@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import LoginPage from "./LoginPage";
 import PageHeader from "./PageHeader";
-import Bg from "./resources/laboratorium.jpg"
+import Bg from "./resources/Oceanograf.jpg"
 import { useImageSize } from 'react-image-size';
 function App() {
     const [dimensions, _] = useImageSize(Bg);
@@ -23,7 +23,7 @@ function App() {
     return (
         <div className={`App bg ${horizontal ? "bgHorizontal": "bgVertical" }`} style={{"backgroundImage":`url(${Bg})`}}>
             <PageHeader></PageHeader>
-            <LoginPage className=" position-relative"></LoginPage>
+            <LoginPage></LoginPage>
         </div>
     );
 }
