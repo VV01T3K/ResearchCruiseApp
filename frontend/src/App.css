@@ -1,0 +1,31 @@
+.App {
+  text-align: center;
+}
+.bg  {
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.bgVertical {
+  -webkit-animation: zoominVertical  50s infinite alternate;
+  animation: zoominVertical  50s infinite alternate;
+}
+
+.bgHorizontal {
+  animation: zoominHorizontal 50s infinite alternate;
+  -webkit-animation: zoominHorizontal 50s infinite alternate;
+}
+
+
+@keyframes zoominHorizontal {
+  from {background-size: 100% }
+  to {background-size: 150%}
+}
+@keyframes zoominVertical {
+  from {background-position: top;background-size: auto 100% }
+  to {background-position: top;background-size: auto 150%}
+}
+
+
