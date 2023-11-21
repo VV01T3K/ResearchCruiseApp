@@ -10,8 +10,11 @@
     "@types/node": "^16.18.62",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "babel-plugin-react-css-modules": "^0.0.0",
     "bootstrap": "^5.3.2",
+    "css-loader": "^6.8.1",
     "react": "^18.2.0",
+    "react-css-modules": "^4.7.11",
     "react-dom": "^18.2.0",
     "react-image-size": "^2.3.2",
     "react-scripts": "^5.0.1",
@@ -24,8 +27,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "install-bootstrap": "npm audit fix --force",
-    "audit": "npm install",
-    "fund": "npm fund"
+    "audit": "npm install css-loader",
+    "fund": "npm fund",
+    "cos": "npm i --save-dev @types/react-css-modules"
   },
   "browserslist": {
     "production": [
@@ -40,6 +44,7 @@
     ]
   },
   "devDependencies": {
-    "@types/bootstrap": "^5.2.9"
+    "@types/bootstrap": "^5.2.9",
+    "@types/react-css-modules": "^4.6.8"
   }
 }
