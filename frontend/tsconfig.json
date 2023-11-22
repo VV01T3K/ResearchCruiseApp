@@ -21,9 +21,12 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "*": ["src/types/*"]
-  },
-  "include": [
-    "src"
-  ]
+      "*": [
+        "src/types/*"
+      ]
+    },
+    "include": [
+      "src"
+    ]
+  }
 }

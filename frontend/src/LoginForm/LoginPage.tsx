@@ -1,32 +1,27 @@
-import React from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import CSSModules from 'react-css-modules';
 import Style from './style.css'
-function LoginPage(props:{className?: string}){
+import LoginForm from "./LoginForm";
+import Bg from "../resources/Oceanograf.jpg";
+import PageHeader from "../PageHeader/PageHeader";
+import ResetPasswordForm from "./ResetPasswordForm";
+import RegisterForm from "./RegisterForm";
+function LoginPage(props:{className?: string, setUserToken:Dispatch<SetStateAction<string | null>>}){
+    const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
-        <div className={props.className + " d-flex flex-row justify-content-end flex-nowrap m-4"}>
-                    <div className="center flex-nowrap  col-12 col-md-auto my-auto ">
-                        <div className="mx-auto pb-1" style={{"width":"500px",  "background": "white"}}>
-                        <h1>Login</h1>
-                        <form method="post">
-                            <div className="txt_field">
-                                <input type="text" required/>
-                                    <span></span>
-                                    <label>Username</label>
+        <>
+            <div className={"bg"} style={{"backgroundImage":`url(${Bg})`}}></div>
+            <PageHeader></PageHeader>
+            <div className={props.className + " d-flex flex-row justify-content-end flex-nowrap m-4"}>
+                        <div className="center flex-nowrap  col-12 col-md-auto my-auto ">
+                            <div className="mx-auto pb-1" style={{"width":"500px",  "background": "white"}}>
+                                {currentForm == "login" && <LoginForm setCurrentForm={setCurrentForm} setUserToken={props.setUserToken}/>}
+                                {currentForm == "remind" && <ResetPasswordForm setCurrentForm={setCurrentForm}/>}
+                                {currentForm == "register" && <RegisterForm setCurrentForm={setCurrentForm}/>}
                             </div>
-                            <div className="txt_field">
-                                <input type="password" required/>
-                                    <span></span>
-                                    <label>Password</label>
-                            </div>
-                            <div className="pass">Forgot Password?</div>
-                            <input type="submit" value="Login"/>
-                                <div className="signup_link">
-                                    Not a member? <a href="#">Signup</a>
-                                </div>
-                        </form>
                         </div>
-                    </div>
-        </div>
+            </div>
+        </>
     )
 }
 

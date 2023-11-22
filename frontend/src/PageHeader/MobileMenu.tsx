@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 function MobileMenu(props:{className?: string}) {
     return (
         <div className="row d-flex" >
