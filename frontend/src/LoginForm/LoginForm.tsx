@@ -38,7 +38,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                     <label>Password</label>
                 </div>
                 <div className="pass" onClick={()=>props.setCurrentForm("remind")}>Forgot Password?</div>
-                <input type="submit" value="Login" onClick={handleSubmit}/>
+                <input type="submit" value="Login" onClick={()=>props.setUserToken(" ")}/>
                 <div className="signup_link">
                     Not a member? <a href="#" onClick={()=>props.setCurrentForm("register")}>Signup</a>
                 </div>
