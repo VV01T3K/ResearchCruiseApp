@@ -9,16 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="03379781-875d-41dc-8f05-316f9d00a398" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/7b125bd2-14ad-4eb3-9c87-48cf51661ee2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/a644b865-f77d-4670-8cc6-7a4d3054f2ef.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231216233125_InitialCreate.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231216233125_InitialCreate.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/ResearchCruiseContextModelSnapshot.cs" beforeDir="false" />
-    </list>
+    <list default="true" id="03379781-875d-41dc-8f05-316f9d00a398" name="Changes" comment="Updated InitialCreate migration" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -166,14 +157,36 @@
       <workItem from="1702755188132" duration="9644000" />
       <workItem from="1702844235816" duration="1648000" />
       <workItem from="1702847502364" duration="2348000" />
-      <workItem from="1702934426636" duration="2201000" />
+      <workItem from="1702934426636" duration="2937000" />
     </task>
+    <task id="LOCAL-00001" summary="Updated InitialCreate migration">
+      <option name="closed" value="true" />
+      <created>1702937291841</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702937291841</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Updated InitialCreate migration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated InitialCreate migration" />
   </component>
 </project>
