@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResearchCruiseApp-API", "ResearchCruiseApp-API\ResearchCruiseApp-API.csproj", "{10450805-D564-4A3B-A67E-BBCF847A538C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResearchCruiseApp-API", "ResearchCruiseApp-API\ResearchCruiseApp-API.csproj", "{2C3DD02F-B756-4527-A0D9-009928384714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{10450805-D564-4A3B-A67E-BBCF847A538C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10450805-D564-4A3B-A67E-BBCF847A538C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10450805-D564-4A3B-A67E-BBCF847A538C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10450805-D564-4A3B-A67E-BBCF847A538C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C3DD02F-B756-4527-A0D9-009928384714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3DD02F-B756-4527-A0D9-009928384714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3DD02F-B756-4527-A0D9-009928384714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3DD02F-B756-4527-A0D9-009928384714}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
