@@ -9,11 +9,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="03379781-875d-41dc-8f05-316f9d00a398" name="Changes" comment="" />
+    <list default="true" id="03379781-875d-41dc-8f05-316f9d00a398" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/7b125bd2-14ad-4eb3-9c87-48cf51661ee2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/a644b865-f77d-4670-8cc6-7a4d3054f2ef.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231216233125_InitialCreate.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231216233125_InitialCreate.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/ResearchCruiseContextModelSnapshot.cs" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -31,6 +43,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -104,7 +117,7 @@
         <settings>
           <option name="imageTag" value="researchcruiseapp-api" />
           <option name="containerName" value="researchcruiseapp-api" />
-          <option name="contextFolderPath" value="D:\Studia\Semestr V\Projekt grupowy\ResearchCruiseApp-API" />
+          <option name="contextFolderPath" value="." />
           <option name="portBindings">
             <list>
               <DockerPortBindingImpl>
@@ -152,6 +165,8 @@
       <workItem from="1702673475873" duration="1017000" />
       <workItem from="1702755188132" duration="9644000" />
       <workItem from="1702844235816" duration="1648000" />
+      <workItem from="1702847502364" duration="2348000" />
+      <workItem from="1702934426636" duration="2201000" />
     </task>
     <servers />
   </component>

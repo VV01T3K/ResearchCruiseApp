@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="ResearchCruiseApp@localhost" uuid="7b125bd2-14ad-4eb3-9c87-48cf51661ee2">
+    <data-source source="LOCAL" name="Microsoft SQL Server (JetBrains)" uuid="3e6abf30-2f92-4c09-b3a9-5aa82d027fe8">
       <driver-ref>sqlserver.jb</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
-      <jdbc-url>Server=localhost,1433;Database=ResearchCruiseApp</jdbc-url>
+      <jdbc-url>Server=localhost, 1433; User Id=sa; Password=p@ssw0rd; Encrypt=False</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
