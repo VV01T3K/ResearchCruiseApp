@@ -1,7 +1,10 @@
 # Backend
-App is created using .NET 7.0
+App is created using .NET 8.0
 
 ## Requirements
+### SDK
+- .NET 8.0.100 SDK
+
 ### Packages (can be installed using NuGet package manager integrated with the IDE):
 - Microsoft.AspNetCore.OpenApi 7.0.3
 - Microsoft.EntityFrameworkCore.Design 7.0.14
