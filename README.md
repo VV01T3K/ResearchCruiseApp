@@ -6,18 +6,18 @@ App is created using .NET 8.0
 - .NET 8.0.100 SDK
 
 ### Packages (can be installed using NuGet package manager integrated with the IDE):
-- Microsoft.AspNetCore.OpenApi 7.0.3
-- Microsoft.EntityFrameworkCore.Design 7.0.14
-- Microsoft.EntityFrameworkCore.SqlServer 7.0.14
-- Microsoft.EntityFrameworkCore.Tools 7.0.14
-- Microsoft.VisualStudio.Web.CodeGeneration.Design 7.0.11
+- Microsoft.AspNetCore.OpenApi 8.0.0
+- Microsoft.EntityFrameworkCore.Design 8.0.0
+- Microsoft.EntityFrameworkCore.SqlServer 8.0.0
+- Microsoft.EntityFrameworkCore.Tools 8.0.0
+- Microsoft.VisualStudio.Web.CodeGeneration.Design 8.0.0
 - Swashbuckle.AspNetCore 6.4.0
 
 ### Tools
 - Docker: https://www.docker.com/products/docker-desktop/
 - dotnet-ef (installation in the **project** folder, not the solution folder!):
   ```powershell
-  dotnet tool install --global dotnet-ef --version 7.0.14
+  dotnet tool install --global dotnet-ef --version 8.0.0
   ```
 ### Database container
 Creating a Docker container from a Microsoft image:
@@ -37,7 +37,7 @@ the _Run_ or _Debug_ button.
   - Database type: _Microsoft SQL Server_
   - String:
     ```powershell
-    Server=localhost, 1433; Database=ResearchCruiseApp; User Id=sa; Password=p@ssw0rd; Encrypt=False
+    Server=localhost, 1433; User Id=sa; Password=p@ssw0rd; Encrypt=False
     ```
 - Click _Connect to database_.
 - Refresh the datasource.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/f3496ff1-0b9d-4538-8cd2-448402ba4ea3)
@@ -53,6 +53,7 @@ the _Run_ or _Debug_ button.
   ```powershell
   dotnet ef migrations add InitialCreate
   ```
+  **NOTE**: `InitialCreate` is a custom name given to the migration.
 - Apply the migration in the database:
   ```powershell
   dotnet ef database update
