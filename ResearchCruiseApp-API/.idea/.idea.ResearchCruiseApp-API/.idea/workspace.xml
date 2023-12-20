@@ -9,19 +9,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="Added database operations. Working only on local machine">
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="Changed Users to Cats to prepare for ASP.NET Core Identity usage">
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/LoginContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/CatsController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231220201457_InitialCreate.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231220201457_InitialCreate.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/ResearchCruiseContextModelSnapshot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Cat.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/IUsersRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/ICatsRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/UsersRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/CatsRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +156,7 @@
       <updated>1702938904500</updated>
       <workItem from="1702938906205" duration="3378000" />
       <workItem from="1703020836919" duration="3364000" />
-      <workItem from="1703100546490" duration="8382000" />
+      <workItem from="1703100546490" duration="11312000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -189,7 +182,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703106926020</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Changed Users to Cats to prepare for ASP.NET Core Identity usage">
+      <option name="closed" value="true" />
+      <created>1703109812118</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1703109812118</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -212,7 +213,8 @@
     <MESSAGE value="Updated .net to 8.0" />
     <MESSAGE value="Deleted old version (.net 7.0 app)" />
     <MESSAGE value="Added database operations. Working only on local machine" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added database operations. Working only on local machine" />
+    <MESSAGE value="Changed Users to Cats to prepare for ASP.NET Core Identity usage" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed Users to Cats to prepare for ASP.NET Core Identity usage" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
