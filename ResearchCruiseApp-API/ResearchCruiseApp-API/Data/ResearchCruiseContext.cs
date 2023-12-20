@@ -15,7 +15,5 @@ public class ResearchCruiseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer(
-            "Server=localhost, 1433; Database=ResearchCruiseApp; User Id=sa; Password=p@ssw0rd; Encrypt=False");
     }
 }

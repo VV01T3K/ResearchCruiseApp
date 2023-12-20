@@ -10,32 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../ResearchCruiseApp-API_old/.idea/.idea.ResearchCruiseApp-API/.idea/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/0479de99-10c6-4dfc-919a-714829116854.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/0479de99-10c6-4dfc-919a-714829116854/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/3d90be25-922b-4375-8bd4-c57a64765c6e.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/3d90be25-922b-4375-8bd4-c57a64765c6e/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/3e6abf30-2f92-4c09-b3a9-5aa82d027fe8.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/3e6abf30-2f92-4c09-b3a9-5aa82d027fe8/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/591e7fcc-6b55-44b3-88dd-fa6a5cd6187b.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/cc3b9a95-aac6-4a4c-a92f-b90e945bef87.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/cc3b9a95-aac6-4a4c-a92f-b90e945bef87/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/3629abd3-d75a-4443-be7f-2318c41e3394.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/3629abd3-d75a-4443-be7f-2318c41e3394.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.aa/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.aa/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.aa/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.aa/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/config/applicationhost.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231218215447_InitialCreate.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231218215447_InitialCreate.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/ResearchCruiseContextModelSnapshot.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231218232757_InitialCreate.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/20231218232757_InitialCreate.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/IUsersRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/IUsersRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/UsersRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/UsersRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,9 +31,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2ZjcPCo3lHTmoM4erJweUIcHbu7" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -59,6 +46,7 @@
     "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "XThreadsFramesViewSplitterKey": "0.4409222",
     "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -144,7 +132,10 @@
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile" />
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
     </configuration>
     <list>
@@ -162,15 +153,107 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1702938904500</updated>
-      <workItem from="1702938906205" duration="3010000" />
+      <workItem from="1702938906205" duration="3378000" />
+      <workItem from="1703020836919" duration="3364000" />
+      <workItem from="1703100546490" duration="5618000" />
     </task>
+    <task id="LOCAL-00001" summary="Updated .net to 8.0">
+      <option name="closed" value="true" />
+      <created>1702942186426</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702942186426</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Deleted old version (.net 7.0 app)">
+      <option name="closed" value="true" />
+      <created>1702942274935</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1702942274935</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Updated .net to 8.0" />
+    <MESSAGE value="Deleted old version (.net 7.0 app)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deleted old version (.net 7.0 app)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs</url>
+          <line>27</line>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\UsersController.cs" initialLine="27" containingFunctionPresentation="Method 'GetAllUsers'">
+            <startOffsets>
+              <option value="680" />
+            </startOffsets>
+            <endOffsets>
+              <option value="722" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs</url>
+          <line>33</line>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\UsersController.cs" initialLine="33" containingFunctionPresentation="Method 'GetUserById'">
+            <startOffsets>
+              <option value="835" />
+            </startOffsets>
+            <endOffsets>
+              <option value="879" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs</url>
+          <line>43</line>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\UsersController.cs" initialLine="43" containingFunctionPresentation="Method 'AddUser'">
+            <startOffsets>
+              <option value="1085" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1125" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs</url>
+          <line>12</line>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Program.cs" initialLine="12" containingFunctionPresentation="">
+            <startOffsets>
+              <option value="409" />
+            </startOffsets>
+            <endOffsets>
+              <option value="496" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

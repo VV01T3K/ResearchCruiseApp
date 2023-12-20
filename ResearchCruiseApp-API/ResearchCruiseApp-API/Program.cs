@@ -8,8 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton<IUsersRepository, UsersRepository>();
-builder.Services.AddDbContext<ResearchCruiseContext>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddDbContext<ResearchCruiseContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
 var app = builder.Build();
 

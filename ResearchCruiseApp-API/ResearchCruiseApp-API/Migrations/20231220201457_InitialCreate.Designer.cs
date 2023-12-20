@@ -11,7 +11,7 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    [Migration("20231218232757_InitialCreate")]
+    [Migration("20231220201457_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

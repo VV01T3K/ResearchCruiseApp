@@ -28,11 +28,23 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(_usersRepository.GetAllUsers());
         }
 
-        [HttpPost("")]
+        [HttpGet("{id:int}")]
+        public IActionResult GetUserById(int id)
+        {
+            var user = _usersRepository.GetUserById(id);
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+
+        [HttpPost]
         public IActionResult AddUser([FromBody]User user)
         {
-            _usersRepository.AddUser(user);
-            return Ok();
+            var id = _usersRepository.AddUser(user);
+            return CreatedAtAction(nameof(GetUserById),
+                new { id = id, controller = "users" },
+                id);
         }
     }
 }

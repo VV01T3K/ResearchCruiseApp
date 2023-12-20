@@ -4,7 +4,7 @@ namespace ResearchCruiseApp_API.Repository;
 
 public interface IUsersRepository
 {
-    public void AddUser(User user);
+    public int AddUser(User user);
 
     public User? GetUserById(int id);
 

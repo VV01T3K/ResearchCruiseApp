@@ -1,25 +1,34 @@
-﻿using ResearchCruiseApp_API.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Models;
 
 namespace ResearchCruiseApp_API.Repository;
 
 public class UsersRepository : IUsersRepository
 {
-    private readonly List<User> _users = new();
-    
-    
-    public void AddUser(User user)
+    private readonly ResearchCruiseContext _context;
+
+
+    public UsersRepository(ResearchCruiseContext context)
     {
-        user.Id = _users.Count;
-        _users.Add(user);
+        _context = context;
+    }
+    
+    public int AddUser(User user)
+    {
+        _context.Users.Add(user);
+        _context.SaveChanges();
+
+        return user.Id;
     }
 
     public User? GetUserById(int id)
     {
-        return _users.SingleOrDefault(user => user.Id == id);
+        return _context.Users.SingleOrDefault(user => user.Id == id);
     }
 
     public List<User> GetAllUsers()
     {
-        return _users;
+        return _context.Users.ToList();
     }
 }
