@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,9 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddAuthentication();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<LoginContext>();
+builder.Services.AddAuthentication()
+    .AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthorizationBuilder();
+builder.Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<LoginContext>()
+    .AddApiEndpoints();
 
 builder.Services.AddDbContext<LoginContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
@@ -31,8 +36,6 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-app.MapGroup("/identity").MapIdentityApi<IdentityUser>();
-app.UseAuthentication();
-app.UseAuthorization();
+app.MapIdentityApi<User>();
 
 app.Run();
