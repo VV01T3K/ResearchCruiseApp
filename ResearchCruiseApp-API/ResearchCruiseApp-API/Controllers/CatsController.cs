@@ -10,6 +10,7 @@ using ResearchCruiseApp_API.Repository;
 
 namespace ResearchCruiseApp_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CatsController : ControllerBase
@@ -39,7 +40,7 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(user);
         }
         
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public IActionResult AddCat([FromBody]Cat cat)
         {
