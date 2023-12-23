@@ -14,7 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication()
     .AddBearerToken(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorizationBuilder();
-builder.Services.AddIdentityCore<User>()
+builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<LoginContext>()
     .AddApiEndpoints();
 
@@ -37,5 +38,31 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.MapIdentityApi<User>();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roleNames = new[] { "Administrator", "Shipowner", "CruiseManager" };
+    
+    foreach (var roleName in roleNames)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+    }
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    
+    if (await userManager.FindByNameAsync("admin") == null)
+    {
+        var adminUser = new User()
+        {
+            UserName = "admin",
+            Email = "admin@admin.com"
+        };
+        await userManager.CreateAsync(adminUser, "Admin@123");
+        await userManager.AddToRoleAsync(adminUser, "Administrator");
+    }
+    
+}
 
 app.Run();
