@@ -6,9 +6,10 @@ import Page from "../Tools/Page";
 function NewFormPage(props:{className?: string}){
     return (
         <>
-            <Page className={props.className + " justify-content-center bg-white"}>
-                <div className=" d-flex flex-row pb-1 m-2 center align-self-start justify-content-center  w-100">
-                    Wybierz formularz
+            <Page className={props.className + " d-flex justify-content-center bg-white"}>
+                <div className="  d-flex flex-column pb-1 m-2 center align-self-start justify-content-center  w-100">
+                    <p>Wybierz formularz</p>
+                    <a href={"/formA"}> formularz A</a>
                 </div>
             </Page>
         </>
