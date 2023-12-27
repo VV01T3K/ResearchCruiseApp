@@ -8,6 +8,8 @@ import LoggedInRoute from "./Tools/LoggedInRoute";
 import NotLoggedInRoute from "./Tools/NotLoggedInRoute";
 import PageHeader from "./PageHeader/PageHeader";
 import useToken from "./Tools/useToken";
+import NewForm from "./NewFormPage/NewFormPage";
+import NewFormPage from "./NewFormPage/NewFormPage";
 
 function GetUsername(userToken:string){
 
@@ -20,6 +22,7 @@ function App() {
             <PageHeader title={token ? GetUsername(token): null}></PageHeader>
             <Routes>
                 <Route element={<LoggedInRoute userToken={token} redirectPath={"/login"} />}>
+                    <Route path="/NewForm" element={<NewFormPage/>}/>
                     <Route path="/*" element={<Home setUserToken={setToken}/>}/>
                 </Route>
                 <Route element={<NotLoggedInRoute userToken={token} redirectPath={"/"} />}>

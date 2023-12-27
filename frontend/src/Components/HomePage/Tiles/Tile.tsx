@@ -1,20 +1,13 @@
 import React, {useState} from 'react';
 import CSSModules from 'react-css-modules';
 import Style from './style.css'
-import Page from "../Tools/Page";
-function HomePage(props:{className?: string, setUserToken:(userToken: string | null) => void}){
+function Tile( props:{children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>}){
     return (
-        <>
-            <Page className={props.className + " justify-content-center bg-success w-100"}>
-                <div>
-                    <a href={"#"} onClick={()=>props.setUserToken(null)}>
-                        logout
-                    </a>
-                </div>
+        <div className={" "}>
 
-            </Page>
-        </>
+            {props.children}
+        </div>
     )
 }
 
-export default CSSModules(HomePage, Style);
+export default CSSModules(Tile, Style);

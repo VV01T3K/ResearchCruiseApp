@@ -2,18 +2,17 @@ import React from 'react';
 import CSSModules from 'react-css-modules';
 import Style from './style.css'
 import Page from "../Tools/Page";
-import Tiles from "./Tiles/TilesMenu";
 
-function HomePage(props:{className?: string, setUserToken:(userToken: string | null) => void}){
+function NewFormPage(props:{className?: string}){
     return (
         <>
-            <Page className={props.className + " justify-content-center"}>
+            <Page className={props.className + " justify-content-center bg-white"}>
                 <div className=" d-flex flex-row pb-1 m-2 center align-self-start justify-content-center  w-100">
-                    <Tiles setUserToken={props.setUserToken}/>
+                    Wybierz formularz
                 </div>
             </Page>
         </>
     )
 }
 
-export default CSSModules(HomePage, Style);
+export default CSSModules(NewFormPage, Style);

@@ -10,7 +10,7 @@ function LoginPage(props:{className?: string, setUserToken:(userToken: string | 
     return (
         <>
             <Page className={props.className}>
-                        <div className=" pb-1 m-2 center"
+                        <div className=" d-flex flex-column pb-1 m-2 center align-self-start"
                              style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}>
                             {currentForm == "login" &&
                                 <LoginForm setCurrentForm={setCurrentForm} setUserToken={props.setUserToken}/>}
