@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ResearchCruiseApp_API.Migrations.Login
+namespace ResearchCruiseApp_API.Migrations.Users
 {
     /// <inheritdoc />
-    public partial class LoginContextAdded : Migration
+    public partial class UsersContextCreated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
