@@ -56,7 +56,8 @@ the _Run_ or _Debug_ button.
   **NOTE**: `InitialCreate` is a custom name given to the migration.
 - Apply the migration in the database:
   ```powershell
-  dotnet ef database update
+  dotnet ef database update --context UsersContext
+  dotnet ef database update --context ResearchCruiseContext
   ```
 - In the database view click the dots next to the _No schemas selected_ message and choose the default schema.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/96f61b49-4301-4fda-99a7-8adf5fe5edee)
 
