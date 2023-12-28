@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.CompilerServices;
 using ResearchCruiseApp_API.Models;
 
 namespace ResearchCruiseApp_API.Data;
 
-public class ResearchCruiseContext : DbContext
+public class ResearchCruiseContext(DbContextOptions<ResearchCruiseContext> options) : DbContext(options)
 {
-    public DbSet<Cat> Cats { get; set;  } = null!;
-    
-    
-    public ResearchCruiseContext(DbContextOptions<ResearchCruiseContext> options)
-        : base(options)
-    {}
+   
 }

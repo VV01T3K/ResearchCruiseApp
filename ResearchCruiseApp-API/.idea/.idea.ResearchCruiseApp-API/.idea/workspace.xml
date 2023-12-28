@@ -9,11 +9,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="gitignore corrected">
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserRegisterModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/CatsController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/CatsController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/CatsController.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/LoginContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/UsersContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/20231220223827_LoginContextAdded.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/20231220223827_LoginContextAdded.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/20231228140248_UsersContextCreated.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/20231221181519_AddedIdentityUser.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/20231221181519_AddedIdentityUser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/20231221182204_SimplifiedIdentityUser.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/20231228140248_UsersContextCreated.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/20231221182204_SimplifiedIdentityUser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Login/LoginContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/UsersContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Cat.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/User.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/CatsRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Repository/ICatsRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,8 +46,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Core/src/IdentityServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityUser.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/EmailAddressAttribute.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -52,7 +71,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "XThreadsFramesViewSplitterKey": "0.3783784",
-    "git-widget-placeholder": "authorizing__with__roles",
+    "git-widget-placeholder": "shipowner__registering",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -163,6 +182,9 @@
       <workItem from="1703100546490" duration="11312000" />
       <workItem from="1703180834366" duration="817000" />
       <workItem from="1703286347310" duration="3475000" />
+      <workItem from="1703356395511" duration="1119000" />
+      <workItem from="1703614991995" duration="96000" />
+      <workItem from="1703766737300" duration="10073000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />

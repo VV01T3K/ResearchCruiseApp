@@ -8,10 +8,10 @@ using ResearchCruiseApp_API.Data;
 
 #nullable disable
 
-namespace ResearchCruiseApp_API.Migrations.Login
+namespace ResearchCruiseApp_API.Migrations.Users
 {
-    [DbContext(typeof(LoginContext))]
-    partial class LoginContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(UsersContext))]
+    partial class UsersContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
