@@ -6,5 +6,4 @@ namespace ResearchCruiseApp_API.Data;
 
 public class ResearchCruiseContext(DbContextOptions<ResearchCruiseContext> options) : DbContext(options)
 {
-   
 }

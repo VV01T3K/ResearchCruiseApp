@@ -59,7 +59,6 @@ using (var scope = app.Services.CreateScope())
         await userManager.CreateAsync(adminUser, "Admin@123");
         await userManager.AddToRoleAsync(adminUser, "Administrator");
     }
-    
 }
 
 app.Run();
