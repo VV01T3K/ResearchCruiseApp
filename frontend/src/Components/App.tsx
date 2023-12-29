@@ -28,7 +28,7 @@ function App() {
                     <Route path="/*" element={<Home setUserToken={setToken}/>}/>
                 </Route>
                 <Route element={<NotLoggedInRoute userToken={token} redirectPath={"/"} />}>
-                    <Route path="/login" element={<LoginPage className={" justify-content-center justify-content-md-end"} setUserToken={setToken} />}/>
+                    <Route path="/login" element={<LoginPage setUserToken={setToken} />}/>
                 </Route>
             </Routes>
         </div>

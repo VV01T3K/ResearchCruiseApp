@@ -26,13 +26,13 @@
 }
 
 
-@media (min-width: 300px) {
+@media (min-width: 318px) {
     .tileContainer {
         width: 300px;
     }
 }
 
-@media (min-width: 450px) {
+@media (min-width: 468px) {
     .tileContainer {
         width: 450px;
     }
