@@ -7,13 +7,19 @@ function FormTemplate(props:{children?: React.ReactElement<any, string | React.J
     const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
         <>
-            <Page className={"justify-content-center"}>
-                <div className={"d-flex flex-column bg-white w-100 overflow-scroll p-5 "}>
-                    {props.children}
+            <Page className={"justify-content-center bg-white"}>
+                <div className={"d-flex flex-column"}>
+                    <div className={"d-flex flex-column  w-100 overflow-scroll p-5 "}>
+                        {props.children}
+                    </div>
+                    <div className={"d-flex flex-row m-3 "}>
+                        <button className={"d-flex col-6 text-center m-2"}>Zapisz</button>
+                        <button className={"d-flex col-6 text-center m-2 "}>Zapisz i wyślij</button>
+                    </div>
                 </div>
             </Page>
         </>
-)
+    )
 }
 
 export default CSSModules(FormTemplate, Style);

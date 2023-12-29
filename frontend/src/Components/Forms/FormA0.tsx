@@ -136,25 +136,43 @@ function FormA0(){
                     </div>
                 </FormSection>
                 <FormSection completed={completedSections[3]} id={"3"} title={"4. Rejon prowadzenia badań"}>
-
+                    <text  style={{height:"200px"}}>
+                     ss
+                    </text>
+                    <div></div>
                 </FormSection>
                 <FormSection completed={completedSections[4]} id={"4"} title={"5. Cel Rejsu"}>
+                    <text style={{height: "200px"}}>
+                        ss
+                    </text>
+                    <div></div>
+                </FormSection>
+                <FormSection completed={completedSections[5]} id={"5"}
+                             title={"6. Przewidywana liczba osób załogi naukowej."}>
 
                 </FormSection>
-                <FormSection completed={completedSections[5]} id={"5"} title={"6. Przewidywana liczba osób załogi naukowej."}>
-
-                </FormSection>
-                <FormSection completed={completedSections[6]} id={"6"} title={"7. Zadania do zrealizowania w trakcie rejsu"}>
-
+                <FormSection completed={completedSections[6]} id={"6"}
+                             title={"7. Zadania do zrealizowania w trakcie rejsu"}>
+                    <text style={{height: "200px"}}>
+                        ss
+                    </text>
+                    <div></div>
                 </FormSection>
                 <FormSection completed={completedSections[7]} id={"7"} title={"8. Lista umów współpracy."}>
-
+                    <text style={{height: "200px"}}>
+                        ss
+                    </text>
+                    <div></div>
                 </FormSection>
-                <FormSection completed={completedSections[8]} id={"8"} title={"9. Zespoły badawcze jakie miałyby uczestniczyć w rejsie."}>
+                <FormSection completed={completedSections[8]} id={"8"}
+                             title={"9. Zespoły badawcze jakie miałyby uczestniczyć w rejsie."}>
 
                 </FormSection>
                 <FormSection completed={completedSections[9]} id={"9"} title={"10. Publikacje i Prace"}>
-
+                    <text style={{height: "200px"}}>
+                        ss
+                    </text>
+                    <div></div>
                 </FormSection>
                 <FormSection completed={completedSections[10]} id={"10"} title={"11. Efekty rejsu"}>
                 </FormSection>
