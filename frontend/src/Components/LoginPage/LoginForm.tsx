@@ -29,7 +29,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
 
     return (
         <>
-            <h1>Login</h1>
+            <h1 style={{fontSize:"2rem"}}>Login</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="txt_field">
                     <input type="text" disabled={loading} {...register("userName", { required: true, maxLength: 10 })}/>
@@ -46,7 +46,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                 {errors.password && <ErrorCode code={"Password -> daj dobre hasło"}/>}
                 <div className="pass m-2"   onClick={loading ? ()=>{}: ()=>props.setCurrentForm("remind")}>Forgot Password?</div>
                 <input className={loading ? "textAnim": ""} type="submit" disabled={loading} value="Login"/>
-                <div className="signup_link m-2">
+                <div className="signup_link m-3">
                     Not a member? // Skip login <a href="#"  onClick={loading ? ()=>{}: ()=>props.setUserToken(" ") }>Signup</a> {/*()=>props.setCurrentForm("register")*/}
                 </div>
             </form>

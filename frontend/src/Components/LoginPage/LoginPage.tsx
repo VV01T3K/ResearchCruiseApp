@@ -5,11 +5,11 @@ import LoginForm from "./LoginForm";
 import ResetPasswordForm from "./ResetPasswordForm";
 import RegisterForm from "./RegisterForm";
 import Page from "../Tools/Page";
-function LoginPage(props:{className?: string, setUserToken:(userToken: string | null) => void}){
+function LoginPage(props:{setUserToken:(userToken: string | null) => void}){
     const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
         <>
-            <Page className={props.className}>
+            <Page className={"justify-content-center justify-content-md-end"}>
                         <div className=" d-flex flex-column pb-1 m-2 center align-self-start"
                              style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}>
                             {currentForm == "login" &&
