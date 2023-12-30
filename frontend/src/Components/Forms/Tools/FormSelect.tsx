@@ -9,7 +9,7 @@ function FormSelect(props: {
     control: Control<FieldValues, any> | undefined,
     options: OptionsOrGroups<any, GroupBase<any>> | undefined, errors: any}){
 
-    return  (<>
+    return  (<div className={"z-3"}>
             <label>{props.label}</label>
             <Controller
                 name={props.name}
@@ -18,7 +18,7 @@ function FormSelect(props: {
                 rules={{required: 'Wybierz jedną z opcji'}} // Dodanie reguły walidacji
                 render={({field}) => (
                     <>
-                        <Select
+                        <Select    minMenuHeight={300}
                             {...field}
                             options={props.options}
                         />
@@ -26,7 +26,7 @@ function FormSelect(props: {
                     </>
                 )}
             />
-        </>
+        </div>
     )
 }
 

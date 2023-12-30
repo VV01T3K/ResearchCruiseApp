@@ -6,6 +6,7 @@ import FormTemplate from "./Tools/FormTemplate";
 import FormTitle from "./Tools/FormTitle";
 import FormSelect from "./Tools/FormSelect";
 import FormSection from "./Tools/FormSection";
+import MonthSlider from "../Tools/MonthSlider";
 function FormA0(){
 
 
@@ -28,7 +29,7 @@ function FormA0(){
 
     }
     const [ loading, setLoading ] = useState(false);
-    const { control,register, handleSubmit, formState: { errors, dirtyFields } } = useForm({
+    const { control,register, getValues, handleSubmit, formState: { errors, dirtyFields } } = useForm({
         mode: 'onBlur'});
 
     const managers = (): readonly any[] => {
@@ -73,36 +74,41 @@ function FormA0(){
         "SPUB"
     ].map((item)=>[item, false]))
 
-    function checkGroup(group:[string, string[]], sections:(string|boolean)[][]) {
-        console.log(dirtyFields["permissions"]!=undefined&& errors["permissions"]==undefined)
+    function checkGroup(group:[string, string[]]) {
         if(group[1].map((value: string)=>{return (dirtyFields[value]!=undefined && errors[value])==undefined}).reduce((sum, next)=> sum && next, true)) {
-            if (sections.some(item =>  item[0] === group[0] && item[1] === false))
-                return(sections.map((value, index) => {
-                    return index == 0 ? value.map((item, index) => index == 1 ? true : item) : value
+            if (completedSections.some(item =>  item[0] === group[0] && item[1] === false)) {
+                setCompleted(completedSections.map((value, index) => {
+                    return value[0] == group[0] ? value.map((item, index) => index == 1 ? true : item) : value
                 }))
+
+            }
         }
-        // else
-        // if(sections.some(item => item[0] === group[0] && item[1] === true))
-        //     return (sections.map((value, index)=>{return index == 0 ? value.map((item, index)=>index==1 ? false: item): value }))
-        return sections
+        else
+            if(completedSections.some(item => item[0] === group[0] && item[1] === true)) {
+                setCompleted(completedSections.map((value, index) => {
+                    return value[0] == group[0] ? value.map((item, index) => index == 1 ? false : item) : value
+                }))
+
+            }
     }
 
     useEffect(()=>{
         var sec= completedSections;
         ([
             ["Kierownik",["managers","supplyManagers","years"]],
-            // ["Pozwolenia", ["permissions"]]
+            ["Pozwolenia", ["permissions"]],
+            ["Czas", ["acceptedPeriod", "optimalPeriod"]]
         ] as [string, string[]][]).forEach(value => {
-            sec=checkGroup(value, sec)
+            checkGroup(value)
         })
-        if(sec!=completedSections)
-            setCompleted(sec)
     })
+
+    const [minmaxAcceptedPeriod, setMinmaxAcceptedPeriod] = useState([0,24])
 
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>
-            <form className={" flex-grow-1 overflow-auto justify-content-center"} onSubmit={handleSubmit(onSubmit)}>
+            <form className={" flex-grow-1 overflow-auto justify-content-center z-1"} onSubmit={handleSubmit(onSubmit)}>
                 <FormSection completed={completedSections[0]} id={"0"} title={"1. Kierownik zgłaszanego rejsu"}>
                     <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1 ">
                         <FormSelect name={"managers"} label={"Kierownik rejsu"} control={control} options={managers()}
@@ -119,6 +125,13 @@ function FormA0(){
                 </FormSection>
                 <FormSection completed={completedSections[1]} id={"1"} title={"2. Czas trwania zgłaszanego rejsu"}>
 
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-5"}>
+                        <MonthSlider handleInput={setMinmaxAcceptedPeriod} maxVal={24}  minVal={0}  name="acceptedPeriod" control={control} label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}/>
+                    </div>
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-5"}>
+
+                        <MonthSlider name="optimalPeriod" maxVal={minmaxAcceptedPeriod[1]}  minVal={minmaxAcceptedPeriod[0]} control={control} label={"Optymalny okres, w którym miałby się odbywać rejs"}/>
+                    </div>
                 </FormSection>
                 <FormSection completed={completedSections[2]} id={"2"}
                              title={"3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"}>
@@ -136,10 +149,7 @@ function FormA0(){
                     </div>
                 </FormSection>
                 <FormSection completed={completedSections[3]} id={"3"} title={"4. Rejon prowadzenia badań"}>
-                    <text  style={{height:"200px"}}>
-                     ss
-                    </text>
-                    <div></div>
+                    <div/>
                 </FormSection>
                 <FormSection completed={completedSections[4]} id={"4"} title={"5. Cel Rejsu"}>
                     <text style={{height: "200px"}}>
