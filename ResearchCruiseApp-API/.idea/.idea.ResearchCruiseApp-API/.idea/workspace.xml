@@ -131,7 +131,7 @@
               </DockerPortBindingImpl>
             </list>
           </option>
-          <option name="commandLineOptions" value="--network researchcruiseapp-network" />
+          <option name="commandLineOptions" value="--network researchcruiseapp-network --hostname researchcruiseapp-api" />
           <option name="sourceFilePath" value="ResearchCruiseApp-API/Dockerfile" />
         </settings>
       </deployment>
