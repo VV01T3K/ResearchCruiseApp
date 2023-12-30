@@ -32,10 +32,6 @@ Creating a Docker container from a Microsoft image and running it in the newly c
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --name researchcruiseapp-db --hostname researchcruiseapp-db --network researchcruiseapp-network -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-## Running the application
-- Choose the Docker configuration from the _Run/Debug Configurations_.
-- Click _Run_ or _Debug_ button.
-
 ## Database
 ### Creating a database
 - Go to the _Database_ tool window.
@@ -51,8 +47,8 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --nam
 - From the _Microsoft SQL Server (JetBrains)_'s context menu choose _New_/_Database_ ![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/955a4798-310c-4792-bd46-1b9c98436b0a)
 - Type the name `ResearchCruiseApp` and click _Ok_.
 - From the _Microsoft SQL Server (JetBrains)_'s context menu choose _Properties_.
-- Go to _Schemas_ tab and enable the _ResearchCruiseApp_ schema.
-- Click _Ok_.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/8d8734e8-c939-4403-a1e0-c0ed1c7ca9de)
+- Go to _Schemas_ tab and enable the _ResearchCruiseApp_ schema and its _Default schema_.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/7b139509-e609-4142-83d4-73cf54a082f1)
+- Click _Ok_.
 
 ### Migrations
 **NOTE:** You **don't have to** create any migrations when running the app for the first time. Following commands will be useful later.<br>
@@ -64,3 +60,6 @@ Creating a miration:
   ```
 Pending migrations are applied automatically when running the application.
 
+## Running the application
+- Choose the Docker configuration from the _Run/Debug Configurations_.
+- Click _Run_ or _Debug_ button.
