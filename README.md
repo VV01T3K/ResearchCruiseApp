@@ -19,15 +19,23 @@ App is created using .NET 8.0
   ```powershell
   dotnet tool install --global dotnet-ef --version 8.0.0
   ```
-### Database container
-Creating a Docker container from a Microsoft image:
+  
+### Docker network
+Creating a docker network:
 ```powershell
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --name researchcruiseapp-db --hostname researchcruiseapp-db -d mcr.microsoft.com/mssql/server:2022-latest
+docker network create researchcruiseapp-network
+```
+
+### Database container
+Creating a Docker container from a Microsoft image and running it in the newly created network:
+```powershell
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --name researchcruiseapp-db --hostname researchcruiseapp-db --network researchcruiseapp-network -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 ## Running the application
-To build and run the application choose the Docker configuration from the _Run/Debug Configurations_ list and click
-the _Run_ or _Debug_ button.
+- Choose the Docker configuration from the _Run/Debug Configurations_.
+- In the editing window add a run option `--network researchcruiseapp-network`<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/d5c5e849-ca76-47ad-8401-b5adae2bc625)
+- Click _Run_ or _Debug_ button.
 
 ## Database
 ### Creating a database
@@ -45,21 +53,15 @@ the _Run_ or _Debug_ button.
 - Type the name `ResearchCruiseApp` and click _Ok_.
 - From the _Microsoft SQL Server (JetBrains)_'s context menu choose _Properties_.
 - Go to _Schemas_ tab and enable the _ResearchCruiseApp_ schema.
-- Click _Ok_<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/8d8734e8-c939-4403-a1e0-c0ed1c7ca9de)
+- Click _Ok_.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/8d8734e8-c939-4403-a1e0-c0ed1c7ca9de)
 
-### Creating and applying a migration
+### Migrations
+**NOTE:** You **don't have to** create any migrations when running the app for the first time. Following commands will be useful later.<br>
+Creating a miration:
 - In the terminal window `cd` to the **project** (not solution) folder.
-- If the `Migrations` folder in the project is empty, create a migration using this command:
+- Create a migration using this command:
   ```powershell
-  dotnet ef migrations add InitialCreate
+  dotnet ef migrations add MyMigrationName --context MyContextName
   ```
-  **NOTE**: `InitialCreate` is a custom name given to the migration.
-- Apply the migration in the database:
-  ```powershell
-  dotnet ef database update --context UsersContext
-  dotnet ef database update --context ResearchCruiseContext
-  ```
-- In the database view click the dots next to the _No schemas selected_ message and choose the default schema.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/96f61b49-4301-4fda-99a7-8adf5fe5edee)
-
-Now you should see the database view created accordingly to the `Data.ResearchCruiseContext` class:<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/42f0534f-8ea2-4071-ac91-f8747a9ffc5f)
+Pending migrations are applied automatically when running the application.
 
