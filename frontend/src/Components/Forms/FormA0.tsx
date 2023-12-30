@@ -29,7 +29,7 @@ function FormA0(){
 
     }
     const [ loading, setLoading ] = useState(false);
-    const { control,register, getValues, handleSubmit, formState: { errors, dirtyFields } } = useForm({
+    const { control,register,resetField, handleSubmit, formState: { errors, dirtyFields } } = useForm({
         mode: 'onBlur'});
 
     const managers = (): readonly any[] => {
@@ -104,7 +104,10 @@ function FormA0(){
     })
 
     const [minmaxAcceptedPeriod, setMinmaxAcceptedPeriod] = useState([0,24])
-
+    function handleInput(arg){
+        setMinmaxAcceptedPeriod(arg)
+        resetField("optimalPeriod")
+    }
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>
@@ -126,17 +129,38 @@ function FormA0(){
                 <FormSection completed={completedSections[1]} id={"1"} title={"2. Czas trwania zgłaszanego rejsu"}>
 
                     <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-5"}>
-                        <MonthSlider handleInput={setMinmaxAcceptedPeriod} maxVal={24}  minVal={0}  name="acceptedPeriod" control={control} label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}/>
+                        <MonthSlider handleInput={handleInput} maxVal={24} minVal={0} name="acceptedPeriod"
+                                     control={control} label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}/>
                     </div>
                     <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-5"}>
 
-                        <MonthSlider name="optimalPeriod" maxVal={minmaxAcceptedPeriod[1]}  minVal={minmaxAcceptedPeriod[0]} control={control} label={"Optymalny okres, w którym miałby się odbywać rejs"}/>
+                        <MonthSlider key={minmaxAcceptedPeriod} name="optimalPeriod" maxVal={minmaxAcceptedPeriod[1]}
+                                     minVal={minmaxAcceptedPeriod[0]} control={control}
+                                     label={"Optymalny okres, w którym miałby się odbywać rejs"}/>
+                    </div>
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
+                        <label> Liczba planowanych dób rejsowych
+                        </label>
+                        <input type={"textbox"}/>
+
+                    </div>
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
+                        <label> Liczba planowanych dób rejsowych
+                        </label>
+                        <input type={"textbox"}/>
+
+                    </div>
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
+                        <label> Uwagi dotyczące teminu
+                        </label>
+                        <textarea rows="4" cols="50" />
+
                     </div>
                 </FormSection>
                 <FormSection completed={completedSections[2]} id={"2"}
                              title={"3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"}>
                     <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1">
-                        <input type="text" disabled={loading} {...register("permissions", {
+                    <input type="text" disabled={loading} {...register("permissions", {
                             required: true,
                             validate: {
                                 maxLength: (v) =>

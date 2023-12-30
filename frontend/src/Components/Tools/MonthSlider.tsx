@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-import MultiRangeSlider from "multi-range-slider-react";
+import React, {useEffect, useState} from "react";
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 import Style from "./MultiRangeSlider.css"
 import CSSModules from "react-css-modules";
 import {Control, Controller, FieldValues} from "react-hook-form";
 
-const MonthSlider = (props: { label: string, name: string, control: Control<FieldValues, any> | undefined, minVal?: string | number | undefined, maxVal?: string | number | undefined, handleInput?: (arg0: any[]) => void}) => {
+const MonthSlider = (props: { label: string, name: string, control: Control<FieldValues, any>
+        | undefined, minVal?: string | number | undefined, maxVal?: string | number | undefined,
+    handleInput?: (arg0: any[]) => void, reset?}) => {
     const months = [
         'Styczeń', 'Luty', 'Marzec', 'Kwiecień',
         'Maj', 'Czerwiec', 'Lipiec', 'Sierpień',
-        'Wrzesień', 'Październik', 'Listopad', 'Grudzień', ''
+        'Wrzesień', 'Październik', 'Listopad', 'Grudzień', null
 
 
     ];
@@ -39,41 +42,52 @@ const MonthSlider = (props: { label: string, name: string, control: Control<Fiel
         '2. połowy grudnia',
     ]
 
-    const [minValue, set_minValue] = useState(1);
-    const [maxValue, set_maxValue] = useState(2);
-    const slicedMonths = months.slice(props.minVal as number/2 ?? 0 ,(props.maxVal as number/2 + 1)  ?? 13)
-    if((props.maxVal ?? 24) <24 )slicedMonths.pop()
-        if((props.maxVal ?? 24) <24 )slicedMonths.push(' ')
-    const handleInput = (e: { min?: number; max?: number; minValue: any; maxValue: any; }) => {
-        console.log("pies")
-        set_minValue(e.minValue);
-        set_maxValue(e.maxValue);
-        if(props.handleInput)props.handleInput([e.minValue, e.maxValue])
-    };
+    const minVal = (props.minVal as number) ?? 0
+    const maxVal = (props.maxVal as number)  ?? 24
+    const slicedMonths = months.slice(( minVal+1)/2,( maxVal)/2+1)
 
+    months.forEach((element, index, arr) => {
+        if (!slicedMonths.includes(element)) {
+            arr[index] = null;
+        }
+    });
+
+
+
+
+    const handleChange =(sliderValues) => {
+        setSliderValues(sliderValues);
+        if(props.handleInput){
+            props.handleInput(sliderValues)
+        }
+    };
+    const [sliderValues, setSliderValues] = useState([minVal,maxVal])
     return (
         <>
         <label>{props.label}</label>
+            <div style={{height:"80px"}}>
             <Controller
                 name={props.name}
                 control={props.control}
-                render={({field}) => (
-                    <>
-        <MultiRangeSlider {...field}
-            min={props.minVal ?? 0}
-                max={props.maxVal ?? 24}
-                step={1}
-                minValue={minValue}
-                maxValue={maxValue}
-                onChange={(e) => {
-                    handleInput(e)
-                }}
-            labels={slicedMonths}
-            />
-                    </>
+                // defaultValue={[minVal,maxVal]}
+                render={({ field }) => (
+                    <Slider
+                        {...field}
+                        range
+                        min={minVal}
+                        max={maxVal}
+                        marks={months.reduce((acc, month, index) => {
+                            acc[2*index] = month;
+                            // acc[minVal % 2 == 0 ? 2*index+1: 2*index] = '';
+                            return acc;
+                        }, {})}
+                        onChangeComplete={handleChange}
+                        defaultValue={[minVal, maxVal]}
+                    />
                 )}
             />
-            <label className={"m-2 center text-center"} style={{fontSize:"0.9rem"}}>Wybrano okres: <br/> od początku {labels[minValue]} <br/>do końca {labels[maxValue-1]}.</label>
+            </div>
+            <label className={"m-2 center text-center"} style={{fontSize:"0.9rem"}}>Wybrano okres: <br/> od początku {labels[sliderValues[0]]} <br/>do końca {labels[sliderValues[1]-1]}.</label>
         </>
 
     );
