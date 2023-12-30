@@ -7,7 +7,7 @@ function FormTitle(props:{title:string, completed:(string | boolean)[][]}){
 
             <h1 className={" d-flex flex-column  text-decoration-underline text-end "}
                 style={{fontSize: "2rem"}}>{props.title}</h1>
-            <h1 className={"d-flex flex-row  flex-wrap"} style={{fontSize: "2.5rem"}}>
+            <h1 className={"d-flex flex-row  flex-wrap d-none d-lg-flex"} style={{fontSize: "2.5rem"}}>
                 {props.completed.map((value, index) => {
                     return <a key={`${index}`}
                         className={`d-flex flex-nowrap p-2 align-self-center text-decoration-none ${value.at(1) ? "text-success" : "text-danger"}`}

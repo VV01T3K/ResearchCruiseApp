@@ -9,7 +9,7 @@ function FormTemplate(props:{children?: React.ReactElement<any, string | React.J
         <>
             <Page className={"justify-content-center bg-white"}>
                 <div className={"d-flex flex-column w-100"}>
-                    <div className={"d-flex flex-column  w-100 overflow-scroll p-5 "}>
+                    <div className={"d-flex flex-column  w-100 overflow-scroll p-2 p-md-5 "}>
                         {props.children}
                     </div>
                     <div className={"d-flex flex-row m-3 "}>
