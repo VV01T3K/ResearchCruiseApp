@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
@@ -35,6 +36,17 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.MapIdentityApi<User>();
+
+using (var scope = app.Services.CreateScope())
+{
+    var usersContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
+    var researchCruiseContext = scope.ServiceProvider.GetRequiredService<ResearchCruiseContext>();
+
+    if (usersContext.Database.GetPendingMigrations().Any())
+        usersContext.Database.Migrate();
+    if (researchCruiseContext.Database.GetPendingMigrations().Any())
+        researchCruiseContext.Database.Migrate();
+}
 
 using (var scope = app.Services.CreateScope())
 {

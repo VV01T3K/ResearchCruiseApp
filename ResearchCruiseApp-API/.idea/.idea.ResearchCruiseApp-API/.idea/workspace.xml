@@ -12,9 +12,8 @@
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/ResearchCruiseContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +73,7 @@
     ]
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.ResearchCruiseApp-API: http">
+  <component name="RunManager" selected="Docker.ResearchCruiseApp-API/Dockerfile">
     <configuration name="ResearchCruiseApp-API: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
@@ -135,6 +134,7 @@
               </DockerPortBindingImpl>
             </list>
           </option>
+          <option name="commandLineOptions" value="--network researchcruiseapp-network" />
           <option name="sourceFilePath" value="ResearchCruiseApp-API/Dockerfile" />
         </settings>
       </deployment>
@@ -171,7 +171,8 @@
       <workItem from="1703356395511" duration="1119000" />
       <workItem from="1703614991995" duration="96000" />
       <workItem from="1703766737300" duration="10073000" />
-      <workItem from="1703791818766" duration="4554000" />
+      <workItem from="1703791818766" duration="5649000" />
+      <workItem from="1703946954795" duration="2506000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -221,7 +222,23 @@
       <option name="project" value="LOCAL" />
       <updated>1703286498106</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Deleted Cats table">
+      <option name="closed" value="true" />
+      <created>1703797338552</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1703797338552</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Merge remote-tracking branch 'origin/main'">
+      <option name="closed" value="true" />
+      <created>1703797446296</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1703797446296</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -248,7 +265,9 @@
     <MESSAGE value="Changed Users to Cats to prepare for ASP.NET Core Identity usage" />
     <MESSAGE value="gitignore added to backend app" />
     <MESSAGE value="gitignore corrected" />
-    <option name="LAST_COMMIT_MESSAGE" value="gitignore corrected" />
+    <MESSAGE value="Deleted Cats table" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/main'" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/main'" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
