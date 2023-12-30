@@ -46,6 +46,7 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --nam
 - Refresh the datasource.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/f3496ff1-0b9d-4538-8cd2-448402ba4ea3)
 - From the _Microsoft SQL Server (JetBrains)_'s context menu choose _New_/_Database_ ![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/955a4798-310c-4792-bd46-1b9c98436b0a)
 - Type the name `ResearchCruiseApp` and click _Ok_.
+- Refresh the datasource again.
 - From the _Microsoft SQL Server (JetBrains)_'s context menu choose _Properties_.
 - Go to _Schemas_ tab and enable the _ResearchCruiseApp_ schema and its _Default schema_.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/7b139509-e609-4142-83d4-73cf54a082f1)
 - Click _Ok_.
