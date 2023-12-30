@@ -20,6 +20,70 @@ namespace ResearchCruiseApp_API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("MyEntityMyMiniEntity", b =>
+                {
+                    b.Property<int>("MiniEntitiesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MyEntitiesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MiniEntitiesId", "MyEntitiesId");
+
+                    b.HasIndex("MyEntitiesId");
+
+                    b.ToTable("MyEntityMyMiniEntity");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.MyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MyEntities");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.MyMiniEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MyMiniEntities");
+                });
+
+            modelBuilder.Entity("MyEntityMyMiniEntity", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Data.MyMiniEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MiniEntitiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Data.MyEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MyEntitiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 #pragma warning restore 612, 618
         }
     }
