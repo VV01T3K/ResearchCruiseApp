@@ -72,6 +72,8 @@ const MonthSlider = (props: { label: string, name: string, control: Control<Fiel
                 // defaultValue={[minVal,maxVal]}
                 render={({ field }) => (
                     <Slider
+                        pushable={true}
+                        allowCross={false}
                         {...field}
                         range
                         min={minVal}

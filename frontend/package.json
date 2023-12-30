@@ -14,7 +14,6 @@
     "bootstrap": "^5.3.2",
     "css-loader": "^6.8.1",
     "framer-motion": "^10.0.0",
-    "multi-range-slider-react": "^2.0.7",
     "rc-slider": "^10.5.0",
     "react": "^18.2.0",
     "react-css-modules": "^4.7.11",
@@ -48,7 +47,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "install-bootstrap": "npm audit fix --force",
-    "audit": "npm install rc-slider",
+    "audit": "npm install -g npm@10.2.5",
     "fund": "npm fund",
     "cos": "npm install react-scripts --save"
   },
@@ -65,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/bootstrap": "^5.2.9",
     "@types/react-css-modules": "^4.6.8"
   }
