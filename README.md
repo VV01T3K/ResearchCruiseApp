@@ -34,7 +34,6 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --nam
 
 ## Running the application
 - Choose the Docker configuration from the _Run/Debug Configurations_.
-- In the editing window add a run option `--network researchcruiseapp-network`<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/d5c5e849-ca76-47ad-8401-b5adae2bc625)
 - Click _Run_ or _Debug_ button.
 
 ## Database
