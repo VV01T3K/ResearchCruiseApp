@@ -10,6 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources/07b65dc8-7335-4b58-aa25-1eac2463adc4/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,7 +41,7 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2ZjcPCo3lHTmoM4erJweUIcHbu7" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -131,7 +134,7 @@
               </DockerPortBindingImpl>
             </list>
           </option>
-          <option name="commandLineOptions" value="--network researchcruiseapp-network --hostname researchcruiseapp-api" />
+          <option name="commandLineOptions" value="--network researchcruiseapp-network&#10;--hostname researchcruiseapp-api" />
           <option name="sourceFilePath" value="ResearchCruiseApp-API/Dockerfile" />
         </settings>
       </deployment>
@@ -168,8 +171,7 @@
       <workItem from="1703356395511" duration="1119000" />
       <workItem from="1703614991995" duration="96000" />
       <workItem from="1703766737300" duration="10073000" />
-      <workItem from="1703791818766" duration="5649000" />
-      <workItem from="1703946954795" duration="2506000" />
+      <workItem from="1703791818766" duration="4554000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -219,23 +221,7 @@
       <option name="project" value="LOCAL" />
       <updated>1703286498106</updated>
     </task>
-    <task id="LOCAL-00007" summary="Deleted Cats table">
-      <option name="closed" value="true" />
-      <created>1703797338552</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1703797338552</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Merge remote-tracking branch 'origin/main'">
-      <option name="closed" value="true" />
-      <created>1703797446296</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1703797446296</updated>
-    </task>
-    <option name="localTasksCounter" value="9" />
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -262,9 +248,7 @@
     <MESSAGE value="Changed Users to Cats to prepare for ASP.NET Core Identity usage" />
     <MESSAGE value="gitignore added to backend app" />
     <MESSAGE value="gitignore corrected" />
-    <MESSAGE value="Deleted Cats table" />
-    <MESSAGE value="Merge remote-tracking branch 'origin/main'" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/main'" />
+    <option name="LAST_COMMIT_MESSAGE" value="gitignore corrected" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
