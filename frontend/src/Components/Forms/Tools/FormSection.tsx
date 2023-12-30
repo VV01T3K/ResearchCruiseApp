@@ -12,7 +12,7 @@ function FormSection(props: {children?: React.ReactElement<any, | string | React
                    <h1 className={"d-flex flex-column col-6  align-self-center"} style={{fontSize: "1.5rem"}}>{props.title} {isActive ? "▲":"▼"}</h1>
                     <h1 className={`d-flex flex-column col-6 text-end ${props.completed.at(1) ? "text-success": "text-danger"} align-self-center`} style={{fontSize: "1.5rem"}}>{props.completed.at(1) ? "+" : "!"}</h1>
                 </div>
-         <div className={`d-flex flex-row flex-wrap justify-content-center  pb-2 ${isActive ? ' ': 'visually-hidden'}`}>
+         <div className={`d-flex flex-row flex-wrap justify-content-center  p-3 ${isActive ? ' ': 'visually-hidden'}`}>
                     {props.children}
                 </div>
             </div>

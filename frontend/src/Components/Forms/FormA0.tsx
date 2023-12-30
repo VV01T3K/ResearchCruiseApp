@@ -113,26 +113,26 @@ function FormA0(){
             <FormTitle completed={completedSections} title={"Formularz A"}/>
             <form className={" flex-grow-1 overflow-auto justify-content-center z-1"} onSubmit={handleSubmit(onSubmit)}>
                 <FormSection completed={completedSections[0]} id={"0"} title={"1. Kierownik zgłaszanego rejsu"}>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1 ">
+                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-3 ">
                         <FormSelect name={"managers"} label={"Kierownik rejsu"} control={control} options={managers()}
                                     errors={errors}/>
                     </div>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1">
+                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-3">
                         <FormSelect name={"supplyManagers"} label={"Zastępca"} control={control}
                                     options={supplyManagers()} errors={errors}/>
                     </div>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1">
+                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-3">
                         <FormSelect name={"years"} label={"Rok rejsu"} control={control} options={years()}
                                     errors={errors}/>
                     </div>
                 </FormSection>
                 <FormSection completed={completedSections[1]} id={"1"} title={"2. Czas trwania zgłaszanego rejsu"}>
 
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-5"}>
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
                         <MonthSlider handleInput={handleInput} maxVal={24} minVal={0} name="acceptedPeriod"
                                      control={control} label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}/>
                     </div>
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-5"}>
+                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
 
                         <MonthSlider key={minmaxAcceptedPeriod} name="optimalPeriod" maxVal={minmaxAcceptedPeriod[1]}
                                      minVal={minmaxAcceptedPeriod[0]} control={control}
