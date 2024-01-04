@@ -14,9 +14,7 @@ namespace ResearchCruiseApp_API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AccountController(
-        UsersContext usersContext, UserManager<User> userManager)
-        : ControllerBase
+    public class AccountController(UserManager<User> userManager) : ControllerBase
     {
         private readonly EmailAddressAttribute _emailAddressAttribute = new();
         
@@ -25,8 +23,6 @@ namespace ResearchCruiseApp_API.Controllers
         public async Task<Results<Ok, ValidationProblem>> Register(
             [FromBody] RegistrationModel registrationModel, [FromServices] IServiceProvider serviceProvider)
         {
-            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-
             if (!userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException($"{nameof(Register)} requires a user store with email support.");
@@ -119,6 +115,26 @@ namespace ResearchCruiseApp_API.Controllers
             if (user != null)
                 return Ok(await UserModel.GetUserModel(user, userManager));
             return NotFound();
+        }
+
+        [Authorize]
+        [HttpPatch]
+        public async Task<IActionResult> ChangeAccountDetails(
+            [FromBody] ChangeAccountDetailsModel changeAccountDetailsModel)
+        {
+            var userName = User.Identity!.Name!;
+            var user = await userManager.FindByNameAsync(userName);
+
+            if (user == null)
+                return NotFound();
+
+            if (changeAccountDetailsModel.NewFirstName != null)
+                user.FirstName = changeAccountDetailsModel.NewFirstName;
+            if (changeAccountDetailsModel.NewLastName != null)
+                user.LastName = changeAccountDetailsModel.NewLastName;
+
+            await userManager.UpdateAsync(user);
+            return NoContent();
         }
         
         
