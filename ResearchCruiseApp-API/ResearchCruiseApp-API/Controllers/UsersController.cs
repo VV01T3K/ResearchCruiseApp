@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Models.AuthenticationRequestsModels;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -12,8 +13,7 @@ namespace ResearchCruiseApp_API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController(
-        UsersContext usersContext,
-        UserManager<User> userManager)
+        UsersContext usersContext, UserManager<User> userManager)
         : ControllerBase
     {
         [HttpGet]
@@ -24,7 +24,7 @@ namespace ResearchCruiseApp_API.Controllers
 
             foreach (var user in users)
             {
-                userModels.Add(await GetUserModel((user)));
+                userModels.Add(await UserModel.GetUserModel(user, userManager));
             }
             
             return Ok(userModels);
@@ -37,47 +37,30 @@ namespace ResearchCruiseApp_API.Controllers
             if (user == null)
                 return NotFound();
             
-            return Ok(await GetUserModel(user));
+            return Ok(await UserModel.GetUserModel(user, userManager));
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody]UserRegistrationModel userRegistrationModel)
+        public async Task<IActionResult> AddUser([FromBody]RegistrationModel registrationModel)
         {
-            if (await userManager.FindByEmailAsync(userRegistrationModel.Email) != null)
+            if (await userManager.FindByEmailAsync(registrationModel.Email) != null)
                 return Conflict();
             
             var newUser = new User()
             {
-                UserName = userRegistrationModel.Email,
-                Email = userRegistrationModel.Email,
-                FirstName = userRegistrationModel.FirstName,
-                LastName = userRegistrationModel.LastName
+                UserName = registrationModel.Email,
+                Email = registrationModel.Email,
+                FirstName = registrationModel.FirstName,
+                LastName = registrationModel.LastName
             };
-            await userManager.CreateAsync(newUser, userRegistrationModel.Password);
+            await userManager.CreateAsync(newUser, registrationModel.Password);
                 
-            if (userRegistrationModel.Role != null)
-                await userManager.AddToRoleAsync(newUser, userRegistrationModel.Role);
+            if (registrationModel.Role != null)
+                await userManager.AddToRoleAsync(newUser, registrationModel.Role);
 
             return CreatedAtAction(nameof(GetUserById),
                 new { id = newUser.Id, controller = "Users" },
                 newUser.Id);
-        }
-
-
-        private async Task<UserModel> GetUserModel(User user)
-        {
-            var userRoles = await userManager.GetRolesAsync(user);
-            var userModel = new UserModel()
-            {
-                Id = user.Id,
-                UserName = user.UserName!,
-                Email = user.Email!,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Roles = [..userRoles]
-            };
-
-            return userModel;
         }
     }
 }

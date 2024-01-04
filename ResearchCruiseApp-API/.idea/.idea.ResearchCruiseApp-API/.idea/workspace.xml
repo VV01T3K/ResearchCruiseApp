@@ -9,15 +9,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication">
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/UsersContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/UsersContextModelSnapshot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserRegisterModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserRegistrationModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,13 +30,24 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Http.Results/src/Results.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/LoginRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/RefreshRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/RegisterRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/ResetPasswordRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/EntityFrameworkCore/src/IdentityDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Core/src/IdentityServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityRole.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityUser.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/EmailAddressAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/7a9cabe33905466a82eaf0ab9cbb93f5838a0/42/24dba5b9/02000027pdb50.il" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/UsersController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Models/UserRegistrationModel.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -55,31 +61,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.ResearchCruiseApp-API: http.executor": "Run",
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "XThreadsFramesViewSplitterKey": "0.3783784",
-    "git-widget-placeholder": "account__controller",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.ResearchCruiseApp-API: http.executor&quot;: &quot;Run&quot;,
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Docker.ResearchCruiseApp-API/Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.3783784&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;custom__authentication&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\tati_\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
-      "C:\\Users\\tati_\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
-      "C:\\Users\\tati_\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\tati_\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\tati_\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\tati_\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Docker.ResearchCruiseApp-API/Dockerfile">
     <configuration name="ResearchCruiseApp-API: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" />
@@ -246,7 +252,55 @@
       <option name="project" value="LOCAL" />
       <updated>1703797446296</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Deleted &quot;api&quot; from route">
+      <option name="closed" value="true" />
+      <created>1704394558368</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1704394558368</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication">
+      <option name="closed" value="true" />
+      <created>1704398811286</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1704398811286</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Moved IdentityAuthenticationController.cs content to AccountController.cs">
+      <option name="closed" value="true" />
+      <created>1704399195561</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1704399195561</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Custom registering, login and refreshing">
+      <option name="closed" value="true" />
+      <created>1704403602564</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1704403602564</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Custom registering, login and refreshing">
+      <option name="closed" value="true" />
+      <created>1704403623641</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1704403623641</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication">
+      <option name="closed" value="true" />
+      <created>1704403639807</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1704403639807</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -275,7 +329,11 @@
     <MESSAGE value="gitignore corrected" />
     <MESSAGE value="Deleted Cats table" />
     <MESSAGE value="Merge remote-tracking branch 'origin/main'" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/main'" />
+    <MESSAGE value="Deleted &quot;api&quot; from route" />
+    <MESSAGE value="Moved IdentityAuthenticationController.cs content to AccountController.cs" />
+    <MESSAGE value="Custom registering, login and refreshing" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

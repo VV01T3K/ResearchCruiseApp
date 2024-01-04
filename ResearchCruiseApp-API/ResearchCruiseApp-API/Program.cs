@@ -35,7 +35,7 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-app.MapIdentityApi<User>();
+// app.MapIdentityApi<User>();
 
 using (var scope = app.Services.CreateScope())
 {
