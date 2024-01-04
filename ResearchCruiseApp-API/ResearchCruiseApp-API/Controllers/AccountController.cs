@@ -14,7 +14,9 @@ namespace ResearchCruiseApp_API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController(
+        UsersContext usersContext, UserManager<User> userManager)
+        : ControllerBase
     {
         private readonly EmailAddressAttribute _emailAddressAttribute = new();
         
@@ -105,6 +107,18 @@ namespace ResearchCruiseApp_API.Controllers
 
             var newPrincipal = await signInManager.CreateUserPrincipalAsync(user);
             return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userName = User.Identity!.Name!;
+            var user = await userManager.FindByNameAsync(userName);
+            
+            if (user != null)
+                return Ok(await UserModel.GetUserModel(user, userManager));
+            return NotFound();
         }
         
         

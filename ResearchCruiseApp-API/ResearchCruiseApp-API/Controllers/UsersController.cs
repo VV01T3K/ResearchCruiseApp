@@ -13,8 +13,7 @@ namespace ResearchCruiseApp_API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController(
-        UsersContext usersContext,
-        UserManager<User> userManager)
+        UsersContext usersContext, UserManager<User> userManager)
         : ControllerBase
     {
         [HttpGet]
@@ -25,7 +24,7 @@ namespace ResearchCruiseApp_API.Controllers
 
             foreach (var user in users)
             {
-                userModels.Add(await GetUserModel((user)));
+                userModels.Add(await UserModel.GetUserModel(user, userManager));
             }
             
             return Ok(userModels);
@@ -38,7 +37,7 @@ namespace ResearchCruiseApp_API.Controllers
             if (user == null)
                 return NotFound();
             
-            return Ok(await GetUserModel(user));
+            return Ok(await UserModel.GetUserModel(user, userManager));
         }
 
         [HttpPost]
@@ -62,23 +61,6 @@ namespace ResearchCruiseApp_API.Controllers
             return CreatedAtAction(nameof(GetUserById),
                 new { id = newUser.Id, controller = "Users" },
                 newUser.Id);
-        }
-
-
-        private async Task<UserModel> GetUserModel(User user)
-        {
-            var userRoles = await userManager.GetRolesAsync(user);
-            var userModel = new UserModel()
-            {
-                Id = user.Id,
-                UserName = user.UserName!,
-                Email = user.Email!,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Roles = [..userRoles]
-            };
-
-            return userModel;
         }
     }
 }
