@@ -41,20 +41,22 @@ namespace ResearchCruiseApp_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody]UserRegisterModel userRegisterModel)
+        public async Task<IActionResult> AddUser([FromBody]UserRegistrationModel userRegistrationModel)
         {
-            if (await userManager.FindByEmailAsync(userRegisterModel.Email) != null)
+            if (await userManager.FindByEmailAsync(userRegistrationModel.Email) != null)
                 return Conflict();
             
             var newUser = new User()
             {
-                UserName = userRegisterModel.UserName,
-                Email = userRegisterModel.Email
+                UserName = userRegistrationModel.Email,
+                Email = userRegistrationModel.Email,
+                FirstName = userRegistrationModel.FirstName,
+                LastName = userRegistrationModel.LastName
             };
-            await userManager.CreateAsync(newUser, userRegisterModel.Password);
+            await userManager.CreateAsync(newUser, userRegistrationModel.Password);
                 
-            if (userRegisterModel.Role != null)
-                await userManager.AddToRoleAsync(newUser, userRegisterModel.Role);
+            if (userRegistrationModel.Role != null)
+                await userManager.AddToRoleAsync(newUser, userRegistrationModel.Role);
 
             return CreatedAtAction(nameof(GetUserById),
                 new { id = newUser.Id, controller = "Users" },
@@ -70,6 +72,8 @@ namespace ResearchCruiseApp_API.Controllers
                 Id = user.Id,
                 UserName = user.UserName!,
                 Email = user.Email!,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Roles = [..userRoles]
             };
 
