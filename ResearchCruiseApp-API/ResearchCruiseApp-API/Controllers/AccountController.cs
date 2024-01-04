@@ -132,6 +132,17 @@ namespace ResearchCruiseApp_API.Controllers
                 user.FirstName = changeAccountDetailsModel.NewFirstName;
             if (changeAccountDetailsModel.NewLastName != null)
                 user.LastName = changeAccountDetailsModel.NewLastName;
+            if (changeAccountDetailsModel.NewPassword != null)
+            {
+                if (changeAccountDetailsModel.Password == null)
+                    return BadRequest();
+                var result = await userManager.ChangePasswordAsync(
+                    user, changeAccountDetailsModel.Password, changeAccountDetailsModel.NewPassword);
+
+                if (result.Succeeded)
+                    return NoContent();
+                return BadRequest();
+            }
 
             await userManager.UpdateAsync(user);
             return NoContent();
