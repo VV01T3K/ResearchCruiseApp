@@ -1,9 +1,31 @@
-﻿namespace ResearchCruiseApp_API.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using ResearchCruiseApp_API.Data;
+
+namespace ResearchCruiseApp_API.Models;
 
 public class UserModel
 {
     public string Id { get; set; } = null!;
     public string UserName { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     public List<string> Roles { get; set; } = null!;
+    
+    
+    public static async Task<UserModel> GetUserModel(User user, UserManager<User> userManager)
+    {
+        var userRoles = await userManager.GetRolesAsync(user);
+        var userModel = new UserModel()
+        {
+            Id = user.Id,
+            UserName = user.UserName!,
+            Email = user.Email!,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Roles = [..userRoles]
+        };
+
+        return userModel;
+    }
 }
