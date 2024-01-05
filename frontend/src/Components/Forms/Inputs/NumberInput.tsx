@@ -6,48 +6,42 @@ import {
     FieldValues,
     Merge,
 } from "react-hook-form";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
 
 function NumberInput(props: {
     className?: string,
-    default:number,
-    maxVal:number,
     label: string,
     name: string,
-    handleInput: (arg0: number) => void,
+    maxVal: number,
+    setValue: (arg0: string, arg1: string, arg2: { shouldValidate: boolean; } | undefined) => void,
+    newVal: (arg0: number) => any,
+    name2: string,
     control: Control<FieldValues, any>,
     errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }}){
 
-     const [value, setValue] = useState(props.default)
 
-    useEffect(()=>{setValue(props.default)}, [props.default])
     const re =  /^[0-9\b]+$/;
-    const onChange = (e) => {
-
+    const onChange = (e: { target: { value: string; }; }) => {
         if (re.test(e.target.value)) {
-            setValue(parseInt(e.target.value) > props.maxVal ? props.maxVal: parseInt(e.target.value))
+            props.setValue(props.name, String(parseInt(e.target.value) > props.maxVal ? props.maxVal: parseInt(e.target.value)), {shouldDirty:true})
+
+            props.setValue(props.name, String(parseInt(e.target.value) > props.maxVal ? props.maxVal: parseInt(e.target.value)), { shouldValidate:true})
         }
-        else{
-            setValue('')
-        }
+        else if(e.target.value=='')
+            props.setValue(props.name, "0", {shouldValidate:true})
     }
     return (
         <div className={props.className + "  p-3"}>
             <label>{props.label}</label>
             <Controller
-                defaultValue={props.default}
-                render={({ field }) => <input className={"text-center"} value={value}
-                                              onBlur={
-                    ()=>{
-                        props.handleInput(value)
-                        field.onBlur();
-
+                render={({ field }) => <input className={"text-center"} value={field.value}
+                                              onBlur={(e)=>{
+                                                  props.setValue(props.name2, String(props.newVal(parseInt(e.target.value))), { shouldDirty: true })
+                                                  props.setValue(props.name2, String(props.newVal(parseInt(e.target.value))), { shouldValidate: true })
+                        // field.onBlur();
                     }
-                } onChange={event=>{
-                    onChange(event);
-                    field.onChange(event);
-                }} />}
+                } onChange={(e)=>{onChange(e)}} />}
                 name={props.name}
                 control={props.control}
                 rules={{
