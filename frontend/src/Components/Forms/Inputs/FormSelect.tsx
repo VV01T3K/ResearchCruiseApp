@@ -4,12 +4,13 @@ import ErrorCode from "../../LoginPage/ErrorCode";
 import React from "react";
 
 function FormSelect(props: {
+    className?:string,
     name:string,
     label:string,
     control: Control<FieldValues, any> | undefined,
     options: OptionsOrGroups<any, GroupBase<any>> | undefined, errors: any}){
 
-    return  (<div className={"z-3"}>
+    return  (<div className={props.className + " z-3 p-3"}>
             <label>{props.label}</label>
             <Controller
                 name={props.name}

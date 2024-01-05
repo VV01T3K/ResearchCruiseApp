@@ -4,9 +4,11 @@ import ErrorCode from "../LoginPage/ErrorCode";
 import Select from 'react-select';
 import FormTemplate from "./Tools/FormTemplate";
 import FormTitle from "./Tools/FormTitle";
-import FormSelect from "./Tools/FormSelect";
+import FormSelect from "./Inputs/FormSelect";
 import FormSection from "./Tools/FormSection";
-import MonthSlider from "../Tools/MonthSlider";
+import MonthSlider from "./Inputs/MonthSlider";
+import NumberInput from "./Inputs/NumberInput";
+import TextArea from "./Inputs/TextArea";
 function FormA0(){
 
 
@@ -29,7 +31,7 @@ function FormA0(){
 
     }
     const [ loading, setLoading ] = useState(false);
-    const { control,register,resetField, handleSubmit, formState: { errors, dirtyFields } } = useForm({
+    const { control, getValues, setValue,register,resetField, handleSubmit, formState: { errors, dirtyFields } } = useForm({
         mode: 'onBlur'});
 
     const managers = (): readonly any[] => {
@@ -104,73 +106,40 @@ function FormA0(){
     })
 
     const [minmaxAcceptedPeriod, setMinmaxAcceptedPeriod] = useState([0,24])
-    function handleInput(arg){
+    const handleInput = (arg: React.SetStateAction<number[]>) => {
         setMinmaxAcceptedPeriod(arg)
         resetField("optimalPeriod")
     }
+
+    const [cruiseTime, setCruiseTime] = useState(1);
+
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>
-            <form className={" flex-grow-1 overflow-auto justify-content-center z-1"} onSubmit={handleSubmit(onSubmit)}>
+            <form className={" flex-grow-1 overflow-auto justify-content-center z-1"} onSubmit={()=>console.log(getValues())}> //
                 <FormSection completed={completedSections[0]} id={"0"} title={"1. Kierownik zgłaszanego rejsu"}>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-3 ">
-                        <FormSelect name={"managers"} label={"Kierownik rejsu"} control={control} options={managers()}
-                                    errors={errors}/>
-                    </div>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-3">
-                        <FormSelect name={"supplyManagers"} label={"Zastępca"} control={control}
-                                    options={supplyManagers()} errors={errors}/>
-                    </div>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-3">
-                        <FormSelect name={"years"} label={"Rok rejsu"} control={control} options={years()}
-                                    errors={errors}/>
-                    </div>
+                    <FormSelect className="d-flex flex-column col-12 col-md-6 col-xl-3" name={"managers"} label={"Kierownik rejsu"} control={control}
+                                options={managers()} errors={errors}/>
+                    <FormSelect className="d-flex flex-column col-12 col-md-6 col-xl-3" name={"supplyManagers"} label={"Zastępca"} control={control}
+                                options={supplyManagers()} errors={errors}/>
+                    <FormSelect className="d-flex flex-column col-12 col-md-6 col-xl-3" name={"years"} label={"Rok rejsu"} control={control}
+                                options={years()} errors={errors}/>
                 </FormSection>
                 <FormSection completed={completedSections[1]} id={"1"} title={"2. Czas trwania zgłaszanego rejsu"}>
+                    <MonthSlider className={"d-flex flex-column col-12 col-md-12 col-xl-6"} handleInput={handleInput} name="acceptedPeriod"
+                                 control={control} label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}/>
+                    <MonthSlider className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"} minMaxVal={minmaxAcceptedPeriod} name={"optimalPeriod"} control={control}
+                                 label={"Optymalny okres, w którym miałby się odbywać rejs"}/>
+                    <NumberInput handleInput={(e)=>{setCruiseTime(Number(e*24)); setValue("cruiseDays", Number(e/24));} }className={"d-flex flex-column col-12 col-md-12 col-xl-6"} name={"cruiseDays"} label={"Liczba planowanych dób rejsowych"}
+                                  maxVal={99} default={String(Number(cruiseTime/24))} control={control} errors={errors}/>
+                    <NumberInput handleInput={(e)=>{setCruiseTime(e); setValue("cruiseTime", Number(e))} } className={"d-flex flex-column col-12 col-md-12 col-xl-6"} name={"cruiseTime"} label={"Liczba planowanych godzin rejsowych"}
+                                  maxVal={99} default={String(cruiseTime)} control={control} errors={errors}/>
 
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
-                        <MonthSlider handleInput={handleInput} maxVal={24} minVal={0} name="acceptedPeriod"
-                                     control={control} label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}/>
-                    </div>
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
-
-                        <MonthSlider key={minmaxAcceptedPeriod} name="optimalPeriod" maxVal={minmaxAcceptedPeriod[1]}
-                                     minVal={minmaxAcceptedPeriod[0]} control={control}
-                                     label={"Optymalny okres, w którym miałby się odbywać rejs"}/>
-                    </div>
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
-                        <label> Liczba planowanych dób rejsowych
-                        </label>
-                        <input type={"textbox"}/>
-
-                    </div>
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
-                        <label> Liczba planowanych dób rejsowych
-                        </label>
-                        <input type={"textbox"}/>
-
-                    </div>
-                    <div className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}>
-                        <label> Uwagi dotyczące teminu
-                        </label>
-                        <textarea rows="4" cols="50" />
-
-                    </div>
+                    <TextArea label={"Uwagi dotyczące teminu"} control={control} errors={errors} name={"notes"} className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}/>
                 </FormSection>
                 <FormSection completed={completedSections[2]} id={"2"}
                              title={"3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"}>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1">
-                    <input type="text" disabled={loading} {...register("permissions", {
-                            required: true,
-                            validate: {
-                                maxLength: (v) =>
-                                    v.length <= 4 || "The email should have at most 50 characters",
-
-                        }})}/>
-                        {errors.permissions && <ErrorCode code={errors.permissions.message}/>}
-                    </div>
-                    <div className="d-flex flex-column col-12 col-md-6 col-xl-3 p-1">
-                    </div>
+                    <TextArea label={"Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?"} control={control} errors={errors} name={"notes2"} className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}/>
                 </FormSection>
                 <FormSection completed={completedSections[3]} id={"3"} title={"4. Rejon prowadzenia badań"}>
                     <div/>

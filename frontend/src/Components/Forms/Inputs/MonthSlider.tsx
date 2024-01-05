@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import Style from "./MultiRangeSlider.css"
+import Style from "./MonthSlider.css"
 import CSSModules from "react-css-modules";
 import {Control, Controller, FieldValues} from "react-hook-form";
+import {circIn} from "framer-motion";
 
-const MonthSlider = (props: { label: string, name: string, control: Control<FieldValues, any>
-        | undefined, minVal?: string | number | undefined, maxVal?: string | number | undefined,
-    handleInput?: (arg0: any[]) => void, reset?}) => {
+const MonthSlider = (props: { className?:string, label: string, name: string, control: Control<FieldValues, any>
+        | undefined, handleInput?: (arg0: any[] | ((prevState: number[]) => number[])) => void, minMaxVal?: number[]}) => {
     const months = [
         'Styczeń', 'Luty', 'Marzec', 'Kwiecień',
         'Maj', 'Czerwiec', 'Lipiec', 'Sierpień',
@@ -42,34 +42,39 @@ const MonthSlider = (props: { label: string, name: string, control: Control<Fiel
         '2. połowy grudnia',
     ]
 
-    const minVal = (props.minVal as number) ?? 0
-    const maxVal = (props.maxVal as number)  ?? 24
+    const [sliderValues, setSliderValues] = useState(props.minMaxVal != undefined ? props.minMaxVal:  [0,24])
+    const [minVal,maxVal] = props.minMaxVal != undefined ? props.minMaxVal:  [0,24]
+
+    React.useEffect(() => {
+        setSliderValues(props.minMaxVal != undefined ? props.minMaxVal:  [0,24])
+    }, [props.minMaxVal]);
+
+
     const slicedMonths = months.slice(( minVal+1)/2,( maxVal)/2+1)
 
     months.forEach((element, index, arr) => {
         if (!slicedMonths.includes(element)) {
             arr[index] = null;
         }
+
     });
 
-
-
-
-    const handleChange =(sliderValues) => {
-        setSliderValues(sliderValues);
+    const handleChange =(sliderValues: number | number[]) => {
+        setSliderValues(sliderValues as number[]);
         if(props.handleInput){
-            props.handleInput(sliderValues)
+            props.handleInput(sliderValues as number[])
+
         }
     };
-    const [sliderValues, setSliderValues] = useState([minVal,maxVal])
+
     return (
-        <>
+        <div className={props.className + "  p-3"}>
         <label>{props.label}</label>
             <div style={{height:"80px"}}>
             <Controller
                 name={props.name}
                 control={props.control}
-                // defaultValue={[minVal,maxVal]}
+                defaultValue={[minVal,maxVal]}
                 render={({ field }) => (
                     <Slider
                         pushable={true}
@@ -78,19 +83,19 @@ const MonthSlider = (props: { label: string, name: string, control: Control<Fiel
                         range
                         min={minVal}
                         max={maxVal}
-                        marks={months.reduce((acc, month, index) => {
+                        marks={
+                        months.reduce((acc, month, index) => {
+                            // @ts-ignore
                             acc[2*index] = month;
-                            // acc[minVal % 2 == 0 ? 2*index+1: 2*index] = '';
                             return acc;
                         }, {})}
                         onChangeComplete={handleChange}
-                        defaultValue={[minVal, maxVal]}
                     />
                 )}
             />
             </div>
             <label className={"m-2 center text-center"} style={{fontSize:"0.9rem"}}>Wybrano okres: <br/> od początku {labels[sliderValues[0]]} <br/>do końca {labels[sliderValues[1]-1]}.</label>
-        </>
+        </div>
 
     );
 };
