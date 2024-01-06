@@ -10,6 +10,7 @@ import TextArea from "./Inputs/TextArea";
 import "./Tools/CheckGroup"
 import checkGroup from "./Tools/CheckGroup";
 import FormRadio from "./Inputs/FormRadio";
+import FormWithSections from "./Tools/FormWithSections";
 function FormA0(){
     async function loginUser(data:FieldValues) {
         return fetch('http://localhost:8080/login', {
@@ -99,7 +100,7 @@ function FormA0(){
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>
-            <form className={" flex-grow-1 overflow-auto justify-content-center z-1"} onChange={()=>console.log(getValues())}>
+            <FormWithSections onChange={()=>console.log(getValues())}>
                 <FormSection title={"1. Kierownik zgłaszanego rejsu"}
                              completed={completedSections[0]} id={"0"}>
                     <FormSelect className="d-flex flex-column col-12 col-md-6 col-xl-3"
@@ -208,7 +209,7 @@ function FormA0(){
                 {/*</div>*/}
                 {/*{errors.password && <ErrorCode code={"Password -> daj dobre hasło"}/>}*/}
                 {/*<button type={"submit"}/>*/}
-            </form>
+            </FormWithSections>
         </FormTemplate>
 
     )
