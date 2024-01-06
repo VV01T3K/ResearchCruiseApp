@@ -70,7 +70,7 @@ namespace ResearchCruiseApp_API.Controllers
             if (!result.Succeeded)
                 return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
 
-            // The signInManager already produced the needed response in the form of a cookie or bearer token.
+            // The signInManager already produced the needed response in the form of a bearer token.
             return TypedResults.Empty;
         }
         
