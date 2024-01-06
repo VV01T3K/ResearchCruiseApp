@@ -5,7 +5,16 @@ using ResearchCruiseApp_API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin", policyBuilder =>
+    {
+        policyBuilder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -26,16 +35,15 @@ builder.Services.AddDbContext<ResearchCruiseContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
 }
 
 app.UseHttpsRedirection();
 
-app.MapControllers();
+app.UseCors("AllowAnyOrigin");
 
-// app.MapIdentityApi<User>();
+app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
