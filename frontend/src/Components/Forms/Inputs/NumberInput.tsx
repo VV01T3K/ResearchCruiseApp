@@ -28,7 +28,7 @@ function NumberInput(props: {
 
             props.setValue(props.name, String(parseInt(e.target.value) > props.maxVal ? props.maxVal: parseInt(e.target.value)), { shouldValidate:true})
         }
-        else if(e.target.value=='')
+        else //if(e.target.value=='')
             props.setValue(props.name, "0", {shouldValidate:true})
     }
     return (

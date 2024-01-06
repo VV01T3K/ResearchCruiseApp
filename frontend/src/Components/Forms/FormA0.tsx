@@ -87,13 +87,15 @@ function FormA0(){
         ([
             ["Kierownik",["managers","supplyManagers","years"]],
             ["Pozwolenia", ["permissions"]],
-            ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseDays", "cruiseTime"]]
+            ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseDays", "cruiseTime", "shipUsage"]]
         ] as [string, string[]][]).forEach(value => {
             checkGroup(value, completedSections, setCompleted, dirtyFields, errors)
         })
     })
 
     const [minmaxAcceptedPeriod, setMinmaxAcceptedPeriod] = useState([0,24])
+
+    const hiddenArea = watch('shipUsage')
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>
@@ -140,6 +142,11 @@ function FormA0(){
                                    "jedynie w nocy (max. 8-12h)",
                                    "8-12h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia o różnych porach",
                                "w inny sposób"]} errors={errors}/>
+                    { (hiddenArea == 'w inny sposób') &&
+                        <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                                  label={"Inny sposób użycia"} name={"diffrentUsage"} required={true}
+                                  control={control} errors={errors} setValue={setValue}/>
+                    }
                 </FormSection>
                 <FormSection completed={completedSections[2]} id={"2"}
                              title={"3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"}>

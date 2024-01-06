@@ -13,6 +13,7 @@ function TextArea(props: {
     className?: string,
     label: string,
     name: string,
+    required?:boolean,
     setValue: (arg0: string, arg1: string) => void,
     control: Control<FieldValues, any>,
     errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }}){
@@ -32,6 +33,7 @@ function TextArea(props: {
                 render={({ field  }) => <textarea  onChange={onChange} value={field.value}  style={{maxHeight:"150px", minHeight:"50px"}}/>}
                 name={props.name}
                 control={props.control}
+                rules={{required: props.required ? 'Wybierz jedną z opcji': false}}
             />
             {props.errors[props.name] && <ErrorCode code={props.errors[props.name].message}/>}
         </div>
