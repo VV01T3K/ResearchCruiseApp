@@ -134,10 +134,12 @@ function FormA0(){
                                  newVal={(e)=>Number((e/24).toFixed(2))}  maxVal={99}
                                  control={control} errors={errors} setValue={setValue}/>
 
-                    <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                    <TextArea className={"d-flex flex-column col-12 p-3"}
                               label={"Uwagi dotyczące teminu"} name={"notes"}
                               control={control} errors={errors} setValue={setValue}/>
-                    <FormRadio label={"Czy statek na potrzeby badań będzie wykorzystywany:"} name={"shipUsage"} control={control}
+                    <FormRadio
+                        className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                        label={"Czy statek na potrzeby badań będzie wykorzystywany:"} name={"shipUsage"} control={control}
                                options={["całą dobę","jedynie w ciągu dnia (max. 8-12h)",
                                    "jedynie w nocy (max. 8-12h)",
                                    "8-12h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia o różnych porach",
