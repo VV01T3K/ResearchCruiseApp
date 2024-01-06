@@ -12,7 +12,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data, null, 2)
+            body: JSON.stringify(data)
         })
             .then(data => data.json())
     }

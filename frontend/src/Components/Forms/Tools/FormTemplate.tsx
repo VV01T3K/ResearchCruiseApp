@@ -12,9 +12,13 @@ function FormTemplate(props:{children?: React.ReactElement<any, string | React.J
                     <div className={"d-flex flex-column  w-100 overflow-scroll p-2 p-md-2 "}>
                         {props.children}
                     </div>
-                    <div className={"d-flex flex-row p-3"}>
-                        <button className={"btn d-flex col-6 text-center p-2 "}>Zapisz</button>
-                        <button className={"btn d-flex col-6 text-center p-2 "}>Zapisz i wyślij</button>
+                    <div className={"d-flex flex-row justify-content-center align-self-center"}>
+                        <div className={"d-flex col-6 text-center p-3 align-items-center"}>
+                            <a className={"btn btn-primary"}>Zapisz</a>
+                        </div>
+                        <div className={"d-flex col-6 text-center p-3 align-items-center"}>
+                            <a className={"btn btn-primary"}>Wyślij</a>
+                        </div>
                     </div>
                 </div>
             </Page>
