@@ -11,36 +11,35 @@ import "./Tools/CheckGroup"
 import checkGroup from "./Tools/CheckGroup";
 import FormRadio from "./Inputs/FormRadio";
 import FormWithSections from "./Tools/FormWithSections";
+import ClickableMap from "./Inputs/ClickableMap";
 function FormA0(){
-    async function loginUser(data:FieldValues) {
-        return fetch('http://localhost:8080/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data, null, 2)
-        })
-            .then(data => data.json())
-    }
 
-    const onSubmit = async (data:FieldValues) => {
-        setLoading(true);
-
-
-        setLoading(false)
-
-    }
-    const [ loading, setLoading ] = useState(false);
-    const { control, trigger, watch, getValues, setValue,register,resetField, handleSubmit, formState: { errors, dirtyFields } } = useForm({
+    const {
+        control, trigger,
+        watch,
+        getValues,
+        setValue,
+        resetField,
+        handleSubmit,
+        formState: { errors, dirtyFields } } = useForm({
         mode: 'onBlur',
         defaultValues: {
+            managers: null,
+            supplyManagers:null,
+            years: { label: '2023', value: '2023' },
+            acceptedPeriod: [0,24],
+            optimalPeriod:[0,24],
             cruiseDays: 0,
-            cruiseTime: 0
+            cruiseTime: 0,
+            notes:null,
+            shipUsage:null,
+            diffrentUsage:null,
+
+
         }
     });
 
     const managers = (): readonly any[] => {
-
         return [
             { label: 'Shark', value: 'Shark' },
             { label: 'Dolphin', value: 'Dolphin' },
@@ -50,7 +49,6 @@ function FormA0(){
     }
 
     const supplyManagers = (): readonly any[] => {
-
         return [
             { label: 'Octopus', value: 'Octopus' },
             { label: 'Crab', value: 'Crab' },
@@ -60,7 +58,6 @@ function FormA0(){
 
 
     const years = (): readonly any[] => {
-
         return [
             { label: '2023', value: '2023' },
         ];
@@ -88,13 +85,13 @@ function FormA0(){
         ([
             ["Kierownik",["managers","supplyManagers","years"]],
             ["Pozwolenia", ["permissions"]],
-            ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseDays", "cruiseTime", "shipUsage"]]
+            ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseTime", "cruiseDays", "shipUsage" ]],
+            ["Rejon", ["area"]]
         ] as [string, string[]][]).forEach(value => {
             checkGroup(value, completedSections, setCompleted, dirtyFields, errors)
         })
     })
 
-    const [minmaxAcceptedPeriod, setMinmaxAcceptedPeriod] = useState([0,24])
 
     const hiddenArea = watch('shipUsage')
     return (
@@ -117,15 +114,10 @@ function FormA0(){
                              completed={completedSections[1]} id={"1"} >
                     <MonthSlider className={"d-flex flex-column col-12 col-md-12 col-xl-6"}
                                  name="acceptedPeriod" label={"Dopuszczalny okres, w którym miałby się odbywać rejs:"}
-                                 handleInput={
-                                     (arg)=>{
-                                         setMinmaxAcceptedPeriod(arg)
-                                         resetField("optimalPeriod")
-                                     }
-                                 } control={control} />
+                                 control={control} />
                     <MonthSlider className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
                                  name={"optimalPeriod"}  label={"Optymalny okres, w którym miałby się odbywać rejs"}
-                                 minMaxVal={minmaxAcceptedPeriod} control={control}/>
+                                 control={control} watch={watch("acceptedPeriod")} setValue={setValue} resetField={resetField}/>
                     <NumberInput className={"d-flex flex-column col-12 col-md-12 col-xl-6"}
                                  name={"cruiseDays"} label={"Liczba planowanych dób rejsowych"} name2={"cruiseTime"}
                                  newVal={(e)=>24*e}   maxVal={99}
@@ -141,28 +133,54 @@ function FormA0(){
                     <FormRadio
                         className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
                         label={"Czy statek na potrzeby badań będzie wykorzystywany:"} name={"shipUsage"} control={control}
-                               options={["całą dobę","jedynie w ciągu dnia (max. 8-12h)",
+                               values={["całą dobę","jedynie w ciągu dnia (max. 8-12h)",
                                    "jedynie w nocy (max. 8-12h)",
                                    "8-12h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia o różnych porach",
                                "w inny sposób"]} errors={errors}/>
-                    { (hiddenArea == 'w inny sposób') &&
-                        <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
-                                  label={"Inny sposób użycia"} name={"diffrentUsage"} required={true}
-                                  control={control} errors={errors} setValue={setValue}/>
-                    }
+
+                    {(() => {
+                        if ( watch("shipUsage") == "w inny sposób" ) {
+                            return (
+                                <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                                          label={"Inny sposób użycia"} name={"diffrentUsage"} required={"Podaj sposób"}
+                                          control={control} errors={errors} setValue={setValue}/>
+                            )
+                        } else return <></>
+                    })()}
+
+
                 </FormSection>
                 <FormSection completed={completedSections[2]} id={"2"}
                              title={"3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"}>
-                    <TextArea label={"Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?"} control={control} errors={errors} name={"notes2"} className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}/>
+                    <FormRadio
+                        className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                        label={"Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:"} name={"permissions"} control={control}
+                        values={["tak", "nie"]} errors={errors}/>
+
+                    {(() => {
+                        if ( watch("permissions") == "tak" ) {
+                            return (
+                                <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                                          label={"Jakie?"} name={"additionalPermissions"} required={"Podaj jakie"}
+                                          control={control} errors={errors} setValue={setValue}/>
+                            )
+                        } else return <></>
+                    })()}
                 </FormSection>
                 <FormSection completed={completedSections[3]} id={"3"} title={"4. Rejon prowadzenia badań"}>
-                    <div/>
+                   <ClickableMap label={"Obszar prowadzonych badań"} name={"area"} setValue={setValue} control={control} errors={errors}/>
+                    <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                              label={"Opis"} name={"areaInfo"}
+                              control={control} errors={errors} setValue={setValue}/>
                 </FormSection>
                 <FormSection completed={completedSections[4]} id={"4"} title={"5. Cel Rejsu"}>
-                    <text style={{height: "200px"}}>
-                        ss
-                    </text>
-                    <div></div>
+                    <FormRadio
+                        className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                        label={"Cel rejsu"} name={"goal"} control={control}
+                        values={["Naukowy", "Komercyjny", "Dydaktyczny"]} errors={errors}/>
+                    <TextArea className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                              label={"Opis"} name={"goalaInfo"}
+                              control={control} errors={errors} required={"Opisz cel"} setValue={setValue}/>
                 </FormSection>
                 <FormSection completed={completedSections[5]} id={"5"}
                              title={"6. Przewidywana liczba osób załogi naukowej."}>

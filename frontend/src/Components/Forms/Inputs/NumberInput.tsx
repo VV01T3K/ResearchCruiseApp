@@ -39,6 +39,8 @@ function NumberInput(props: {
                                               onBlur={(e)=>{
                                                   props.setValue(props.name2, String(props.newVal(parseInt(e.target.value))), { shouldDirty: true })
                                                   props.setValue(props.name2, String(props.newVal(parseInt(e.target.value))), { shouldValidate: true })
+                                                  props.setValue(props.name, String(parseInt(e.target.value)), { shouldDirty: true })
+                                                  props.setValue(props.name, String(parseInt(e.target.value)), { shouldValidate: true })
                         // field.onBlur();
                     }
                 } onChange={(e)=>{onChange(e)}} />}
