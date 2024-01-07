@@ -9,7 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="" />
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,7 +56,7 @@
   "keyToString": {
     ".NET Launch Settings Profile.ResearchCruiseApp-API: http.executor": "Run",
     "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Debug",
+    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "XThreadsFramesViewSplitterKey": "0.3783784",
@@ -177,7 +179,8 @@
       <workItem from="1703946954795" duration="2506000" />
       <workItem from="1703961864549" duration="15000" />
       <workItem from="1704579570046" duration="1408000" />
-      <workItem from="1704581271405" duration="1734000" />
+      <workItem from="1704581271405" duration="1868000" />
+      <workItem from="1704634032362" duration="572000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -299,7 +302,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704405710424</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Simplified logging">
+      <option name="closed" value="true" />
+      <created>1704583135178</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1704583135178</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -333,26 +344,8 @@
     <MESSAGE value="Custom registering, login and refreshing" />
     <MESSAGE value="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication" />
     <MESSAGE value="Added first/last name changing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added first/last name changing" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs</url>
-          <line>73</line>
-          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="73" containingFunctionPresentation="Method 'Login'">
-            <startOffsets>
-              <option value="3276" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3302" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Simplified logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Simplified logging" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
