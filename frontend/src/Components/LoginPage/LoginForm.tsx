@@ -23,9 +23,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
     const onSubmit = async (data:FieldValues) => {
         setLoading(true);
         const token = await loginUser(data);
-        // console.log(token[]);
-        if(token[""])
-        props.setUserToken(token[""]);
+        props.setUserToken(token["accessToken"]);
         setLoading(false)
 
     }
