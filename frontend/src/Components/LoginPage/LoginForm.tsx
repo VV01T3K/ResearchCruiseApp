@@ -14,14 +14,18 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             },
             body: JSON.stringify(data)
         })
-            .then(data => data.json())
+            .then(data => {
+                if(!data.ok) throw new Error(data.status);
+                else return data.json();
+            })
     }
 
     const onSubmit = async (data:FieldValues) => {
         setLoading(true);
         const token = await loginUser(data);
-        console.log(token);
-        props.setUserToken(token);
+        // console.log(token[]);
+        if(token[""])
+        props.setUserToken(token[""]);
         setLoading(false)
 
     }
