@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +20,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthentication()
+    .AddBearerToken(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorizationBuilder();
 
 builder.Services.AddIdentityCore<User>(options =>
-        options.SignIn.RequireConfirmedAccount = false)
+        options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<UsersContext>()
     .AddApiEndpoints();
@@ -32,6 +34,8 @@ builder.Services.AddDbContext<UsersContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 builder.Services.AddDbContext<ResearchCruiseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
+
+builder.Services.AddTransient<IEmailSender<User>, EmailSender<User>>();
 
 var app = builder.Build();
 
@@ -44,6 +48,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAnyOrigin");
 
 app.MapControllers();
+app.MapIdentityApi<User>();
 
 using (var scope = app.Services.CreateScope())
 {
