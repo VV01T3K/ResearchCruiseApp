@@ -8,7 +8,7 @@ import {
 } from "react-hook-form";
 import React, {useEffect, useRef, useState} from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
-import Map from '../../../resources/GraniceSamorządów.jpg'
+import Map from 'src/resources/GraniceSamorzadow.jpg'
 function ClickableMap(props: {
     className?: string,
     label: string,
