@@ -4,7 +4,7 @@ import {FieldValues, useForm} from "react-hook-form";
 function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
 
     async function loginUser(data:FieldValues) {
-        return fetch('http://localhost:8080/account/login', {
+        return fetch('http://localhost:8080/account/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

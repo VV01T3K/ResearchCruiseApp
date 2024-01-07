@@ -10,7 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/LoginForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/RegisterForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +181,7 @@
       <workItem from="1703961864549" duration="15000" />
       <workItem from="1704579570046" duration="1408000" />
       <workItem from="1704581271405" duration="1868000" />
-      <workItem from="1704634032362" duration="1325000" />
+      <workItem from="1704634032362" duration="2566000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -345,7 +346,8 @@
     <MESSAGE value="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication" />
     <MESSAGE value="Added first/last name changing" />
     <MESSAGE value="Simplified logging" />
-    <option name="LAST_COMMIT_MESSAGE" value="Simplified logging" />
+    <MESSAGE value="Merge pull request #8 from MichalTarnacki/main2&#10;&#10;Added space" />
+    <option name="LAST_COMMIT_MESSAGE" value="" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
