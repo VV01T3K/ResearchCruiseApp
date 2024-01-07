@@ -9,11 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="Added first/last name changing">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/ChangeAccountDetailsModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/ChangeAccountDetailsModel.cs" afterDir="false" />
-    </list>
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,15 +37,6 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/EmailAddressAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/7a9cabe33905466a82eaf0ab9cbb93f5838a0/42/24dba5b9/02000027pdb50.il" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/UsersController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Models/UserRegistrationModel.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -67,11 +54,11 @@
   "keyToString": {
     ".NET Launch Settings Profile.ResearchCruiseApp-API: http.executor": "Run",
     "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
+    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "XThreadsFramesViewSplitterKey": "0.3783784",
-    "git-widget-placeholder": "account__data__changing",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -189,6 +176,8 @@
       <workItem from="1703791818766" duration="5649000" />
       <workItem from="1703946954795" duration="2506000" />
       <workItem from="1703961864549" duration="15000" />
+      <workItem from="1704579570046" duration="1408000" />
+      <workItem from="1704581271405" duration="1734000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -345,6 +334,25 @@
     <MESSAGE value="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication" />
     <MESSAGE value="Added first/last name changing" />
     <option name="LAST_COMMIT_MESSAGE" value="Added first/last name changing" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs</url>
+          <line>73</line>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="73" containingFunctionPresentation="Method 'Login'">
+            <startOffsets>
+              <option value="3276" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3302" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

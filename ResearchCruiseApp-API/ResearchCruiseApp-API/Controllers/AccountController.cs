@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -57,27 +58,19 @@ namespace ResearchCruiseApp_API.Controllers
         
         [HttpPost("login")]
         public async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>> Login(
-            [FromBody] LoginModel loginModel,
-            [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies,
-            [FromServices] IServiceProvider serviceProvider)
+            [FromBody] LoginModel loginModel, [FromServices] IServiceProvider serviceProvider)
         {
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
-
-            var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
-            var isPersistent = (useCookies == true) && (useSessionCookies != true);
+            const bool isPersistent = false;
             
-            signInManager.AuthenticationScheme = useCookieScheme ?
-                IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
-
+            signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
             var result = await signInManager.PasswordSignInAsync(
-                loginModel.Email, loginModel.Password,isPersistent, lockoutOnFailure: true);
-
+                loginModel.Email, loginModel.Password, isPersistent, lockoutOnFailure: true);
+            
             if (!result.Succeeded)
-            {
                 return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
-            }
 
-            // The signInManager already produced the needed response in the form of a cookie or bearer token.
+            // The signInManager already produced the needed response in the form of a bearer token.
             return TypedResults.Empty;
         }
         

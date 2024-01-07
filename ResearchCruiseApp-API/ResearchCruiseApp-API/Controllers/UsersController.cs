@@ -10,7 +10,7 @@ using ResearchCruiseApp_API.Models.AuthenticationRequestsModels;
 namespace ResearchCruiseApp_API.Controllers
 {
     [Authorize(Roles = "Administrator")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController(
         UsersContext usersContext, UserManager<User> userManager)

@@ -7,7 +7,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
 
 
     async function loginUser(data:FieldValues) {
-        return fetch('http://localhost:8080/login', {
+        return fetch('http://localhost:8080/account/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -20,6 +20,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
     const onSubmit = async (data:FieldValues) => {
         setLoading(true);
         const token = await loginUser(data);
+        console.log(token);
         props.setUserToken(token);
         setLoading(false)
 
@@ -32,14 +33,14 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             <h1 style={{fontSize:"2rem"}}>Login</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("userName", { required: true, maxLength: 10 })}/>
+                    <input type="text" disabled={loading} {...register("email", { required: true, maxLength: 100 })}/>
                     <span></span>
                     <label>Username</label>
 
                 </div>
                 {errors.userName && <ErrorCode code={"Username -> sXXXXXXX or email@ug.edu.pl"}/>}
                 <div className="txt_field">
-                    <input type="password" disabled={loading}  {...register("password", { required: true, maxLength: 10 })}/>
+                    <input type="password" disabled={loading}  {...register("password", { required: true, maxLength: 100 })}/>
                     <span></span>
                     <label>Password</label>
                 </div>
