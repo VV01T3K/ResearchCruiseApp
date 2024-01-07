@@ -2,10 +2,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Net;
+using System.Text;
+using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
@@ -22,7 +26,8 @@ namespace ResearchCruiseApp_API.Controllers
         
         [HttpPost("register")]
         public async Task<Results<Ok, ValidationProblem>> Register(
-            [FromBody] RegistrationModel registrationModel, [FromServices] IServiceProvider serviceProvider)
+            [FromBody] RegistrationModel registrationModel,
+            [FromServices] IServiceProvider serviceProvider)
         {
             if (!userManager.SupportsUserEmail)
             {
@@ -51,14 +56,15 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return CreateValidationProblem(result);
             }
-
-            // await SendConfirmationEmailAsync(user, userManager, context, email);
+            
+            await SendConfirmationEmailAsync(user, serviceProvider, this.HttpContext, email);
             return TypedResults.Ok();
         }
         
         [HttpPost("login")]
         public async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>> Login(
-            [FromBody] LoginModel loginModel, [FromServices] IServiceProvider serviceProvider)
+            [FromBody] LoginModel loginModel,
+            [FromServices] IServiceProvider serviceProvider)
         {
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             const bool isPersistent = false;
@@ -77,7 +83,9 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpPost("refresh")]
         public async
             Task<Results<Ok<AccessTokenResponse>, UnauthorizedHttpResult, SignInHttpResult, ChallengeHttpResult>>
-            Refresh([FromBody] RefreshModel refreshModel, [FromServices] IServiceProvider serviceProvider)
+            Refresh(
+                [FromBody] RefreshModel refreshModel,
+                [FromServices] IServiceProvider serviceProvider)
         {
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             var bearerTokenOptions = serviceProvider.GetRequiredService<IOptionsMonitor<BearerTokenOptions>>();
@@ -96,6 +104,52 @@ namespace ResearchCruiseApp_API.Controllers
 
             var newPrincipal = await signInManager.CreateUserPrincipalAsync(user);
             return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
+        }
+        
+        [HttpGet("confirmEmail", Name = "ConfirmEmail")]
+        public async Task<Results<ContentHttpResult, UnauthorizedHttpResult>> ConfirmEmail(
+                [FromQuery] string userId,
+                [FromQuery] string code,
+                [FromQuery] string? changedEmail)
+        {
+            if (await userManager.FindByIdAsync(userId) is not { } user)
+            {
+                // We could respond with a 404 instead of a 401 like Identity UI, but that feels like unnecessary
+                // information.
+                return TypedResults.Unauthorized();
+            }
+
+            try
+            {
+                code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            }
+            catch (FormatException)
+            {
+                return TypedResults.Unauthorized();
+            }
+
+            IdentityResult result;
+
+            if (string.IsNullOrEmpty(changedEmail))
+            {
+                result = await userManager.ConfirmEmailAsync(user, code);
+            }
+            else
+            {
+                // As with Identity UI, email and user name are one and the same. So when we update the email,
+                // we need to update the user name.
+                result = await userManager.ChangeEmailAsync(user, changedEmail, code);
+
+                if (result.Succeeded)
+                {
+                    result = await userManager.SetUserNameAsync(user, changedEmail);
+                }
+            }
+                
+            if (!result.Succeeded)
+                return TypedResults.Unauthorized();
+
+            return TypedResults.Text("Thank you for confirming your email.");
         }
 
         [Authorize]
@@ -168,6 +222,46 @@ namespace ResearchCruiseApp_API.Controllers
             }
 
             return TypedResults.ValidationProblem(errorDictionary);
+        }
+        
+        private async Task SendConfirmationEmailAsync(
+            User user,
+            IServiceProvider serviceProvider,
+            HttpContext context,
+            string email,
+            bool isChange = false)
+        {
+            var confirmEmailEndpointName = "";
+            if (confirmEmailEndpointName is null)
+                throw new NotSupportedException("No email confirmation endpoint was registered!");
+
+            var code = isChange ?
+                await userManager.GenerateChangeEmailTokenAsync(user, email) : 
+                await userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            var userId = await userManager.GetUserIdAsync(user);
+            var routeValues = new RouteValueDictionary()
+            {
+                ["userId"] = userId,
+                ["code"] = code,
+            };
+
+            if (isChange)
+            {
+                // This is validated by the /confirmEmail endpoint on change.
+                routeValues.Add("changedEmail", email);
+            }
+            
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
+            var linkGenerator = serviceProvider.GetRequiredService<LinkGenerator>();
+            
+            var confirmEmailUrl = linkGenerator.GetUriByName(context, "ConfirmEmail", routeValues) ??
+                                  throw new NotSupportedException(
+                                      $"Could not find endpoint named '{confirmEmailEndpointName}'.");
+            
+            await emailSender.SendConfirmationLinkAsync(
+                user, email, HtmlEncoder.Default.Encode(confirmEmailUrl));
         }
     }
 }
