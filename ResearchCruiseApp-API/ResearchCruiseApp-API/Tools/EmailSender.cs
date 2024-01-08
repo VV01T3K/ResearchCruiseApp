@@ -25,9 +25,9 @@ public class EmailSender<TUser>(IConfiguration configuration) : IEmailSender<TUs
             From = new MailAddress(
                 smtpSettings.GetSection("SenderEmail").Value ?? "",
                 smtpSettings.GetSection("SenderName").Value),
-            Subject = "Email confirmation link",
+            Subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu",
             Body = confirmationLink,
-            IsBodyHtml = true,
+            IsBodyHtml = true
         };
 
         message.To.Add(email);

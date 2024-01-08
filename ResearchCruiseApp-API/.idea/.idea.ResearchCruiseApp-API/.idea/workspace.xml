@@ -10,12 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API.sln.DotSettings" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Tools/EmailSender.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API.sln.DotSettings" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Tools/EmailSender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Tools/EmailSender.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +32,6 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Http.Results/src/Results.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Routing/src/LinkGeneratorEndpointNameAddressExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/LoginRequest.cs" root0="SKIP_HIGHLIGHTING" />
@@ -43,17 +41,18 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/EntityFrameworkCore/src/IdentityDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Core/src/IdentityServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Core/src/UserManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityRole.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityUser.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Mvc/Mvc.Core/src/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/EmailAddressAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Net.Mail/src/System/Net/Mail/MailMessage.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Net.Mail/src/System/Net/Mail/SmtpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Private.CoreLib/src/System/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Text.Encodings.Web/src/System/Text/Encodings/Web/HtmlEncoder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Text.Encodings.Web/src/System/Text/Encodings/Web/TextEncoder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/7a9cabe33905466a82eaf0ab9cbb93f5838a0/42/24dba5b9/02000027pdb50.il" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -74,8 +73,8 @@
     "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "XThreadsFramesViewSplitterKey": "0.3783784",
-    "git-widget-placeholder": "email__confirmation",
+    "XThreadsFramesViewSplitterKey": "0.39361703",
+    "git-widget-placeholder": "email__confirmation__with__frontend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -198,6 +197,7 @@
       <workItem from="1704581271405" duration="1868000" />
       <workItem from="1704634032362" duration="2756000" />
       <workItem from="1704645247951" duration="13427000" />
+      <workItem from="1704738693565" duration="5805000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -389,32 +389,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs</url>
-          <line>262</line>
-          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="262" containingFunctionPresentation="Method 'SendConfirmationEmailAsync'">
-            <startOffsets>
-              <option value="10972" />
-            </startOffsets>
-            <endOffsets>
-              <option value="11091" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Tools/EmailSender.cs</url>
-          <line>34</line>
-          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Tools\EmailSender.cs" initialLine="32" containingFunctionPresentation="Method 'SendConfirmationLinkAsync'">
-            <startOffsets>
-              <option value="1245" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1281" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
