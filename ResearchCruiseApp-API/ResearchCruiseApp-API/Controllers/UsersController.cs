@@ -62,5 +62,7 @@ namespace ResearchCruiseApp_API.Controllers
                 new { id = newUser.Id, controller = "Users" },
                 newUser.Id);
         }
+        
+        public async Task<IActionResult> SetActivated
     }
 }

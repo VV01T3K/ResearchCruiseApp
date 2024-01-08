@@ -107,7 +107,7 @@ namespace ResearchCruiseApp_API.Controllers
             return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
         }
         
-        [HttpGet("confirmEmail", Name = "ConfirmEmail")]
+        [HttpGet("confirmEmail")]
         public async Task<Results<ContentHttpResult, UnauthorizedHttpResult>> ConfirmEmail(
                 [FromQuery] string userId,
                 [FromQuery] string code,
@@ -237,7 +237,8 @@ namespace ResearchCruiseApp_API.Controllers
             await emailSender.SendConfirmationLinkAsync(user, user.Email!, emailConfirmationMessageBody);
         }
 
-        private async Task<string> GenerateEmailConfirmationMessageBody(User user, bool isChange, IConfiguration configuration)
+        private async Task<string> GenerateEmailConfirmationMessageBody(
+            User user, bool isChange, IConfiguration configuration)
         {
             var code = isChange ?
                 await userManager.GenerateChangeEmailTokenAsync(user, user.Email!) : 
