@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -57,7 +58,7 @@ namespace ResearchCruiseApp_API.Controllers
                 return CreateValidationProblem(result);
             }
             
-            await SendConfirmationEmailAsync(user, serviceProvider, this.HttpContext, email);
+            await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
             return TypedResults.Ok();
         }
         
@@ -228,40 +229,38 @@ namespace ResearchCruiseApp_API.Controllers
             User user,
             IServiceProvider serviceProvider,
             HttpContext context,
-            string email,
             bool isChange = false)
         {
-            var confirmEmailEndpointName = "";
-            if (confirmEmailEndpointName is null)
-                throw new NotSupportedException("No email confirmation endpoint was registered!");
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
+            var emailConfirmationMessageBody = await GenerateEmailConfirmationMessageBody(user, isChange, serviceProvider.GetRequiredService<IConfiguration>());
+            
+            await emailSender.SendConfirmationLinkAsync(user, user.Email!, emailConfirmationMessageBody);
+        }
 
+        private async Task<string> GenerateEmailConfirmationMessageBody(User user, bool isChange, IConfiguration configuration)
+        {
             var code = isChange ?
-                await userManager.GenerateChangeEmailTokenAsync(user, email) : 
+                await userManager.GenerateChangeEmailTokenAsync(user, user.Email!) : 
                 await userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
             var userId = await userManager.GetUserIdAsync(user);
-            var routeValues = new RouteValueDictionary()
-            {
-                ["userId"] = userId,
-                ["code"] = code,
-            };
-
+            var protocol = configuration.GetSection("ProtocolUsed").Value;
+            var frontendUrl = configuration.GetSection("FrontendUrl").Value;
+            
+            string link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userId}&code={code}";
             if (isChange)
             {
                 // This is validated by the /confirmEmail endpoint on change.
-                routeValues.Add("changedEmail", email);
+                link += $"&changedEmail={user.Email}";
             }
             
-            var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
-            var linkGenerator = serviceProvider.GetRequiredService<LinkGenerator>();
-            
-            var confirmEmailUrl = linkGenerator.GetUriByName(context, "ConfirmEmail", routeValues) ??
-                                  throw new NotSupportedException(
-                                      $"Could not find endpoint named '{confirmEmailEndpointName}'.");
-            
-            await emailSender.SendConfirmationLinkAsync(
-                user, email, HtmlEncoder.Default.Encode(confirmEmailUrl));
+            string body = $"{user.FirstName} {user.LastName},<br/><br/>" +
+                          $"witaj w systemie rejsów badawczych Biura Armatora Uniwersytetu.<br/>" +
+                          $"Aby potwierdzić rejestrację konta, kliknij poniższy link:<br/><br/>" +
+                          $"{link}.<br/><br/>" +
+                          $"Pozdrawiamy<br/>" +
+                          $"Biuro Armatora Uniwersytetu";
+            return body;
         }
     }
 }
