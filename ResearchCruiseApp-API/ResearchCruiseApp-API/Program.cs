@@ -81,7 +81,8 @@ using (var scope = app.Services.CreateScope())
             UserName = "admin@admin.com",
             Email = "admin@admin.com",
             FirstName = "Admin",
-            LastName = "Admin"
+            LastName = "Admin",
+            EmailConfirmed = true
         };
         await userManager.CreateAsync(adminUser, "Admin@123");
         await userManager.AddToRoleAsync(adminUser, "Administrator");

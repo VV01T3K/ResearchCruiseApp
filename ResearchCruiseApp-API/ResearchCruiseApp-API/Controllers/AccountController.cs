@@ -84,9 +84,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpPost("refresh")]
         public async
             Task<Results<Ok<AccessTokenResponse>, UnauthorizedHttpResult, SignInHttpResult, ChallengeHttpResult>>
-            Refresh(
-                [FromBody] RefreshModel refreshModel,
-                [FromServices] IServiceProvider serviceProvider)
+            Refresh([FromBody] RefreshModel refreshModel, [FromServices] IServiceProvider serviceProvider)
         {
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             var bearerTokenOptions = serviceProvider.GetRequiredService<IOptionsMonitor<BearerTokenOptions>>();
@@ -98,7 +96,7 @@ namespace ResearchCruiseApp_API.Controllers
             // Reject the /refresh attempt with a 401 if the token expired or the security stamp validation fails
             if (refreshTicket?.Properties?.ExpiresUtc is not { } expiresUtc ||
                 timeProvider.GetUtcNow() >= expiresUtc ||
-                await signInManager.ValidateSecurityStampAsync(refreshTicket.Principal) is not User user)
+                await signInManager.ValidateSecurityStampAsync(refreshTicket.Principal) is not { } user)
             {
                 return TypedResults.Challenge();
             }
@@ -107,7 +105,7 @@ namespace ResearchCruiseApp_API.Controllers
             return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
         }
         
-        [HttpGet("confirmEmail", Name = "ConfirmEmail")]
+        [HttpGet("confirmEmail")]
         public async Task<Results<ContentHttpResult, UnauthorizedHttpResult>> ConfirmEmail(
                 [FromQuery] string userId,
                 [FromQuery] string code,
@@ -237,7 +235,8 @@ namespace ResearchCruiseApp_API.Controllers
             await emailSender.SendConfirmationLinkAsync(user, user.Email!, emailConfirmationMessageBody);
         }
 
-        private async Task<string> GenerateEmailConfirmationMessageBody(User user, bool isChange, IConfiguration configuration)
+        private async Task<string> GenerateEmailConfirmationMessageBody(
+            User user, bool isChange, IConfiguration configuration)
         {
             var code = isChange ?
                 await userManager.GenerateChangeEmailTokenAsync(user, user.Email!) : 

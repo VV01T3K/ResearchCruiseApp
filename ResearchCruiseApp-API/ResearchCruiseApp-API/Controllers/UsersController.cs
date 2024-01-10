@@ -31,7 +31,7 @@ namespace ResearchCruiseApp_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById([FromRoute]string id)
+        public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -41,7 +41,7 @@ namespace ResearchCruiseApp_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody]RegistrationModel registrationModel)
+        public async Task<IActionResult> AddUser([FromBody] RegistrationModel registrationModel)
         {
             if (await userManager.FindByEmailAsync(registrationModel.Email) != null)
                 return Conflict();
@@ -62,5 +62,18 @@ namespace ResearchCruiseApp_API.Controllers
                 new { id = newUser.Id, controller = "Users" },
                 newUser.Id);
         }
+
+        // [HttpPatch("lock/{id}")]
+        // public async Task<IActionResult> SetLocked([FromRoute] string id, [FromQuery] bool setLocked)
+        // {
+        //     var user = await userManager.FindByIdAsync(id);
+        //     if (user == null)
+        //         return NotFound();
+        //
+        //     var um = userManager;
+        //     await userManager.SetLockoutEnabledAsync(user, setLocked);
+        //
+        //     return NoContent();
+        // }
     }
 }
