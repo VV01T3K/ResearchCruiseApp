@@ -84,9 +84,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpPost("refresh")]
         public async
             Task<Results<Ok<AccessTokenResponse>, UnauthorizedHttpResult, SignInHttpResult, ChallengeHttpResult>>
-            Refresh(
-                [FromBody] RefreshModel refreshModel,
-                [FromServices] IServiceProvider serviceProvider)
+            Refresh([FromBody] RefreshModel refreshModel, [FromServices] IServiceProvider serviceProvider)
         {
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             var bearerTokenOptions = serviceProvider.GetRequiredService<IOptionsMonitor<BearerTokenOptions>>();
@@ -98,7 +96,7 @@ namespace ResearchCruiseApp_API.Controllers
             // Reject the /refresh attempt with a 401 if the token expired or the security stamp validation fails
             if (refreshTicket?.Properties?.ExpiresUtc is not { } expiresUtc ||
                 timeProvider.GetUtcNow() >= expiresUtc ||
-                await signInManager.ValidateSecurityStampAsync(refreshTicket.Principal) is not User user)
+                await signInManager.ValidateSecurityStampAsync(refreshTicket.Principal) is not { } user)
             {
                 return TypedResults.Challenge();
             }
