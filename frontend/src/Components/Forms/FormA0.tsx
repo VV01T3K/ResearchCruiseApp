@@ -14,6 +14,10 @@ import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
 import IntInput from "./Inputs/IntInput";
 import TaskInput from "./Inputs/taskInput/TaskInput";
+import BlockList from "./Inputs/BlockList/BlockList";
+import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
+import {Simulate} from "react-dom/test-utils";
+import submit = Simulate.submit;
 function FormA0(){
 
     const {
@@ -99,7 +103,7 @@ function FormA0(){
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>
-            <FormWithSections onChange={()=>console.log(getValues())}>
+            <FormWithSections onSubmit={handleSubmit(submit)} onChange={()=>console.log(getValues())}>
                 <FormSection title={"1. Kierownik zgłaszanego rejsu"}
                              completed={completedSections[0]} id={"0"}>
                     <FormSelect className="d-flex flex-column col-12 col-md-6 col-xl-3"
@@ -209,10 +213,9 @@ function FormA0(){
 
                 </FormSection>
                 <FormSection completed={completedSections[9]} id={"9"} title={"10. Publikacje i Prace"}>
-                    <text style={{height: "200px"}}>
-                        ss
-                    </text>
-                    <div></div>
+                    <BlockListInput className={"col-4"} errors={errors} setValue={setValue} dirtyFields={dirtyFields} label={"Uczestnictwo naukowców spoza UG"} control={control} name={"blockListInput2"}/>
+                    <BlockListInput className={"col-4"} errors={errors} setValue={setValue} dirtyFields={dirtyFields} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} control={control} name={"blockListInput"}/>
+                   <BlockList className={"col-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} control={control} name={"blockList"}/>
                 </FormSection>
                 <FormSection completed={completedSections[10]} id={"10"} title={"11. Efekty rejsu"}>
                 </FormSection>

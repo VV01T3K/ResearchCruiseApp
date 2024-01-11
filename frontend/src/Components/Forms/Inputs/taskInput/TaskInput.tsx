@@ -34,7 +34,7 @@ function TaskInput(props:{className:string, label:string, control}) {
                     <th className={"w-75 text-center p-2"}>Szczegóły</th>
                     <th className={"d-inline-flex p-2"}>
                         <div className="dropdown">
-                            <button onClick={()=>setIsOpen(!isOpen)} className="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button onClick={()=>setIsOpen(!isOpen)} className="btn btn-outline-light dropdown-toggle"zq type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 +
                             </button>
 
