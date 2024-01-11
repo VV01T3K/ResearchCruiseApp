@@ -30,7 +30,7 @@ function TextArea(props: {
         <div className={props.className + "  p-3"}>
             <label>{props.label}</label>
             <Controller
-                render={({ field  }) => <textarea   {...field} onChange={onChange} value={field.value}  style={{maxHeight:"150px", minHeight:"50px"}}/>}
+                render={({ field  }) => <textarea   {...field} onChange={onChange} value={field.value ?? ''}  style={{maxHeight:"150px", minHeight:"50px"}}/>}
                 name={props.name}
                 control={props.control}
 

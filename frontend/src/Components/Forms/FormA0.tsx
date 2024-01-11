@@ -12,6 +12,8 @@ import checkGroup from "./Tools/CheckGroup";
 import FormRadio from "./Inputs/FormRadio";
 import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
+import IntInput from "./Inputs/IntInput";
+import TaskInput from "./Inputs/taskInput/TaskInput";
 function FormA0(){
 
     const {
@@ -184,14 +186,17 @@ function FormA0(){
                 </FormSection>
                 <FormSection completed={completedSections[5]} id={"5"}
                              title={"6. Przewidywana liczba osób załogi naukowej."}>
+                    <IntInput   className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                            label={"Pracownicy UG"} name={"ugEmployees"} setValue={setValue} maxVal={20} control={control} errors={errors}/>
+                    <IntInput   className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                                label={"Studenci I, II st. i doktoranci"} name={"students"} setValue={setValue} maxVal={20} control={control} errors={errors}/>
+                    <IntInput   className={"d-flex flex-column col-12 col-md-12 col-xl-6 p-3"}
+                                label={"Goście / osoby spoza UG"} name={"guests"} setValue={setValue} maxVal={20} control={control} errors={errors}/>
 
                 </FormSection>
                 <FormSection completed={completedSections[6]} id={"6"}
                              title={"7. Zadania do zrealizowania w trakcie rejsu"}>
-                    <text style={{height: "200px"}}>
-                        ss
-                    </text>
-                    <div></div>
+                    <TaskInput control={control} className={"d-flex flex-column col-12"} label={""}/>
                 </FormSection>
                 <FormSection completed={completedSections[7]} id={"7"} title={"8. Lista umów współpracy."}>
                     <text style={{height: "200px"}}>
