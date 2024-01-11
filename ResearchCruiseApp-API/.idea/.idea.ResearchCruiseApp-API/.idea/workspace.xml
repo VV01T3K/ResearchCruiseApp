@@ -10,15 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/20240110162734_AddedActive.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/20240110162734_AddedActive.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/20240110164819_DeletedActive.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Migrations/Users/20240110164819_DeletedActive.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Data/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,11 +69,11 @@
   "keyToString": {
     ".NET Launch Settings Profile.ResearchCruiseApp-API: http.executor": "Debug",
     "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Debug",
+    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "XThreadsFramesViewSplitterKey": "0.39361703",
-    "git-widget-placeholder": "admin__users__panel",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -387,27 +381,13 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs</url>
           <line>415</line>
-          <properties documentPath="C:\Users\tati_\AppData\Local\Symbols\src\dotnet\aspnetcore\3f1acb59718cadf111a0a796681e3d3509bb3381\src\Identity\Core\src\IdentityApiEndpointRouteBuilderExtensions.cs" initialLine="415" containingFunctionPresentation="Local function 'SendConfirmationEmailAsync'">
-            <startOffsets>
-              <option value="19422" />
-            </startOffsets>
-            <endOffsets>
-              <option value="19524" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="C:\Users\tati_\AppData\Local\Symbols\src\dotnet\aspnetcore\3f1acb59718cadf111a0a796681e3d3509bb3381\src\Identity\Core\src\IdentityApiEndpointRouteBuilderExtensions.cs" initialLine="415" containingFunctionPresentation="Local function 'SendConfirmationEmailAsync'" />
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs</url>
           <line>111</line>
-          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="111" containingFunctionPresentation="Method 'Logout'">
-            <startOffsets>
-              <option value="5172" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5207" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="111" containingFunctionPresentation="Method 'Logout'" />
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
