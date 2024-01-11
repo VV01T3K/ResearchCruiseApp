@@ -1,19 +1,9 @@
 # Backend
 App is created using .NET 8.0
 
-## Requirements
-### SDK
-- .NET 8.0.100 SDK
-
-### Packages (can be installed using NuGet package manager integrated with the IDE):
-- Microsoft.AspNetCore.OpenApi 8.0.0
-- Microsoft.EntityFrameworkCore.Design 8.0.0
-- Microsoft.EntityFrameworkCore.SqlServer 8.0.0
-- Microsoft.EntityFrameworkCore.Tools 8.0.0
-- Microsoft.VisualStudio.Web.CodeGeneration.Design 8.0.0
-- Swashbuckle.AspNetCore 6.4.0
-
+## Prerequisites
 ### Tools
+- .NET 8.0.100 SDK: https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 - Docker: https://www.docker.com/products/docker-desktop/
 - dotnet-ef (installation in the **project** folder, not the solution folder!):
   ```powershell
@@ -29,8 +19,9 @@ docker network create researchcruiseapp-network
 ### Database container
 Creating a Docker container from a Microsoft image and running it in the newly created network:
 ```powershell
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --name researchcruiseapp-db --hostname researchcruiseapp-db --network researchcruiseapp-network -d mcr.microsoft.com/mssql/server:2022-latest
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=[MySecretPassword]" -p 1433:1433 --name researchcruiseapp-db --hostname researchcruiseapp-db --network researchcruiseapp-network -d mcr.microsoft.com/mssql/server:2022-latest
 ```
+**NOTE**: `[MySecretPassword]` should be a strong secret password.
 
 ## Database
 ### Creating a database
@@ -40,7 +31,7 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 --nam
   - Database type: _Microsoft SQL Server_
   - String:
     ```powershell
-    Server=localhost, 1433; User Id=sa; Password=p@ssw0rd; Encrypt=False
+    Server=localhost, 1433; User Id=sa; Password=YourStrongPassword; Encrypt=False
     ```
 - Click _Connect to database_.
 - Refresh the datasource.<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/f3496ff1-0b9d-4538-8cd2-448402ba4ea3)
@@ -60,6 +51,25 @@ Creating a miration:
   dotnet ef migrations add MyMigrationName --context MyContextName
   ```
 Pending migrations are applied automatically when running the application.
+
+## Configuring the user secrets
+- Open the _.NET User Secrets_ window<br>![obraz](https://github.com/MichalTarnacki/_projekt_grupowy/assets/116964693/738800d4-f68e-4315-a5d5-08e64a8bed70)
+- Set the user secrets:
+  ```json
+  {
+    "ConnectionStrings": {
+      "ResearchCruiseApp-DB": "Server=researchcruiseapp-db, 1433; Database=ResearchCruiseApp; User Id=sa; Password=[MySecretPassword]; Encrypt=False"
+    },
+    "SmtpSettings": {
+      "SmtpServer": "smtp.gmail.com",
+      "SmtpPort": 587,
+      "SmtpUsername": "[MySecretSmtpUsername]",
+      "SmtpPassword": "[MySecretSmtpPassword]",
+      "SenderEmail": "[MySecretSenderEmail]",
+      "SenderName": "Biuro Armatora Uniwersytetu"
+    }
+  }
+  ```
 
 ## Running the application
 - Choose the Docker configuration from the _Run/Debug Configurations_.

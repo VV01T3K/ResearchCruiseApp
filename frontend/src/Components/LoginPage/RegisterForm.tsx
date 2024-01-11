@@ -1,36 +1,77 @@
-import React, {Dispatch, SetStateAction} from "react";
+import React, {Dispatch, SetStateAction, useState} from "react";
+import {FieldValues, useForm} from "react-hook-form";
 
 function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
+
+    async function loginUser(data:FieldValues) {
+        return fetch('http://localhost:8080/account/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(data => {
+                if(!data.ok) throw new Error(data.status);
+                // else return data.json();
+            })
+    }
+
+    const onSubmit = async (data:FieldValues) => {
+        setLoading(true);
+        const token = await loginUser(data);
+        // console.log(token[]);
+        // if(token[""])
+        //     props.setUserToken(token[""]);
+        setLoading(false)
+
+    }
+    const [ loading, setLoading ] = useState(false);
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
+
+
+
     return (
         <>
             <h1>Register </h1>
-            <form method="post">
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="txt_field">
-                    <input type="text" required/>
+                    <input type="text" disabled={loading} {...register("email", {required: true, maxLength: 100})}/>
                     <span></span>
-                    <label>Username</label>
+                    <label>Email</label>
                 </div>
                 <div className="txt_field">
-                    <input type="text" required/>
-                    <span></span>
-                    <label>E-mail</label>
-                </div>
-                <div className="txt_field">
-                    <input type="password" required/>
+                    <input type="password" disabled={loading} {...register("password", {
+                        required: true,
+                        maxLength: 100
+                    })}/>
                     <span></span>
                     <label>Password</label>
                 </div>
                 <div className="txt_field">
-                    <input type="password" required/>
+                    <input type="text" disabled={loading} {...register("firstname", {
+                        required: true,
+                        maxLength: 100
+                    })}/>
                     <span></span>
-                    <label>Confirm password</label>
+                    <label>First name</label>
                 </div>
-                <input type="submit" value="Confirm" />
+                <div className="txt_field">
+                    <input type="text" disabled={loading} {...register("lastname", {
+                        required: true,
+                        maxLength: 100
+                    })}/>
+                    <span></span>
+                    <label>Last name</label>
+                </div>
+                <input type="submit" value="Confirm"/>
                 <div className="signup_link">
-                    Already member? <a href="#" onClick={()=>props.setCurrentForm("login")} >Login</a>
+                    Already member? <a href="#" onClick={() => props.setCurrentForm("login")}>Login</a>
                 </div>
             </form>
         </>
     )
 }
+
 export default RegisterForm

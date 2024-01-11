@@ -9,7 +9,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="" />
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,19 +28,30 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Authentication.Abstractions/src/AuthenticationHttpContextExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Http.Results/src/Results.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Http.Results/src/TypedResults.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Http/Routing/src/LinkGeneratorEndpointNameAddressExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/LoginRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/RefreshRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/RegisterRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/Data/ResetPasswordRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/SignInManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/EntityFrameworkCore/src/IdentityDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Core/src/IdentityServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Core/src/UserManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityRole.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Extensions.Stores/src/IdentityUser.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Mvc/Mvc.Core/src/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/EmailAddressAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Net.Mail/src/System/Net/Mail/MailMessage.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Net.Mail/src/System/Net/Mail/SmtpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Private.CoreLib/src/System/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Text.Encodings.Web/src/System/Text/Encodings/Web/HtmlEncoder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Text.Encodings.Web/src/System/Text/Encodings/Web/TextEncoder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/7a9cabe33905466a82eaf0ab9cbb93f5838a0/42/24dba5b9/02000027pdb50.il" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -52,12 +67,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    ".NET Launch Settings Profile.ResearchCruiseApp-API: http.executor": "Run",
+    ".NET Launch Settings Profile.ResearchCruiseApp-API: http.executor": "Debug",
     "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Debug",
+    "Docker.ResearchCruiseApp-API/Dockerfile.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "XThreadsFramesViewSplitterKey": "0.3783784",
+    "XThreadsFramesViewSplitterKey": "0.39361703",
     "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -65,6 +80,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "D:\\PROGRAMY\\JetBrains\\JetBrains Rider 2023.3.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -177,7 +193,11 @@
       <workItem from="1703946954795" duration="2506000" />
       <workItem from="1703961864549" duration="15000" />
       <workItem from="1704579570046" duration="1408000" />
-      <workItem from="1704581271405" duration="1734000" />
+      <workItem from="1704581271405" duration="1868000" />
+      <workItem from="1704634032362" duration="2756000" />
+      <workItem from="1704645247951" duration="13427000" />
+      <workItem from="1704738693565" duration="5805000" />
+      <workItem from="1704748699136" duration="1337000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
@@ -299,7 +319,23 @@
       <option name="project" value="LOCAL" />
       <updated>1704405710424</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Simplified logging">
+      <option name="closed" value="true" />
+      <created>1704583135178</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1704583135178</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Register url changed">
+      <option name="closed" value="true" />
+      <created>1704637011804</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1704637011804</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -333,23 +369,26 @@
     <MESSAGE value="Custom registering, login and refreshing" />
     <MESSAGE value="Merge remote-tracking branch 'origin/custom_authentication' into custom_authentication" />
     <MESSAGE value="Added first/last name changing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added first/last name changing" />
+    <MESSAGE value="Simplified logging" />
+    <MESSAGE value="Merge pull request #8 from MichalTarnacki/main2&#10;&#10;Added space" />
+    <MESSAGE value="Register url changed" />
+    <MESSAGE value="Added frontend link to the email confirmation message" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added frontend link to the email confirmation message" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs</url>
+          <line>415</line>
+          <properties documentPath="C:\Users\tati_\AppData\Local\Symbols\src\dotnet\aspnetcore\3f1acb59718cadf111a0a796681e3d3509bb3381\src\Identity\Core\src\IdentityApiEndpointRouteBuilderExtensions.cs" initialLine="415" containingFunctionPresentation="Local function 'SendConfirmationEmailAsync'" />
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs</url>
-          <line>73</line>
-          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="73" containingFunctionPresentation="Method 'Login'">
-            <startOffsets>
-              <option value="3276" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3302" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
+          <line>111</line>
+          <properties documentPath="D:\Studia\Semestr V\Projekt grupowy\_projekt_grupowy\ResearchCruiseApp-API\ResearchCruiseApp-API\Controllers\AccountController.cs" initialLine="111" containingFunctionPresentation="Method 'Logout'" />
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -8,7 +8,7 @@ import {
 } from "react-hook-form";
 import React, {useEffect, useRef, useState} from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
-import Map from '../../../resources/GraniceSamorządów.jpg'
+import Map from 'src/resources/GraniceSamorzadow.jpg'
 function ClickableMap(props: {
     className?: string,
     label: string,
@@ -29,7 +29,7 @@ function ClickableMap(props: {
     const handleClick = (e) => {
         const boundingRect = imageRef.current.getBoundingClientRect();
         const offsetX = e.clientX - boundingRect.left;
-        const offsetY = e.clientY- boundingRect.top;
+        const offsetY = e.clientY - boundingRect.top;
 
 
         regions.forEach((region)=>{

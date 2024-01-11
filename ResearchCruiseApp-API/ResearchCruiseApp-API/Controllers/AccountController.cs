@@ -2,10 +2,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Net;
+using System.Text;
+using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
@@ -22,7 +27,8 @@ namespace ResearchCruiseApp_API.Controllers
         
         [HttpPost("register")]
         public async Task<Results<Ok, ValidationProblem>> Register(
-            [FromBody] RegistrationModel registrationModel, [FromServices] IServiceProvider serviceProvider)
+            [FromBody] RegistrationModel registrationModel,
+            [FromServices] IServiceProvider serviceProvider)
         {
             if (!userManager.SupportsUserEmail)
             {
@@ -51,14 +57,15 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return CreateValidationProblem(result);
             }
-
-            // await SendConfirmationEmailAsync(user, userManager, context, email);
+            
+            await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
             return TypedResults.Ok();
         }
         
         [HttpPost("login")]
         public async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>> Login(
-            [FromBody] LoginModel loginModel, [FromServices] IServiceProvider serviceProvider)
+            [FromBody] LoginModel loginModel,
+            [FromServices] IServiceProvider serviceProvider)
         {
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             const bool isPersistent = false;
@@ -89,13 +96,59 @@ namespace ResearchCruiseApp_API.Controllers
             // Reject the /refresh attempt with a 401 if the token expired or the security stamp validation fails
             if (refreshTicket?.Properties?.ExpiresUtc is not { } expiresUtc ||
                 timeProvider.GetUtcNow() >= expiresUtc ||
-                await signInManager.ValidateSecurityStampAsync(refreshTicket.Principal) is not User user)
+                await signInManager.ValidateSecurityStampAsync(refreshTicket.Principal) is not { } user)
             {
                 return TypedResults.Challenge();
             }
 
             var newPrincipal = await signInManager.CreateUserPrincipalAsync(user);
             return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
+        }
+        
+        [HttpGet("confirmEmail")]
+        public async Task<Results<ContentHttpResult, UnauthorizedHttpResult>> ConfirmEmail(
+                [FromQuery] string userId,
+                [FromQuery] string code,
+                [FromQuery] string? changedEmail)
+        {
+            if (await userManager.FindByIdAsync(userId) is not { } user)
+            {
+                // We could respond with a 404 instead of a 401 like Identity UI, but that feels like unnecessary
+                // information.
+                return TypedResults.Unauthorized();
+            }
+
+            try
+            {
+                code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            }
+            catch (FormatException)
+            {
+                return TypedResults.Unauthorized();
+            }
+
+            IdentityResult result;
+
+            if (string.IsNullOrEmpty(changedEmail))
+            {
+                result = await userManager.ConfirmEmailAsync(user, code);
+            }
+            else
+            {
+                // As with Identity UI, email and user name are one and the same. So when we update the email,
+                // we need to update the user name.
+                result = await userManager.ChangeEmailAsync(user, changedEmail, code);
+
+                if (result.Succeeded)
+                {
+                    result = await userManager.SetUserNameAsync(user, changedEmail);
+                }
+            }
+                
+            if (!result.Succeeded)
+                return TypedResults.Unauthorized();
+
+            return TypedResults.Text("Thank you for confirming your email.");
         }
 
         [Authorize]
@@ -168,6 +221,45 @@ namespace ResearchCruiseApp_API.Controllers
             }
 
             return TypedResults.ValidationProblem(errorDictionary);
+        }
+        
+        private async Task SendConfirmationEmailAsync(
+            User user,
+            IServiceProvider serviceProvider,
+            HttpContext context,
+            bool isChange = false)
+        {
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
+            var emailConfirmationMessageBody = await GenerateEmailConfirmationMessageBody(user, isChange, serviceProvider.GetRequiredService<IConfiguration>());
+            
+            await emailSender.SendConfirmationLinkAsync(user, user.Email!, emailConfirmationMessageBody);
+        }
+
+        private async Task<string> GenerateEmailConfirmationMessageBody(
+            User user, bool isChange, IConfiguration configuration)
+        {
+            var code = isChange ?
+                await userManager.GenerateChangeEmailTokenAsync(user, user.Email!) : 
+                await userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var userId = await userManager.GetUserIdAsync(user);
+            var protocol = configuration.GetSection("ProtocolUsed").Value;
+            var frontendUrl = configuration.GetSection("FrontendUrl").Value;
+            
+            string link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userId}&code={code}";
+            if (isChange)
+            {
+                // This is validated by the /confirmEmail endpoint on change.
+                link += $"&changedEmail={user.Email}";
+            }
+            
+            string body = $"{user.FirstName} {user.LastName},<br/><br/>" +
+                          $"witaj w systemie rejsów badawczych Biura Armatora Uniwersytetu.<br/>" +
+                          $"Aby potwierdzić rejestrację konta, kliknij poniższy link:<br/><br/>" +
+                          $"{link}.<br/><br/>" +
+                          $"Pozdrawiamy<br/>" +
+                          $"Biuro Armatora Uniwersytetu";
+            return body;
         }
     }
 }
