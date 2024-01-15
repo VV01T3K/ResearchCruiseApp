@@ -9,7 +9,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="" />
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/ToggleUserRoleModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/LoginModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/LoginModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/RefreshModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/RefreshModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/RegisterModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/RegisterModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/ResendConfirmationEmailModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/ResendConfirmationEmailModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/ChangeAccountDetailsModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/ChangeAccountDetailsModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/UserModel.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="testing_branch" />
+        <entry key="$PROJECT_DIR$/.." value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -69,7 +81,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "XThreadsFramesViewSplitterKey": "0.39361703",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "users__controller__upgrades",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

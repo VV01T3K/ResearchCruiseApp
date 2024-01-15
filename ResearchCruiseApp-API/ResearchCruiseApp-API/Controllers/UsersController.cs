@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
-using ResearchCruiseApp_API.Models.AuthenticationModels;
+using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
@@ -44,7 +43,7 @@ namespace ResearchCruiseApp_API.Controllers
         
         [Authorize(Roles = RoleName.Administrator)]
         [HttpPost]
-        public async Task<IActionResult> AddShipowner([FromBody] RegisterModel registerModel)
+        public async Task<IActionResult> AddUser([FromBody] RegisterModel registerModel)
         {
             if (await userManager.FindByEmailAsync(registerModel.Email) != null)
                 return Conflict();
@@ -59,7 +58,14 @@ namespace ResearchCruiseApp_API.Controllers
                 Accepted = true
             };
             await userManager.CreateAsync(newUser, registerModel.Password);
-            await userManager.AddToRoleAsync(newUser, RoleName.Shipowner);
+
+            try
+            {
+                if (registerModel.Role is not null)
+                    await userManager.AddToRoleAsync(newUser, registerModel.Role);
+            }
+            catch (InvalidOperationException e)
+            { }
 
             return CreatedAtAction(nameof(GetUserById),
                 new { id = newUser.Id, controller = "Users" },
@@ -96,6 +102,35 @@ namespace ResearchCruiseApp_API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = RoleName.Administrator)]
+        [HttpPatch("{id}/roles")]
+        public async Task<IActionResult> ToggleUserRole(
+            [FromRoute] string id,
+            [FromBody] ToggleUserRoleModel toggleUserRoleModel,
+            [FromServices] IServiceProvider serviceProvider)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user is null)
+                return NotFound();
+            
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var rolesNames = await roleManager.Roles
+                .Select(role => role.Name!)
+                .ToListAsync();
+            
+            if (rolesNames.Contains(toggleUserRoleModel.RoleName))
+                await userManager.AddToRoleAsync(user, toggleUserRoleModel.RoleName);
+            else
+                return BadRequest();
+
+            if (toggleUserRoleModel.AddRole)
+                await userManager.AddToRoleAsync(user, toggleUserRoleModel.RoleName);
+            else
+                await userManager.RemoveFromRoleAsync(user, toggleUserRoleModel.RoleName);
+
+            return NoContent();
+        }
+        
         // [HttpPatch("lock/{id}")]
         // public async Task<IActionResult> SetLocked([FromRoute] string id, [FromQuery] bool setLocked)
         // {

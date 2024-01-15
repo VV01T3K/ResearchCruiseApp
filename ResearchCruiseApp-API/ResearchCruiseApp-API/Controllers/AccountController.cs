@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
-using ResearchCruiseApp_API.Models.AuthenticationModels;
+using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
