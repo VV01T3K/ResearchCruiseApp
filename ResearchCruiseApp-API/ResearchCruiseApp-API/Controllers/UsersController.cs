@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Models.Users;
@@ -43,10 +44,12 @@ namespace ResearchCruiseApp_API.Controllers
         
         [Authorize(Roles = RoleName.Administrator)]
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] RegisterModel registerModel)
+        public async Task<IActionResult> AddUser(
+            [FromBody] RegisterModel registerModel, [FromServices] IServiceProvider serviceProvider)
         {
             if (await userManager.FindByEmailAsync(registerModel.Email) != null)
                 return Conflict();
+            string? responseMessage = null;
             
             var newUser = new User()
             {
@@ -59,17 +62,22 @@ namespace ResearchCruiseApp_API.Controllers
             };
             await userManager.CreateAsync(newUser, registerModel.Password);
 
-            try
+            if (registerModel.Role is not null)
             {
-                if (registerModel.Role is not null)
+                var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var rolesNames = await roleManager.Roles
+                    .Select(role => role.Name!)
+                    .ToListAsync();
+
+                if (rolesNames.Contains(registerModel.Role))
                     await userManager.AddToRoleAsync(newUser, registerModel.Role);
+                else
+                    responseMessage = "Role does not exist";
             }
-            catch (InvalidOperationException e)
-            { }
 
             return CreatedAtAction(nameof(GetUserById),
                 new { id = newUser.Id, controller = "Users" },
-                newUser.Id);
+                new {Id = newUser.Id, message = responseMessage});
         }
 
         [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -121,7 +129,7 @@ namespace ResearchCruiseApp_API.Controllers
             if (rolesNames.Contains(toggleUserRoleModel.RoleName))
                 await userManager.AddToRoleAsync(user, toggleUserRoleModel.RoleName);
             else
-                return BadRequest();
+                return BadRequest(new {Message = "Role does not exist"});
 
             if (toggleUserRoleModel.AddRole)
                 await userManager.AddToRoleAsync(user, toggleUserRoleModel.RoleName);

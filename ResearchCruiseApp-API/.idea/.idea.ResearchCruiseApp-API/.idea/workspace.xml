@@ -9,18 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/ToggleUserRoleModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="Added roles toggling">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/AccountController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Controllers/UsersController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/LoginModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/LoginModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/RefreshModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/RefreshModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/RegisterModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/RegisterModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/AuthenticationModels/ResendConfirmationEmailModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/ResendConfirmationEmailModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/ChangeAccountDetailsModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/ChangeAccountDetailsModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/UserModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Models/Users/UserModel.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +51,7 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Text.Encodings.Web/src/System/Text/Encodings/Web/HtmlEncoder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Text.Encodings.Web/src/System/Text/Encodings/Web/TextEncoder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/7a9cabe33905466a82eaf0ab9cbb93f5838a0/42/24dba5b9/02000027pdb50.il" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Studia/Semestr V/Projekt grupowy/_projekt_grupowy/ResearchCruiseApp-API/ResearchCruiseApp-API/Controllers/AccountController.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -344,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704637011804</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Added roles toggling">
+      <option name="closed" value="true" />
+      <created>1705341088431</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1705341088431</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -382,7 +382,8 @@
     <MESSAGE value="Merge pull request #8 from MichalTarnacki/main2&#10;&#10;Added space" />
     <MESSAGE value="Register url changed" />
     <MESSAGE value="Added frontend link to the email confirmation message" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added frontend link to the email confirmation message" />
+    <MESSAGE value="Added roles toggling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added roles toggling" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
