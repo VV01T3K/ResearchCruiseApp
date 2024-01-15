@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations.Users
 {
     [DbContext(typeof(UsersContext))]
-    partial class UsersContextModelSnapshot : ModelSnapshot
+    [Migration("20240114221158_AddedWaitingForAcceptance")]
+    partial class AddedWaitingForAcceptance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,9 +163,6 @@ namespace ResearchCruiseApp_API.Migrations.Users
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("bit");
-
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
@@ -217,6 +217,9 @@ namespace ResearchCruiseApp_API.Migrations.Users
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("WaitingForAcceptance")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

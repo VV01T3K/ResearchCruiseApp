@@ -2,19 +2,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Net;
 using System.Text;
-using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication.BearerToken;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
-using ResearchCruiseApp_API.Models.AuthenticationRequestsModels;
+using ResearchCruiseApp_API.Models.AuthenticationModels;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -27,7 +24,7 @@ namespace ResearchCruiseApp_API.Controllers
         
         [HttpPost("register")]
         public async Task<Results<Ok, ValidationProblem>> Register(
-            [FromBody] RegistrationModel registrationModel,
+            [FromBody] RegisterModel registerModel,
             [FromServices] IServiceProvider serviceProvider)
         {
             if (!userManager.SupportsUserEmail)
@@ -37,7 +34,7 @@ namespace ResearchCruiseApp_API.Controllers
 
             var userStore = serviceProvider.GetRequiredService<IUserStore<User>>();
             var emailStore = (IUserEmailStore<User>)userStore;
-            var email = registrationModel.Email;
+            var email = registerModel.Email;
 
             if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))
             {
@@ -47,11 +44,11 @@ namespace ResearchCruiseApp_API.Controllers
             var user = new User();
             await userStore.SetUserNameAsync(user, email, CancellationToken.None);
             await emailStore.SetEmailAsync(user, email, CancellationToken.None);
-            user.FirstName = registrationModel.FirstName;
-            user.LastName = registrationModel.LastName;
+            user.FirstName = registerModel.FirstName;
+            user.LastName = registerModel.LastName;
             
-            var result = await userManager.CreateAsync(user, registrationModel.Password);
-            await userManager.AddToRoleAsync(user, "CruiseManager");
+            var result = await userManager.CreateAsync(user, registerModel.Password);
+            await userManager.AddToRoleAsync(user, RoleName.CruiseManager);
             
             if (!result.Succeeded)
             {
@@ -67,6 +64,12 @@ namespace ResearchCruiseApp_API.Controllers
             [FromBody] LoginModel loginModel,
             [FromServices] IServiceProvider serviceProvider)
         {
+            var user = await userManager.FindByEmailAsync(loginModel.Email);
+            if (user is { Accepted: false })
+            {
+                return TypedResults.Problem(statusCode: StatusCodes.Status401Unauthorized);
+            }
+            
             var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
             const bool isPersistent = false;
             
@@ -75,7 +78,7 @@ namespace ResearchCruiseApp_API.Controllers
                 loginModel.Email, loginModel.Password, isPersistent, lockoutOnFailure: true);
             
             if (!result.Succeeded)
-                return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
+                return TypedResults.Problem(statusCode: StatusCodes.Status401Unauthorized);
 
             // The signInManager already produced the needed response in the form of a bearer token.
             return TypedResults.Empty;
@@ -149,6 +152,21 @@ namespace ResearchCruiseApp_API.Controllers
                 return TypedResults.Unauthorized();
 
             return TypedResults.Text("Thank you for confirming your email.");
+        }
+        
+        [HttpPost("resendConfirmationEmail")]
+        public async Task<Ok> ResendConfirmationEmail(
+            [FromBody] ResendConfirmationEmailModel resendConfirmationEmailModel,
+            [FromServices] IServiceProvider serviceProvider)
+        {
+            if (await userManager.FindByEmailAsync(resendConfirmationEmailModel.Email) is not { } user)
+            {
+                // Responding with 404 or similar would provide with unnecessary information
+                return TypedResults.Ok();
+            }
+
+            await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
+            return TypedResults.Ok();
         }
 
         [Authorize]
@@ -227,10 +245,11 @@ namespace ResearchCruiseApp_API.Controllers
             User user,
             IServiceProvider serviceProvider,
             HttpContext context,
-            bool isChange = false)
+            bool changeEmail = false)
         {
             var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
-            var emailConfirmationMessageBody = await GenerateEmailConfirmationMessageBody(user, isChange, serviceProvider.GetRequiredService<IConfiguration>());
+            var emailConfirmationMessageBody = await GenerateEmailConfirmationMessageBody(
+                user, changeEmail, serviceProvider.GetRequiredService<IConfiguration>());
             
             await emailSender.SendConfirmationLinkAsync(user, user.Email!, emailConfirmationMessageBody);
         }

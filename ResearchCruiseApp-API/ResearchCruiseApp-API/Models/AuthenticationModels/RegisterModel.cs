@@ -1,6 +1,6 @@
-﻿namespace ResearchCruiseApp_API.Models.AuthenticationRequestsModels;
+﻿namespace ResearchCruiseApp_API.Models.AuthenticationModels;
 
-public class RegistrationModel
+public class RegisterModel
 {
     public required string Email { get; init; }
     public required string Password { get; init; }
