@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Models.AuthenticationRequestsModels;
+﻿namespace ResearchCruiseApp_API.Models.AuthenticationModels;
 
 public class LoginModel
 {

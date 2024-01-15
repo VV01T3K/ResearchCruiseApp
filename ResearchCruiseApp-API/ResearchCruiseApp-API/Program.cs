@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication()
     .AddBearerToken(IdentityConstants.BearerScheme);
@@ -41,6 +44,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -64,7 +69,7 @@ using (var scope = app.Services.CreateScope())
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roleNames = new[] { "Administrator", "Shipowner", "CruiseManager" };
+    var roleNames = new[] { RoleName.Administrator, RoleName.Shipowner, RoleName.CruiseManager };
     
     foreach (var roleName in roleNames)
     {
@@ -82,10 +87,11 @@ using (var scope = app.Services.CreateScope())
             Email = "admin@admin.com",
             FirstName = "Admin",
             LastName = "Admin",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            Accepted = true
         };
         await userManager.CreateAsync(adminUser, "Admin@123");
-        await userManager.AddToRoleAsync(adminUser, "Administrator");
+        await userManager.AddToRoleAsync(adminUser, RoleName.Administrator);
     }
 }
 

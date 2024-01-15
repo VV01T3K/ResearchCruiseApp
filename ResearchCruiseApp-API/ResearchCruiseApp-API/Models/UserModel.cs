@@ -11,6 +11,8 @@ public class UserModel
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public List<string> Roles { get; set; } = null!;
+    public bool EmailConfirmed { get; set; }
+    public bool Accepted { get; set; }
     
     
     public static async Task<UserModel> GetUserModel(User user, UserManager<User> userManager)
@@ -23,7 +25,9 @@ public class UserModel
             Email = user.Email!,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Roles = [..userRoles]
+            Roles = [..userRoles],
+            EmailConfirmed = user.EmailConfirmed,
+            Accepted = user.Accepted
         };
 
         return userModel;
