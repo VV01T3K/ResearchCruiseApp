@@ -53,7 +53,6 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAnyOrigin");
 
 app.MapControllers();
-app.MapIdentityApi<User>();
 
 using (var scope = app.Services.CreateScope())
 {
