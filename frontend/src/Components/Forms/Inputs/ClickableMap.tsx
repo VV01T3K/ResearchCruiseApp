@@ -6,7 +6,7 @@ import {
     FieldValues,
     Merge,
 } from "react-hook-form";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import Map from 'src/resources/GraniceSamorzadow.jpg'
 function ClickableMap(props: {
@@ -22,9 +22,11 @@ function ClickableMap(props: {
     const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
     const imageRef = useRef(null);
 
-    const regions= [["Gdynia", [301,263,294,370,472,565,541,407], [316,392,435,408,407,311,290,272]],
+    const regions= [
+        ["Gdynia", [301,263,294,370,472,565,541,407], [316,392,435,408,407,311,290,272]],
         ["Gdańsk", [479,392,374,300,304,356,400,464,522,582,653,566], [409,415,456,437,549,540,598,523,538,598,384,314]],
-        ["Woda", [172,251,279,322,361,473,533,795,964,1144,1129,172,0,3,175], [62,66,94,115,139,205,286,507,415,152,6,6,2,95,76]]]
+        ["Woda", [172,251,279,322,361,473,533,795,964,1144,1129,172,0,3,175], [62,66,94,115,139,205,286,507,415,152,6,6,2,95,76]]
+    ]
 
     const handleClick = (e) => {
         const boundingRect = imageRef.current.getBoundingClientRect();

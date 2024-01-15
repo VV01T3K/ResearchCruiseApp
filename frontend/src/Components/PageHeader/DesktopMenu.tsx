@@ -13,7 +13,7 @@ function DesktopMenu(props:{className?: string}) {
                 </a>
             </div>
             <div className="col text-center">
-                <a href="https://en.ug.edu.pl/" id="english" lang="en" title="English Version" tabIndex={0} style={{"textDecoration":"none", "fontSize": "20px","fontWeight": "500","color": "white"}}>
+                <a href="/" id="english" lang="en" title="English Version" tabIndex={0} style={{"textDecoration":"none", "fontSize": "20px","fontWeight": "500","color": "white"}}>
                     EN
                 </a>
             </div>

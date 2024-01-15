@@ -1,10 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
-import Style from "./MonthSlider.css"
-import CSSModules from "react-css-modules";
+import "./MonthSlider.css"
 import {Control, Controller, FieldValues} from "react-hook-form";
-import {circIn} from "framer-motion";
 
 const MonthSlider = (props: { className?:string, label: string, name: string, control: Control<FieldValues, any>
         | undefined, watch?, setValue?, resetField?}) => {
@@ -94,4 +91,4 @@ const MonthSlider = (props: { className?:string, label: string, name: string, co
     );
 };
 
-export default  CSSModules(MonthSlider, Style);
+export default  MonthSlider;

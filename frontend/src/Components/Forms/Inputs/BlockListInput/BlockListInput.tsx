@@ -1,8 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React from "react";
 import {Controller, useFieldArray} from "react-hook-form";
-import Dropdown from 'react-bootstrap/Dropdown'
-import {ButtonGroup} from "react-bootstrap";
-import Style from "./BlockListInput.css"
+import Style from "./BlockListInput.module.css"
 import CSSModules from "react-css-modules";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 

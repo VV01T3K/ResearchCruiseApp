@@ -1,5 +1,5 @@
 import React, {Dispatch, SetStateAction, useState} from "react";
-import {FieldValues, useForm, useFormState} from "react-hook-form";
+import {FieldValues, useForm} from "react-hook-form";
 import ErrorCode from "./ErrorCode";
 
 function LoginForm(props:{setUserToken: (userToken: string | null) => void,
@@ -38,7 +38,6 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                     <input type="text" disabled={loading} {...register("email", { required: true, maxLength: 100 })}/>
                     <span></span>
                     <label>Username</label>
-
                 </div>
                 {errors.userName && <ErrorCode code={"Username -> sXXXXXXX or email@ug.edu.pl"}/>}
                 <div className="txt_field">

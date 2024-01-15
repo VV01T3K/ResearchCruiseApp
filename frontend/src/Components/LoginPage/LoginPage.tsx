@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
-import CSSModules from 'react-css-modules';
-import Style from './style.css'
+import Style from './LoginPage.module.css'
 import LoginForm from "./LoginForm";
 import ResetPasswordForm from "./ResetPasswordForm";
 import RegisterForm from "./RegisterForm";
 import Page from "../Tools/Page";
+import "./style.css"
 function LoginPage(props:{setUserToken:(userToken: string | null) => void}){
     const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
         <>
-            <Page className={"justify-content-center justify-content-md-end"}>
+            <Page bgStyle={Style.bg + " " + Style.bgImage} className={"justify-content-center justify-content-md-end " + Style}>
                         <div className=" d-flex flex-column pb-1 m-2 center align-self-start"
                              style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}>
                             {currentForm == "login" &&
@@ -23,4 +23,4 @@ function LoginPage(props:{setUserToken:(userToken: string | null) => void}){
     )
 }
 
-export default CSSModules(LoginPage, Style);
+export default LoginPage

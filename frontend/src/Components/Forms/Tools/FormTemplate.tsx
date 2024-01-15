@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
-import CSSModules from 'react-css-modules';
-import Style from './FormTemplate.css'
 import Page from "../../Tools/Page";
 
 function FormTemplate(props:{children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>[]}){
-    const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
         <>
             <Page className={"justify-content-center bg-white"}>
@@ -26,4 +23,4 @@ function FormTemplate(props:{children?: React.ReactElement<any, string | React.J
     )
 }
 
-export default CSSModules(FormTemplate, Style);
+export default FormTemplate

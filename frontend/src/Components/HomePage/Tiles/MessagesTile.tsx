@@ -12,4 +12,4 @@ function MessagesTile( ){
     )
 }
 
-export default CSSModules(MessagesTile, Style);
+export default MessagesTile

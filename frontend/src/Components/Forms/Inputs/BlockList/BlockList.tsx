@@ -1,9 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Controller, useFieldArray} from "react-hook-form";
+import React from "react";
+import {useFieldArray} from "react-hook-form";
 import Dropdown from 'react-bootstrap/Dropdown'
 import {ButtonGroup} from "react-bootstrap";
-import Style from "./BlockList.css"
-import CSSModules from "react-css-modules";
+import Style from "./BlockList.module.css"
 
 const data =  ["Katedra Biologii Morza i Biotechnologii",
     "Stacja Morska im. Profesora Krzysztofa Skóry",
@@ -46,7 +45,7 @@ function BlockList(props:{className:string, label:string, control, name}) {
                 ))}
                 </tbody>
             </table>
-            <ButtonGroup as={Dropdown}  className="w-100 align-self-center centered-dropdown"> {/* Dodaj klasę CSS dla dropleft */}
+            <ButtonGroup as={Dropdown}  className={"w-100 align-self-center" + Style.centeredDropdown}>
                 <Dropdown.Toggle className={!disabled ? " " : " disabled "} disabled={disabled} variant="primary">
                     +
                 </Dropdown.Toggle>
@@ -62,4 +61,4 @@ function BlockList(props:{className:string, label:string, control, name}) {
         </div>
     )
 }
-export default  CSSModules(BlockList, Style)
+export default  BlockList

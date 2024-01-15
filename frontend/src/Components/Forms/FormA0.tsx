@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Controller, FieldValues, get, useForm, useWatch} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import FormTemplate from "./Tools/FormTemplate";
 import FormTitle from "./Tools/FormTitle";
 import FormSelect from "./Inputs/FormSelect";
@@ -200,7 +200,7 @@ function FormA0(){
                 </FormSection>
                 <FormSection completed={completedSections[6]} id={"6"}
                              title={"7. Zadania do zrealizowania w trakcie rejsu"}>
-                    <TaskInput control={control} className={"d-flex flex-column col-12"} label={""}/>
+                    <TaskInput setValue={setValue} name={"wejscie"} control={control} className={"d-flex flex-column col-12"} label={""}/>
                 </FormSection>
                 <FormSection completed={completedSections[7]} id={"7"} title={"8. Lista umów współpracy."}>
                     <text style={{height: "200px"}}>
@@ -210,14 +210,16 @@ function FormA0(){
                 </FormSection>
                 <FormSection completed={completedSections[8]} id={"8"}
                              title={"9. Zespoły badawcze jakie miałyby uczestniczyć w rejsie."}>
+                    <BlockListInput className={"col-12 col-xl-4 "} errors={errors} setValue={setValue} dirtyFields={dirtyFields} label={"Uczestnictwo naukowców spoza UG"} control={control} name={"blockListInput2"}/>
+                    <BlockListInput className={"col-12 col-xl-4 "} errors={errors} setValue={setValue} dirtyFields={dirtyFields} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} control={control} name={"blockListInput"}/>
+                    <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} control={control} name={"blockList"}/>
 
                 </FormSection>
                 <FormSection completed={completedSections[9]} id={"9"} title={"10. Publikacje i Prace"}>
-                    <BlockListInput className={"col-4"} errors={errors} setValue={setValue} dirtyFields={dirtyFields} label={"Uczestnictwo naukowców spoza UG"} control={control} name={"blockListInput2"}/>
-                    <BlockListInput className={"col-4"} errors={errors} setValue={setValue} dirtyFields={dirtyFields} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} control={control} name={"blockListInput"}/>
-                   <BlockList className={"col-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} control={control} name={"blockList"}/>
-                </FormSection>
+                  </FormSection>
                 <FormSection completed={completedSections[10]} id={"10"} title={"11. Efekty rejsu"}>
+                    <TaskInput setValue={setValue} name={"wejscie2"} control={control} className={"d-flex flex-column col-12"} label={""}/>
+
                 </FormSection>
 
                 <FormSection completed={completedSections[11]} id={"11"} title={"12. Zadanie SPUB."}>

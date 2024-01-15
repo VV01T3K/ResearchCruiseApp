@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './App.css';
 import LoginPage from "./LoginPage/LoginPage";
 import { Route, Routes } from "react-router-dom"
@@ -10,6 +10,8 @@ import useToken from "./Tools/useToken";
 import NewFormPage from "./NewFormPage/NewFormPage";
 import FormA0 from "./Forms/FormA0";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import FormB0 from "./Forms/FormB0";
+import FormC0 from "./Forms/FormC0";
 
 
 function GetUsername(userToken:string){
@@ -25,6 +27,8 @@ function App() {
                 <Route element={<LoggedInRoute userToken={token} redirectPath={"/login"} />}>
                     <Route path="/NewForm" element={<NewFormPage/>}/>
                     <Route path="/FormA" element={<FormA0/>}/>
+                    <Route path="/FormB" element={<FormB0/>}/>
+                    <Route path="/FormC" element={<FormC0/>}/>
                     <Route path="/*" element={<Home setUserToken={setToken}/>}/>
                 </Route>
                 <Route element={<NotLoggedInRoute userToken={token} redirectPath={"/"} />}>

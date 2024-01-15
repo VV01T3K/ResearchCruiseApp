@@ -1,8 +1,6 @@
 import React from "react";
-import "./style.css";
-import "/node_modules/react-tiles-dnd/esm/index.css";
+import tilesDndStyle from "/node_modules/react-tiles-dnd/esm/index.css";
 import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
-import Tile from "./Tile";
 import UserTile from "./UserTile";
 import NewFormTile from "./NewFormTile";
 import SavedFormsTile from "./SavedFormsTile";
@@ -46,7 +44,7 @@ export default function TilesComponent(props:{ setUserToken:(userToken: string |
     return (
         <div className={"tileContainer"} style={{ display: "flex", justifyContent: "center" }}>
 
-            <TilesContainer
+            <TilesContainer className={tilesDndStyle}
                 data={tilesMenu}
                 renderTile={render}
                 tileSize={tileSize}

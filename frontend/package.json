@@ -51,7 +51,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "install-bootstrap": "npm audit fix --force",
-    "audit": "npm install react-bootstrap",
+    "audit": "npm install",
     "fund": "npm fund",
     "cos": "npm install react-scripts --save"
   },

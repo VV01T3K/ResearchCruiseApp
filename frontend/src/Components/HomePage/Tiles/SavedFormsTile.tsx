@@ -1,6 +1,4 @@
 import React  from 'react';
-import CSSModules from 'react-css-modules';
-import Style from './style.css'
 import Tile from "./Tile";
 function SavedFormsTile( ){
     return (
@@ -12,4 +10,4 @@ function SavedFormsTile( ){
     )
 }
 
-export default CSSModules(SavedFormsTile, Style);
+export default SavedFormsTile;

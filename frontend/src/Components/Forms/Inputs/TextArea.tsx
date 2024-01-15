@@ -6,7 +6,7 @@ import {
     FieldValues,
     Merge,
 } from "react-hook-form";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
 
 function TextArea(props: {

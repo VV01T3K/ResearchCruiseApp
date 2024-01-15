@@ -1,6 +1,4 @@
 import React  from 'react';
-import CSSModules from 'react-css-modules';
-import Style from './style.css'
 import Tile from "./Tile";
 function UserTile( props:{ setUserToken:(userToken: string | null) => void}){
     return (
@@ -12,4 +10,4 @@ function UserTile( props:{ setUserToken:(userToken: string | null) => void}){
     )
 }
 
-export default CSSModules(UserTile, Style);
+export default UserTile

@@ -1,6 +1,4 @@
 import React  from 'react';
-import CSSModules from 'react-css-modules';
-import Style from './style.css'
 import Tile from "./Tile";
 function ViewFormsTile( ){
     return (
@@ -12,4 +10,4 @@ function ViewFormsTile( ){
     )
 }
 
-export default CSSModules(ViewFormsTile, Style);
+export default ViewFormsTile
