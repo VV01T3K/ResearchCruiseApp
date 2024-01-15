@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp_API.Data;
 
-namespace ResearchCruiseApp_API.Models;
+namespace ResearchCruiseApp_API.Models.Users;
 
 public class UserModel
 {

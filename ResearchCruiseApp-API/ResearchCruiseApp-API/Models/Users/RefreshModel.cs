@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Models.AuthenticationModels;
+﻿namespace ResearchCruiseApp_API.Models.Users;
 
 public class RefreshModel
 {
