@@ -138,8 +138,16 @@ namespace ResearchCruiseApp_API.Controllers
 
             return NoContent();
         }
-        
-        // [HttpPatch("lock/{id}")]
+
+        // [Authorize(Roles = RoleName.Administrator)]
+        // [HttpGet("locked")]
+        // public async Task<IActionResult> GetAllLockedUsers()
+        // {
+        //     
+        // }
+        //
+        // [Authorize(Roles = RoleName.Administrator)]
+        // [HttpPatch("locked/{id}")]
         // public async Task<IActionResult> SetLocked([FromRoute] string id, [FromQuery] bool setLocked)
         // {
         //     var user = await userManager.FindByIdAsync(id);
