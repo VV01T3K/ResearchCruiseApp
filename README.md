@@ -17,7 +17,7 @@ docker network create researchcruiseapp-network
 ```
 
 ### Database container
-Create a Docker container from a Microsoft image, that runns in the newly created network and used a Docker's named volume
+Create a Docker container from a Microsoft image, that runns in the newly created network and used a Docker's named volume:
 ```powershell
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=[MySecretPassword]" -p 1433:1433 --name researchcruiseapp-db --hostname researchcruiseapp-db --network researchcruiseapp-network -v researchcruisepp-mssql:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2022-latest
 ```
