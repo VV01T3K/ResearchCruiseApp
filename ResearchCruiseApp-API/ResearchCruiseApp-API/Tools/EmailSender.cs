@@ -1,16 +1,19 @@
 ﻿using System.Net;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using ResearchCruiseApp_API.Data;
 
 namespace ResearchCruiseApp_API.Tools;
 
 public class EmailSender<TUser>(IConfiguration configuration) : IEmailSender<TUser>
     where TUser: class
 {
-    public async Task SendConfirmationLinkAsync(TUser user, string email, string confirmationLink)
+    public async Task SendConfirmationLinkAsync(TUser user, string email, string confirmationEmailBody)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");
+        
         using var client = new SmtpClient(
             smtpSettings.GetSection("SmtpServer").Value,
             int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""));
@@ -26,7 +29,7 @@ public class EmailSender<TUser>(IConfiguration configuration) : IEmailSender<TUs
                 smtpSettings.GetSection("SenderEmail").Value ?? "",
                 smtpSettings.GetSection("SenderName").Value),
             Subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu",
-            Body = confirmationLink,
+            Body = confirmationEmailBody,
             IsBodyHtml = true
         };
 
