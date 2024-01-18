@@ -1,38 +1,62 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import LoginPage from "./LoginPage/LoginPage";
-import { Route, Routes } from "react-router-dom"
-import Home from "./HomePage/Home";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom"
+import AdminPanel from "./HomePage/AdminPanel"
 import LoggedInRoute from "./Tools/LoggedInRoute";
 import NotLoggedInRoute from "./Tools/NotLoggedInRoute";
 import PageHeader from "./PageHeader/PageHeader";
-import useToken from "./Tools/useToken";
+import useAuth from "./Tools/useAuth";
 import NewFormPage from "./NewFormPage/NewFormPage";
 import FormA0 from "./Forms/FormA0";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FormB0 from "./Forms/FormB0";
 import FormC0 from "./Forms/FormC0";
+import ManagerPanel from "./HomePage/ManagerPanel";
+import ShipOwnerPanel from "./HomePage/ShipOwnerPanel";
+import RegisterForm from "./LoginPage/RegisterForm";
+import LogoutPage from "./LoginPage/LogoutPage";
 
-
-function GetUsername(userToken:string){
-
-    return "Witaj Kierowniku";
-}
 function App() {
-    const {token, setToken} = useToken()
+    const navigate = useNavigate()
+    const {auth, setAuth} = useAuth(navigate)
+
     return (
         <div className={`vh-100`}>
-            <PageHeader title={token ? GetUsername(token): null}></PageHeader>
+            <PageHeader auth={auth}></PageHeader>
             <Routes>
-                <Route element={<LoggedInRoute userToken={token} redirectPath={"/login"} />}>
-                    <Route path="/NewForm" element={<NewFormPage/>}/>
-                    <Route path="/FormA" element={<FormA0/>}/>
-                    <Route path="/FormB" element={<FormB0/>}/>
-                    <Route path="/FormC" element={<FormC0/>}/>
-                    <Route path="/*" element={<Home setUserToken={setToken}/>}/>
+                <Route element={<LoggedInRoute auth={auth} redirectPath={"/login"} />}>
+                    { auth != null && auth.role=="shipOwner" && <>
+                        <Route path="/NewForm" element={<NewFormPage/>}/>
+                        <Route path="/FormA" element={<FormA0/>}/>
+
+                        <Route path="/*" element={<ShipOwnerPanel setAuth={setAuth}/>}/>
+                    </>
+                    }
+                    { auth != null && auth.role=="admin" &&<>
+                        <Route path="/NewForm" element={<NewFormPage/>}/>
+                        <Route path="/FormA" element={<FormA0/>}/>
+                        <Route path="/FormB" element={<FormB0/>}/>
+                        <Route path="/FormC" element={<FormC0/>}/>
+                        <Route path="/*" element={<AdminPanel setAuth={setAuth}/>}/>
+                    </>
+                    }
+                    { auth != null && auth.role=="manager" &&<>
+                        <Route path="/NewForm" element={<NewFormPage/>}/>
+                        <Route path="/FormA" element={<FormA0/>}/>
+                        <Route path="/FormB" element={<FormB0/>}/>
+                        <Route path="/FormC" element={<FormC0/>}/>
+                        <Route path="/*" element={<ManagerPanel setAuth={setAuth}/>}/>
+                    </>
+                    }
+                    { auth == null &&<>
+                        <Route path="/*" element={<LogoutPage setAuth={setAuth} />}/>
+                    </>
+                    }
                 </Route>
-                <Route element={<NotLoggedInRoute userToken={token} redirectPath={"/"} />}>
-                    <Route path="/login" element={<LoginPage setUserToken={setToken} />}/>
+                <Route element={<NotLoggedInRoute auth={auth} redirectPath={"/"} />}>
+                    <Route path="/login" element={<LoginPage setAuth={setAuth} />}/>
+                    <Route path="/forcedLogout" element={<LogoutPage/>}/>
                 </Route>
             </Routes>
         </div>

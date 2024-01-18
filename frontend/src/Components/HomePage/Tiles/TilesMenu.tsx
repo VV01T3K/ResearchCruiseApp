@@ -1,30 +1,13 @@
 import React from "react";
 import tilesDndStyle from "/node_modules/react-tiles-dnd/esm/index.css";
 import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
-import UserTile from "./UserTile";
-import NewFormTile from "./NewFormTile";
-import SavedFormsTile from "./SavedFormsTile";
-import FormsRequestsTile from "./FormsRequestsTile";
-import ManageUserTile from "./ManageUserTile";
-import MessagesTile from "./MessagesTile";
-import ViewFormsTile from "./ViewFormsTile";
 
 
-export default function TilesComponent(props:{ setUserToken:(userToken: string | null) => void}) {
+export default function TilesComponent(props:{tilesMenu}) {
 
-    const tilesMenu = [
-        { element: <UserTile setUserToken={props.setUserToken}/>, cols: 1, rows: 1 },
-        { element:<NewFormTile/>, cols: 1, rows: 1 },
-        { element: <SavedFormsTile/>, cols: 2, rows: 2 },
-        { element: <FormsRequestsTile/>, cols: 2, rows: 2 },
-        { element: <ManageUserTile/>, cols: 1, rows: 1 },
-        { element: <MessagesTile/>, cols: 1, rows: 1 },
-        { element: <ViewFormsTile/>, cols: 1, rows: 1 },
-        { element: "Tile 8", cols: 1, rows: 1 },
-        { element: "Tile 9", cols: 2, rows: 1 },
-    ];
 
-    const render: RenderTileFunction<typeof tilesMenu[0]> = ({ data, isDragging }) => (
+
+    const render: RenderTileFunction<typeof props.tilesMenu[0]> = ({ data, isDragging }) => (
         <div className={"p-2 w-100 h-100 d-flex "}>
             <div
                 className={`tile bg-white h-100 w-100 ${isDragging ? "dragging" : ""}`} style={{color:"#052d73"}}>
@@ -33,7 +16,7 @@ export default function TilesComponent(props:{ setUserToken:(userToken: string |
         </div>
     );
 
-    const tileSize = (tile: typeof tilesMenu[0]) => ({
+    const tileSize = (tile: typeof props.tilesMenu[0]) => ({
         colSpan: tile.cols,
         rowSpan: tile.rows,
     });
@@ -45,7 +28,7 @@ export default function TilesComponent(props:{ setUserToken:(userToken: string |
         <div className={"tileContainer"} style={{ display: "flex", justifyContent: "center" }}>
 
             <TilesContainer className={tilesDndStyle}
-                data={tilesMenu}
+                data={props.tilesMenu}
                 renderTile={render}
                 tileSize={tileSize}
                 forceTileWidth={150}

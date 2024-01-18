@@ -5,7 +5,7 @@ import ResetPasswordForm from "./ResetPasswordForm";
 import RegisterForm from "./RegisterForm";
 import Page from "../Tools/Page";
 import "./style.css"
-function LoginPage(props:{setUserToken:(userToken: string | null) => void}){
+function LoginPage(props:{setAuth:(userToken: string | null) => void}){
     const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
         <>
@@ -13,7 +13,7 @@ function LoginPage(props:{setUserToken:(userToken: string | null) => void}){
                         <div className=" d-flex flex-column pb-1 m-2 center align-self-start"
                              style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}>
                             {currentForm == "login" &&
-                                <LoginForm setCurrentForm={setCurrentForm} setUserToken={props.setUserToken}/>}
+                                <LoginForm setCurrentForm={setCurrentForm} setAuth={props.setAuth}/>}
                             {currentForm == "remind" && <ResetPasswordForm setCurrentForm={setCurrentForm}/>}
                             {currentForm == "register" && <RegisterForm setCurrentForm={setCurrentForm}/>}
                         </div>

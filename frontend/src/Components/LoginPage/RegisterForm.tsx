@@ -1,9 +1,12 @@
 import React, {Dispatch, SetStateAction, useState} from "react";
 import {FieldValues, useForm} from "react-hook-form";
+import ErrorCode from "./ErrorCode";
 
 function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
 
-    async function loginUser(data:FieldValues) {
+    const [registerError, setError] = useState<null|string>(null)
+
+    async function registerUser(data:FieldValues) {
         return fetch('http://localhost:8080/account/register', {
             method: 'POST',
             headers: {
@@ -12,64 +15,104 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
             body: JSON.stringify(data)
         })
             .then(data => {
-                if(!data.ok) throw new Error(data.status);
-                // else return data.json();
+                if(data.status == 409) setError("Użytkownik o podanym adresie już istnieje");
+                else if(!data.ok) setError("Wystąpił problem z rejestracją")
+                else return data.json();
             })
     }
 
     const onSubmit = async (data:FieldValues) => {
+        const { password2, ...dataWithoutPassword2 } = data;
         setLoading(true);
-        const token = await loginUser(data);
-        // console.log(token[]);
-        // if(token[""])
-        //     props.setUserToken(token[""]);
+        try {
+            await registerUser(dataWithoutPassword2);
+            setError(null)
+            setRegisterSuccessful(true)
+        }
+        catch (e){
+            setError("Wystąpił problem z rejestracją, sprawdź połączenie z internetem")
+        }
         setLoading(false)
 
     }
     const [ loading, setLoading ] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [ registerSuccessful, setRegisterSuccessful ] = useState(false);
 
 
 
 
     return (
         <>
-            <h1>Register </h1>
+            <h1 style={{fontSize:"2rem"}}>Rejestracja</h1>
+            {!registerSuccessful &&
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("email", {required: true, maxLength: 100})}/>
+                    <input type="text" disabled={loading} {...register("email", { required: "Pole wymagane", maxLength: 30,  pattern: {
+                            value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
+                            message: 'Podaj adres e-mail z domeny @ug.edu.pl',
+                        }})}/>
                     <span></span>
-                    <label>Email</label>
+                    <label>Adres e-mail</label>
                 </div>
-                <div className="txt_field">
-                    <input type="password" disabled={loading} {...register("password", {
-                        required: true,
-                        maxLength: 100
-                    })}/>
-                    <span></span>
-                    <label>Password</label>
-                </div>
+                {errors["email"] && <ErrorCode code={errors["email"].message}/>}
                 <div className="txt_field">
                     <input type="text" disabled={loading} {...register("firstname", {
-                        required: true,
+                        required: "Pole wymagane",
                         maxLength: 100
                     })}/>
                     <span></span>
-                    <label>First name</label>
+                    <label>Imię</label>
                 </div>
+                {errors["firstname"] && <ErrorCode code={errors["firstname"].message}/>}
+
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("lastname", {
-                        required: true,
-                        maxLength: 100
+                    <input type="text" disabled={loading} {...register("lastname",
+                        {
+                            required: "Pole wymagane",
+                            maxLength: 100
+                        })}/>
+                    <span></span>
+                    <label>Nazwisko</label>
+                </div>
+                {errors["lastname"] && <ErrorCode code={errors["lastname"].message}/>}
+                <div className="txt_field">
+                    <input type="password" disabled={loading} {...register("password", { required: "Pole wymagane", maxLength: 30, pattern: {
+                            value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
+                            message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
+                        } })}/>
+                    <span></span>
+                    <label>Hasło</label>
+                </div>
+                {errors["password"] && <ErrorCode code={errors["password"].message}/>}
+                <div className="txt_field">
+                    <input type="password" disabled={loading} {...register("password2", { required: "Pole wymagane", maxLength: 30,
+                        validate: (value) => value === watch('password') || 'Hasła nie pasują do siebie',
                     })}/>
                     <span></span>
-                    <label>Last name</label>
+                    <label>Potwierdź hasło</label>
                 </div>
-                <input type="submit" value="Confirm"/>
-                <div className="signup_link">
-                    Already member? <a href="#" onClick={() => props.setCurrentForm("login")}>Login</a>
+                {errors["password2"] && <ErrorCode code={errors["password2"].message}/>}
+                <input className={loading ? "textAnim": "" + " mt-2"} type="submit" disabled={loading} value="Potwiedź"/>
+                {registerError && <ErrorCode code={registerError}/>}
+                <div className="signup_link m-3">
+                    Posiadasz konto? <a href="#" onClick={() => props.setCurrentForm("login")}>Logowanie</a>
                 </div>
             </form>
+            }
+            {registerSuccessful &&
+                <>
+                    <div className="signup_link m-3 text-break">
+                        <div style={{fontSize:"1.3rem"}}>Rejestracja przebiegła pomyślnie, aby się zalogować biuro armatora musi zatwierdzić twoje konto</div>
+                        <div className={"butt p-2 mt-2"}>
+                        <a className={"text-white"} href="#" onClick={() => props.setCurrentForm("login")}>
+                                Powrót do logowania
+                        </a>
+                        </div>
+                    </div>
+                </>
+
+            }
         </>
     )
 }
