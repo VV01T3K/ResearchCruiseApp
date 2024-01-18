@@ -36,16 +36,16 @@ namespace ResearchCruiseApp_API.Controllers
 
             var userStore = serviceProvider.GetRequiredService<IUserStore<User>>();
             var emailStore = (IUserEmailStore<User>)userStore;
-            var email = registerModel.Email;
 
-            if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))
+            if (string.IsNullOrEmpty(registerModel.Email) || !_emailAddressAttribute.IsValid(registerModel.Email))
             {
-                return CreateValidationProblem(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(email)));
+                return CreateValidationProblem(
+                    IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(registerModel.Email)));
             }
 
             var user = new User();
-            await userStore.SetUserNameAsync(user, email, CancellationToken.None);
-            await emailStore.SetEmailAsync(user, email, CancellationToken.None);
+            await userStore.SetUserNameAsync(user, registerModel.Email, CancellationToken.None);
+            await emailStore.SetEmailAsync(user, registerModel.Email, CancellationToken.None);
             user.FirstName = registerModel.FirstName;
             user.LastName = registerModel.LastName;
             
@@ -57,9 +57,9 @@ namespace ResearchCruiseApp_API.Controllers
                 return CreateValidationProblem(result);
             }
             
-            var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
-            await emailSender.SendConfirmationEmailAsync(
-                user, RoleName.CruiseManager, serviceProvider);
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+            await emailSender.SendEmailConfirmationMessageAsync(
+                user, registerModel.Email, RoleName.CruiseManager, serviceProvider);
             return TypedResults.Ok();
         }
         
@@ -155,7 +155,7 @@ namespace ResearchCruiseApp_API.Controllers
             if (!result.Succeeded)
                 return TypedResults.Unauthorized();
 
-            return TypedResults.Text("Thank you for confirming your email.");
+            return TypedResults.Text("Email confirmed");
         }
         
         [HttpPost("resendConfirmationEmail")]
