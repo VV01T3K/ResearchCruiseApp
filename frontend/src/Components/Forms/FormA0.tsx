@@ -226,7 +226,7 @@ function FormA0(){
 
                 </FormSection>
 
-                <button type={"submit"}/>
+
                 {/*<div className="txt_field">*/}
                 {/*    <input type="password" disabled={loading}  {...register("password", {*/}
                 {/*        required: true,*/}

@@ -8,6 +8,7 @@ import MessagesTile from "./Tiles/MessagesTile";
 import ViewFormsTile from "./Tiles/ViewFormsTile";
 import React from "react";
 import Tiles from "./Tiles/TilesMenu";
+import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 
 export default function ManagerPanel(props:{setAuth}){
 
@@ -18,6 +19,7 @@ export default function ManagerPanel(props:{setAuth}){
         { element: <FormsRequestsTile/>, cols: 2, rows: 2 },
         { element: <MessagesTile/>, cols: 1, rows: 1 },
         { element: <ViewFormsTile/>, cols: 1, rows: 1 },
+        { element: <AccountSettingsTile/>, cols: 1, rows: 1 },
     ];
 
     return(

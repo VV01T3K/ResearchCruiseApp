@@ -8,12 +8,14 @@ import MessagesTile from "./Tiles/MessagesTile";
 import ViewFormsTile from "./Tiles/ViewFormsTile";
 import React from "react";
 import Tiles from "./Tiles/TilesMenu";
+import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 
 export default function ShipOwnerPanel(props:{setAuth}){
 
     const tilesMenu = [
         { element: <UserTile setAuth={props.setAuth}/>, cols: 1, rows: 1 },
         { element:<NewFormTile/>, cols: 1, rows: 1 },
+        { element: <AccountSettingsTile/>, cols: 1, rows: 1 },
     ];
 
     return(

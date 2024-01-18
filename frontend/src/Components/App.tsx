@@ -16,6 +16,7 @@ import ManagerPanel from "./HomePage/ManagerPanel";
 import ShipOwnerPanel from "./HomePage/ShipOwnerPanel";
 import RegisterForm from "./LoginPage/RegisterForm";
 import LogoutPage from "./LoginPage/LogoutPage";
+import AccountPage from "./HomePage/AccountPage/AccountPage";
 
 function App() {
     const navigate = useNavigate()
@@ -53,6 +54,7 @@ function App() {
                         <Route path="/*" element={<LogoutPage setAuth={setAuth} />}/>
                     </>
                     }
+                    <Route path={"/AccountSettings"} element={<AccountPage/>}/>
                 </Route>
                 <Route element={<NotLoggedInRoute auth={auth} redirectPath={"/"} />}>
                     <Route path="/login" element={<LoginPage setAuth={setAuth} />}/>
