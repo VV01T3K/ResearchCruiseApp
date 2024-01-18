@@ -38,7 +38,7 @@ builder.Services.AddDbContext<UsersContext>(options =>
 builder.Services.AddDbContext<ResearchCruiseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
-builder.Services.AddTransient<IEmailSender<User>, EmailSender<User>>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
