@@ -6,6 +6,7 @@ using NuGet.Protocol.Plugins;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Models.Users;
+using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
@@ -49,7 +50,9 @@ namespace ResearchCruiseApp_API.Controllers
         {
             if (await userManager.FindByEmailAsync(registerModel.Email) != null)
                 return Conflict();
+            
             string? responseMessage = null;
+            var roleName = string.Empty;
             
             var newUser = new User()
             {
@@ -57,7 +60,6 @@ namespace ResearchCruiseApp_API.Controllers
                 Email = registerModel.Email,
                 FirstName = registerModel.FirstName,
                 LastName = registerModel.LastName,
-                EmailConfirmed = true,
                 Accepted = true
             };
             await userManager.CreateAsync(newUser, registerModel.Password);
@@ -70,11 +72,18 @@ namespace ResearchCruiseApp_API.Controllers
                     .ToListAsync();
 
                 if (rolesNames.Contains(registerModel.Role))
+                {
                     await userManager.AddToRoleAsync(newUser, registerModel.Role);
+                    roleName = registerModel.Role;
+                }
                 else
                     responseMessage = "Role does not exist";
             }
 
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+            await emailSender.SendEmailConfirmationMessageAsync(
+                newUser, registerModel.Email, roleName, serviceProvider);
+            
             return CreatedAtAction(nameof(GetUserById),
                 new { id = newUser.Id, controller = "Users" },
                 new {Id = newUser.Id, message = responseMessage});
@@ -99,14 +108,19 @@ namespace ResearchCruiseApp_API.Controllers
 
         [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
         [HttpPatch("unaccepted/{id}")]
-        public async Task<IActionResult> AcceptUser([FromRoute] string id)
+        public async Task<IActionResult> AcceptUser(
+            [FromRoute] string id, [FromServices] IServiceProvider serviceProvider)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
-            user.Accepted = true;
             
+            user.Accepted = true;
             await userManager.UpdateAsync(user);
+
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+            await emailSender.SendAccountAcceptedMessageAsync(user);
+            
             return NoContent();
         }
 
