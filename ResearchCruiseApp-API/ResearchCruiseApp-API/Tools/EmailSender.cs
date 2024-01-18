@@ -1,16 +1,73 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.WebUtilities;
+using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Tools;
 
-public class EmailSender<TUser>(IConfiguration configuration) : IEmailSender<TUser>
-    where TUser: class
+public class EmailSender(IConfiguration configuration) : IEmailSender
 {
-    public async Task SendConfirmationLinkAsync(TUser user, string email, string confirmationLink)
+    public async Task SendEmailConfirmationMessageAsync(
+        User user, string email, string roleName, IServiceProvider serviceProvider, bool changeEmail = false)
+    {
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+        
+        var subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu";
+        
+        var code = changeEmail
+            ? await userManager.GenerateChangeEmailTokenAsync(user, user.Email!)
+            : await userManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        var userId = await userManager.GetUserIdAsync(user);
+        var protocol = configuration.GetSection("ProtocolUsed").Value;
+        var frontendUrl = configuration.GetSection("FrontendUrl").Value;
+
+        var link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userId}&code={code}";
+        if (changeEmail)
+        {
+            // This is validated by the /confirmEmail endpoint on change.
+            link += $"&changedEmail={user.Email}";
+        }
+
+        var emailTemplatePath = Path.Combine("Resources", "Emails", "accountConfirmationEmail.html");
+        var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
+            .Replace("{{firstName}}", user.FirstName)
+            .Replace("{{lastName}}", user.LastName)
+            .Replace("{{roleText}}", $" {RoleName.Translate(roleName, "pl-PL")} ")
+            .Replace("{{link}}", link);
+        
+        await SendEmail(email, subject, emailBody);
+    }
+
+    public async Task SendAccountAcceptedMessageAsync(User user)
+    {
+        var subject = "Powiadomienie o akceptacji konta przez Biuro Armatora Uniwersytetu";
+        
+        var emailTemplatePath = Path.Combine("Resources", "Emails", "accountAcceptedEmail.html");
+        var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
+            .Replace("{{firstName}}", user.FirstName)
+            .Replace("{{lastName}}", user.LastName);
+        
+        await SendEmail(user.Email!, subject, emailBody);
+    }
+    public Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
+    {
+        throw new NotImplementedException();
+    }
+    
+
+    private async Task SendEmail(string email, string subject, string body)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");
+        
         using var client = new SmtpClient(
             smtpSettings.GetSection("SmtpServer").Value,
             int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""));
@@ -20,28 +77,19 @@ public class EmailSender<TUser>(IConfiguration configuration) : IEmailSender<TUs
             smtpSettings.GetSection("SmtpPassword").Value);
         client.EnableSsl = true;
 
+        var from = new MailAddress(
+            smtpSettings.GetSection("SenderEmail").Value ?? "",
+            smtpSettings.GetSection("SenderName").Value);
+
         var message = new MailMessage
         {
-            From = new MailAddress(
-                smtpSettings.GetSection("SenderEmail").Value ?? "",
-                smtpSettings.GetSection("SenderName").Value),
-            Subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu",
-            Body = confirmationLink,
+            From = from,
+            Subject = subject,
+            Body = body,
             IsBodyHtml = true
         };
-
         message.To.Add(email);
 
         await client.SendMailAsync(message);
-    }
-
-    public Task SendPasswordResetLinkAsync(TUser user, string email, string resetLink)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task SendPasswordResetCodeAsync(TUser user, string email, string resetCode)
-    {
-        throw new NotImplementedException();
     }
 }
