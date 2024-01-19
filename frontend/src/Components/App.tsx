@@ -16,7 +16,8 @@ import ManagerPanel from "./HomePage/ManagerPanel";
 import ShipOwnerPanel from "./HomePage/ShipOwnerPanel";
 import RegisterForm from "./LoginPage/RegisterForm";
 import LogoutPage from "./LoginPage/LogoutPage";
-import AccountPage from "./HomePage/AccountPage/AccountPage";
+import AccountPage from "./AccountPage/AccountPage";
+import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
 
 function App() {
     const navigate = useNavigate()
@@ -24,13 +25,13 @@ function App() {
 
     return (
         <div className={`vh-100`}>
-            <PageHeader auth={auth}></PageHeader>
+            <PageHeader auth={null}></PageHeader>
             <Routes>
-                <Route element={<LoggedInRoute auth={auth} redirectPath={"/login"} />}>
+                {/*<Route element={<LoggedInRoute auth={auth} redirectPath={"/login"} />}>*/}
                     { auth != null && auth.role=="shipOwner" && <>
                         <Route path="/NewForm" element={<NewFormPage/>}/>
                         <Route path="/FormA" element={<FormA0/>}/>
-
+                        <Route path="/ManageUsers" element={<ManageUsersPage/>}/>
                         <Route path="/*" element={<ShipOwnerPanel setAuth={setAuth}/>}/>
                     </>
                     }
@@ -50,16 +51,19 @@ function App() {
                         <Route path="/*" element={<ManagerPanel setAuth={setAuth}/>}/>
                     </>
                     }
-                    { auth == null &&<>
-                        <Route path="/*" element={<LogoutPage setAuth={setAuth} />}/>
-                    </>
-                    }
-                    <Route path={"/AccountSettings"} element={<AccountPage/>}/>
-                </Route>
-                <Route element={<NotLoggedInRoute auth={auth} redirectPath={"/"} />}>
-                    <Route path="/login" element={<LoginPage setAuth={setAuth} />}/>
-                    <Route path="/forcedLogout" element={<LogoutPage/>}/>
-                </Route>
+                    {/*{ auth == null &&<>*/}
+                    {/*    <Route path="/*" element={<LogoutPage setAuth={setAuth} />}/>*/}
+                    {/*</>*/}
+                    {/*}*/}
+                { auth != null &&
+                    <Route path={"/AccountSettings"} element={<AccountPage/>}/> }
+                {/*</Route>*/}
+                {/*<Route element={<NotLoggedInRoute auth={auth} redirectPath={"/"} />}>*/}
+                { auth == null &&
+                    <>
+                    <Route path="/*" element={<LoginPage setAuth={setAuth} />}/>
+                    <Route path="/forcedLogout" element={<LogoutPage/>}/> </>}
+                {/*</Route>*/}
             </Routes>
         </div>
     );

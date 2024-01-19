@@ -1,13 +1,5 @@
 import React from 'react';
 import Page from "../Tools/Page";
-import Tiles from "./Tiles/TilesMenu";
-import UserTile from "./Tiles/UserTile";
-import NewFormTile from "./Tiles/NewFormTile";
-import SavedFormsTile from "./Tiles/SavedFormsTile";
-import FormsRequestsTile from "./Tiles/FormsRequestsTile";
-import ManageUserTile from "./Tiles/ManageUserTile";
-import MessagesTile from "./Tiles/MessagesTile";
-import ViewFormsTile from "./Tiles/ViewFormsTile";
 
 
 function HomePage(props:{className?: string, children}){

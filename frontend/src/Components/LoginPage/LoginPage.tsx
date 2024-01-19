@@ -9,7 +9,7 @@ function LoginPage(props:{setAuth:(userToken: string | null) => void}){
     const [currentForm, setCurrentForm] = useState<"login"|"register"|"remind">("login")
     return (
         <>
-            <Page bgStyle={Style.bg + " " + Style.bgImage} className={"justify-content-center justify-content-md-end " + Style}>
+            <Page bgStyle={Style.bgImage + " bg"} className={"justify-content-center justify-content-md-end " + Style}>
                         <div className=" d-flex flex-column pb-1 m-2 center align-self-start"
                              style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}>
                             {currentForm == "login" &&

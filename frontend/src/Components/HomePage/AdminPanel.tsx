@@ -8,7 +8,7 @@ import MessagesTile from "./Tiles/MessagesTile";
 import ViewFormsTile from "./Tiles/ViewFormsTile";
 import React from "react";
 import Tiles from "./Tiles/TilesMenu";
-import AccountPage from "./AccountPage/AccountPage";
+import AccountPage from "../AccountPage/AccountPage";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 
 export default function AdminPanel(props:{setAuth}){

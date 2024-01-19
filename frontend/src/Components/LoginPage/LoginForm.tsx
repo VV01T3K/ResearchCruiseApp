@@ -1,6 +1,7 @@
 import React, {Dispatch, SetStateAction, useState} from "react";
 import {FieldValues, useForm} from "react-hook-form";
 import ErrorCode from "./ErrorCode";
+import {Link} from "react-router-dom";
 
 function LoginForm(props:{setAuth,
 setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
@@ -67,11 +68,11 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                 <input className={loading ? "textAnim": ""} type="submit" disabled={loading} value="Zaloguj się"/>
                 {loginError && <ErrorCode code={loginError}/>}
 
-                <div className="signup_link m-3"> Brak konta? <a href="#"  onClick={loading ? ()=>{}: ()=>props.setAuth({
+                <div className="signup_link m-3"> Brak konta? <Link to={""}  onClick={loading ? ()=>{}: ()=>props.setAuth({
                     accessToken:"tok",
                     refreshToken:"tik",
                     role:"shipOwner",
-                    name:"cos"}) }>Zarejestruj</a> {/*()=>props.setCurrentForm("register")*/}
+                    name:"cos"}) }>Zarejestruj</Link> {/*()=>props.setCurrentForm("register")*/}
                 </div>
             </form>
         </>

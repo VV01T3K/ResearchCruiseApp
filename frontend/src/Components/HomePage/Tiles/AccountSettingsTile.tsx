@@ -1,10 +1,11 @@
 import React  from 'react';
 import Tile from "./Tile";
+import {Link} from "react-router-dom";
 function AccountSettingsTile(props:{children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>}){
     return (
         <Tile>
             <div>
-                <a href={"/AccountSettings"}>Ustawienia konta</a>
+                <Link to={"/AccountSettings"}>Ustawienia konta</Link>
             </div>
         </Tile>
     )

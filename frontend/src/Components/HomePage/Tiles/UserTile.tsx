@@ -1,10 +1,11 @@
 import React  from 'react';
 import Tile from "./Tile";
+import {Link} from "react-router-dom";
 function UserTile( props:{ setAuth}){
     return (
         <Tile>
             <div>
-                <a href={"#"} onClick={()=>props.setAuth(null)}> Logout </a>
+                <Link to={""} onClick={()=>props.setAuth(null)}> Logout </Link>
             </div>
         </Tile>
     )

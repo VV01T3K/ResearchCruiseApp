@@ -16,6 +16,7 @@ export default function ShipOwnerPanel(props:{setAuth}){
         { element: <UserTile setAuth={props.setAuth}/>, cols: 1, rows: 1 },
         { element:<NewFormTile/>, cols: 1, rows: 1 },
         { element: <AccountSettingsTile/>, cols: 1, rows: 1 },
+        { element: <ManageUserTile/>, cols: 1, rows: 1 },
     ];
 
     return(
