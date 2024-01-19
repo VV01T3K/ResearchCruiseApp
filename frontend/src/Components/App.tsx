@@ -18,6 +18,7 @@ import RegisterForm from "./LoginPage/RegisterForm";
 import LogoutPage from "./LoginPage/LogoutPage";
 import AccountPage from "./AccountPage/AccountPage";
 import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
+import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
 
 function App() {
     const navigate = useNavigate()
@@ -64,6 +65,7 @@ function App() {
                     <Route path="/*" element={<LoginPage setAuth={setAuth} />}/>
                     <Route path="/forcedLogout" element={<LogoutPage/>}/> </>}
                 {/*</Route>*/}
+                <Route path="/ConfirmEmail/:token" element={<EmailConfirmPage/>}/>
             </Routes>
         </div>
     );

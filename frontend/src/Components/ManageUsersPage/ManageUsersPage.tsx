@@ -30,14 +30,9 @@ function ManageUsersPage(props:{className?: string}){
             catch (e){
                 setUserList({user1: {name:"Wills", surname:"Smith", mail:"www@ug.com", role:"admin"}, user2: {name:"sss", surname:"Smith", mail:"www@ug.com", role:"admin"}})
             }
-
-
-
         }
-
         // Wywołaj funkcję do pobierania danych po zamontowaniu komponentu
         getCredentials();
-
     }, [])
 
 
