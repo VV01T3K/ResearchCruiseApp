@@ -6,11 +6,11 @@ import {FieldValues, useForm} from "react-hook-form";
 
 
 function AccountPage(props:{className?: string}){
-    const [ loading, setLoading ] = useState(false);
+    // const [ loading, setLoading ] = useState(false);
     const [ loading2, setLoading2 ] = useState(false);
 
 
-    const [credentials, setCredentials] = useState( )//
+    const [credentials, setCredentials] = useState( )
 
     useEffect(() => {
         async function getCredentials() {
@@ -23,67 +23,71 @@ function AccountPage(props:{className?: string}){
                     },
 
                 }).then(data => {
-                        if(data.status == 401) setChangeMailError("Podano obecny adres e-mail");
-                        else if(!data.ok) setChangeMailError("Wystąpił problem ze zmianą adresu e-mail")
+                        if(!data.ok) throw new Error("Wystąpił problem pobraniem danych")
                         else return data.json();
                     })
                 setCredentials(response)
             }
             catch (e){
-                // setCredentials({firstName:"Wills", surname:"Smith", mail:"www@ug.com", role:"admin"})
+                setCredentialsError(e.message);
             }
 
 
 
         }
-
-        // Wywołaj funkcję do pobierania danych po zamontowaniu komponentu
         getCredentials();
 
     }, [])
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors } } = useForm({
-        mode: 'onSubmit',
-    });
+
+    // const [changeMailError, setChangeMailError] = useState<null|string>(null)
+    // const {
+    //     register,
+    //     handleSubmit,
+    //     formState: { errors } } = useForm({
+    //     mode: 'onSubmit',
+    // });
+
+
+    // async function changeMail(data:FieldValues) {
+    //     return fetch('http://localhost:8080/account/changeMail', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
+    //         },
+    //         body: JSON.stringify(data)
+    //     })
+    //         .then(data => {
+    //             if(data.status == 401) setChangeMailError("Podano obecny adres e-mail");
+    //             else if(!data.ok) setChangeMailError("Wystąpił problem ze zmianą adresu e-mail")
+    //             else return data.json();
+    //         })
+    // }
+    //
+    // const handleMailChange =   async (data:FieldValues) => {
+    //     setLoading(true);
+    //     try {
+    //         await changeMail(data);
+    //         setChangeMailError(null)
+    //         // setRegisterSuccessful(true)
+    //     }
+    //     catch (e){
+    //         setChangeMailError("Wystąpił problem ze zmianą adresu e-mail, sprawdź połączenie z internetem")
+    //     }
+    //     setLoading(false)
+    // }
+
+    const [changePasswordError, setChangePasswordError] = useState<null|string>(null)
+    const [changePasswordSuccess, setChangePasswordSuccess] = useState(false)
+
     const {
         watch,
         register:register2,
         handleSubmit:handleSubmit2,
         formState: { errors:errors2  } } = useForm({
-        mode: 'onSubmit',
+        mode: 'onBlur',
     });
-
-    async function changeMail(data:FieldValues) {
-        return fetch('http://localhost:8080/account/changeMail', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
-            },
-            body: JSON.stringify(data)
-        })
-            .then(data => {
-                if(data.status == 401) setChangeMailError("Podano obecny adres e-mail");
-                else if(!data.ok) setChangeMailError("Wystąpił problem ze zmianą adresu e-mail")
-                else return data.json();
-            })
-    }
-
-    const handleMailChange =   async (data:FieldValues) => {
-        setLoading(true);
-        try {
-            await changeMail(data);
-            setChangeMailError(null)
-            // setRegisterSuccessful(true)
-        }
-        catch (e){
-            setChangeMailError("Wystąpił problem ze zmianą adresu e-mail, sprawdź połączenie z internetem")
-        }
-        setLoading(false)
-    }
 
     async function changePassword(data:FieldValues) {
         return fetch('http://localhost:8080/account', {
@@ -95,9 +99,8 @@ function AccountPage(props:{className?: string}){
             body: JSON.stringify(data)
         })
             .then(data => {
-                if(data.status == 401) setChangePasswordError("Podano obecne hasło");
-                else if(!data.ok) setChangePasswordError("Wystąpił problem ze zmianą hasła")
-                else return data.json();
+                if(data.status == 401) throw new Error("Podano obecne hasło");
+                else if(!data.ok) throw new Error("Wystąpił problem ze zmianą hasła, upewnij się, że stare hasło jest prawidłowe")
             })
     }
 
@@ -107,17 +110,21 @@ function AccountPage(props:{className?: string}){
         try {
             await changePassword(dataWithoutPassword2);
             setChangePasswordError(null)
-            // setRegisterSuccessful(true)
+            setChangePasswordSuccess(true)
         }
         catch (e){
-            setChangePasswordError("Wystąpił problem ze zmianą hasła, sprawdź połączenie z internetem")
+            setChangePasswordError(e.message)
+            setChangePasswordSuccess(false)
         }
         setLoading2(false)
     }
 
+    useEffect(()=>{
+        setChangePasswordSuccess(false)
+    }, [watch])
 
-    const [changeMailError, setChangeMailError] = useState<null|string>(null)
-    const [changePasswordError, setChangePasswordError] = useState<null|string>(null)
+
+    const [credentialsError, setCredentialsError] = useState()
     return (
         <>
             <Page className={props.className + " justify-content-center "}>
@@ -142,8 +149,7 @@ function AccountPage(props:{className?: string}){
                                 {credentials && credentials["email"]}
                                 {credentials && !credentials["emailConfirmed"] && <ErrorCode code={"email nie został potwierdzony"}/>}
                             </div>
-
-
+                            {credentialsError && <ErrorCode code={credentialsError}/>}
                         </div>
                         <div
                             className={" h4 col-12 col-xl-5 p-2 pt-3 d-flex flex-column justify-content-center justify-content-xl-start  text-center "}>
@@ -170,7 +176,7 @@ function AccountPage(props:{className?: string}){
                             <form className={`p-0 h6`}
                                   onSubmit={handleSubmit2(handlePasswordChange)}>
                                 <div className="txt_field">
-                                    <input type="password" disabled={loading2} {...register2("password", {
+                                    <input type="password" onClick={()=>setChangePasswordSuccess(false)} disabled={loading2} {...register2("password", {
                                         required: "Pole wymagane", maxLength: 30, pattern: {
                                             value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
                                             message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
@@ -181,7 +187,7 @@ function AccountPage(props:{className?: string}){
                                 </div>
                                 {errors2["password"] && <ErrorCode code={errors2["password"].message}/>}
                                 <div className="txt_field">
-                                    <input type="password" disabled={loading2} {...register2("newPassword", {
+                                    <input type="password" onClick={()=>setChangePasswordSuccess(false)} disabled={loading2} {...register2("newPassword", {
                                         required: "Pole wymagane", maxLength: 30, pattern: {
                                             value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
                                             message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
@@ -192,7 +198,7 @@ function AccountPage(props:{className?: string}){
                                 </div>
                                 {errors2["newPassword"] && <ErrorCode code={errors2["newPassword"].message}/>}
                                 <div className="txt_field">
-                                    <input type="password" disabled={loading2} {...register2("password2", {
+                                    <input type="password"  onClick={()=>setChangePasswordSuccess(false)} disabled={loading2} {...register2("password2", {
                                         required: "Pole wymagane", maxLength: 30,
                                         validate: (value) => value === watch('newPassword') || 'Hasła nie pasują do siebie',
                                     })}/>
@@ -204,6 +210,7 @@ function AccountPage(props:{className?: string}){
                                        value="Zmień hasło"/>
                                 {changePasswordError && <ErrorCode code={changePasswordError}/>}
                             </form>
+                            {changePasswordSuccess && <div className={"h6"}>Pomyślnie zmieniono hasło</div>}
                         </div>
                     </div>
                 </div>

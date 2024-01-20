@@ -15,22 +15,21 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
             body: JSON.stringify(data)
         })
             .then(data => {
-                if(data.status == 409) setError("Użytkownik o podanym adresie już istnieje");
-                else if(!data.ok) setError("Wystąpił problem z rejestracją")
-                else return data.json();
-            })
+                if(data.status == 400) throw new Error("Użytkownik o podanym adresie e-mail już istnieje");
+                else if(!data.ok) throw new Error("Wystąpił problem z rejestracją, sprawdź połączenie z internetem")
+            });
     }
 
     const onSubmit = async (data:FieldValues) => {
         const { password2, ...dataWithoutPassword2 } = data;
         setLoading(true);
         try {
-            await registerUser(dataWithoutPassword2);
+            await registerUser(data);
             setError(null)
             setRegisterSuccessful(true)
         }
         catch (e){
-            setError("Wystąpił problem z rejestracją, sprawdź połączenie z internetem")
+            setError(e.message)
         }
         setLoading(false)
 
@@ -105,7 +104,8 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
             {registerSuccessful &&
                 <>
                     <div className="signup_link m-3 text-break">
-                        <div style={{fontSize:"1.3rem"}}>Rejestracja przebiegła pomyślnie, aby się zalogować biuro armatora musi zatwierdzić twoje konto</div>
+                        <div style={{fontSize:"1.3rem"}}>Rejestracja przebiegła pomyślnie, potwierdź rejestrację poprzez link wysłany na adres e-mail i oczekuj zatwierdzenia konta
+                            przez biuro armatora</div>
                         <div className={"butt p-2 mt-2"}>
                         <a className={"text-white"} href="#" onClick={() => props.setCurrentForm("login")}>
                                 Powrót do logowania

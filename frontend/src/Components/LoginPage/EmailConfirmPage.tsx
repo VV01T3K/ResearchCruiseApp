@@ -3,10 +3,11 @@ import Style from './LoginPage.module.css'
 import Page from "../Tools/Page";
 import "./style.css"
 import {Link, useLocation, useParams} from "react-router-dom";
+import {ErrorMessage} from "react-image-size/lib/lib/constants";
+import ErrorCode from "./ErrorCode";
 function EmailConfirmPage(){
     const [confirmed, setConfirmed] = useState(false)
     const [errorMsg, setErrorMsg] = useState<null|string>(null)
-    const [userIdParam] = useState()
     const { search } = useLocation();
     useEffect(() => {
         const searchParams = new URLSearchParams(search);
@@ -23,15 +24,13 @@ function EmailConfirmPage(){
                     },
                 })
                     .then(data => {
-                        if(data.ok)
-                            return data.json();
-                        else throw new Error("problem")
+                        if(!data.ok)
+                            throw new Error("Wystąpił problem")
                     })
                 setConfirmed(true)
             }
             catch (e){
-                setErrorMsg(e.toString())
-
+                setErrorMsg(e.message)
             }
         }
         confirmEmail();
@@ -52,9 +51,10 @@ function EmailConfirmPage(){
                                     </div>
                                 </div>
                             }
-                            { !confirmed &&
+                            { errorMsg &&
                                 <div className="signup_link m-3 text-break">
                                     <div style={{fontSize:"1.3rem"}}>Nie udało się potwiedzić adresu email</div>
+                                    {ErrorMessage && <ErrorCode code={errorMsg}/>}
                                     <div className={"butt p-2 mt-2"}>
                                         <Link className={"text-white"} to="/">
                                             Powrót do logowania

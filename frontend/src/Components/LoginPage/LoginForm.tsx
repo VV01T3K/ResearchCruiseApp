@@ -7,6 +7,7 @@ function LoginForm(props:{setAuth,
 setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
 
     const [loginError, setError] = useState<null|string>(null)
+    const [ loading, setLoading ] = useState(false);
     async function loginUser(data:FieldValues) {
         return fetch('http://localhost:8080/account/login', {
             method: 'POST',
@@ -16,10 +17,10 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             body: JSON.stringify(data)
         })
             .then(data => {
-                if(data.status == 401) setError("Nieprawidłowy adres e-mail lub hasło");
-                else if(!data.ok) setError("Wystąpił problem z zalogowaniem")
+                if(data.status == 401) throw new Error("Nieprawidłowy adres e-mail lub hasło");
+                else if(!data.ok) throw new Error("Wystąpił problem z zalogowaniem, sprawdź połączenie sieciowe")
                 else return data.json();
-            })
+            });
     }
 
     async function getUserData(accessToken: string) {
@@ -32,9 +33,9 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
 
         })
             .then(data => {
-                if(!data.ok) setError("Wystąpił problem z zalogowaniem")
+                if(!data.ok) throw new Error("Nie można pobrać roli użytkownika")
                 else return data.json();
-            })
+            });
     }
 
 
@@ -44,9 +45,7 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
         setLoading(true);
         try {
             const auth = await loginUser(data);
-            console.log(auth)
             const userData = await getUserData(auth["accessToken"])
-            console.log(userData)
             props.setAuth({
                 accessToken:auth["accessToken"],
                 refreshToken:auth["refreshToken"],
@@ -55,12 +54,12 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             setError(null)
         }
         catch (e){
-            setError("Wystąpił problem z zalogowaniem, sprawdź połączenie z internetem")
+            setError(e.message)
         }
         setLoading(false)
     }
 
-    const [ loading, setLoading ] = useState(false);
+
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     return (
@@ -93,12 +92,14 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                 <div className="pass m-2"   onClick={loading ? ()=>{}: ()=>props.setCurrentForm("remind")}>Nie pamiętam hasła</div>
                 <input className={loading ? "textAnim": ""} type="submit" disabled={loading} value="Zaloguj się"/>
                 {loginError && <ErrorCode code={loginError}/>}
-
-                <div className="signup_link m-3"> Brak konta? <Link to={""}  onClick={loading ? ()=>{}: ()=>props.setAuth({
-                    accessToken:"tok",
-                    refreshToken:"tik",
-                    role:"Shipowner",
-                    firstName:"cos"}) }>Zarejestruj</Link> {/*()=>props.setCurrentForm("register")*/}
+                <div className="signup_link m-3"> Brak konta? <Link to={""}  onClick={loading ? ()=>{}:
+                    // ()=>props.setAuth({
+                    // accessToken:"tok",
+                    // refreshToken:"tik",
+                    // role:"Shipowner",
+                    // firstName:"cos"})
+                    ()=>props.setCurrentForm("register")
+                }>Zarejestruj</Link>
                 </div>
             </form>
         </>
