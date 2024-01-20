@@ -48,26 +48,28 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
             {!registerSuccessful &&
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("email", { required: "Pole wymagane", maxLength: 30,  pattern: {
-                            value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
-                            message: 'Podaj adres e-mail z domeny @ug.edu.pl',
-                        }})}/>
+                    <input type="text" disabled={loading} {...register("email", { required: "Pole wymagane", maxLength: 30,
+                        // pattern: {
+                        //     value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
+                        //     message: 'Podaj adres e-mail z domeny @ug.edu.pl',
+                        // }
+                    })}/>
                     <span></span>
                     <label>Adres e-mail</label>
                 </div>
                 {errors["email"] && <ErrorCode code={errors["email"].message}/>}
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("firstname", {
+                    <input type="text" disabled={loading} {...register("firstName", {
                         required: "Pole wymagane",
                         maxLength: 100
                     })}/>
                     <span></span>
                     <label>Imię</label>
                 </div>
-                {errors["firstname"] && <ErrorCode code={errors["firstname"].message}/>}
+                {errors["firstName"] && <ErrorCode code={errors["firstName"].message}/>}
 
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("lastname",
+                    <input type="text" disabled={loading} {...register("lastName",
                         {
                             required: "Pole wymagane",
                             maxLength: 100
@@ -75,11 +77,11 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
                     <span></span>
                     <label>Nazwisko</label>
                 </div>
-                {errors["lastname"] && <ErrorCode code={errors["lastname"].message}/>}
+                {errors["lastName"] && <ErrorCode code={errors["lastName"].message}/>}
                 <div className="txt_field">
                     <input type="password" disabled={loading} {...register("password", { required: "Pole wymagane", maxLength: 30, pattern: {
                             value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-                            message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
+                            message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
                         } })}/>
                     <span></span>
                     <label>Hasło</label>

@@ -22,15 +22,36 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             })
     }
 
+    async function getUserData(accessToken: string) {
+        return fetch('http://localhost:8080/account', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+
+        })
+            .then(data => {
+                if(!data.ok) setError("Wystąpił problem z zalogowaniem")
+                else return data.json();
+            })
+    }
+
+
+
+
     const onSubmit = async (data:FieldValues) => {
         setLoading(true);
         try {
             const auth = await loginUser(data);
+            console.log(auth)
+            const userData = await getUserData(auth["accessToken"])
+            console.log(userData)
             props.setAuth({
                 accessToken:auth["accessToken"],
                 refreshToken:auth["refreshToken"],
-                role:auth["role"],
-                name:auth["name"]});
+                role:userData["roles"][0],
+                firstName:userData["firstName"]});
             setError(null)
         }
         catch (e){
@@ -47,19 +68,24 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
             <h1 style={{fontSize:"2rem"}}>Logowanie</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="txt_field">
-                    <input type="text" disabled={loading} {...register("email", { required: "Pole wymagane", maxLength: 30,  pattern: {
-                            value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
-                            message: 'Podaj adres e-mail z domeny @ug.edu.pl',
-                        }})}/>
+                    <input type="text" disabled={loading} {...register("email",
+                        { required: "Pole wymagane", maxLength: 30,
+                            // pattern: {
+                            // value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
+                            // message: 'Podaj adres e-mail z domeny @ug.edu.pl',
+                        // }
+                        })}/>
                     <span></span>
                     <label>E-mail</label>
                 </div>
                 {errors["email"] && <ErrorCode code={errors["email"].message}/>}
                 <div className="txt_field">
-                    <input type="password" disabled={loading}  {...register("password", { required: "Pole wymagane", maxLength: 30, pattern: {
-                            value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-                            message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
-                        } })}/>
+                    <input type="password" disabled={loading}  {...register("password", { required: "Pole wymagane", maxLength: 30,
+                        // pattern: {
+                        //     value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
+                        //     message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
+                        // }
+                    })}/>
                     <span></span>
                     <label>Hasło</label>
                 </div>
@@ -71,8 +97,8 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                 <div className="signup_link m-3"> Brak konta? <Link to={""}  onClick={loading ? ()=>{}: ()=>props.setAuth({
                     accessToken:"tok",
                     refreshToken:"tik",
-                    role:"shipOwner",
-                    name:"cos"}) }>Zarejestruj</Link> {/*()=>props.setCurrentForm("register")*/}
+                    role:"Shipowner",
+                    firstName:"cos"}) }>Zarejestruj</Link> {/*()=>props.setCurrentForm("register")*/}
                 </div>
             </form>
         </>

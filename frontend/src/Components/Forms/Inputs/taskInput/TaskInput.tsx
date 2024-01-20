@@ -28,7 +28,7 @@ function TaskInput(props:{className:string, label:string, control, name:string, 
 
     const { fields, append, remove } = useFieldArray({
         control: props.control,
-        name: props.name,
+        firstName: props.name,
     });
 
     const [isOpen, setIsOpen] = useState(false);

@@ -13,7 +13,7 @@ function PageHeader(props:{className?: string, auth?}){
                             <a className={"navbar-brand pe-3 ps-3 h-100 border-end"} href={"https://ug.edu.pl/"} title={"Strona główna"} rel={"home"}>
                                 <img src={Logo} alt="Strona główna" className={"d-inline align-top h-100"}/>
                             </a>
-                            <div className={"h-100 text-light text-nowrap navbar me-3"}>{props.auth?.name}</div>
+                            <div className={"h-100 text-light text-nowrap navbar me-3"}>{props.auth && "Witaj, " + props.auth?.firstName}</div>
                             <button className="d-md-flex d-md-none navbar-toggler navbar-dark ms-auto me-0 pe-3" onClick={()=>setToggle(!toggledButton)}>
                                 <span className="navbar-toggler-icon"></span>
                             </button>

@@ -2,21 +2,25 @@ import React, {useEffect, useState} from 'react';
 import Style from './LoginPage.module.css'
 import Page from "../Tools/Page";
 import "./style.css"
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 function EmailConfirmPage(){
     const [confirmed, setConfirmed] = useState(false)
     const [errorMsg, setErrorMsg] = useState<null|string>(null)
-    const { token } = useParams();
+    const [userIdParam] = useState()
+    const { search } = useLocation();
     useEffect(() => {
+        const searchParams = new URLSearchParams(search);
+        const userIdParam = searchParams.get('userId');
+        const codeParam = searchParams.get('code');
+
         async function confirmEmail() {
             try {
-                console.log(token)
-                const  response = await fetch('http://localhost:8080/account/confirmEmail', {
-                    method: 'POST',
+                const  response = await fetch(`http://localhost:8080/account/confirmEmail?userId=${userIdParam}&code=${codeParam}`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
+
                     },
-                    body: JSON.stringify({ token }),
                 })
                     .then(data => {
                         if(data.ok)
@@ -31,7 +35,7 @@ function EmailConfirmPage(){
             }
         }
         confirmEmail();
-    }, [token])
+    }, [])
 
     return (
         <>

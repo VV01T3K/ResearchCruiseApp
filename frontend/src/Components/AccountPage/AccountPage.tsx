@@ -10,18 +10,19 @@ function AccountPage(props:{className?: string}){
     const [ loading2, setLoading2 ] = useState(false);
 
 
-    const [credentials, setCredentials] = useState( {name:"", surname:"", mail:"", role:""})//
+    const [credentials, setCredentials] = useState( )//
 
     useEffect(() => {
         async function getCredentials() {
             try {
-                const  response = await fetch('http://localhost:8080/account/changeMail', {
-                    method: 'POST',
+                const  response = await fetch('http://localhost:8080/account', {
+                    method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
                     },
-                })
-                    .then(data => {
+
+                }).then(data => {
                         if(data.status == 401) setChangeMailError("Podano obecny adres e-mail");
                         else if(!data.ok) setChangeMailError("Wystąpił problem ze zmianą adresu e-mail")
                         else return data.json();
@@ -29,7 +30,7 @@ function AccountPage(props:{className?: string}){
                 setCredentials(response)
             }
             catch (e){
-                setCredentials({name:"Wills", surname:"Smith", mail:"www@ug.com", role:"admin"})
+                // setCredentials({firstName:"Wills", surname:"Smith", mail:"www@ug.com", role:"admin"})
             }
 
 
@@ -59,7 +60,8 @@ function AccountPage(props:{className?: string}){
         return fetch('http://localhost:8080/account/changeMail', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
             },
             body: JSON.stringify(data)
         })
@@ -84,10 +86,11 @@ function AccountPage(props:{className?: string}){
     }
 
     async function changePassword(data:FieldValues) {
-        return fetch('http://localhost:8080/account/changePassword', {
-            method: 'POST',
+        return fetch('http://localhost:8080/account', {
+            method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
             },
             body: JSON.stringify(data)
         })
@@ -119,7 +122,7 @@ function AccountPage(props:{className?: string}){
         <>
             <Page className={props.className + " justify-content-center "}>
                 <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start justify-content-center p-2">
-                   <h1 style={{fontSize:"2rem"}}>Ustwienia konta <span className={"text-danger"}> {errors ? "!":""}</span></h1>
+                   <h1 style={{fontSize:"2rem"}}>Ustawienia konta </h1>
                     <div className={"d-flex flex-row flex-wrap justify-content-center  p-2 p-xl-5 align-items-center"}>
 
                         <div
@@ -127,17 +130,17 @@ function AccountPage(props:{className?: string}){
                             <img style={{width: "300px"}} className={"align-self-center border border-5 rounded m-2 "}
                                  src={UserImg}></img>
                             <div className={" h6 "}>
-                                {credentials["role"]}
+                                {credentials && credentials["role"]}
 
                             </div>
                             <div className={"p-1  "}>
-                                {credentials["name"] + " " + credentials["surname"]}
-                                {credentials["name"] && <ErrorCode code={"użytkownik nie został zaakceptowany"}/>}
+                                {credentials && credentials["firstName"] + " " + credentials["lastName"]}
+                                {credentials && !credentials["accepted"] && <ErrorCode code={"użytkownik nie został zaakceptowany"}/>}
                             </div>
 
                             <div className={"p-1 h5"}>
-                                {credentials["mail"]}
-                                {credentials["mail"] && <ErrorCode code={"email nie został potwierdzony"}/>}
+                                {credentials && credentials["email"]}
+                                {credentials && !credentials["emailConfirmed"] && <ErrorCode code={"email nie został potwierdzony"}/>}
                             </div>
 
 
@@ -146,31 +149,31 @@ function AccountPage(props:{className?: string}){
                             className={" h4 col-12 col-xl-5 p-2 pt-3 d-flex flex-column justify-content-center justify-content-xl-start  text-center "}>
 
 
-                            <form className={`p-0 h6`}
-                                  onSubmit={handleSubmit(handleMailChange)}>
-                                <div className="txt_field">
-                                    <input type="text" disabled={loading} {...register("email", {
-                                        required: "Pole wymagane", maxLength: 30, pattern: {
-                                            value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
-                                            message: 'Podaj adres e-mail z domeny @ug.edu.pl',
-                                        }
-                                    })}/>
-                                    <span></span>
-                                    <label>Adres e-mail</label>
-                                </div>
-                                {errors["email"] && <ErrorCode code={errors["email"].message}/>}
-                                <input className={loading ? "textAnim" : ""} type="submit" disabled={loading}
-                                       value="Zmień adres email"/>
-                                {changeMailError && <ErrorCode code={changeMailError}/>}
-                            </form>
+                            {/*<form className={`p-0 h6`}*/}
+                            {/*      onSubmit={handleSubmit(handleMailChange)}>*/}
+                            {/*    <div className="txt_field">*/}
+                            {/*        <input type="text" disabled={loading} {...register("email", {*/}
+                            {/*            required: "Pole wymagane", maxLength: 30, pattern: {*/}
+                            {/*                value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,*/}
+                            {/*                message: 'Podaj adres e-mail z domeny @ug.edu.pl',*/}
+                            {/*            }*/}
+                            {/*        })}/>*/}
+                            {/*        <span></span>*/}
+                            {/*        <label>Adres e-mail</label>*/}
+                            {/*    </div>*/}
+                            {/*    {errors["email"] && <ErrorCode code={errors["email"].message}/>}*/}
+                            {/*    <input className={loading ? "textAnim" : ""} type="submit" disabled={loading}*/}
+                            {/*           value="Zmień adres email"/>*/}
+                            {/*    {changeMailError && <ErrorCode code={changeMailError}/>}*/}
+                            {/*</form>*/}
 
                             <form className={`p-0 h6`}
                                   onSubmit={handleSubmit2(handlePasswordChange)}>
                                 <div className="txt_field">
-                                    <input type="password" disabled={loading2} {...register2("password0", {
+                                    <input type="password" disabled={loading2} {...register2("password", {
                                         required: "Pole wymagane", maxLength: 30, pattern: {
                                             value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-                                            message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
+                                            message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
                                         }
                                     })}/>
                                     <span></span>
@@ -178,20 +181,20 @@ function AccountPage(props:{className?: string}){
                                 </div>
                                 {errors2["password"] && <ErrorCode code={errors2["password"].message}/>}
                                 <div className="txt_field">
-                                    <input type="password" disabled={loading2} {...register2("password", {
+                                    <input type="password" disabled={loading2} {...register2("newPassword", {
                                         required: "Pole wymagane", maxLength: 30, pattern: {
                                             value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-                                            message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
+                                            message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
                                         }
                                     })}/>
                                     <span></span>
                                     <label>Nowe hasło</label>
                                 </div>
-                                {errors2["password"] && <ErrorCode code={errors2["password"].message}/>}
+                                {errors2["newPassword"] && <ErrorCode code={errors2["newPassword"].message}/>}
                                 <div className="txt_field">
                                     <input type="password" disabled={loading2} {...register2("password2", {
                                         required: "Pole wymagane", maxLength: 30,
-                                        validate: (value) => value === watch('password') || 'Hasła nie pasują do siebie',
+                                        validate: (value) => value === watch('newPassword') || 'Hasła nie pasują do siebie',
                                     })}/>
                                     <span></span>
                                     <label>Potwierdź hasło</label>

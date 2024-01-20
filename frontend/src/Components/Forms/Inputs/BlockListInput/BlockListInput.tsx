@@ -10,7 +10,7 @@ const data =  ["Katedra Biologii Morza i Biotechnologii",
 function BlockListInput(props:{className:string, label:string, control, name, errors, setValue, dirtyFields}) {
     const { fields, append, remove } = useFieldArray({
         control: props.control,
-        name: props.name,
+        firstName: props.name,
     });
 
 

@@ -26,25 +26,27 @@ function App() {
 
     return (
         <div className={`vh-100`}>
-            <PageHeader auth={null}></PageHeader>
+            <PageHeader auth={auth}></PageHeader>
             <Routes>
                 {/*<Route element={<LoggedInRoute auth={auth} redirectPath={"/login"} />}>*/}
-                    { auth != null && auth.role=="shipOwner" && <>
+                    { auth != null && auth.role=="Shipowner" && <>
                         <Route path="/NewForm" element={<NewFormPage/>}/>
                         <Route path="/FormA" element={<FormA0/>}/>
                         <Route path="/ManageUsers" element={<ManageUsersPage/>}/>
                         <Route path="/*" element={<ShipOwnerPanel setAuth={setAuth}/>}/>
                     </>
                     }
-                    { auth != null && auth.role=="admin" &&<>
+                    { auth != null && auth.role=="Administrator" &&<>
                         <Route path="/NewForm" element={<NewFormPage/>}/>
                         <Route path="/FormA" element={<FormA0/>}/>
                         <Route path="/FormB" element={<FormB0/>}/>
                         <Route path="/FormC" element={<FormC0/>}/>
+                        <Route path="/ManageUsers" element={<ManageUsersPage/>}/>
+
                         <Route path="/*" element={<AdminPanel setAuth={setAuth}/>}/>
                     </>
                     }
-                    { auth != null && auth.role=="manager" &&<>
+                    { auth != null && auth.role=="CruiseManager" &&<>
                         <Route path="/NewForm" element={<NewFormPage/>}/>
                         <Route path="/FormA" element={<FormA0/>}/>
                         <Route path="/FormB" element={<FormB0/>}/>
@@ -65,7 +67,7 @@ function App() {
                     <Route path="/*" element={<LoginPage setAuth={setAuth} />}/>
                     <Route path="/forcedLogout" element={<LogoutPage/>}/> </>}
                 {/*</Route>*/}
-                <Route path="/ConfirmEmail/:token" element={<EmailConfirmPage/>}/>
+                <Route path="/ConfirmEmail" element={<EmailConfirmPage/>}/>
             </Routes>
         </div>
     );

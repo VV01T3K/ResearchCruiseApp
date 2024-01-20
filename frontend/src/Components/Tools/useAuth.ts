@@ -37,7 +37,7 @@ const useAuth = (navigate) => {
                     accessToken:response["accessToken"],
                     refreshToken:response["refreshToken"],
                     role:response["role"],
-                    name:response["name"]})
+                    firstName:response["name"]})
             } catch (error) {
                 console.error(error.message);
                 sessionStorage.clear()
