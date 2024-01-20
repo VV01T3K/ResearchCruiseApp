@@ -9,18 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/AccountPage/AccountPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/AccountPage/AccountPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/BlockList/BlockList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/BlockList/BlockList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/BlockListInput/BlockListInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/BlockListInput/BlockListInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/taskInput/TaskInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/taskInput/TaskInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/LoginForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Tools/useAuth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Tools/useAuth.ts" afterDir="false" />
-    </list>
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
