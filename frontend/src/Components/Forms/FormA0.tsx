@@ -32,7 +32,7 @@ function FormA0(){
         defaultValues: {
             managers: null,
             supplyManagers:null,
-            years: { label: '2023', value: '2023' },
+            years: { label: '', value: '' },
             acceptedPeriod: [0,24],
             optimalPeriod:[0,24],
             cruiseDays: 0,
