@@ -1,8 +1,11 @@
 ﻿namespace ResearchCruiseApp_API.Models;
 
-public class FormsModel
+public struct CruiseInfo
 {
-    //TODO sprawdzić czy model może mieć struktury i każdą sekcje umieścić w strukturze
+    public CruiseInfo()
+    {
+    }
+    //podstawowe informacje
     public string Id { get; set; } = null!;
     public string CruiseManager { get; set; } = null!;
     public string Deputy { get; set; } = null!;
@@ -18,7 +21,93 @@ public class FormsModel
     //Uwaga dotycząca terminu:
     public string DateComment { get; set; } = null!;
     //Czy statek na potrzeby badań będzie wykorzystywany
-    public string Choice1 { get; set; } = null!;
+    public string Choice { get; set; } = null!;
+}
+
+public struct Tasks
+{
+    public Tasks()
+    {
+    }
+
+    //Zadania
+    //typ zadania np licencjacka, magisterska
+    public string Type { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    public string ThesisAuthor { get; set; } = null!;
+    //Instytucja do której projetk będzie składany
+    public string ProjectInstitution { get; set; } = null!;
+    //przewidywany termin skadania projektu
+    //Proponowany termin złożenia
+    public string ProjectDeadline { get; set; } = null!;
+    //Ramy czasowe
+    public string ProjectTime { get; set; } = null!;
+    //Kwota przyznanego dla UG finansowania
+    public float ProjectFunding { get; set; } = 0;
+    //Opis zajec dydaktycznych
+    public string Description { get; set; } = null!;
+    //Proponowane czasopismo
+    public string MagazineName { get; set; } = null!;
+    //liczba punktów ministerialnych
+    public int MinisterialPoints { get; set; } = 0;
+}
+
+public struct Contracts
+{
+    //Lista umów współpracy
+    //
+    //
+}
+
+public struct Publications
+{
+    public Publications()
+    {
+    }
+
+    //Publikacje
+    public string Category { get; set; } = null!;
+    public string DOI { get; set; } = null!;
+    public string Author { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    public string Magazine { get; set; } = null!;
+    public string Release { get; set; } = null!;
+    public int Points { get; set; } = 0;
+    public string Actions { get; set; } = null!;
+}
+
+public struct Theses
+{
+    public Theses()
+    {
+    }
+
+    //Prace
+    public string Category { get; set; } = null!;
+    public string Author { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    public string Promotor { get; set; } = null!;
+    public string DefenseYear { get; set; } = null!;
+    public string Actions { get; set; } = null!;
+}
+
+public struct Efects
+{
+    public Efects()
+    {
+    }
+    //TODO ujednolicić nieścisłośći pomiedzy polami do wpisywania a zawartosciami tabeli)
+    //typ zadania np licencjacka, magisterska
+    public string EfectTaskType { get; set; } = null!;
+    public string EfectTitle { get; set; } = null!;
+    public string EfectThesisAuthor { get; set; } = null!;
+    //(...)
+}
+
+public class FormsModel
+{
+    //Ogólne informacje
+    public CruiseInfo CruiseInfoData;
     
     
     //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
@@ -39,32 +128,14 @@ public class FormsModel
     public int UGWorkers { get; set; } = 0;
     public int Students { get; set; } = 0;
     public int Guests { get; set; } = 0;
+
     
     //Zadania
-    //typ zadania np licencjacka, magisterska
-    public string TaskType { get; set; } = null!;
-    public string Title { get; set; } = null!;
-    public string ThesisAuthor { get; set; } = null!;
-    //Instytucja do której projetk będzie składany
-    public string ProjectInstitution { get; set; } = null!;
-    //przewidywany termin skadania projektu
-    //Proponowany termin złożenia
-    public string ProjectDeadline { get; set; } = null!;
-    //Ramy czasowe
-    public string ProjectTime { get; set; } = null!;
-    //Kwota przyznanego dla UG finansowania
-    public float ProjectFunding { get; set; } = 0;
-    //Opis zajec dydaktycznych
-    public string Description { get; set; } = null!;
-    //Proponowane czasopismo
-    public string MagazineName { get; set; } = null!;
-    //liczba punktów ministerialnych
-    public int MinisterialPoints { get; set; } = 0;
+    public List<Tasks>? TasksList;
+
     
-    
-    //Lista umów współpracy
-    //
-    //
+    //Lista umów
+    public List<Contracts>? ContractsList;
     
     
     //Zespoły badawcze
@@ -74,30 +145,12 @@ public class FormsModel
     
     
     //Publikacje i Prace
-    //Publikacje
-    public string PublicationCategory { get; set; } = null!;
-    public string PublicationDOI { get; set; } = null!;
-    public string PublicationAuthor { get; set; } = null!;
-    public string PublicationTitle { get; set; } = null!;
-    public string PublicationMagazine { get; set; } = null!;
-    public string PublicationRelease { get; set; } = null!;
-    public int PublicationPoints { get; set; } = 0;
-    public string PublicationActions { get; set; } = null!;
-    //Prace
-    public string WorkCategory { get; set; } = null!;
-    public string WorkAuthor { get; set; } = null!;
-    public string WorkTitle { get; set; } = null!;
-    public string WorkPromotor { get; set; } = null!;
-    public string WorkDefenseYear { get; set; } = null!;
-    public string WorkActions { get; set; } = null!;
+    public List<Publications>? PublicationsList;
+    public List<Theses>? ThesesList;
     
     
-    //Efekty rejsu (TODO ujednolicić nieścisłośći pomiedzy polami do wpisywania a zawartosciami tabeli)
-    //typ zadania np licencjacka, magisterska
-    public string EfectTaskType { get; set; } = null!;
-    public string EfectTitle { get; set; } = null!;
-    public string EfectThesisAuthor { get; set; } = null!;
-    //(...)
+    //Efekty rejsu 
+    public List<Efects>? EfectsList;
     
     
     //Zadanie SPUB
