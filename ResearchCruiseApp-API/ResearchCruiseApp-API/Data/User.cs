@@ -11,4 +11,6 @@ public class User : IdentityUser
     public string LastName { get; set; } = null!;
 
     public bool Accepted { get; set; } = false;
+    
+    public List<FormA> Forms { get; set; } = null!;
 }
