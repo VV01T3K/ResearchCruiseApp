@@ -10,9 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../Nowy Dokument tekstowy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wait-for-db.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Forms/FormA0.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Forms/FormA0.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/IntInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Forms/Inputs/IntInput.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/LogoutPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/LogoutPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/LoginPage/RegisterForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +99,10 @@
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlserver.localdb",
+      "sqlserver"
+    ],
     "rider.external.source.directories": [
       "C:\\Users\\theed\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
       "C:\\Users\\theed\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
@@ -153,12 +166,12 @@
             <list>
               <DockerPortBindingImpl>
                 <option name="containerPort" value="8080" />
-                <option name="hostIp" value="127.0.0.1" />
+                <option name="hostIp" value="localhost" />
                 <option name="hostPort" value="8080" />
               </DockerPortBindingImpl>
             </list>
           </option>
-          <option name="commandLineOptions" value="--network researchcruiseapp-network --hostname researchcruiseapp-api" />
+          <option name="commandLineOptions" value="--network researchcruiseapp-network" />
           <option name="sourceFilePath" value="ResearchCruiseApp-API/Dockerfile" />
         </settings>
       </deployment>
@@ -208,7 +221,9 @@
       <workItem from="1705517962238" duration="8074000" />
       <workItem from="1705588590244" duration="7092000" />
       <workItem from="1705698971970" duration="1259000" />
-      <workItem from="1705745508657" duration="4642000" />
+      <workItem from="1705745508657" duration="4643000" />
+      <workItem from="1706177151026" duration="1636000" />
+      <workItem from="1708964162848" duration="11598000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />

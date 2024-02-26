@@ -92,7 +92,9 @@ function FormA0(){
             ["Kierownik",["managers","supplyManagers","years"]],
             ["Pozwolenia", ["permissions"]],
             ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseTime", "cruiseDays", "shipUsage" ]],
-            ["Rejon", ["area"]]
+            ["Rejon", ["area"]],
+            ["Cel",["goal"]],
+            ["L.Osób", ["ugEmployees", "guests", "students"]]
         ] as [string, string[]][]).forEach(value => {
             checkGroup(value, completedSections, setCompleted, dirtyFields, errors)
         })

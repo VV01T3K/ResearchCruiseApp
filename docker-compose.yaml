@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: app-dev
+    image: app-dev
+    build:
+      context: ./frontend
+      target: production
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 3000:3000
+    networks:
+      - researchcruiseapp-network
+  researchcruiseapp-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: researchcruiseapp-db
+    hostname: researchcruiseapp-db
+    environment:
+      SA_PASSWORD: "p@ssw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_DATABASE: "ResearchCruiseApp" 
+      MSSQL_SERVER_NAME: "researchcruiseapp-db"
+    ports:
+      - 1433:1433
+    volumes:
+      - ./researchcruisepp-mssql:/var/opt/mssql/bin/sqlservr
+    user: "10001"
+    networks:
+      - researchcruiseapp-network
+networks:
+  researchcruiseapp-network:
+    driver: bridge

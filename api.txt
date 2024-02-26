@@ -1,0 +1,16 @@
+
+
+
+researchcruiseapp-api:
+    build:
+      context: ./ResearchCruiseApp-API/
+      target: final  # Wskaż docelowy etap budowy
+    container_name: researchcruiseapp-api
+    environment:
+      - APP_UID=1000  # Przykładowy UID, dostosuj do swoich potrzeb
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+        researchcruiseapp-db:
+           condition: service_healthy

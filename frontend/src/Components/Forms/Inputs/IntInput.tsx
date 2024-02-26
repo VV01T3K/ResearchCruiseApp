@@ -37,8 +37,7 @@ function IntInput(props: {
                                               onBlur={field.onBlur}
                                               onChange={(e)=>{onChange(e)}} />}
 
-                rules={{
-                    required:"Pole nie może być puste"}}
+                rules={{ required:"Pole nie może być puste" }}
                 name={props.name}
                 control={props.control}
             />

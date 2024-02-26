@@ -56,7 +56,7 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
                     <span></span>
                     <label>Adres e-mail</label>
                 </div>
-                {errors["email"] && <ErrorCode code={errors["email"].message}/>}
+                {errors["email"] && <ErrorCode code={errors["email"]!.message}/>}
                 <div className="txt_field">
                     <input type="text" disabled={loading} {...register("firstName", {
                         required: "Pole wymagane",
@@ -65,7 +65,7 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
                     <span></span>
                     <label>Imię</label>
                 </div>
-                {errors["firstName"] && <ErrorCode code={errors["firstName"].message}/>}
+                {errors["firstName"] && <ErrorCode code={errors["firstName"]!.message}/>}
 
                 <div className="txt_field">
                     <input type="text" disabled={loading} {...register("lastName",
@@ -76,7 +76,7 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
                     <span></span>
                     <label>Nazwisko</label>
                 </div>
-                {errors["lastName"] && <ErrorCode code={errors["lastName"].message}/>}
+                {errors["lastName"] && <ErrorCode code={errors["lastName"]!.message}/>}
                 <div className="txt_field">
                     <input type="password" disabled={loading} {...register("password", { required: "Pole wymagane", maxLength: 30, pattern: {
                             value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
@@ -85,7 +85,7 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
                     <span></span>
                     <label>Hasło</label>
                 </div>
-                {errors["password"] && <ErrorCode code={errors["password"].message}/>}
+                {errors["password"] && <ErrorCode code={errors["password"]!.message}/>}
                 <div className="txt_field">
                     <input type="password" disabled={loading} {...register("password2", { required: "Pole wymagane", maxLength: 30,
                         validate: (value) => value === watch('password') || 'Hasła nie pasują do siebie',
@@ -93,7 +93,7 @@ function RegisterForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"re
                     <span></span>
                     <label>Potwierdź hasło</label>
                 </div>
-                {errors["password2"] && <ErrorCode code={errors["password2"].message}/>}
+                {errors["password2"] && <ErrorCode code={errors["password2"]!.message}/>}
                 <input className={loading ? "textAnim": "" + " mt-2"} type="submit" disabled={loading} value="Potwiedź"/>
                 {registerError && <ErrorCode code={registerError}/>}
                 <div className="signup_link m-3">
