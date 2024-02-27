@@ -1,34 +1,48 @@
 version: "3.8"
 
 services:
-  app:
-    container_name: app-dev
-    image: app-dev
+  web:
+    container_name: researchcruiseapp-frontend-dc
     build:
       context: ./frontend
       target: production
     volumes:
-      - ./frontend:/app
+      - ./frontend:/researchcruiseapp-frontend-dc
     ports:
       - 3000:3000
     networks:
-      - researchcruiseapp-network
-  researchcruiseapp-db:
+      - researchcruiseapp-network-dc
+  db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: researchcruiseapp-db
-    hostname: researchcruiseapp-db
+    container_name: researchcruiseapp-db-dc
+    hostname: researchcruiseapp-db-dc
     environment:
       SA_PASSWORD: "p@ssw0rd"
       ACCEPT_EULA: "Y"
-      MSSQL_DATABASE: "ResearchCruiseApp" 
-      MSSQL_SERVER_NAME: "researchcruiseapp-db"
+      MSSQL_DATABASE: "ResearchCruiseApp"
+      MSSQL_SERVER_NAME: "researchcruiseapp-db-dc"
     ports:
       - 1433:1433
     volumes:
-      - ./researchcruisepp-mssql:/var/opt/mssql/bin/sqlservr
-    user: "10001"
+      - researchcruisepp-mssql-dc:/var/opt/mssql/data
+    user: root
     networks:
-      - researchcruiseapp-network
+      - researchcruiseapp-network-dc
+  api:
+    build:
+      context: ./ResearchCruiseApp-API/
+    container_name: researchcruiseapp-api-dc
+    environment:
+      - APP_UID=1000 # Przykładowy UID, dostosuj do swoich potrzeb
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    networks:
+      - researchcruiseapp-network-dc
+
 networks:
-  researchcruiseapp-network:
+  researchcruiseapp-network-dc:
     driver: bridge
+
+volumes:
+  researchcruisepp-mssql-dc:
