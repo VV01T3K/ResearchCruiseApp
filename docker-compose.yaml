@@ -12,6 +12,8 @@ services:
       - 3000:3000
     networks:
       - researchcruiseapp-network-dc
+    environment:
+      - CHOKIDAR_USEPOLLING=true
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: researchcruiseapp-db-dc
@@ -24,7 +26,7 @@ services:
     ports:
       - 1433:1433
     volumes:
-      - researchcruisepp-mssql-dc:/var/opt/mssql/data
+      - researchcruiseapp-mssql-dc:/var/opt/mssql/data
     user: root
     networks:
       - researchcruiseapp-network-dc
@@ -37,6 +39,7 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
+    restart: always
     networks:
       - researchcruiseapp-network-dc
 
@@ -45,4 +48,4 @@ networks:
     driver: bridge
 
 volumes:
-  researchcruisepp-mssql-dc:
+  researchcruiseapp-mssql-dc:
