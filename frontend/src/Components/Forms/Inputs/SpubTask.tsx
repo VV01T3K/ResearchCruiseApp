@@ -16,7 +16,7 @@ const SpubTask = (props: { className?:string, label: string, name: string, contr
                     control={props.control}
                     render={({ field }) => (
                         <>
-                            <input type={"text"} {...field}/>
+                            <input type={"text"} {...field}/> onChange={""} onHover={""}
                             </>
                     )}
                 />
