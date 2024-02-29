@@ -13,7 +13,7 @@ import FormRadio from "./Inputs/FormRadio";
 import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
 import IntInput from "./Inputs/IntInput";
-import TaskInput from "./Inputs/taskInput/TaskInput";
+import TaskInput from "./Inputs/TaskInput/TaskInput";
 import BlockList from "./Inputs/BlockList/BlockList";
 import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
 import {Simulate} from "react-dom/test-utils";

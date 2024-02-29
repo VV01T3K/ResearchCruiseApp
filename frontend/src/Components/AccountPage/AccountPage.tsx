@@ -3,42 +3,11 @@ import Page from "../Tools/Page";
 import UserImg from "../../resources/user.png"
 import ErrorCode from "../LoginPage/ErrorCode";
 import {FieldValues, useForm} from "react-hook-form";
+import Api from "../Tools/Api";
 
 
-function AccountPage(props:{className?: string}){
-    // const [ loading, setLoading ] = useState(false);
+function AccountPage(props:{className?: string, userData: { [x: string]: any; }}){
     const [ loading2, setLoading2 ] = useState(false);
-
-
-    const [credentials, setCredentials] = useState( )
-
-    useEffect(() => {
-        async function getCredentials() {
-            try {
-                const  response = await fetch('http://localhost:8080/account', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
-                    },
-
-                }).then(data => {
-                        if(!data.ok) throw new Error("Wystąpił problem pobraniem danych")
-                        else return data.json();
-                    })
-                setCredentials(response)
-            }
-            catch (e){
-                setCredentialsError(e.message);
-            }
-
-
-
-        }
-        getCredentials();
-
-    }, [])
-
 
     // const [changeMailError, setChangeMailError] = useState<null|string>(null)
     // const {
@@ -90,17 +59,10 @@ function AccountPage(props:{className?: string}){
     });
 
     async function changePassword(data:FieldValues) {
-        return fetch('http://localhost:8080/account', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
-            },
-            body: JSON.stringify(data)
-        })
-            .then(data => {
-                if(data.status == 401) throw new Error("Podano obecne hasło");
-                else if(!data.ok) throw new Error("Wystąpił problem ze zmianą hasła, upewnij się, że stare hasło jest prawidłowe")
+        return Api.patch('/account', data)
+            .then(response => {
+                if(response.status == 401) throw new Error("Podano obecne hasło");
+              else return response.data
             })
     }
 
@@ -137,17 +99,17 @@ function AccountPage(props:{className?: string}){
                             <img style={{width: "300px"}} className={"align-self-center border border-5 rounded m-2 "}
                                  src={UserImg}></img>
                             <div className={" h6 "}>
-                                {credentials && credentials["role"]}
+                                {props.userData["role"]}
 
                             </div>
                             <div className={"p-1  "}>
-                                {credentials && credentials["firstName"] + " " + credentials["lastName"]}
-                                {credentials && !credentials["accepted"] && <ErrorCode code={"użytkownik nie został zaakceptowany"}/>}
+                                {props.userData["firstName"] + " " + props.userData["lastName"]}
+                                {props.userData["accepted"] && <ErrorCode code={"użytkownik nie został zaakceptowany"}/>}
                             </div>
 
                             <div className={"p-1 h5"}>
-                                {credentials && credentials["email"]}
-                                {credentials && !credentials["emailConfirmed"] && <ErrorCode code={"email nie został potwierdzony"}/>}
+                                {props.userData["email"]}
+                                {props.userData["emailConfirmed"] && <ErrorCode code={"email nie został potwierdzony"}/>}
                             </div>
                             {credentialsError && <ErrorCode code={credentialsError}/>}
                         </div>

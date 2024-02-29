@@ -15,7 +15,7 @@ function MobileMenu(props:{className?: string}) {
             </div>
             <div className="col-4 text-center">
                 <Link to="/" id="english" lang="en" title="English Version" tabIndex={0} style={{"textDecoration":"none", "fontSize": "20px","fontWeight": "500","color": "white"}}>
-                    EN
+                    HOME
                 </Link>
             </div>
         </div>

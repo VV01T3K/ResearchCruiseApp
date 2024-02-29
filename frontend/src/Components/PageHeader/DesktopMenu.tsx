@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Link} from "react-router-dom";
 function DesktopMenu(props:{className?: string}) {
+
     return (
         <div className="row d-flex" >
             <div className="col text-center border-end border-light">
@@ -13,9 +14,10 @@ function DesktopMenu(props:{className?: string}) {
                     <img alt="Poczta UG" src="https://ug.edu.pl/themes/ug_faculty/images/mail.svg"/>
                 </Link>
             </div>
+
             <div className="col text-center">
                 <Link to="/" id="english" lang="en" title="English Version" tabIndex={0} style={{"textDecoration":"none", "fontSize": "20px","fontWeight": "500","color": "white"}}>
-                    EN
+                    HOME
                 </Link>
             </div>
         </div>

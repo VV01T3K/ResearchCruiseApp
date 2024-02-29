@@ -1,24 +1,16 @@
-import React, {Dispatch, SetStateAction, useState} from "react";
+import React, {useState} from "react";
 import {FieldValues, useForm} from "react-hook-form";
 import ErrorCode from "./ErrorCode";
+import Api from "../Tools/Api";
+import {Link} from "react-router-dom";
 
-function ResetPasswordForm(props:{setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
+function ResetPasswordForm(){
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [resetError, setError] = useState<null|string>(null)
     const [ resetSuccessful, setResetSuccessful ] = useState(false);
 
     async function resetPassword(data:FieldValues) {
-        return fetch('http://localhost:8080/account/reset', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(data => {
-                if(!data.ok) setError("Wystąpił problem z resetowaniem hasła")
-                else return data.json();
-            })
+        return Api.post('/account/reset', data)
     }
 
         const onSubmit = async (data:FieldValues) => {
@@ -29,7 +21,7 @@ function ResetPasswordForm(props:{setCurrentForm: Dispatch<SetStateAction<"login
                 setResetSuccessful(true)
             }
             catch (e){
-                setError("Wystąpił problem z zalogowaniem, sprawdź połączenie z internetem")
+                setError("Wystąpił problem z resetowaniem hasła")
             }
             setLoading(false)
         }
@@ -51,21 +43,23 @@ function ResetPasswordForm(props:{setCurrentForm: Dispatch<SetStateAction<"login
                 </div>
                 {errors["email"] && <ErrorCode code={errors["email"].message}/>}
 
-                <div className="pass m-1" onClick={()=>props.setCurrentForm("login")}>Znasz hasło?</div>
+                <div className="pass m-2">
+                    <Link className={"pass"} to={"/"}>Znasz hasło?</Link>
+                </div>
                 <input type="submit" value="Potwierdź" />
                 {resetError && <ErrorCode code={resetError}/>}
 
                 <div className="signup_link m-3">
-                    Brak konta? <a href="#" onClick={()=>props.setCurrentForm("register")}>Zarejestruj</a>
+                    Brak konta? <Link  to={"/rejestracja"}>Zarejestruj</Link>
                 </div>
             </form>}
             {resetSuccessful && <>
                 <div className="signup_link m-3 text-break">
                     <div style={{fontSize:"1.3rem"}}>Jeśli konto istnieje, został wysłany link do zmiany hasła na podany adres e-mail</div>
                     <div className={"butt p-2 mt-2"}>
-                        <a className={"text-white"} href="#" onClick={() => props.setCurrentForm("login")}>
+                            <Link className={"text-white"} to={"/"}>
                             Powrót do logowania
-                        </a>
+                            </Link>
                     </div>
                 </div>
             </>}

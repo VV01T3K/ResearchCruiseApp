@@ -13,11 +13,12 @@ import FormRadio from "./Inputs/FormRadio";
 import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
 import IntInput from "./Inputs/IntInput";
-import TaskInput from "./Inputs/taskInput/TaskInput";
+import TaskInput from "./Inputs/TaskInput/TaskInput";
 import BlockList from "./Inputs/BlockList/BlockList";
 import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
+import SpubTask from "./Inputs/SpubTask";
 function FormA0(){
 
     const {
@@ -27,7 +28,8 @@ function FormA0(){
         setValue,
         resetField,
         handleSubmit,
-        formState: { errors, dirtyFields } } = useForm({
+        formState: { errors, dirtyFields }
+    } = useForm({
         mode: 'onBlur',
         defaultValues: {
             managers: null,
@@ -225,7 +227,7 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection completed={completedSections[11]} id={"11"} title={"12. Zadanie SPUB."}>
-
+                <SpubTask label={"Zadania do wykonania w trakcie rejsu"} name={"spubTask"} control={control}/>
                 </FormSection>
 
 

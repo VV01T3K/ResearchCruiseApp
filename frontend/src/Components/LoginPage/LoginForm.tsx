@@ -1,62 +1,35 @@
-import React, {Dispatch, SetStateAction, useState} from "react";
+import React, {useState} from "react";
 import {FieldValues, useForm} from "react-hook-form";
 import ErrorCode from "./ErrorCode";
 import {Link} from "react-router-dom";
+import Api from "../Tools/Api"; Api;
 
-function LoginForm(props:{setAuth,
-setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
+function LoginForm(props:{onSuccess: () => void}){
 
     const [loginError, setError] = useState<null|string>(null)
     const [ loading, setLoading ] = useState(false);
     async function loginUser(data:FieldValues) {
-        return fetch('http://localhost:8080/account/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(data => {
-                if(data.status == 401) throw new Error("Nieprawidłowy adres e-mail lub hasło");
-                else if(!data.ok) throw new Error("Wystąpił problem z zalogowaniem, sprawdź połączenie sieciowe")
-                else return data.json();
+        return Api.post('/account/login', data)
+            .then((response: { status: number; data: any; }) => {
+                if(response.status == 401) throw new Error("Nieprawidłowy adres e-mail lub hasło");
+                else return response.data;
             });
     }
-
-    async function getUserData(accessToken: string) {
-        return fetch('http://localhost:8080/account', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
-            },
-
-        })
-            .then(data => {
-                if(!data.ok) throw new Error("Nie można pobrać roli użytkownika")
-                else return data.json();
-            });
-    }
-
-
-
 
     const onSubmit = async (data:FieldValues) => {
         setLoading(true);
         try {
             const auth = await loginUser(data);
-            const userData = await getUserData(auth["accessToken"])
-            props.setAuth({
-                accessToken:auth["accessToken"],
-                refreshToken:auth["refreshToken"],
-                role:userData["roles"][0],
-                firstName:userData["firstName"]});
+            Object.entries(auth).forEach(([key, value]) => {
+                sessionStorage.setItem(key, value as string);
+            });
             setError(null)
         }
         catch (e){
-            setError(e.message)
+            setError((e as Error).message)
         }
         setLoading(false)
+        props.onSuccess()
     }
 
 
@@ -74,32 +47,32 @@ setCurrentForm: Dispatch<SetStateAction<"login"|"remind"|"register">>}){
                             // message: 'Podaj adres e-mail z domeny @ug.edu.pl',
                         // }
                         })}/>
-                    <span></span>
                     <label>E-mail</label>
                 </div>
                 {errors["email"] && <ErrorCode code={errors["email"].message}/>}
                 <div className="txt_field">
-                    <input type="password" disabled={loading}  {...register("password", { required: "Pole wymagane", maxLength: 30,
+                    <input type="password" disabled={loading}  {...register("password",
+                        { required: "Pole wymagane", maxLength: 30,
                         // pattern: {
                         //     value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
                         //     message: 'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
                         // }
                     })}/>
-                    <span></span>
                     <label>Hasło</label>
                 </div>
                 {errors["password"] && <ErrorCode code={errors["password"].message}/>}
-                <div className="pass m-2"   onClick={loading ? ()=>{}: ()=>props.setCurrentForm("remind")}>Nie pamiętam hasła</div>
+                <div className={"m-2"}>
+                    <Link className="pass" to={"/przypominanieHasla"} onClick={ (event) => { loading ? event.preventDefault():null}}>
+                        Nie pamiętam hasła
+                    </Link>
+                </div>
                 <input className={loading ? "textAnim": ""} type="submit" disabled={loading} value="Zaloguj się"/>
                 {loginError && <ErrorCode code={loginError}/>}
-                <div className="signup_link m-3"> Brak konta? <Link to={""}  onClick={loading ? ()=>{}:
-                    // ()=>props.setAuth({
-                    // accessToken:"tok",
-                    // refreshToken:"tik",
-                    // role:"Shipowner",
-                    // firstName:"cos"})
-                    ()=>props.setCurrentForm("register")
-                }>Zarejestruj</Link>
+                <div className="signup_link m-3">
+                    Brak konta? <span></span>
+                    <Link to={"/rejestracja"} onClick={ (event) => { loading ? event.preventDefault():null}}>
+                        Zarejestruj
+                    </Link>
                 </div>
             </form>
         </>

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Style from './LoginPage.module.css'
 import Page from "../Tools/Page";
 import "./style.css"
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {ErrorMessage} from "react-image-size/lib/lib/constants";
 import ErrorCode from "./ErrorCode";
 function EmailConfirmPage(){

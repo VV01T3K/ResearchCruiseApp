@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Logo from "../../resources/logo.svg"
 import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
-function PageHeader(props:{className?: string, auth?}){
+function PageHeader(props:{className?: string, name?:string}){
     const [toggledButton, setToggle] = useState(false)
 
     return(
@@ -13,7 +13,7 @@ function PageHeader(props:{className?: string, auth?}){
                             <a className={"navbar-brand pe-3 ps-3 h-100 border-end"} href={"https://ug.edu.pl/"} title={"Strona główna"} rel={"home"}>
                                 <img src={Logo} alt="Strona główna" className={"d-inline align-top h-100"}/>
                             </a>
-                            <div className={"h-100 text-light text-nowrap navbar me-3"}>{props.auth && "Witaj, " + props.auth?.firstName}</div>
+                            <div className={"h-100 text-light text-nowrap navbar me-3"}>{props.name && "Witaj, " + props.name}</div>
                             <button className="d-md-flex d-md-none navbar-toggler navbar-dark ms-auto me-0 pe-3" onClick={()=>setToggle(!toggledButton)}>
                                 <span className="navbar-toggler-icon"></span>
                             </button>
