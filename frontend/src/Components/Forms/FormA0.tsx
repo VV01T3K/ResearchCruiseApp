@@ -28,15 +28,11 @@ function FormA0(){
         Api.get('/formA')
             .then(response => setUserData(response.data)).catch(()=>{})
         console.log(userData)
-        return () => {
-
-
-        };
+        return () => {};
 
     },[]);
 
-    const
-        {
+    const {
         control, trigger,
         watch,
         getValues,
@@ -58,8 +54,6 @@ function FormA0(){
             notes:null,
             shipUsage:null,
             diffrentUsage:null,
-
-
         }
     });
 
@@ -68,7 +62,6 @@ function FormA0(){
             { label: 'Shark', value: 'Shark' },
             { label: 'Dolphin', value: 'Dolphin' },
             { label: 'Whale', value: 'Whale' },
-
         ];
     }
 
@@ -93,11 +86,11 @@ function FormA0(){
         "Pozwolenia",
         "Rejon",
         "Cel",
-        "L.Osób",
+        "L. osób",
         "Zadania",
         "Umowy",
-        "Z.Badawcze",
-        "Publikacje/Prace",
+        "Z. badawcze",
+        "Publikacje/prace",
         "Efekty",
         "SPUB"
     ].map((item)=>[item, false]))
