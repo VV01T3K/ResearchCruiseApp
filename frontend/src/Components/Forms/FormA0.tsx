@@ -28,10 +28,7 @@ function FormA0(){
     useEffect(()=>{
         Api.get('/formA').then(response => setUserData(response.data)).catch(()=>{})
         console.log(userData)
-        return () => {
-
-
-        };
+        return () => {};
 
     },[]);
 

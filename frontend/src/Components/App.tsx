@@ -15,7 +15,7 @@ import LogoutPage from "./LoginPage/LogoutPage";
 import AccountPage from "./AccountPage/AccountPage";
 import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
 import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
-import {TestPage} from "./TestPage/TestPage";
+// import {TestPage} from "./TestPage/TestPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
 
@@ -92,7 +92,7 @@ function App() {
                     <Route path="/*" element={<LoginPage/>}/>
                     <Route path="/forcedLogout" element={<LogoutPage/>}/> </>}
                 <Route path="/ConfirmEmail" element={<EmailConfirmPage/>}/>
-                <Route path="/Test" element={<TestPage/>}/>
+                {/*<Route path="/Test" element={<TestPage/>}/>*/}
             </Routes>
         </div>
     );
