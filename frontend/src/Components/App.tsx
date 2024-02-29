@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import LoginPage from "./LoginPage/LoginPage";
 import {Route, Routes} from "react-router-dom"
@@ -17,14 +17,44 @@ import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
 import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
 import {TestPage} from "./TestPage/TestPage";
 import Api from "./Tools/Api";
+import useCustomEvent from "./Tools/useCustomEvent";
 
 function App() {
 
-    const [userData, setUserData] = useState(null)
-    const getUserData = () => {
-            Api.get('/account')
-                .then(response=>setUserData(response.data))
+    const { addEventListener:loginListener } = useCustomEvent('loginSuccessful');
+    const { addEventListener:logoutListener } = useCustomEvent('logoutSuccessful');
+
+    interface UserData {
+        roles: string[];
+        firstName: string;
     }
+
+    const [userData, setUserData] = useState<UserData|null>(null)
+
+    useEffect(() => {
+        const getUserData = () => {
+            if(sessionStorage.getItem("accessToken"))
+                Api.get('/account')
+                    .then(response=>setUserData(response.data))
+        }
+
+        const unsubscribeLogin = loginListener(() => {
+            getUserData();
+        });
+
+        const unsubscribeLogout = logoutListener(() => {
+            sessionStorage.clear()
+            setUserData(null)
+        });
+        window.addEventListener('load', getUserData);
+
+        return () => {
+            unsubscribeLogin();
+            unsubscribeLogout();
+            window.removeEventListener('load', getUserData);
+
+        };
+    }, [loginListener, logoutListener, 'load']);
 
     return (
         <div className={`vh-100`}>
@@ -55,15 +85,11 @@ function App() {
                         <Route path="/*" element={<ManagerPanel/>}/>
                     </>
                     }
-                    {/*{ auth == null &&<>*/}
-                    {/*    <Route path="/*" element={<LogoutPage setAuth={setAuth} />}/>*/}
-                    {/*</>*/}
-                    {/*}*/}
                 { userData != null &&
                     <Route path={"/AccountSettings"} element={<AccountPage userData={userData}/>}/> }
                 { userData == null &&
                     <>
-                    <Route path="/*" element={<LoginPage onLogin={getUserData} />}/>
+                    <Route path="/*" element={<LoginPage/>}/>
                     <Route path="/forcedLogout" element={<LogoutPage/>}/> </>}
                 <Route path="/ConfirmEmail" element={<EmailConfirmPage/>}/>
                 <Route path="/Test" element={<TestPage/>}/>

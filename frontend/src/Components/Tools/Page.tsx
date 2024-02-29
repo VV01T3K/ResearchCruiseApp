@@ -1,6 +1,6 @@
 import React from 'react';
 import Style from "./Page.module.css"
-function Page(props:{className?: string, bgStyle?,  children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>}){
+function Page(props:{className?: string, bgStyle?: any,  children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>}){
     return (
         <>
             <div className={`${props.bgStyle ?? Style.bgImage} ${Style.bg}`}></div>

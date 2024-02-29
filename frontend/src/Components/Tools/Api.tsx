@@ -49,8 +49,8 @@ const handleResponseError = async (error: { response: { status: number; }, confi
 };
 
 axios.interceptors.request.use(
-    function (config: { url: string; }) {
-        if (!config.url.startsWith('http')) {
+    function (config): { url?: string; headers?: any } {
+        if (config.url && !config.url.startsWith('http')) {
             config.url = defaultServerAddress + config.url;
         }
         return setAccessToken(config);
@@ -66,7 +66,7 @@ axios.interceptors.response.use(
         // Wykonuje się po otrzymaniu poprawnej odpowiedzi
         return response;
     },
-    function (error: { response: { status: number; ok:boolean }; }) {
+    function (error: { response: { status: number }, config: any }) {
         // Wykonuje się w przypadku błędu odpowiedzi
         return handleResponseError(error);
     }

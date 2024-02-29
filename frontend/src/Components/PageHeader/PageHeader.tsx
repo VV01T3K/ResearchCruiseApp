@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Logo from "../../resources/logo.svg"
 import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
-function PageHeader(props:{className?: string, name?:string}){
+function PageHeader(props:{className?: string, name?:string | null}){
     const [toggledButton, setToggle] = useState(false)
 
     return(

@@ -2,9 +2,10 @@ import React, {useState} from "react";
 import {FieldValues, useForm} from "react-hook-form";
 import ErrorCode from "./ErrorCode";
 import {Link} from "react-router-dom";
-import Api from "../Tools/Api"; Api;
+import Api from "../Tools/Api";
+import useCustomEvent from "../Tools/useCustomEvent"; Api;
 
-function LoginForm(props:{onSuccess: () => void}){
+function LoginForm(){
 
     const [loginError, setError] = useState<null|string>(null)
     const [ loading, setLoading ] = useState(false);
@@ -15,6 +16,10 @@ function LoginForm(props:{onSuccess: () => void}){
                 else return response.data;
             });
     }
+
+    const { dispatchEvent } = useCustomEvent('loginSuccessful');
+
+
 
     const onSubmit = async (data:FieldValues) => {
         setLoading(true);
@@ -29,7 +34,7 @@ function LoginForm(props:{onSuccess: () => void}){
             setError((e as Error).message)
         }
         setLoading(false)
-        props.onSuccess()
+        dispatchEvent(null);
     }
 
 

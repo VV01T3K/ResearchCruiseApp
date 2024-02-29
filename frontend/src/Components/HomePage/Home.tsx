@@ -2,7 +2,7 @@ import React from 'react';
 import Page from "../Tools/Page";
 
 
-function HomePage(props:{className?: string, children}){
+function HomePage(props:{className?: string, children: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined}){
 
 
     return (

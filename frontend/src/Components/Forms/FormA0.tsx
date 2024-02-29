@@ -19,9 +19,24 @@ import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
 import SpubTask from "./Inputs/SpubTask";
+import Api from "../Tools/Api";
 function FormA0(){
 
-    const {
+    const [userData, setUserData] = useState(null)
+
+    useEffect(()=>{
+        Api.get('/formA')
+            .then(response => setUserData(response.data)).catch(()=>{})
+        console.log(userData)
+        return () => {
+
+
+        };
+
+    },[]);
+
+    const
+        {
         control, trigger,
         watch,
         getValues,
@@ -29,7 +44,8 @@ function FormA0(){
         resetField,
         handleSubmit,
         formState: { errors, dirtyFields }
-    } = useForm({
+    }
+    = useForm({
         mode: 'onBlur',
         defaultValues: {
             managers: null,
@@ -101,9 +117,6 @@ function FormA0(){
             checkGroup(value, completedSections, setCompleted, dirtyFields, errors)
         })
     })
-
-
-    const hiddenArea = watch('shipUsage')
     return (
         <FormTemplate>
             <FormTitle completed={completedSections} title={"Formularz A"}/>

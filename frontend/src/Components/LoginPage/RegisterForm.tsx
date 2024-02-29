@@ -13,8 +13,9 @@ function RegisterForm(){
     async function registerUser(data:FieldValues) {
         return Api.post('/account/register', data)
             .then((response: { status: number; data: any; }) => {
-                if(response.status == 400) throw new Error("Użytkownik o podanym adresie e-mail już istnieje");
-                else return response.data;
+                // if(response.status == 400) throw new Error("Użytkownik o podanym adresie e-mail już istnieje");
+                // else
+                    return response.data;
             });
     }
 
