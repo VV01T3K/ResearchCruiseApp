@@ -15,7 +15,7 @@ function FormSection(props: {form?: { formState: { dirtyFields: { [x: string]: u
     };
 
 
-    const { dispatchEvent } = useCustomEvent('sectionStateChange');
+    // const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
 
 
@@ -23,23 +23,16 @@ function FormSection(props: {form?: { formState: { dirtyFields: { [x: string]: u
     const [isCompleted, setIsCompleted] = useState(false)
 
     useEffect(()=>{
-        // Użyj React.Children.map do mapowania dzieci
         const validChildren =
             !Object.values(React.Children.map(props.children, (child) => {
-                 // Przyjmuję, że pola mają atrybut "name"
                 return isChildInvalid(child)})).some((child)=>child==true)
-        // }));
-
-        // setIsCompleted(validChildren)
-        // console.log(React.Children.map(props.children, (child) => {
-        //     const childName = child.props.name; // Przyjmuję, że pola mają atrybut "name"
-        //     return isChildInvalid(childName)}))
+        // dispatchEvent( {[props.title]:validChildren})
         setIsCompleted(validChildren)
+
     },[props.form!.watch()])
 
     useEffect(() => {
-        dispatchEvent({props.title, isCompleted});
-    }, [isCompleted]);
+      });
 
 
     return  (<div className="accordion-item border-2 border-black border-bottom">
