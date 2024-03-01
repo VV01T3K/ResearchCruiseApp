@@ -2,9 +2,9 @@ import React from "react";
 import Slider from 'rc-slider';
 import "./MonthSlider.css"
 import {Control, Controller, FieldValues} from "react-hook-form";
+import InputWrapper from "./InputWrapper";
 
-const MonthSlider = (props: { className?:string, label: string, name: string, control: Control<FieldValues, any>
-        | undefined, watch?, setValue?, resetField?}) => {
+const MonthSlider = (props: { className?:string, label: string, name: string, watch?: number[], form?: { setValue: (arg0: string, arg1: any, arg2: { shouldDirty?: boolean; shouldTouch?: boolean; }) => void; control: Control<FieldValues, any> | undefined; }}) => {
     const months = [
         'Styczeń', 'Luty', 'Marzec', 'Kwiecień',
         'Maj', 'Czerwiec', 'Lipiec', 'Sierpień',
@@ -41,12 +41,9 @@ const MonthSlider = (props: { className?:string, label: string, name: string, co
     const [minVal,maxVal] = props.watch ??  [0,24]
 
     React.useEffect(() => {
-        if(props.setValue) {
+            props.form!.setValue(props.name, props.watch, {shouldDirty: true})
+            props.form!.setValue(props.name, props.watch, {shouldTouch: true})
 
-            // props.resetField(props.name)
-            props.setValue(props.name, props.watch, {shouldDirty: true})
-            props.setValue(props.name, props.watch, {shouldTouch: true})
-        }
     }, [props.watch]);
 
 
@@ -59,12 +56,10 @@ const MonthSlider = (props: { className?:string, label: string, name: string, co
     });
 
     return (
-        <div className={props.className + "  p-3"}>
-        <label>{props.label}</label>
-            <div className={"justify-content-center align-self-center d-flex flex-column w-100"} >
+        <InputWrapper {...props}>
             <Controller
                 name={props.name}
-                control={props.control}
+                control={props.form!.control}
                 render={({ field }) => (
                     <>
                     <Slider style={{height:"80px"}}
@@ -85,8 +80,7 @@ const MonthSlider = (props: { className?:string, label: string, name: string, co
                     </>
                 )}
             />
-            </div>
-        </div>
+        </InputWrapper>
 
     );
 };

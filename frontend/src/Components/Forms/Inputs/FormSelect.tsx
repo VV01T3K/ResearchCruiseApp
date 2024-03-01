@@ -1,32 +1,34 @@
 import {Control, Controller, FieldError, FieldErrorsImpl, FieldValues, Merge} from "react-hook-form";
-import Select, {GroupBase, OptionsOrGroups} from "react-select";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import Select from "react-select";
 import React from "react";
+import InputWrapper from "./InputWrapper";
 
 function FormSelect(props: {
     className?: string,
     name: string,
     label: string,
-    options: OptionsOrGroups<any, GroupBase<any>> | undefined,
-    form}){
+    values: any[]
+    form?: { control: Control<FieldValues, any> | undefined; formState: { errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }; }; }}){
 
     return  (
-        <div className={props.className + " p-3"}>
-            <label>{props.label}</label>
+        <InputWrapper {...props}>
             <Controller
                 name={props.name}
-                control={props.form.control}
+                control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                 <Select minMenuHeight={300} {...field}
                         styles={{menu: provided => ({ ...provided, zIndex: 9999 })}}
-                        options={props.options}
+                        options={props.values?.map(value => ({ label: value, value }))}
                         closeMenuOnScroll={() => true}
+                        // onChange={(selectedOption) => {
+                        //     // Przekazuje tylko wartość (value) do formularza
+                        //     field.onChange(selectedOption ? selectedOption : null);
+                        // }}
                 />
                 )}
             />
-            {props.form.formState.errors[props.name] && <ErrorCode code={props.form.formState.errors[props.name].message}/>}
-        </div>
+         </InputWrapper>
     )
 }
 

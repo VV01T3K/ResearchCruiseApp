@@ -1,15 +1,21 @@
 import React, {useEffect, useState} from "react";
+import useCustomEvent from "../../Tools/useCustomEvent";
+import {FieldValues} from "react-hook-form";
 
-function FormSection(props: {form, id?: string | undefined, children?: React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] | React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
+function FormSection(props: {form?: { formState: { dirtyFields: { [x: string]: undefined; }; errors: { [x: string]: any; }; }; watch: () => unknown; }, id?: string | undefined, children?: React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] | React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
     title:string}){
 
     // Sprawdź warunki dla każdego dziecka
-    const isChildInvalid = (childName) => {
-        // return false
-
-        return props.form.formState.dirtyFields[childName] !== undefined && props.form.formState.errors[childName];
+    const isChildInvalid = (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined) => {
+        const required = child.props.required ?? true
+        const childName = child.props.name;
+        if(!required ||  React.Children.count(child) === 0)
+            return false
+        return !(required && props.form!.formState.dirtyFields[childName] !== undefined && props.form!.formState.errors[childName] === undefined );
     };
 
+
+    const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
 
 
@@ -20,8 +26,8 @@ function FormSection(props: {form, id?: string | undefined, children?: React.Rea
         // Użyj React.Children.map do mapowania dzieci
         const validChildren =
             !Object.values(React.Children.map(props.children, (child) => {
-                const childName = child.props.name; // Przyjmuję, że pola mają atrybut "name"
-                return isChildInvalid(childName)})).some((child)=>child==false)
+                 // Przyjmuję, że pola mają atrybut "name"
+                return isChildInvalid(child)})).some((child)=>child==true)
         // }));
 
         // setIsCompleted(validChildren)
@@ -29,7 +35,11 @@ function FormSection(props: {form, id?: string | undefined, children?: React.Rea
         //     const childName = child.props.name; // Przyjmuję, że pola mają atrybut "name"
         //     return isChildInvalid(childName)}))
         setIsCompleted(validChildren)
-    },[props.form.watch()])
+    },[props.form!.watch()])
+
+    useEffect(() => {
+        dispatchEvent({props.title, isCompleted});
+    }, [isCompleted]);
 
 
     return  (<div className="accordion-item border-2 border-black border-bottom">
@@ -40,6 +50,7 @@ function FormSection(props: {form, id?: string | undefined, children?: React.Rea
          <div className={`d-flex flex-row flex-wrap justify-content-center  p-3 ${isActive ? ' ': 'visually-hidden'}`}>
                     {React.Children.map(props.children, (child, index) => {
                         // Dodaj nową właściwość do każdego dziecka
+                        // @ts-ignore
                         return React.cloneElement(child, {form:props.form });
                     })}
                 </div>
