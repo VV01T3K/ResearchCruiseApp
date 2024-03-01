@@ -7,16 +7,16 @@ import ErrorCode from "../../../LoginPage/ErrorCode";
 const data =  ["Katedra Biologii Morza i Biotechnologii",
     "Stacja Morska im. Profesora Krzysztofa Skóry",
 "asddasds", "sadasdd"]
-function BlockListInput(props:{className:string, label:string, control, name, errors, setValue, dirtyFields}) {
+function BlockListInput(props:{className:string, label:string, name, form?}) {
     const { fields, append, remove } = useFieldArray({
-        control: props.control,
-        name: props.name,
+        control: props.form.control,
+        name: props.form.name,
     });
 
 
-    const disabled = !Array.from({ length: data.length }, (_, index) => index)
-        .some(item => (!fields.map((field)=>field.label)
-            .includes(item)))
+    // const disabled = !Array.from({ length: data.length }, (_, index) => index)
+    //     .some(item => (!fields.map((field)=>field.form.label)
+    //         .includes(item)))
 
     // const isSubFormDirty = fields.every(
     //     (field, index) => props.dirtyFields[`${props.name}[${index}].value`]
@@ -41,7 +41,7 @@ function BlockListInput(props:{className:string, label:string, control, name, er
                             {/*<text>   {data[item.label]}</text>*/}
                             <Controller
                                 name={`${props.name}[${index}].value`}
-                                control={props.control}
+                                control={props.form.control}
                                 rules={{
                                     required:"Pole nie może być puste" ,
                                     validate: (value) => value.length < 10 ||   'Pole nie może mieć wartości 0.'
@@ -49,8 +49,8 @@ function BlockListInput(props:{className:string, label:string, control, name, er
                                 render={({ field }) => (
                          <input {...field} type={"text"} className={"w-100"}
                                 onBlur={(e)=>{
-                                    props.setValue(`${props.name}[${index}].value`, e.target.value, { shouldDirty: false })
-                                    props.setValue(`${props.name}[${index}].value`, e.target.value, { shouldValidate: true })
+                                    props.form.setValue(`${props.name}[${index}].value`, e.target.value, { shouldDirty: false })
+                                    props.form.setValue(`${props.name}[${index}].value`, e.target.value, { shouldValidate: true })
                                 }}
                          ></input>)}/>
                         </th>
@@ -61,7 +61,7 @@ function BlockListInput(props:{className:string, label:string, control, name, er
                         </tr>
                         <tr className={"bg-light"}>
                            <th>
-                               {props.errors[props.name] && props.errors[props.name][index] && <ErrorCode code={props.errors[props.name][index]["value"].message}/>}
+                               {props.form.formState.errors[props.name] && props.form.formState.errors[props.name][index] && <ErrorCode code={props.form.formState.errors[props.name][index]["value"].message}/>}
                            </th>
                         </tr>
                         </React.Fragment>
@@ -69,7 +69,9 @@ function BlockListInput(props:{className:string, label:string, control, name, er
                 ))}
                 </tbody>
             </table>
-            <button className={"btn btn-primary"} type={"button"} disabled={disabled} onClick={() => {append({value:"" })}}>+</button>
+            <button className={"btn btn-primary"} type={"button"}
+                    // disabled={disabled}
+                    onClick={() => {append({value:"" })}}>+</button>
 
         </div>
     )
