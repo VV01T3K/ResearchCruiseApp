@@ -9,14 +9,13 @@ import {
 import React, {useRef, useState} from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import Map from 'src/resources/GraniceSamorzadow.jpg'
+import InputWrapper from "./InputWrapper";
 function ClickableMap(props: {
     className?: string,
     label: string,
     name: string,
     required?:boolean,
-    setValue: (arg0: string, arg1: string) => void,
-    control: Control<FieldValues, any>,
-    errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }}){
+    form?}){
 
 
     const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
@@ -36,7 +35,7 @@ function ClickableMap(props: {
 
         regions.forEach((region)=>{
             if (isInside({ x: offsetX, y: offsetY }, region[1], region[2]))
-                props.setValue(props.name, region[0], {shouldDirty:true});
+                props.form.setValue(props.name, region[0], {shouldDirty:true});
         // setClickPosition({ x: offsetX, y: offsetY });
         })
     }
@@ -65,8 +64,7 @@ function ClickableMap(props: {
 
 
     return (
-        <div className={props.className + "  p-3"}>
-            <label>{props.label}</label>
+        <InputWrapper {...props}>
             <Controller
                 render={({ field  }) =>
                     <div className={"d-flex flex-column"}>
@@ -84,13 +82,12 @@ function ClickableMap(props: {
                     </div>
             }
                 name={props.name}
-                control={props.control}
+                control={props.form.control}
 
                 rules={{required: "Wybierz obszar"
                 }}
             />
-            {props.errors[props.name] && <ErrorCode code={props.errors[props.name].message}/>}
-        </div>
+        </InputWrapper >
     )
 }
 

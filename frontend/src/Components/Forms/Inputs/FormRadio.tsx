@@ -1,28 +1,20 @@
 import {
-    Control,
     Controller,
-    FieldError,
-    FieldErrorsImpl,
-    FieldValues,
-    Merge,
 } from "react-hook-form";
 import React from "react";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import InputWrapper from "./InputWrapper";
 
 function FormRadio(props: {
     className?: string,
     label: string,
     name: string,
-    control: Control<FieldValues, any>,
-    values: string[],
-    errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }}){
+    values: string[], form?: any}){
 
     return (
-        <div className={props.className + "  p-3"}>
-            <label>{props.label}</label>
+        <InputWrapper {...props}>
             <Controller
                 name={props.name}
-                control={props.control}
+                control={props.form!.control}
                 render={({ field }) => (
                     <div className={"d-flex flex-column"}>
                         {props.values.map((option, index)=> (
@@ -38,8 +30,7 @@ function FormRadio(props: {
                         }
                     </div>)}
             />
-            {props.errors[props.name] && <ErrorCode code={props.errors[props.name].message}/>}
-        </div>
+        </InputWrapper>
     )
 }
 

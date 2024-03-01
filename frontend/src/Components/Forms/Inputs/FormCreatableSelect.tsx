@@ -8,14 +8,14 @@ function FormCreatableSelect(props: {
     className?: string,
     name: string,
     label: string,
-    options: OptionsOrGroups<any, GroupBase<any>> | undefined,
-    form: { control: Control | undefined; formState: { errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }; }; }}){
+    values: any[]
+    form?: { control: Control | undefined; formState: { errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }; }; }}){
 
     return  (
         <InputWrapper {...props}>
             <Controller
                 name={props.name}
-                control={props.form.control}
+                control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                 <CreatableSelect
@@ -25,8 +25,8 @@ function FormCreatableSelect(props: {
                     }}
                     minMenuHeight={300} {...field}
                         styles={{menu: (provided: any) => ({ ...provided, zIndex: 9999 })}}
-                        options={props.options}
                         closeMenuOnScroll={() => true}
+                    options={props.values?.map(value => ({ label: value, value }))}
 
                 />
                 )}
