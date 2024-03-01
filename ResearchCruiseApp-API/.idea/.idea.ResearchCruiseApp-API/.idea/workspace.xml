@@ -10,9 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/AccountPage/AccountPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/AccountPage/AccountPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/Components/Forms/Tools/CheckGroup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/Components/Forms/Tools/CheckGroup.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,9 +108,9 @@
       "sqlserver"
     ],
     "rider.external.source.directories": [
-      "C:\\Users\\theed\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
-      "C:\\Users\\theed\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
-      "C:\\Users\\theed\\AppData\\Local\\Symbols\\src"
+      "C:\\Users\\tati_\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
+      "C:\\Users\\tati_\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
+      "C:\\Users\\tati_\\AppData\\Local\\Symbols\\src"
     ]
   }
 }]]></component>
@@ -229,6 +228,7 @@
       <workItem from="1705745508657" duration="4643000" />
       <workItem from="1706177151026" duration="1636000" />
       <workItem from="1708964162848" duration="11598000" />
+      <workItem from="1709327372931" duration="296000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
