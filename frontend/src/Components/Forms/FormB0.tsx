@@ -33,10 +33,10 @@ function FormB0(){
         mode: 'onBlur',
         defaultValues: {
             managers: null,
-            supplyManagers:null,
+            supplyManagers: null,
             years: { label: '2023', value: '2023' },
             acceptedPeriod: [0,24],
-            optimalPeriod:[0,24],
+            optimalPeriod: [0,24],
             cruiseDays: 0,
             cruiseTime: 0,
             notes: null,

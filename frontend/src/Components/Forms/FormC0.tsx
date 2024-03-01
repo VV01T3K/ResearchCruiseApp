@@ -18,8 +18,9 @@ import BlockList from "./Inputs/BlockList/BlockList";
 import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
-function FormC0(){
 
+
+function FormC0(){
     const {
         control, trigger,
         watch,
@@ -27,31 +28,26 @@ function FormC0(){
         setValue,
         resetField,
         handleSubmit,
-        formState: { errors, dirtyFields } } = useForm({
+        formState: { errors, dirtyFields}
+    } = useForm({
         mode: 'onBlur',
         defaultValues: {
             managers: null,
-            supplyManagers:null,
+            supplyManagers: null,
             years: { label: '2023', value: '2023' },
             acceptedPeriod: [0,24],
-            optimalPeriod:[0,24],
+            optimalPeriod: [0,24],
             cruiseDays: 0,
             cruiseTime: 0,
-            notes:null,
-            shipUsage:null,
-            diffrentUsage:null,
-
-
+            notes: null,
+            shipUsage: null,
+            diffrentUsage: null,
         }
     });
 
 
-    const [completedSections, setCompleted] = useState([
-        "Sekcja 1",
-        "Sekcja2",
-    ].map((item)=>[item, false]))
-
-
+    const [completedSections, setCompleted] =
+        useState(["Sekcja 1", "Sekcja2",].map((item) => [item, false]))
 
     useEffect(()=>{
         var sec= completedSections;
@@ -67,15 +63,16 @@ function FormC0(){
 
     return (
         <FormTemplate>
-            <FormTitle completed={completedSections} title={"Formularz B"}/>
-            <FormWithSections onSubmit={handleSubmit(submit)} onChange={()=>console.log(getValues())}>
+            <FormTitle completed={completedSections} title={"Formularz B"} />
+            <FormWithSections onSubmit={handleSubmit(submit)} onChange={() => console.log(getValues())}>
                 <FormSection title={"1. Coś"}
-                             completed={completedSections[0]} id={"0"}>
+                             completed={completedSections[0]}
+                             id={"0"}>
                 </FormSection>
             </FormWithSections>
         </FormTemplate>
-
     )
 }
+
 
 export default FormC0
