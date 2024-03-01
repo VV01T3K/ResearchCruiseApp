@@ -7,8 +7,6 @@ import FormSection from "./Tools/FormSection";
 import MonthSlider from "./Inputs/MonthSlider";
 import NumberInput from "./Inputs/NumberInput";
 import TextArea from "./Inputs/TextArea";
-import "./Tools/CheckGroup"
-import checkGroup from "./Tools/CheckGroup";
 import FormRadio from "./Inputs/FormRadio";
 import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
