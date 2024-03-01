@@ -18,8 +18,9 @@ import BlockList from "./Inputs/BlockList/BlockList";
 import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
-function FormB0(){
 
+
+function FormB0(){
     const {
         control, trigger,
         watch,
@@ -27,7 +28,8 @@ function FormB0(){
         setValue,
         resetField,
         handleSubmit,
-        formState: { errors, dirtyFields } } = useForm({
+        formState: { errors, dirtyFields}
+    } = useForm({
         mode: 'onBlur',
         defaultValues: {
             managers: null,
@@ -37,45 +39,37 @@ function FormB0(){
             optimalPeriod:[0,24],
             cruiseDays: 0,
             cruiseTime: 0,
-            notes:null,
-            shipUsage:null,
-            diffrentUsage:null,
-
-
+            notes: null,
+            shipUsage: null,
+            diffrentUsage: null,
         }
     });
 
+    const [completedSections, setCompleted] =
+        useState(["Sekcja 1", "Sekcja2",].map((item) => [item, false]))
 
-    const [completedSections, setCompleted] = useState([
-        "Sekcja 1",
-        "Sekcja2",
-    ].map((item)=>[item, false]))
-
-
-
-    useEffect(()=>{
-        var sec= completedSections;
+    useEffect(()=> {
+        var sec = completedSections;
         ([
-            ["Kierownik",["managers","supplyManagers","years"]],
+            ["Kierownik", ["managers", "supplyManagers", "years"]],
             ["Pozwolenia", ["permissions"]],
-            ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseTime", "cruiseDays", "shipUsage" ]],
+            ["Czas", ["acceptedPeriod", "optimalPeriod", "cruiseTime", "cruiseDays", "shipUsage"]],
             ["Rejon", ["area"]]
-        ] as [string, string[]][]).forEach(value => {
-            checkGroup(value, completedSections, setCompleted, dirtyFields, errors)
+        ] as [string, string[]][]).forEach(value=> {
+                checkGroup(value, completedSections, setCompleted, dirtyFields, errors)
         })
     })
 
     return (
         <FormTemplate>
-            <FormTitle completed={completedSections} title={"Formularz B"}/>
-            <FormWithSections onSubmit={handleSubmit(submit)} onChange={()=>console.log(getValues())}>
-                <FormSection title={"1. Coś"}
-                             completed={completedSections[0]} id={"0"}>
+            <FormTitle completed={completedSections} title={"Formularz B"} />
+            <FormWithSections onSubmit={handleSubmit(submit)} onChange={() => console.log(getValues())}>
+                <FormSection title={"1. Coś"} completed={completedSections[0]} id={"0"}>
                 </FormSection>
             </FormWithSections>
         </FormTemplate>
-
     )
 }
+
 
 export default FormB0
