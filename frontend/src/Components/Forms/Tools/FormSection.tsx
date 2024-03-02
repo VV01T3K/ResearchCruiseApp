@@ -59,9 +59,12 @@ function FormSection(props: Props) {
         [props.form!.watch()]
     )
 
-    useEffect(() => {
-        dispatchEvent({props.title, isCompleted});
-    }, [isCompleted]);
+    useEffect(
+        () => {
+            dispatchEvent({props.title, isCompleted});
+        },
+        [isCompleted]
+    );
 
     return  (
         <div className="accordion-item border-2 border-black border-bottom">
