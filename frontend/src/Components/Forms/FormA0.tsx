@@ -75,7 +75,9 @@ function FormA0(){
     return (
         <FormTemplate>
             <FormTitle sections={sections} title={"Formularz A"}/>
-            <FormWithSections form={form} onSubmit={()=>{}} onChange={()=>console.log(form.getValues())}>
+            <FormWithSections form={form} onSubmit={()=>{}}
+                              // onChange={()=>console.log(form.getValues())}
+            >
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3" name={"managers"} label={"Kierownik rejsu"} values={["sss"]}/>
                     <FormSelect className="col-12 col-md-6 col-xl-3" name={"supplyManagers"} label={"Zastępca"} values={userData?.supplyManagers}/>
@@ -145,7 +147,7 @@ function FormA0(){
                     <TextArea className={"col-12 col-md-12 col-xl-6 p-3"}
                               label={"Opis"} name={"goalaInfo"} required={"Opisz cel"}/>
                 </FormSection>
-                <FormSection  title={"s"}>
+                <FormSection  title={sections["L.Osób"]}>
                     <NumberInput   className={"col-12 col-md-12 col-xl-6 p-3"}
                             label={"Pracownicy UG"} name={"ugEmployees"} maxVal={20}/>
                     <NumberInput   className={"col-12 col-md-12 col-xl-6 p-3"}
@@ -153,19 +155,21 @@ function FormA0(){
                     <NumberInput   className={" col-12 col-md-12 col-xl-6 p-3"}
                                 label={"Goście / osoby spoza UG"} name={"guests"}  maxVal={20}/>
                 </FormSection>
-                {/*<FormSection title={sections.Zadania}>*/}
-                {/*    /!*<TaskInput name={"wejscie"} className={"col-12"} label={""}/>*!/*/}
-                {/*</FormSection>*/}
+                <FormSection title={sections.Zadania}>
+                    <NumberInput   className={" col-12 col-md-12 col-xl-6 p-3"}
+                                   label={"Goście / osoby spoza UG"} name={"gusests"}  maxVal={20}/>
+                    {/*<TaskInput name={"wejscie"} className={"col-12"} label={""}/>*/}
+                </FormSection>
                 <FormSection title={sections.Umowy}>
                     <NumberInput   className={" col-12 col-md-12 col-xl-6 p-3"}
                                    label={"Goście / osoby spoza UG"} name={"gusests"}  maxVal={20}/>
                 </FormSection>
-                <FormSection title={sections["Z.Badawcze"]}>
-                    <BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"blockListInput2"}/>
-                    {/*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*/}
-                    {/*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*/}
+                {/*<FormSection title={sections["Z.Badawcze"]}>*/}
+                {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"blockListInput2"}/>*!/*/}
+                {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
+                {/*    /!*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*!/*/}
 
-                </FormSection>
+                {/*</FormSection>*/}
             {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}
             {/*      </FormSection>*/}
             {/*    <FormSection completed={completedSections[10]} id={"10"} title={sections.Efekty}>*/}

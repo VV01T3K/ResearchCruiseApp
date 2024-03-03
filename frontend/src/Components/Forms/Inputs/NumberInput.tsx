@@ -24,7 +24,6 @@ function NumberInput(props: {
             props.form!.setValue(props.name, "0", {shouldValidate:true})
 
     }
-    console.log('props.notZero:', props.notZero);
     return (
         <InputWrapper {...props}>
             <Controller

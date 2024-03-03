@@ -10,7 +10,7 @@ const useCustomEvent = (eventName) => {
         };
     }, [eventName]);
 
-    const dispatchEvent = (data) => {
+    const dispatchEvent = (data: any) => {
         if (ref.current) {
             document.dispatchEvent(new CustomEvent(eventName, { detail: data }));
         }

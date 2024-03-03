@@ -1,5 +1,19 @@
 ﻿namespace ResearchCruiseApp_API.Models;
 
+
+
+public struct DateRange
+{
+    public DateRange()
+    {
+        
+    }
+
+    public int Beginning { get; set; } = 0;
+    public int End { get; set; } = 0;
+
+}
+
 public struct CruiseInfo
 {
     public CruiseInfo()
@@ -14,9 +28,9 @@ public struct CruiseInfo
     
     
     //Dopuszczlny termin rejsu (typ?)
-    public string PermissibleDate { get; set; } = null!;
+    public DateRange PermissibleDate;
     //Optymalny termin rejsu (typ?)
-    public string OptimalDate { get; set; } = null!;
+    public DateRange OptimalDate;
     public int CruiseHours { get; set; } = 0;
     //Uwaga dotycząca terminu:
     public string DateComment { get; set; } = null!;
@@ -116,12 +130,10 @@ public class FormsModel
     
     //(?) opcjonalnie opis. 
     public string ResearchArea { get; set; } = null!;
-    public string ResearchAreaComment { get; set; } = null!;
     
     
     //Cel rejsu (opis max. 100 słów):
-    public string Choice2 { get; set; } = null!;
-    public string CruiseObectiveComment { get; set; } = null!;
+    public string ChoiceGoal { get; set; } = null!;
     
     
     //Przewidywana liczba osób zamierzających uczestniczyć w rejsie, podać liczby osobno dla:
@@ -141,7 +153,7 @@ public class FormsModel
     //Zespoły badawcze
     public string ResearchersOutsideUG { get; set; } = null!;
     public string ResearchersOutsideWOIG { get; set; } = null!;
-    public string ResearchersFromWOIG { get; set; } = null!;
+    public int ResearchersFromWOIG { get; set; } = 0;
     
     
     //Publikacje i Prace
