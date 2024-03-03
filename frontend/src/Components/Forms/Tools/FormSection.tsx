@@ -2,22 +2,41 @@ import React, {useEffect, useState} from "react";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import {FieldValues} from "react-hook-form";
 
-function FormSection(props: {form?: { formState: { dirtyFields: { [x: string]: undefined; }; errors: { [x: string]: any; }; }; watch: () => unknown; }, id?: string | undefined, children?: React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] | React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
-    title:string}){
 
-    // Sprawdź warunki dla każdego dziecka
-    const isChildInvalid = (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined) => {
-        const required = child.props.required ?? true
-        const childName = child.props.name;
-        if(!required ||  React.Children.count(child) === 0)
-            return false
-        return !(required && props.form!.formState.dirtyFields[childName] !== undefined && props.form!.formState.errors[childName] === undefined );
-    };
+type Props = {
+    form?: {
+        formState: {
+            dirtyFields: { [x: string]: undefined; };
+            errors: { [x: string]: any; };
+        };
+        watch: () => unknown;
+    },
+    id?: string | undefined,
+    children?:
+        React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
+        React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
+    title: string
+}
+
+// const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
 
-    // const { dispatchEvent } = useCustomEvent('sectionStateChange');
+function FormSection(props: Props) {
+    // Check conditions for each child
+    const isChildInvalid =
+        (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined) => {
+            const required = child.props.required ?? true
+            const childName = child.props.name;
+            if (!required || React.Children.count(child) === 0)
+                return false
+            return !(
+                required &&
+                props.form!.formState.dirtyFields[childName] !== undefined &&
+                props.form!.formState.errors[childName] === undefined
+            );
+        };
 
-
+    const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
     const [isActive, setIsActive] = useState(true);
     const [isCompleted, setIsCompleted] = useState(false)
@@ -41,14 +60,16 @@ function FormSection(props: {form?: { formState: { dirtyFields: { [x: string]: u
                     <h1 className={`d-flex flex-column col-2 text-end ${isCompleted ? "text-success": "text-danger"} align-self-center`} style={{fontSize: "1rem"}}>{isCompleted ? "+" : "!"}</h1>
                 </div>
          <div className={`d-flex flex-row flex-wrap justify-content-center  p-3 ${isActive ? ' ': 'visually-hidden'}`}>
+
                     {React.Children.map(props.children, (child, index) => {
                         // Dodaj nową właściwość do każdego dziecka
                         // @ts-ignore
-                        return React.cloneElement(child, {form:props.form });
+                        return React.cloneElement(child, {form: props.form});
                     })}
-                </div>
             </div>
+        </div>
     )
 }
+
 
 export default FormSection

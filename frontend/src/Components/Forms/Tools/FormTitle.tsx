@@ -3,8 +3,15 @@ import {Link} from "react-router-dom";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import Api from "../../Tools/Api";
 
-function FormTitle(props:{title:string, sections:(string | boolean)[][]}){
-    function scrollSmoothTo(elementId) {
+
+type Props = {
+    title: string,
+    sections: (string | boolean)[][]
+}
+
+
+function FormTitle(props: Props){
+    function scrollSmoothTo(elementId){
         var element = document.getElementById(elementId);
         element.scrollIntoView({
             block: 'start',
@@ -61,5 +68,6 @@ function FormTitle(props:{title:string, sections:(string | boolean)[][]}){
         </div>
     )
 }
+
 
 export default FormTitle
