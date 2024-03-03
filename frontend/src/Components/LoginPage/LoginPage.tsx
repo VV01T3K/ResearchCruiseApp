@@ -12,7 +12,7 @@ function LoginPage(){
     return (
         <>
             <Page bgStyle={Style.bgImage + " bg"} className={"justify-content-center justify-content-md-end " + Style}>
-                <div className=" d-flex flex-column pb-1 m-2 center align-self-start"
+                <div className="d-flex flex-column pb-1 m-2 center align-self-start"
                      style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}
                 >
                     <Routes>
