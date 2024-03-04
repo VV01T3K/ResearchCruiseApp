@@ -1,10 +1,10 @@
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 
+
 const defaultServerAddress = 'http://localhost:8080';
 
-
-// Funkcja do ustawiania nagłówków z tokenem dostępu
+// Function sets headers with access token
 const setAccessToken = (config: { url?: string; headers?: any; }) => {
     const accessToken = sessionStorage.getItem("accessToken");
     if (accessToken) {
@@ -13,31 +13,31 @@ const setAccessToken = (config: { url?: string; headers?: any; }) => {
     return config;
 };
 
-const handleResponseError = async (error: { response: { status: number; }, config: any }) => {
-    // Tutaj możesz dostosować obsługę błędów w zależności od potrzeb
+const handleResponseError = async (error: { response: { status: number; }, config: any })=> {
+    // Adjust error handling
     if (error.response) {
         const originalRequest = error.config;
 
-        // Sprawdź, czy błąd wynika z nieważnego tokenu
+        // Check if the error is a result of a not valid token
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
                 const refreshToken = sessionStorage.getItem('refreshToken');
 
-                // Wywołaj endpoint do odświeżania tokenu
+                // Call the token refreshment endpoint
                 const refreshResponse = await axios.post('/refresh-token', {
                     refreshToken: refreshToken,
-                });
-
+                })
                 const newAccessToken = refreshResponse.data.accessToken;
 
-                // Zapisz nowy token dostępowy
+                // Save the new access token
                 sessionStorage.setItem('accessToken', newAccessToken);
 
-                // Ponów pierwotne żądanie z nowym tokenem dostępowym
+                // Try the original request with th new access token
                 return axios(originalRequest);
-            } catch (refreshError) {
+            }
+            catch (refreshError) {
                 sessionStorage.clear()
                 const navigate = useNavigate()
                 navigate("/forcedLogout")
@@ -71,5 +71,6 @@ axios.interceptors.response.use(
         return handleResponseError(error);
     }
 );
+
 
 export default axios
