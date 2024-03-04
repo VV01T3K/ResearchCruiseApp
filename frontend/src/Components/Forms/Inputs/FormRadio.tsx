@@ -4,34 +4,40 @@ import {
 import React from "react";
 import InputWrapper from "./InputWrapper";
 
-function FormRadio(props: {
+
+type Props = {
     className?: string,
     label: string,
     name: string,
-    values: string[], form?: any}){
+    values: string[], form?: any
+}
 
+
+function FormRadio(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
                 name={props.name}
                 control={props.form!.control}
-                render={({ field }) => (
-                    <div className={"d-flex flex-column"}>
-                        {props.values.map((option, index)=> (
-                           <label key={index}>
+                render={({field}) => (
+                    <div className="d-flex flex-column">
+                        {props.values.map((option, index) => (
+                            <label key={index}>
                                 <input
                                     type="radio"
                                     value={option}
                                     onChange={field.onChange}
                                     checked={field.value === option}
                                 />
-                               {option}
-                            </label>))
-                        }
-                    </div>)}
+                                {option}
+                            </label>
+                        ))}
+                    </div>
+                )}
             />
         </InputWrapper>
     )
 }
+
 
 export default FormRadio

@@ -3,33 +3,46 @@ import Select from "react-select";
 import React from "react";
 import InputWrapper from "./InputWrapper";
 
-function FormSelect(props: {
+
+type Props = {
     className?: string,
     name: string,
     label: string,
     values: any[]
-    form?: { control: Control<FieldValues, any> | undefined; formState: { errors: { [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }; }; }; }}){
+    form?: {
+        control: Control<FieldValues, any> | undefined;
+        formState: {
+            errors: {
+                [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; };
+            };
+        };
+    }
+}
 
-    return  (
+
+function FormSelect(props: Props) {
+    return (
         <InputWrapper {...props}>
             <Controller
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
-                <Select minMenuHeight={300} {...field}
-                        styles={{menu: provided => ({ ...provided, zIndex: 9999 })}}
-                        options={props.values?.map(value => ({ label: value, value }))}
-                        closeMenuOnScroll={() => true}
-                        // onChange={(selectedOption) => {
-                        //     // Przekazuje tylko wartość (value) do formularza
-                        //     field.onChange(selectedOption ? selectedOption : null);
-                        // }}
-                />
+                    <Select minMenuHeight={300}
+                            {...field}
+                            styles={{menu: provided => ({...provided, zIndex: 9999})}}
+                            options={props.values?.map(value => ({label: value, value}))}
+                            closeMenuOnScroll={() => true}
+                            // onChange={(selectedOption) => {
+                            //     // Przekazuje tylko wartość (value) do formularza
+                            //     field.onChange(selectedOption ? selectedOption : null);
+                            // }}
+                    />
                 )}
             />
-         </InputWrapper>
+        </InputWrapper>
     )
 }
+
 
 export default FormSelect
