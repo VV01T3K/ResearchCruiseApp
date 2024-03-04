@@ -19,6 +19,7 @@ import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
 
+
 function App() {
 
     const { addEventListener:loginListener } = useCustomEvent('loginSuccessful');
@@ -29,73 +30,79 @@ function App() {
         firstName: string;
     }
 
-    const [userData, setUserData] = useState<UserData|null>(null)
+    const [userData, setUserData] = useState<UserData | null>(null)
 
-    useEffect(() => {
-        const getUserData = () => {
-            if(sessionStorage.getItem("accessToken"))
-                Api.get('/account')
-                    .then(response=>setUserData(response.data))
-        }
+    useEffect(
+        () => {
+            const getUserData = () => {
+                if (sessionStorage.getItem("accessToken"))
+                    Api.get('/account')
+                        .then(response => setUserData(response.data))
+            }
+            const unsubscribeLogin = loginListener(() => {
+                getUserData();
+            });
+            const unsubscribeLogout = logoutListener(() => {
+                sessionStorage.clear()
+                setUserData(null)
+            });
+            window.addEventListener('load', getUserData);
 
-        const unsubscribeLogin = loginListener(() => {
-            getUserData();
-        });
-
-        const unsubscribeLogout = logoutListener(() => {
-            sessionStorage.clear()
-            setUserData(null)
-        });
-        window.addEventListener('load', getUserData);
-
-        return () => {
-            unsubscribeLogin();
-            unsubscribeLogout();
-            window.removeEventListener('load', getUserData);
-
-        };
-    }, [loginListener, logoutListener, 'load']);
+            return () => {
+                unsubscribeLogin();
+                unsubscribeLogout();
+                window.removeEventListener('load', getUserData);
+            };
+        },
+        [loginListener, logoutListener, 'load']
+    );
 
     return (
-        <div className={`vh-100`}>
-            <PageHeader name={userData ? userData.firstName:null}/>
+        <div className="vh-100">
+            <PageHeader name={userData ? userData.firstName : null} />
             <Routes>
-                    { userData && userData["roles"].includes("Shipowner") && <>
-                        <Route path="/NewForm" element={<NewFormPage/>}/>
-                        <Route path="/FormA" element={<FormA0/>}/>
-                        <Route path="/ManageUsers" element={<ManageUsersPage/>}/>
-                        <Route path="/*" element={<ShipOwnerPanel/>}/>
-                    </>
+                    {userData && userData["roles"].includes("Shipowner") &&
+                        <>
+                            <Route path="/NewForm" element={<NewFormPage />} />
+                            <Route path="/FormA" element={<FormA0 />} />
+                            <Route path="/ManageUsers" element={<ManageUsersPage />} />
+                            <Route path="/*" element={<ShipOwnerPanel />} />
+                        </>
                     }
-                    { userData && userData["roles"].includes("Administrator") &&<>
-                        <Route path="/NewForm" element={<NewFormPage/>}/>
-                        <Route path="/FormA" element={<FormA0/>}/>
-                        <Route path="/FormB" element={<FormB0/>}/>
-                        <Route path="/FormC" element={<FormC0/>}/>
-                        <Route path="/ManageUsers" element={<ManageUsersPage/>}/>
-
-                        <Route path="/*" element={<AdminPanel/>}/>
-                    </>
+                    {userData && userData["roles"].includes("Administrator") &&
+                        <>
+                            <Route path="/NewForm" element={<NewFormPage />} />
+                            <Route path="/FormA" element={<FormA0 />} />
+                            <Route path="/FormB" element={<FormB0 />} />
+                            <Route path="/FormC" element={<FormC0 />} />
+                            <Route path="/ManageUsers" element={<ManageUsersPage />} />
+                            <Route path="/*" element={<AdminPanel />} />
+                        </>
                     }
-                    { userData && userData["roles"].includes("CruiseManager") &&<>
-                        <Route path="/NewForm" element={<NewFormPage/>}/>
-                        <Route path="/FormA" element={<FormA0/>}/>
-                        <Route path="/FormB" element={<FormB0/>}/>
-                        <Route path="/FormC" element={<FormC0/>}/>
-                        <Route path="/*" element={<ManagerPanel/>}/>
-                    </>
+                    {userData && userData["roles"].includes("CruiseManager") &&
+                        <>
+                            <Route path="/NewForm" element={<NewFormPage />} />
+                            <Route path="/FormA" element={<FormA0 />} />
+                            <Route path="/FormB" element={<FormB0 />} />
+                            <Route path="/FormC" element={<FormC0 />} />
+                            <Route path="/*" element={<ManagerPanel />} />
+                        </>
                     }
-                { userData != null &&
-                    <Route path={"/AccountSettings"} element={<AccountPage userData={userData}/>}/> }
-                { userData == null &&
+                {userData != null &&
+                    <Route path="/AccountSettings" element={<AccountPage userData={userData} />} />
+                }
+                {userData == null &&
                     <>
-                    <Route path="/*" element={<LoginPage/>}/>
-                    <Route path="/forcedLogout" element={<LogoutPage/>}/> </>}
-                <Route path="/ConfirmEmail" element={<EmailConfirmPage/>}/>
+                        <Route path="/*" element={<LoginPage />} />
+                        <Route path="/forcedLogout" element={<LogoutPage />} />
+                    </>
+                }
+                <Route path="/ConfirmEmail" element={<EmailConfirmPage />} />
                 {/*<Route path="/Test" element={<TestPage/>}/>*/}
             </Routes>
         </div>
     );
 }
+
 
 export default App;
