@@ -1,3 +1,8 @@
-export const DummyTag = (props:{required?: any}) => {
+type Props = {
+    required?: any
+}
+
+
+export const DummyTag = (props: Props) => {
     return <></>
 }

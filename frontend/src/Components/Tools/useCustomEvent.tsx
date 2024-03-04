@@ -1,23 +1,27 @@
 import { useEffect, useRef } from 'react';
 
-const useCustomEvent = (eventName) => {
+
+const useCustomEvent = (eventName)=> {
     const ref = useRef(null);
 
-    useEffect(() => {
-        ref.current = new CustomEvent(eventName);
-        return () => {
-            ref.current = null;
-        };
-    }, [eventName]);
+    useEffect(
+        () => {
+            ref.current = new CustomEvent(eventName);
+            return () => {
+                ref.current = null;
+            };
+        },
+        [eventName]
+    );
 
-    const dispatchEvent = (data: any) => {
+    const dispatchEvent = (data: any)=> {
         if (ref.current) {
             document.dispatchEvent(new CustomEvent(eventName, { detail: data }));
         }
     };
 
     const addEventListener = (callback) => {
-        const eventHandler = (event) => {
+        const eventHandler = (event)=> {
             callback(event.detail);
         };
 
@@ -30,5 +34,6 @@ const useCustomEvent = (eventName) => {
 
     return { dispatchEvent, addEventListener };
 };
+
 
 export default useCustomEvent;
