@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="RD-233.11799.303">
-    <data-source name="Microsoft SQL Server (JetBrains)" uuid="a2fddd5c-d456-4cc4-9230-9c60ddefe4be">
+    <data-source name="Microsoft SQL Server (JetBrains)" uuid="459d572d-5bd1-4e76-93de-eaa97202b7f9">
       <database-info product="Microsoft SQL Server" version="16.00.4095" jdbc-version="4.2" driver-name="JetBrains JDBC Driver for SQL Server" driver-version="1.0" dbms="MSSQL" exact-version="16.0.4095" exact-driver-version="1.0">
         <extra-name-characters>$#@</extra-name-characters>
         <identifier-quote-string>&quot;</identifier-quote-string>
@@ -11,7 +11,9 @@
       <auth-provider>no-auth</auth-provider>
       <schema-mapping>
         <introspection-scope>
-          <node kind="database" qname="@">
+          <node kind="database">
+            <name qname="@" />
+            <name qname="ResearchCruiseApp" />
             <node kind="schema" qname="@" />
           </node>
         </introspection-scope>
