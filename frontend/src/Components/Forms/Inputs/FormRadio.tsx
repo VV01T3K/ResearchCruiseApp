@@ -17,6 +17,7 @@ function FormRadio(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 render={({field}) => (

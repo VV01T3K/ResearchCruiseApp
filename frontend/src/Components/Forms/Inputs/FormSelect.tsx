@@ -24,6 +24,7 @@ function FormSelect(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}

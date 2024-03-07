@@ -15,35 +15,35 @@ const setAccessToken = (config: { url?: string; headers?: any; }) => {
 
 const handleResponseError = async (error: { response: { status: number; }, config: any })=> {
     // Adjust error handling
-    if (error.response) {
-        const originalRequest = error.config;
-
-        // Check if the error is a result of a not valid token
-        if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-
-            try {
-                const refreshToken = sessionStorage.getItem('refreshToken');
-
-                // Call the token refreshment endpoint
-                const refreshResponse = await axios.post('/refresh-token', {
-                    refreshToken: refreshToken,
-                })
-                const newAccessToken = refreshResponse.data.accessToken;
-
-                // Save the new access token
-                sessionStorage.setItem('accessToken', newAccessToken);
-
-                // Try the original request with th new access token
-                return axios(originalRequest);
-            }
-            catch (refreshError) {
-                sessionStorage.clear()
-                const navigate = useNavigate()
-                navigate("/forcedLogout")
-            }
-        }
-    }
+    // if (error.response) {
+    //     const originalRequest = error.config;
+    //
+    //     // Check if the error is a result of a not valid token
+    //     if (error.response.status === 401 && !originalRequest._retry) {
+    //         // originalRequest._retry = true;
+    //         //
+    //         // try {
+    //         //     const refreshToken = sessionStorage.getItem('refreshToken');
+    //         //
+    //         //     // Call the token refreshment endpoint
+    //         //     const refreshResponse = await axios.post('/refresh-token', {
+    //         //         refreshToken: refreshToken,
+    //         //     })
+    //         //     const newAccessToken = refreshResponse.data.accessToken;
+    //         //
+    //         //     // Save the new access token
+    //         //     sessionStorage.setItem('accessToken', newAccessToken);
+    //         //
+    //         //     // Try the original request with th new access token
+    //         //     return axios(originalRequest);
+    //         // }
+    //         // catch (refreshError) {
+    //         //     sessionStorage.clear()
+    //         //     const navigate = useNavigate()
+    //         //     navigate("/forcedLogout")
+    //         // }
+    //     }
+    // }
 
     return Promise.reject(error);
 };

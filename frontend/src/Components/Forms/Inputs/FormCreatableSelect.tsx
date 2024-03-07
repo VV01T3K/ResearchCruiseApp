@@ -25,11 +25,13 @@ function FormCreatableSelect(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                     <CreatableSelect
+
                         isClearable
                         formatCreateLabel={(inputValue: any) => {
                             return `Dodaj: ${inputValue}`;

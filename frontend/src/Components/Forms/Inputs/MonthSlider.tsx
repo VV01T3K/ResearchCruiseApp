@@ -74,6 +74,7 @@ const MonthSlider = (props: Props) => {
             <Controller
                 name={props.name}
                 control={props.form!.control}
+                defaultValue={[0,24]}
                 render={({ field}) => (
                     <>
                         <Slider style={{height: "80px"}}
