@@ -39,6 +39,7 @@ function TextArea(props: Props) {
                 }
                 name={props.name}
                 control={props.form!.control}
+                defaultValue={""}
                 rules={{
                     required: props.required ?? true,
                     maxLength: {

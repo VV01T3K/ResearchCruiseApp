@@ -38,7 +38,7 @@ function NumberInput(props: Props){
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
-                    <input className="text-center"
+                    <input className="text-center placeholder-glow" style={{}}
                            value={field.value}
                            onBlur={(e) => {
                                if (re.test(e.target.value)) {
@@ -65,14 +65,16 @@ function NumberInput(props: Props){
                                        { shouldValidate: true }
                                    )
                                }
-                               else {
-                                   field.onBlur()
-                               }
+                               // else {
+                               //     field.onBlur()
+                               // }
                                // field.onBlur();
                            }}
+                           placeholder="0"
                            onChange={(e) => { onChange(e) }}
                     />
                 }
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{

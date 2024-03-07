@@ -4,6 +4,7 @@ import {Controller, useFieldArray} from "react-hook-form";
 import 'react-dropdown/style.css';
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Style from "./TaskInput.module.css";
+import InputWrapper from "../InputWrapper";
 
 
 type Props = {
@@ -54,6 +55,7 @@ function TaskInput(props: Props) {
     );
 
     return (
+        <InputWrapper>
         <div className={props.className + " p-3"}>
             <label>{props.label}</label>
             <div className="table-striped w-100">
@@ -164,6 +166,7 @@ function TaskInput(props: Props) {
                 </div>
             </div>
         </div>
+        </InputWrapper>
     )
 }
 

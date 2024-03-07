@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import useCustomEvent from "../../Tools/useCustomEvent";
-import {FieldValues} from "react-hook-form";
 
 
 type Props = {
@@ -24,15 +23,16 @@ type Props = {
 function FormSection(props: Props) {
     // Check conditions for each child
     const isChildInvalid =
-        (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined) => {
-            const required = child.props.required ?? true
-            const childName = child.props.name;
+        (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined):boolean =>{
+            const required = child!.props.required ?? true
+            const childName = child!.props.name;
             if (!required || React.Children.count(child) === 0)
                 return false
+            console.log(props.form!.formState.dirtyFields)
             return !(
                 required &&
-                props.form!.formState.dirtyFields[childName] !== undefined &&
-                props.form!.formState.errors[childName] === undefined
+                childName in props.form!.formState.dirtyFields &&
+                !(childName in props.form!.formState.errors)
             );
         };
 
@@ -42,16 +42,15 @@ function FormSection(props: Props) {
     const [isCompleted, setIsCompleted] = useState(false)
 
     useEffect(()=>{
+        const invalidChildren = React.Children.map(props.children, (child) => {
+            return isChildInvalid(child)}) as boolean[]
         const validChildren =
-            !Object.values(React.Children.map(props.children, (child) => {
-                return isChildInvalid(child)})).some((child)=>child==true)
+            !Object.values(invalidChildren).some((child)=>child)
         // dispatchEvent( {[props.title]:validChildren})
         setIsCompleted(validChildren)
 
     },[props.form!.watch()])
 
-    useEffect(() => {
-      });
 
 
     return  (<div className="accordion-item border-2 border-black border-bottom">
@@ -62,9 +61,7 @@ function FormSection(props: Props) {
          <div className={`d-flex flex-row flex-wrap justify-content-center  p-3 ${isActive ? ' ': 'visually-hidden'}`}>
 
                     {React.Children.map(props.children, (child, index) => {
-                        // Dodaj nową właściwość do każdego dziecka
-                        // @ts-ignore
-                        return React.cloneElement(child, {form: props.form});
+                        return React.cloneElement(child as React.ReactElement, {form: props.form});
                     })}
             </div>
         </div>

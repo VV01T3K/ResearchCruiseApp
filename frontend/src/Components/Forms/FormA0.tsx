@@ -9,7 +9,6 @@ import MonthSlider from "./Inputs/MonthSlider";
 import NumberInput from "./Inputs/NumberInput";
 import TextArea from "./Inputs/TextArea";
 import FormRadio from "./Inputs/FormRadio";
-import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
 import IntInput from "./Inputs/IntInput";
 import TaskInput from "./Inputs/TaskInput/TaskInput";
@@ -20,6 +19,7 @@ import submit = Simulate.submit;
 import SpubTask from "./Inputs/SpubTask";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
+import FormWithSections from "./Tools/FormWithSections";
 
 
 function FormA0(){
@@ -37,21 +37,22 @@ function FormA0(){
     );
 
     const defaultValues = {
-        managers: null,
-        supplyManagers: null,
-        years: null,
-        acceptedPeriod: [0,24],
-        optimalPeriod: [0,24],
-        cruiseDays: 0,
-        cruiseTime: 0,
-        notes: null,
-        shipUsage: null,
-        diffrentUsage: null,
+        // managers: null,
+        // supplyManagers: null,
+        // years: null,
+        // acceptedPeriod: [0,24],
+        // optimalPeriod: [0,24],
+        // cruiseDays: 0,
+        // cruiseTime: 0,
+        // notes: null,
+        // shipUsage: null,
+        // diffrentUsage: null,
     }
 
     const form = useForm({
         mode: 'onBlur',
-        defaultValues: defaultValues
+        // defaultValues: defaultValues,
+        shouldUnregister: false
     });
 
         // {
@@ -83,8 +84,7 @@ function FormA0(){
         <FormTemplate>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections form={form} onSubmit={()=>{}}
-                              // onChange={()=>console.log(form.getValues())}
-            >
+                              onChange={()=>console.log(form.getValues())}>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
                                          name="managers"
@@ -226,7 +226,7 @@ function FormA0(){
                 <FormSection title={sections.Zadania}>
                     <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
                                  label="Goście / osoby spoza UG"
-                                 name="gusests"
+                                 name="gusestsss"
                                  maxVal={20}
                     />
                     {/*<TaskInput name={"wejscie"} className={"col-12"} label={""}/>*/}
@@ -235,17 +235,17 @@ function FormA0(){
                 <FormSection title={sections.Umowy}>
                     <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
                                  label="Goście / osoby spoza UG"
-                                 name="gusests"
+                                 name="gusestss"
                                  maxVal={20}
                     />
                 </FormSection>
 
-                {/*<FormSection title={sections["Z.Badawcze"]}>*/}
-                {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"blockListInput2"}/>*!/*/}
+                <FormSection title={sections["Z. badawcze"]}>
+                    <BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"}/>
                 {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
                 {/*    /!*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*!/*/}
 
-                {/*</FormSection>*/}
+                </FormSection>
             {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}
             {/*      </FormSection>*/}
             {/*    <FormSection completed={completedSections[10]} id={"10"} title={sections.Efekty}>*/}

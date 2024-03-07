@@ -1,5 +1,5 @@
 import React from "react";
-import {Controller, useFieldArray} from "react-hook-form";
+import {Controller, get, useFieldArray} from "react-hook-form";
 import Style from "./BlockListInput.module.css"
 import CSSModules from "react-css-modules";
 import ErrorCode from "../../../LoginPage/ErrorCode";
@@ -24,10 +24,12 @@ function BlockListInput(props: Props){
     const {
         fields,
         append,
-        remove
+        remove,
+        prepend
     } = useFieldArray({
         control: props.form.control,
-        name: props.form.name,
+        name: props.name,
+
     });
 
     // const disabled = !Array.from({ length: data.length }, (_, index) => index)
@@ -38,6 +40,48 @@ function BlockListInput(props: Props){
     //     (field, index) => props.dirtyFields[`${props.name}[${index}].value`]
     // );
     // console.log(isSubFormDirty)
+    const isLastFilled = () => {
+        const lastIndex = fields.length-1;
+
+        return fields && fields[lastIndex] && fields[lastIndex].value==''
+
+    }
+    React.useEffect(() => {
+        // Przykładowe ustawienie wartości dla najnowszego pola
+        const lastIndex = fields.length-1;
+
+        // if(isLastFilled()) {
+        //     props.form.setValue(
+        //         `${props.name}[${lastIndex}].value`,
+        //         "",
+        //         {shouldDirty: false, shouldTouch: false}
+        //     )
+        //
+        //     props.form.setError(props.name, {
+        //         type: 'manual',
+        //         message: 'To jest ręcznie ustawiony błąd!',
+        //     });
+        // }
+        // else{
+        //     props.form.clearErrors(props.name)
+        // }
+
+        // props.form.trigger(`${props.name}`)
+        // props.form.clearErrors(props.name)
+        // props.form.setValue(
+        //     `${props.name}[${lastIndex}].value`,
+        //     "",
+        //     { shouldValidate: true }
+        // )
+    }, [fields])
+    const appends = () => {
+        const index = fields.length-1;
+        // props.form.setValue(`${props.name}[${index}]`, "")
+        // prepend({})
+        // props.form.setValue("isDirty", false)
+
+
+    }
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
@@ -71,18 +115,19 @@ function BlockListInput(props: Props){
                                                     <input {...field}
                                                            type="text"
                                                            className="w-100"
-                                                           onBlur={(e)=> {
-                                                               props.form.setValue(
-                                                                   `${props.name}[${index}].value`,
-                                                                   e.target.value,
-                                                                   { shouldDirty: false }
-                                                               )
-                                                               props.form.setValue(
-                                                                   `${props.name}[${index}].value`,
-                                                                   e.target.value,
-                                                                   { shouldValidate: true }
-                                                               )
-                                                           }}
+                                                           // onChange={(e)=> {
+                                                           //     props.form.setValue(
+                                                           //         `${props.name}[${index}].value`,
+                                                           //         e.target.value,
+                                                           //         { shouldDirty: false }
+                                                           //     )
+                                                           //     props.form.setValue(
+                                                           //         `${props.name}[${index}].value`,
+                                                           //         e.target.value,
+                                                           //         { shouldValidate: true }
+                                                           //     )
+                                                           //     props.form.clearErrors(  props.name)
+                                                           // }}
                                                     />
                                                 )}
                                     />
@@ -111,9 +156,9 @@ function BlockListInput(props: Props){
                 </tbody>
             </table>
 
-            <button className="btn btn-primary"
+            <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled": ""}`}
                     type="button"
-                    onClick={() => { append({value: "" })} }
+                    onClick={appends }
                     // disabled={disabled}
             >
                 +
