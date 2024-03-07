@@ -27,7 +27,12 @@ function FormRadio(props: Props) {
                                 <input
                                     type="radio"
                                     value={option}
-                                    onChange={field.onChange}
+                                    onChange={(e) => {
+                                        props.form!.setValue(props.name, e.target.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                                    }}
+                                    // onBlur={
+                                    // props.form!.setValue(props.name, field.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true })
+                                    // }
                                     checked={field.value === option}
                                 />
                                 {option}

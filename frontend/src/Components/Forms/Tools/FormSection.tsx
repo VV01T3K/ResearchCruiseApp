@@ -14,10 +14,10 @@ type Props = {
     children?:
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
-    title: string
+    title: string,
+    sections
 }
 
-// const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
 
 function FormSection(props: Props) {
@@ -26,27 +26,28 @@ function FormSection(props: Props) {
         (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined):boolean =>{
             const required = child!.props.required ?? true
             const childName = child!.props.name;
-            if (!required || React.Children.count(child) === 0)
+            if (React.Children.count(child) === 0)
                 return false
-            console.log(props.form!.formState.dirtyFields)
-            return !(
-                required &&
-                childName in props.form!.formState.dirtyFields &&
-                !(childName in props.form!.formState.errors)
-            );
+            return (
+                (required &&(
+                !(childName in props.form!.formState.dirtyFields) ||
+                !(childName in props.form!.formState.touchedFields))) ||
+                (childName in props.form!.formState.errors)
+            )
         };
 
     const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
     const [isActive, setIsActive] = useState(true);
     const [isCompleted, setIsCompleted] = useState(false)
+    const key = Object.keys(props.sections).find((k) => props.sections[k] === props.title);
 
     useEffect(()=>{
         const invalidChildren = React.Children.map(props.children, (child) => {
             return isChildInvalid(child)}) as boolean[]
         const validChildren =
             !Object.values(invalidChildren).some((child)=>child)
-        // dispatchEvent( {[props.title]:validChildren})
+        dispatchEvent( {[key as string]:validChildren})
         setIsCompleted(validChildren)
 
     },[props.form!.watch()])
