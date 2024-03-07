@@ -8,7 +8,6 @@ import ErrorCode from "../../../LoginPage/ErrorCode";
 type Props = {
     className: string,
     label: string,
-    emptyInputMessage: string,
     name,
     form?
 }
