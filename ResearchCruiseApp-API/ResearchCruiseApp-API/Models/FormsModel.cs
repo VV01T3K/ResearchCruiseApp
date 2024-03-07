@@ -90,9 +90,9 @@ public struct Publications
     public string Actions { get; set; } = null!;
 }
 
-public struct Theses
+public struct Thesis
 {
-    public Theses()
+    public Thesis()
     {
     }
 
@@ -158,7 +158,7 @@ public class FormsModel
     
     //Publikacje i Prace
     public List<Publications>? PublicationsList;
-    public List<Theses>? ThesesList;
+    public List<Thesis>? ThesesList;
     
     
     //Efekty rejsu 
