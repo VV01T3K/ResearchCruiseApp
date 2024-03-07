@@ -241,7 +241,12 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    <BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"}/>
+                    <BlockListInput
+                        className="col-12 col-xl-4 "
+                        label="Uczestnictwo naukowców spoza UG"
+                        emptyInputMessage="Nie dodano żadnej jednostki"
+                        name="bl"
+                    />
                 {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
                 {/*    /!*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*!/*/}
 
@@ -252,11 +257,14 @@ function FormA0(){
             {/*        <TaskInput name={"wejscie2"} form={form} className={"col-12"} label={""}/>*/}
 
             {/*    </FormSection>*/}
-
-            {/*    <FormSection completed={completedSections[11]} id={"11"} title={sections.SPUB}>*/}
-            {/*    <SpubTask label={"Zadania do wykonania w trakcie rejsu"} name={"spubTask"} form={form}/>*/}
-            {/*    </FormSection>*/}
-
+                <FormSection title={sections.SPUB}>
+                    <BlockListInput
+                        className="col-12 col-xl-10"
+                        label="Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
+                        emptyInputMessage="Brak"
+                        name="spubTasks"
+                    />
+                </FormSection>
             {/*    <button type={"submit"}/>*/}
             </FormWithSections>
         </FormTemplate>

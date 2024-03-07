@@ -8,6 +8,7 @@ import ErrorCode from "../../../LoginPage/ErrorCode";
 type Props = {
     className: string,
     label: string,
+    emptyInputMessage: string,
     name,
     form?
 }
@@ -95,7 +96,7 @@ function BlockListInput(props: Props){
                 <tbody>
                     {!fields.length &&
                         <tr className="d-flex flex-row bg-light p-2 justify-content-center">
-                            <th colSpan={3} className={"text-center"} >Nie dodano żadnej jednostki</th>
+                            <th colSpan={3} className={"text-center"} >{props.emptyInputMessage}</th>
                         </tr>
                     }
                     {fields.map((item, index) => (
@@ -158,7 +159,7 @@ function BlockListInput(props: Props){
 
             <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled": ""}`}
                     type="button"
-                    onClick={appends }
+                    onClick={appends}
                     // disabled={disabled}
             >
                 +
