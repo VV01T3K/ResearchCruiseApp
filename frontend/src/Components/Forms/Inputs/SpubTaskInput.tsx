@@ -6,7 +6,6 @@ import ErrorCode from "../../LoginPage/ErrorCode";
 type Props = {
     className: string,
     label: string,
-    emptyInputMessage: string,
     name: string,
     form?
 }
@@ -40,7 +39,7 @@ export default function SpubTaskInput(props: Props){
                 <tbody>
                 {!fields.length &&
                     <tr className="d-flex flex-row bg-light p-2 justify-content-center">
-                        <td colSpan={3} className={"text-center"} >{props.emptyInputMessage}</td>
+                        <td colSpan={3} className={"text-center"} >Brak</td>
                     </tr>
                 }
                 {fields.map((item, index) => (
@@ -48,10 +47,19 @@ export default function SpubTaskInput(props: Props){
                         <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
                             <td className="text-center p-2 border-end" style={{"width": "10%"}}>{index}</td>
                             <th className="text-center p-2" style={{"width": "90%"}}>
-                                {Object.entries(item).map(key => {
-                                    console.log(key)
-                                    return (
-                                        <Controller name={key[0]}
+                                {/*<Controller*/}
+                                {/*    name={`${props.name}[${index}].yearFrom`}*/}
+                                {/*    control={props.form.control}*/}
+                                {/*    rules={{*/}
+                                {/*        required: "Pole nie może być puste",*/}
+                                {/*    }}*/}
+                                {/*    render={({ field }) => (*/}
+                                {/*        <input {...field}*/}
+                                {/*               type="text"*/}
+                                {/*        />*/}
+                                {/*    )}*/}
+                                {/*/>*/}
+                                <Controller name={`${props.name}[${index}].value`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -61,11 +69,10 @@ export default function SpubTaskInput(props: Props){
                                             render={({ field }) => (
                                                 <input {...field}
                                                        type="text"
+                                                       className="w-100"
                                                 />
                                             )}
-                                        />
-                                    )
-                                })}
+                                />
                             </th>
                             <th className="d-inline-flex p-2">
                                 <button type="button"

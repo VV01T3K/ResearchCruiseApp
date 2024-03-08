@@ -244,7 +244,6 @@ function FormA0(){
                     <BlockListInput
                         className="col-12 col-xl-4 "
                         label="Uczestnictwo naukowców spoza UG"
-                        emptyInputMessage="Nie dodano żadnej jednostki"
                         name="bl"
                     />
                 {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
@@ -261,7 +260,6 @@ function FormA0(){
                     <SpubTaskInput
                         className="col-12 col-xl-10"
                         label="Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
-                        emptyInputMessage="Brak"
                         name="spubTasks"
                     />
                 </FormSection>

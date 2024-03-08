@@ -95,7 +95,7 @@ function BlockListInput(props: Props){
                 <tbody>
                     {!fields.length &&
                         <tr className="d-flex flex-row bg-light p-2 justify-content-center">
-                            <th colSpan={3} className={"text-center"} >{props.emptyInputMessage}</th>
+                            <th colSpan={3} className={"text-center"} >Nie dodano żadnej jednostki</th>
                         </tr>
                     }
                     {fields.map((item, index) => (
