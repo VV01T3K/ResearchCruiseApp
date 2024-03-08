@@ -28,7 +28,7 @@ function FormSection(props: Props) {
             const childName = child!.props.name;
             if (!required || React.Children.count(child) === 0)
                 return false
-            console.log(props.form!.formState.dirtyFields)
+            // console.log(props.form!.formState.dirtyFields)
             return !(
                 required &&
                 childName in props.form!.formState.dirtyFields &&

@@ -12,9 +12,9 @@ type Props = {
 }
 
 type SpubTask = {
-    yearFrom: number,
-    yearTo: number,
-    name: string
+    yearFrom: string | "",
+    yearTo: string | "",
+    name: string | ""
 }
 
 
@@ -48,7 +48,10 @@ export default function SpubTaskInput(props: Props){
                         <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
                             <td className="text-center p-2 border-end" style={{"width": "10%"}}>{index}</td>
                             <th className="text-center p-2" style={{"width": "90%"}}>
-                                <Controller name={`${props.name}[${index}].value`}
+                                {Object.entries(item).map(key => {
+                                    console.log(key)
+                                    return (
+                                        <Controller name={key[0]}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -60,7 +63,9 @@ export default function SpubTaskInput(props: Props){
                                                        type="text"
                                                 />
                                             )}
-                                />
+                                        />
+                                    )
+                                })}
                             </th>
                             <th className="d-inline-flex p-2">
                                 <button type="button"
@@ -88,7 +93,12 @@ export default function SpubTaskInput(props: Props){
 
             <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""}`}
                     type="button"
-                    onClick={append}
+                    onClick={() => append({
+                            yearFrom: "",
+                            yearTo: "",
+                            name: ""
+                        })
+                    }
             >
                 +
             </button>
