@@ -34,10 +34,9 @@ function FormSelect(props: Props) {
                             styles={{menu: provided => ({...provided, zIndex: 9999})}}
                             options={props.values?.map(value => ({label: value, value}))}
                             closeMenuOnScroll={() => true}
-                            // onChange={(selectedOption) => {
-                            //     // Przekazuje tylko wartość (value) do formularza
-                            //     field.onChange(selectedOption ? selectedOption : null);
-                            // }}
+                            onChange={(selectedOption) => {
+                                props.form!.setValue(props.name, selectedOption, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                            }}
                     />
                 )}
             />

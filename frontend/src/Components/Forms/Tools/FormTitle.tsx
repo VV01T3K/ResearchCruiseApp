@@ -19,37 +19,42 @@ function FormTitle(props: Props){
         });
     }
 
-    const [sections, setSections] = useState(Object.entries(props.sections).reduce((acc, [value, key]) => {
-        acc[key] = { [value]: false };
-        return acc;
-    }, {}))
-    //
-    //
-    // const { addEventListener:sectionStateListener } = useCustomEvent('sectionStateChange');
-    //
-    // useEffect(() => {
-    //     const unsubscribeLogin = sectionStateListener((data) => {
-    //             try {
-    //
-    //
-    //                 const tmpSections = sections
-    //
-    //                 const firstKey = tmpSections[Object.keys(data)]
-    //                 tmpSections[Object.keys(data)][Object.keys(firstKey)] = data[Object.keys(data)]
-    //                 setSections(tmpSections)
-    //             }
-    //             catch{
-    //                 console.log("błąd")
-    //             }
-    //
-    //         }
-    //
-    //         );
-    //     return () => {
-    //         unsubscribeLogin();
-    //     };
-    // },[sectionStateListener])
-    //
+    const [sections, setSections] = useState(
+        Object.keys(props.sections).map((key) => { return {[key]:false};
+        })
+    )
+
+
+    const { addEventListener:sectionStateListener } = useCustomEvent('sectionStateChange');
+
+    useEffect(() => {
+        const unsubscribeLogin = sectionStateListener((data) => {
+
+                // console.log(Object.keys(sections).map((key) => {
+                //     const value = sections[key];
+                //     if (key==Object.entries(data)[0][0]) {
+                //         return { [key]: Object.entries(data)[0][1] }; // Zamień 'x' na 'y'
+                //     }
+                //     return {key: value};
+                // }))
+    // console.log(Object.entries(data)[0][0])
+            console.log(sections)
+
+                    // const tmpSections = sections
+                    //
+                    // const firstKey = tmpSections[Object.keys(data)]
+                    // tmpSections[Object.keys(data)][Object.keys(firstKey)] = data[Object.keys(data)]
+                    // setSections(sections[data.key] = data.value)
+
+             // console.log(data)
+            }
+
+            );
+        return () => {
+            unsubscribeLogin();
+        };
+    },[sectionStateListener])
+
 
     return (
         <div className={" mb-2  bg-light z-0 ps-2 pe-2 "}>

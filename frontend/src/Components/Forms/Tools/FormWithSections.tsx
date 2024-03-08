@@ -5,7 +5,8 @@ type Props = {
     form,
     children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>[],
     onChange,
-    onSubmit
+    onSubmit,
+    sections,
 }
 
 
@@ -18,7 +19,7 @@ function FormWithSections(props: Props){
         >
             {React.Children.map(props.children, (child, index) => {
                 // Dodaj nową właściwość do każdego dziecka
-                return React.cloneElement(child, { id: index + 1, form: props.form });
+                return React.cloneElement(child, { id: index + 1, form: props.form, sections:props.sections });
             })}
         </form>
     )

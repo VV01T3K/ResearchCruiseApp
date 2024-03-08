@@ -83,7 +83,7 @@ function FormA0(){
     return (
         <FormTemplate>
             <FormTitle sections={sections} title={"Formularz A"} />
-            <FormWithSections form={form} onSubmit={()=>{}}
+            <FormWithSections sections={sections} form={form} onSubmit={()=>{}}
                               onChange={()=>console.log(form.getValues())}>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
@@ -94,12 +94,12 @@ function FormA0(){
                     <FormSelect className="col-12 col-md-6 col-xl-3"
                                 name="supplyManagers"
                                 label="Zastępca"
-                                values={userData?.supplyManagers}
+                                values={["sss"]}
                     />
                     <FormSelect className="col-12 col-md-6 col-xl-3"
                                 name="years"
                                 label="Rok rejsu"
-                                values={userData?.years}
+                                values={["sss"]}
                     />
                 </FormSection>
 
@@ -241,11 +241,7 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    <BlockListInput
-                        className="col-12 col-xl-4 "
-                        label="Uczestnictwo naukowców spoza UG"
-                        name="bl"
-                    />
+                    <BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>
                 {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
                 {/*    /!*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*!/*/}
 
