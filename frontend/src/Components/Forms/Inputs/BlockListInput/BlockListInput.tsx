@@ -143,8 +143,8 @@ function BlockListInput(props: Props){
                                 <th>
                                     {props.form.formState.errors[props.name] &&
                                         props.form.formState.errors[props.name][index] &&
-                                        <ErrorCode code=
-                                                       {props.form.formState.errors[props.name][index]["value"].message}
+                                        <ErrorCode
+                                            code={props.form.formState.errors[props.name][index]["value"].message}
                                         />
                                     }
                                 </th>
@@ -154,10 +154,9 @@ function BlockListInput(props: Props){
                 </tbody>
             </table>
 
-            <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled": ""}`}
+            <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""}`}
                     type="button"
-                    onClick={appends }
-                    // disabled={disabled}
+                    onClick={append}
             >
                 +
             </button>
