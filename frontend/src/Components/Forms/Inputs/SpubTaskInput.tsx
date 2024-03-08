@@ -11,9 +11,9 @@ type Props = {
 }
 
 type SpubTask = {
-    yearFrom: string | "",
-    yearTo: string | "",
-    name: string | ""
+    yearFrom: string,
+    yearTo: string,
+    name: string
 }
 
 
@@ -29,86 +29,125 @@ export default function SpubTaskInput(props: Props){
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
-            <table className="table-striped w-100">
+            <table className="table-stripe w-100">
                 <thead className="text-white text-center" style={{"backgroundColor":"#052d73"}}>
-                <tr className="d-flex flex-row center align-items-center w-100">
-                    <td className="text-center p-2 w-100">{props.label}</td>
-                </tr>
+                    <tr className="d-flex flex-row center align-items-center w-100">
+                        <td className="text-center p-2 w-100">{props.label}</td>
+                    </tr>
                 </thead>
 
                 <tbody>
                 {!fields.length &&
                     <tr className="d-flex flex-row bg-light p-2 justify-content-center">
-                        <td colSpan={3} className={"text-center"} >Brak</td>
+                        <td colSpan={3} className="text-center w-100" >Brak</td>
+                    </tr>
+                }
+                {fields.length > 0 &&
+                    <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
+                        <td className="text-center p-2" style={{"width": "5%", "height": "100%"}}>Lp.</td>
+                        <td className="text-center p-2" style={{"width": "15%"}}>Rok rozpoczęcia</td>
+                        <td className="text-center p-2" style={{"width": "15%"}}>Rok zakończenia</td>
+                        <td className="text-center p-2" style={{"width": "60%"}}>Nazwa</td>
+                        <td className="text-center p-2" style={{"width": "5%"}}></td>
                     </tr>
                 }
                 {fields.map((item, index) => (
                     <React.Fragment key={item.id}>
                         <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
-                            <td className="text-center p-2 border-end" style={{"width": "10%"}}>{index}</td>
-                            <th className="text-center p-2" style={{"width": "90%"}}>
-                                {/*<Controller*/}
-                                {/*    name={`${props.name}[${index}].yearFrom`}*/}
-                                {/*    control={props.form.control}*/}
-                                {/*    rules={{*/}
-                                {/*        required: "Pole nie może być puste",*/}
-                                {/*    }}*/}
-                                {/*    render={({ field }) => (*/}
-                                {/*        <input {...field}*/}
-                                {/*               type="text"*/}
-                                {/*        />*/}
-                                {/*    )}*/}
-                                {/*/>*/}
-                                <Controller name={`${props.name}[${index}].value`}
+                            <td className="text-center p-2" style={{"width": "5%"}}>{index + 1}.</td>
+                            <td className="text-center p-2" style={{"width": "15%"}}>
+                                <Controller name={`${props.name}[${index}].value.yearFrom`}
                                             control={props.form.control}
                                             rules={{
-                                                required: "Pole nie może być puste",
-                                                validate: (value) =>
-                                                    value.length < 10 || 'Pole nie może mieć wartości 0.'
+                                                required: "Pole nie może być puste"
                                             }}
                                             render={({ field }) => (
                                                 <input {...field}
                                                        type="text"
-                                                       className="w-100"
+                                                       className="w-100 rounded border-1"
                                                 />
                                             )}
                                 />
-                            </th>
-                            <th className="d-inline-flex p-2">
+                            </td>
+                            <td className="text-center p-2" style={{"width": "15%"}}>
+                                <Controller name={`${props.name}[${index}].value.yearTo`}
+                                            control={props.form.control}
+                                            rules={{
+                                                required: "Pole nie może być puste"
+                                            }}
+                                            render={({ field }) => (
+                                                <input {...field}
+                                                       type="text"
+                                                       className="w-100 rounded border-1"
+                                                />
+                                            )}
+                                />
+                            </td>
+                            <td className="text-center p-2" style={{"width": "60%"}}>
+                                <Controller name={`${props.name}[${index}].value.name`}
+                                            control={props.form.control}
+                                            rules={{
+                                                required: "Pole nie może być puste"
+                                            }}
+                                            render={({ field }) => (
+                                                <input {...field}
+                                                       type="text"
+                                                       className="w-100 rounded border-1"
+                                                />
+                                            )}
+                                />
+                            </td>
+                            <td className="d-inline-flex p-2" style={{"width": "5%"}}>
                                 <button type="button"
                                         className="btn btn-primary"
                                         onClick={() => {remove(index)}}
                                 >
                                     -
                                 </button>
-                            </th>
+                            </td>
                         </tr>
                         <tr className="bg-light">
-                            <th>
-                                {props.form.formState.errors[props.name] &&
-                                    props.form.formState.errors[props.name][index] &&
+                            {props.form.formState.errors[props.name] &&
+                                props.form.formState.errors[props.name][index] &&
+                                <th>
                                     <ErrorCode
-                                        code={props.form.formState.errors[props.name][index]["value"].message}
-                                    />
-                                }
-                            </th>
+                                            code={props.form.formState.errors[props.name][index]["value"].message}
+                                        />
+                                </th>
+                            }
                         </tr>
                     </React.Fragment>
                 ))}
                 </tbody>
             </table>
 
-            <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""}`}
-                    type="button"
-                    onClick={() => append({
-                            yearFrom: "",
-                            yearTo: "",
-                            name: ""
-                        })
-                    }
-            >
-                +
-            </button>
+            <div className="d-flex flex-row justify-content-center w-100">
+                <div className="d-flex col-6 text-center p-2 justify-content-center">
+                    <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""} w-100`}
+                            type="button"
+                            onClick={() => {
+                                const newSpubTask: SpubTask = {
+                                    yearFrom: "",
+                                    yearTo: "",
+                                    name: ""
+                                }
+                                append(newSpubTask)
+                            }}
+                    >
+                        Dodaj nowe
+                    </button>
+                </div>
+                <div className="d-flex col-6 text-center p-2 justify-content-center">
+                    <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""} w-100`}
+                            type="button"
+                            onClick={() => {
+
+                            }}
+                    >
+                        Dodaj z historii
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }
