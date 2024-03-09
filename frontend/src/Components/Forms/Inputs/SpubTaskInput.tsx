@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import {Controller, get, useFieldArray} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
+import {register} from "../../../serviceWorkerRegistration";
 
 
 type Props = {
@@ -11,8 +12,8 @@ type Props = {
 }
 
 type SpubTask = {
-    yearFrom: number,
-    yearTo: number,
+    yearFrom: string,
+    yearTo: string,
     name: string
 }
 
@@ -66,7 +67,6 @@ export default function SpubTaskInput(props: Props){
                                                        type="number"
                                                        min="1900"
                                                        max="2100"
-                                                       defaultValue={`${new Date().getFullYear()}`}
                                                        className="w-100"
                                                 />
                                             )}
@@ -77,16 +77,14 @@ export default function SpubTaskInput(props: Props){
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
-                                                // validate: value =>
-                                                //     value >= props.form.getValues(props.name)[index].value.yearFrom ||
-                                                //         "Rok zakończenia nie może być wcześniejszy niż rok rozpoczęcia"
+                                                validate: value =>
+                                                    false || "Błąd!"
                                             }}
                                             render={({ field }) => (
                                                 <input {...field}
                                                        type="number"
                                                        min="1900"
                                                        max="2100"
-                                                       defaultValue={`${new Date().getFullYear()}`}
                                                        className="w-100"
                                                 />
                                             )}
@@ -102,7 +100,6 @@ export default function SpubTaskInput(props: Props){
                                                 <input {...field}
                                                        type="text"
                                                        className="w-100"
-                                                       defaultValue=""
                                                 />
                                             )}
                                 />
@@ -117,13 +114,14 @@ export default function SpubTaskInput(props: Props){
                             </td>
                         </tr>
                         <tr className="bg-light">
-                            {props.form.formState.errors[props.name] &&
+                            {
+                                props.form.formState.errors[props.name] &&
                                 props.form.formState.errors[props.name][index] &&
-                                <th>
-                                    <ErrorCode
-                                            code={props.form.formState.errors[props.name][index]["value"].message}
-                                        />
-                                </th>
+                                    <th>
+                                        <ErrorCode
+                                                code={props.form.formState.errors[props.name][index]["value"].message}
+                                            />
+                                    </th>
                             }
                         </tr>
                     </React.Fragment>
@@ -135,7 +133,14 @@ export default function SpubTaskInput(props: Props){
                 <div className="d-flex col-6 text-center p-2 justify-content-center">
                     <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""} w-100`}
                             type="button"
-                            onClick={append}
+                            onClick={() => {
+                                const newSpubTask: SpubTask = {
+                                    yearFrom: `${new Date().getFullYear()}`,
+                                    yearTo: `${new Date().getFullYear()}`,
+                                    name: ""
+                                }
+                                append({value: newSpubTask})
+                            }}
                     >
                         Dodaj nowe
                     </button>
