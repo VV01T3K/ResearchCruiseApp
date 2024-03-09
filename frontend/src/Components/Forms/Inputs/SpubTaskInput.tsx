@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {Controller, get, useFieldArray} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
 
@@ -11,8 +11,8 @@ type Props = {
 }
 
 type SpubTask = {
-    yearFrom: string,
-    yearTo: string,
+    yearFrom: number,
+    yearTo: number,
     name: string
 }
 
@@ -63,8 +63,11 @@ export default function SpubTaskInput(props: Props){
                                             }}
                                             render={({ field }) => (
                                                 <input {...field}
-                                                       type="text"
-                                                       className="w-100 rounded border-1"
+                                                       type="number"
+                                                       min="1900"
+                                                       max="2100"
+                                                       defaultValue={`${new Date().getFullYear()}`}
+                                                       className="w-100"
                                                 />
                                             )}
                                 />
@@ -73,12 +76,18 @@ export default function SpubTaskInput(props: Props){
                                 <Controller name={`${props.name}[${index}].value.yearTo`}
                                             control={props.form.control}
                                             rules={{
-                                                required: "Pole nie może być puste"
+                                                required: "Pole nie może być puste",
+                                                // validate: value =>
+                                                //     value >= props.form.getValues(props.name)[index].value.yearFrom ||
+                                                //         "Rok zakończenia nie może być wcześniejszy niż rok rozpoczęcia"
                                             }}
                                             render={({ field }) => (
                                                 <input {...field}
-                                                       type="text"
-                                                       className="w-100 rounded border-1"
+                                                       type="number"
+                                                       min="1900"
+                                                       max="2100"
+                                                       defaultValue={`${new Date().getFullYear()}`}
+                                                       className="w-100"
                                                 />
                                             )}
                                 />
@@ -92,7 +101,8 @@ export default function SpubTaskInput(props: Props){
                                             render={({ field }) => (
                                                 <input {...field}
                                                        type="text"
-                                                       className="w-100 rounded border-1"
+                                                       className="w-100"
+                                                       defaultValue=""
                                                 />
                                             )}
                                 />
@@ -125,14 +135,7 @@ export default function SpubTaskInput(props: Props){
                 <div className="d-flex col-6 text-center p-2 justify-content-center">
                     <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""} w-100`}
                             type="button"
-                            onClick={() => {
-                                const newSpubTask: SpubTask = {
-                                    yearFrom: "",
-                                    yearTo: "",
-                                    name: ""
-                                }
-                                append(newSpubTask)
-                            }}
+                            onClick={append}
                     >
                         Dodaj nowe
                     </button>
