@@ -10,6 +10,8 @@ import React, {useRef, useState} from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import Map from 'src/resources/GraniceSamorzadow.jpg'
 import InputWrapper from "./InputWrapper";
+import {administrationUnits} from "../../../resources/administrationUnits";
+import Select from "react-select";
 
 
 type Props = {
@@ -50,7 +52,7 @@ function ClickableMap(props: Props) {
 
         regions.forEach((region)=> {
             if (isInside({ x: offsetX, y: offsetY }, region[1], region[2]))
-                props.form.setValue(props.name, region[0], { shouldDirty: true });
+                props.form.setValue(props.name, region[0], { shouldDirty: true, shouldTouch:true });
             // setClickPosition({ x: offsetX, y: offsetY });
         })
     }
@@ -76,11 +78,30 @@ function ClickableMap(props: Props) {
         return inside;
     };
 
+    console.log()
+
     return (
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
                     <div className="d-flex flex-column">
+                        <Select minMenuHeight={300}
+                            // className={"text-white"}
+                                menuPlacement="auto"
+                                placeholder={"Wybierz opcję lub wyszukaj"}
+                                styles={{
+                                    menu: provided => ({...provided, zIndex: 9999})
+                                }}
+                                placeHolder={"Wybierz"}
+                            // styles={{}}
+                            value={{label: field.value, value:field.value}}
+                                options={regions.map(value => ({label: value[0], value:value[0]}))}
+                            // closeMenuOnScroll={() => true}
+                                onChange={(selectedOption) => {
+                                    props.form.setValue(props.name, selectedOption.value, { shouldDirty: true, shouldTouch:true });
+
+                                }}
+                        />
                         <img ref={imageRef}
                              className="shadow m-2 bg-white rounded w-100"
                              draggable={false}
@@ -89,7 +110,6 @@ function ClickableMap(props: Props) {
                              alt="Obszary"
                              onClick={handleClick}
                         />
-                        {field.value && <div>Wybrano {field.value}</div>}
                     </div>
                 }
                 name={props.name}

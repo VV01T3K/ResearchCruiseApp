@@ -224,12 +224,7 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection title={sections.Zadania}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="gusestsss"
-                                 maxVal={20}
-                    />
-                    {/*<TaskInput name={"wejscie"} className={"col-12"} label={""}/>*/}
+                    <TaskInput name={"wejscie"} className={"col-12"} label={"ss"}/>
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>
@@ -243,7 +238,7 @@ function FormA0(){
                 <FormSection title={sections["Z. badawcze"]}>
                     <BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>
                 {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
-                {/*    /!*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*!/*/}
+                    <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
                 </FormSection>
             {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}

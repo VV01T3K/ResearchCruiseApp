@@ -12,34 +12,16 @@ type Props = {
     form?
 }
 
-
-const data= [
-    "Katedra Biologii Morza i Biotechnologii",
-    "Stacja Morska im. Profesora Krzysztofa Skóry",
-    "asddasds",
-    "sadasdd"
-]
-
 function BlockListInput(props: Props){
     const {
         fields,
         append,
-        remove,
-        prepend
+        remove
     } = useFieldArray({
         control: props.form.control,
         name: props.name,
 
     });
-
-    // const disabled = !Array.from({ length: data.length }, (_, index) => index)
-    //     .some(item => (!fields.map((field)=>field.form.label)
-    //         .includes(item)))
-
-    // const isSubFormDirty = fields.every(
-    //     (field, index) => props.dirtyFields[`${props.name}[${index}].value`]
-    // );
-    // console.log(isSubFormDirty)
     const isLastFilled = () => {
         const lastIndex = fields.length-1;
 
@@ -64,29 +46,11 @@ function BlockListInput(props: Props){
         }
         else{
             props.form.clearErrors(props.name)
-            // props.form.trigger(`${props.name}`)
         }
-        // props.form.touch(props.name)
-        // props.form.trigger(`${props.name}`)
-        // props.form.clearErrors(props.name)
-        // props.form.setValue(
-        //     `${props.name}[${lastIndex}].value`,
-        //     "",
-        //     { shouldValidate: true  }
-        // )
     }, [fields])
-    const appends = () => {
-        const index = fields.length-1;
-        // props.form.setValue(`${props.name}[${index}]`, "")
-        append({value:""})
-        // props.form.touch
-        // props.form.setValue("isDirty", false)
-
-
-    }
 
     return (
-        <div required={props.required} className={props.className + " p-3 d-flex flex-column justify-content-center"}>
+        <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
             <table className="table-striped w-100">
                 <thead className="text-white text-center" style={{"backgroundColor":"#052d73"}}>
                     <tr className="d-flex flex-row center align-items-center w-100">
@@ -156,7 +120,7 @@ function BlockListInput(props: Props){
 
             <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled" : ""}`}
                     type="button"
-                    onClick={append}
+                    onClick={() =>  append({value:""}) }
             >
                 +
             </button>

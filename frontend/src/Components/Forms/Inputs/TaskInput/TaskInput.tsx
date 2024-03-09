@@ -10,9 +10,8 @@ import InputWrapper from "../InputWrapper";
 type Props = {
     className: string,
     label:string,
-    control,
+    form?,
     name: string,
-    setValue
 }
 
 
@@ -39,7 +38,7 @@ function TaskInput(props: Props) {
         append,
         remove
     } = useFieldArray({
-        control: props.control,
+        control: props.form.control,
         name: props.name,
     });
 
@@ -55,7 +54,7 @@ function TaskInput(props: Props) {
     );
 
     return (
-        <InputWrapper>
+        <InputWrapper {...props}>
         <div className={props.className + " p-3"}>
             <label>{props.label}</label>
             <div className="table-striped w-100">
@@ -104,7 +103,7 @@ function TaskInput(props: Props) {
                                         <div className="d-flex flex-row flex-wrap col-12 col-xl-6">
                                             <div className="col-12 col-xl-3">{t[0]}</div>
                                             <Controller name={`${props.name}[${index}].${t[0]}`}
-                                                        control={props.control}
+                                                        control={props.form.control}
                                                         rules={{
                                                             required: "Pole nie może być puste",
                                                             validate: (value) =>
@@ -116,12 +115,12 @@ function TaskInput(props: Props) {
                                                                    type="text"
                                                                    className="col-12 col-xl-9"
                                                                    onBlur={(e)=> {
-                                                                       props.setValue(
+                                                                       props.form.setValue(
                                                                            `${props.name}[${index}].${t[0]}`,
                                                                            e.target.value,
                                                                            { shouldDirty: false }
                                                                        )
-                                                                       props.setValue(
+                                                                       props.form.setValue(
                                                                            `${props.name}[${index}].${t[0]}`,
                                                                            e.target.value,
                                                                            { shouldValidate: true }
