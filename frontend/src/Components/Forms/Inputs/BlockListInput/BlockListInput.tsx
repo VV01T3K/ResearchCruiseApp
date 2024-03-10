@@ -103,16 +103,17 @@ function BlockListInput(props: Props){
                                     </button>
                                 </th>
                             </tr>
-                            <tr className="bg-light">
-                                <th>
-                                    {props.form.formState.errors[props.name] &&
-                                        props.form.formState.errors[props.name][index] &&
+                            {
+                                props.form.formState.errors[props.name] &&
+                                props.form.formState.errors[props.name][index] &&
+                                <tr className="bg-light">
+                                    <th>
                                         <ErrorCode
                                             code={props.form.formState.errors[props.name][index]["value"].message}
                                         />
-                                    }
-                                </th>
-                            </tr>
+                                    </th>
+                                </tr>
+                            }
                         </React.Fragment>
                     ))}
                 </tbody>
