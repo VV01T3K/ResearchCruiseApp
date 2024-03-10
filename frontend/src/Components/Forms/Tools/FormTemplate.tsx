@@ -12,7 +12,7 @@ function FormTemplate(props: Props) {
         <>
             <Page className="justify-content-center bg-white">
                 <div className="d-flex flex-column w-100">
-                    <div className="d-flex flex-column  w-100 overflow-scroll p-2 p-md-2 ">
+                    <div className="d-flex flex-column  w-100 overflow-auto p-2 p-md-2 ">
                         {props.children}
                     </div>
                     <div className="d-flex flex-row justify-content-center border-top border-black w-100">
