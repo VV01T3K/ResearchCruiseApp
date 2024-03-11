@@ -33,4 +33,24 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\EmailsResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>EmailsResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\EmailsResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>EmailsResources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\Templates\EmailTemplates\accountAcceptedEmail.html" />
+      <None Include="wwwroot\Templates\EmailTemplates\accountConfirmationEmail.html" />
+    </ItemGroup>
+
 </Project>
