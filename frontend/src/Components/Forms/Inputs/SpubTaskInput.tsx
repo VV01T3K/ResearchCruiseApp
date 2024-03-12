@@ -133,7 +133,7 @@ export default function SpubTaskInput(props: Props){
             </table>
 
             <div className="d-flex flex-row justify-content-center w-100">
-                <div className="d-flex col-6 text-center p-2 justify-content-center">
+                <div className="d-flex w-50 text-center p-2 justify-content-center">
                     <button
                         className={`btn btn-primary w-100
                             ${props.form.formState.errors[props.name] ? "disabled" : ""}`
@@ -153,7 +153,7 @@ export default function SpubTaskInput(props: Props){
                 </div>
                 <Select
                     minMenuHeight={300}
-                    className="d-flex col-6 text-center p-2 justify-content-center"
+                    className="d-flex w-50 text-center p-2 justify-content-center"
                     isDisabled={props.form.formState.errors[props.name]}
                     menuPlacement="auto"
                     placeholder="Dodaj z historii"
@@ -178,7 +178,7 @@ export default function SpubTaskInput(props: Props){
                     }}
                     placeHolder={"Wybierz"}
                     options ={props.historicalSpubTasks.map((spubTask: SpubTask) => ({
-                        label: spubTask.name,
+                        label: `${spubTask.name} (${spubTask.yearFrom}–${spubTask.yearTo})`,
                         value: spubTask
                     }))}
                     value={""}
