@@ -34,7 +34,7 @@ function TextArea(props: Props) {
                 render={({ field}) =>
                     <textarea {...field}
                               value={field.value ?? ''}
-                              style={{maxHeight: "130px", minHeight: "70px"}}
+                              style={{maxHeight: "130px"}}
                     />
                 }
                 name={props.name}

@@ -4,10 +4,7 @@ import useCustomEvent from "../../Tools/useCustomEvent";
 
 type Props = {
     form?: {
-        formState: {
-            dirtyFields: { [x: string]: undefined; };
-            errors: { [x: string]: any; };
-        };
+        formState: { dirtyFields: any; touchedFields: any; errors: any; }
         watch: () => unknown;
     },
     id?: string | undefined,
@@ -15,7 +12,7 @@ type Props = {
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
     title: string,
-    sections
+    sections?: { [x: string]: string; }
 }
 
 
@@ -40,7 +37,7 @@ function FormSection(props: Props) {
 
     const [isActive, setIsActive] = useState(true);
     const [isCompleted, setIsCompleted] = useState(false)
-    const key = Object.keys(props.sections).find((k) => props.sections[k] === props.title);
+    const key = Object.keys(props.sections!).find((k) => props.sections![k] === props.title);
 
     useEffect(()=>{
         const invalidChildren = React.Children.map(props.children, (child) => {

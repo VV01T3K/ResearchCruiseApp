@@ -61,10 +61,6 @@ function NumberInput(props: Props){
                                        )
                                    }
                                }
-                               // else {
-                               //     field.onBlur()
-                               // }
-                               // field.onBlur();
                            }}
                            placeholder="0"
                            onChange={(e) => { onChange(e) }}
