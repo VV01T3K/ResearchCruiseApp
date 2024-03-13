@@ -55,16 +55,6 @@ function FormA0(){
         shouldUnregister: false
     });
 
-        // {
-        // control, trigger,
-        // watch,
-        // getValues,
-        // setValue,
-        // resetField,
-        // handleSubmit,
-    //     formState: { errors, dirtyFields }
-    // }
-
     const [sections, setSections] = useState({
         "Kierownik":"Kierownik zgłaszanego rejsu",
         "Czas":"Czas trwania zgłaszanego rejsu",
@@ -80,6 +70,7 @@ function FormA0(){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
+    // @ts-ignore
     return (
         <FormTemplate>
             <FormTitle sections={sections} title={"Formularz A"} />

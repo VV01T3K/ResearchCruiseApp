@@ -7,14 +7,14 @@ import {keyboard} from "@testing-library/user-event/dist/keyboard";
 
 type Props = {
     title: string,
-    sections: (string | boolean)[][]
+    sections: {}
 }
 
 
 function FormTitle(props: Props){
-    function scrollSmoothTo(elementId){
+    function scrollSmoothTo(elementId: string){
         var element = document.getElementById(elementId);
-        element.scrollIntoView({
+        element!.scrollIntoView({
             block: 'start',
             behavior: 'smooth'
         });
@@ -23,7 +23,8 @@ function FormTitle(props: Props){
 
     const [sections, setSections] = useState(
         Object.keys(props.sections).reduce((acc, key) => {
-        acc[key] = false;
+        // @ts-ignore
+            acc[key] = false;
         return acc;
     }, {})
     )
@@ -32,9 +33,10 @@ function FormTitle(props: Props){
     const { addEventListener:sectionStateListener } = useCustomEvent('sectionStateChange');
 
     useEffect(() => {
-        const unsubscribeLogin = sectionStateListener((data) => {
-           setSections((sections) => ({
+        const unsubscribeLogin = sectionStateListener((data: any) => {
+                setSections((sections) => ({
                ...sections,
+                    // @ts-ignore
                [Object.keys(data)]:Object.values(data)[0]
            }))}
 

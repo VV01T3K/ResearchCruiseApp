@@ -40,12 +40,7 @@ function NumberInput(props: Props){
                                    props.form!.setValue(
                                        props.name,
                                        String(parseInt(e.target.value)),
-                                       {shouldDirty: true}
-                                   )
-                                   props.form!.setValue(
-                                       props.name,
-                                       String(parseInt(e.target.value)),
-                                       {shouldValidate: true}
+                                       {shouldDirty: true, shouldValidate: true, shouldTouch: true}
                                    )
 
                                    if (props.connectedName && props.newVal) {
@@ -54,17 +49,8 @@ function NumberInput(props: Props){
                                            String(props.newVal(parseInt(e.target.value))),
                                            {shouldDirty: true, shouldValidate: true, shouldTouch: true}
                                        )
-                                       props.form!.setValue(
-                                           props.connectedName,
-                                           String(props.newVal(parseInt(e.target.value))),
-                                           {shouldDirty: true, shouldValidate: true, shouldTouch: true}
-                                       )
                                    }
                                }
-                               // else {
-                               //     field.onBlur()
-                               // }
-                               // field.onBlur();
                            }}
                            placeholder="0"
                            onChange={(e) => { onChange(e) }}
