@@ -35,7 +35,8 @@ function NumberInput(props: Props){
                 render={({ field}) =>
                     <input className="text-center placeholder-glow" style={{}}
                            value={field.value}
-                           onBlur={(e) => {
+                           onBlur={
+                        (e) => {
                                if (re.test(e.target.value)) {
                                    props.form!.setValue(
                                        props.name,
@@ -51,12 +52,20 @@ function NumberInput(props: Props){
                                        )
                                    }
                                }
-                           }}
+                               else {
+                                   if (props.connectedName && props.newVal)
+                                       props.connectedName,
+                                           "",
+                                           {shouldDirty: true, shouldValidate: true, shouldTouch: true}
+                               }
+                               field.onBlur()
+                           }
+                    }
                            placeholder="0"
                            onChange={(e) => { onChange(e) }}
                     />
                 }
-                defaultValue={""}
+                // defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{
