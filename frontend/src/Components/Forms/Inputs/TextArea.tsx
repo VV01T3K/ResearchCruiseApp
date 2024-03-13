@@ -12,6 +12,7 @@ type Props = {
     name: string,
     required?: any,
     maxLenth?: number,
+    resize,
     form?: {
         setValue: (arg0: string, arg1: string) => void;
         control: Control<Record<string, any>, any> | undefined;
@@ -34,7 +35,8 @@ function TextArea(props: Props) {
                 render={({ field}) =>
                     <textarea {...field}
                               value={field.value ?? ''}
-                              style={{maxHeight: "130px"}}
+                              style={{maxHeight: "130px", resize:props.resize ?? "true"}}
+
                     />
                 }
                 name={props.name}

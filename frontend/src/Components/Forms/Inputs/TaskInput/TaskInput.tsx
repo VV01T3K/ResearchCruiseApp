@@ -37,6 +37,7 @@ function TaskInput(props: Props) {
 };
 
 
+
     const {
         fields,
         append,
@@ -57,9 +58,28 @@ function TaskInput(props: Props) {
         [isOpen]
     );
 
+    const newProps = {
+        ...props,
+        label: '',
+    }
+
+    React.useEffect(() => {
+        const lastIndex = fields.length-1;
+
+        if(fields.length>0) {
+
+            props.form!.setValue(
+                `${props.name}[${lastIndex}].value`,
+                // @ts-ignore
+                fields[lastIndex].value,
+                {shouldDirty: true, shouldTouch: true}
+            )
+            props.form!.clearErrors(props.name)
+        }
+    }, [fields])
 
     return (
-        <InputWrapper {...props}>
+        <InputWrapper {...newProps}>
         <div className={props.className + " p-3"}>
             <div className="table-striped w-100">
                 <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
@@ -99,35 +119,37 @@ function TaskInput(props: Props) {
                              bg-light"
                         >
                             <div className="text-center align-items-center  col-12 col-xl-3 justify-content-center p-2 d-inline-flex border-end">
-                                {Object.keys(item)[0]}
+                                {Object.keys(options)[Object.keys(item)[0]]}
                             </div>
                             <div className="text-center d-flex col-12 col-xl-8 ">
-                                {<div className="d-flex flex-wrap justify-content-center w-100">
+                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start  align-items-center w-100">
+                                    {/*{()=>{*/}
+                                    {/*    console.log(Object.values(item)[0])*/}
+                                    {/*    return <div/>}}()*/}
                                     {Object.entries(Object.values(item)[0]).map((t, s) => {
-
+                                        const title = Object.keys(Object.values(options)[Object.keys(item)[0]])[s];
                                         return(
-                                        <>
+                                        <div id={`${Object.keys(item)[0]}.${s}`}  className={`${Object.entries(Object.values(item)[0]).length == 2 && "col-xl-6" }
+                                         ${Object.entries(Object.values(item)[0]).length == 3 && "col-xl-4" }
+                                         col-12 `}>
                                             {(()=>{
                                                 console.log(Object.keys(item)[0])
-                                                switch (t[0]){
+                                                switch (title){
                                                     case "Autor":
                                                     case "Tytuł":
-                                                        return (<TextArea label={t[0]} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                     case "Instytucja do której składany":
-                                                    case "Przewidywany termin składania":
-                                                        return (<NumberInput label={t[0]} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
-                                                    case "Ramy czasowe" :
-                                                    case "Kwota finansowania" :
-                                                        return (<NumberInput label={t[0] + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
-
                                                     case "Opis zajęcia dydaktycznego" :
                                                     case "Opis zadania" :
-                                                        return (<TextArea label={t[0]} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                        return (<TextArea  resize={"none"} label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
 
+                                                    case "Przewidywany termin składania":
+                                                        return (<NumberInput label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                    case "Ramy czasowe" :
+                                                    case "Kwota finansowania" :
+                                                        return (<NumberInput label={title + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                 }
                                             })()}
-
-                                        </>
+                                        </div>
                                     )})}
                                 </div>}
                             </div>
@@ -156,7 +178,10 @@ function TaskInput(props: Props) {
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {Object.keys(options).map((key, index) => (
-                                <Dropdown.Item key={index} onClick={() => { append({[key]:options[key]})}}>
+                                <Dropdown.Item key={index} onClick={() => { append({[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
+                                        acc[index] = value;
+                                        return acc;
+                                    }, {})})}}>
                                     {key}
                                 </Dropdown.Item>
                             ))}

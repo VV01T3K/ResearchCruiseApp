@@ -46,7 +46,7 @@ export default function SpubTaskInput(props: Props){
                         <tr className="d-flex flex-row bg-light p-2 justify-content-center">
                             <td colSpan={3} className="text-center w-100" >Brak</td>
                         </tr>
-                    }
+                    }mn
                     {fields.length > 0 &&
                         <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
                             <td className="text-center p-2" style={{"width": "5%"}}>Lp.</td>
