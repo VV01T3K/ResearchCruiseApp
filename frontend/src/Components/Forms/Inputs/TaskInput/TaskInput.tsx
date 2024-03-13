@@ -228,7 +228,6 @@ function TaskInput(props: Props) {
                     />
                 </div>
             </div>
-        </div>
         </InputWrapper>
     )
 }

@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Types;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace ResearchCruiseApp_API.Tools;
 
-public class EmailSender(IConfiguration configuration) : IEmailSender
+public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHostEnvironment) : IEmailSender
 {
     public async Task SendEmailConfirmationMessageAsync(
         User user, string email, string roleName, IServiceProvider serviceProvider, bool changeEmail = false)
@@ -32,13 +33,7 @@ public class EmailSender(IConfiguration configuration) : IEmailSender
             link += $"&changedEmail={user.Email}";
         }
 
-        var emailTemplatePath = Path.Combine("Resources", "Emails", "accountConfirmationEmail.html");
-        var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
-            .Replace("{{firstName}}", user.FirstName)
-            .Replace("{{lastName}}", user.LastName)
-            .Replace("{{roleText}}", $" {RoleName.Translate(roleName, "pl-PL")} ")
-            .Replace("{{link}}", link);
-        
+        var emailBody = await GetAccountAcceptedEmailBodyAsync(user, roleName, link);
         await SendEmail(email, subject, emailBody);
     }
 
@@ -53,6 +48,7 @@ public class EmailSender(IConfiguration configuration) : IEmailSender
         
         await SendEmail(user.Email!, subject, emailBody);
     }
+    
     public Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
     {
         throw new NotImplementedException();
@@ -62,8 +58,25 @@ public class EmailSender(IConfiguration configuration) : IEmailSender
     {
         throw new NotImplementedException();
     }
-    
 
+
+    private async Task<string> GetAccountAcceptedEmailBodyAsync(
+        User user, string roleName, string link)
+    {
+        var emailTemplatePath = webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar +
+                                "Templates" + Path.DirectorySeparatorChar +
+                                "EmailTemplates" + Path.DirectorySeparatorChar +
+                                "accountAcceptedEmail.html";
+        
+        var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
+            .Replace("{{firstName}}", user.FirstName)
+            .Replace("{{lastName}}", user.LastName)
+            .Replace("{{roleText}}", $" {RoleName.Translate(roleName, "pl-PL")} ")
+            .Replace("{{link}}", link);
+
+        return emailBody;
+    }
+    
     private async Task SendEmail(string email, string subject, string body)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");

@@ -67,7 +67,7 @@ function FormA0(){
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
         "Efekty": "Efekty rejsu",
-        "SPUB": "Zadania SPUB"
+        "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
     // @ts-ignore
@@ -241,7 +241,6 @@ function FormA0(){
                 <FormSection title={sections.SPUB}>
                     <SpubTaskInput
                         className="col-12 col-xl-10"
-                        label="Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
                         name="spubTasks"
                         historicalSpubTasks={[
                             {

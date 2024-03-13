@@ -9,7 +9,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="" />
+    <list default="true" id="f2b47ce3-1779-4f32-a493-9ed69d6104ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Resources/EmailsResources.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Resources/EmailsResources.pl-pl.resx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Resources/EmailsResources.resx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ResearchCruiseApp-API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/ResearchCruiseApp-API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Resources/Emails/accountAcceptedEmail.html" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/wwwroot/Templates/EmailTemplates/accountAcceptedEmail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Resources/Emails/accountConfirmationEmail.html" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/wwwroot/Templates/EmailTemplates/accountConfirmationEmail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/Tools/EmailSender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/Tools/EmailSender.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ResearchCruiseApp-API/appsettings.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -89,7 +99,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.39361703&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;mateusz__kowalczyk&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -228,6 +238,8 @@
       <workItem from="1709327372931" duration="893000" />
       <workItem from="1709408566315" duration="548000" />
       <workItem from="1709551457120" duration="365000" />
+      <workItem from="1710150082463" duration="4810000" />
+      <workItem from="1710158103393" duration="86000" />
     </task>
     <task id="LOCAL-00001" summary="Updated .net to 8.0">
       <option name="closed" value="true" />
