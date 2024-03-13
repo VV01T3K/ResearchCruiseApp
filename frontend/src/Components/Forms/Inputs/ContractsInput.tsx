@@ -9,7 +9,7 @@ import Style from "./TaskInput/TaskInput.module.css";
 import InputWrapper from "./InputWrapper";
 
 
-type SpubTask = {
+type Contract = {
     yearFrom: string,
     yearTo: string,
     name: string
@@ -19,11 +19,11 @@ type Props = {
     className: string,
     name: string,
     form?,
-    historicalSpubTasks: SpubTask[]
+    historicalContracts: Contract[]
 }
 
 
-export default function SpubTaskInput(props: Props){
+export default function ContractsInput(props: Props){
     const {
         fields,
         append,
@@ -32,7 +32,6 @@ export default function SpubTaskInput(props: Props){
         control: props.form.control,
         name: props.name,
     });
-    console.log(props.form.getValues())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -53,19 +52,20 @@ export default function SpubTaskInput(props: Props){
             <div className="table-striped w-100">
                 <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
                     <div className="d-flex flex-row center align-items-center">
-                        <div className="text-center d-none d-xl-block p-2 col-1" style={{width: "5%"}}>
+                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "5%"}}>
                             <b>Lp.</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-start" style={{width: "15%"}}>
-                            <b>Rok<br />rozpoczęcia</b>
+                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "15%"}}>
+                            <b>Kategoria</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-start border-end"
-                             style={{width: "15%"}}
-                        >
-                            <b>Rok<br/>zakończenia</b>
+                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "25%"}}>
+                            <b>Instytucja</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2" style={{width: "60%"}}>
-                            <b>Nazwa zadania</b>
+                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "50%"}}>
+                            <b>Opis</b>
+                        </div>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "10%"}}>
+                            <b>Skan</b>
                         </div>
                         <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}} />
 
@@ -77,7 +77,7 @@ export default function SpubTaskInput(props: Props){
                 <div className="w-100 bg-light">
                     {!fields.length &&
                         <div className="d-flex flex-row justify-content-center bg-light p-2 border">
-                            <div className="text-center">Nie wybrano żadnego zadania</div>
+                            <div className="text-center">Nie dodano żadnej umowy</div>
                         </div>
                     }
                     {fields.map((item, index) => (
@@ -177,15 +177,15 @@ export default function SpubTaskInput(props: Props){
                         }
                         type="button"
                         onClick={() => {
-                            const newSpubTask: SpubTask = {
-                                yearFrom: `${new Date().getFullYear()}`,
-                                yearTo: `${new Date().getFullYear()}`,
-                                name: ""
-                            }
-                            append({value: newSpubTask})
+                            // const newSpubTask: SpubTask = {
+                            //     yearFrom: `${new Date().getFullYear()}`,
+                            //     yearTo: `${new Date().getFullYear()}`,
+                            //     name: ""
+                            // }
+                            // append({value: newSpubTask})
                         }}
                     >
-                        Dodaj nowe
+                        Dodaj nową
                     </button>
                 </div>
                 <Select
@@ -215,21 +215,21 @@ export default function SpubTaskInput(props: Props){
                         })
                     }}
                     placeHolder={"Wybierz"}
-                    options ={props.historicalSpubTasks.map((spubTask: SpubTask) => ({
-                        label: `${spubTask.name} (${spubTask.yearFrom}–${spubTask.yearTo})`,
-                        value: spubTask
-                    }))}
+                    // options ={props.historicalSpubTasks.map((spubTask: SpubTask) => ({
+                    //     label: `${spubTask.name} (${spubTask.yearFrom}–${spubTask.yearTo})`,
+                    //     value: spubTask
+                    // }))}
                     value={""}
-                    onChange={(selectedOption: { label: string, value: SpubTask })=> {
-                        if (selectedOption) {
-                            const newSpubTask: SpubTask = {
-                                yearFrom: `${selectedOption.value.yearFrom}`,
-                                yearTo: `${selectedOption.value.yearTo}`,
-                                name: `${selectedOption.value.name}`
-                            }
-                            append({value: newSpubTask})
-                        }
-                    }}
+                    // onChange={(selectedOption: { label: string, value: SpubTask })=> {
+                    //     if (selectedOption) {
+                    //         const newSpubTask: SpubTask = {
+                    //             yearFrom: `${selectedOption.value.yearFrom}`,
+                    //             yearTo: `${selectedOption.value.yearTo}`,
+                    //             name: `${selectedOption.value.name}`
+                    //         }
+                    //         append({value: newSpubTask})
+                    //     }
+                    // }}
                 />
                 {props.form.formState.errors[props.name] &&
                     <ErrorCode code={props.form.formState.errors[props.name].message}/>
