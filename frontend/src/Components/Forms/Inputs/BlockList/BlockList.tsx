@@ -1,5 +1,5 @@
 import React from "react";
-import { useFieldArray} from "react-hook-form";
+import { FieldError, FieldErrorsImpl, Merge, useFieldArray} from "react-hook-form";
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
@@ -7,8 +7,8 @@ import Select from "react-select";
 type Props = {
     className: string,
     label: string,
-    name,
-    form?
+    name: string,
+    form:any
 }
 function BlockList(props: Props) {
     const {
@@ -16,12 +16,12 @@ function BlockList(props: Props) {
         append,
         remove
     } = useFieldArray({
-        control: props.form.control,
+        control: props.form!.control,
         name: props.name,
 
     });
     React.useEffect(() => {
-        props.form.setValue(props.name, "", {shouldTouch:true, shouldDirty:true});
+        props.form!.setValue(props.name, "", {shouldTouch:true, shouldDirty:true});
     }, [])
 
 
@@ -29,12 +29,14 @@ function BlockList(props: Props) {
         const lastIndex = fields.length-1;
 
         if(fields.length>0) {
-            props.form.setValue(
+
+            props.form!.setValue(
                 `${props.name}[${lastIndex}].value`,
+                // @ts-ignore
                 fields[lastIndex].value,
                 {shouldDirty: true, shouldTouch: true}
             )
-            props.form.clearErrors(props.name)
+            props.form!.clearErrors(props.name)
         }
     }, [fields])
 
@@ -53,7 +55,7 @@ function BlockList(props: Props) {
                         <th colSpan={3} className={"text-center"} >Nie dodano żadnej jednostki</th>
                     </tr>
                 }
-                {fields.map((item, index) => {
+                {fields.map((item: any, index) => {
                     return(
                     <React.Fragment key={item.id}>
                         <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
@@ -66,7 +68,7 @@ function BlockList(props: Props) {
                                         className="btn btn-primary"
                                         onClick={() => {remove(index);
                                         if(fields.length-1<=0)
-                                            props.form.setError(props.name, {
+                                            props.form!.setError(props.name, {
                                                 type: 'manual',
                                                 message: 'Wymagana przynajmniej jedna jednostka',
                                             });
@@ -109,10 +111,12 @@ function BlockList(props: Props) {
                     }}
                     placeHolder={"Wybierz"}
                     // styles={{}}
+                // @ts-ignore
                     options={administrationUnits.filter(element => !fields.map((item)=>item.value).includes(element))?.map(value => ({label: value, value}))}
                     value={""}
                     // closeMenuOnScroll={() => true}
                     onChange={(selectedOption) => {
+                        // @ts-ignore
                         append({value:`${selectedOption.label}`});
 
                     }}
