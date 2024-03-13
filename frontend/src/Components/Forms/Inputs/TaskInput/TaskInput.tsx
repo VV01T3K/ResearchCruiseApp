@@ -68,18 +68,15 @@ function TaskInput(props: Props) {
 
         if(fields.length>0) {
 
-            props.form!.setValue(
-                `${props.name}[${lastIndex}].value`,
-                // @ts-ignore
-                fields[lastIndex].value,
-                {shouldDirty: true, shouldTouch: true}
-            )
-            props.form!.clearErrors(props.name)
+            // props.form.setError(props.name, {
+            //     type: 'manual',
+            //     message: 'To jest ręcznie ustawiony błąd!',
+            // });
+            // props.form!.clearErrors(props.name)
         }
     }, [fields])
 
     return (
-        <InputWrapper {...newProps}>
         <div className={props.className + " p-3"}>
             <div className="table-striped w-100">
                 <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
@@ -87,25 +84,7 @@ function TaskInput(props: Props) {
                         <div className="col-xl-3 text-center d-none d-xl-block border-end p-2">Zadanie</div>
                         <div className=" col-xl-8 text-center d-lg-block d-xl-none p-2">Zadanie</div>
                         <div className="w-75 text-center d-none d-xl-block p-2">Szczegóły</div>
-                        {/*<div className="d-none d-xl-inline-flex p-2">*/}
-                        {/*    <ButtonGroup as={Dropdown}*/}
-                        {/*                 className={"w-100 align-self-center" + Style.centeredDropdown}*/}
-                        {/*    >*/}
-                        {/*        /!* Dodaj klasę CSS dla dropleft *!/*/}
-                        {/*        <Dropdown.Toggle variant="primary">*/}
-                        {/*            +*/}
-                        {/*        </Dropdown.Toggle>*/}
-                        {/*        <Dropdown.Menu>*/}
-                        {/*            {Object.keys(options).map((key, index) => (*/}
-                        {/*                <Dropdown.Item key={index} onClick={() => { append({[key]:options[key]})}}>*/}
-                        {/*                    {key}*/}
-                        {/*                </Dropdown.Item>*/}
-                        {/*            ))}*/}
-                        {/*        </Dropdown.Menu>*/}
-                        {/*    </ButtonGroup>*/}
-                        {/*</div>*/}
                     </div>
-                    {/*}//*/}
                 </div>
                 <div className={"w-100"}>
                     {!fields.length &&
@@ -123,9 +102,6 @@ function TaskInput(props: Props) {
                             </div>
                             <div className="text-center d-flex col-12 col-xl-8 ">
                                 {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start  align-items-center w-100">
-                                    {/*{()=>{*/}
-                                    {/*    console.log(Object.values(item)[0])*/}
-                                    {/*    return <div/>}}()*/}
                                     {Object.entries(Object.values(item)[0]).map((t, s) => {
                                         const title = Object.keys(Object.values(options)[Object.keys(item)[0]])[s];
                                         return(
@@ -133,7 +109,6 @@ function TaskInput(props: Props) {
                                          ${Object.entries(Object.values(item)[0]).length == 3 && "col-xl-4" }
                                          col-12 `}>
                                             {(()=>{
-                                                console.log(Object.keys(item)[0])
                                                 switch (title){
                                                     case "Autor":
                                                     case "Tytuł":
@@ -172,7 +147,6 @@ function TaskInput(props: Props) {
                     <ButtonGroup as={Dropdown}
                                  className={"w-100 h-100 p-2 align-self-center" + Style.centeredDropdown}
                     >
-                        {/* Dodaj klasę CSS dla dropleft */}
                         <Dropdown.Toggle variant="primary">
                             +
                         </Dropdown.Toggle>
@@ -229,7 +203,6 @@ function TaskInput(props: Props) {
                 </div>
             </div>
         </div>
-        </InputWrapper>
     )
 }
 
