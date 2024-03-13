@@ -54,16 +54,32 @@ function FormSection(props: Props) {
 
 
 
-    return  (<div className="accordion-item border-2 border-black border-bottom">
-                <div onClick={() => setIsActive(!isActive)} id={props.id} className={" accordion-title d-flex flex-row p-3  bg-light sticky-top z-2 "} >
-                   <h1 className={"d-flex flex-column col-10  align-self-center"} style={{fontSize: "1rem"}}>{props.id + '. ' + props.title} {isActive ? "▲":"▼"}</h1>
-                    <h1 className={`d-flex flex-column col-2 text-end ${isCompleted ? "text-success": "text-danger"} align-self-center`} style={{fontSize: "1rem"}}>{isCompleted ? "+" : "!"}</h1>
-                </div>
-         <div className={`d-flex flex-row flex-wrap justify-content-center  p-3 ${isActive ? ' ': 'visually-hidden'}`}>
-
-                    {React.Children.map(props.children, (child, index) => {
-                        return React.cloneElement(child as React.ReactElement, {form: props.form});
-                    })}
+    return  (
+        <div className="accordion-item border-2 border-black border-bottom">
+            <div onClick={() => setIsActive(!isActive)}
+                 id={props.id}
+                 className={"accordion-title d-flex flex-row p-3 bg-light sticky-top z-2"}
+                 style={{cursor:"pointer"}}
+            >
+                <h1 className={"d-flex flex-column col-10 align-self-center"} style={{fontSize: "1rem"}}>
+                    {props.id + '. ' + props.title} {isActive ? "▲" : "▼"}
+                </h1>
+                <h1 className={
+                        `d-flex flex-column col-2 text-end ${isCompleted ? "text-success" : "text-danger"}
+                        align-self-center`
+                    }
+                    style={{fontSize: "1rem"}}
+                >
+                    {isCompleted ? "+" : "!"}
+                </h1>
+            </div>
+            <div className={
+                    `d-flex flex-row flex-wrap justify-content-center p-3 ${isActive ? ' ' : 'visually-hidden'}`
+                }
+            >
+                {React.Children.map(props.children, (child, index) => {
+                    return React.cloneElement(child as React.ReactElement, {form: props.form});
+                })}
             </div>
         </div>
     )
