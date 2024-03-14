@@ -89,9 +89,7 @@ export default function SpubTasksInput(props: Props){
                             >
                                 {index + 1}.
                             </div>
-                            <div className="text-center d-flex d-xl-none justify-content-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
-                            >
+                            <div className="text-center d-flex d-xl-none justify-content-center p-2 col-12">
                                 <b>Zadanie {index + 1}.</b>
                             </div>
 

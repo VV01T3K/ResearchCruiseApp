@@ -1,18 +1,18 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Controller, get, useFieldArray} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
-import {register} from "../../../serviceWorkerRegistration";
 import Select from "react-select";
-import {administrationUnits} from "../../../resources/administrationUnits";
-import {ButtonGroup, Dropdown} from "react-bootstrap";
-import Style from "./TaskInput/TaskInput.module.css";
-import InputWrapper from "./InputWrapper";
 
 
 type Contract = {
-    yearFrom: string,
-    yearTo: string,
-    name: string
+    category: string,
+    institution: {
+        name: string,
+        unit: string,
+        localization: string
+    },
+    description: string,
+    scan
 }
 
 type Props = {
@@ -32,6 +32,7 @@ export default function ContractsInput(props: Props){
         control: props.form.control,
         name: props.name,
     });
+    console.log(props.form.getValues())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -61,7 +62,7 @@ export default function ContractsInput(props: Props){
                         <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "25%"}}>
                             <b>Instytucja</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "50%"}}>
+                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "40%"}}>
                             <b>Opis</b>
                         </div>
                         <div className="text-center d-none d-xl-block p-2" style={{width: "10%"}}>
@@ -82,82 +83,126 @@ export default function ContractsInput(props: Props){
                     }
                     {fields.map((item, index) => (
                         <div key={item.id}
-                             className="d-flex flex-wrap flex-row justify-content-center align-items-center border
-                                        bg-light"
+                             className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                         >
-                            <div className="text-center d-none d-xl-flex justify-content-center p-2"
+                            <div className="text-center d-none d-xl-flex justify-content-center align-items-center p-2
+                                             border-end"
                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                             >
                                 {index + 1}.
                             </div>
-                            <div className="text-center d-flex d-xl-none justify-content-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
-                            >
-                                <b>Zadanie {index + 1}.</b>
+                            <div className="text-center d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
+                                <b>Umowa {index + 1}.</b>
                             </div>
 
-                            <div className="text-center d-flex flex-wrap justify-content-center p-2"
+                            <div className="text-center d-inline-flex flex-wrap justify-content-center align-items-center p-2 border-end"
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
-                                <div className="col-12 d-xl-none">Rok rozpoczęcia</div>
-                                <Controller name={`${props.name}[${index}].value.yearFrom`}
+                                <div className="col-12 d-xl-none">Kategoria</div>
+                                <Controller name={`${props.name}[${index}].value.category`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
                                             }}
-                                            render={({ field }) => (
-                                                <input {...field}
-                                                       type="number"
-                                                       min="1900"
-                                                       max="2100"
-                                                       className="col-12"
-                                                />
+                                            render={({field}) => (
+                                                <select {...field} className="">
+                                                    <option value="domestic">Krajowa</option>
+                                                    <option value="internatinal">Międzynarodowa</option>
+                                                </select>
                                             )}
                                 />
                             </div>
-                            <div className="text-center d-flex flex-wrap ustify-content-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                            <div className="text-center d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
+                                 style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                             >
-                                <div className="col-12 d-xl-none">Rok zakończenia</div>
-                                <Controller name={`${props.name}[${index}].value.yearTo`}
+                                <div className="col-12">Nazwa instytucji</div>
+                                <Controller name={`${props.name}[${index}].value.institution.name`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
                                                 validate: value =>
                                                     false || "Błąd!"
                                             }}
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <input {...field}
-                                                       type="number"
-                                                       min="1900"
-                                                       max="2100"
+                                                       type="text"
+                                                       className="col-12"
+                                                />
+                                            )}
+                                />
+                                <div className="col-12">Jednostka</div>
+                                <Controller name={`${props.name}[${index}].value.institution.unit`}
+                                            control={props.form.control}
+                                            rules={{
+                                                required: "Pole nie może być puste",
+                                                validate: value =>
+                                                    false || "Błąd!"
+                                            }}
+                                            render={({field}) => (
+                                                <input {...field}
+                                                       type="text"
+                                                       className="col-12"
+                                                />
+                                            )}
+                                />
+                                <div className="col-12">Lokalizacja instytucji</div>
+                                <Controller name={`${props.name}[${index}].value.institution.localization`}
+                                            control={props.form.control}
+                                            rules={{
+                                                required: "Pole nie może być puste",
+                                                validate: value =>
+                                                    false || "Błąd!"
+                                            }}
+                                            render={({field}) => (
+                                                <input {...field}
+                                                       type="text"
                                                        className="col-12"
                                                 />
                                             )}
                                 />
                             </div>
-                            <div className="text-center d-flex flex-wrap justify-content-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
+                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                 style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
                             >
-                                <div className="col-12 d-xl-none">Nazwa</div>
+                                <div className="col-12 d-xl-none">Opis</div>
                                 <Controller name={`${props.name}[${index}].value.name`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
                                             }}
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <textarea {...field}
                                                           className="col-12"
                                                 />
                                             )}
                                 />
                             </div>
-                            <div className="text-center d-flex justify-content-center p-2"
+                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                 style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                            >
+                                <div className="col-12 d-xl-none">Skan</div>
+                                <Controller name={`${props.name}[${index}].value.scan`}
+                                            control={props.form.control}
+                                            rules={{
+                                                required: "Pole nie może być puste"
+                                            }}
+                                            render={({field}) => (
+                                                <input
+                                                    {...field}
+                                                    type="file"
+                                                    className="col-12 text-center"
+                                                />
+                                            )}
+                                />
+                            </div>
+                            <div className="text-center d-flex justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                             >
                                 <button type="button"
                                         className="btn btn-primary"
-                                        onClick={() => {remove(index)}}
+                                        onClick={() => {
+                                            remove(index)
+                                        }}
                                 >
                                     -
                                 </button>
@@ -177,12 +222,17 @@ export default function ContractsInput(props: Props){
                         }
                         type="button"
                         onClick={() => {
-                            // const newSpubTask: SpubTask = {
-                            //     yearFrom: `${new Date().getFullYear()}`,
-                            //     yearTo: `${new Date().getFullYear()}`,
-                            //     name: ""
-                            // }
-                            // append({value: newSpubTask})
+                            const newContract: Contract = {
+                                category: "",
+                                description: "",
+                                institution: {
+                                    localization: "",
+                                    name: "",
+                                    unit: ""
+                                },
+                                scan: undefined
+                            }
+                            append({value: newContract})
                         }}
                     >
                         Dodaj nową
