@@ -65,7 +65,7 @@ export default function ContractsInput(props: Props){
                         <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "40%"}}>
                             <b>Opis</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2" style={{width: "10%"}}>
+                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "10%"}}>
                             <b>Skan</b>
                         </div>
                         <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}} />
@@ -105,10 +105,39 @@ export default function ContractsInput(props: Props){
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <select {...field} className="">
-                                                    <option value="domestic">Krajowa</option>
-                                                    <option value="internatinal">Międzynarodowa</option>
-                                                </select>
+                                                <Select
+                                                    minMenuHeight={300}
+                                                    className="d-flex col-12 justify-content-center"
+                                                    menuPlacement="auto"
+                                                    placeholder="Wybierz"
+                                                    styles={{
+                                                        control: (provided, state) => ({
+                                                            ...provided,
+                                                            boxShadow: "none",
+                                                            border: "1px solid grey",
+                                                            width: "100%",
+                                                            "border-radius": "2px",
+                                                            padding: "0px"
+                                                        }),
+                                                        menu: provided => ({
+                                                            ...provided,
+                                                            zIndex: 9999
+                                                        })
+                                                    }}
+                                                    placeHolder={"Wybierz"}
+                                                    options = {[
+                                                        { label: "Krajowa", value: "domestic" },
+                                                        { label: "Międzynarodowa", value: "international" }
+                                                    ]}
+                                                    onChange={(selectedOption: { label: string, value: string })=> {
+                                                        if (selectedOption) {
+                                                            props.form.setValue(
+                                                                `${props.name}[${index}].value.category`,
+                                                                selectedOption.value
+                                                            )
+                                                        }
+                                                    }}
+                                                />
                                             )}
                                 />
                             </div>
@@ -126,7 +155,7 @@ export default function ContractsInput(props: Props){
                                             render={({field}) => (
                                                 <input {...field}
                                                        type="text"
-                                                       className="col-12"
+                                                       className="col-12 p-1"
                                                 />
                                             )}
                                 />
@@ -141,7 +170,7 @@ export default function ContractsInput(props: Props){
                                             render={({field}) => (
                                                 <input {...field}
                                                        type="text"
-                                                       className="col-12"
+                                                       className="col-12 p-1"
                                                 />
                                             )}
                                 />
@@ -156,7 +185,7 @@ export default function ContractsInput(props: Props){
                                             render={({field}) => (
                                                 <input {...field}
                                                        type="text"
-                                                       className="col-12"
+                                                       className="col-12 p-1"
                                                 />
                                             )}
                                 />
@@ -172,7 +201,7 @@ export default function ContractsInput(props: Props){
                                             }}
                                             render={({field}) => (
                                                 <textarea {...field}
-                                                          className="col-12"
+                                                          className="col-12 p-1"
                                                 />
                                             )}
                                 />
