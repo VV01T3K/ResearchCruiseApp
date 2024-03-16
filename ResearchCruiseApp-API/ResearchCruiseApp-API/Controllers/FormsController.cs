@@ -22,7 +22,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFormById([FromRoute] string id)
         {
-            await researchCruiseContext.MyEntities.FindAsync(id);
+            //await researchCruiseContext.MyEntities.FindAsync(id);
             
             
 
