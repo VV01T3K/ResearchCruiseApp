@@ -3,24 +3,33 @@ using NuGet.Protocol.Plugins;
 
 namespace ResearchCruiseApp_API.Data;
 
+
+public class DateRange
+{
+    public int Beg;
+    public int End;
+}
+
 public class FormA
 {
     public int Id { get; set; }
-    public User Manager { get; set; } = null!;
-    public string OptimalPeriod { get; set; } = null!;
+    public User CruiseManager { get; set; } = null!;  //User
+    public User Deputy { get; set; } = null!; //User
+    public string Year { get; set; } = null!;
+    public DateRange PermissibleDate { get; set; } = null!;
+    public DateRange OptimalDate { get; set; } = null!;
     public int CruiseHours { get; set; }
-    public string AddnotationsToPeriod { get; set; } = null!;
-    public string Usage { get; set; } = null!;
-    public string Permission { get; set; } = null!;
-    public string Region { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public string Objective { get; set; } = null!;
-    public int NumberOfEmployes { get; set; }
-    public int NumberOfStudents { get; set; }
-    public int NumberOfGuests { get; set; }
+    public string DateComment { get; set; } = null!;
+    public string ShipUsage { get; set; } = null!;
+    public string Permissions { get; set; } = null!;
+    public string ResearchArea { get; set; } = null!;
+    public string CruiseGoal { get; set; } = null!;
+    public int UGWorkers { get; set; }
+    public int Students { get; set; }
+    public int Guests { get; set; }
     public string OrganizationalUnit { get; set; } = null!;
-    public List<Contract> Contracts { get; set; } = null!;
-    public List<TaskToDo> TasksToDo { get; set; } = null!;
+    public List<Contract> ContractsList { get; set; } = null!;
+    public List<TaskToDo> ResearchTask { get; set; } = null!;
     public List<SPUBTask> SPUBTasks { get; set; } = null!;
     
 }
