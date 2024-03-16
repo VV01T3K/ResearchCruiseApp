@@ -16,10 +16,11 @@ import BlockList from "./Inputs/BlockList/BlockList";
 import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
-import SpubTaskInput from "./Inputs/SpubTaskInput";
+import SpubTasksInput from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
 import FormWithSections from "./Tools/FormWithSections";
+import ContractsInput from "./Inputs/ContractsInput";
 
 
 function FormA0(){
@@ -63,7 +64,7 @@ function FormA0(){
         "Cel": "Cel Rejsu",
         "L. osób": "Przewidywana liczba osób załogi naukowej",
         "Zadania": "Zadania do zrealizowania w trakcie rejsu",
-        "Umowy": "Lista umów współpracy",
+        "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
         "Efekty": "Efekty rejsu",
@@ -219,10 +220,9 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="gusestss"
-                                 maxVal={20}
+                    <ContractsInput
+                        className="col-12"
+                        name="contracts"
                     />
                 </FormSection>
 
@@ -239,8 +239,8 @@ function FormA0(){
 
             {/*    </FormSection>*/}
                 <FormSection title={sections.SPUB}>
-                    <SpubTaskInput
-                        className="col-12 col-xl-10"
+                    <SpubTasksInput
+                        className="col-12"
                         name="spubTasks"
                         historicalSpubTasks={[
                             {
