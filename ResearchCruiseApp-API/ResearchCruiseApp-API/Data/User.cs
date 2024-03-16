@@ -12,5 +12,5 @@ public class User : IdentityUser
 
     public bool Accepted { get; set; } = false;
     
-    public List<FormA> Forms { get; set; } = null!;
+    // public List<FormA> Forms { get; set; } = null!;
 }
