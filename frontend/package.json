@@ -21,7 +21,6 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-css-modules": "^4.7.11",
-    "react-data-table-component": "^7.6.2",
     "react-dnd": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-double-range-slider": "^3.0.1",
@@ -52,8 +51,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "install": "npm install",
-    "audit": "npm install react-data-table-component",
+    "install-bootstrap": "npm audit fix --force",
+    "audit": "npm install",
     "fund": "npm fund",
     "cos": "npm install axios"
   },
