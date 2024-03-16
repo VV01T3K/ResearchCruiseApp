@@ -1,13 +1,19 @@
 import React  from 'react';
 import Tile from "./Tile";
-function UserTile( props:{ setUserToken:(userToken: string | null) => void}){
+import {Link} from "react-router-dom";
+import useCustomEvent from "../../Tools/useCustomEvent";
+
+
+function UserTile(){
+    const { dispatchEvent } = useCustomEvent('logoutSuccessful');
     return (
         <Tile>
             <div>
-                <a href={"#"} onClick={()=>props.setUserToken(null)}> Logout </a>
+                <Link to="" onClick={()=> { dispatchEvent(null)} }> Logout </Link>
             </div>
         </Tile>
     )
 }
+
 
 export default UserTile

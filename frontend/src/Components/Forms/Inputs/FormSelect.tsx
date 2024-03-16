@@ -1,33 +1,48 @@
-import {Control, Controller, FieldValues} from "react-hook-form";
-import Select, {GroupBase, OptionsOrGroups} from "react-select";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import {Control, Controller, FieldError, FieldErrorsImpl, FieldValues, Merge} from "react-hook-form";
+import Select from "react-select";
 import React from "react";
+import InputWrapper from "./InputWrapper";
 
-function FormSelect(props: {
-    className?:string,
-    name:string,
-    label:string,
-    control: Control<FieldValues, any> | undefined,
-    options: OptionsOrGroups<any, GroupBase<any>> | undefined, errors: any}){
 
-    return  (
-        <div className={props.className + " p-3"}>
-            <label>{props.label}</label>
+type Props = {
+    className?: string,
+    name: string,
+    label: string,
+    values: any[]
+    form?: {
+        control: Control<FieldValues, any> | undefined;
+        formState: {
+            errors: {
+                [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; };
+            };
+        };
+    }
+}
+
+
+function FormSelect(props: Props) {
+    return (
+        <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 name={props.name}
-                control={props.control}
+                control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
-                <Select minMenuHeight={300} {...field}
-                        styles={{menu: provided => ({ ...provided, zIndex: 9999 })}}
-                        options={props.options}
-                        closeMenuOnScroll={() => true}
-                />
+                    <Select minMenuHeight={300}
+                            {...field}
+                            styles={{menu: provided => ({...provided, zIndex: 9999})}}
+                            options={props.values?.map(value => ({label: value, value}))}
+                            closeMenuOnScroll={() => true}
+                            onChange={(selectedOption) => {
+                                props.form!.setValue(props.name, selectedOption, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                            }}
+                    />
                 )}
             />
-            {props.errors[props.name] && <ErrorCode code={props.errors[props.name].message}/>}
-        </div>
+        </InputWrapper>
     )
 }
+
 
 export default FormSelect

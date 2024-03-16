@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter}from "react-router-dom"
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

@@ -2,13 +2,25 @@ import React from "react";
 import Slider from 'rc-slider';
 import "./MonthSlider.css"
 import {Control, Controller, FieldValues} from "react-hook-form";
+import InputWrapper from "./InputWrapper";
 
-const MonthSlider = (props: { className?:string, label: string, name: string, control: Control<FieldValues, any>
-        | undefined, watch?, setValue?, resetField?}) => {
+
+type Props = {
+    className?: string,
+    label: string,
+    name: string,
+    watch?: number[],
+    form?: {
+        setValue: (arg0: string, arg1: any, arg2: { shouldDirty?: boolean; shouldTouch?: boolean; }) => void;
+        control: Control<FieldValues, any> | undefined;
+    }
+}
+
+
+const MonthSlider = (props: Props) => {
     const months = [
-        'Styczeń', 'Luty', 'Marzec', 'Kwiecień',
-        'Maj', 'Czerwiec', 'Lipiec', 'Sierpień',
-        'Wrzesień', 'Październik', 'Listopad', 'Grudzień', null
+        'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik',
+        'Listopad', 'Grudzień', null
     ];
 
     const labels = [
@@ -38,19 +50,18 @@ const MonthSlider = (props: { className?:string, label: string, name: string, co
         '2. połowy grudnia',
     ]
 
-    const [minVal,maxVal] = props.watch ??  [0,24]
+    const [minVal, maxVal] = props.watch ?? [0, 24]
 
-    React.useEffect(() => {
-        if(props.setValue) {
+    React.useEffect(
+        () => {
+            props.form!.setValue(props.name, props.watch, { shouldDirty: true })
+            props.form!.setValue(props.name, props.watch, { shouldTouch: true })
+        },
+        [props.watch]
+    );
 
-            // props.resetField(props.name)
-            props.setValue(props.name, props.watch, {shouldDirty: true})
-            props.setValue(props.name, props.watch, {shouldTouch: true})
-        }
-    }, [props.watch]);
 
-
-    const slicedMonths = months.slice(( minVal+1)/2,( maxVal)/2+1)
+    const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
 
     months.forEach((element, index, arr) => {
         if (!slicedMonths.includes(element)) {
@@ -59,36 +70,38 @@ const MonthSlider = (props: { className?:string, label: string, name: string, co
     });
 
     return (
-        <div className={props.className + "  p-3"}>
-        <label>{props.label}</label>
-            <div className={"justify-content-center align-self-center d-flex flex-column w-100"} >
+        <InputWrapper {...props}>
             <Controller
                 name={props.name}
-                control={props.control}
-                render={({ field }) => (
+                control={props.form!.control}
+                defaultValue={[0,24]}
+                render={({ field}) => (
                     <>
-                    <Slider style={{height:"80px"}}
-                        pushable={true}
-                        allowCross={false}
-                        {...field}
-                        range
-                        min={minVal}
-                        max={maxVal}
-                        marks={
-                        months.reduce((acc, month, index) => {
-                            // @ts-ignore
-                            acc[2*index] = month;
-                            return acc;
-                        }, {})}
-                    />
-                    <label className={"m-2 center text-center"} style={{fontSize:"0.9rem"}}>Wybrano okres: <br/> od początku {labels[field.value[0]]} <br/>do końca {labels[field.value[1]-1]}.</label>
+                        <Slider style={{height: "80px"}}
+                                pushable={true}
+                                allowCross={false}
+                                {...field}
+                                range
+                                min={minVal}
+                                max={maxVal}
+                                marks={
+                                    months.reduce((acc, month, index) => {
+                                        // @ts-ignore
+                                        acc[2 * index] = month;
+                                        return acc;
+                                    }, {})}
+                        />
+                        <label className="m-2 center text-center" style={{fontSize: "0.9rem"}}>
+                            Wybrano okres: <br/>
+                            od początku {labels[field.value[0]]} <br/>
+                            do końca {labels[field.value[1] - 1]}.
+                        </label>
                     </>
                 )}
             />
-            </div>
-        </div>
-
+        </InputWrapper>
     );
 };
 
-export default  MonthSlider;
+
+export default MonthSlider;

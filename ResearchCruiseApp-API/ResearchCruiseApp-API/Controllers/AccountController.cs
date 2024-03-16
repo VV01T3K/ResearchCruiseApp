@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +11,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
-using ResearchCruiseApp_API.Models.AuthenticationModels;
+using ResearchCruiseApp_API.Models.Users;
+using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
@@ -34,16 +36,16 @@ namespace ResearchCruiseApp_API.Controllers
 
             var userStore = serviceProvider.GetRequiredService<IUserStore<User>>();
             var emailStore = (IUserEmailStore<User>)userStore;
-            var email = registerModel.Email;
 
-            if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))
+            if (string.IsNullOrEmpty(registerModel.Email) || !_emailAddressAttribute.IsValid(registerModel.Email))
             {
-                return CreateValidationProblem(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(email)));
+                return CreateValidationProblem(
+                    IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(registerModel.Email)));
             }
 
             var user = new User();
-            await userStore.SetUserNameAsync(user, email, CancellationToken.None);
-            await emailStore.SetEmailAsync(user, email, CancellationToken.None);
+            await userStore.SetUserNameAsync(user, registerModel.Email, CancellationToken.None);
+            await emailStore.SetEmailAsync(user, registerModel.Email, CancellationToken.None);
             user.FirstName = registerModel.FirstName;
             user.LastName = registerModel.LastName;
             
@@ -55,7 +57,9 @@ namespace ResearchCruiseApp_API.Controllers
                 return CreateValidationProblem(result);
             }
             
-            await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+            await emailSender.SendEmailConfirmationMessageAsync(
+                user, registerModel.Email, RoleName.CruiseManager, serviceProvider);
             return TypedResults.Ok();
         }
         
@@ -151,7 +155,7 @@ namespace ResearchCruiseApp_API.Controllers
             if (!result.Succeeded)
                 return TypedResults.Unauthorized();
 
-            return TypedResults.Text("Thank you for confirming your email.");
+            return TypedResults.Text("Email confirmed");
         }
         
         [HttpPost("resendConfirmationEmail")]
@@ -165,7 +169,7 @@ namespace ResearchCruiseApp_API.Controllers
                 return TypedResults.Ok();
             }
 
-            await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
+            //await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
             return TypedResults.Ok();
         }
 
@@ -239,46 +243,6 @@ namespace ResearchCruiseApp_API.Controllers
             }
 
             return TypedResults.ValidationProblem(errorDictionary);
-        }
-        
-        private async Task SendConfirmationEmailAsync(
-            User user,
-            IServiceProvider serviceProvider,
-            HttpContext context,
-            bool changeEmail = false)
-        {
-            var emailSender = serviceProvider.GetRequiredService<IEmailSender<User>>();
-            var emailConfirmationMessageBody = await GenerateEmailConfirmationMessageBody(
-                user, changeEmail, serviceProvider.GetRequiredService<IConfiguration>());
-            
-            await emailSender.SendConfirmationLinkAsync(user, user.Email!, emailConfirmationMessageBody);
-        }
-
-        private async Task<string> GenerateEmailConfirmationMessageBody(
-            User user, bool isChange, IConfiguration configuration)
-        {
-            var code = isChange ?
-                await userManager.GenerateChangeEmailTokenAsync(user, user.Email!) : 
-                await userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var userId = await userManager.GetUserIdAsync(user);
-            var protocol = configuration.GetSection("ProtocolUsed").Value;
-            var frontendUrl = configuration.GetSection("FrontendUrl").Value;
-            
-            string link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userId}&code={code}";
-            if (isChange)
-            {
-                // This is validated by the /confirmEmail endpoint on change.
-                link += $"&changedEmail={user.Email}";
-            }
-            
-            string body = $"{user.FirstName} {user.LastName},<br/><br/>" +
-                          $"witaj w systemie rejsów badawczych Biura Armatora Uniwersytetu.<br/>" +
-                          $"Aby potwierdzić rejestrację konta, kliknij poniższy link:<br/><br/>" +
-                          $"{link}.<br/><br/>" +
-                          $"Pozdrawiamy<br/>" +
-                          $"Biuro Armatora Uniwersytetu";
-            return body;
         }
     }
 }

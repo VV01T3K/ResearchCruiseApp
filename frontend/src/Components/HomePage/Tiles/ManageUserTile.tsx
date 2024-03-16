@@ -1,13 +1,17 @@
 import React  from 'react';
 import Tile from "./Tile";
-function ManageUserTile( ){
+import {Link} from "react-router-dom";
+
+
+function ManageUserTile(){
     return (
         <Tile>
             <div>
-                <a href={"#"}> Manage Users </a>
+                <Link to="/ManageUsers"> Zarządzanie użytkownikami </Link>
             </div>
         </Tile>
     )
 }
+
 
 export default ManageUserTile
