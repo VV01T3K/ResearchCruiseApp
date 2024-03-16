@@ -255,7 +255,7 @@ paket-files/
 .fake/
 
 # JetBrains Rider
-.idea/
+ResearchCruiseApp-API/.idea/
 *.sln.iml
 
 # CodeRush

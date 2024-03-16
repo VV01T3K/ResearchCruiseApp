@@ -10,5 +10,7 @@ public class User : IdentityUser
     [ProtectedPersonalData]
     public string LastName { get; set; } = null!;
 
-    public bool Accepted { get; set; }
+    public bool Accepted { get; set; } = false;
+    
+    public List<FormA> Forms { get; set; } = null!;
 }
