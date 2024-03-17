@@ -21,6 +21,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-css-modules": "^4.7.11",
+    "react-datepicker": "^6.4.0",
     "react-dnd": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-double-range-slider": "^3.0.1",
@@ -54,7 +55,7 @@
     "install-bootstrap": "npm audit fix --force",
     "audit": "npm install",
     "fund": "npm fund",
-    "cos": "npm install axios"
+    "cos": "npm install react-datepicker --save"
   },
   "browserslist": {
     "production": [

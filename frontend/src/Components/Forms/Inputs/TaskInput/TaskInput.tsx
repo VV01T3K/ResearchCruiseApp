@@ -66,7 +66,6 @@ function TaskInput(props: Props) {
             (value) => checkTouched(index, item, value) === true
         )
     }   );
-    const [isTouched, setTouched] = useState(touched);
 
     React.useEffect(() => {
         if(!touched ) {
@@ -78,25 +77,21 @@ function TaskInput(props: Props) {
             // props.form!.clearErrors(props.name)
         }
         else {
+            if(props.form.formState.errors[props.name] && fields.length)
+                props.form!.clearErrors(props.name)
+        }
+    })
+
+    React.useEffect(()=>{
+        if(!fields.length ) {
             if(props.form.formState.errors[props.name])
                 props.form!.clearErrors(props.name)
-            if(!fields.length ) {
-                if(!props.form.formState.errors[props.name])
-                    props.form.setError(props.name, {
-                        type: 'manual',
-                        message: 'To jest ręcznie ustawiony błąd!',
-                    });
-                // props.form!.clearErrors(props.name)
-            }
-            else {
-                if(props.form.formState.errors[props.name])
-                    props.form!.clearErrors(props.name)
-            }
+            props.form.setError(props.name, {
+                type: 'manual',
+                message: 'To jest ręcznie ustawiony błąd!',
+            });
         }
-
-        // // console.log(fields)
-        // console.log(props.form.formState.errors)
-    })
+    }, [fields.length])
 
     return (
         <div className={props.className + " p-3"}>
@@ -191,12 +186,6 @@ function TaskInput(props: Props) {
                                         acc[index] = value;
                                         return acc;
                                     }, {})})
-                                    // props.form.setError(props.name[fields.length-1], {
-                                    //     type: 'manual',
-                                    //     message: 'To jest ręcznie ustawiony błąd!',
-                                    // });
-
-
                                 }
                                 }>
                                     {key}
