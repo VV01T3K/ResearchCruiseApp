@@ -110,7 +110,7 @@ function TaskInput(props: Props) {
                                 {Object.keys(options)[Object.keys(item)[0]]}
                             </div>
                             <div className="text-center d-flex col-12 col-xl-8 ">
-                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start   w-100">
+                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start  pb-3  w-100">
                                     {/*{item}*/}
                                     {Object.entries(Object.values(item)[0]).map((t, s) => {
                                         const title = Object.keys(Object.values(options)[Object.keys(item)[0]])[s];
@@ -125,29 +125,24 @@ function TaskInput(props: Props) {
                                                     case "Instytucja do której składany":
                                                     case "Opis zajęcia dydaktycznego" :
                                                     case "Opis zadania" :
-                                                        return (<TextArea  resize={"none"} label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                        return (<TextArea customError={true}  resize={"none"} label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
 
                                                     case "Przewidywany termin składania":
-                                                        return (<NumberInput label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                        return (<NumberInput customError={true}  label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                     case "Ramy czasowe" :
                                                     case "Kwota finansowania" :
-                                                        return (<NumberInput label={title + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                        return (<NumberInput customError={true}  label={title + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                 }
                                             })()}
 
 
-                                            {(()=>{
-                                                // console.log(props.form.formState.errors[props.name][index] && props.form.formState.errors[props.name][index][Object.keys(item)[0]])
-                                                return props.form.formState.errors[props.name] &&
+                                            {props.form.formState.errors[props.name] &&
                                                 props.form.formState.errors[props.name][index] &&
                                                 props.form.formState.errors[props.name][index][Object.keys(item)[0]] &&
                                                 props.form.formState.errors[props.name][index][Object.keys(item)[0]][t[0]] &&
                                                 <ErrorCode code={props.form.formState.errors[props.name][index][Object.keys(item)[0]][t[0]].message}/>
                                                 }
-                                            )()}
-                                            {
 
-                                            }
 
                                         </div>
                                     )})}
