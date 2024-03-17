@@ -44,7 +44,7 @@ function TextArea(props: Props) {
                 defaultValue={""}
 
                 rules={{
-                    required: props.required ?? true,
+                    required: props.required ?? "Pole wymagane",
                     maxLength: {
                         value: props.maxLenth ?? 200, // Maksymalna długość
                         message: `Za długi tekst, maksymalna długość to ${props.maxLenth ?? 200} znaków.`,
