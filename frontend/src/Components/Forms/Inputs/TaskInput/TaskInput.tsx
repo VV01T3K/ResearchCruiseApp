@@ -69,7 +69,7 @@ function TaskInput(props: Props) {
     const [isTouched, setTouched] = useState(touched);
 
     React.useEffect(() => {
-        if(!touched || fields.length ==0) {
+        if(!touched ) {
             if(!props.form.formState.errors[props.name])
             props.form.setError(props.name, {
                 type: 'manual',
@@ -80,7 +80,20 @@ function TaskInput(props: Props) {
         else {
             if(props.form.formState.errors[props.name])
                 props.form!.clearErrors(props.name)
+            if(!fields.length ) {
+                if(!props.form.formState.errors[props.name])
+                    props.form.setError(props.name, {
+                        type: 'manual',
+                        message: 'To jest ręcznie ustawiony błąd!',
+                    });
+                // props.form!.clearErrors(props.name)
+            }
+            else {
+                if(props.form.formState.errors[props.name])
+                    props.form!.clearErrors(props.name)
+            }
         }
+
         // // console.log(fields)
         // console.log(props.form.formState.errors)
     })
