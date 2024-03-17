@@ -10,6 +10,9 @@ import NumberInput from "../NumberInput";
 import Select from "react-select";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import textArea from "../TextArea";
+import DateInput from "../DateInput";
+import DateRangeInput from "../DateRangeInput";
+import FloatInput from "../FloatInput";
 
 
 type Props = {
@@ -71,7 +74,7 @@ function TaskInput(props: Props) {
         if(!touched ) {
             if(!props.form.formState.errors[props.name])
             props.form.setError(props.name, {
-                type: 'manual',
+                type: 'manual11',
                 message: 'To jest ręcznie ustawiony błąd!',
             });
             // props.form!.clearErrors(props.name)
@@ -87,7 +90,7 @@ function TaskInput(props: Props) {
             if(props.form.formState.errors[props.name])
                 props.form!.clearErrors(props.name)
             props.form.setError(props.name, {
-                type: 'manual',
+                type: 'manual1',
                 message: 'To jest ręcznie ustawiony błąd!',
             });
         }
@@ -136,10 +139,11 @@ function TaskInput(props: Props) {
                                                         return (<TextArea customError={true}  resize={"none"} label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
 
                                                     case "Przewidywany termin składania":
-                                                        return (<NumberInput customError={true}  label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                        return (<DateInput customError={true} label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                     case "Ramy czasowe" :
+                                                        return (<DateRangeInput customError={true} label={title} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                     case "Kwota finansowania" :
-                                                        return (<NumberInput customError={true}  label={title + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
+                                                        return (<FloatInput customError={true}  label={title + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                 }
                                             })()}
 

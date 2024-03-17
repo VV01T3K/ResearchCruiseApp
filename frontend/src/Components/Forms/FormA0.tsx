@@ -10,17 +10,15 @@ import NumberInput from "./Inputs/NumberInput";
 import TextArea from "./Inputs/TextArea";
 import FormRadio from "./Inputs/FormRadio";
 import ClickableMap from "./Inputs/ClickableMap";
-import IntInput from "./Inputs/IntInput";
 import TaskInput from "./Inputs/TaskInput/TaskInput";
 import BlockList from "./Inputs/BlockList/BlockList";
 import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
-import {Simulate} from "react-dom/test-utils";
-import submit = Simulate.submit;
 import SpubTasksInput from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
 import FormWithSections from "./Tools/FormWithSections";
 import ContractsInput from "./Inputs/ContractsInput";
+import DateInput from "./Inputs/DateInput";
 
 
 function FormA0(){
@@ -55,6 +53,20 @@ function FormA0(){
         // defaultValues: defaultValues,
         shouldUnregister: false
     });
+    const saveValues = (data) => {
+        // Tu możesz zapisać dane do Local Storage lub innego źródła danych
+        localStorage.setItem('formData', JSON.stringify(data));
+    };
+
+    // Wczytaj dane z Local Storage, jeśli istnieją
+    React.useEffect(() => {
+        const savedData = JSON.parse(localStorage.getItem('formData'));
+        if (savedData) {
+            Object.entries(savedData).forEach(([key, value]) => {
+                form.setValue(key, value, {shouldDirty:true, shouldValidate:true, shouldTouch:true});
+            });
+        }
+    }, [form.setValue]);
 
     const [sections, setSections] = useState({
         "Kierownik":"Kierownik zgłaszanego rejsu",
@@ -73,9 +85,9 @@ function FormA0(){
 
     // @ts-ignore
     return (
-        <FormTemplate>
+        <FormTemplate send={()=>console.log(form.formState.errors)} save={()=>saveValues(form.getValues())}>
             <FormTitle sections={sections} title={"Formularz A"} />
-            <FormWithSections sections={sections} form={form} onSubmit={()=>{}}
+            <FormWithSections sections={sections} form={form}
                               onChange={()=>null
                                   //console.log(form.getValues())
             }>

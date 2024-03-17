@@ -1,4 +1,5 @@
 import {FieldError, FieldErrorsImpl, Merge} from "react-hook-form";
+import {post} from "axios";
 
 
 type Props = {
@@ -7,11 +8,14 @@ type Props = {
 
 
 function ErrorCode(props: Props){
+    if(props.code)
     return (
         <p className="m-1 text-center text-danger" style={{fontSize: "12px"}}>
             {typeof props.code == "string" ? props.code: ""}
         </p>
     )
+    else
+        return <span/>
 }
 
 
