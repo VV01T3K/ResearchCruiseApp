@@ -30,7 +30,7 @@ function FormA0(){
             Api.get('/formA')
                 .then(response => setUserData(response.data))
                 .catch(()=> {})
-            console.log(userData)
+            // console.log(userData)
             return () => {};
         },
         []
@@ -75,7 +75,9 @@ function FormA0(){
         <FormTemplate>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form} onSubmit={()=>{}}
-                              onChange={()=>console.log(form.getValues())}>
+                              onChange={()=>null
+                                  //console.log(form.getValues())
+            }>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
                                          name="managers"
@@ -215,7 +217,7 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection title={sections.Zadania}>
-                    <TaskInput name={"wejscie"} className={"col-12"} label={"ss"}/>
+                    <TaskInput name={"wejscie"} historicalTasks={{0:{0:{0:"autor", 1:"coś"}}, 1:{0:{0:"autor", 1:"coś"}}}} className={"col-12"} label={"ss"}/>
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>

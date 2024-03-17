@@ -32,7 +32,7 @@ export default function SpubTaskInput(props: Props){
         control: props.form.control,
         name: props.name,
     });
-    console.log(props.form.getValues())
+    // console.log(props.form.getValues())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(

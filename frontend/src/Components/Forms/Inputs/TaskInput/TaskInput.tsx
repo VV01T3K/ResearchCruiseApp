@@ -8,6 +8,8 @@ import InputWrapper from "../InputWrapper";
 import TextArea from "../TextArea";
 import NumberInput from "../NumberInput";
 import Select from "react-select";
+import ErrorCode from "../../../LoginPage/ErrorCode";
+import textArea from "../TextArea";
 
 
 type Props = {
@@ -15,6 +17,7 @@ type Props = {
     label:string,
     form?,
     name: string,
+    historicalTasks
 }
 
 
@@ -36,8 +39,6 @@ function TaskInput(props: Props) {
         "Inne zadanie": {"Opis zadania":""}
 };
 
-
-
     const {
         fields,
         append,
@@ -47,34 +48,42 @@ function TaskInput(props: Props) {
         name: props.name,
     });
 
-    const [isOpen, setIsOpen] = useState(false);
+    const checkTouched = (index,item, field) => {
+        return props.form.formState.touchedFields[`${props.name}`] &&
+            props.form.formState.touchedFields[`${props.name}`][`${index}`] &&
+            props.form.formState.touchedFields[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`] &&
+            props.form.formState.touchedFields[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`][field]
+        && (!(
+            props.form.formState.errors[`${props.name}`] &&
+            props.form.formState.errors[`${props.name}`][`${index}`] &&
+            props.form.formState.errors[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`]
+            // props.form.formState.errors[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`][field]
+        ))
 
-    useEffect(
-        () => {
-            const onScroll = () => setIsOpen(false)
-            document.body.addEventListener('scroll', onScroll);
-            return () => document.body.removeEventListener("scroll", onScroll);
-        },
-        [isOpen]
-    );
-
-    const newProps = {
-        ...props,
-        label: '',
     }
+    const touched = fields.every((item, index) => {
+        return       Object.keys(Object.values(item)[0]).every(
+            (value) => checkTouched(index, item, value) === true
+        )
+    }   );
+    const [isTouched, setTouched] = useState(touched);
 
     React.useEffect(() => {
-        const lastIndex = fields.length-1;
-
-        if(fields.length>0) {
-
-            // props.form.setError(props.name, {
-            //     type: 'manual',
-            //     message: 'To jest ręcznie ustawiony błąd!',
-            // });
+        if(!touched || fields.length ==0) {
+            if(!props.form.formState.errors[props.name])
+            props.form.setError(props.name, {
+                type: 'manual',
+                message: 'To jest ręcznie ustawiony błąd!',
+            });
             // props.form!.clearErrors(props.name)
         }
-    }, [fields])
+        else {
+            if(props.form.formState.errors[props.name])
+                props.form!.clearErrors(props.name)
+        }
+        // // console.log(fields)
+        // console.log(props.form.formState.errors)
+    })
 
     return (
         <div className={props.className + " p-3"}>
@@ -101,11 +110,12 @@ function TaskInput(props: Props) {
                                 {Object.keys(options)[Object.keys(item)[0]]}
                             </div>
                             <div className="text-center d-flex col-12 col-xl-8 ">
-                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start  align-items-center w-100">
+                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start   w-100">
+                                    {/*{item}*/}
                                     {Object.entries(Object.values(item)[0]).map((t, s) => {
                                         const title = Object.keys(Object.values(options)[Object.keys(item)[0]])[s];
                                         return(
-                                        <div id={`${Object.keys(item)[0]}.${s}`}  className={`${Object.entries(Object.values(item)[0]).length == 2 && "col-xl-6" }
+                                        <div key={`${Object.keys(item)[0]}.${s}`}  className={`${Object.entries(Object.values(item)[0]).length == 2 && "col-xl-6" }
                                          ${Object.entries(Object.values(item)[0]).length == 3 && "col-xl-4" }
                                          col-12 `}>
                                             {(()=>{
@@ -124,6 +134,21 @@ function TaskInput(props: Props) {
                                                         return (<NumberInput label={title + " (zł)"} form={props.form} name={`${props.name}[${index}].${Object.keys(item)[0]}.${t[0]}`}/>)
                                                 }
                                             })()}
+
+
+                                            {(()=>{
+                                                // console.log(props.form.formState.errors[props.name][index] && props.form.formState.errors[props.name][index][Object.keys(item)[0]])
+                                                return props.form.formState.errors[props.name] &&
+                                                props.form.formState.errors[props.name][index] &&
+                                                props.form.formState.errors[props.name][index][Object.keys(item)[0]] &&
+                                                props.form.formState.errors[props.name][index][Object.keys(item)[0]][t[0]] &&
+                                                <ErrorCode code={props.form.formState.errors[props.name][index][Object.keys(item)[0]][t[0]].message}/>
+                                                }
+                                            )()}
+                                            {
+
+                                            }
+
                                         </div>
                                     )})}
                                 </div>}
@@ -143,19 +168,29 @@ function TaskInput(props: Props) {
                         </div>
                     ))}
                 </div>
+
                 <div className="d-inline-flex p-2 w-100">
                     <ButtonGroup as={Dropdown}
                                  className={"w-100 h-100 p-2 align-self-center" + Style.centeredDropdown}
                     >
-                        <Dropdown.Toggle variant="primary">
+                        <Dropdown.Toggle disabled={!touched} variant="primary">
                             +
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {Object.keys(options).map((key, index) => (
-                                <Dropdown.Item key={index} onClick={() => { append({[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
+                                <Dropdown.Item key={index} onClick={() => {
+                                    append({[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
                                         acc[index] = value;
                                         return acc;
-                                    }, {})})}}>
+                                    }, {})})
+                                    // props.form.setError(props.name[fields.length-1], {
+                                    //     type: 'manual',
+                                    //     message: 'To jest ręcznie ustawiony błąd!',
+                                    // });
+
+
+                                }
+                                }>
                                     {key}
                                 </Dropdown.Item>
                             ))}
@@ -164,7 +199,7 @@ function TaskInput(props: Props) {
                     <Select
                         minMenuHeight={300}
                         className="d-flex col-6 text-center p-2 justify-content-center"
-                        isDisabled={props.form.formState.errors[props.name]}
+                        isDisabled={!touched}
                         menuPlacement="auto"
                         placeholder="Dodaj z historii"
                         styles={{
@@ -187,18 +222,24 @@ function TaskInput(props: Props) {
                             })
                         }}
                         placeHolder={"Wybierz"}
-                        options ={{label:"", value:""}}
+                        options ={Object.values(props.historicalTasks).map((key)=>{
+                            const task = Object.keys(options)[Object.keys(key)[0]];
+                            const values = Object.keys(Object.values(options)[Object.keys(key)[0]]);
+                            const string = task + ", " + values.map((value, index)=> value +  ": " + Object.values(key[0])[index] ).join(", ")
+
+                            return{ label:string, value:  key}
+                        }
+                        )}
                         value={""}
-                        // onChange={(selectedOption: { label: string, value: SpubTask })=> {
-                        //     if (selectedOption) {
-                        //         const newSpubTask: SpubTask = {
-                        //             yearFrom: `${selectedOption.value.yearFrom}`,
-                        //             yearTo: `${selectedOption.value.yearTo}`,
-                        //             name: `${selectedOption.value.name}`
-                        //         }
-                        //         append({value: newSpubTask})
-                        //     }
-                        // }}
+                        onChange={(selectedOption: { label: any, value: unknown })=> {
+                            append(selectedOption.value)
+                            Object.values(selectedOption.value).forEach((key, value)=>{
+                              Object.values(key).forEach((key1, value1)=>{
+                                  props.form.setValue(`${props.name}.${fields.length}.${value}.${value1}`, key1,  {shouldDirty: true, shouldTouch: true, shouldValidate:true})
+
+                              })
+                            })
+                        }}
                     />
                 </div>
             </div>

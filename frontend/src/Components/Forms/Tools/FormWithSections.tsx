@@ -2,11 +2,11 @@ import React from "react";
 
 
 type Props = {
-    form,
+    form: any,
     children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>[],
-    onChange,
-    onSubmit,
-    sections,
+    onChange: React.FormEventHandler<HTMLFormElement> | undefined,
+    onSubmit: React.FormEventHandler<HTMLFormElement> | undefined,
+    sections: any,
 }
 
 
@@ -19,6 +19,7 @@ function FormWithSections(props: Props){
         >
             {React.Children.map(props.children, (child, index) => {
                 // Dodaj nową właściwość do każdego dziecka
+                // @ts-ignore
                 return React.cloneElement(child, { id: index + 1, form: props.form, sections:props.sections });
             })}
         </form>

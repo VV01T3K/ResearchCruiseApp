@@ -78,7 +78,7 @@ function ClickableMap(props: Props) {
         return inside;
     };
 
-    console.log()
+    // console.log()
 
     return (
         <InputWrapper {...props}>
