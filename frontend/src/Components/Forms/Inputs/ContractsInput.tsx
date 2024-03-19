@@ -2,6 +2,8 @@ import React, {useEffect, useRef, useState} from "react";
 import {Controller, get, useFieldArray} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import Select from "react-select";
+import file_icon from 'src/resources/file_icon.png'
+import FilePicker from "./FilePicker";
 
 
 type Contract = {
@@ -12,7 +14,7 @@ type Contract = {
         localization: string
     },
     description: string,
-    scan
+    scan: File | ""
 }
 
 type Props = {
@@ -32,7 +34,7 @@ export default function ContractsInput(props: Props){
         control: props.form.control,
         name: props.name,
     });
-    // console.log(props.form.getValues())
+    console.log(props.form.getValues())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -200,8 +202,9 @@ export default function ContractsInput(props: Props){
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <textarea {...field}
-                                                          className="col-12 p-1"
+                                                <textarea
+                                                    {...field}
+                                                    className="col-12 p-1"
                                                 />
                                             )}
                                 />
@@ -216,10 +219,9 @@ export default function ContractsInput(props: Props){
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <input
-                                                    {...field}
-                                                    type="file"
-                                                    className="col-12 text-center"
+                                                <FilePicker
+                                                    field={field}
+                                                    id={`${props.name}[${index}].value.scan`}
                                                 />
                                             )}
                                 />
@@ -259,7 +261,7 @@ export default function ContractsInput(props: Props){
                                     name: "",
                                     unit: ""
                                 },
-                                scan: undefined
+                                scan: ""
                             }
                             append({value: newContract})
                         }}
