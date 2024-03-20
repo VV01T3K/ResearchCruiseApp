@@ -39,15 +39,15 @@ const handleResponseError = async (error: {
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            try {
-                await refreshToken()
-                // Try the original request with th new access token
-                return axios(originalRequest);
-            }
-            catch (refreshError) {
-                sessionStorage.clear()
-                window.location.href = '/forcedLogout'
-            }
+            // try {
+            //     await refreshToken()
+            //     // Try the original request with th new access token
+            //     return axios(originalRequest);
+            // }
+            // catch (refreshError) {
+            //     sessionStorage.clear()
+            //     window.location.href = '/forcedLogout'
+            // }
         }
     }
 
