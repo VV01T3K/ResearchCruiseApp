@@ -21,6 +21,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-css-modules": "^4.7.11",
+    "react-data-table-component": "^7.6.2",
     "react-datepicker": "^6.4.0",
     "react-dnd": "^16.0.1",
     "react-dom": "^18.2.0",
@@ -55,7 +56,7 @@
     "install-bootstrap": "npm audit fix --force",
     "audit": "npm install",
     "fund": "npm fund",
-    "cos": "npm install react-datepicker --save"
+    "cos": "npm install react-data-table-component --save"
   },
   "browserslist": {
     "production": [

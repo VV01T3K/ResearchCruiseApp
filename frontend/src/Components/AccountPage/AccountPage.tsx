@@ -125,12 +125,12 @@ function AccountPage(props: Props) {
                             </div>
                             <div className="p-1">
                                 {props.userData["firstName"] + " " + props.userData["lastName"]}
-                                {props.userData["accepted"] && <ErrorCode code="użytkownik nie został zaakceptowany" />}
+                                {!props.userData["accepted"] && <ErrorCode code="użytkownik nie został zaakceptowany" />}
                             </div>
 
                             <div className={"p-1 h5"}>
                                 {props.userData["email"]}
-                                {props.userData["emailConfirmed"] && <ErrorCode code="email nie został potwierdzony" />}
+                                {!props.userData["emailConfirmed"] && <ErrorCode code="email nie został potwierdzony" />}
                             </div>
                             {credentialsError && <ErrorCode code={credentialsError}/>}
                         </div>

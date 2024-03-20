@@ -18,11 +18,12 @@ import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
 // import {TestPage} from "./TestPage/TestPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
+import Page from "./Tools/Page";
 
 
 function App() {
 
-    const { addEventListener:loginListener } = useCustomEvent('loginSuccessful');
+    const { addEventListener:loginListener, dispatchEvent } = useCustomEvent('loginSuccessful');
     const { addEventListener:logoutListener } = useCustomEvent('logoutSuccessful');
 
     interface UserData {
@@ -30,32 +31,39 @@ function App() {
         firstName: string;
     }
 
-    const [userData, setUserData] = useState<UserData | null>(null)
+    const [userData, setUserData] = useState<UserData | null | undefined>(undefined)
+
+    const logout = () => {
+        sessionStorage.clear()
+        setUserData(null)
+    }
+    const getUserData = async () => {
+        if (sessionStorage.getItem("accessToken")) {
+             await Api.get('/account')
+                .then(response => setUserData(response.data)).catch((err)=>{})
+        } else setUserData(null)
+    }
 
     useEffect(
         () => {
-            const getUserData = () => {
-                if (sessionStorage.getItem("accessToken"))
-                    Api.get('/account')
-                        .then(response => setUserData(response.data))
-            }
-            const unsubscribeLogin = loginListener(() => {
-                getUserData();
-            });
-            const unsubscribeLogout = logoutListener(() => {
-                sessionStorage.clear()
-                setUserData(null)
-            });
+            const unsubscribeLogin = loginListener(getUserData);
             window.addEventListener('load', getUserData);
-
             return () => {
                 unsubscribeLogin();
-                unsubscribeLogout();
                 window.removeEventListener('load', getUserData);
             };
         },
-        [loginListener, logoutListener, 'load']
+        [loginListener, 'load']
     );
+
+    useEffect(()=>{
+        const unsubscribeLogout = logoutListener(() => {
+         logout()
+        });
+        return () => {
+            unsubscribeLogout();
+        };
+    }, [logoutListener])
 
     return (
         <div className="vh-100">
@@ -88,14 +96,17 @@ function App() {
                             <Route path="/*" element={<ManagerPanel />} />
                         </>
                     }
-                {userData != null &&
+                {userData != null && true &&
                     <Route path="/AccountSettings" element={<AccountPage userData={userData} />} />
                 }
-                {userData == null &&
+                {userData === null &&
                     <>
                         <Route path="/*" element={<LoginPage />} />
                         <Route path="/forcedLogout" element={<LogoutPage />} />
                     </>
+                }
+                {userData === undefined &&
+                    <Route path="/*" element={<Page />} />
                 }
                 <Route path="/ConfirmEmail" element={<EmailConfirmPage />} />
                 {/*<Route path="/Test" element={<TestPage/>}/>*/}
