@@ -23,7 +23,7 @@ function ManageUsersPage(props: Props) {
                     })
 
             }
-            fetchData().then(response => {  console.log(response); setUserList(response)})
+            fetchData().then(response => setUserList(response))
         },[]
     )
 
@@ -130,11 +130,13 @@ function ManageUsersPage(props: Props) {
 
     const applyFilters = (list:any[]) => {
         var tmp = list
-        if(notAcceptedToggle)
-            tmp = notAccepted(tmp)
-        if(withoutConfirmedMailToggle)
-            tmp = withoutConfirmedMail(tmp)
-        tmp = nameFilter(tmp)
+        if(tmp.length) {
+            if (notAcceptedToggle)
+                tmp = notAccepted(tmp)
+            if (withoutConfirmedMailToggle)
+                tmp = withoutConfirmedMail(tmp)
+            tmp = nameFilter(tmp)
+        }
         return tmp
     }
 
@@ -166,23 +168,41 @@ function ManageUsersPage(props: Props) {
 
     const [selectedRows, setSelectedRows] = React.useState([]);
     const [toggleCleared, setToggleCleared] = React.useState(false);
-    const [data, setData] = React.useState(userList);
     const handleRowSelected = React.useCallback(state => {
         setSelectedRows(state.selectedRows);
     }, []);
     const contextActions = React.useMemo(() => {
         const handleDelete = () => {
             // eslint-disable-next-line no-alert
-            if (window.confirm(`Are you sure you want to delete:\r ${selectedRows.map(r => r.title)}?`)) {
-                // setToggleCleared(!toggleCleared);
+            if (window.confirm(`Czy na pewno chcesz usunąć:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
+                setToggleCleared(!toggleCleared);
+                const neww = Api.get('/Users').then(response => {
+                        return [];
+                    })
+                setUserList(selectedRows)
                 // setData(differenceBy(data, selectedRows, 'title'));
             }
         };
+        const handleAccept = () => {
+            if (window.confirm(`Czy na pewno chcesz zaakcptować:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
+                setToggleCleared(!toggleCleared);
+                Api.patch('/Users')
+                // setData(differenceBy(data, selectedRows, 'title'));
+            }
+        }
+
+        const handleSendMail = () => {
+            if (window.confirm(`Czy na pewno chcesz wysłać email:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
+                setToggleCleared(!toggleCleared);
+                // setData(differenceBy(data, selectedRows, 'title'));
+            }
+        }
+
         return <>
-            <button className={"btn btn-primary m-1"} onClick={handleDelete}>
+            <button className={"btn btn-primary m-1"} onClick={handleAccept}>
                 Zaakceptuj
             </button>
-            <button className={"btn btn-primary m-1"} onClick={handleDelete}>
+            <button className={"btn btn-primary m-1"} onClick={handleSendMail}>
                 Wyślij Mail
             </button>
             <button className={"btn btn-danger m-1"} onClick={handleDelete}>
@@ -190,7 +210,7 @@ function ManageUsersPage(props: Props) {
             </button>
 
         </>;
-    }, [data, selectedRows, toggleCleared]);
+    }, [selectedRows, toggleCleared]);
 
     return (
         <>

@@ -1,12 +1,13 @@
 import React  from 'react';
 import Tile from "./Tile";
+import {Link} from "react-router-dom";
 
 
 function ViewFormsTile(){
     return (
         <Tile>
             <div>
-                <a href="#"> View forms </a>
+                <Link to="/ViewForms"> View forms </Link>
             </div>
         </Tile>
     )

@@ -19,6 +19,7 @@ import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
 import Page from "./Tools/Page";
+import MessagesPage from "./MessagesPage/MessagesPage";
 
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
+                            <Route path="/Messages" element={<MessagesPage/>}/>
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&

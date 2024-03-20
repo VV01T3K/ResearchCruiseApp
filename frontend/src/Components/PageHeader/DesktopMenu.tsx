@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {Link} from "react-router-dom";
+import useCustomEvent from "../Tools/useCustomEvent";
 
 
 type Props = {
@@ -8,6 +9,8 @@ type Props = {
 
 
 function DesktopMenu(props: Props){
+    const loggedIn = sessionStorage.getItem("accessToken") ?? false
+    const { dispatchEvent } = useCustomEvent('logoutSuccessful');
     return (
         <div className="row d-flex">
             <div className="col text-center border-end border-light">
@@ -32,7 +35,7 @@ function DesktopMenu(props: Props){
                     <img alt="Poczta UG" src="https://ug.edu.pl/themes/ug_faculty/images/mail.svg" />
                 </Link>
             </div>
-            <div className="col text-center">
+            <div className={`col text-center ${loggedIn ? "border-end border-light ":""}`}>
                 <Link to="/"
                       id="english"
                       lang="en"
@@ -43,6 +46,13 @@ function DesktopMenu(props: Props){
                     HOME
                 </Link>
             </div>
+            {loggedIn &&    <div className="col text-center">
+                <Link onClick={()=>dispatchEvent(null)} to="/"
+                      style={{"textDecoration":"none", "fontSize": "20px","color": "white"}}
+                >
+                    Wyloguj
+                </Link>
+            </div>}
         </div>
     )
 }
