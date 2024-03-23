@@ -13,6 +13,7 @@ import textArea from "../TextArea";
 import DateInput from "../DateInput";
 import DateRangeInput from "../DateRangeInput";
 import FloatInput from "../FloatInput";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
@@ -42,62 +43,13 @@ function TaskInput(props: Props) {
         "Inne zadanie": {"Opis zadania":""}
 };
 
-    const {
-        fields,
-        append,
-        remove
-    } = useFieldArray({
-        control: props.form.control,
-        name: props.name,
-    });
-
-    const checkTouched = (index,item, field) => {
-        return props.form.formState.touchedFields[`${props.name}`] &&
-            props.form.formState.touchedFields[`${props.name}`][`${index}`] &&
-            props.form.formState.touchedFields[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`] &&
-            props.form.formState.touchedFields[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`][field]
-        && (!(
-            props.form.formState.errors[`${props.name}`] &&
-            props.form.formState.errors[`${props.name}`][`${index}`] &&
-            props.form.formState.errors[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`]
-            // props.form.formState.errors[`${props.name}`][`${index}`][`${Object.keys(item)[0]}`][field]
-        ))
-
-    }
-    const touched = fields.every((item, index) => {
-        return       Object.keys(Object.values(item)[0]).every(
-            (value) => checkTouched(index, item, value) === true
-        )
-    }   );
-
-    React.useEffect(() => {
-        if(!touched ) {
-            if(!props.form.formState.errors[props.name])
-            props.form.setError(props.name, {
-                type: 'manual11',
-                message: 'To jest ręcznie ustawiony błąd!',
-            });
-            // props.form!.clearErrors(props.name)
-        }
-        else {
-            if(props.form.formState.errors[props.name] && fields.length)
-                props.form!.clearErrors(props.name)
-        }
-    })
-
-    React.useEffect(()=>{
-        if(!fields.length ) {
-            if(props.form.formState.errors[props.name])
-                props.form!.clearErrors(props.name)
-            props.form.setError(props.name, {
-                type: 'manual1',
-                message: 'To jest ręcznie ustawiony błąd!',
-            });
-        }
-    }, [fields.length])
-
     return (
         <div className={props.className + " p-3"}>
+            <Controller name={props.name}  control={props.form!.control}
+                        defaultValue={[]}
+                        rules = {{required: 'Wymagana przynajmniej jedna jednostka',  validate: {notEmptyArray:(value)=>{if(value.length==0)return"sss"}}}}
+                        render={({field})=>(
+                            <>
             <div className="table-striped w-100">
                 <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
                     <div className="d-flex flex-row center align-items-center">
@@ -107,12 +59,12 @@ function TaskInput(props: Props) {
                     </div>
                 </div>
                 <div className={"w-100"}>
-                    {!fields.length &&
+                    {!field.value.length &&
                         <div className="d-flex flex-row justify-content-center bg-light p-2 ">
                             <div className="text-center">Nie wybrano żadnego zadania</div>
                         </div>
                     }
-                    {fields && fields.map((item, index) => (
+                    {field.value && field.value.map((item, index) => (
                         <div key={item.id}
                              className="d-flex flex-wrap border
                              bg-light"
@@ -166,7 +118,11 @@ function TaskInput(props: Props) {
                                 <div className={"align-items-center justify-content-center d-flex"}>
                                 <button type="button"
                                         className=" btn btn-primary"
-                                        onClick={() => { remove(index) }}
+                                        onClick={() => {
+                                            const val = field.value;
+                                            val.splice(index,1)
+                                            props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                        }}
                                 >
                                     -
                                 </button>
@@ -180,16 +136,16 @@ function TaskInput(props: Props) {
                     <ButtonGroup as={Dropdown}
                                  className={"w-100 h-100 p-2 align-self-center" + Style.centeredDropdown}
                     >
-                        <Dropdown.Toggle disabled={!touched} variant="primary">
+                        <Dropdown.Toggle disabled={props.form.formState.errors[props.name]} variant="primary">
                             +
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {Object.keys(options).map((key, index) => (
                                 <Dropdown.Item key={index} onClick={() => {
-                                    append({[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
-                                        acc[index] = value;
-                                        return acc;
-                                    }, {})})
+                                    props.form.setValue(props.name, [...field.value, {[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
+                                            acc[index] = value;
+                                            return acc;
+                                        }, {})}], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
                                 }
                                 }>
                                     {key}
@@ -200,7 +156,7 @@ function TaskInput(props: Props) {
                     <Select
                         minMenuHeight={300}
                         className="d-flex col-6 text-center p-2 justify-content-center"
-                        isDisabled={!touched}
+                        isDisabled={props.form.formState.errors[props.name]}
                         menuPlacement="auto"
                         placeholder="Dodaj z historii"
                         styles={{
@@ -233,10 +189,10 @@ function TaskInput(props: Props) {
                         )}
                         value={""}
                         onChange={(selectedOption: { label: any, value: unknown })=> {
-                            append(selectedOption.value)
+                            props.form.setValue(props.name, [...field.value,selectedOption.value], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
                             Object.values(selectedOption.value).forEach((key, value)=>{
                               Object.values(key).forEach((key1, value1)=>{
-                                  props.form.setValue(`${props.name}.${fields.length}.${value}.${value1}`, key1,  {shouldDirty: true, shouldTouch: true, shouldValidate:true})
+                                  props.form.setValue(`${props.name}.${field.value.length}.${value}.${value1}`, key1,  {shouldDirty: true, shouldTouch: true, shouldValidate:true})
 
                               })
                             })
@@ -244,6 +200,12 @@ function TaskInput(props: Props) {
                     />
                 </div>
             </div>
+
+
+                            </>)}/>
+            {props.form.formState.errors[props.name] &&
+                <ErrorCode code={props.form.formState.errors[props.name].message}/>
+            }
         </div>
     )
 }

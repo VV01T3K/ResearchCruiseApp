@@ -13,44 +13,24 @@ type Props = {
 }
 
 function BlockListInput(props: Props){
-    const {
-        fields,
-        append,
-        remove
-    } = useFieldArray({
-        control: props.form.control,
-        name: props.name,
 
-    });
-    const isLastFilled = () => {
-        const lastIndex = fields.length-1;
-
-        return fields && fields[lastIndex] && fields[lastIndex].value==''
-
-    }
-    React.useEffect(() => {
-        // Przykładowe ustawienie wartości dla najnowszego pola
-        const lastIndex = fields.length-1;
-
-        if(isLastFilled()) {
-            props.form.setValue(
-                `${props.name}[${lastIndex}].value`,
-                "",
-                {shouldDirty: false, shouldTouch: false}
-            )
-
-            props.form.setError(props.name, {
-                type: 'manual',
-                message: 'To jest ręcznie ustawiony błąd!',
-            });
-        }
-        else{
-            props.form.clearErrors(props.name)
-        }
-    }, [fields])
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
+            <Controller name={props.name}  control={props.form!.control}
+                        defaultValue={[]}
+                        rules = {{validate: {
+                            notEmpty: (value) => {
+                                for (const key in value) {
+                                    if (value.hasOwnProperty(key) && value[key].value === "") {
+                                        return "Uzupełnij wszystkie pola";
+                                    }
+                                }
+                                return true;
+                            }}
+                            }}
+                        render={({field})=>(
+                            <>
             <table className="table-striped w-100">
                 <thead className="text-white text-center" style={{"backgroundColor":"#052d73"}}>
                     <tr className="d-flex flex-row center align-items-center w-100">
@@ -59,61 +39,43 @@ function BlockListInput(props: Props){
                 </thead>
 
                 <tbody>
-                    {!fields.length &&
+                    {!field.value.length &&
                         <tr className="d-flex flex-row bg-light p-2 justify-content-center">
                             <th colSpan={3} className={"text-center"} >Nie dodano żadnej jednostki</th>
                         </tr>
                     }
-                    {fields.map((item, index) => (
-                        <React.Fragment key={item.id}>
+                    {field.value.map((item, index) => (
+                        <React.Fragment key={index}>
                             <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
                                 <th className="w-25 text-center p-2 border-end ">{index}</th>
                                 <th className="w-75 text-center p-2">
-                                    {/*<text>   {data[item.label]}</text>*/}
-                                    <Controller name={`${props.name}[${index}].value`}
-                                                control={props.form.control}
-                                                rules={{
-                                                    required: "Pole nie może być puste",
-                                                    validate: (value) =>
-                                                        value.length < 10 || 'Pole nie może mieć wartości 0.'
-                                                }}
-                                                render={({ field }) => (
-                                                    <input
-                                                        //{...field}
-                                                           type="text"
-                                                           className="w-100"
-                                                           onChange={(e)=> {
-                                                               props.form.setValue(
-                                                                   `${props.name}[${index}].value`,
-                                                                   e.target.value,
-                                                                   { shouldDirty: true, shouldValidate: true }
-                                                               )
-                                                               props.form.clearErrors(  props.name)
-                                                           }}
-                                                    />
-                                                )}
+                                    <input
+                                     {...field}
+                                        value={field.value[index].value}
+                                           type="text"
+                                           className="w-100"
+                                           onChange={(e)=> {
+                                               var val = field.value;
+                                               val[index].value = e.target.value
+                                               field.onChange(val)
+                                           }}
                                     />
                                 </th>
                                 <th className="d-inline-flex p-2">
                                     <button type="button"
                                             className="btn btn-primary"
-                                            onClick={() => {remove(index);}}
+                                            onClick={() => {
+                                                const val = field.value;
+                                                val.splice(index,1)
+                                                props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                            }
+                                            }
                                     >
                                         -
                                     </button>
                                 </th>
                             </tr>
-                            {
-                                props.form.formState.errors[props.name] &&
-                                props.form.formState.errors[props.name][index] &&
-                                <tr className="bg-light">
-                                    <th>
-                                        <ErrorCode
-                                            code={props.form.formState.errors[props.name][index]["value"].message}
-                                        />
-                                    </th>
-                                </tr>
-                            }
+
                         </React.Fragment>
                     ))}
                 </tbody>
@@ -121,10 +83,22 @@ function BlockListInput(props: Props){
 
             <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled " : ""}`}
                     type="button"
-                    onClick={() =>  append({value:""}) }
+                    onClick={(selectedOption)=>{
+                        props.form.setValue(props.name, [...field.value, {value:``}], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+
+
+                    }}
             >
                 +
             </button>
+                            </>)}/>
+            {
+                props.form.formState.errors[props.name] &&
+
+                <ErrorCode
+                    code={props.form.formState.errors[props.name].message}
+                />
+            }
         </div>
     )
 }
