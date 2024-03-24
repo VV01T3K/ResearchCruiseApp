@@ -1,5 +1,6 @@
 import file_icon from "../../../resources/file_icon.png";
-import React, {useRef, useState} from "react";
+import React, {MouseEvent, useRef, useState} from "react";
+import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import {ControllerRenderProps} from "react-hook-form";
 import app from "../../App";
 
@@ -9,7 +10,7 @@ type Props = {
     id: string,
     rowIdx: number,
     sectionName: string,
-    form
+    form:  UseFormReturn<FieldValues, any, undefined>
 }
 
 
@@ -49,12 +50,14 @@ export default function FilePicker(props: Props) {
                     height="45px"
                     width="45px"
                     className="rounded-2 p-1 d-flex"
-                    onMouseEnter={e =>
-                        e.target.style.backgroundColor = "#eeeeee"
-                    }
-                    onMouseLeave={e =>
-                        e.target.style.backgroundColor = "#f8f8f8"
-                    }
+                    onMouseEnter={e => {
+                        const thisImage = e.target as HTMLImageElement
+                        thisImage.style.backgroundColor = "#eeeeee"
+                    }}
+                    onMouseLeave={e => {
+                        const thisImage = e.target as HTMLImageElement
+                        thisImage.style.backgroundColor = "#f8f8f8"
+                    }}
                     alt="File picker icon"
                 />
             </label>
