@@ -186,12 +186,17 @@ function TaskInput(props: Props) {
                         <Dropdown.Menu>
                             {Object.keys(options).map((key, index) => (
                                 <Dropdown.Item key={index} onClick={() => {
-                                    append({[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
-                                        acc[index] = value;
-                                        return acc;
-                                    }, {})})
-                                }
-                                }>
+                                    append({ [index] : Object
+                                            .values(Object.values(options)[index])
+                                            .reduce(
+                                                (acc, value, index) => {
+                                                    acc[index] = value;
+                                                    return acc;
+                                                },
+                                                {}
+                                            )
+                                    })
+                                }}>
                                     {key}
                                 </Dropdown.Item>
                             ))}

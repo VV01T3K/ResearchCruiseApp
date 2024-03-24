@@ -14,7 +14,7 @@ type Contract = {
         localization: string
     },
     description: string,
-    scan: File | ""
+    scan: string
 }
 
 type Props = {
@@ -101,7 +101,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Kategoria</div>
-                                <Controller name={`${props.name}[${index}].value.category`}
+                                <Controller name={`${props.name}[${index}].category`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -134,7 +134,7 @@ export default function ContractsInput(props: Props){
                                                     onChange={(selectedOption: { label: string, value: string })=> {
                                                         if (selectedOption) {
                                                             props.form.setValue(
-                                                                `${props.name}[${index}].value.category`,
+                                                                `${props.name}[${index}].category`,
                                                                 selectedOption.value
                                                             )
                                                         }
@@ -147,7 +147,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                             >
                                 <div className="col-12">Nazwa instytucji</div>
-                                <Controller name={`${props.name}[${index}].value.institution.name`}
+                                <Controller name={`${props.name}[${index}].institution.name`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -162,7 +162,7 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                                 <div className="col-12">Jednostka</div>
-                                <Controller name={`${props.name}[${index}].value.institution.unit`}
+                                <Controller name={`${props.name}[${index}].institution.unit`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -177,7 +177,7 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                                 <div className="col-12">Lokalizacja instytucji</div>
-                                <Controller name={`${props.name}[${index}].value.institution.localization`}
+                                <Controller name={`${props.name}[${index}].institution.localization`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -196,7 +196,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Opis</div>
-                                <Controller name={`${props.name}[${index}].value.name`}
+                                <Controller name={`${props.name}[${index}].description`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -209,11 +209,11 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                             </div>
-                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
-                                <Controller name={`${props.name}[${index}].value.scan`}
+                                <Controller name={`${props.name}[${index}].scan`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -221,7 +221,8 @@ export default function ContractsInput(props: Props){
                                             render={({field}) => (
                                                 <FilePicker
                                                     field={field}
-                                                    id={`${props.name}[${index}].value.scan`}
+                                                    id={`${props.name}[${index}].scan`}
+                                                    form={props.form}
                                                 />
                                             )}
                                 />
@@ -263,7 +264,7 @@ export default function ContractsInput(props: Props){
                                 },
                                 scan: ""
                             }
-                            append({value: newContract})
+                            append(newContract)
                         }}
                     >
                         Dodaj nową
