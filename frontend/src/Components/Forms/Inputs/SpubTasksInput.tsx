@@ -17,7 +17,7 @@ type SpubTask = {
 
 type Props = {
     className: string,
-    name: string,
+    sectionName: string,
     form?,
     historicalSpubTasks: SpubTask[]
 }
@@ -30,7 +30,7 @@ export default function SpubTasksInput(props: Props){
         remove
     } = useFieldArray({
         control: props.form.control,
-        name: props.name,
+        name: props.sectionName,
     });
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -104,7 +104,7 @@ export default function SpubTasksInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
-                                <Controller name={`${props.name}[${index}].value.yearFrom`}
+                                <Controller name={`${props.sectionName}[${index}].value.yearFrom`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -123,7 +123,7 @@ export default function SpubTasksInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
-                                <Controller name={`${props.name}[${index}].value.yearTo`}
+                                <Controller name={`${props.sectionName}[${index}].value.yearTo`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -144,7 +144,7 @@ export default function SpubTasksInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
-                                <Controller name={`${props.name}[${index}].value.name`}
+                                <Controller name={`${props.sectionName}[${index}].value.name`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -178,7 +178,7 @@ export default function SpubTasksInput(props: Props){
                 >
                     <button
                         className={`btn btn-primary w-100
-                            ${props.form.formState.errors[props.name] ? "disabled" : ""}`
+                            ${props.form.formState.errors[props.sectionName] ? "disabled" : ""}`
                         }
                         type="button"
                         onClick={() => {
@@ -197,7 +197,7 @@ export default function SpubTasksInput(props: Props){
                     minMenuHeight={300}
                     className="d-flex col-12 col-xl-6 text-center pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2
                                justify-content-center"
-                    isDisabled={props.form.formState.errors[props.name]}
+                    isDisabled={props.form.formState.errors[props.sectionName]}
                     menuPlacement="auto"
                     placeholder="Dodaj z historii"
                     styles={{
@@ -236,8 +236,8 @@ export default function SpubTasksInput(props: Props){
                         }
                     }}
                 />
-                {props.form.formState.errors[props.name] &&
-                    <ErrorCode code={props.form.formState.errors[props.name].message}/>
+                {props.form.formState.errors[props.sectionName] &&
+                    <ErrorCode code={props.form.formState.errors[props.sectionName].message}/>
                 }
             </div>
         </div>

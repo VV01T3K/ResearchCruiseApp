@@ -255,7 +255,7 @@ function FormA0(){
                 <FormSection title={sections.SPUB}>
                     <SpubTasksInput
                         className="col-12"
-                        name="spubTasks"
+                        sectionName="spubTasks"
                         historicalSpubTasks={[
                             {
                                 yearFrom: "2020",
