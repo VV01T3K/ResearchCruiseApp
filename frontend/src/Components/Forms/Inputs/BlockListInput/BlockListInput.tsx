@@ -3,13 +3,15 @@ import {Controller, get, useFieldArray} from "react-hook-form";
 import Style from "./BlockListInput.module.css"
 import CSSModules from "react-css-modules";
 import ErrorCode from "../../../LoginPage/ErrorCode";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
     className: string,
     label: string,
     name,
-    form?
+    form?,
+    required?
 }
 
 function BlockListInput(props: Props){
@@ -19,7 +21,7 @@ function BlockListInput(props: Props){
         <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
-                        rules = {{validate: {
+                        rules = {{required:props.required ?? true,validate: {
                             notEmpty: (value) => {
                                 for (const key in value) {
                                     if (value.hasOwnProperty(key) && value[key].value === "") {
@@ -67,6 +69,7 @@ function BlockListInput(props: Props){
                                             onClick={() => {
                                                 const val = field.value;
                                                 val.splice(index,1)
+                                                props.form.clearErrors(props.name)
                                                 props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
                                             }
                                             }

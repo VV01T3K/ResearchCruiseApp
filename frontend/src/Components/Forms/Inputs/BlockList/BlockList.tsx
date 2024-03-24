@@ -62,7 +62,7 @@ function BlockList(props: Props) {
                 <Select minMenuHeight={300}
                         menuPlacement="auto"
                         // value={{label:"", value:""}}
-                        value={null}
+
                         placeholder={"Wybierz opcję lub wyszukaj"}
                         styles={{
                             control: (provided, state) => ({
@@ -84,11 +84,11 @@ function BlockList(props: Props) {
                             }),
                             menu: provided => ({...provided, zIndex: 9999})
                         }}
-                       // {/*{...field}*/}
                         options={administrationUnits.filter(element => !field.value.map((item)=>item.value).includes(element))?.map(value => ({label: value, value})) ?? {label:"", value:""}}
-                        closeMenuOnScroll={() => true}
-                       // {/*{...field}*/}
+                       {...field}
+                        value={null}
                         onChange={(selectedOption)=>{
+                            // field.onChange([...field.value, {value:`${selectedOption.label}`}])
                             props.form.setValue(props.name, [...field.value, {value:`${selectedOption.label}`}], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
 
 

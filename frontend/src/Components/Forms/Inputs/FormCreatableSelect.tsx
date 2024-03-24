@@ -38,7 +38,6 @@ function FormCreatableSelect(props: Props) {
                         }}
                         minMenuHeight={300} {...field}
                         styles={{menu: (provided: any) => ({...provided, zIndex: 9999})}}
-                        closeMenuOnScroll={() => true}
                         options={props.values?.map(value => ({label: value, value}))}
                     />
                 )}
