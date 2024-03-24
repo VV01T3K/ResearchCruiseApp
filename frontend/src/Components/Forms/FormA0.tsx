@@ -57,7 +57,7 @@ function FormA0(props:{loadValues}){
         // Tu możesz zapisać dane do Local Storage lub innego źródła danych
         localStorage.setItem('formData', JSON.stringify(data));
     };
-    // Wczytaj dane z Local Storage, jeśli istnieją
+
     React.useEffect(() => {
         if (props.loadValues) {
             Object.entries(props.loadValues).forEach(([key, value]) => {
