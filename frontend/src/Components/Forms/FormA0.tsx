@@ -236,7 +236,7 @@ function FormA0(){
                 <FormSection title={sections.Umowy}>
                     <ContractsInput
                         className="col-12"
-                        name="contracts"
+                        sectionName="contracts"
                     />
                 </FormSection>
 
