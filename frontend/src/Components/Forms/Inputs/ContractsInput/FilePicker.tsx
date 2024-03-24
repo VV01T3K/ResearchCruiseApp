@@ -1,16 +1,17 @@
-import file_icon from "../../../resources/file_icon.png";
+import file_icon from "../../../../resources/file_icon.png";
 import React, {MouseEvent, useRef, useState} from "react";
 import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import {ControllerRenderProps} from "react-hook-form";
-import app from "../../App";
+import app from "../../../App";
 
 
 type Props = {
     field: any,
-    id: string,
+    inputName: string,
     rowIdx: number,
     sectionName: string,
-    form:  UseFormReturn<FieldValues, any, undefined>
+    fileFieldName: string,
+    form: UseFormReturn
 }
 
 
@@ -21,25 +22,30 @@ export default function FilePicker(props: Props) {
         <div className="d-flex flex-wrap justify-content-center">
             <input
                 {...props.field}
-                id={props.id}
+                id={props.inputName}
                 type="file"
                 hidden
                 onChange={e => {
                     if (e.target.files && e.target.files.length) {
                         const reader = new FileReader()
+                        const fileName = e.target.files[0].name
 
                         reader.onloadend = () => {
-                            let fileContent = reader.result!.toString();
-                            props.form.getValues()[props.sectionName][props.rowIdx].scan = fileContent
+                            if (e.target.files) {
+                                const fileContent = reader.result!.toString();
+                                const formValues = props.form.getValues()
+
+                                formValues[props.sectionName][props.rowIdx][props.fileFieldName].name = fileName
+                                formValues[props.sectionName][props.rowIdx][props.fileFieldName].content = fileContent
+                            }
                         }
                         reader.readAsDataURL(e.target.files[0])
-
                         setFileName(e.target.files[0].name)
                     }
                 }}
             />
             <label
-                htmlFor={props.id}
+                htmlFor={props.inputName}
                 className="w-100 bg-light d-flex justify-content-center"
                 style={{
                     cursor: "pointer"

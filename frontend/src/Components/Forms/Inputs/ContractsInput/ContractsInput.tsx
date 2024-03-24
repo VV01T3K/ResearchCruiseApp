@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Controller, get, useFieldArray} from "react-hook-form";
-import ErrorCode from "../../LoginPage/ErrorCode";
-import Select from "react-select";
-import file_icon from 'src/resources/file_icon.png'
+import {Controller, get, useFieldArray, UseFormReturn} from "react-hook-form";
+import ErrorCode from "../../../LoginPage/ErrorCode";
+import Select, {SingleValue} from "react-select";
+import file_icon from '../../../../resources/file_icon.png'
 import FilePicker from "./FilePicker";
+import ContractCategoryPicker from "./ContractCategoryPicker";
 
 
 type Contract = {
@@ -14,13 +15,16 @@ type Contract = {
         localization: string
     },
     description: string,
-    scan: string
+    scan: {
+        name: string,
+        content: string
+    }
 }
 
 type Props = {
     className: string,
     sectionName: string,
-    form?,
+    form: UseFormReturn,
     historicalContracts: Contract[]
 }
 
@@ -107,38 +111,9 @@ export default function ContractsInput(props: Props){
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <Select
-                                                    minMenuHeight={300}
-                                                    className="d-flex col-12 justify-content-center"
-                                                    menuPlacement="auto"
-                                                    placeholder="Wybierz"
-                                                    styles={{
-                                                        control: (provided, state) => ({
-                                                            ...provided,
-                                                            boxShadow: "none",
-                                                            border: "1px solid grey",
-                                                            width: "100%",
-                                                            "border-radius": "2px",
-                                                            padding: "0px"
-                                                        }),
-                                                        menu: provided => ({
-                                                            ...provided,
-                                                            zIndex: 9999
-                                                        })
-                                                    }}
-                                                    placeHolder={"Wybierz"}
-                                                    options = {[
-                                                        { label: "Krajowa", value: "domestic" },
-                                                        { label: "Międzynarodowa", value: "international" }
-                                                    ]}
-                                                    onChange={(selectedOption: { label: string, value: string })=> {
-                                                        if (selectedOption) {
-                                                            props.form.setValue(
-                                                                `${props.sectionName}[${index}].category`,
-                                                                selectedOption.value
-                                                            )
-                                                        }
-                                                    }}
+                                                <ContractCategoryPicker
+                                                    inputName={`${props.sectionName}[${index}].category`}
+                                                    form={props.form}
                                                 />
                                             )}
                                 />
@@ -213,7 +188,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
-                                <Controller name={`${props.sectionName}[${index}].scan`}
+                                <Controller name={`${props.sectionName}[${index}].scan.content`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -221,9 +196,10 @@ export default function ContractsInput(props: Props){
                                             render={({field}) => (
                                                 <FilePicker
                                                     field={field}
-                                                    id={`${props.sectionName}[${index}].scan`}
+                                                    inputName={`${props.sectionName}[${index}].scan`}
                                                     rowIdx={index}
                                                     sectionName={props.sectionName}
+                                                    fileFieldName="scan"
                                                     form={props.form}
                                                 />
                                             )}
@@ -264,7 +240,10 @@ export default function ContractsInput(props: Props){
                                     name: "",
                                     unit: ""
                                 },
-                                scan: ""
+                                scan: {
+                                    name: "",
+                                    content: ""
+                                }
                             }
                             append(newContract)
                         }}
