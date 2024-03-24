@@ -7,13 +7,15 @@ import app from "../../App";
 type Props = {
     field: any,
     id: string,
+    rowIdx: number,
+    sectionName: string,
     form
 }
 
 
 export default function FilePicker(props: Props) {
     const inputLabelRef = useRef(null)
-    const [fileContent, setFileCon]
+    const [fileContent, setFileContent] = useState(null)
 
     return (
         <div className="d-flex flex-wrap justify-content-center">
@@ -25,13 +27,17 @@ export default function FilePicker(props: Props) {
                 onChange={e => {
                     if (e.target.files && e.target.files.length) {
                         const reader = new FileReader()
-                        let fileContent
                         reader.onloadend = () => {
-                            console.log(props.id)
-                            fileContent = reader.result!.toString()
+                            let fileContent = reader.result!.toString();
+                            props.form.getValues()[props.sectionName][props.rowIdx].scan = fileContent
                         }
                         reader.readAsDataURL(e.target.files[0])
-                        props.form.setValue(props.id, fileContent)
+
+                        if (inputLabelRef && inputLabelRef.current) {
+                            console.log("Here")
+                            console.log(e.target.files[0].name)
+                            inputLabelRef.current.value = e.target.files[0].name
+                        }
                     }
                 }}
             />
