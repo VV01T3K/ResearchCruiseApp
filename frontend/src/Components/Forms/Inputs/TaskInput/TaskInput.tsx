@@ -47,7 +47,6 @@ function TaskInput(props: Props) {
         var newField = field.value
         newField[index][Object.keys(item)[0]][subIndex[0]] = newValue
         props.form.setValue(props.name, newField, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
-
         return newField
     }
 
@@ -62,13 +61,13 @@ function TaskInput(props: Props) {
     const getFieldLabel = (item, fieldIndex) => {
         return Object.keys(Object.values(options)[Object.keys(item)[0]])[fieldIndex]
     }
-
-
+    const requiredMsg = "Dodaj przynajmniej jedno zadanie"
+    const disabled = props.form.formState.errors[props.name] && props.form.formState.errors[props.name].message != requiredMsg
     return (
         <div className={props.className + " p-3"}>
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
-                        rules = {{ validate: {
+                        rules = {{ required:requiredMsg,validate: {
                             notEmptyArray:(value)=>{
                                 if(
                                 value.some((val)=> {
@@ -77,12 +76,14 @@ function TaskInput(props: Props) {
                                         if (typeof x === 'string' && x.trim() === '') {
                                             return true;
                                         }
-                                        if (typeof x === 'object' && Object.keys(x).length < 2) {
-                                            return true;
-                                        }
-                                        for (let key in x) {
-                                            if (x.hasOwnProperty(key) && typeof x[key] === 'string' && x[key].trim() === '') {
-                                                return true; // Zwraca true, jeśli znaleziono pusty string
+                                        else if (typeof x === 'object') {
+                                            if(Object.keys(x).length < 2)
+                                                return true;
+
+                                            for (let key in x) {
+                                                if (x.hasOwnProperty(key) && typeof x[key] === 'string' && x[key].trim() === '') {
+                                                    return true; // Zwraca true, jeśli znaleziono pusty string
+                                                }
                                             }
                                         }
 
@@ -154,9 +155,9 @@ function TaskInput(props: Props) {
                                                                 locale={"pl"}
                                                                 selected={getFieldValue(field, index, item, t) ? new Date(getFieldValue(field, index, item, t)) : null}
                                                                 onChange={(e)=>{
-                                                                field.onChange(handleChange(field, index, item, t, e ))
+                                                                field.onChange(handleChange(field, index, item, t, e.toString() ))
                                                              }}
-                                                                getPopupContainer={trigger => trigger.parentElement}
+                                                                // getPopupContainer={trigger => trigger.parentElement}
                                                                 dateFormat="dd/MM/yyyy"
                                                                 // placeholderText={props.label}
                                                             />
@@ -259,7 +260,7 @@ function TaskInput(props: Props) {
                     <ButtonGroup as={Dropdown}
                                  className={"w-100 h-100 p-2 align-self-center" + Style.centeredDropdown}
                     >
-                        <Dropdown.Toggle disabled={props.form.formState.errors[props.name]} variant="primary">
+                        <Dropdown.Toggle disabled={disabled} variant="primary">
                             +
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
@@ -279,7 +280,7 @@ function TaskInput(props: Props) {
                     <Select
                         minMenuHeight={300}
                         className="d-flex col-6 text-center p-2 justify-content-center"
-                        isDisabled={props.form.formState.errors[props.name]}
+                        isDisabled={disabled}
                         menuPlacement="auto"
                         placeholder="Dodaj z historii"
                         styles={{
@@ -312,12 +313,7 @@ function TaskInput(props: Props) {
                         value={""}
                         onChange={(selectedOption: { label: any, value: unknown })=> {
                             props.form.setValue(props.name, [...field.value,selectedOption.value], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
-                            Object.values(selectedOption.value).forEach((key, value)=>{
-                              Object.values(key).forEach((key1, value1)=>{
-                                  props.form.setValue(`${props.name}.${field.value.length}.${value}.${value1}`, key1,  {shouldDirty: true, shouldTouch: true, shouldValidate:true})
-
-                              })
-                            })
+                            field.onChange([...field.value,selectedOption.value])
                         }}
                     />
                 </div>
