@@ -20,6 +20,7 @@ import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
 import Page from "./Tools/Page";
 import MessagesPage from "./MessagesPage/MessagesPage";
+import SavedFormPage from "./SavedFormsPage/SavedFormPage";
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
                     }
                     {userData && userData["roles"].includes("Administrator") &&
                         <>
+                            <Route path="/SavedForms" element={<SavedFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
                             <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/FormB" element={<FormB0 />} />

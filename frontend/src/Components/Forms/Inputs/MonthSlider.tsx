@@ -3,6 +3,7 @@ import Slider from 'rc-slider';
 import "./MonthSlider.css"
 import {Control, Controller, FieldValues} from "react-hook-form";
 import InputWrapper from "./InputWrapper";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
     label: string,
     name: string,
     watch?: number[],
+    connectedName?,
+    range?,
     form?: {
         setValue: (arg0: string, arg1: any, arg2: { shouldDirty?: boolean; shouldTouch?: boolean; }) => void;
         control: Control<FieldValues, any> | undefined;
@@ -50,15 +53,7 @@ const MonthSlider = (props: Props) => {
         '2. połowy grudnia',
     ]
 
-    const [minVal, maxVal] = props.watch ?? [0, 24]
-
-    React.useEffect(
-        () => {
-            props.form!.setValue(props.name, props.watch, { shouldDirty: true })
-            props.form!.setValue(props.name, props.watch, { shouldTouch: true })
-        },
-        [props.watch]
-    );
+    const [minVal, maxVal] = props.range ?? [0, 24]
 
 
     const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
@@ -75,6 +70,10 @@ const MonthSlider = (props: Props) => {
                 name={props.name}
                 control={props.form!.control}
                 defaultValue={[0,24]}
+                rules={{required: 'Wybierz jedną z opcji',
+                    validate: {differenceCheck:(val)=>{if(val[0]==0&&val[1]==24) return "Ustaw krótszy okres"}}}}
+
+
                 render={({ field}) => (
                     <>
                         <Slider style={{height: "80px"}}
@@ -84,6 +83,14 @@ const MonthSlider = (props: Props) => {
                                 range
                                 min={minVal}
                                 max={maxVal}
+                                onChange={(e
+                                )=>{
+                                    props.form!.setValue(props.name, e, { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+
+                                    if(props.connectedName)
+                                        props.form!.setValue(props.connectedName, props.form.getValues(props.name), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+
+                                }}
                                 marks={
                                     months.reduce((acc, month, index) => {
                                         // @ts-ignore
