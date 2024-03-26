@@ -236,7 +236,7 @@ function FormA0(){
                 <FormSection title={sections.Umowy}>
                     <ContractsInput
                         className="col-12"
-                        sectionName="contracts"
+                        name="contracts"
                     />
                 </FormSection>
 
@@ -255,7 +255,7 @@ function FormA0(){
                 <FormSection title={sections.SPUB}>
                     <SpubTasksInput
                         className="col-12"
-                        sectionName="spubTasks"
+                        name="spubTasks"
                         historicalSpubTasks={[
                             {
                                 yearFrom: "2020",

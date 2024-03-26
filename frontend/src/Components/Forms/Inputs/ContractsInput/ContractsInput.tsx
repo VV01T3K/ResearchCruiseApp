@@ -23,7 +23,7 @@ type Contract = {
 
 type Props = {
     className: string,
-    sectionName: string,
+    name: string,
     form: UseFormReturn,
     historicalContracts: Contract[]
 }
@@ -36,7 +36,7 @@ export default function ContractsInput(props: Props){
         remove
     } = useFieldArray({
         control: props.form.control,
-        name: props.sectionName,
+        name: props.name,
     });
     console.log(props.form.getValues())
     console.log(props.form.formState.errors)
@@ -106,14 +106,14 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Kategoria</div>
-                                <Controller name={`${props.sectionName}[${index}].category`}
+                                <Controller name={`${props.name}[${index}].category`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
                                                 <ContractCategoryPicker
-                                                    inputName={`${props.sectionName}[${index}].category`}
+                                                    inputName={`${props.name}[${index}].category`}
                                                     form={props.form}
                                                 />
                                             )}
@@ -123,7 +123,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                             >
                                 <div className="col-12">Nazwa instytucji</div>
-                                <Controller name={`${props.sectionName}[${index}].institution.name`}
+                                <Controller name={`${props.name}[${index}].institution.name`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -138,7 +138,7 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                                 <div className="col-12">Jednostka</div>
-                                <Controller name={`${props.sectionName}[${index}].institution.unit`}
+                                <Controller name={`${props.name}[${index}].institution.unit`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -153,7 +153,7 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                                 <div className="col-12">Lokalizacja instytucji</div>
-                                <Controller name={`${props.sectionName}[${index}].institution.localization`}
+                                <Controller name={`${props.name}[${index}].institution.localization`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -172,7 +172,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Opis</div>
-                                <Controller name={`${props.sectionName}[${index}].description`}
+                                <Controller name={`${props.name}[${index}].description`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -189,7 +189,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
-                                <Controller name={`${props.sectionName}[${index}].scan.content`}
+                                <Controller name={`${props.name}[${index}].scan.content`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
@@ -197,9 +197,9 @@ export default function ContractsInput(props: Props){
                                             render={({field}) => (
                                                 <FilePicker
                                                     field={field}
-                                                    inputName={`${props.sectionName}[${index}].scan`}
+                                                    inputName={`${props.name}[${index}].scan`}
                                                     rowIdx={index}
-                                                    sectionName={props.sectionName}
+                                                    sectionName={props.name}
                                                     fileFieldName="scan"
                                                     form={props.form}
                                                 />
@@ -229,7 +229,7 @@ export default function ContractsInput(props: Props){
                 >
                     <button
                         className={`btn btn-primary w-100
-                            ${props.form.formState.errors[props.sectionName] ? "disabled" : ""}`
+                            ${props.form.formState.errors[props.name] ? "disabled" : ""}`
                         }
                         type="button"
                         onClick={() => {
@@ -256,7 +256,7 @@ export default function ContractsInput(props: Props){
                     minMenuHeight={300}
                     className="d-flex col-12 col-xl-6 text-center pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2
                                justify-content-center"
-                    isDisabled={props.form.formState.errors[props.sectionName]}
+                    isDisabled={props.form.formState.errors[props.name]}
                     menuPlacement="auto"
                     placeholder="Dodaj z historii"
                     styles={{
@@ -295,8 +295,8 @@ export default function ContractsInput(props: Props){
                     //     }
                     // }}
                 />
-                {props.form.formState.errors[props.sectionName] &&
-                    <ErrorCode code={props.form.formState.errors[props.sectionName].message}/>
+                {props.form.formState.errors[props.name] &&
+                    <ErrorCode code={props.form.formState.errors[props.name].message}/>
                 }
             </div>
         </div>
