@@ -17,7 +17,7 @@ import SpubTasksInput from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
 import FormWithSections from "./Tools/FormWithSections";
-import ContractsInput from "./Inputs/ContractsInput";
+import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 
 

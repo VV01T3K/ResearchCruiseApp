@@ -1,7 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Controller, get, useFieldArray} from "react-hook-form";
-import ErrorCode from "../../LoginPage/ErrorCode";
-import Select from "react-select";
+import {Controller, get, useFieldArray, UseFormReturn} from "react-hook-form";
+import ErrorCode from "../../../LoginPage/ErrorCode";
+import Select, {SingleValue} from "react-select";
+import file_icon from '../../../../resources/file_icon.png'
+import FilePicker from "./FilePicker";
+import ContractCategoryPicker from "./ContractCategoryPicker";
 
 
 type Contract = {
@@ -12,13 +15,16 @@ type Contract = {
         localization: string
     },
     description: string,
-    scan
+    scan: {
+        name: string,
+        content: string
+    }
 }
 
 type Props = {
     className: string,
     name: string,
-    form?,
+    form: UseFormReturn,
     historicalContracts: Contract[]
 }
 
@@ -32,7 +38,8 @@ export default function ContractsInput(props: Props){
         control: props.form.control,
         name: props.name,
     });
-    // console.log(props.form.getValues())
+    console.log(props.form.getValues())
+    console.log(props.form.formState.errors)
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -71,7 +78,7 @@ export default function ContractsInput(props: Props){
                         <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}} />
 
                         <div className="text-center d-block d-xl-none p-2 col-12">
-                            <b>Zadania</b>
+                            <b>Umowy</b>
                         </div>
                     </div>
                 </div>
@@ -99,44 +106,15 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Kategoria</div>
-                                <Controller name={`${props.name}[${index}].value.category`}
+                                <Controller name={`${props.name}[${index}].category`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <Select
-                                                    minMenuHeight={300}
-                                                    className="d-flex col-12 justify-content-center"
-                                                    menuPlacement="auto"
-                                                    placeholder="Wybierz"
-                                                    styles={{
-                                                        control: (provided, state) => ({
-                                                            ...provided,
-                                                            boxShadow: "none",
-                                                            border: "1px solid grey",
-                                                            width: "100%",
-                                                            "border-radius": "2px",
-                                                            padding: "0px"
-                                                        }),
-                                                        menu: provided => ({
-                                                            ...provided,
-                                                            zIndex: 9999
-                                                        })
-                                                    }}
-                                                    placeHolder={"Wybierz"}
-                                                    options = {[
-                                                        { label: "Krajowa", value: "domestic" },
-                                                        { label: "Międzynarodowa", value: "international" }
-                                                    ]}
-                                                    onChange={(selectedOption: { label: string, value: string })=> {
-                                                        if (selectedOption) {
-                                                            props.form.setValue(
-                                                                `${props.name}[${index}].value.category`,
-                                                                selectedOption.value
-                                                            )
-                                                        }
-                                                    }}
+                                                <ContractCategoryPicker
+                                                    inputName={`${props.name}[${index}].category`}
+                                                    form={props.form}
                                                 />
                                             )}
                                 />
@@ -145,7 +123,7 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                             >
                                 <div className="col-12">Nazwa instytucji</div>
-                                <Controller name={`${props.name}[${index}].value.institution.name`}
+                                <Controller name={`${props.name}[${index}].institution.name`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -160,7 +138,7 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                                 <div className="col-12">Jednostka</div>
-                                <Controller name={`${props.name}[${index}].value.institution.unit`}
+                                <Controller name={`${props.name}[${index}].institution.unit`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -175,7 +153,7 @@ export default function ContractsInput(props: Props){
                                             )}
                                 />
                                 <div className="col-12">Lokalizacja instytucji</div>
-                                <Controller name={`${props.name}[${index}].value.institution.localization`}
+                                <Controller name={`${props.name}[${index}].institution.localization`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste",
@@ -194,32 +172,36 @@ export default function ContractsInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Opis</div>
-                                <Controller name={`${props.name}[${index}].value.name`}
+                                <Controller name={`${props.name}[${index}].description`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <textarea {...field}
-                                                          className="col-12 p-1"
+                                                <textarea
+                                                    {...field}
+                                                    className="col-12 p-1"
                                                 />
                                             )}
                                 />
                             </div>
-                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
-                                <Controller name={`${props.name}[${index}].value.scan`}
+                                <Controller name={`${props.name}[${index}].scan.content`}
                                             control={props.form.control}
                                             rules={{
                                                 required: "Pole nie może być puste"
                                             }}
                                             render={({field}) => (
-                                                <input
-                                                    {...field}
-                                                    type="file"
-                                                    className="col-12 text-center"
+                                                <FilePicker
+                                                    field={field}
+                                                    inputName={`${props.name}[${index}].scan`}
+                                                    rowIdx={index}
+                                                    sectionName={props.name}
+                                                    fileFieldName="scan"
+                                                    form={props.form}
                                                 />
                                             )}
                                 />
@@ -259,9 +241,12 @@ export default function ContractsInput(props: Props){
                                     name: "",
                                     unit: ""
                                 },
-                                scan: undefined
+                                scan: {
+                                    name: "",
+                                    content: ""
+                                }
                             }
-                            append({value: newContract})
+                            append(newContract)
                         }}
                     >
                         Dodaj nową
