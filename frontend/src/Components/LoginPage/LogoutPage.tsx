@@ -2,6 +2,7 @@ import React from 'react';
 import Style from './LoginPage.module.css'
 import Page from "../Tools/Page";
 import "./style.css"
+import {Link} from "react-router-dom";
 
 
 function LogoutPage(){
@@ -14,9 +15,9 @@ function LogoutPage(){
                     <div className="signup_link m-3 text-break">
                         <div style={{fontSize:"1.3rem"}}>Nastąpiło wylogowanie</div>
                         <div className="butt p-2 mt-2">
-                            <a className="text-white" href="/">
+                            <Link className="text-white" to="/">
                                 Powrót do logowania
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -28,6 +28,7 @@ export default function TilesComponent(props: Props) {
         <div className="tileContainer" style={{display: "flex", justifyContent: "center"}}>
             <TilesContainer className={tilesDndStyle}
                             data={props.tilesMenu}
+                            disabled={true}
                             renderTile={render}
                             tileSize={tileSize}
                             forceTileWidth={150}

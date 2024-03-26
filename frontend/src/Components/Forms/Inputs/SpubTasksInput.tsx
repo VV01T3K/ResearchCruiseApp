@@ -24,14 +24,6 @@ type Props = {
 
 
 export default function SpubTasksInput(props: Props){
-    const {
-        fields,
-        append,
-        remove
-    } = useFieldArray({
-        control: props.form.control,
-        name: props.name,
-    });
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -47,8 +39,23 @@ export default function SpubTasksInput(props: Props){
         []
     );
 
+    const requiredMsg = "Dodaj przynajmniej jedno zadanie"
+    const disabled = props.form.formState.errors[props.name] && props.form.formState.errors[props.name].message != requiredMsg
+
     return (
         <div className={props.className + " p-3"}>
+            <Controller name={props.name}  control={props.form!.control}
+                        defaultValue={[]}
+                        rules = {{ required:requiredMsg,validate: {
+                                notEmptyArray:(value)=>{
+                                    if(
+                                        value.some((val)=> {
+                                            console.log(Object.values(val))
+                                            return Object.values(Object.values(val)).some((x)=> !x)
+                                        }))
+                                        return"Wypełnij wszystkie pola"}}}}
+                        render={({field})=>(
+                            <>
             <div className="table-striped w-100">
                 <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
                     <div className="d-flex flex-row center">
@@ -82,12 +89,12 @@ export default function SpubTasksInput(props: Props){
                     </div>
                 </div>
                 <div className="w-100 bg-light">
-                    {!fields.length &&
+                    {!field.value.length &&
                         <div className="d-flex flex-row justify-content-center bg-light p-2 border">
                             <div className="text-center">Nie dodano żadnego zadania</div>
                         </div>
                     }
-                    {fields.map((item, index) => (
+                    {field.value.map((item, index) => (
                         <div key={item.id}
                              className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                         >
@@ -104,65 +111,64 @@ export default function SpubTasksInput(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
-                                <Controller name={`${props.name}[${index}].value.yearFrom`}
-                                            control={props.form.control}
-                                            rules={{
-                                                required: "Pole nie może być puste"
-                                            }}
-                                            render={({ field }) => (
                                                 <input {...field}
+                                                       value={field.value[index].yearFrom}
+                                                       onChange = {(e)=>{
+                                                           var newField = field.value
+                                                           newField[index].yearFrom = e.target.value
+                                                        props.form.setValue(props.name, newField, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
+                                                        field.onChange(newField)
+                                                    }}
                                                        type="number"
                                                        min="1900"
                                                        max="2100"
                                                        className="col-12 p-1"
                                                 />
-                                            )}
-                                />
                             </div>
                             <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
-                                <Controller name={`${props.name}[${index}].value.yearTo`}
-                                            control={props.form.control}
-                                            rules={{
-                                                required: "Pole nie może być puste",
-                                                validate: value =>
-                                                    false || "Błąd!"
-                                            }}
-                                            render={({ field }) => (
                                                 <input {...field}
+                                                       value={field.value[index].yearTo}
+                                                       onChange = {(e)=>{
+                                                           var newField = field.value
+                                                           newField[index].yearTo = e.target.value
+                                                           props.form.setValue(props.name, newField, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
+                                                           field.onChange(newField)
+                                                       }}
                                                        type="number"
                                                        min="1900"
                                                        max="2100"
                                                        className="col-12 p-1"
                                                 />
-                                            )}
-                                />
                             </div>
                             <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
                                  style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
-                                <Controller name={`${props.name}[${index}].value.name`}
-                                            control={props.form.control}
-                                            rules={{
-                                                required: "Pole nie może być puste"
-                                            }}
-                                            render={({ field }) => (
                                                 <textarea {...field}
+                                                            value={field.value[index].name}
+                                                          onChange = {(e)=>{
+                                                              var newField = field.value
+                                                              newField[index].name = e.target.value
+                                                              props.form.setValue(props.name, newField, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
+                                                              field.onChange(newField)
+                                                          }}
                                                           className="col-12"
                                                           rows={1}
                                                 />
-                                            )}
-                                />
                             </div>
                             <div className="d-flex justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                             >
                                 <button type="button"
                                         className="btn btn-primary"
-                                        onClick={() => {remove(index)}}
+                                        onClick={() => {
+                                            const val = field.value;
+                                            val.splice(index,1)
+                                            props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                        }}
                                 >
                                     -
                                 </button>
@@ -178,7 +184,7 @@ export default function SpubTasksInput(props: Props){
                 >
                     <button
                         className={`btn btn-primary w-100
-                            ${props.form.formState.errors[props.name] ? "disabled" : ""}`
+                            ${ disabled ? "disabled" : ""}`
                         }
                         type="button"
                         onClick={() => {
@@ -187,7 +193,8 @@ export default function SpubTasksInput(props: Props){
                                 yearTo: `${new Date().getFullYear()}`,
                                 name: ""
                             }
-                            append({value: newSpubTask})
+                            props.form.setValue(props.name, [...field.value,newSpubTask], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                            field.onChange([...field.value,newSpubTask])
                         }}
                     >
                         Dodaj nowe
@@ -197,7 +204,7 @@ export default function SpubTasksInput(props: Props){
                     minMenuHeight={300}
                     className="d-flex col-12 col-xl-6 text-center pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2
                                justify-content-center"
-                    isDisabled={props.form.formState.errors[props.name]}
+                    isDisabled={disabled}
                     menuPlacement="auto"
                     placeholder="Dodaj z historii"
                     styles={{
@@ -227,12 +234,8 @@ export default function SpubTasksInput(props: Props){
                     value={""}
                     onChange={(selectedOption: { label: string, value: SpubTask })=> {
                         if (selectedOption) {
-                            const newSpubTask: SpubTask = {
-                                yearFrom: `${selectedOption.value.yearFrom}`,
-                                yearTo: `${selectedOption.value.yearTo}`,
-                                name: `${selectedOption.value.name}`
-                            }
-                            append({value: newSpubTask})
+                                props.form.setValue(props.name, [...field.value,selectedOption.value], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                field.onChange([...field.value,selectedOption.value])
                         }
                     }}
                 />
@@ -240,6 +243,7 @@ export default function SpubTasksInput(props: Props){
                     <ErrorCode code={props.form.formState.errors[props.name].message}/>
                 }
             </div>
+                            </>)}/>
         </div>
     )
 }

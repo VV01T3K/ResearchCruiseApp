@@ -65,7 +65,7 @@ function NumberInput(props: Props){
                            onChange={(e) => { onChange(e) }}
                     />
                 }
-                // defaultValue={""}
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{

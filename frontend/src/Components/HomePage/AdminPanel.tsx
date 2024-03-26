@@ -10,6 +10,7 @@ import React from "react";
 import Tiles from "./Tiles/TilesMenu";
 import AccountPage from "../AccountPage/AccountPage";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
+import ScheduleTile from "./Tiles/ScheduleTile";
 
 
 export default function AdminPanel() {
@@ -22,7 +23,7 @@ export default function AdminPanel() {
         { element: <MessagesTile />, cols: 1, rows: 1 },
         { element: <ViewFormsTile />, cols: 1, rows: 1 },
         { element: <AccountSettingsTile />, cols: 1, rows: 1 },
-        { element: "Tile 9", cols: 2, rows: 1 },
+        { element: <ScheduleTile/>, cols: 2, rows: 1 },
     ];
 
     return(

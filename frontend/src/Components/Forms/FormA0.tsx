@@ -21,7 +21,7 @@ import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 
 
-function FormA0(){
+function FormA0(props:{loadValues}){
     const [userData, setUserData] = useState(null)
 
     useEffect(
@@ -58,11 +58,9 @@ function FormA0(){
         localStorage.setItem('formData', JSON.stringify(data));
     };
 
-    // Wczytaj dane z Local Storage, jeśli istnieją
     React.useEffect(() => {
-        const savedData = JSON.parse(localStorage.getItem('formData'));
-        if (savedData) {
-            Object.entries(savedData).forEach(([key, value]) => {
+        if (props.loadValues) {
+            Object.entries(props.loadValues).forEach(([key, value]) => {
                 form.setValue(key, value, {shouldDirty:true, shouldValidate:true, shouldTouch:true});
             });
         }
@@ -85,7 +83,7 @@ function FormA0(){
 
     // @ts-ignore
     return (
-        <FormTemplate send={()=>console.log(form.formState.errors)} save={()=>saveValues(form.getValues())}>
+        <FormTemplate send={()=>{console.log(form.getValues()); console.log(form.formState.errors); console.log(form.formState.dirtyFields)}} save={()=>saveValues(form.getValues())}>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}
                               onChange={()=>null
@@ -112,12 +110,14 @@ function FormA0(){
                 <FormSection title={sections.Czas}>
                     <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
                                  name="acceptedPeriod"
+                                 connectedName="optimalPeriod"
                                  label="Dopuszczalny okres, w którym miałby się odbywać rejs:"
                     />
                     <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
                                  name="optimalPeriod"
+                                 range={form.getValues("acceptedPeriod")}
                                  label="Optymalny okres, w którym miałby się odbywać rejs"
-                                 watch={form.watch("acceptedPeriod")}
+                                 // watch={form.watch("acceptedPeriod")}
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  name="cruiseDays"
@@ -241,8 +241,8 @@ function FormA0(){
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    <BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>
-                {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
+                    {/*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>*/}
+                    <BlockListInput required={false} className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
                     <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
                 </FormSection>

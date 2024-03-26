@@ -27,8 +27,10 @@ function FormSection(props: Props) {
                 return false
             return (
                 (required &&(
-                !(childName in props.form!.formState.dirtyFields) ||
-                !(childName in props.form!.formState.touchedFields))) ||
+                !(childName in props.form!.formState.dirtyFields)
+                ||
+                !(childName in props.form!.formState.touchedFields)
+                )) ||
                 (childName in props.form!.formState.errors)
             )
         };

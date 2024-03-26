@@ -19,6 +19,7 @@ function FormRadio(props: Props) {
             <Controller
                 defaultValue={""}
                 name={props.name}
+                rules={{required: 'Wybierz jedną z opcji'}}
                 control={props.form!.control}
                 render={({field}) => (
                     <div className="d-flex flex-column">
