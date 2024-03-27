@@ -1,8 +1,7 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Controller, get, useFieldArray, UseFormReturn} from "react-hook-form";
+import React, {useEffect, useState} from "react";
+import {Controller, useFieldArray, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../LoginPage/ErrorCode";
-import Select, {SingleValue} from "react-select";
-import file_icon from '../../../../resources/file_icon.png'
+import Select from "react-select";
 import FilePicker from "./FilePicker";
 import ContractCategoryPicker from "./ContractCategoryPicker";
 

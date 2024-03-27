@@ -40,7 +40,7 @@ export default function SpubTasksInput(props: Props){
         []
     );
 
-    const disabled = props.form!.formState.errors[props.name]
+    const disabled = props.form!.formState.errors[props.name] != undefined
     const minYear = 1900
     const maxYear = 2100
 
@@ -81,7 +81,7 @@ export default function SpubTasksInput(props: Props){
                 row.yearTo = row.yearFrom
         }
 
-        props.form.setValue(
+        props.form!.setValue(
             props.name,
             field.value,
             {
@@ -123,7 +123,7 @@ export default function SpubTasksInput(props: Props){
         }
 
         if (yearIsChanged) {
-            props.form.setValue(
+            props.form!.setValue(
                 props.name,
                 field.value,
                 {
@@ -316,7 +316,7 @@ export default function SpubTasksInput(props: Props){
                                                     yearTo: `${new Date().getFullYear()}`,
                                                     name: ""
                                                 }
-                                                props.form.setValue(
+                                                props.form!.setValue(
                                                     props.name,
                                                     [...field.value, newSpubTask],
                                                     {
@@ -366,7 +366,7 @@ export default function SpubTasksInput(props: Props){
                                         value={""}
                                         onChange={(selectedOption: { label: string, value: SpubTask })=> {
                                             if (selectedOption) {
-                                                props.form.setValue(
+                                                props.form!.setValue(
                                                     props.name,
                                                     [...field.value, selectedOption.value],
                                                     {
@@ -379,8 +379,8 @@ export default function SpubTasksInput(props: Props){
                                             }
                                         }}
                                     />
-                                    {props.form.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form.formState.errors[props.name].message}/>
+                                    {props.form!.formState.errors[props.name] &&
+                                        <ErrorCode code={props.form!.formState.errors[props.name].message}/>
                                     }
                                 </div>
                             </>
