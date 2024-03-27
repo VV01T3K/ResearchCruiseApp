@@ -212,66 +212,66 @@ export default function SpubTasksInput(props: Props){
                                                      style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                                 >
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
-                                                        <input
-                                                            {...field}
-                                                            value={row.yearFrom}
-                                                            onChange={(e) => {
-                                                                onYearChange(e, row, true,  field)
-                                                            }}
-                                                            onBlur={(e) => {
-                                                                onYearBlur(e, row, true, field)
-                                                            }}
-                                                            type="number"
-                                                            min="1900"
-                                                            max="2100"
-                                                            className="col-12 p-1"
-                                                        />
+                                                    <input
+                                                        {...field}
+                                                        value={row.yearFrom}
+                                                        onChange={(e) => {
+                                                            onYearChange(e, row, true,  field)
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            onYearBlur(e, row, true, field)
+                                                        }}
+                                                        type="number"
+                                                        min="1900"
+                                                        max="2100"
+                                                        className="col-12 p-1"
+                                                    />
                                                 </div>
                                                 <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
                                                      style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                                 >
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
-                                                        <input
-                                                            {...field}
-                                                            value={row.yearTo}
-                                                            onChange={(e) => {
-                                                                onYearChange(e, row, false,  field)
-                                                            }}
-                                                            onBlur={(e) => {
-                                                                onYearBlur(e, row, false, field)
-                                                            }}
-                                                            onMouseUp={(e) => {
-                                                                onYearBlur(e, row, false, field)
-                                                            }}
-                                                            type="number"
-                                                            min="1900"
-                                                            max="2100"
-                                                            className="col-12 p-1"
-                                                        />
+                                                    <input
+                                                        {...field}
+                                                        value={row.yearTo}
+                                                        onChange={(e) => {
+                                                            onYearChange(e, row, false,  field)
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            onYearBlur(e, row, false, field)
+                                                        }}
+                                                        onMouseUp={(e) => {
+                                                            onYearBlur(e, row, false, field)
+                                                        }}
+                                                        type="number"
+                                                        min="1900"
+                                                        max="2100"
+                                                        className="col-12 p-1"
+                                                    />
                                                 </div>
                                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
                                                      style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                                                 >
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
-                                                        <textarea
-                                                            {...field}
-                                                            value={row.name}
-                                                            onChange = {(e)=> {
-                                                                row.name = e.target.value
-                                                                props.form!.setValue(
-                                                                    props.name,
-                                                                    field.value,
-                                                                    {
-                                                                        shouldTouch: true,
-                                                                        shouldValidate: true,
-                                                                        shouldDirty: true
-                                                                    }
-                                                                )
-                                                                field.onChange(field.value)
-                                                            }}
-                                                            className="col-12"
-                                                            rows={1}
-                                                        />
+                                                    <textarea
+                                                        {...field}
+                                                        value={row.name}
+                                                        onChange = {(e)=> {
+                                                            row.name = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true,
+                                                                    shouldDirty: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }}
+                                                        className="col-12"
+                                                        rows={1}
+                                                    />
                                                 </div>
                                                 <div className="d-flex justify-content-center align-items-center p-2"
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
