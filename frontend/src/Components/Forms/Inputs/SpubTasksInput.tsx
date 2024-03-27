@@ -25,7 +25,6 @@ type Props = {
 
 
 export default function SpubTasksInput(props: Props){
-
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
         () => {

@@ -237,6 +237,7 @@ function FormA0(props:{loadValues}){
                     <ContractsInput
                         className="col-12"
                         name="contracts"
+                        required={false}
                     />
                 </FormSection>
 
