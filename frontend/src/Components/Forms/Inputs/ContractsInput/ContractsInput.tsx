@@ -38,8 +38,6 @@ export default function ContractsInput(props: Props){
         control: props.form.control,
         name: props.name,
     });
-    console.log(props.form.getValues())
-    console.log(props.form.formState.errors)
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
