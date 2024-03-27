@@ -246,12 +246,7 @@ function FormA0(props:{loadValues}){
                     <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
                 </FormSection>
-            {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}
-            {/*      </FormSection>*/}
-            {/*    <FormSection completed={completedSections[10]} id={"10"} title={sections.Efekty}>*/}
-            {/*        <TaskInput name={"wejscie2"} form={form} className={"col-12"} label={""}/>*/}
 
-            {/*    </FormSection>*/}
                 <FormSection title={sections.SPUB}>
                     <SpubTasksInput
                         className="col-12"
@@ -276,7 +271,7 @@ function FormA0(props:{loadValues}){
                         required={false}
                     />
                 </FormSection>
-            {/*    <button type={"submit"}/>*/}
+
             </FormWithSections>
         </FormTemplate>
     )

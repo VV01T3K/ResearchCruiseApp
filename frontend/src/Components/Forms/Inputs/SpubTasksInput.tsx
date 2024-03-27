@@ -43,7 +43,6 @@ export default function SpubTasksInput(props: Props){
     const disabled = props.form!.formState.errors[props.name]
     const minYear = 1900
     const maxYear = 2100
-    console.log(props.form)
 
 
     const onYearChange = (
@@ -259,7 +258,7 @@ export default function SpubTasksInput(props: Props){
                                                             value={row.name}
                                                             onChange = {(e)=> {
                                                                 row.name = e.target.value
-                                                                props.form.setValue(
+                                                                props.form!.setValue(
                                                                     props.name,
                                                                     field.value,
                                                                     {
@@ -281,8 +280,17 @@ export default function SpubTasksInput(props: Props){
                                                             className="btn btn-primary"
                                                             onClick={() => {
                                                                 const val = field.value;
-                                                                val.splice(index,1)
-                                                                props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+
+                                                                val.splice(index, 1)
+                                                                props.form!.setValue(
+                                                                    props.name,
+                                                                    val,
+                                                                    {
+                                                                        shouldValidate: true,
+                                                                        shouldDirty: true,
+                                                                        shouldTouch: true
+                                                                    }
+                                                                )
                                                             }}
                                                     >
                                                         -
