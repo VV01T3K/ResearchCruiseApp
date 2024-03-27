@@ -273,6 +273,7 @@ function FormA0(props:{loadValues}){
                                 name: "Bałtycki pobór zasobów mineralnych na obszarze Polskiej WSE"
                             },
                         ]}
+                        required={false}
                     />
                 </FormSection>
             {/*    <button type={"submit"}/>*/}

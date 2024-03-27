@@ -1,5 +1,5 @@
 import React, {MouseEvent, useEffect, useRef, useState} from "react";
-import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray} from "react-hook-form";
+import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import {register} from "../../../serviceWorkerRegistration";
 import Select from "react-select";
@@ -18,8 +18,9 @@ type SpubTask = {
 type Props = {
     className: string,
     name: string,
-    form?,
-    historicalSpubTasks: SpubTask[]
+    form?: UseFormReturn,
+    historicalSpubTasks: SpubTask[],
+    required: boolean
 }
 
 
@@ -39,9 +40,10 @@ export default function SpubTasksInput(props: Props){
         []
     );
 
-    const disabled = props.form.formState.errors[props.name]
+    const disabled = props.form!.formState.errors[props.name]
     const minYear = 1900
     const maxYear = 2100
+    console.log(props.form)
 
 
     const onYearChange = (
@@ -141,6 +143,7 @@ export default function SpubTasksInput(props: Props){
                         control={props.form!.control}
                         defaultValue={[]}
                         rules = {{
+                            required: false,
                             validate: {
                                 noEmptyRowFields: (value: SpubTask[]) => {
                                     if (value.some((row: SpubTask) => {
@@ -311,7 +314,7 @@ export default function SpubTasksInput(props: Props){
                                                     {
                                                         shouldValidate: true,
                                                         shouldDirty: true,
-                                                        shouldTouched: true
+                                                        // shouldTouched: true
                                                     }
                                                 )
                                                 field.onChange([...field.value, newSpubTask])
@@ -372,7 +375,9 @@ export default function SpubTasksInput(props: Props){
                                         <ErrorCode code={props.form.formState.errors[props.name].message}/>
                                     }
                                 </div>
-                            </>)}/>
+                            </>
+                        )}
+            />
         </div>
     )
 }
