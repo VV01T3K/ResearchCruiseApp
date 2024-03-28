@@ -1,10 +1,14 @@
 import React from "react";
-import {UseFormReturn} from "react-hook-form";
+import {ControllerRenderProps, FieldValues, UseFormReturn} from "react-hook-form";
 import Select, {SingleValue} from "react-select";
+import {Contract} from "./ContractsInput";
+
 
 
 type Props = {
-    inputName: string,
+    name: string,
+    row: Contract,
+    field: ControllerRenderProps<FieldValues, string>,
     form: UseFormReturn
 }
 
@@ -30,14 +34,29 @@ export default function ContractCategoryPicker(props: Props) {
                     zIndex: 9999
                 })
             }}
-            placeHolder={"Wybierz"}
             options = {[
                 { label: "Krajowa", value: "domestic" },
                 { label: "Międzynarodowa", value: "international" }
             ]}
+            value={
+                props.row.category &&
+                {
+                    label: props.row.category == "domestic" ? "Krajowa" : "Międzynaraodowa",
+                    value: props.row.category
+                }
+            }
             onChange={(selectedOption: SingleValue<{ label: string, value: string }>)=> {
                 if (selectedOption) {
-                    props.form.setValue(props.inputName, selectedOption.value)
+                    props.row.category = selectedOption.value
+                    props.form.setValue(
+                        props.name,
+                        props.field.value,
+                        {
+                            shouldTouch: true,
+                            shouldValidate: true,
+                            shouldDirty: true
+                        }
+                    )
                 }
             }}
         />

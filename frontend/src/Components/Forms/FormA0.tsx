@@ -237,6 +237,61 @@ function FormA0(props:{loadValues}){
                     <ContractsInput
                         className="col-12"
                         name="contracts"
+                        historicalContracts={[
+                            {
+                                category: "international",
+                                institution: {
+                                    name: "Instytucja 1",
+                                    unit: "Jednostka 1",
+                                    localization: "Lokalizacja 1"
+                                },
+                                description: "Opis 1",
+                                scan: {
+                                    name: "Skan 1",
+                                    content: "1111111111"
+                                }
+                            },
+                            {
+                                category: "international",
+                                institution: {
+                                    name: "Instytucja 2",
+                                    unit: "Jednostka 2",
+                                    localization: "Lokalizacja 2"
+                                },
+                                description: "Opis 2",
+                                scan: {
+                                    name: "Skan 2",
+                                    content: "222222222"
+                                }
+                            },
+                            {
+                                category: "domestic",
+                                institution: {
+                                    name: "Instytucja 3",
+                                    unit: "Jednostka 3",
+                                    localization: "Lokalizacja 3"
+                                },
+                                description: "Opis 3",
+                                scan: {
+                                    name: "Skan 3",
+                                    content: "3333333333"
+                                }
+                            },
+                            {
+                                category: "domestic",
+                                institution: {
+                                    name: "Instytucja 4",
+                                    unit: "Jednostka 4",
+                                    localization: "Lokalizacja 4"
+                                },
+                                description: "Opis 4",
+                                scan: {
+                                    name: "Skan 4",
+                                    content: "444444444"
+                                }
+                            }
+                        ]}
+                        required={false}
                     />
                 </FormSection>
 
@@ -246,12 +301,7 @@ function FormA0(props:{loadValues}){
                     <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
                 </FormSection>
-            {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}
-            {/*      </FormSection>*/}
-            {/*    <FormSection completed={completedSections[10]} id={"10"} title={sections.Efekty}>*/}
-            {/*        <TaskInput name={"wejscie2"} form={form} className={"col-12"} label={""}/>*/}
 
-            {/*    </FormSection>*/}
                 <FormSection title={sections.SPUB}>
                     <SpubTasksInput
                         className="col-12"
@@ -273,9 +323,10 @@ function FormA0(props:{loadValues}){
                                 name: "Bałtycki pobór zasobów mineralnych na obszarze Polskiej WSE"
                             },
                         ]}
+                        required={false}
                     />
                 </FormSection>
-            {/*    <button type={"submit"}/>*/}
+
             </FormWithSections>
         </FormTemplate>
     )

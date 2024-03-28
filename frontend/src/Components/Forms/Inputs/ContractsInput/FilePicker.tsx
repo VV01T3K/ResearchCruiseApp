@@ -3,26 +3,27 @@ import React, {MouseEvent, useRef, useState} from "react";
 import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import {ControllerRenderProps} from "react-hook-form";
 import app from "../../../App";
+import {Contract} from "./ContractsInput";
 
 
 type Props = {
     field: any,
-    inputName: string,
-    rowIdx: number,
-    sectionName: string,
+    name: string,
     fileFieldName: string,
+    row: Contract,
+    rowIdx: number,
     form: UseFormReturn
 }
 
 
 export default function FilePicker(props: Props) {
-    const [fileName, setFileName] = useState("Brak")
+    //const [fileName, setFileName] = useState("Brak")
 
     return (
         <div className="d-flex flex-wrap justify-content-center">
             <input
-                {...props.field}
-                id={props.inputName}
+                //{...props.field}
+                id={`contracts[${props.rowIdx}].fileInput`}
                 type="file"
                 hidden
                 onChange={e => {
@@ -33,19 +34,28 @@ export default function FilePicker(props: Props) {
                         reader.onloadend = () => {
                             if (e.target.files) {
                                 const fileContent = reader.result!.toString();
-                                const formValues = props.form.getValues()
 
-                                formValues[props.sectionName][props.rowIdx][props.fileFieldName].name = fileName
-                                formValues[props.sectionName][props.rowIdx][props.fileFieldName].content = fileContent
+                                props.row.scan.name = fileName
+                                props.row.scan.content = fileContent
+
+                                props.form!.setValue(
+                                    props.name,
+                                    props.field.value,
+                                    {
+                                        shouldTouch: true,
+                                        shouldValidate: true,
+                                        shouldDirty: true
+                                    }
+                                )
                             }
                         }
                         reader.readAsDataURL(e.target.files[0])
-                        setFileName(e.target.files[0].name)
+                        //setFileName(e.target.files[0].name)
                     }
                 }}
             />
             <label
-                htmlFor={props.inputName}
+                htmlFor={`contracts[${props.rowIdx}].fileInput`}
                 className="w-100 bg-light d-flex justify-content-center"
                 style={{
                     cursor: "pointer"
@@ -70,7 +80,7 @@ export default function FilePicker(props: Props) {
             <input
                 type="text"
                 className="text-center w-100 bg-light border-0 text-secondary"
-                value={fileName}
+                value={props.row.scan.name || "Brak"}
                 readOnly
             />
         </div>
