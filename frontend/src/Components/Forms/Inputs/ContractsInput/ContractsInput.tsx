@@ -53,11 +53,18 @@ export default function ContractsInput(props: Props){
                 rules = {{
                     required: false,
                     validate: {
-                        noEmptyRowFields: (value: Contract[]) => {
+                        noEmptyInputs: (value: Contract[]) => {
                             if (value.some((row: Contract) => {
                                 return Object
                                     .values(row)
-                                    .some(rowField => !rowField)
+                                    .some((rowField: object | string) => {
+                                        if (typeof rowField == 'object') {
+                                            return Object
+                                                .values(rowField)
+                                                .some((rowSubField: string) => !rowSubField)
+                                        }
+                                        return !rowField
+                                    })
                             })
                             )
                                 return "Wypełnij wszystkie pola"
@@ -130,6 +137,7 @@ export default function ContractsInput(props: Props){
                                             <input {...field}
                                                    type="text"
                                                    className="col-12 p-1"
+                                                   value={row.institution.name}
                                                    onChange = {(e)=> {
                                                        row.institution.name = e.target.value
                                                        props.form!.setValue(
@@ -149,6 +157,7 @@ export default function ContractsInput(props: Props){
                                             <input {...field}
                                                    type="text"
                                                    className="col-12 p-1"
+                                                   value={row.institution.unit}
                                                    onChange = {(e)=> {
                                                        row.institution.unit = e.target.value
                                                        props.form!.setValue(
@@ -168,6 +177,7 @@ export default function ContractsInput(props: Props){
                                             <input {...field}
                                                    type="text"
                                                    className="col-12 p-1"
+                                                   value={row.institution.localization}
                                                    onChange = {(e)=> {
                                                        row.institution.localization = e.target.value
                                                        props.form!.setValue(
@@ -187,38 +197,36 @@ export default function ContractsInput(props: Props){
                                              style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Opis</div>
-                                            <Controller name={`${props.name}[${index}].description`}
-                                                        control={props.form.control}
-                                                        rules={{
-                                                            required: "Pole nie może być puste"
-                                                        }}
-                                                        render={({field}) => (
-                                                            <textarea
-                                                                {...field}
-                                                                className="col-12 p-1"
-                                                            />
-                                                        )}
+                                            <textarea
+                                                {...field}
+                                                className="col-12 p-1"
+                                                value={row.description}
+                                                onChange = {(e)=> {
+                                                    row.description = e.target.value
+                                                    props.form!.setValue(
+                                                        props.name,
+                                                        field.value,
+                                                        {
+                                                            shouldTouch: true,
+                                                            shouldValidate: true,
+                                                            shouldDirty: true
+                                                        }
+                                                    )
+                                                    field.onChange(field.value)
+                                                }}
                                             />
                                         </div>
                                         <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
                                              style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
-                                            <Controller name={`${props.name}[${index}].scan.content`}
-                                                        control={props.form.control}
-                                                        rules={{
-                                                            required: "Pole nie może być puste"
-                                                        }}
-                                                        render={({field}) => (
-                                                            <FilePicker
-                                                                field={field}
-                                                                inputName={`${props.name}[${index}].scan`}
-                                                                rowIdx={index}
-                                                                sectionName={props.name}
-                                                                fileFieldName="scan"
-                                                                form={props.form}
-                                                            />
-                                                        )}
+                                            <FilePicker
+                                                field={field}
+                                                name={props.name}
+                                                fileFieldName="scan"
+                                                row={row}
+                                                rowIdx={index}
+                                                form={props.form!}
                                             />
                                         </div>
                                         <div className="text-center d-flex justify-content-center align-items-center p-2"
@@ -227,7 +235,17 @@ export default function ContractsInput(props: Props){
                                             <button type="button"
                                                     className="btn btn-primary"
                                                     onClick={() => {
-                                                        remove(index)
+                                                        const val: Contract[] = field.value;
+                                                        val.splice(index, 1)
+                                                        props.form!.setValue(
+                                                            props.name,
+                                                            val,
+                                                            {
+                                                                shouldValidate: true,
+                                                                shouldDirty: true,
+                                                                shouldTouch: true
+                                                            }
+                                                        )
                                                     }}
                                             >
                                                 -
@@ -243,9 +261,7 @@ export default function ContractsInput(props: Props){
                                 justify-content-center"
                             >
                                 <button
-                                    className={`btn btn-primary w-100
-                            ${props.form.formState.errors[props.name] ? "disabled" : ""}`
-                                    }
+                                    className={`btn btn-primary w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}
                                     type="button"
                                     onClick={() => {
                                         const newContract: Contract = {
@@ -261,7 +277,14 @@ export default function ContractsInput(props: Props){
                                                 content: ""
                                             }
                                         }
-                                        append(newContract)
+                                        props.form!.setValue(
+                                            props.name,
+                                            [...field.value, newContract],
+                                            {
+                                                shouldValidate: true,
+                                                shouldDirty: true
+                                            }
+                                        )
                                     }}
                                 >
                                     Dodaj nową
@@ -269,9 +292,8 @@ export default function ContractsInput(props: Props){
                             </div>
                             <Select
                                 minMenuHeight={300}
-                                className="d-flex col-12 col-xl-6 text-center pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2
-                               justify-content-center"
-                                isDisabled={props.form.formState.errors[props.name]}
+                                className="d-flex col-12 col-xl-6 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
+                                isDisabled={!!props.form!.formState.errors[props.name]}
                                 menuPlacement="auto"
                                 placeholder="Dodaj z historii"
                                 styles={{
@@ -293,25 +315,46 @@ export default function ContractsInput(props: Props){
                                         zIndex: 9999
                                     })
                                 }}
-                                placeHolder={"Wybierz"}
-                                // options ={props.historicalSpubTasks.map((spubTask: SpubTask) => ({
-                                //     label: `${spubTask.name} (${spubTask.yearFrom}–${spubTask.yearTo})`,
-                                //     value: spubTask
-                                // }))}
+                                options ={[
+                                    {
+                                        label: "Krajowe",
+                                        options:
+                                            props.historicalContracts
+                                                .filter((contract: Contract) => contract.category == "domestic")
+                                                .map((contract: Contract) => ({
+                                                    label: `${contract.institution.name}, ${contract.institution.unit}, ${contract.institution.localization}: ${contract.description}`,
+                                                    value: contract
+                                                }))
+                                    },
+                                    {
+                                        label: "Międzynarodowe",
+                                        options:
+                                            props.historicalContracts
+                                                .filter((contract: Contract) => contract.category == "international")
+                                                .map((contract: Contract) => ({
+                                                    label: `${contract.institution.name}, ${contract.institution.unit}, ${contract.institution.localization}: ${contract.description}`,
+                                                    value: contract
+                                                }))
+                                    }
+                                ]}
                                 value={""}
-                                // onChange={(selectedOption: { label: string, value: SpubTask })=> {
-                                //     if (selectedOption) {
-                                //         const newSpubTask: SpubTask = {
-                                //             yearFrom: `${selectedOption.value.yearFrom}`,
-                                //             yearTo: `${selectedOption.value.yearTo}`,
-                                //             name: `${selectedOption.value.name}`
-                                //         }
-                                //         append({value: newSpubTask})
-                                //     }
-                                // }}
+                                onChange={(selectedOption: { label: string, value: Contract })=> {
+                                    if (selectedOption) {
+                                        props.form!.setValue(
+                                            props.name,
+                                            [...field.value, selectedOption.value],
+                                            {
+                                                shouldValidate: true,
+                                                shouldDirty: true,
+                                                shouldTouch: true
+                                            }
+                                        )
+                                        field.onChange([...field.value, selectedOption.value])
+                                    }
+                                }}
                             />
-                            {props.form.formState.errors[props.name] &&
-                                <ErrorCode code={props.form.formState.errors[props.name].message}/>
+                            {props.form!.formState.errors[props.name] &&
+                                <ErrorCode code={props.form!.formState.errors[props.name].message} />
                             }
                         </div>
                     </>

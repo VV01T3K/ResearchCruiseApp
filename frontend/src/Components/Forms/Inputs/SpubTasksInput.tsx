@@ -278,7 +278,7 @@ export default function SpubTasksInput(props: Props){
                                                     <button type="button"
                                                             className="btn btn-primary"
                                                             onClick={() => {
-                                                                const val = field.value;
+                                                                const val: SpubTask[] = field.value;
 
                                                                 val.splice(index, 1)
                                                                 props.form!.setValue(
@@ -331,7 +331,7 @@ export default function SpubTasksInput(props: Props){
                                     </div>
                                     <Select
                                         minMenuHeight={300}
-                                        className="d-flex col-12 col-xl-6 text-center pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2 justify-content-center"
+                                        className="d-flex col-12 col-xl-6 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
                                         isDisabled={disabled}
                                         menuPlacement="auto"
                                         placeholder="Dodaj z historii"
@@ -378,7 +378,7 @@ export default function SpubTasksInput(props: Props){
                                         }}
                                     />
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name].message}/>
+                                        <ErrorCode code={props.form!.formState.errors[props.name].message} />
                                     }
                                 </div>
                             </>

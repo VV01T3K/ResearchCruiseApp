@@ -34,11 +34,17 @@ export default function ContractCategoryPicker(props: Props) {
                     zIndex: 9999
                 })
             }}
-            placeHolder={"Wybierz"}
             options = {[
                 { label: "Krajowa", value: "domestic" },
                 { label: "Międzynarodowa", value: "international" }
             ]}
+            value={
+                props.row.category &&
+                {
+                    label: props.row.category == "domestic" ? "Krajowa" : "Międzynaraodowa",
+                    value: props.row.category
+                }
+            }
             onChange={(selectedOption: SingleValue<{ label: string, value: string }>)=> {
                 if (selectedOption) {
                     props.row.category = selectedOption.value
