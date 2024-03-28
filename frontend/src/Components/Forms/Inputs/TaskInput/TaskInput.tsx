@@ -94,7 +94,7 @@ function TaskInput(props: Props) {
                         render={({field})=>(
                             <>
             <div className="table-striped w-100">
-                <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
+                <div className="text-white text-center bg-primary">
                     <div className="d-flex flex-row center align-items-center">
                         <div className="col-xl-3 text-center d-none d-xl-block border-end p-2">Zadanie</div>
                         <div className=" col-xl-8 text-center d-lg-block d-xl-none p-2">Zadanie</div>

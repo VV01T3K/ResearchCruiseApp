@@ -57,7 +57,7 @@ export default function SpubTasksInput(props: Props){
                         render={({field})=>(
                             <>
             <div className="table-striped w-100">
-                <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
+                <div className="text-white text-center bg-primary">
                     <div className="d-flex flex-row center">
                         <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                              style={{width: "5%"}}

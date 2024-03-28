@@ -22,13 +22,13 @@ function FormRadio(props: Props) {
                 rules={{required: 'Wybierz jedną z opcji'}}
                 control={props.form!.control}
                 render={({field}) => (
-                    <div className="d-flex flex-column">
+                    <div className="d-flex flex-column justify-content-center align-content-center">
                         {props.values.map((option, index) => (
-                            <label key={index}>
-                                <input
-                                    type="radio"
+                            // <label key={index}>
+                                <input key={index} className={`btn ${field.value === option ? "btn-primary":"btn-outline-primary"} w-100 m-1`}
+                                    type={"button"}
                                     value={option}
-                                    onChange={(e) => {
+                                    onClick={(e) => {
                                         props.form!.setValue(props.name, e.target.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                                     }}
                                     // onBlur={
@@ -36,8 +36,8 @@ function FormRadio(props: Props) {
                                     // }
                                     checked={field.value === option}
                                 />
-                                {option}
-                            </label>
+                               // {/*{option}*/}
+                            // </label>
                         ))}
                     </div>
                 )}

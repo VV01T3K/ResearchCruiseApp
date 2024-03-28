@@ -58,7 +58,7 @@ export default function ContractsInput(props: Props){
     return (
         <div className={props.className + " p-3"}>
             <div className="table-striped w-100">
-                <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
+                <div className="text-white text-center bg-primary">
                     <div className="d-flex flex-row center align-items-center">
                         <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "5%"}}>
                             <b>Lp.</b>

@@ -10,6 +10,7 @@ type Props = {
     label: string,
     values: any[]
     form?: {
+        setValue(name: string, selectedOption: any, arg2: { shouldDirty: boolean; shouldValidate: boolean; shouldTouch: boolean; }): unknown;
         control: Control<FieldValues, any> | undefined;
         formState: {
             errors: {

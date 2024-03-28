@@ -10,9 +10,8 @@ type Props = {
 
 export default function TilesComponent(props: Props) {
     const render: RenderTileFunction<typeof props.tilesMenu[0]> = ({ data, isDragging }) => (
-        <div className="p-2 w-100 h-100 d-flex ">
-            <div className={`tile bg-white h-100 w-100 ${isDragging ? "dragging" : ""}`}
-                 style={{color:"#052d73"}}
+        <div className="p-2 w-100 h-100 d-flex">
+            <div className={`tile bg-white h-100 w-100 text-dark  ${isDragging ? "dragging" : ""}`}
             >
                 {data.element}
             </div>
@@ -25,7 +24,7 @@ export default function TilesComponent(props: Props) {
     });
 
     return (
-        <div className="tileContainer" style={{display: "flex", justifyContent: "center"}}>
+        <div className="tileContainer bg-primary bg-opacity-25" style={{display: "flex", justifyContent: "center"}}>
             <TilesContainer className={tilesDndStyle}
                             data={props.tilesMenu}
                             disabled={true}

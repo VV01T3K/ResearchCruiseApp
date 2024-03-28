@@ -33,7 +33,7 @@ function NumberInput(props: Props){
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
-                    <input className="text-center placeholder-glow" style={{}}
+                    <input className="text-center placeholder-glow"
                            value={field.value}
                            onBlur={
                         (e) => {

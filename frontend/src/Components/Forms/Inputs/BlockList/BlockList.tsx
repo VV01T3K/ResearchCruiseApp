@@ -20,7 +20,7 @@ function BlockList(props: Props) {
                         render={({field})=>(
                             <>
                 <table className="table-striped w-100" >
-                    <thead className="text-white text-center" style={{"backgroundColor":"#052d73"}}>
+                    <thead className="text-white text-center bg-primary">
                     <tr className="d-flex flex-row center align-items-center w-100">
                         <th className="text-center p-2 w-100">{props.label}</th>
                     </tr>
@@ -62,27 +62,27 @@ function BlockList(props: Props) {
                 <Select minMenuHeight={300}
                         menuPlacement="auto"
                         // value={{label:"", value:""}}
-
+                        className={"bg-primary text-white "}
                         placeholder={"Wybierz opcję lub wyszukaj"}
                         styles={{
                             control: (provided, state) => ({
                                 ...provided,
                                 boxShadow: "none",
                                 border: "none",
-                                backgroundColor: "#052d73",
-                                color:"white",
+                                backgroundColor: "inherit",
+                                color:"inherit",
                                 width:"100%"
                             }),
                             placeholder:(provided:any) => ({
                                 ...provided,
-                                color:'white',
+                                color:'inherit',
                                 textAlign:"center"
                             }),
                             input:(provided:any) => ({
                                 ...provided,
-                                color:'white',
+                                color:'inherit',
                             }),
-                            menu: provided => ({...provided, zIndex: 9999})
+                            menu: provided => ({...provided, zIndex: 9999, color:"black"})
                         }}
                         options={administrationUnits.filter(element => !field.value.map((item)=>item.value).includes(element))?.map(value => ({label: value, value})) ?? {label:"", value:""}}
                        {...field}

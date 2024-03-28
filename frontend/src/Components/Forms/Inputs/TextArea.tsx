@@ -33,9 +33,9 @@ function TextArea(props: Props) {
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
-                    <textarea {...field}
+                    <textarea className={"h-100"} {...field}
                               value={field.value ?? ''}
-                              style={{maxHeight: "130px", resize:props.resize ?? "true"}}
+                              style={{resize:props.resize ?? "true"}}
 
                     />
                 }
