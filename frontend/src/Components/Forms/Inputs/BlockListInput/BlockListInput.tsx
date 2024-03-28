@@ -34,7 +34,7 @@ function BlockListInput(props: Props){
                         render={({field})=>(
                             <>
             <table className="table-striped w-100">
-                <thead className="text-white text-center" style={{"backgroundColor":"#052d73"}}>
+                <thead className="text-white text-center bg-primary">
                     <tr className="d-flex flex-row center align-items-center w-100">
                         <th className="text-center p-2 w-100">{props.label}</th>
                     </tr>

@@ -48,18 +48,21 @@ function FormTitle(props: Props){
 
 
     return (
-        <div className={" mb-2  bg-light z-0 ps-2 pe-2 "}>
+        // <div className={" flex-row bg-primary mb-2  bg-light z-0 ps-2 pe-2 "}>
 
-            <h1 className={" d-flex flex-column  text-decoration-underline text-end p-2 "}
-                style={{fontSize: "1.5rem"}}>{props.title}</h1>
-            <h1 className={"d-flex flex-row  flex-wrap d-none d-lg-flex p-2"} style={{fontSize: "1.5rem"}}>
-                {Object.entries(sections).map(([key,value], index) => {
+
+            <div className={" d-flex align-items-center w-100 text-white bg-primary d-none d-lg-flex p-2 border-bottom"}>
+                {Object.entries(sections).map(([key, value], index) => {
                     return <Link key={`${index}`}
-                        className={`d-flex flex-nowrap m-1 align-self-center text-decoration-none ${value ? "text-success" : "text-danger"}`}
-                        style={{fontSize: "0.9rem"}} onClick={()=>scrollSmoothTo(`${index+1}`)}  to={""}>{index + 1}. {key}</Link>
+                                 className={`p-2 mx-auto text-nowrap text-truncate text-white text-decoration-none`}
+                              onClick={() => scrollSmoothTo(`${index + 1}`)}
+                                 to={""}>{key}{value ? "":"*"}</Link>
                 })}
-            </h1>
-        </div>
+                <div className={" bg-primary text-end me-0 ms-auto text-nowrap p-2"}
+                     style={{fontSize: "1.5rem"}}>{props.title}</div>
+            </div>
+
+        // </div>
     )
 }
 

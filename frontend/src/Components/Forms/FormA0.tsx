@@ -190,7 +190,7 @@ function FormA0(props:{loadValues}){
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap label="Obszar prowadzonych badań" name="area" />
+                    <ClickableMap className={"col-8"} label="Obszar prowadzonych badań" name="area" />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"

@@ -1,3 +1,7 @@
 ::placeholder {
     opacity: 0.2; /* Firefox */
 }
+
+.appHeader {
+    height: 60.3px;
+}

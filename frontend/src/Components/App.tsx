@@ -6,7 +6,7 @@ import AdminPanel from "./HomePage/AdminPanel"
 import PageHeader from "./PageHeader/PageHeader";
 import NewFormPage from "./NewFormPage/NewFormPage";
 import FormA0 from "./Forms/FormA0";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './../scss/app.scss';
 import FormB0 from "./Forms/FormB0";
 import FormC0 from "./Forms/FormC0";
 import ManagerPanel from "./HomePage/ManagerPanel";
@@ -15,7 +15,6 @@ import LogoutPage from "./LoginPage/LogoutPage";
 import AccountPage from "./AccountPage/AccountPage";
 import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
 import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
-// import {TestPage} from "./TestPage/TestPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
 import Page from "./Tools/Page";
