@@ -241,6 +241,7 @@ function TaskInput(props: Props) {
                             >
                                 <div className={"align-items-center justify-content-center d-flex"}>
                                 <button type="button"
+                                        style={{fontSize:"inherit"}}
                                         className=" btn btn-primary"
                                         onClick={() => {
                                             const val = field.value;
@@ -260,7 +261,7 @@ function TaskInput(props: Props) {
                     <ButtonGroup as={Dropdown}
                                  className={"w-100 h-100 p-2 align-self-center" + Style.centeredDropdown}
                     >
-                        <Dropdown.Toggle disabled={disabled} variant="primary">
+                        <Dropdown.Toggle  disabled={disabled} variant="primary">
                             +
                         </Dropdown.Toggle>
                         <Dropdown.Menu>

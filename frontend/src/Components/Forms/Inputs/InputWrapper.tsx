@@ -8,7 +8,7 @@ type Props = any
 function InputWrapper(props: Props) {
     return (
         <div className={props.className + ` d-flex flex-column ${props.customError ? 'pb-0': ''} p-3 `}>
-            <label>{props.label}</label>
+            <div>{props.label}</div>
             {props.children}
             {!props.customError && props.form.formState.errors[props.name] &&
                 <ErrorCode code={props.form.formState.errors[props.name].message} />

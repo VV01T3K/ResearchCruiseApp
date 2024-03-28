@@ -261,6 +261,7 @@ export default function ContractsInput(props: Props){
                                 justify-content-center"
                             >
                                 <button
+                                    style={{fontSize:"inherit"}}
                                     className={`btn btn-primary w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}
                                     type="button"
                                     onClick={() => {

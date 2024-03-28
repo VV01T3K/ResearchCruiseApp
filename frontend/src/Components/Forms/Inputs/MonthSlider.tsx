@@ -98,7 +98,7 @@ const MonthSlider = (props: Props) => {
                                         return acc;
                                     }, {})}
                         />
-                        <label className="m-2 center text-center" style={{fontSize: "0.9rem"}}>
+                        <label className="m-2 center text-center">
                             Wybrano okres: <br/>
                             od początku {labels[field.value[0]]} <br/>
                             do końca {labels[field.value[1] - 1]}.

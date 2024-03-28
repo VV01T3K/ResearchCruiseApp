@@ -72,12 +72,10 @@ function FormA0(props:{loadValues}){
         "Pozwolenia": "Dodatkowe pozwolenia do planowanych podczas rejsu badań",
         "Rejon": "Rejon prowadzenia badań",
         "Cel": "Cel Rejsu",
-        "L. osób": "Przewidywana liczba osób załogi naukowej",
         "Zadania": "Zadania do zrealizowania w trakcie rejsu",
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
-        "Efekty": "Efekty rejsu",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
@@ -190,7 +188,7 @@ function FormA0(props:{loadValues}){
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap className={"col-8"} label="Obszar prowadzonych badań" name="area" />
+                    <ClickableMap label="Obszar prowadzonych badań" name="area" />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -211,23 +209,23 @@ function FormA0(props:{loadValues}){
                     />
                 </FormSection>
 
-                <FormSection  title={sections["L. osób"]}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Pracownicy UG"
-                                 name="ugEmployees"
-                                 maxVal={20}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Studenci I, II st. i doktoranci"
-                                 name="students"
-                                 maxVal={20}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="guests"
-                                 maxVal={20}
-                    />
-                </FormSection>
+                {/*<FormSection  title={sections["L. osób"]}>*/}
+                {/*    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"*/}
+                {/*                 label="Pracownicy UG"*/}
+                {/*                 name="ugEmployees"*/}
+                {/*                 maxVal={20}*/}
+                {/*    />*/}
+                {/*    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"*/}
+                {/*                 label="Studenci I, II st. i doktoranci"*/}
+                {/*                 name="students"*/}
+                {/*                 maxVal={20}*/}
+                {/*    />*/}
+                {/*    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"*/}
+                {/*                 label="Goście / osoby spoza UG"*/}
+                {/*                 name="guests"*/}
+                {/*                 maxVal={20}*/}
+                {/*    />*/}
+                {/*</FormSection>*/}
 
                 <FormSection title={sections.Zadania}>
                     <TaskInput name={"wejscie"} historicalTasks={{0:{0:{0:"autor", 1:"coś"}}, 1:{0:{0:"autor", 1:"coś"}}}} className={"col-12"} label={"ss"}/>

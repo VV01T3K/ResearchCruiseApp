@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 function LogoutPage(){
     return (
         <>
-            <Page bgStyle={"bg " + Style.bgImage} className={"justify-content-center justify-content-md-end " + Style}>
+            <Page bgStyle={"bg " + Style.bgImage} className={" w-100 justify-content-center justify-content-md-end " + Style}>
                 <div className="d-flex flex-column pb-1 m-2 center align-self-start"
                      style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}
                 >

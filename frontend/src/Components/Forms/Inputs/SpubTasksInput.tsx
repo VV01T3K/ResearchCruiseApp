@@ -1,12 +1,7 @@
-import React, {MouseEvent, useEffect, useRef, useState} from "react";
+import React, { useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
-import {register} from "../../../serviceWorkerRegistration";
 import Select from "react-select";
-import {administrationUnits} from "../../../resources/administrationUnits";
-import {ButtonGroup, Dropdown} from "react-bootstrap";
-import Style from "./TaskInput/TaskInput.module.css";
-import InputWrapper from "./InputWrapper";
 
 
 type SpubTask = {
@@ -275,7 +270,7 @@ export default function SpubTasksInput(props: Props){
                                                 <div className="d-flex justify-content-center align-items-center p-2"
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
-                                                    <button type="button"
+                                                    <button type="button" style={{fontSize:"inherit"}}
                                                             className="btn btn-primary"
                                                             onClick={() => {
                                                                 const val: SpubTask[] = field.value;
@@ -304,7 +299,7 @@ export default function SpubTasksInput(props: Props){
                                     <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
                                                     justify-content-center"
                                     >
-                                        <button
+                                        <button style={{fontSize:"inherit"}}
                                             className={`btn btn-primary w-100
                                                 ${ disabled ? "disabled" : ""}`
                                             }

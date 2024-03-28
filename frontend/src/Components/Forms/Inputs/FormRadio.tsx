@@ -25,7 +25,7 @@ function FormRadio(props: Props) {
                     <div className="d-flex flex-column justify-content-center align-content-center">
                         {props.values.map((option, index) => (
                             // <label key={index}>
-                                <input key={index} className={`btn ${field.value === option ? "btn-primary":"btn-outline-primary"} w-100 m-1`}
+                                <input key={index} className={`btn ${field.value === option ? "btn-primary":"btn-outline-primary"} text-wrap m-1`} style={{fontSize:"inherit"}}
                                     type={"button"}
                                     value={option}
                                     onClick={(e) => {
