@@ -12,7 +12,7 @@ type Props = {
     name: string,
     required?: any,
     maxLenth?: number,
-    resize,
+    resize?:string,
     form?: {
         setValue: (arg0: string, arg1: string) => void;
         control: Control<Record<string, any>, any> | undefined;
@@ -29,12 +29,14 @@ function TextArea(props: Props) {
         //     props.setValue(props.name, "0", {shouldValidate:true})
     }
 
+
     return (
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
                     <textarea className={"h-100"} {...field}
                               value={field.value ?? ''}
+                        // @ts-ignore
                               style={{resize:props.resize ?? "true"}}
 
                     />

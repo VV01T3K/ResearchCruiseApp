@@ -21,7 +21,7 @@ import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 
 
-function FormA0(props:{loadValues}){
+function FormA0(props:{loadValues:any}){
     const [userData, setUserData] = useState(null)
 
     useEffect(
@@ -53,7 +53,7 @@ function FormA0(props:{loadValues}){
         // defaultValues: defaultValues,
         shouldUnregister: false
     });
-    const saveValues = (data) => {
+    const saveValues = (data:any) => {
         // Tu możesz zapisać dane do Local Storage lub innego źródła danych
         localStorage.setItem('formData', JSON.stringify(data));
     };
@@ -83,10 +83,7 @@ function FormA0(props:{loadValues}){
     return (
         <FormTemplate send={()=>{console.log(form.getValues()); console.log(form.formState.errors); console.log(form.formState.dirtyFields)}} save={()=>saveValues(form.getValues())}>
             <FormTitle sections={sections} title={"Formularz A"} />
-            <FormWithSections sections={sections} form={form}
-                              onChange={()=>null
-                                  //console.log(form.getValues())
-            }>
+            <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
                                          name="managers"
@@ -115,7 +112,6 @@ function FormA0(props:{loadValues}){
                                  name="optimalPeriod"
                                  range={form.getValues("acceptedPeriod")}
                                  label="Optymalny okres, w którym miałby się odbywać rejs"
-                                 // watch={form.watch("acceptedPeriod")}
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  name="cruiseDays"
@@ -209,26 +205,10 @@ function FormA0(props:{loadValues}){
                     />
                 </FormSection>
 
-                {/*<FormSection  title={sections["L. osób"]}>*/}
-                {/*    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"*/}
-                {/*                 label="Pracownicy UG"*/}
-                {/*                 name="ugEmployees"*/}
-                {/*                 maxVal={20}*/}
-                {/*    />*/}
-                {/*    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"*/}
-                {/*                 label="Studenci I, II st. i doktoranci"*/}
-                {/*                 name="students"*/}
-                {/*                 maxVal={20}*/}
-                {/*    />*/}
-                {/*    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"*/}
-                {/*                 label="Goście / osoby spoza UG"*/}
-                {/*                 name="guests"*/}
-                {/*                 maxVal={20}*/}
-                {/*    />*/}
-                {/*</FormSection>*/}
-
                 <FormSection title={sections.Zadania}>
-                    <TaskInput name={"wejscie"} historicalTasks={{0:{0:{0:"autor", 1:"coś"}}, 1:{0:{0:"autor", 1:"coś"}}}} className={"col-12"} label={"ss"}/>
+                    <TaskInput name={"wejscie"} historicalTasks={[
+                        {type:0, values:{author:"sads", title:"sadds"}}
+                    ]} className={"col-12"} label={"ss"}/>
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>
@@ -294,7 +274,6 @@ function FormA0(props:{loadValues}){
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    {/*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>*/}
                     <BlockListInput required={false} className={"col-12 col-xl-6 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
                     <BlockList className={"col-12 col-xl-6"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 

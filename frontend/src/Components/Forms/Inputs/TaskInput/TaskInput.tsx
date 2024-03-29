@@ -1,5 +1,5 @@
 import React from "react";
-import {Controller} from "react-hook-form";
+import {Controller, UseFormReturn} from "react-hook-form";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../DateInput.css'
@@ -15,9 +15,9 @@ import ErrorCode from "../../../LoginPage/ErrorCode";
 type Props = {
     className: string,
     label:string,
-    form?,
+    form?: UseFormReturn,
     name: string,
-    historicalTasks
+    historicalTasks: any
 }
 
 
@@ -25,44 +25,52 @@ type Props = {
 
 function TaskInput(props: Props) {
     const options =
-        {'Praca licencjacka': {"Autor": "", "Tytuł": "" },
-        'Praca magisterska': { "Autor": "", "Tytuł": "" },
-        'Praca doktorska': { "Autor": "", "Tytuł": "" },
-        "Przygotowanie projektu naukowego": { "Tytuł": "", "Instytucja do której składany": "", "Przewidywany termin składania":"" },
-        "Realizacja projektu krajowego (NCN, NCBiR, itp)":  { "Tytuł": "", "Ramy czasowe":{}, "Kwota finansowania":"" },
-        "Realizacja projektu zagranicznego (ERC, Programy ramowe UE, fundusze norweskie, itp)":  { "Tytuł": "", "Ramy czasowe":{}, "Kwota finansowania":"" },
-        "Realizacja projektu wewnętrznego UG": { "Tytuł": "", "Ramy czasowe":{}, "Kwota finansowania":"" },
-        "Realizacja innego projektu naukowego":{ "Tytuł": "", "Ramy czasowe":{}, "Kwota finansowania":"" },
-        "Realizacja projektu komercyjnego": { "Tytuł": "", "Ramy czasowe":{}, "Kwota finansowania":"" },
-        "Dydaktyka": {"Opis zajęcia dydaktycznego":""},
-        "Realizacja własnego zadania badawczego": { "Tytuł": "", "Ramy czasowe":{}, "Kwota finansowania":"" },
-        "Inne zadanie": {"Opis zadania":""}
+        {'Praca licencjacka': ["Autor", "Tytuł" ],
+        'Praca magisterska': ["Autor", "Tytuł" ],
+        'Praca doktorska': ["Autor", "Tytuł" ],
+        "Przygotowanie projektu naukowego": ["Tytuł", "Instytucja do której składany", "Przewidywany termin składania"],
+        "Realizacja projektu krajowego (NCN, NCBiR, itp)":  ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Realizacja projektu zagranicznego (ERC, Programy ramowe UE, fundusze norweskie, itp)":  ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Realizacja projektu wewnętrznego UG": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Realizacja innego projektu naukowego":["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Realizacja projektu komercyjnego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Dydaktyka": ["Opis zajęcia dydaktycznego"],
+        "Realizacja własnego zadania badawczego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Inne zadanie": ["Opis zadania"]
 };
+    type time = {startDate:string, endDate:string}
+    const defaultValues = [
+        {author:"", title:""},
+        {author:"", title:""},
+        {author:"", title:""},
+        {title:"", institution:"", date:""},
+        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
+        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
+        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
+        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
+        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
+        {description:""},
+        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
+        {description:""},
+    ]
 
-    const getFieldValue = (field, index, item, subIndex) => {
-        return field.value[index][Object.keys(item)[0]][subIndex[0]]
+    const handleChange = (field:{value:Array<{ values:any }>}, row:{values:object}, rowIndex:number, index:number, newValue:string) => {
+        field.value[rowIndex].values[Object.keys(row.values)[index]] = newValue
+        props.form!.setValue(props.name, field.value, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
     }
 
-    const handleChange = (field, index, item, subIndex,  newValue) => {
-        var newField = field.value
-        newField[index][Object.keys(item)[0]][subIndex[0]] = newValue
-        props.form.setValue(props.name, newField, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
-        return newField
+    const getTaskTitle = (item:{type:number}) => {
+        return Object.keys(options)[item.type]
     }
 
-    const getTaskTitle = (item) => {
-        return Object.keys(options)[Object.keys(item)[0]]
+    const getFields = (item:{values:object}) => {
+        console.log(Object.values(item.values))
+        // return []
+        return Object.values(item.values)
     }
 
-    const getFields = (item) => {
-        return Object.entries(Object.values(item)[0])
-    }
-
-    const getFieldLabel = (item, fieldIndex) => {
-        return Object.keys(Object.values(options)[Object.keys(item)[0]])[fieldIndex]
-    }
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
-    const disabled = props.form.formState.errors[props.name] && props.form.formState.errors[props.name].message != requiredMsg
+    const disabled = props.form!.formState.errors[props.name] && props.form.formState.errors[props.name]!.message != requiredMsg
     return (
         <div className={props.className + " p-3"}>
             <Controller name={props.name}  control={props.form!.control}
@@ -70,8 +78,7 @@ function TaskInput(props: Props) {
                         rules = {{ required:requiredMsg,validate: {
                             notEmptyArray:(value)=>{
                                 if(
-                                value.some((val)=> {
-                                    console.log(Object.values(Object.values(val)[0]))
+                                value.some((val:object)=> {
                                     return Object.values(Object.values(val)[0]).some((x)=> {
                                         if (typeof x === 'string' && x.trim() === '') {
                                             return true;
@@ -107,42 +114,42 @@ function TaskInput(props: Props) {
                             <div className="text-center">Nie wybrano żadnego zadania</div>
                         </div>
                     }
-                    {field.value && field.value.map((item, index) => (
-                        <div key={index}
+                    {field.value && field.value.map((row: {type:number, values:object }, rowIndex:number) => (
+                        <div key={rowIndex}
                              className="d-flex flex-wrap border
                              bg-light"
                         >
                             <div className="text-center align-items-center  col-12 col-xl-3 justify-content-center p-2
                              d-inline-flex border-end">
-                                {getTaskTitle(item)}
+                                {getTaskTitle(row)}
                             </div>
                             <div className="text-center d-flex col-12 col-xl-8 ">
                                 {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start
                                   pb-3  w-100">
-                                    {getFields(item).map((t, s) => {
+                                    {getFields(row).map((val:unknown, s, array:unknown[]) => {
                                         return(
                                         <div key={s}
-                                             className={`${getFields(item).length == 2
+                                             className={`${getFields(row).length == 2
                                              && "col-xl-6" }
-                                         ${getFields(item).length == 3 && "col-xl-4" }
+                                         ${getFields(row).length == 3 && "col-xl-4" }
                                          col-12 p-1`}>
-                                            <label className={"d-flex justify-content-center"}>{getFieldLabel(item, s)}</label>
+                                            <label className={"d-flex justify-content-center align-items-center"}>{Object.values(options)[row.type][s]}</label>
                                             {(()=>{
-                                                switch (getFieldLabel(item, s)){
+                                                switch (Object.values(options)[row.type][s]){
                                                     case "Autor":
                                                     case "Tytuł":
-                                                    case "Instytucja do której składany":
+
                                                         return (
-                                                            <input className={"w-100"} {...field} value={getFieldValue(field, index, item, t)} onChange={(e)=>{
-                                                                field.onChange(handleChange(field, index, item, t, e.target.value ))
+                                                            <input className={"w-100"} {...field} value={val as string} onChange={(e)=>{
+                                                                handleChange(field, row, rowIndex, s, e.target.value )
                                                             } }/>
                                                         )
-
+                                                    case "Instytucja do której składany":
                                                     case "Opis zajęcia dydaktycznego" :
                                                     case "Opis zadania" :
                                                         return (
-                                                            <input type="text" className={"w-100"}  style={{height:"100px"}} {...field} value={getFieldValue(field, index, item, t)} onChange={(e)=>{
-                                                            field.onChange(handleChange(field, index, item, t, e.target.value ))
+                                                            <input type="text" className={"w-100"}  style={{height:"100px"}} {...field} value={val as string} onChange={(e)=>{
+                                                                handleChange(field, row, rowIndex, s, e.target.value )
                                                         } }/>
                                                         )
                                                     case "Przewidywany termin składania":
@@ -153,9 +160,9 @@ function TaskInput(props: Props) {
 
                                                                 closeOnScroll={true}
                                                                 locale={"pl"}
-                                                                selected={getFieldValue(field, index, item, t) ? new Date(getFieldValue(field, index, item, t)) : null}
-                                                                onChange={(e)=>{
-                                                                field.onChange(handleChange(field, index, item, t, e.toString() ))
+                                                                selected={val ? new Date(val as string) : null}
+                                                                onChange={(e:Date)=>{
+                                                                    handleChange(field, row, rowIndex, s, e.toString() )
                                                              }}
                                                                 // getPopupContainer={trigger => trigger.parentElement}
                                                                 dateFormat="dd/MM/yyyy"
@@ -171,16 +178,16 @@ function TaskInput(props: Props) {
                                                                 showMonthYearDropdown
                                                                 className={" text-center w-100"}
                                                                 selectsStart
-                                                                startDate={getFieldValue(field, index, item, t).startDate ? new Date(getFieldValue(field, index, item, t).startDate) : null}
-                                                                maxDate={getFieldValue(field, index, item, t).endDate ? new Date(getFieldValue(field, index, item, t).endDate) : null}
-                                                                endDate={getFieldValue(field, index, item, t).endDate ? new Date(getFieldValue(field, index, item, t).endDate) : null}
+                                                                startDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
+                                                                maxDate={(val as time ).endDate ? new Date((val as time ).endDate) : null}
+                                                                endDate={(val as time ).endDate ? new Date((val as time ).endDate) : null}
                                                                 locale={"pl"}
-                                                                selected={getFieldValue(field, index, item, t).startDate ? new Date(getFieldValue(field, index, item, t).startDate) : null}
-                                                                onChange={(e)=>{
+                                                                selected={(val as time ).startDate ? new Date((val as time ).startDate) : null}
+                                                                onChange={(e:Date)=>{
                                                                     if(e!=null) {
-                                                                        var tmp = getFieldValue(field, index, item, t)
+                                                                        var tmp = val as time
                                                                         tmp["startDate"] = e.toString();
-                                                                        field.onChange(handleChange(field, index, item, t, tmp))
+                                                                        handleChange(field, row, rowIndex, s, tmp )
                                                                     }
                                                                 }}
                                                                 // getPopupContainer={trigger => trigger.parentElement}
@@ -192,17 +199,18 @@ function TaskInput(props: Props) {
                                                                 showYearDropdown
                                                                 showMonthYearPicker
                                                                 className={"text-center w-100"}
-                                                                startDate={getFieldValue(field, index, item, t).startDate ? new Date(getFieldValue(field, index, item, t).startDate) : null}
-                                                                endDate={getFieldValue(field, index, item, t).endDate ? new Date(getFieldValue(field, index, item, t).endDate) : null}
-                                                                minDate={getFieldValue(field, index, item, t).startDate ? new Date(getFieldValue(field, index, item, t).startDate) : null}
+                                                                startDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
+                                                                endDate={(val as time ).endDate ? new Date((val as time ).endDate) : null}
+                                                                minDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
                                                                 selectsEnd
                                                                 locale={"pl"}
-                                                                selected={getFieldValue(field, index, item, t).endDate ? new Date(getFieldValue(field, index, item, t).endDate) : null}
-                                                                onChange={(e)=>{
+                                                                selected={(val as time ).endDate ? new Date((val as time ).endDate) : null}
+                                                                onChange={(e:Date)=>{
                                                                     if(e!=null) {
-                                                                        var tmp = getFieldValue(field, index, item, t)
+                                                                        var tmp = val as time
                                                                         tmp["endDate"] = e.toString();
-                                                                        field.onChange(handleChange(field, index, item, t, tmp))
+                                                                        handleChange(field, row, rowIndex, s, tmp )
+
                                                                     }
                                                                 }}
                                                                 // getPopupContainer={trigger => trigger.parentElement}
@@ -216,15 +224,15 @@ function TaskInput(props: Props) {
                                                                 {...field}
                                                                 type="text" // Zmieniamy typ na text
                                                                 className="text-center placeholder-glow w-100"
-                                                                value={getFieldValue(field, index, item, t)}
-                                                                onChange={ (e) => field.onChange(handleChange(field, index, item, t, e.target.value))}
+                                                                value={val as string}
+                                                                onChange={ (e) =>  handleChange(field, row, rowIndex, s, e.target.value )}
                                                                 onBlur ={(e) => {
                                                                     const { value } = e.target;
                                                                     const sanitizedValue = parseFloat(value);
                                                                     if (!isNaN(sanitizedValue)) {
-                                                                        field.onChange(handleChange(field, index, item, t, sanitizedValue.toFixed(2).toString()))
+                                                                        handleChange(field, row, rowIndex, s, sanitizedValue.toFixed(2).toString())
                                                                     } else {
-                                                                        field.onChange(handleChange(field, index, item, t, "0.00"))
+                                                                        handleChange(field, row, rowIndex, s, "0.00")
                                                                     }
                                                                 }}
                                                                 placeholder="0"
@@ -245,8 +253,8 @@ function TaskInput(props: Props) {
                                         className=" btn btn-primary"
                                         onClick={() => {
                                             const val = field.value;
-                                            val.splice(index,1)
-                                            props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                            val.splice(rowIndex,1)
+                                            props.form!.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
                                         }}
                                 >
                                     -
@@ -267,10 +275,7 @@ function TaskInput(props: Props) {
                         <Dropdown.Menu>
                             {Object.keys(options).map((key, index) => (
                                 <Dropdown.Item key={index} onClick={() => {
-                                    props.form.setValue(props.name, [...field.value, {[index]:Object.values(Object.values(options)[index]).reduce((acc, value, index) => {
-                                            acc[index] = value;
-                                            return acc;
-                                        }, {})}], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                    props.form!.setValue(props.name, [...field.value, {type:index, values:defaultValues[index]}], {shouldValidate:true, shouldDirty:true, shouldTouch:true})
                                 }
                                 }>
                                     {key}
@@ -304,17 +309,18 @@ function TaskInput(props: Props) {
                             })
                         }}
                         options ={Object.values(props.historicalTasks).map((key)=>{
-                            const task = Object.keys(options)[Object.keys(key)[0]];
-                            const values = Object.keys(Object.values(options)[Object.keys(key)[0]]);
-                            const string = task + ", " + values.map((value, index)=> value +  ": " + Object.values(key[0])[index] ).join(", ")
+                            // const task = Object.keys(options)[Object.keys(key)[0]];
+                            // const values = Object.keys(Object.values(options)[Object.keys(key)[0]]);
+                            const values = key.values
+                            const string =  "Autor:" + (values.author?? "") + ", Tytuł:" + (values.title?? "")
 
                             return{ label:string, value:  key}
                         }
                         )}
                         value={""}
-                        onChange={(selectedOption: { label: any, value: unknown })=> {
-                            props.form.setValue(props.name, [...field.value,selectedOption.value], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
-                            field.onChange([...field.value,selectedOption.value])
+                        onChange={(selectedOption: { label: any, value: any })=> {
+                            props.form!.setValue(props.name, [...field.value,selectedOption.value], {shouldValidate:true, shouldDirty:true, shouldTouch:true})
+                            // field.onChange([...field.value,selectedOption.value])
                         }}
                     />
                 </div>
@@ -322,8 +328,8 @@ function TaskInput(props: Props) {
 
 
                             </>)}/>
-            {props.form.formState.errors[props.name] &&
-                <ErrorCode code={props.form.formState.errors[props.name].message}/>
+            {props.form!.formState.errors[props.name] &&
+                <ErrorCode code={props.form!.formState.errors[props.name]!.message}/>
             }
         </div>
     )

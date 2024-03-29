@@ -45,7 +45,7 @@ export default function ContractCategoryPicker(props: Props) {
                     value: props.row.category
                 }
             }
-            onChange={(selectedOption: SingleValue<{ label: string, value: string }>)=> {
+            onChange={(selectedOption: SingleValue<"" | {label: string; value: string; }>)=> {
                 if (selectedOption) {
                     props.row.category = selectedOption.value
                     props.form.setValue(
