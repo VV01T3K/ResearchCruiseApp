@@ -76,7 +76,7 @@ const MonthSlider = (props: Props) => {
 
                 render={({ field}) => (
                     <>
-                        <Slider style={{height: "80px"}}
+                        <Slider style={{height: "77px"}}
                                 pushable={true}
                                 allowCross={false}
                                 {...field}
@@ -98,9 +98,9 @@ const MonthSlider = (props: Props) => {
                                         return acc;
                                     }, {})}
                         />
-                        <label className="m-2 center text-center">
-                            Wybrano okres: <br/>
-                            od początku {labels[field.value[0]]} <br/>
+                        <label className=" text-center">
+                            Wybrano okres:
+                            od początku {labels[field.value[0]] + " "}
                             do końca {labels[field.value[1] - 1]}.
                         </label>
                     </>

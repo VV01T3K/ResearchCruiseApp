@@ -106,12 +106,12 @@ function FormA0(props:{loadValues}){
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
+                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="acceptedPeriod"
                                  connectedName="optimalPeriod"
                                  label="Dopuszczalny okres, w którym miałby się odbywać rejs:"
                     />
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
+                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="optimalPeriod"
                                  range={form.getValues("acceptedPeriod")}
                                  label="Optymalny okres, w którym miałby się odbywać rejs"
@@ -295,9 +295,12 @@ function FormA0(props:{loadValues}){
 
                 <FormSection title={sections["Z. badawcze"]}>
                     {/*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>*/}
-                    <BlockListInput required={false} className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
-                    <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
+                    <BlockListInput required={false} className={"col-12 col-xl-6 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
+                    <BlockList className={"col-12 col-xl-6"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
+                </FormSection>
+                <FormSection title={sections["Publikacje/prace"]}>
+                   <DummyTag/>
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
