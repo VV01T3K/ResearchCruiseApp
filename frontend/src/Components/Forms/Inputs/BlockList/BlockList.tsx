@@ -21,7 +21,7 @@ function BlockList(props: Props) {
                         rules={{
                             required: props.required ?? requiredMsg, validate: {
                                 notEmpty: (value) => {
-                                        if (Object.values(value).some((row)=>Object.values(row).some((val)=>!val))) {
+                                        if (Object.values(value).some((row)=>Object.values(row).some((val)=>val===""))) {
                                             return "Uzupełnij wszystkie pola";
                                         }
                                     return true;
