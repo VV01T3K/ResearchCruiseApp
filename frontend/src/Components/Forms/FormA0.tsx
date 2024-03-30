@@ -21,7 +21,7 @@ import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 
 
-function FormA0(props:{loadValues:any, onSubmit:any}){
+function FormA0(props:{loadValues?:any}){
 
     const form = useForm({
         mode: 'onBlur',
@@ -45,7 +45,7 @@ function FormA0(props:{loadValues:any, onSubmit:any}){
 
     // @ts-ignore
     return (
-        <FormTemplate form={form} loadValues={props.loadValues} send={()=>props.onSubmit(form.getValues(), form)}>
+        <FormTemplate form={form} loadValues={props.loadValues} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
