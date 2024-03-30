@@ -54,6 +54,32 @@ function TaskInput(props: Props) {
         {description:""},
     ]
 
+    const selectOptions = () =>{
+        const values = Object.values(props.historicalTasks).map((key) => {
+            const options2 = {month: '2-digit', year: 'numeric'}
+            const values = key.values
+            const type = key.type
+            const string = (values.author ? ("Autor: " + values.author + ", ") : "")
+                + (values.title ? ("Tytuł: " + values.title + ", ") : "")
+                + (values.institution ? ("Instytucja: " + values.institution + ", ") : "")
+                + (values.date ? ("Data: " + new Date(values.date).toLocaleDateString('pl-PL') + ", ") : "")
+                + (values.time ? ("Od: " + new Date(values.time.startDate).toLocaleDateString('pl-PL', options2) + " do: " + new Date(values.time.endDate).toLocaleDateString('pl-PL', options2) + ", ") : "")
+                + (values.financingAmount ? ("Kwota: " + values.financingAmount + " zł, ") : "")
+                + (values.description ? ("Opis: " + values.description + ", ") : "")
+
+            return {type:type, label: string, value: key}
+        })
+        var selectOptions:Array<{label:string, options:object}> = []
+        Object.keys(options)
+            .forEach((value, index)=>{
+
+            selectOptions = [...selectOptions, {label:value,options:values.filter(item => item.type == index).map(item=>{return{label: item.label, value: item.value}})}]
+
+
+        })
+        return selectOptions
+    }
+
     const handleChange = (field:{value:Array<{ values:any }>}, row:{values:object}, rowIndex:number, index:number, newValue:string) => {
         field.value[rowIndex].values[Object.keys(row.values)[index]] = newValue
         props.form!.setValue(props.name, field.value, {shouldTouch:true, shouldValidate:true, shouldDirty:true})
@@ -78,20 +104,14 @@ function TaskInput(props: Props) {
                         rules = {{ required:requiredMsg,validate: {
                             notEmptyArray:(value)=>{
                                 if(
-                                value.some((val:object)=> {
-                                    return Object.values(Object.values(val)[0]).some((x)=> {
+                                value.some((val: { values:object })=> {
+                                    return Object.values(val.values).some((x)=> {
                                         if (typeof x === 'string' && x.trim() === '') {
                                             return true;
                                         }
                                         else if (typeof x === 'object') {
-                                            if(Object.keys(x).length < 2)
-                                                return true;
-
-                                            for (let key in x) {
-                                                if (x.hasOwnProperty(key) && typeof x[key] === 'string' && x[key].trim() === '') {
-                                                    return true; // Zwraca true, jeśli znaleziono pusty string
-                                                }
-                                            }
+                                            if(Object.values(x).some(y =>y==''))
+                                                return true
                                         }
 
                                         return false;
@@ -254,7 +274,7 @@ function TaskInput(props: Props) {
                                         onClick={() => {
                                             const val = field.value;
                                             val.splice(rowIndex,1)
-                                            props.form!.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                                            props.form!.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouch:true})
                                         }}
                                 >
                                     -
@@ -308,15 +328,7 @@ function TaskInput(props: Props) {
                                 zIndex: 9999
                             })
                         }}
-                        options ={Object.values(props.historicalTasks).map((key)=>{
-                            // const task = Object.keys(options)[Object.keys(key)[0]];
-                            // const values = Object.keys(Object.values(options)[Object.keys(key)[0]]);
-                            const values = key.values
-                            const string =  "Autor:" + (values.author?? "") + ", Tytuł:" + (values.title?? "")
-
-                            return{ label:string, value:  key}
-                        }
-                        )}
+                        options ={selectOptions()}
                         value={""}
                         onChange={(selectedOption: { label: any, value: any })=> {
                             props.form!.setValue(props.name, [...field.value,selectedOption.value], {shouldValidate:true, shouldDirty:true, shouldTouch:true})

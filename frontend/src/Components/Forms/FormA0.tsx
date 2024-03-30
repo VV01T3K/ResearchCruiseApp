@@ -21,50 +21,14 @@ import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 
 
-function FormA0(props:{loadValues:any}){
-    const [userData, setUserData] = useState(null)
-
-    useEffect(
-        () => {
-            Api.get('/formA')
-                .then(response => setUserData(response.data))
-                .catch(()=> {})
-            // console.log(userData)
-            return () => {};
-        },
-        []
-    );
-
-    const defaultValues = {
-        // managers: null,
-        // supplyManagers: null,
-        // years: null,
-        // acceptedPeriod: [0,24],
-        // optimalPeriod: [0,24],
-        // cruiseDays: 0,
-        // cruiseTime: 0,
-        // notes: null,
-        // shipUsage: null,
-        // diffrentUsage: null,
-    }
+function FormA0(props:{loadValues:any, onSubmit:any}){
 
     const form = useForm({
         mode: 'onBlur',
         // defaultValues: defaultValues,
         shouldUnregister: false
     });
-    const saveValues = (data:any) => {
-        // Tu możesz zapisać dane do Local Storage lub innego źródła danych
-        localStorage.setItem('formData', JSON.stringify(data));
-    };
 
-    React.useEffect(() => {
-        if (props.loadValues) {
-            Object.entries(props.loadValues).forEach(([key, value]) => {
-                form.setValue(key, value, {shouldDirty:true, shouldValidate:true, shouldTouch:true});
-            });
-        }
-    }, [form.setValue]);
 
     const [sections, setSections] = useState({
         "Kierownik":"Kierownik zgłaszanego rejsu",
@@ -81,7 +45,7 @@ function FormA0(props:{loadValues:any}){
 
     // @ts-ignore
     return (
-        <FormTemplate send={()=>{console.log(form.getValues()); console.log(form.formState.errors); console.log(form.formState.dirtyFields)}} save={()=>saveValues(form.getValues())}>
+        <FormTemplate form={form} loadValues={props.loadValues} send={()=>props.onSubmit(form.getValues(), form)}>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
@@ -207,7 +171,50 @@ function FormA0(props:{loadValues:any}){
 
                 <FormSection title={sections.Zadania}>
                     <TaskInput name={"wejscie"} historicalTasks={[
-                        {type:0, values:{author:"sads", title:"sadds"}}
+
+                            {
+                                "type": 5,
+                                "values": {
+                                    "title": "3re",
+                                    "time": {
+                                        "startDate": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
+                                        "endDate": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                    },
+                                    "financingAmount": "0.00"
+                                }
+                            },
+                            {
+                                "type": 5,
+                                "values": {
+                                    "title": "3re",
+                                    "time": {
+                                        "startDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
+                                        "endDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
+                                    },
+                                    "financingAmount": "0.00"
+                                }
+                            },
+                            {
+                                "type": 11,
+                                "values": {
+                                    "description": "rtetretret"
+                                }
+                            },
+                            {
+                                "type": 3,
+                                "values": {
+                                    "title": "fsdfds",
+                                    "institution": "ffsdff",
+                                    "date": "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                }
+                            },
+                            {
+                                "type": 0,
+                                "values": {
+                                    "author": "sdfdsf",
+                                    "title": "dsfdfsd"
+                                }
+                            }
                     ]} className={"col-12"} label={"ss"}/>
                 </FormSection>
 
