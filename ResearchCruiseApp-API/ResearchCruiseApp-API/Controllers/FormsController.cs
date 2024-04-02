@@ -30,12 +30,12 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         //metody do przyjmowania formularzy (POST) 
-        public async Task<IActionResult> AddForm([FromBody] FormsModel formsModel)
-        {
-            
-
-            return Ok();
-        }
+        // public async Task<IActionResult> AddForm([FromBody] FormsModel formsModel)
+        // {
+        //     
+        //
+        //     return Ok();
+        // }
         
         //metoda zwracania formualrzy listy
     }

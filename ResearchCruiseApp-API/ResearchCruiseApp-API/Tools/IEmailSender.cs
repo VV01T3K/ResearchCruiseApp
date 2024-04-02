@@ -4,7 +4,7 @@ namespace ResearchCruiseApp_API.Tools;
 
 public interface IEmailSender
 {
-    public Task SendEmailConfirmationMessageAsync(
+    public Task SendAccountConfirmationMessageAsync(
         User user, string email, string roleName, IServiceProvider serviceProvider, bool changeEmail = false);
 
     public Task SendAccountAcceptedMessageAsync(User user);
