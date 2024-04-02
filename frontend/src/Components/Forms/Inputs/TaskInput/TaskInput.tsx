@@ -130,7 +130,7 @@ function TaskInput(props: Props) {
                 </div>
                 <div className={"w-100"}>
                     {!field.value.length &&
-                        <div className="d-flex flex-row justify-content-center bg-light p-2 ">
+                        <div className="d-flex flex-row justify-content-center bg-light p-2 border">
                             <div className="text-center">Nie wybrano żadnego zadania</div>
                         </div>
                     }
@@ -270,7 +270,7 @@ function TaskInput(props: Props) {
                                 <div className={"align-items-center justify-content-center d-flex"}>
                                 <button type="button"
                                         style={{fontSize:"inherit"}}
-                                        className=" btn btn-primary"
+                                        className=" btn btn-info"
                                         onClick={() => {
                                             const val = field.value;
                                             val.splice(rowIndex,1)
@@ -285,27 +285,29 @@ function TaskInput(props: Props) {
                     ))}
                 </div>
 
-                <div className="d-inline-flex p-2 w-100">
-                    <ButtonGroup as={Dropdown}
-                                 className={"w-100 h-100 p-2 align-self-center" + Style.centeredDropdown}
+                <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
+                                                    justify-content-center"
                     >
-                        <Dropdown.Toggle  disabled={disabled} variant="primary">
-                            +
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            {Object.keys(options).map((key, index) => (
-                                <Dropdown.Item key={index} onClick={() => {
-                                    props.form!.setValue(props.name, [...field.value, {type:index, values:defaultValues[index]}], {shouldValidate:true, shouldDirty:true, shouldTouch:true})
-                                }
-                                }>
-                                    {key}
-                                </Dropdown.Item>
-                            ))}
-                        </Dropdown.Menu>
-                    </ButtonGroup>
+                        <ButtonGroup as={Dropdown} className={"w-100 h-100 align-self-center" + Style.centeredDropdown}>
+                            <Dropdown.Toggle disabled={disabled} variant="info" style={{fontSize:"inherit"}}>
+                                Dodaj nowe
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                {Object.keys(options).map((key, index) => (
+                                    <Dropdown.Item key={index} onClick={() => {
+                                        props.form!.setValue(props.name, [...field.value, {type:index, values:defaultValues[index]}], {shouldValidate:true, shouldDirty:true, shouldTouch:true})
+                                    }
+                                    }>
+                                        {key}
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Menu>
+                        </ButtonGroup>
+                    </div>
                     <Select
                         minMenuHeight={300}
-                        className="d-flex col-6 text-center p-2 justify-content-center"
+                        className="d-flex col-12 col-xl-6 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2 "
                         isDisabled={disabled}
                         menuPlacement="auto"
                         placeholder="Dodaj z historii"

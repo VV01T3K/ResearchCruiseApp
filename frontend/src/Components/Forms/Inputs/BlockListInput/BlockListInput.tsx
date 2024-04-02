@@ -107,7 +107,7 @@ function BlockListInput(props: Props){
                                     </div>
                                     <div className="col-1 d-flex justify-content-center align-items-center p-2">
                                         <button type="button"
-                                                className="btn btn-primary"
+                                                className="btn btn-info"
                                                 onClick={() => {
                                                     const val = field.value;
                                                     val.splice(index, 1)
@@ -130,7 +130,7 @@ function BlockListInput(props: Props){
                     </div>
 
                     <button
-                        className={`btn btn-primary ${props.form!.formState.errors[props.name] ? "disabled " : ""}`}
+                        className={`btn btn-info ${props.form!.formState.errors[props.name] ? "disabled " : ""}`}
                         type="button"
                         onClick={()=>{props.form!.setValue(props.name, [...field.value, {value:``, count:''}],
                             {shouldValidate:true, shouldDirty:true, shouldTouch:true})}}

@@ -129,7 +129,7 @@ function BlockList(props: Props) {
                                     <div
                                         className="col-1 d-flex justify-content-center align-items-center p-2">
                                         <button type="button"
-                                                className="btn btn-primary"
+                                                className="btn btn-info"
                                                 onClick={() => {
                                                     const val = field.value;
                                                     val.splice(index, 1)
@@ -152,7 +152,7 @@ function BlockList(props: Props) {
                     <Select minMenuHeight={300}
                             menuPlacement="auto"
                             isDisabled={disabled}
-                            className={`bg-primary text-white`}
+                            className={`bg-info text-white`}
                             placeholder={disabled ? "": "Wybierz opcję lub wyszukaj"}
                             styles={{
                                 control: (provided, state) => ({
