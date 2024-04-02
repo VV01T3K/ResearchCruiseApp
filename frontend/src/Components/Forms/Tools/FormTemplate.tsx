@@ -70,10 +70,10 @@ function FormTemplate(props: Props) {
                     </div>
                     <div className="d-flex flex-row justify-content-center border-top border-black w-100 bg-white" style={{zIndex:9999}}>
                         <div className="d-flex col-6 text-center p-2 justify-content-center">
-                            <button onClick={saveValues} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
+                            <button onClick={saveValues} className="btn btn-info w-100" style={{fontSize:"inherit"}}>Zapisz</button>
                         </div>
                         <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                            <button onClick={handleSubmit} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                            <button onClick={handleSubmit} className="btn btn-info w-100" style={{fontSize:"inherit"}}>Wyślij</button>
                         </div>
                     </div>
                 </div>

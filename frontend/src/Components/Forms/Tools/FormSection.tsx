@@ -57,7 +57,7 @@ function FormSection(props: Props) {
         <div className="accordion-item border-2 border-black border-bottom">
             <div onClick={() => setIsActive(!isActive)}
                  id={props.id}
-                 className={"accordion-title d-flex flex-row p-1 ps-3 pe-3 bg-light sticky-top z-2 border-bottom "}
+                 className={"accordion-title d-flex flex-row pt-2 pb-2 ps-3 pe-3 bg-light sticky-top z-2 border-bottom "}
                  style={{cursor:"pointer"}}
             >
                 <div className={"d-flex flex-column col-10"} style={{fontSize: "1rem"}}>

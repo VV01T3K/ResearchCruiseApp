@@ -271,7 +271,7 @@ export default function SpubTasksInput(props: Props){
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
                                                     <button type="button" style={{fontSize:"inherit"}}
-                                                            className="btn btn-primary"
+                                                            className="btn btn-info"
                                                             onClick={() => {
                                                                 const val: SpubTask[] = field.value;
 
@@ -299,8 +299,9 @@ export default function SpubTasksInput(props: Props){
                                     <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
                                                     justify-content-center"
                                     >
-                                        <button style={{fontSize:"inherit"}}
-                                            className={`btn btn-primary w-100
+                                        <button
+                                            style={{fontSize:"inherit"}}
+                                            className={`btn btn-info w-100
                                                 ${ disabled ? "disabled" : ""}`
                                             }
                                             type="button"

@@ -233,7 +233,7 @@ export default function ContractsInput(props: Props){
                                              style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                         >
                                             <button type="button"
-                                                    className="btn btn-primary"
+                                                    className="btn btn-info"
                                                     onClick={() => {
                                                         const val: Contract[] = field.value;
                                                         val.splice(index, 1)
@@ -262,7 +262,7 @@ export default function ContractsInput(props: Props){
                             >
                                 <button
                                     style={{fontSize:"inherit"}}
-                                    className={`btn btn-primary w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}
+                                    className={`btn btn-info w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}
                                     type="button"
                                     onClick={() => {
                                         const newContract: Contract = {
