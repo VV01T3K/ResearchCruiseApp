@@ -38,6 +38,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>EmailsResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="App_GlobalResources\Roles.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Roles.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -45,6 +49,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>EmailsResources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="App_GlobalResources\Roles.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Roles.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

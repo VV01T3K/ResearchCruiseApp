@@ -1,8 +1,11 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using System.Net.Mail;
+using System.Resources;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Types;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -36,12 +39,16 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
         var emailTemplatePath = webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar +
                                 "Templates" + Path.DirectorySeparatorChar +
                                 "EmailTemplates" + Path.DirectorySeparatorChar +
-                                "accountConfirmationEmail.html";
+                                "accountConfirmationEmail.html"; ;
+
+        var cultureInfo = new CultureInfo("pl-pl");
+        var resourceManager = 
+            new ResourceManager("ResearchCruiseApp_API.App_GlobalResources.Roles", typeof(Roles).Assembly);
         
         var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
             .Replace("{{firstName}}", user.FirstName)
             .Replace("{{lastName}}", user.LastName)
-            .Replace("{{roleText}}", $" {RoleName.Translate(roleName, "pl-PL")} ")
+            .Replace("{{roleText}}", $" {resourceManager.GetString(roleName, cultureInfo)} ")
             .Replace("{{link}}", link);
 
 
