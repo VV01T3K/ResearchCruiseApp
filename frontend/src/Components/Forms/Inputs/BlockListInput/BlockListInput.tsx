@@ -1,17 +1,14 @@
 import React from "react";
-import {Controller, get, useFieldArray} from "react-hook-form";
-import Style from "./BlockListInput.module.css"
-import CSSModules from "react-css-modules";
+import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../LoginPage/ErrorCode";
-import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
     className: string,
     label: string,
-    name,
-    form?,
-    required?
+    name:string,
+    form?: UseFormReturn,
+    required? :boolean
 }
 
 function BlockListInput(props: Props){
@@ -24,7 +21,7 @@ function BlockListInput(props: Props){
                         rules = {{required:props.required ?? true,validate: {
                             notEmpty: (value) => {
                                 for (const key in value) {
-                                    if (value.hasOwnProperty(key) && value[key].value === "") {
+                                    if (value.hasOwnProperty(key) && (value[key].value === "" || value[key].count === "")) {
                                         return "Uzupełnij wszystkie pola";
                                     }
                                 }
@@ -32,74 +29,120 @@ function BlockListInput(props: Props){
                             }}
                             }}
                         render={({field})=>(
-                            <>
-            <table className="table-striped w-100">
-                <thead className="text-white text-center bg-primary">
-                    <tr className="d-flex flex-row center align-items-center w-100">
-                        <th className="text-center p-2 w-100">{props.label}</th>
-                    </tr>
-                </thead>
+                <>
+                    <div className="w-100">
+                        <div className="text-white text-center bg-primary">
+                            <div>
+                                <div className="p-2">{props.label}</div>
+                            </div>
+                        </div>
 
-                <tbody>
-                    {!field.value.length &&
-                        <tr className="d-flex flex-row bg-light p-2 justify-content-center">
-                            <th colSpan={3} className={"text-center"} >Nie dodano żadnej jednostki</th>
-                        </tr>
-                    }
-                    {field.value.map((item, index) => (
-                        <React.Fragment key={index}>
-                            <tr className="d-flex flex-row justify-content-center align-items-center border bg-light">
-                                <th className="w-25 text-center p-2 border-end ">{index}</th>
-                                <th className="w-75 text-center p-2">
-                                    <input
-                                     {...field}
-                                        value={field.value[index].value}
-                                           type="text"
-                                           className="w-100"
-                                           onChange={(e)=> {
-                                               var val = field.value;
-                                               val[index].value = e.target.value
-                                               field.onChange(val)
-                                           }}
-                                    />
-                                </th>
-                                <th className="d-inline-flex p-2">
-                                    <button type="button"
-                                            className="btn btn-primary"
-                                            onClick={() => {
-                                                const val = field.value;
-                                                val.splice(index,1)
-                                                props.form.clearErrors(props.name)
-                                                props.form.setValue(props.name, val, {shouldValidate:true, shouldDirty:true, shouldTouched:true})
-                                            }
-                                            }
-                                    >
-                                        -
-                                    </button>
-                                </th>
-                            </tr>
+                        <div>
+                            <div className="text-white text-center bg-secondary">
+                                <div className="d-flex flex-row center">
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end col-1">
+                                        <b>Lp.</b>
+                                    </div>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end col-7">
+                                        <b>Instytucja</b>
+                                    </div>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end col-3">
+                                        <b>Liczba gości</b>
+                                    </div>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end col-1"/>
+                                </div>
+                            </div>
+                        {!field.value.length &&
+                            <div className="d-flex flex-row bg-light p-2 justify-content-center">
+                                <div className={"text-center"}>Nie dodano żadnej jednostki</div>
+                            </div>
+                        }
+                        {field.value.map((item:{value:string, count:string}, index:number) => (
+                            <div className={"d-flex"} key={index}>
+                                    <div className="d-flex justify-content-center align-items-center p-2 border-end col-1">{index}</div>
+                                    <div className="d-flex justify-content-center align-items-center p-2 border-end text-center col-7">
+                                        <textarea
+                                            {...field}
+                                            value={item.value}
+                                            style={{resize: "none"}}
+                                            className="w-100 h-100"
+                                            onChange={(e) => {
+                                                if (e.target.value.length < 100) {
+                                                    var val = field.value;
+                                                    val[index].value = e.target.value
+                                                    props.form!.setValue(props.name, val, {
+                                                        shouldDirty: true,
+                                                        shouldTouch: true,
+                                                        shouldValidate: true
+                                                    })
+                                                    field.onChange(val)
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="col-3 d-flex justify-content-center align-items-center p-2 border-end text-center">
+                                        <textarea style={{resize: "none"}}
+                                                  {...field}
+                                                  className="text-center placeholder-glow w-100"
+                                                  value={item.count}
+                                                  onChange={(e) => {
+                                                      const sanitizedValue = parseInt(e.target.value);
+                                                      var val = field.value;
+                                                      console.log(sanitizedValue)
+                                                      if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
+                                                          val[index].count = sanitizedValue
 
-                        </React.Fragment>
-                    ))}
-                </tbody>
-            </table>
+                                                      } else {
+                                                          val[index].count = '0'
+                                                      }
+                                                      props.form!.setValue(props.name, val, {
+                                                          shouldDirty: true,
+                                                          shouldTouch: true,
+                                                          shouldValidate: true
+                                                      })
+                                                      field.onChange(val)
+                                                  }}
+                                                  placeholder="0"
+                                        />
+                                    </div>
+                                    <div className="col-1 d-flex justify-content-center align-items-center p-2">
+                                        <button type="button"
+                                                className="btn btn-primary"
+                                                onClick={() => {
+                                                    const val = field.value;
+                                                    val.splice(index, 1)
+                                                    props.form!.clearErrors(props.name)
+                                                    props.form!.setValue(props.name, val, {
+                                                        shouldValidate: true,
+                                                        shouldDirty: true,
+                                                        shouldTouch: true
+                                                    })
+                                                }
+                                                }
+                                        >
+                                            -
+                                        </button>
+                                    </div>
 
-            <button className={`btn btn-primary ${props.form.formState.errors[props.name] ? "disabled " : ""}`}
-                    type="button"
-                    onClick={(selectedOption)=>{
-                        props.form.setValue(props.name, [...field.value, {value:``}], {shouldValidate:true, shouldDirty:true, shouldTouched:true})
+                            </div>
+                        ))}
+                        </div>
+                    </div>
 
-
-                    }}
-            >
-                +
-            </button>
-                            </>)}/>
+                    <button
+                        className={`btn btn-primary ${props.form!.formState.errors[props.name] ? "disabled " : ""}`}
+                        type="button"
+                        onClick={()=>{props.form!.setValue(props.name, [...field.value, {value:``, count:''}],
+                            {shouldValidate:true, shouldDirty:true, shouldTouch:true})}}
+                    >
+                        +
+                    </button>
+                </>
+            )}/>
             {
-                props.form.formState.errors[props.name] &&
-
+                props.form!.formState.errors[props.name] &&
                 <ErrorCode
-                    code={props.form.formState.errors[props.name].message}
+                    code={props.form!.formState.errors[props.name]!.message}
                 />
             }
         </div>
@@ -107,4 +150,4 @@ function BlockListInput(props: Props){
 }
 
 
-export default  CSSModules(BlockListInput, Style)
+export default  BlockListInput

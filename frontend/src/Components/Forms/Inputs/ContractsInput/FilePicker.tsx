@@ -1,13 +1,11 @@
 import file_icon from "../../../../resources/file_icon.png";
-import React, {MouseEvent, useRef, useState} from "react";
-import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
-import {ControllerRenderProps} from "react-hook-form";
-import app from "../../../App";
+import React from "react";
+import {UseFormReturn} from "react-hook-form";
 import {Contract} from "./ContractsInput";
 
 
 type Props = {
-    field: any,
+    field: {value:string},
     name: string,
     fileFieldName: string,
     row: Contract,

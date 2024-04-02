@@ -65,7 +65,6 @@ function App() {
             unsubscribeLogout();
         };
     }, [logoutListener])
-
     return (
         <div className="vh-100">
             <PageHeader name={userData ? userData.firstName : null} />
@@ -73,7 +72,6 @@ function App() {
                     {userData && userData["roles"].includes("Shipowner") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<ShipOwnerPanel />} />
                         </>
@@ -82,7 +80,6 @@ function App() {
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/FormB" element={<FormB0 />} />
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
@@ -93,7 +90,6 @@ function App() {
                     {userData && userData["roles"].includes("CruiseManager") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/FormB" element={<FormB0 />} />
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/*" element={<ManagerPanel />} />

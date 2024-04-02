@@ -21,50 +21,14 @@ import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 
 
-function FormB0(props:{loadValues}){
-    const [userData, setUserData] = useState(null)
-
-    useEffect(
-        () => {
-            Api.get('/formA')
-                .then(response => setUserData(response.data))
-                .catch(()=> {})
-            // console.log(userData)
-            return () => {};
-        },
-        []
-    );
-
-    const defaultValues = {
-        // managers: null,
-        // supplyManagers: null,
-        // years: null,
-        // acceptedPeriod: [0,24],
-        // optimalPeriod: [0,24],
-        // cruiseDays: 0,
-        // cruiseTime: 0,
-        // notes: null,
-        // shipUsage: null,
-        // diffrentUsage: null,
-    }
+function FormB0(props:{loadValues?:any}){
 
     const form = useForm({
         mode: 'onBlur',
         // defaultValues: defaultValues,
         shouldUnregister: false
     });
-    const saveValues = (data) => {
-        // Tu możesz zapisać dane do Local Storage lub innego źródła danych
-        localStorage.setItem('formData', JSON.stringify(data));
-    };
 
-    React.useEffect(() => {
-        if (props.loadValues) {
-            Object.entries(props.loadValues).forEach(([key, value]) => {
-                form.setValue(key, value, {shouldDirty:true, shouldValidate:true, shouldTouch:true});
-            });
-        }
-    }, [form.setValue]);
 
     const [sections, setSections] = useState({
         "Kierownik":"Kierownik zgłaszanego rejsu",
@@ -72,23 +36,18 @@ function FormB0(props:{loadValues}){
         "Pozwolenia": "Dodatkowe pozwolenia do planowanych podczas rejsu badań",
         "Rejon": "Rejon prowadzenia badań",
         "Cel": "Cel Rejsu",
-        "L. osób": "Przewidywana liczba osób załogi naukowej",
         "Zadania": "Zadania do zrealizowania w trakcie rejsu",
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
-        "Efekty": "Efekty rejsu",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
     // @ts-ignore
     return (
-        <FormTemplate send={()=>{console.log(form.getValues()); console.log(form.formState.errors); console.log(form.formState.dirtyFields)}} save={()=>saveValues(form.getValues())}>
+        <FormTemplate form={form} loadValues={props.loadValues} type='B'>
             <FormTitle sections={sections} title={"Formularz B"} />
-            <FormWithSections sections={sections} form={form}
-                              onChange={()=>null
-                                  //console.log(form.getValues())
-                              }>
+            <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
                                          name="managers"
@@ -108,16 +67,15 @@ function FormB0(props:{loadValues}){
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
+                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="acceptedPeriod"
                                  connectedName="optimalPeriod"
                                  label="Dopuszczalny okres, w którym miałby się odbywać rejs:"
                     />
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
+                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="optimalPeriod"
                                  range={form.getValues("acceptedPeriod")}
                                  label="Optymalny okres, w którym miałby się odbywać rejs"
-                        // watch={form.watch("acceptedPeriod")}
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  name="cruiseDays"
@@ -190,7 +148,7 @@ function FormB0(props:{loadValues}){
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap className={"col-8"} label="Obszar prowadzonych badań" name="area" />
+                    <ClickableMap label="Obszar prowadzonych badań" name="area" />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -211,47 +169,126 @@ function FormB0(props:{loadValues}){
                     />
                 </FormSection>
 
-                <FormSection  title={sections["L. osób"]}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Pracownicy UG"
-                                 name="ugEmployees"
-                                 maxVal={20}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Studenci I, II st. i doktoranci"
-                                 name="students"
-                                 maxVal={20}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="guests"
-                                 maxVal={20}
-                    />
-                </FormSection>
-
                 <FormSection title={sections.Zadania}>
-                    <TaskInput name={"wejscie"} historicalTasks={{0:{0:{0:"autor", 1:"coś"}}, 1:{0:{0:"autor", 1:"coś"}}}} className={"col-12"} label={"ss"}/>
+                    <TaskInput name={"wejscie"} historicalTasks={[
+
+                        {
+                            "type": 5,
+                            "values": {
+                                "title": "3re",
+                                "time": {
+                                    "startDate": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
+                                    "endDate": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                },
+                                "financingAmount": "0.00"
+                            }
+                        },
+                        {
+                            "type": 5,
+                            "values": {
+                                "title": "3re",
+                                "time": {
+                                    "startDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
+                                    "endDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
+                                },
+                                "financingAmount": "0.00"
+                            }
+                        },
+                        {
+                            "type": 11,
+                            "values": {
+                                "description": "rtetretret"
+                            }
+                        },
+                        {
+                            "type": 3,
+                            "values": {
+                                "title": "fsdfds",
+                                "institution": "ffsdff",
+                                "date": "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                            }
+                        },
+                        {
+                            "type": 0,
+                            "values": {
+                                "author": "sdfdsf",
+                                "title": "dsfdfsd"
+                            }
+                        }
+                    ]} className={"col-12"} label={"ss"}/>
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>
                     <ContractsInput
                         className="col-12"
                         name="contracts"
+                        historicalContracts={[
+                            {
+                                category: "international",
+                                institution: {
+                                    name: "Instytucja 1",
+                                    unit: "Jednostka 1",
+                                    localization: "Lokalizacja 1"
+                                },
+                                description: "Opis 1",
+                                scan: {
+                                    name: "Skan 1",
+                                    content: "1111111111"
+                                }
+                            },
+                            {
+                                category: "international",
+                                institution: {
+                                    name: "Instytucja 2",
+                                    unit: "Jednostka 2",
+                                    localization: "Lokalizacja 2"
+                                },
+                                description: "Opis 2",
+                                scan: {
+                                    name: "Skan 2",
+                                    content: "222222222"
+                                }
+                            },
+                            {
+                                category: "domestic",
+                                institution: {
+                                    name: "Instytucja 3",
+                                    unit: "Jednostka 3",
+                                    localization: "Lokalizacja 3"
+                                },
+                                description: "Opis 3",
+                                scan: {
+                                    name: "Skan 3",
+                                    content: "3333333333"
+                                }
+                            },
+                            {
+                                category: "domestic",
+                                institution: {
+                                    name: "Instytucja 4",
+                                    unit: "Jednostka 4",
+                                    localization: "Lokalizacja 4"
+                                },
+                                description: "Opis 4",
+                                scan: {
+                                    name: "Skan 4",
+                                    content: "444444444"
+                                }
+                            }
+                        ]}
+                        required={false}
                     />
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    {/*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"bl"} required={false}/>*/}
-                    <BlockListInput required={false} className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
-                    <BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
+                    <BlockListInput required={false} className={"col-12 col-xl-6 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
+                    <BlockList className={"col-12 col-xl-6"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
                 </FormSection>
-                {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}
-                {/*      </FormSection>*/}
-                {/*    <FormSection completed={completedSections[10]} id={"10"} title={sections.Efekty}>*/}
-                {/*        <TaskInput name={"wejscie2"} form={form} className={"col-12"} label={""}/>*/}
+                <FormSection title={sections["Publikacje/prace"]}>
+                    <DummyTag/>
+                </FormSection>
 
-                {/*    </FormSection>*/}
                 <FormSection title={sections.SPUB}>
                     <SpubTasksInput
                         className="col-12"
@@ -273,9 +310,10 @@ function FormB0(props:{loadValues}){
                                 name: "Bałtycki pobór zasobów mineralnych na obszarze Polskiej WSE"
                             },
                         ]}
+                        required={false}
                     />
                 </FormSection>
-                {/*    <button type={"submit"}/>*/}
+
             </FormWithSections>
         </FormTemplate>
     )

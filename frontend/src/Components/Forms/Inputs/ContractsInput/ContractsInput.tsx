@@ -261,6 +261,7 @@ export default function ContractsInput(props: Props){
                                 justify-content-center"
                             >
                                 <button
+                                    style={{fontSize:"inherit"}}
                                     className={`btn btn-primary w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}
                                     type="button"
                                     onClick={() => {
@@ -303,11 +304,11 @@ export default function ContractsInput(props: Props){
                                         border: "1px solid grey",
                                         width: "100%"
                                     }),
-                                    placeholder: (provided: any) => ({
+                                    placeholder: (provided) => ({
                                         ...provided,
                                         textAlign: "center"
                                     }),
-                                    input: (provided: any) => ({
+                                    input: (provided) => ({
                                         ...provided
                                     }),
                                     menu: provided => ({
@@ -354,7 +355,7 @@ export default function ContractsInput(props: Props){
                                 }}
                             />
                             {props.form!.formState.errors[props.name] &&
-                                <ErrorCode code={props.form!.formState.errors[props.name].message} />
+                                <ErrorCode code={props.form!.formState.errors[props.name]!.message} />
                             }
                         </div>
                     </>

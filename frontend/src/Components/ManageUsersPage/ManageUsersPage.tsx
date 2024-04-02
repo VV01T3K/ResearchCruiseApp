@@ -3,7 +3,6 @@ import Page from "../Tools/Page";
 import Api from "../Tools/Api";
 import DataTable from 'react-data-table-component';
 import './ManageUsersPage.css'
-import {set} from "react-hook-form";
 type Props = {
     className?: string
 }
