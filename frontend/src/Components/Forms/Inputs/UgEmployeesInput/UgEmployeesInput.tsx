@@ -11,7 +11,7 @@ type Props = {
     form?:UseFormReturn
     required?: boolean,
 }
-function BlockList(props: Props) {
+function UgEmployeesInput(props: Props) {
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
     const disabled = props.form!.formState.errors[props.name] && props.form!.formState.errors[props.name]!.message != requiredMsg
     return (
@@ -201,4 +201,4 @@ function BlockList(props: Props) {
 }
 
 
-export default BlockList
+export default UgEmployeesInput

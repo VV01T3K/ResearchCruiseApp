@@ -253,14 +253,15 @@ export default function SpubTasksInput(props: Props){
                                                             )
                                                             field.onChange(field.value)
                                                         }}
-                                                        className="col-12"
+                                                        className="col-12 p-1"
                                                         rows={1}
                                                     />
                                                 </div>
                                                 <div className="d-flex justify-content-center align-items-center p-2"
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
-                                                    <button type="button" style={{fontSize:"inherit"}}
+                                                    <button type="button"
+                                                            style={{fontSize:"inherit"}}
                                                             className="btn btn-info"
                                                             onClick={() => {
                                                                 const val: SpubTask[] = field.value;
@@ -286,9 +287,7 @@ export default function SpubTasksInput(props: Props){
                                 </div>
 
                                 <div className="d-flex flex-row flex-wrap justify-content-center w-100">
-                                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
-                                                    justify-content-center"
-                                    >
+                                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize:"inherit"}}
                                             className={`btn btn-info w-100
@@ -340,7 +339,6 @@ export default function SpubTasksInput(props: Props){
                                                 zIndex: 9999
                                             })
                                         }}
-                                        placeHolder={"Wybierz"}
                                         options ={
                                             props.historicalSpubTasks.map((spubTask: SpubTask) => ({
                                                 label: `${spubTask.name} (${spubTask.yearFrom}–${spubTask.yearTo})`,
