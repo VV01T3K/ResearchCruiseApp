@@ -154,29 +154,19 @@ export default function SpubTasksInput(props: Props){
                                 <div className="table-striped w-100">
                                     <div className="text-white text-center bg-primary">
                                         <div className="d-flex flex-row center">
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                 style={{width: "5%"}}
-                                            >
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
                                                 <b>Lp.</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                 style={{width: "15%"}}
-                                            >
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
                                                 <b>Rok rozpoczęcia</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                 style={{width: "15%"}}
-                                            >
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
                                                 <b>Rok zakończenia</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                 style={{width: "60%"}}
-                                            >
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "60%"}}>
                                                 <b>Nazwa zadania</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2"
-                                                 style={{width: "5%"}}
-                                            />
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}}/>
 
                                             <div className="d-flex justify-content-center d-xl-none p-2 col-12">
                                                 <b>Zadania</b>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -24,34 +24,37 @@ type Props = {
 // const defaultOption = options[0];
 
 function TaskInput(props: Props) {
-    const options =
-        {'Praca licencjacka': ["Autor", "Tytuł" ],
+    const options= {
+        'Praca licencjacka': ["Autor", "Tytuł" ],
         'Praca magisterska': ["Autor", "Tytuł" ],
         'Praca doktorska': ["Autor", "Tytuł" ],
-        "Przygotowanie projektu naukowego": ["Tytuł", "Instytucja do której składany", "Przewidywany termin składania"],
-        "Realizacja projektu krajowego (NCN, NCBiR, itp)":  ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Realizacja projektu zagranicznego (ERC, Programy ramowe UE, fundusze norweskie, itp)":  ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Przygotowanie projektu naukowego": ["Tytuł", "Instytucja, do której składany", "Przewidywany termin składania"],
+        "Realizacja projektu krajowego (NCN, NCBiR, itp.)": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+        "Realizacja projektu zagranicznego (ERC, Programy ramowe UE, fundusze norweskie, itp)": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
         "Realizacja projektu wewnętrznego UG": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
         "Realizacja innego projektu naukowego":["Tytuł", "Ramy czasowe", "Kwota finansowania"],
         "Realizacja projektu komercyjnego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
         "Dydaktyka": ["Opis zajęcia dydaktycznego"],
         "Realizacja własnego zadania badawczego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
         "Inne zadanie": ["Opis zadania"]
-};
-    type time = {startDate:string, endDate:string}
+    }
+    type time = {
+        startDate: string,
+        endDate: string
+    }
     const defaultValues = [
-        {author:"", title:""},
-        {author:"", title:""},
-        {author:"", title:""},
-        {title:"", institution:"", date:""},
-        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
-        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
-        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
-        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
-        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
-        {description:""},
-        {title:"", time:{startDate:"", endDate:""}, financingAmount:""},
-        {description:""},
+        { author: "", title: "" },
+        { author: "", title: ""},
+        { author: "", title: ""},
+        { title: "", institution: "", date: ""},
+        { title: "", time: { startDate: "", endDate: ""}, financingAmount: "" },
+        { title: "", time: { startDate: "", endDate: ""}, financingAmount: "" },
+        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
+        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
+        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
+        { description: "" },
+        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
+        { description: "" },
     ]
 
     const selectOptions = () =>{
@@ -97,6 +100,21 @@ function TaskInput(props: Props) {
 
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
     const disabled = props.form!.formState.errors[props.name] && props.form.formState.errors[props.name]!.message != requiredMsg
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+    useEffect(
+        () => {
+            const handleResize = () => {
+                setWindowWidth(window.innerWidth);
+            };
+            window.addEventListener('resize', handleResize);
+            return () => {
+                window.removeEventListener('resize', handleResize);
+            };
+        },
+        []
+    );
+
     return (
         <div className={props.className + " p-3"}>
             <Controller name={props.name}  control={props.form!.control}
@@ -123,9 +141,20 @@ function TaskInput(props: Props) {
             <div className="table-striped w-100">
                 <div className="text-white text-center bg-primary">
                     <div className="d-flex flex-row center align-items-center">
-                        <div className="col-xl-3 text-center d-none d-xl-block border-end p-2">Zadanie</div>
-                        <div className=" col-xl-8 text-center d-lg-block d-xl-none p-2">Zadanie</div>
-                        <div className="w-75 text-center d-none d-xl-block p-2">Szczegóły</div>
+                        <div className="text-center d-none d-xl-block border-end p-2" style={{width: "5%"}}>
+                            <b>Lp.</b>
+                        </div>
+                        <div className="text-center d-none d-xl-block border-end p-2" style={{width: "20%"}}>
+                            <b>Zadanie</b>
+                        </div>
+                        <div className="text-center d-none d-xl-block border-end p-2" style={{width: "70%"}}>
+                            <b>Szczegóły</b>
+                        </div>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}}/>
+
+                        <div className="text-center d-lg-block d-xl-none p-2 col-12">
+                            <b>Zadania</b>
+                        </div>
                     </div>
                 </div>
                 <div className={"w-100"}>
@@ -134,19 +163,25 @@ function TaskInput(props: Props) {
                             <div className="text-center">Nie wybrano żadnego zadania</div>
                         </div>
                     }
-                    {field.value && field.value.map((row: {type:number, values:object }, rowIndex:number) => (
-                        <div key={rowIndex}
-                             className="d-flex flex-wrap border
-                             bg-light"
-                        >
-                            <div className="text-center align-items-center  col-12 col-xl-3 justify-content-center p-2
-                             d-inline-flex border-end">
+                    {field.value && field.value.map((row: {type: number, values: object }, rowIndex:number) => (
+                        <div key={rowIndex} className="d-flex flex-wrap border bg-light">
+                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
+                                {rowIndex + 1}.
+                            </div>
+                            <div className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
+                                <b>Zadanie {rowIndex + 1}.</b>
+                            </div>
+
+                            <div className="text-center align-items-center justify-content-center p-2 d-inline-flex border-end"
+                                 style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
+                            >
                                 {getTaskTitle(row)}
                             </div>
-                            <div className="text-center d-flex col-12 col-xl-8 ">
-                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start
-                                  pb-3  w-100">
-                                    {getFields(row).map((val:unknown, s, array:unknown[]) => {
+                            <div className="text-center d-flex border-end"
+                                 style={{width: windowWidth >= 1200 ? "70%" : "100%"}}
+                            >
+                                {<div className="d-flex flex-wrap justify-content-center justify-content-xl-start pb-3 w-100">
+                                    {getFields(row).map((val: unknown, s, array: unknown[]) => {
                                         return(
                                         <div key={s}
                                              className={`${getFields(row).length == 2
@@ -264,13 +299,13 @@ function TaskInput(props: Props) {
                                     })}
                                 </div>}
                             </div>
-                            <div className=" d-flex p-2 col-12 col-xl-1 justify-content-center
-                                            justify-content-xl-end"
+                            <div className="d-flex p-2 justify-content-center"
+                                 style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                             >
                                 <div className={"align-items-center justify-content-center d-flex"}>
                                 <button type="button"
                                         style={{fontSize:"inherit"}}
-                                        className=" btn btn-info"
+                                        className="btn btn-info"
                                         onClick={() => {
                                             const val = field.value;
                                             val.splice(rowIndex,1)
