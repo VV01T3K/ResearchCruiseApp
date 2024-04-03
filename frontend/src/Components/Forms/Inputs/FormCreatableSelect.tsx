@@ -37,7 +37,16 @@ function FormCreatableSelect(props: Props) {
                             return `Dodaj: ${inputValue}`;
                         }}
                         minMenuHeight={300} {...field}
-                        styles={{menu: (provided: any) => ({...provided, zIndex: 9999})}}
+                        styles={{
+                            control: (provided: any) => ({
+                                ...provided,
+                                cursor: "pointer"
+                            }),
+                            menu: (provided: any) => ({
+                                ...provided,
+                                zIndex: 9999
+                            })
+                        }}
                         options={props.values?.map(value => ({label: value, value}))}
                     />
                 )}

@@ -70,7 +70,7 @@ function GuestsInput(props: Props){
                                             <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "25%"}}>
                                                 <b>Liczba osób</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}/>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}} />
                                         </div>
                                     </div>
                                     {!field.value.length &&
@@ -82,18 +82,23 @@ function GuestsInput(props: Props){
                                         <div key={index}
                                              className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                         >
-                                                <div className="d-flex justify-content-center align-items-center p-2 border-end"
+                                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
                                                     {index + 1}.
                                                 </div>
-                                                <div className="d-flex justify-content-center align-items-center p-2 border-end text-center"
+                                                <div className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
+                                                    <b>Instytucja {index + 1}.</b>
+                                                </div>
+
+                                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                                                      style={{width: windowWidth >= 1200 ? "65%" : "100%"}}
                                                 >
+                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Instytucja</div>
                                                     <textarea
                                                         {...field}
                                                         value={row.institution}
-                                                        className="w-100 p-1"
+                                                        className="col-12 p-1"
                                                         onChange={(e) => {
                                                             if (e.target.value.length < 100) {
                                                                 row.institution = e.target.value
@@ -112,9 +117,10 @@ function GuestsInput(props: Props){
                                                         rows={1}
                                                     />
                                                 </div>
-                                                <div className="d-flex justify-content-center align-items-center p-2 border-end text-center"
+                                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                                                      style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                                                 >
+                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Liczba osób</div>
                                                     <input
                                                         type="text"
                                                         {...field}
@@ -206,7 +212,8 @@ function GuestsInput(props: Props){
                                                 ...provided,
                                                 boxShadow: "none",
                                                 border: "1px solid grey",
-                                                width: "100%"
+                                                width: "100%",
+                                                cursor: "pointer"
                                             }),
                                             placeholder: (provided: any) => ({
                                                 ...provided,
@@ -247,7 +254,7 @@ function GuestsInput(props: Props){
                                         }}
                                     />
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name].message} />
+                                        <ErrorCode code={props.form!.formState.errors[props.name]!.message} />
                                     }
                                 </div>
                             </>

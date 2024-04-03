@@ -32,7 +32,16 @@ function FormSelect(props: Props) {
                 render={({field}) => (
                     <Select minMenuHeight={300}
                             {...field}
-                            styles={{menu: provided => ({...provided, zIndex: 9999})}}
+                            styles={{
+                                control: (provided: any) => ({
+                                    ...provided,
+                                    cursor: "pointer"
+                                }),
+                                menu: provided => ({
+                                    ...provided,
+                                    zIndex: 9999
+                                })
+                            }}
                             options={props.values?.map(value => ({label: value, value}))}
                             onChange={(selectedOption) => {
                                 props.form!.setValue(props.name, selectedOption, { shouldDirty: true, shouldValidate: true, shouldTouch:true });

@@ -325,7 +325,8 @@ export default function SpubTasksInput(props: Props){
                                                 ...provided,
                                                 boxShadow: "none",
                                                 border: "1px solid grey",
-                                                width: "100%"
+                                                width: "100%",
+                                                cursor: "pointer"
                                             }),
                                             placeholder: (provided: any) => ({
                                                 ...provided,
