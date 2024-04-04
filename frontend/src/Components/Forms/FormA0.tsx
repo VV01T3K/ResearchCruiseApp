@@ -97,6 +97,7 @@ function FormA0(props:{loadValues?:any}){
                               required={false}
                               label="Uwagi dotyczące teminu"
                               name="notes"
+                              resize="none"
                     />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
@@ -117,6 +118,7 @@ function FormA0(props:{loadValues?:any}){
                                           label="Inny sposób użycia"
                                           name="diffrentUsage"
                                           required="Podaj sposób użycia"
+                                          resize="none"
                                 />
                             )
                         }
@@ -139,6 +141,7 @@ function FormA0(props:{loadValues?:any}){
                                           label="Jakie?"
                                           name="additionalPermissions"
                                           required="Podaj jakie"
+                                          resize="none"
                                 />
                             )
                         }
@@ -153,6 +156,7 @@ function FormA0(props:{loadValues?:any}){
                               required={false}
                               label="Opis"
                               name="areaInfo"
+                              resize="none"
                     />
                 </FormSection>
 
@@ -166,11 +170,12 @@ function FormA0(props:{loadValues?:any}){
                               label="Opis"
                               name="goalaInfo"
                               required="Opisz cel"
+                              resize="none"
                     />
                 </FormSection>
 
                 <FormSection title={sections.Zadania}>
-                    <TaskInput name={"wejscie"} historicalTasks={[
+                    <TaskInput name={"tasks"} historicalTasks={[
 
                             {
                                 "type": 5,
@@ -282,13 +287,13 @@ function FormA0(props:{loadValues?:any}){
 
                 <FormSection title={sections["Z. badawcze"]}>
                     <UgEmployeesInput
-                        className="col-12"
+                        className="col-12 col-xl-6"
                         label="Uczestnictwo osób z jednostek organizacyjnych UG"
                         name="ugEmployees"
                     />
                     <GuestsInput
                         required={false}
-                        className="col-12"
+                        className="col-12 col-xl-6"
                         label="Uczestnictwo gości spoza UG"
                         name="guests"
                         historicalGuestsInstitutions={[

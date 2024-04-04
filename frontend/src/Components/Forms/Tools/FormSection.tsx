@@ -72,10 +72,7 @@ function FormSection(props: Props) {
                     {isCompleted ? "+" : "!"}
                 </div>
             </div>
-            <div className={
-                    `d-flex flex-row flex-wrap justify-content-center p-2 ${isActive ? ' ' : 'visually-hidden'}`
-                }
-            >
+            <div className={`d-flex flex-row flex-wrap justify-content-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}>
                 {React.Children.map(props.children, (child, index) => {
                     return React.cloneElement(child as React.ReactElement, {form: props.form});
                 })}

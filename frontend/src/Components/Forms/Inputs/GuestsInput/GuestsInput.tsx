@@ -35,7 +35,7 @@ function GuestsInput(props: Props){
     );
 
     return (
-        <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
+        <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
                         rules = {{required:props.required ?? true,validate: {
@@ -61,16 +61,16 @@ function GuestsInput(props: Props){
 
                                     <div className="text-white text-center bg-secondary">
                                         <div className="d-flex flex-row center">
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "10%"}}>
                                                 <b>Lp.</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "65%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "60%"}}>
                                                 <b>Instytucja</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "25%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "20%"}}>
                                                 <b>Liczba osób</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}} />
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "10%"}} />
                                         </div>
                                     </div>
                                     {!field.value.length &&
@@ -83,7 +83,7 @@ function GuestsInput(props: Props){
                                              className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                         >
                                                 <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                     style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                                     style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                                 >
                                                     {index + 1}.
                                                 </div>
@@ -92,7 +92,7 @@ function GuestsInput(props: Props){
                                                 </div>
 
                                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                                     style={{width: windowWidth >= 1200 ? "65%" : "100%"}}
+                                                     style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                                                 >
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Instytucja</div>
                                                     <textarea
@@ -118,7 +118,7 @@ function GuestsInput(props: Props){
                                                     />
                                                 </div>
                                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                                     style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                     style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
                                                 >
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Liczba osób</div>
                                                     <input
@@ -147,7 +147,7 @@ function GuestsInput(props: Props){
                                                     />
                                                 </div>
                                                 <div className="d-flex justify-content-center align-items-center p-2"
-                                                     style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                                     style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                                 >
                                                     <button type="button"
                                                             className="btn btn-info"
@@ -173,9 +173,7 @@ function GuestsInput(props: Props){
                                 </div>
 
                                 <div className="d-flex flex-row flex-wrap justify-content-center w-100">
-                                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
-                                                                justify-content-center"
-                                    >
+                                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize:"inherit"}}
                                             className={`btn btn-info w-100

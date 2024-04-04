@@ -30,7 +30,7 @@ function UgEmployeesInput(props: Props) {
     );
 
     return (
-        <div className={props.className + " p-3 d-flex flex-column justify-content-center"}>
+        <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>
             <Controller name={props.name} control={props.form!.control}
                         defaultValue={[]}
                         rules={{
@@ -56,19 +56,19 @@ function UgEmployeesInput(props: Props) {
 
                                     <div className="text-white text-center bg-secondary">
                                         <div className="d-flex flex-row center">
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "10%"}}>
                                                 <b>Lp.</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "40%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "36%"}}>
                                                 <b>Jednostka</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "25%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "22%"}}>
                                                 <b>Liczba pracowników</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "25%"}}>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "22%"}}>
                                                 <b>Liczba studentów</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}} />
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "10%"}} />
                                         </div>
                                     </div>
                                     {!field.value.length &&
@@ -81,7 +81,7 @@ function UgEmployeesInput(props: Props) {
                                              key={index}
                                         >
                                             <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                 style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                                 style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                             >
                                                 {index + 1}.
                                             </div>
@@ -90,12 +90,12 @@ function UgEmployeesInput(props: Props) {
                                             </div>
 
                                             <div className="d-flex justify-content-center align-items-center p-2 border-end text-center"
-                                                 style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
+                                                 style={{width: windowWidth >= 1200 ? "36%" : "100%"}}
                                             >
                                                 <span>{item.value}</span>
                                             </div>
                                             <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                                 style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                 style={{width: windowWidth >= 1200 ? "22%" : "100%"}}
                                             >
                                                 <div className="col-12 d-flex d-xl-none justify-content-center">Liczba pracowników</div>
                                                 <input
@@ -125,7 +125,7 @@ function UgEmployeesInput(props: Props) {
                                                 />
                                             </div>
                                             <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                                 style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                 style={{width: windowWidth >= 1200 ? "22%" : "100%"}}
                                             >
                                                 <div className="col-12 d-flex d-xl-none justify-content-center">Liczba studentów</div>
                                                 <input
@@ -154,7 +154,7 @@ function UgEmployeesInput(props: Props) {
                                                 />
                                             </div>
                                             <div className="d-flex justify-content-center align-items-center p-2"
-                                                 style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                                 style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                             >
                                                 <button
                                                     type="button"
@@ -182,7 +182,7 @@ function UgEmployeesInput(props: Props) {
                                     <Select minMenuHeight={300}
                                             menuPlacement="auto"
                                             isDisabled={disabled}
-                                            className="bg-info text-white d-flex col-12 rounded"
+                                            className="bg-info text-white d-flex col-12 rounded-2"
                                             placeholder={disabled ? "": "Wybierz opcję lub wyszukaj"}
                                             styles={{
                                                 control: (provided, state) => ({
