@@ -234,6 +234,7 @@ export default function ContractsInput(props: Props){
                                         >
                                             <button type="button"
                                                     className="btn btn-info"
+                                                    style={{fontSize:"inherit"}}
                                                     onClick={() => {
                                                         const val: Contract[] = field.value;
                                                         val.splice(index, 1)

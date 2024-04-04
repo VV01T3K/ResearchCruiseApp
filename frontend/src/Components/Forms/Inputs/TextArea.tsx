@@ -34,10 +34,11 @@ function TextArea(props: Props) {
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
-                    <textarea className={"h-100"} {...field}
+                    <textarea className={"h-100"}
+                              {...field}
                               value={field.value ?? ''}
                         // @ts-ignore
-                              style={{resize:props.resize ?? "true"}}
+                              style={{resize: props.resize ?? "true"}}
 
                     />
                 }
