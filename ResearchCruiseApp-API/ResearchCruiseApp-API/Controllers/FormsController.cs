@@ -10,7 +10,7 @@ namespace ResearchCruiseApp_API.Controllers
     [Route("[controller]")]
     [ApiController]
     public class FormsController(
-        ResearchCruiseContext researchCruiseContext) 
+        FormsContext formsContext) 
         : ControllerBase
     //1 argument contextowy - jest to zbiór tabel bazodanowych
     
@@ -22,7 +22,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFormById([FromRoute] string id)
         {
-            await researchCruiseContext.MyEntities.FindAsync(id);
+            await formsContext.Forms.FindAsync(id);
             
             
 
@@ -30,9 +30,17 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         //metody do przyjmowania formularzy (POST) 
-        public async Task<IActionResult> AddForm([FromBody] FormsModel formsModel)
+        [HttpPost]
+        public async Task<IActionResult> AddForm([FromBody] FormsModel form)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var form_1 = Mapper.Map<FormsModel>(form);
+            formsContext.Forms.Add(form_1);
+            await formsContext.SaveChangeAsync();
 
             return Ok();
         }

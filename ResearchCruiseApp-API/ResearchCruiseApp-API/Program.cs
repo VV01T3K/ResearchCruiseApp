@@ -37,6 +37,8 @@ builder.Services.AddDbContext<UsersContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 builder.Services.AddDbContext<ResearchCruiseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
+builder.Services.AddDbContext<FormsContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -58,11 +60,14 @@ using (var scope = app.Services.CreateScope())
 {
     var usersContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
     var researchCruiseContext = scope.ServiceProvider.GetRequiredService<ResearchCruiseContext>();
+    var formsContext = scope.ServiceProvider.GetRequiredService<FormsContext>();
 
     if (usersContext.Database.GetPendingMigrations().Any())
         usersContext.Database.Migrate();
     if (researchCruiseContext.Database.GetPendingMigrations().Any())
         researchCruiseContext.Database.Migrate();
+    if (formsContext.Database.GetPendingMigrations().Any())
+        formsContext.Database.Migrate();
 }
 
 using (var scope = app.Services.CreateScope())
