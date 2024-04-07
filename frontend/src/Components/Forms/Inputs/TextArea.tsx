@@ -12,6 +12,7 @@ type Props = {
     name: string,
     required?: any,
     maxLenth?: number,
+    resize?:string,
     form?: {
         setValue: (arg0: string, arg1: string) => void;
         control: Control<Record<string, any>, any> | undefined;
@@ -28,19 +29,25 @@ function TextArea(props: Props) {
         //     props.setValue(props.name, "0", {shouldValidate:true})
     }
 
+
     return (
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
-                    <textarea {...field}
+                    <textarea className={"h-100"}
+                              {...field}
                               value={field.value ?? ''}
-                              style={{maxHeight: "130px", minHeight: "70px"}}
+                        // @ts-ignore
+                              style={{resize: props.resize ?? "true"}}
+
                     />
                 }
                 name={props.name}
                 control={props.form!.control}
+                defaultValue={""}
+
                 rules={{
-                    required: props.required ?? true,
+                    required: props.required ?? "Pole wymagane",
                     maxLength: {
                         value: props.maxLenth ?? 200, // Maksymalna długość
                         message: `Za długi tekst, maksymalna długość to ${props.maxLenth ?? 200} znaków.`,

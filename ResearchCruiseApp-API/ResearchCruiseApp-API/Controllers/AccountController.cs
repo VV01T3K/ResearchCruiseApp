@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Models.Users;
@@ -58,7 +59,7 @@ namespace ResearchCruiseApp_API.Controllers
             }
             
             var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
-            await emailSender.SendEmailConfirmationMessageAsync(
+            await emailSender.SendAccountConfirmationMessageAsync(
                 user, registerModel.Email, RoleName.CruiseManager, serviceProvider);
             return TypedResults.Ok();
         }
@@ -169,7 +170,9 @@ namespace ResearchCruiseApp_API.Controllers
                 return TypedResults.Ok();
             }
 
-            //await SendConfirmationEmailAsync(user, serviceProvider, HttpContext);
+            var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+            await emailSender.SendAccountConfirmationMessageAsync(
+                user, resendConfirmationEmailModel.Email, RoleName.CruiseManager, serviceProvider);
             return TypedResults.Ok();
         }
 

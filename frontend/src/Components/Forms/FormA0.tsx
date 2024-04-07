@@ -9,60 +9,26 @@ import MonthSlider from "./Inputs/MonthSlider";
 import NumberInput from "./Inputs/NumberInput";
 import TextArea from "./Inputs/TextArea";
 import FormRadio from "./Inputs/FormRadio";
-import FormWithSections from "./Tools/FormWithSections";
 import ClickableMap from "./Inputs/ClickableMap";
-import IntInput from "./Inputs/IntInput";
 import TaskInput from "./Inputs/TaskInput/TaskInput";
-import BlockList from "./Inputs/BlockList/BlockList";
-import BlockListInput from "./Inputs/BlockListInput/BlockListInput";
-import {Simulate} from "react-dom/test-utils";
-import submit = Simulate.submit;
-import SpubTask from "./Inputs/SpubTask";
+import GuestsInput from "./Inputs/GuestsInput/GuestsInput";
+import SpubTasksInput from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
+import FormWithSections from "./Tools/FormWithSections";
+import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
+import DateInput from "./Inputs/DateInput";
+import UgEmployeesInput from "./Inputs/UgEmployeesInput/UgEmployeesInput";
 
 
-function FormA0(){
-    const [userData, setUserData] = useState(null)
-
-    useEffect(
-        () => {
-            Api.get('/formA')
-                .then(response => setUserData(response.data))
-                .catch(()=> {})
-            console.log(userData)
-            return () => {};
-        },
-        []
-    );
-
-    const defaultValues = {
-        managers: null,
-        supplyManagers: null,
-        years: null,
-        acceptedPeriod: [0,24],
-        optimalPeriod: [0,24],
-        cruiseDays: 0,
-        cruiseTime: 0,
-        notes: null,
-        shipUsage: null,
-        diffrentUsage: null,
-    }
+function FormA0(props:{loadValues?:any}){
 
     const form = useForm({
         mode: 'onBlur',
-        defaultValues: defaultValues
+        // defaultValues: defaultValues,
+        shouldUnregister: false
     });
 
-        // {
-        // control, trigger,
-        // watch,
-        // getValues,
-        // setValue,
-        // resetField,
-        // handleSubmit,
-    //     formState: { errors, dirtyFields }
-    // }
 
     const [sections, setSections] = useState({
         "Kierownik":"Kierownik zgłaszanego rejsu",
@@ -70,21 +36,18 @@ function FormA0(){
         "Pozwolenia": "Dodatkowe pozwolenia do planowanych podczas rejsu badań",
         "Rejon": "Rejon prowadzenia badań",
         "Cel": "Cel Rejsu",
-        "L. osób": "Przewidywana liczba osób załogi naukowej",
         "Zadania": "Zadania do zrealizowania w trakcie rejsu",
-        "Umowy": "Lista umów współpracy",
+        "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
-        "Efekty": "Efekty rejsu",
-        "SPUB": "Zadania SPUB"
+        "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
+    // @ts-ignore
     return (
-        <FormTemplate>
+        <FormTemplate form={form} loadValues={props.loadValues} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
-            <FormWithSections form={form} onSubmit={()=>{}}
-                              // onChange={()=>console.log(form.getValues())}
-            >
+            <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
                                          name="managers"
@@ -94,24 +57,25 @@ function FormA0(){
                     <FormSelect className="col-12 col-md-6 col-xl-3"
                                 name="supplyManagers"
                                 label="Zastępca"
-                                values={userData?.supplyManagers}
+                                values={["sss"]}
                     />
                     <FormSelect className="col-12 col-md-6 col-xl-3"
                                 name="years"
                                 label="Rok rejsu"
-                                values={userData?.years}
+                                values={["sss"]}
                     />
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
+                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="acceptedPeriod"
+                                 connectedName="optimalPeriod"
                                  label="Dopuszczalny okres, w którym miałby się odbywać rejs:"
                     />
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-5"
+                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="optimalPeriod"
+                                 range={form.getValues("acceptedPeriod")}
                                  label="Optymalny okres, w którym miałby się odbywać rejs"
-                                 watch={form.watch("acceptedPeriod")}
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  name="cruiseDays"
@@ -133,6 +97,7 @@ function FormA0(){
                               required={false}
                               label="Uwagi dotyczące teminu"
                               name="notes"
+                              resize="none"
                     />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
@@ -153,6 +118,7 @@ function FormA0(){
                                           label="Inny sposób użycia"
                                           name="diffrentUsage"
                                           required="Podaj sposób użycia"
+                                          resize="none"
                                 />
                             )
                         }
@@ -175,6 +141,7 @@ function FormA0(){
                                           label="Jakie?"
                                           name="additionalPermissions"
                                           required="Podaj jakie"
+                                          resize="none"
                                 />
                             )
                         }
@@ -189,6 +156,7 @@ function FormA0(){
                               required={false}
                               label="Opis"
                               name="areaInfo"
+                              resize="none"
                     />
                 </FormSection>
 
@@ -202,62 +170,167 @@ function FormA0(){
                               label="Opis"
                               name="goalaInfo"
                               required="Opisz cel"
-                    />
-                </FormSection>
-
-                <FormSection  title={sections["L. osób"]}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Pracownicy UG"
-                                 name="ugEmployees"
-                                 maxVal={20}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Studenci I, II st. i doktoranci"
-                                 name="students"
-                                 maxVal={20}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="guests"
-                                 maxVal={20}
+                              resize="none"
                     />
                 </FormSection>
 
                 <FormSection title={sections.Zadania}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="gusests"
-                                 maxVal={20}
-                    />
-                    {/*<TaskInput name={"wejscie"} className={"col-12"} label={""}/>*/}
+                    <TaskInput name={"tasks"} historicalTasks={[
+
+                            {
+                                "type": 5,
+                                "values": {
+                                    "title": "3re",
+                                    "time": {
+                                        "startDate": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
+                                        "endDate": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                    },
+                                    "financingAmount": "0.00"
+                                }
+                            },
+                            {
+                                "type": 5,
+                                "values": {
+                                    "title": "3re",
+                                    "time": {
+                                        "startDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
+                                        "endDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
+                                    },
+                                    "financingAmount": "0.00"
+                                }
+                            },
+                            {
+                                "type": 11,
+                                "values": {
+                                    "description": "rtetretret"
+                                }
+                            },
+                            {
+                                "type": 3,
+                                "values": {
+                                    "title": "fsdfds",
+                                    "institution": "ffsdff",
+                                    "date": "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                }
+                            },
+                            {
+                                "type": 0,
+                                "values": {
+                                    "author": "sdfdsf",
+                                    "title": "dsfdfsd"
+                                }
+                            }
+                    ]} className={"col-12"} label={"ss"}/>
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>
-                    <NumberInput className="col-12 col-md-12 col-xl-6 p-3"
-                                 label="Goście / osoby spoza UG"
-                                 name="gusests"
-                                 maxVal={20}
+                    <ContractsInput
+                        className="col-12"
+                        name="contracts"
+                        historicalContracts={[
+                            {
+                                category: "international",
+                                institution: {
+                                    name: "Instytucja 1",
+                                    unit: "Jednostka 1",
+                                    localization: "Lokalizacja 1"
+                                },
+                                description: "Opis 1",
+                                scan: {
+                                    name: "Skan 1",
+                                    content: "1111111111"
+                                }
+                            },
+                            {
+                                category: "international",
+                                institution: {
+                                    name: "Instytucja 2",
+                                    unit: "Jednostka 2",
+                                    localization: "Lokalizacja 2"
+                                },
+                                description: "Opis 2",
+                                scan: {
+                                    name: "Skan 2",
+                                    content: "222222222"
+                                }
+                            },
+                            {
+                                category: "domestic",
+                                institution: {
+                                    name: "Instytucja 3",
+                                    unit: "Jednostka 3",
+                                    localization: "Lokalizacja 3"
+                                },
+                                description: "Opis 3",
+                                scan: {
+                                    name: "Skan 3",
+                                    content: "3333333333"
+                                }
+                            },
+                            {
+                                category: "domestic",
+                                institution: {
+                                    name: "Instytucja 4",
+                                    unit: "Jednostka 4",
+                                    localization: "Lokalizacja 4"
+                                },
+                                description: "Opis 4",
+                                scan: {
+                                    name: "Skan 4",
+                                    content: "444444444"
+                                }
+                            }
+                        ]}
+                        required={false}
                     />
                 </FormSection>
 
-                {/*<FormSection title={sections["Z.Badawcze"]}>*/}
-                {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców spoza UG"} name={"blockListInput2"}/>*!/*/}
-                {/*    /!*<BlockListInput className={"col-12 col-xl-4 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>*!/*/}
-                {/*    /!*<BlockList className={"col-12 col-xl-4"} label={"Uczestnictwo osób z jednostek organizacyjnych WOiG UG"} name={"blockList"}/>*!/*/}
+                <FormSection title={sections["Z. badawcze"]}>
+                    <UgEmployeesInput
+                        className="col-12 col-xl-6"
+                        label="Uczestnictwo osób z jednostek organizacyjnych UG"
+                        name="ugEmployees"
+                    />
+                    <GuestsInput
+                        required={false}
+                        className="col-12 col-xl-6"
+                        label="Uczestnictwo gości spoza UG"
+                        name="guests"
+                        historicalGuestsInstitutions={[
+                            "Instytucja 1", "Instytucja 2", "Instytucja 3"
+                        ]}
+                    />
+                </FormSection>
 
-                {/*</FormSection>*/}
-            {/*    <FormSection completed={completedSections[9]} id={"9"} title={sections["Publikacje/Prace"]}>*/}
-            {/*      </FormSection>*/}
-            {/*    <FormSection completed={completedSections[10]} id={"10"} title={sections.Efekty}>*/}
-            {/*        <TaskInput name={"wejscie2"} form={form} className={"col-12"} label={""}/>*/}
+                <FormSection title={sections["Publikacje/prace"]}>
+                   <DummyTag/>
+                </FormSection>
 
-            {/*    </FormSection>*/}
+                <FormSection title={sections.SPUB}>
+                    <SpubTasksInput
+                        className="col-12"
+                        name="spubTasks"
+                        historicalSpubTasks={[
+                            {
+                                yearFrom: "2020",
+                                yearTo: "2030",
+                                name: "Badanie nowych właściwości wodno-tlenowych Morza Bałtyckiego w obszarze Zatoki Gdańskiej"
+                            },
+                            {
+                                yearFrom: "2021",
+                                yearTo: "2026",
+                                name: "Badanie właściwości azotowych Morza Bałtyckiego w obszarze Zatoki Puckiej"
+                            },
+                            {
+                                yearFrom: "2022",
+                                yearTo: "2024",
+                                name: "Bałtycki pobór zasobów mineralnych na obszarze Polskiej WSE"
+                            },
+                        ]}
+                        required={false}
+                    />
+                </FormSection>
 
-            {/*    <FormSection completed={completedSections[11]} id={"11"} title={sections.SPUB}>*/}
-            {/*    <SpubTask label={"Zadania do wykonania w trakcie rejsu"} name={"spubTask"} form={form}/>*/}
-            {/*    </FormSection>*/}
-
-            {/*    <button type={"submit"}/>*/}
             </FormWithSections>
         </FormTemplate>
     )

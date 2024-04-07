@@ -1,10 +1,7 @@
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
-
 
 const defaultServerAddress = 'http://localhost:8080';
 
-// Function sets headers with access token
 const setAccessToken = (config: { url?: string; headers?: any; }) => {
     const accessToken = sessionStorage.getItem("accessToken");
     if (accessToken) {
@@ -13,35 +10,44 @@ const setAccessToken = (config: { url?: string; headers?: any; }) => {
     return config;
 };
 
-const handleResponseError = async (error: { response: { status: number; }, config: any })=> {
-    // Adjust error handling
+
+async function refreshToken () {
+    const refreshResponse = await axios.post('/token/refresh', {
+        refreshToken:  sessionStorage.getItem('refreshToken'),
+    })
+    const newAccessToken = refreshResponse.data.accessToken;
+    sessionStorage.setItem('accessToken', newAccessToken);
+}
+
+const handleResponseError = async (error: {
+
+    code: string;
+    response: { status: number; }, config: any })=> {
+
+    if(error.code == "ERR_NETWORK") {
+        console.log(error)
+        sessionStorage.clear()
+        window.location.href = '/forcedLogout'
+        return Promise.reject(error)
+    }
+
     if (error.response) {
+        console.log(error)
         const originalRequest = error.config;
 
         // Check if the error is a result of a not valid token
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            try {
-                const refreshToken = sessionStorage.getItem('refreshToken');
-
-                // Call the token refreshment endpoint
-                const refreshResponse = await axios.post('/refresh-token', {
-                    refreshToken: refreshToken,
-                })
-                const newAccessToken = refreshResponse.data.accessToken;
-
-                // Save the new access token
-                sessionStorage.setItem('accessToken', newAccessToken);
-
-                // Try the original request with th new access token
-                return axios(originalRequest);
-            }
-            catch (refreshError) {
-                sessionStorage.clear()
-                const navigate = useNavigate()
-                navigate("/forcedLogout")
-            }
+            // try {
+            //     await refreshToken()
+            //     // Try the original request with th new access token
+            //     return axios(originalRequest);
+            // }
+            // catch (refreshError) {
+            //     sessionStorage.clear()
+            //     window.location.href = '/forcedLogout'
+            // }
         }
     }
 
@@ -68,7 +74,7 @@ axios.interceptors.response.use(
     },
     function (error: { response: { status: number }, config: any }) {
         // Wykonuje się w przypadku błędu odpowiedzi
-        return handleResponseError(error);
+        return  handleResponseError(error);
     }
 );
 

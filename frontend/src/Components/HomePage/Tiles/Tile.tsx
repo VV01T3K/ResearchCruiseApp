@@ -9,7 +9,7 @@ type Props = {
 
 function Tile(props: Props){
     return (
-        <div className={Style + " text-center"}>
+        <div className={Style + " text-center w-100 h-100 justify-content-center align-items-center "}>
             {props.children}
         </div>
     )

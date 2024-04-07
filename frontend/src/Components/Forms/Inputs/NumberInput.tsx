@@ -22,57 +22,50 @@ function NumberInput(props: Props){
             props.form!.setValue(
                 props.name,
                 String(parseInt(e.target.value) > props.maxVal ? props.maxVal : parseInt(e.target.value)),
-                { shouldDirty: true }
-            )
-            props.form!.setValue(
-                props.name,
-                String(parseInt(e.target.value) > props.maxVal ? props.maxVal : parseInt(e.target.value)),
-                { shouldValidate: true }
+                { shouldDirty: true, shouldValidate: true, shouldTouch:true }
             )
         }
         else //if(e.target.value=='')
-            props.form!.setValue(props.name, "0", { shouldValidate: true })
+            props.form!.setValue(props.name, "0", { shouldDirty: true, shouldValidate: true, shouldTouch:true })
     }
 
     return (
         <InputWrapper {...props}>
             <Controller
                 render={({ field}) =>
-                    <input className="text-center"
+                    <input className="text-center placeholder-glow"
                            value={field.value}
-                           onBlur={(e) => {
+                           onBlur={
+                        (e) => {
                                if (re.test(e.target.value)) {
                                    props.form!.setValue(
                                        props.name,
                                        String(parseInt(e.target.value)),
-                                       { shouldDirty: true }
+                                       {shouldDirty: true, shouldValidate: true, shouldTouch: true}
                                    )
-                                   props.form!.setValue(
-                                       props.name,
-                                       String(parseInt(e.target.value)),
-                                       { shouldValidate: true }
-                                   )
-                               }
-                               if (props.connectedName && props.newVal) {
-                                   props.form!.setValue(
-                                       props.connectedName,
-                                       String(props.newVal(parseInt(e.target.value))),
-                                       { shouldDirty: true }
-                                   )
-                                   props.form!.setValue(
-                                       props.connectedName,
-                                       String(props.newVal(parseInt(e.target.value))),
-                                       { shouldValidate: true }
-                                   )
+
+                                   if (props.connectedName && props.newVal) {
+                                       props.form!.setValue(
+                                           props.connectedName,
+                                           String(props.newVal(parseInt(e.target.value))),
+                                           {shouldDirty: true, shouldValidate: true, shouldTouch: true}
+                                       )
+                                   }
                                }
                                else {
-                                   field.onBlur()
+                                   if (props.connectedName && props.newVal)
+                                       props.connectedName,
+                                           "",
+                                           {shouldDirty: true, shouldValidate: true, shouldTouch: true}
                                }
-                               // field.onBlur();
-                           }}
+                               field.onBlur()
+                           }
+                    }
+                           placeholder="0"
                            onChange={(e) => { onChange(e) }}
                     />
                 }
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{

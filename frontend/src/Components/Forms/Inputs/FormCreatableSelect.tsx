@@ -25,18 +25,28 @@ function FormCreatableSelect(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                     <CreatableSelect
+
                         isClearable
                         formatCreateLabel={(inputValue: any) => {
                             return `Dodaj: ${inputValue}`;
                         }}
                         minMenuHeight={300} {...field}
-                        styles={{menu: (provided: any) => ({...provided, zIndex: 9999})}}
-                        closeMenuOnScroll={() => true}
+                        styles={{
+                            control: (provided: any) => ({
+                                ...provided,
+                                cursor: "pointer"
+                            }),
+                            menu: (provided: any) => ({
+                                ...provided,
+                                zIndex: 9999
+                            })
+                        }}
                         options={props.values?.map(value => ({label: value, value}))}
                     />
                 )}

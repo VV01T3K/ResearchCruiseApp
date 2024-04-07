@@ -6,7 +6,7 @@ import AdminPanel from "./HomePage/AdminPanel"
 import PageHeader from "./PageHeader/PageHeader";
 import NewFormPage from "./NewFormPage/NewFormPage";
 import FormA0 from "./Forms/FormA0";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './../scss/app.scss';
 import FormB0 from "./Forms/FormB0";
 import FormC0 from "./Forms/FormC0";
 import ManagerPanel from "./HomePage/ManagerPanel";
@@ -15,14 +15,16 @@ import LogoutPage from "./LoginPage/LogoutPage";
 import AccountPage from "./AccountPage/AccountPage";
 import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
 import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
-// import {TestPage} from "./TestPage/TestPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
+import Page from "./Tools/Page";
+import MessagesPage from "./MessagesPage/MessagesPage";
+import SavedFormPage from "./SavedFormsPage/SavedFormPage";
 
 
 function App() {
 
-    const { addEventListener:loginListener } = useCustomEvent('loginSuccessful');
+    const { addEventListener:loginListener, dispatchEvent } = useCustomEvent('loginSuccessful');
     const { addEventListener:logoutListener } = useCustomEvent('logoutSuccessful');
 
     interface UserData {
@@ -30,33 +32,39 @@ function App() {
         firstName: string;
     }
 
-    const [userData, setUserData] = useState<UserData | null>(null)
+    const [userData, setUserData] = useState<UserData | null | undefined>(undefined)
+
+    const logout = () => {
+        sessionStorage.clear()
+        setUserData(null)
+    }
+    const getUserData = async () => {
+        if (sessionStorage.getItem("accessToken")) {
+             await Api.get('/account')
+                .then(response => setUserData(response.data)).catch((err)=>{})
+        } else setUserData(null)
+    }
 
     useEffect(
         () => {
-            const getUserData = () => {
-                if (sessionStorage.getItem("accessToken"))
-                    Api.get('/account')
-                        .then(response => setUserData(response.data))
-            }
-            const unsubscribeLogin = loginListener(() => {
-                getUserData();
-            });
-            const unsubscribeLogout = logoutListener(() => {
-                sessionStorage.clear()
-                setUserData(null)
-            });
+            const unsubscribeLogin = loginListener(getUserData);
             window.addEventListener('load', getUserData);
-
             return () => {
                 unsubscribeLogin();
-                unsubscribeLogout();
                 window.removeEventListener('load', getUserData);
             };
         },
-        [loginListener, logoutListener, 'load']
+        [loginListener, 'load']
     );
 
+    useEffect(()=>{
+        const unsubscribeLogout = logoutListener(() => {
+         logout()
+        });
+        return () => {
+            unsubscribeLogout();
+        };
+    }, [logoutListener])
     return (
         <div className="vh-100">
             <PageHeader name={userData ? userData.firstName : null} />
@@ -64,38 +72,40 @@ function App() {
                     {userData && userData["roles"].includes("Shipowner") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<ShipOwnerPanel />} />
                         </>
                     }
                     {userData && userData["roles"].includes("Administrator") &&
                         <>
+                            <Route path="/SavedForms" element={<SavedFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/FormB" element={<FormB0 />} />
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
+                            <Route path="/Messages" element={<MessagesPage/>}/>
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormA" element={<FormA0 />} />
                             <Route path="/FormB" element={<FormB0 />} />
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/*" element={<ManagerPanel />} />
                         </>
                     }
-                {userData != null &&
+                {userData != null && true &&
                     <Route path="/AccountSettings" element={<AccountPage userData={userData} />} />
                 }
-                {userData == null &&
+                {userData === null &&
                     <>
                         <Route path="/*" element={<LoginPage />} />
                         <Route path="/forcedLogout" element={<LogoutPage />} />
                     </>
+                }
+                {userData === undefined &&
+                    <Route path="/*" element={<Page />} />
                 }
                 <Route path="/ConfirmEmail" element={<EmailConfirmPage />} />
                 {/*<Route path="/Test" element={<TestPage/>}/>*/}

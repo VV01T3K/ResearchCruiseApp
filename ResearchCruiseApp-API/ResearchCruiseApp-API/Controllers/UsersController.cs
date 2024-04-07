@@ -81,7 +81,7 @@ namespace ResearchCruiseApp_API.Controllers
             }
 
             var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
-            await emailSender.SendEmailConfirmationMessageAsync(
+            await emailSender.SendAccountConfirmationMessageAsync(
                 newUser, registerModel.Email, roleName, serviceProvider);
             
             return CreatedAtAction(nameof(GetUserById),

@@ -3,7 +3,9 @@ import {FieldValues, useForm} from "react-hook-form";
 import ErrorCode from "./ErrorCode";
 import {Link} from "react-router-dom";
 import Api from "../Tools/Api";
-import useCustomEvent from "../Tools/useCustomEvent"; Api;
+import useCustomEvent from "../Tools/useCustomEvent";
+import {Simulate} from "react-dom/test-utils";
+import reset = Simulate.reset; Api;
 
 
 function LoginForm(){
@@ -14,11 +16,11 @@ function LoginForm(){
         return Api
             .post('/account/login', data)
             .then((response: { status: number; data: any; }) => {
-                if (response.status == 401)
-                    throw new Error("Nieprawidłowy adres e-mail lub hasło");
-                else
                     return response.data;
-            });
+            }).catch(error => {
+                if (error.response && error.response.status === 401) {
+                    throw new Error("Nieprawidłowy adres e-mail lub hasło")
+                }});
     }
 
     const { dispatchEvent } = useCustomEvent('loginSuccessful');
@@ -34,6 +36,7 @@ function LoginForm(){
         }
         catch (e) {
             setError((e as Error).message)
+            setValue('password', '');
         }
         setLoading(false)
         dispatchEvent(null);
@@ -43,6 +46,7 @@ function LoginForm(){
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors}
     } = useForm();
 

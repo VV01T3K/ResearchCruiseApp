@@ -1,0 +1,14 @@
+$theme-colors: (
+        "primary":    #052d73, // Domyślny kolor główny Bootstrapa
+        "secondary":  #6c757d, // Domyślny kolor drugorzędny Bootstrapa
+        "success":    #28a745, // Domyślny kolor sukcesu Bootstrapa
+        "info":       #0041d2, // Domyślny kolor informacyjny Bootstrapa
+        "warning":    #ffc107, // Domyślny kolor ostrzeżenia Bootstrapa
+        "danger":     #dc3545, // Domyślny kolor niebezpieczeństwa Bootstrapa
+        "light":      #f8f9fa, // Domyślny kolor jasny Bootstrapa
+        "dark":       #343a40  // Domyślny kolor ciemny Bootstrapa
+);
+
+
+
+@import "node_modules/bootstrap/scss/bootstrap";

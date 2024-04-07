@@ -10,6 +10,7 @@ type Props = {
     label: string,
     values: any[]
     form?: {
+        setValue(name: string, selectedOption: any, arg2: { shouldDirty: boolean; shouldValidate: boolean; shouldTouch: boolean; }): unknown;
         control: Control<FieldValues, any> | undefined;
         formState: {
             errors: {
@@ -24,19 +25,27 @@ function FormSelect(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                     <Select minMenuHeight={300}
                             {...field}
-                            styles={{menu: provided => ({...provided, zIndex: 9999})}}
+                            styles={{
+                                control: (provided: any) => ({
+                                    ...provided,
+                                    cursor: "pointer"
+                                }),
+                                menu: provided => ({
+                                    ...provided,
+                                    zIndex: 9999
+                                })
+                            }}
                             options={props.values?.map(value => ({label: value, value}))}
-                            closeMenuOnScroll={() => true}
-                            // onChange={(selectedOption) => {
-                            //     // Przekazuje tylko wartość (value) do formularza
-                            //     field.onChange(selectedOption ? selectedOption : null);
-                            // }}
+                            onChange={(selectedOption) => {
+                                props.form!.setValue(props.name, selectedOption, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                            }}
                     />
                 )}
             />
