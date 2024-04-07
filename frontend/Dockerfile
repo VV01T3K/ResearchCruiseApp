@@ -1,5 +1,5 @@
 # Użyj oficjalnego obrazu Node.js w wersji LTS jako bazowego obrazu
-FROM node:lts-alpine
+FROM node:lts-alpine AS production
 
 # Ustaw katalog roboczy na /app
 WORKDIR /app

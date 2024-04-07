@@ -1,6 +1,7 @@
 import {Control, Controller, FieldError, FieldErrorsImpl, FieldValues, Merge} from "react-hook-form";
-import Select from "react-select";
+import {GroupBase, OptionsOrGroups} from "react-select";
 import React from "react";
+import CreatableSelect from "react-select/creatable";
 import InputWrapper from "./InputWrapper";
 
 
@@ -10,7 +11,7 @@ type Props = {
     label: string,
     values: any[]
     form?: {
-        control: Control<FieldValues, any> | undefined;
+        control: Control | undefined;
         formState: {
             errors: {
                 [x: string]: { message: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; };
@@ -20,7 +21,7 @@ type Props = {
 }
 
 
-function FormSelect(props: Props) {
+function FormCreatableSelect(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
@@ -28,15 +29,15 @@ function FormSelect(props: Props) {
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
-                    <Select minMenuHeight={300}
-                            {...field}
-                            styles={{menu: provided => ({...provided, zIndex: 9999})}}
-                            options={props.values?.map(value => ({label: value, value}))}
-                            closeMenuOnScroll={() => true}
-                            // onChange={(selectedOption) => {
-                            //     // Przekazuje tylko wartość (value) do formularza
-                            //     field.onChange(selectedOption ? selectedOption : null);
-                            // }}
+                    <CreatableSelect
+                        isClearable
+                        formatCreateLabel={(inputValue: any) => {
+                            return `Dodaj: ${inputValue}`;
+                        }}
+                        minMenuHeight={300} {...field}
+                        styles={{menu: (provided: any) => ({...provided, zIndex: 9999})}}
+                        closeMenuOnScroll={() => true}
+                        options={props.values?.map(value => ({label: value, value}))}
                     />
                 )}
             />
@@ -45,4 +46,4 @@ function FormSelect(props: Props) {
 }
 
 
-export default FormSelect
+export default FormCreatableSelect

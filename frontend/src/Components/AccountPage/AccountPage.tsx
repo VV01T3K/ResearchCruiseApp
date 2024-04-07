@@ -3,42 +3,17 @@ import Page from "../Tools/Page";
 import UserImg from "../../resources/user.png"
 import ErrorCode from "../LoginPage/ErrorCode";
 import {FieldValues, useForm} from "react-hook-form";
+import Api from "../Tools/Api";
 
 
-function AccountPage(props:{className?: string}){
-    // const [ loading, setLoading ] = useState(false);
-    const [ loading2, setLoading2 ] = useState(false);
+type Props = {
+    className?: string,
+    userData: { [x: string]: any; }
+}
 
 
-    const [credentials, setCredentials] = useState( )
-
-    useEffect(() => {
-        async function getCredentials() {
-            try {
-                const  response = await fetch('http://localhost:8080/account', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
-                    },
-
-                }).then(data => {
-                        if(!data.ok) throw new Error("Wystąpił problem pobraniem danych")
-                        else return data.json();
-                    })
-                setCredentials(response)
-            }
-            catch (e){
-                setCredentialsError(e.message);
-            }
-
-
-
-        }
-        getCredentials();
-
-    }, [])
-
+function AccountPage(props: Props) {
+    const [loading2, setLoading2 ] = useState(false);
 
     // const [changeMailError, setChangeMailError] = useState<null|string>(null)
     // const {
@@ -78,83 +53,90 @@ function AccountPage(props:{className?: string}){
     //     setLoading(false)
     // }
 
-    const [changePasswordError, setChangePasswordError] = useState<null|string>(null)
-    const [changePasswordSuccess, setChangePasswordSuccess] = useState(false)
+    const [changePasswordError, setChangePasswordError] =
+        useState<null | string>(null)
+    const [changePasswordSuccess, setChangePasswordSuccess] =
+        useState(false)
 
     const {
         watch,
-        register:register2,
-        handleSubmit:handleSubmit2,
-        formState: { errors:errors2  } } = useForm({
+        register: register2,
+        handleSubmit: handleSubmit2,
+        formState: { errors: errors2}
+    } = useForm({
         mode: 'onBlur',
     });
 
-    async function changePassword(data:FieldValues) {
-        return fetch('http://localhost:8080/account', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("auth")!)["accessToken"]}`,
-            },
-            body: JSON.stringify(data)
-        })
-            .then(data => {
-                if(data.status == 401) throw new Error("Podano obecne hasło");
-                else if(!data.ok) throw new Error("Wystąpił problem ze zmianą hasła, upewnij się, że stare hasło jest prawidłowe")
+    async function changePassword(data: FieldValues) {
+        return Api
+            .patch('/account', data)
+            .then(response=> {
+                if (response.status == 401)
+                    throw new Error("Podano obecne hasło");
+                else
+                    return response.data
             })
     }
 
-    const handlePasswordChange =   async (data:FieldValues) => {
+    const handlePasswordChange = async (data: FieldValues) => {
         const { password2, ...dataWithoutPassword2 } = data;
         setLoading2(true);
+
         try {
             await changePassword(dataWithoutPassword2);
             setChangePasswordError(null)
             setChangePasswordSuccess(true)
         }
-        catch (e){
+        catch (e) {
             setChangePasswordError(e.message)
             setChangePasswordSuccess(false)
         }
+
         setLoading2(false)
     }
 
-    useEffect(()=>{
-        setChangePasswordSuccess(false)
-    }, [watch])
-
+    useEffect(
+        ()=> {
+            setChangePasswordSuccess(false)
+        },
+        [watch])
 
     const [credentialsError, setCredentialsError] = useState()
+
     return (
         <>
-            <Page className={props.className + " justify-content-center "}>
-                <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start justify-content-center p-2">
-                   <h1 style={{fontSize:"2rem"}}>Ustawienia konta </h1>
-                    <div className={"d-flex flex-row flex-wrap justify-content-center  p-2 p-xl-5 align-items-center"}>
+            <Page className={props.className + " justify-content-center"}>
+                <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start
+                                justify-content-center p-2"
+                >
+                    <h1 style={{fontSize:"2rem"}}>Ustawienia konta</h1>
 
-                        <div
-                            className={" h4 col-12 col-xl-7 p-2 pt-3 d-flex flex-column justify-content-center justify-content-xl-start text-center   "}>
-                            <img style={{width: "300px"}} className={"align-self-center border border-5 rounded m-2 "}
-                                 src={UserImg}></img>
-                            <div className={" h6 "}>
-                                {credentials && credentials["role"]}
-
+                    <div className="d-flex flex-row flex-wrap justify-content-center p-2 p-xl-5 align-items-center">
+                        <div className="h4 col-12 col-xl-7 p-2 pt-3 d-flex flex-column justify-content-center
+                                        justify-content-xl-start text-center"
+                        >
+                            <img style={{width: "300px"}}
+                                 className="align-self-center border border-5 rounded m-2"
+                                 src={UserImg}
+                                 alt="Zdjęcie użytkownika"
+                            />
+                            <div className="h6">
+                                {props.userData["role"]}
                             </div>
-                            <div className={"p-1  "}>
-                                {credentials && credentials["firstName"] + " " + credentials["lastName"]}
-                                {credentials && !credentials["accepted"] && <ErrorCode code={"użytkownik nie został zaakceptowany"}/>}
+                            <div className="p-1">
+                                {props.userData["firstName"] + " " + props.userData["lastName"]}
+                                {props.userData["accepted"] && <ErrorCode code="użytkownik nie został zaakceptowany" />}
                             </div>
 
                             <div className={"p-1 h5"}>
-                                {credentials && credentials["email"]}
-                                {credentials && !credentials["emailConfirmed"] && <ErrorCode code={"email nie został potwierdzony"}/>}
+                                {props.userData["email"]}
+                                {props.userData["emailConfirmed"] && <ErrorCode code="email nie został potwierdzony" />}
                             </div>
                             {credentialsError && <ErrorCode code={credentialsError}/>}
                         </div>
-                        <div
-                            className={" h4 col-12 col-xl-5 p-2 pt-3 d-flex flex-column justify-content-center justify-content-xl-start  text-center "}>
-
-
+                        <div className="h4 col-12 col-xl-5 p-2 pt-3 d-flex flex-column justify-content-center
+                                        justify-content-xl-start text-center"
+                        >
                             {/*<form className={`p-0 h6`}*/}
                             {/*      onSubmit={handleSubmit(handleMailChange)}>*/}
                             {/*    <div className="txt_field">*/}
@@ -173,44 +155,73 @@ function AccountPage(props:{className?: string}){
                             {/*    {changeMailError && <ErrorCode code={changeMailError}/>}*/}
                             {/*</form>*/}
 
-                            <form className={`p-0 h6`}
-                                  onSubmit={handleSubmit2(handlePasswordChange)}>
+                            <form className="p-0 h6"
+                                  onSubmit={handleSubmit2(handlePasswordChange)}
+                            >
                                 <div className="txt_field">
-                                    <input type="password" onClick={()=>setChangePasswordSuccess(false)} disabled={loading2} {...register2("password", {
-                                        required: "Pole wymagane", maxLength: 30, pattern: {
-                                            value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-                                            message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
-                                        }
-                                    })}/>
-                                    <span></span>
+                                    <input type="password"
+                                           onClick={() => setChangePasswordSuccess(false)}
+                                           disabled={loading2}
+                                           {...register2("password", {
+                                               required: "Pole wymagane",
+                                               maxLength: 30,
+                                               pattern: {
+                                                   value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
+                                                   message:
+                                                       'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera,' +
+                                                       'mała litera oraz cyfra',
+                                                }
+                                            })}
+                                    />
+                                    <span />
                                     <label>Stare hasło</label>
                                 </div>
-                                {errors2["password"] && <ErrorCode code={errors2["password"].message}/>}
+                                {errors2["password"] && <ErrorCode code={errors2["password"].message} />}
+
                                 <div className="txt_field">
-                                    <input type="password" onClick={()=>setChangePasswordSuccess(false)} disabled={loading2} {...register2("newPassword", {
-                                        required: "Pole wymagane", maxLength: 30, pattern: {
-                                            value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-                                            message: 'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera, mała litera oraz cyfra',
-                                        }
-                                    })}/>
-                                    <span></span>
+                                    <input type="password"
+                                           onClick={() => setChangePasswordSuccess(false)}
+                                           disabled={loading2}
+                                           {...register2("newPassword", {
+                                               required: "Pole wymagane",
+                                               maxLength: 30,
+                                               pattern: {
+                                                   value: /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
+                                                   message:
+                                                       'Co najmniej 8 znaków, w tym przynajmniej jedna duża litera,' +
+                                                       'mała litera oraz cyfra',
+                                               }
+                                           })}
+                                    />
+                                    <span />
                                     <label>Nowe hasło</label>
                                 </div>
-                                {errors2["newPassword"] && <ErrorCode code={errors2["newPassword"].message}/>}
+                                {errors2["newPassword"] && <ErrorCode code={errors2["newPassword"].message} />}
+
                                 <div className="txt_field">
-                                    <input type="password"  onClick={()=>setChangePasswordSuccess(false)} disabled={loading2} {...register2("password2", {
-                                        required: "Pole wymagane", maxLength: 30,
-                                        validate: (value) => value === watch('newPassword') || 'Hasła nie pasują do siebie',
-                                    })}/>
-                                    <span></span>
+                                    <input type="password"
+                                           onClick={() => setChangePasswordSuccess(false)}
+                                           disabled={loading2}
+                                           {...register2("password2", {
+                                               required: "Pole wymagane",
+                                               maxLength: 30,
+                                               validate: (value) =>
+                                                   value === watch('newPassword') || 'Hasła nie pasują do siebie',
+                                           })}
+                                    />
+                                    <span />
                                     <label>Potwierdź hasło</label>
                                 </div>
-                                {errors2["password2"] && <ErrorCode code={errors2["password2"].message}/>}
-                                <input className={loading2 ? "textAnim" : ""} type="submit" disabled={loading2}
-                                       value="Zmień hasło"/>
-                                {changePasswordError && <ErrorCode code={changePasswordError}/>}
+                                {errors2["password2"] && <ErrorCode code={errors2["password2"].message} />}
+
+                                <input className={loading2 ? "textAnim" : ""}
+                                       type="submit"
+                                       disabled={loading2}
+                                       value="Zmień hasło"
+                                />
+                                {changePasswordError && <ErrorCode code={changePasswordError} />}
                             </form>
-                            {changePasswordSuccess && <div className={"h6"}>Pomyślnie zmieniono hasło</div>}
+                            {changePasswordSuccess && <div className="h6">Pomyślnie zmieniono hasło</div>}
                         </div>
                     </div>
                 </div>
@@ -218,5 +229,6 @@ function AccountPage(props:{className?: string}){
         </>
     )
 }
+
 
 export default AccountPage

@@ -10,21 +10,21 @@ import React from "react";
 import Tiles from "./Tiles/TilesMenu";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 
-export default function ManagerPanel(props:{setAuth}){
 
+export default function ManagerPanel(){
     const tilesMenu = [
-        { element: <UserTile setAuth={props.setAuth}/>, cols: 1, rows: 1 },
-        { element:<NewFormTile/>, cols: 1, rows: 1 },
-        { element: <SavedFormsTile/>, cols: 2, rows: 2 },
-        { element: <FormsRequestsTile/>, cols: 2, rows: 2 },
-        { element: <MessagesTile/>, cols: 1, rows: 1 },
-        { element: <ViewFormsTile/>, cols: 1, rows: 1 },
-        { element: <AccountSettingsTile/>, cols: 1, rows: 1 },
+        { element: <UserTile />, cols: 1, rows: 1 },
+        { element:<NewFormTile />, cols: 1, rows: 1 },
+        { element: <SavedFormsTile />, cols: 2, rows: 2 },
+        { element: <FormsRequestsTile />, cols: 2, rows: 2 },
+        { element: <MessagesTile />, cols: 1, rows: 1 },
+        { element: <ViewFormsTile />, cols: 1, rows: 1 },
+        { element: <AccountSettingsTile />, cols: 1, rows: 1 },
     ];
 
     return(
         <Home>
-            <Tiles tilesMenu={tilesMenu}/>
+            <Tiles tilesMenu={tilesMenu} />
         </Home>
     )
 }

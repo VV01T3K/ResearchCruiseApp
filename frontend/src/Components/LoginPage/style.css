@@ -1,6 +1,3 @@
-
-
-
 .center h1{
     text-align: center;
     padding: 20px 0;
@@ -60,6 +57,7 @@ form .txt_field{
     margin: -5px 0 20px 5px;
     color: #666666;
     cursor: pointer;
+    text-decoration: none;
 }
 .pass:hover{
     text-decoration: underline;

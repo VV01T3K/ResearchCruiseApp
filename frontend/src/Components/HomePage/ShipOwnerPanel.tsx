@@ -10,18 +10,19 @@ import React from "react";
 import Tiles from "./Tiles/TilesMenu";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 
-export default function ShipOwnerPanel(props:{setAuth}){
+
+export default function ShipOwnerPanel() {
 
     const tilesMenu = [
-        { element: <UserTile setAuth={props.setAuth}/>, cols: 1, rows: 1 },
-        { element:<NewFormTile/>, cols: 1, rows: 1 },
-        { element: <AccountSettingsTile/>, cols: 1, rows: 1 },
-        { element: <ManageUserTile/>, cols: 1, rows: 1 },
+        { element: <UserTile />, cols: 1, rows: 1 },
+        { element:<NewFormTile />, cols: 1, rows: 1 },
+        { element: <AccountSettingsTile />, cols: 1, rows: 1 },
+        { element: <ManageUserTile />, cols: 1, rows: 1 },
     ];
 
     return(
         <Home>
-            <Tiles tilesMenu={tilesMenu}/>
+            <Tiles tilesMenu={tilesMenu} />
         </Home>
     )
 }
