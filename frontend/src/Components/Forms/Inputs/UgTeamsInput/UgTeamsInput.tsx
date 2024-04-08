@@ -11,7 +11,7 @@ type Props = {
     form?:UseFormReturn
     required?: boolean,
 }
-function UgEmployeesInput(props: Props) {
+function UgTeamsInput(props: Props) {
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
     const disabled = props.form!.formState.errors[props.name] && props.form!.formState.errors[props.name]!.message != requiredMsg
 
@@ -244,4 +244,4 @@ function UgEmployeesInput(props: Props) {
 }
 
 
-export default UgEmployeesInput
+export default UgTeamsInput

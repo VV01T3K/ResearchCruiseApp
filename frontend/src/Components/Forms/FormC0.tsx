@@ -11,8 +11,8 @@ import TextArea from "./Inputs/TextArea";
 import FormRadio from "./Inputs/FormRadio";
 import ClickableMap from "./Inputs/ClickableMap";
 import TaskInput from "./Inputs/TaskInput/TaskInput";
-import BlockList from "./Inputs/UgEmployeesInput/UgEmployeesInput";
-import GuestsInput from "./Inputs/GuestsInput/GuestsInput";
+import BlockList from "./Inputs/UgTeamsInput/UgTeamsInput";
+import GuestTeamsInput from "./Inputs/GuestTeamsInput/GuestTeamsInput";
 import SpubTasksInput from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
@@ -281,7 +281,7 @@ function FormC0(props:{loadValues?:any}){
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    <GuestsInput required={false} className={"col-12 col-xl-6 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
+                    <GuestTeamsInput required={false} className={"col-12 col-xl-6 "} label={"Uczestnictwo naukowców z jednostek organizacyjnych UG spoza WOiG"} name={"blockListInput"}/>
                     <BlockList className={"col-12 col-xl-6"} label={"Uczestnictwo osób z jednostek organizacyjnych UG"} name={"blockList"}/>
 
                 </FormSection>

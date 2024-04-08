@@ -19,7 +19,7 @@ type GuestsCount = {
 }
 
 
-function GuestsInput(props: Props){
+function GuestTeamsInput(props: Props){
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
         () => {
@@ -263,4 +263,4 @@ function GuestsInput(props: Props){
 }
 
 
-export default GuestsInput
+export default GuestTeamsInput
