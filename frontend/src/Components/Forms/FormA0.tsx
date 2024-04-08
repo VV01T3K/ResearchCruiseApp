@@ -11,14 +11,14 @@ import TextArea from "./Inputs/TextArea";
 import FormRadio from "./Inputs/FormRadio";
 import ClickableMap from "./Inputs/ClickableMap";
 import TaskInput from "./Inputs/TaskInput/TaskInput";
-import GuestsInput from "./Inputs/GuestsInput/GuestsInput";
+import GuestTeamsInput from "./Inputs/GuestTeamsInput/GuestTeamsInput";
 import SpubTasksInput from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
 import FormWithSections from "./Tools/FormWithSections";
 import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
-import UgEmployeesInput from "./Inputs/UgEmployeesInput/UgEmployeesInput";
+import UgTeamsInput from "./Inputs/UgTeamsInput/UgTeamsInput";
 
 
 function FormA0(props:{loadValues?:any}){
@@ -43,24 +43,23 @@ function FormA0(props:{loadValues?:any}){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
-    // @ts-ignore
     return (
         <FormTemplate form={form} loadValues={props.loadValues} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
                     <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
-                                         name="managers"
+                                         name="cruiseManager"
                                          label="Kierownik rejsu"
                                          values={["sss"]}
                     />
                     <FormSelect className="col-12 col-md-6 col-xl-3"
-                                name="supplyManagers"
+                                name="deputyManager"
                                 label="Zastępca"
                                 values={["sss"]}
                     />
                     <FormSelect className="col-12 col-md-6 col-xl-3"
-                                name="years"
+                                name="year"
                                 label="Rok rejsu"
                                 values={["sss"]}
                     />
@@ -80,14 +79,14 @@ function FormA0(props:{loadValues?:any}){
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  name="cruiseDays"
                                  label="Liczba planowanych dób rejsowych"
-                                 connectedName="cruiseTime"
+                                 connectedName="cruiseHours"
                                  notZero
                                  newVal={(e) => 24*e}
                                  maxVal={99}
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  notZero
-                                 name="cruiseTime"
+                                 name="cruiseHours"
                                  label="Liczba planowanych godzin rejsowych"
                                  connectedName="cruiseDays"
                                  newVal={(e) => Number((e/24).toFixed(2))}
@@ -96,7 +95,7 @@ function FormA0(props:{loadValues?:any}){
                     <TextArea className="col-12 p-3"
                               required={false}
                               label="Uwagi dotyczące teminu"
-                              name="notes"
+                              name="periodNotes"
                               resize="none"
                     />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
@@ -116,7 +115,7 @@ function FormA0(props:{loadValues?:any}){
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
-                                          name="diffrentUsage"
+                                          name="differentUsage"
                                           required="Podaj sposób użycia"
                                           resize="none"
                                 />
@@ -151,11 +150,11 @@ function FormA0(props:{loadValues?:any}){
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap label="Obszar prowadzonych badań" name="area" />
+                    <ClickableMap label="Obszar prowadzonych badań" name="researchArea" />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
-                              name="areaInfo"
+                              name="researchAreaInfo"
                               resize="none"
                     />
                 </FormSection>
@@ -163,19 +162,19 @@ function FormA0(props:{loadValues?:any}){
                 <FormSection title={sections.Cel}>
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
-                               name="goal"
+                               name="cruiseGoal"
                                values={["Naukowy", "Komercyjny", "Dydaktyczny"]}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"
-                              name="goalaInfo"
+                              name="cruiseGoalDescription"
                               required="Opisz cel"
                               resize="none"
                     />
                 </FormSection>
 
                 <FormSection title={sections.Zadania}>
-                    <TaskInput name={"tasks"} historicalTasks={[
+                    <TaskInput name={"researchTasks"} historicalTasks={[
 
                             {
                                 "type": 5,
@@ -286,16 +285,16 @@ function FormA0(props:{loadValues?:any}){
                 </FormSection>
 
                 <FormSection title={sections["Z. badawcze"]}>
-                    <UgEmployeesInput
+                    <UgTeamsInput
                         className="col-12 col-xl-6"
                         label="Uczestnictwo osób z jednostek organizacyjnych UG"
-                        name="ugEmployees"
+                        name="ugTeams"
                     />
-                    <GuestsInput
+                    <GuestTeamsInput
                         required={false}
                         className="col-12 col-xl-6"
                         label="Uczestnictwo gości spoza UG"
-                        name="guests"
+                        name="guestTeams"
                         historicalGuestsInstitutions={[
                             "Instytucja 1", "Instytucja 2", "Instytucja 3"
                         ]}
