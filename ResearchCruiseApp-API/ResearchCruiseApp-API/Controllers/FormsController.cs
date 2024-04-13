@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
@@ -45,18 +46,20 @@ namespace ResearchCruiseApp_API.Controllers
                 return BadRequest(ModelState);
             }
             
-            //var form_1 = Mapper.Map<FormsModel>(form);
-            //researchCruiseContext.Forms.Add(form);
-            //await formsContext.SaveChangeAsync();
             Console.WriteLine("zapisywanie rozpoczete");
-            
-            var form1 = new FormA()
-            {
-                Students = form.Students
-            };
-            Console.WriteLine(form1.ToString());
-            researchCruiseContext.FormsA.Add(form1);
+
+            var mapper = MapperConfig.InitializeAutomapper();
+            var formA = mapper.Map<FormA>(form);
+            researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
+            
+            // var form1 = new FormA()
+            // {
+            //     Students = form.Students
+            // };
+            // Console.WriteLine(form1.ToString());
+            // researchCruiseContext.FormsA.Add(form1);
+            // await researchCruiseContext.SaveChangesAsync();
 
             return Ok();
         }
