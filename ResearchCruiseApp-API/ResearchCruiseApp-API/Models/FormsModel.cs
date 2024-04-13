@@ -125,15 +125,15 @@ public class FormsModel
     
     
     //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
-    public string Permissions { get; set; } = null!;
+    public string? Permissions { get; set; } = null!;
     
     
     //(?) opcjonalnie opis. 
-    public string ResearchArea { get; set; } = null!;
+    public string? ResearchArea { get; set; } = null!;
     
     
     //Cel rejsu (opis max. 100 słów):
-    public string ChoiceGoal { get; set; } = null!;
+    public string? ChoiceGoal { get; set; } = null!;
     
     
     //Przewidywana liczba osób zamierzających uczestniczyć w rejsie, podać liczby osobno dla:
@@ -151,8 +151,8 @@ public class FormsModel
     
     
     //Zespoły badawcze
-    public string ResearchersOutsideUG { get; set; } = null!;
-    public string ResearchersOutsideWOIG { get; set; } = null!;
+    public string? ResearchersOutsideUG { get; set; } = null!;
+    public string? ResearchersOutsideWOIG { get; set; } = null;
     public int ResearchersFromWOIG { get; set; } = 0;
     
     
@@ -166,5 +166,5 @@ public class FormsModel
     
     
     //Zadanie SPUB
-    public string ResearchTask { get; set; } = null!;
+    public string? ResearchTask { get; set; } = null!;
 }
