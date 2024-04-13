@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
 {
-    [Authorize(Roles = "Administrator;CruiseManager")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
     [Route("[controller]")]
     [ApiController]
     public class FormsController(
@@ -22,20 +24,45 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFormById([FromRoute] string id)
         {
-            //await researchCruiseContext.MyEntities.FindAsync(id);
+            await researchCruiseContext.FormsA.FindAsync(id);
             
             
 
             return Ok();
         }
         
+        [HttpGet]
+        public async Task<IActionResult> GetForms()
+        {
+            return Ok();
+        }
+        
         //metody do przyjmowania formularzy (POST) 
-        // public async Task<IActionResult> AddForm([FromBody] FormsModel formsModel)
-        // {
-        //     
-        //
-        //     return Ok();
-        // }
+        [HttpPost]
+        public async Task<IActionResult> AddForm([FromBody] FormsModel form)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            Console.WriteLine("zapisywanie rozpoczete");
+
+            var mapper = MapperConfig.InitializeAutomapper();
+            var formA = mapper.Map<FormA>(form);
+            researchCruiseContext.FormsA.Add(formA);
+            await researchCruiseContext.SaveChangesAsync();
+            
+            // var form1 = new FormA()
+            // {
+            //     Students = form.Students
+            // };
+            // Console.WriteLine(form1.ToString());
+            // researchCruiseContext.FormsA.Add(form1);
+            // await researchCruiseContext.SaveChangesAsync();
+
+            return Ok();
+        }
         
         //metoda zwracania formualrzy listy
     }

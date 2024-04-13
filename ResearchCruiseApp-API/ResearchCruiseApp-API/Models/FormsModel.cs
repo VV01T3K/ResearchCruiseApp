@@ -22,25 +22,25 @@ public struct CruiseInfo
     //podstawowe informacje
     public string Id { get; set; } = null!;
     public string CruiseManager { get; set; } = null!;
-    public string Deputy { get; set; } = null!;
+    public string DeputyManager { get; set; } = null!;
     //(?) jaki format na rok
     public string Year { get; set; } = null!;
     
     
     //Dopuszczlny termin rejsu (typ?)
-    public DateRange PermissibleDate;
+    public DateRange AcceptablePeriod;
     //Optymalny termin rejsu (typ?)
-    public DateRange OptimalDate;
+    public DateRange OptimalPeriod;
     public int CruiseHours { get; set; } = 0;
     //Uwaga dotycząca terminu:
-    public string DateComment { get; set; } = null!;
+    public string PeriodNotes { get; set; } = null!;
     //Czy statek na potrzeby badań będzie wykorzystywany
-    public string Choice { get; set; } = null!;
+    public string ShipUsage { get; set; } = null!;
 }
 
-public struct Tasks
+public struct ResearchTask
 {
-    public Tasks()
+    public ResearchTask()
     {
     }
 
@@ -66,16 +66,16 @@ public struct Tasks
     public int MinisterialPoints { get; set; } = 0;
 }
 
-public struct Contracts
+public struct Contract
 {
     //Lista umów współpracy
     //
     //
 }
 
-public struct Publications
+public struct Publication
 {
-    public Publications()
+    public Publication()
     {
     }
 
@@ -125,15 +125,15 @@ public class FormsModel
     
     
     //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
-    public string Permissions { get; set; } = null!;
+    public string? Permissions { get; set; } = null!;
     
     
     //(?) opcjonalnie opis. 
-    public string ResearchArea { get; set; } = null!;
+    public string? ResearchArea { get; set; } = null!;
     
     
     //Cel rejsu (opis max. 100 słów):
-    public string ChoiceGoal { get; set; } = null!;
+    public string? CruiseGoal { get; set; } = null!;
     
     
     //Przewidywana liczba osób zamierzających uczestniczyć w rejsie, podać liczby osobno dla:
@@ -143,28 +143,28 @@ public class FormsModel
 
     
     //Zadania
-    public List<Tasks>? TasksList;
+    public List<ResearchTask>? ResearchTasks;
 
     
     //Lista umów
-    public List<Contracts>? ContractsList;
+    public List<Contract>? Contracts;
     
     
     //Zespoły badawcze
-    public string ResearchersOutsideUG { get; set; } = null!;
-    public string ResearchersOutsideWOIG { get; set; } = null!;
+    public string? ResearchersOutsideUG { get; set; } = null!;
+    public string? ResearchersOutsideWOIG { get; set; } = null;
     public int ResearchersFromWOIG { get; set; } = 0;
     
     
     //Publikacje i Prace
-    public List<Publications>? PublicationsList;
-    public List<Thesis>? ThesesList;
+    public List<Publication>? Publications;
+    public List<Thesis>? Theses;
     
     
-    //Efekty rejsu 
+    //Efekty rejsu (do usunięcia?)
     public List<Efects>? EfectsList;
     
     
     //Zadanie SPUB
-    public string ResearchTask { get; set; } = null!;
+    public string? ResearchTask { get; set; } = null!;
 }
