@@ -23,9 +23,9 @@ const handleResponseError = async (error: {
 
     code: string;
     response: { status: number; }, config: any })=> {
+    const originalRequest = error.config;
 
-    if(error.code == "ERR_NETWORK") {
-        const originalRequest = error.config;
+    if(error.code == "ERR_NETWORK" && !originalRequest._retry && error.response.status != null) {
 
         originalRequest._retry = true;
 
