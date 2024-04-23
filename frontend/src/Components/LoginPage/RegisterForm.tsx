@@ -8,38 +8,40 @@ import RegisterSuccessful from "./RegisterSuccessful";
 
 
 function RegisterForm(){
+    const {
+        reset,
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors }
+    } = useForm();
     const [registerError, setError] = useState<null | string>(null)
 
     async function registerUser(data: FieldValues){
         return Api
             .post('/account/register', data)
             .then((response: { status: number; data: any; }) => {
-                // if(response.status == 400) throw new Error("Użytkownik o podanym adresie e-mail już istnieje");
-                // else
+                setError(null)
+                setRegisterSuccessful(true)
+                reset()
                     return response.data;
+            }).catch(error => {
+                if (error.response && error.response.status === 401) {
+                    setError("Nieprawidłowy adres e-mail lub hasło")
+                }
+                else setError("Wystąpił problem z rejestracją spróbuj ponownie później")
             });
     }
 
     const onSubmit = async (data: FieldValues)=> {
+        console.log("sadsdas")
         setLoading(true);
-        try {
-            await registerUser(data);
-            setError(null)
-            setRegisterSuccessful(true)
-        }
-        catch (e) {
-            setError((e as Error).message)
-        }
+        await registerUser(data);
         setLoading(false)
     }
 
     const [loading, setLoading] = useState(false);
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors }
-    } = useForm();
+
     const [registerSuccessful, setRegisterSuccessful] = useState(false);
 
     return (

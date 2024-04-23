@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.2",
     "css-loader": "^6.8.1",
     "framer-motion": "^10.0.0",
+    "history": "^5.3.0",
     "popper.js": "^1.16.1",
     "rc-slider": "^10.5.0",
     "react": "^18.2.0",
@@ -56,7 +57,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "install-bootstrap": "npm audit fix --force",
-    "audit": "npm install",
+    "audit": "npm install history",
     "fund": "npm fund",
     "cos": "npm install react-super-responsive-table --save"
   },

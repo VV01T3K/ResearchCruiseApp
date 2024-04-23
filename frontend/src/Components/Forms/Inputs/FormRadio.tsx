@@ -35,7 +35,7 @@ function FormRadio(props: Props) {
                                     // onBlur={
                                     // props.form!.setValue(props.name, field.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true })
                                     // }
-                                    checked={field.value === option}
+                                    // checked={field.value === option}
                                 />
                                // {/*{option}*/}
                             // </label>

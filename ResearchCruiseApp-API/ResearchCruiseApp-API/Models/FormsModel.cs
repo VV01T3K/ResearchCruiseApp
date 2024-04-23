@@ -1,4 +1,6 @@
-﻿namespace ResearchCruiseApp_API.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ResearchCruiseApp_API.Models;
 
 
 
@@ -20,7 +22,9 @@ public struct CruiseInfo
     {
     }
     //podstawowe informacje
+    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public string Id { get; set; } = null!;
+    //\p{L}\p{M}
     public string CruiseManager { get; set; } = null!;
     public string DeputyManager { get; set; } = null!;
     //(?) jaki format na rok

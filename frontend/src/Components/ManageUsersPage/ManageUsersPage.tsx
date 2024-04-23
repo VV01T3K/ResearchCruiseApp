@@ -3,26 +3,28 @@ import Page from "../Tools/Page";
 import Api from "../Tools/Api";
 import DataTable from 'react-data-table-component';
 import './ManageUsersPage.css'
+import useCustomEvent from "../Tools/useCustomEvent";
 type Props = {
     className?: string
 }
 
 
 function ManageUsersPage(props: Props) {
+    const { dispatchEvent } = useCustomEvent('busy')
     const [userList, setUserList] = useState(
         [])
+    const fetchData = async () => {
+        return  Api.get(
+            '/Users',)
+            .then(response => {
+                return response.data;
+            }).then(response => setUserList(response)).finally(()=>dispatchEvent(null)).catch(()=>{})
 
+    }
     useEffect(
         () => {
-            const fetchData = async () => {
-                return  Api.get(
-                    '/Users',)
-                    .then(response => {
-                        return response.data;
-                    })
-
-            }
-            fetchData().then(response => setUserList(response))
+            dispatchEvent("Trwa ładowanie użytkowników")
+            fetchData()
         },[]
     )
 
@@ -86,25 +88,25 @@ function ManageUsersPage(props: Props) {
                 selector: row => row.roles,
                 sortable: true,
             },
-            {
-                name: 'Akcje',
-                button: true,
-                cell: row => (
-                    <div className={"d-flex flex-wrap"}>
-                        {!row.accepted && <button className={"btn btn-primary d-flex m-1"} style={{fontSize:"0.8rem"}} onClick={()=>{}}>Potwierdź</button>
-                        }
-                        {!row.emailConfirmed && <button className={"btn btn-primary d-flex m-1"} style={{fontSize:"0.8rem"}} onClick={()=>{}}>Wyślij mail</button>
-                        }
-                    </div>
-                ),
-            },
-            {
-                name: 'Usuń',
-                button: true,
-                cell: row => (
-                        <button  onClick={()=>{}} className={"btn btn-danger d-flex m-1"} disabled={row.roles.includes("Administrator")} style={{fontSize:"0.8rem"}} onClick={()=>{}}>-</button>
-                ),
-            },
+            // {
+            //     name: 'Akcje',
+            //     button: true,
+            //     cell: row => (
+            //         <div className={"d-flex flex-wrap"}>
+            //             {!row.accepted && <button className={"btn btn-primary d-flex m-1"} style={{fontSize:"0.8rem"}} onClick={()=>{}}>Potwierdź</button>
+            //             }
+            //             {!row.emailConfirmed && <button className={"btn btn-primary d-flex m-1"} style={{fontSize:"0.8rem"}} onClick={()=>{}}>Wyślij mail</button>
+            //             }
+            //         </div>
+            //     ),
+            // },
+            // {
+            //     name: 'Usuń',
+            //     button: true,
+            //     cell: row => (
+            //             <button  onClick={()=>{}} className={"btn btn-danger d-flex m-1"} disabled={row.roles.includes("Administrator")} style={{fontSize:"0.8rem"}} onClick={()=>{}}>-</button>
+            //     ),
+            // },
         ];
 
 
@@ -174,7 +176,11 @@ function ManageUsersPage(props: Props) {
         const handleDelete = () => {
             // eslint-disable-next-line no-alert
             if (window.confirm(`Czy na pewno chcesz usunąć:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
+
                 setToggleCleared(!toggleCleared);
+                selectedRows.forEach(()=>{
+
+                })
                 const neww = Api.get('/Users').then(response => {
                         return [];
                     })
@@ -184,15 +190,21 @@ function ManageUsersPage(props: Props) {
         };
         const handleAccept = () => {
             if (window.confirm(`Czy na pewno chcesz zaakcptować:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
-                setToggleCleared(!toggleCleared);
-                Api.patch('/Users')
+                // setToggleCleared(!toggleCleared);
+                dispatchEvent("Trwa zapisywanie zmian")
+                selectedRows.forEach((user) => Api.patch('/Users/unaccepted/' + user.id))
+                fetchData()
+                // dispatchEvent(null)
                 // setData(differenceBy(data, selectedRows, 'title'));
             }
         }
 
         const handleSendMail = () => {
             if (window.confirm(`Czy na pewno chcesz wysłać email:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
-                setToggleCleared(!toggleCleared);
+                // setToggleCleared(!toggleCleared);
+                dispatchEvent("Trwa wysyłanie maili")
+                selectedRows.forEach((user) => Api.post('/Account/resendConfirmationEmail', {email:user.userName}).catch(()=>{}))
+                dispatchEvent(null)
                 // setData(differenceBy(data, selectedRows, 'title'));
             }
         }

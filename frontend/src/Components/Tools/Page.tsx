@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Style from "./Page.module.css"
+import useCustomEvent from "./useCustomEvent";
 
 
 type Props = {
@@ -10,6 +11,10 @@ type Props = {
 
 
 function Page(props: Props){
+    const { dispatchEvent } = useCustomEvent('busy')
+    useEffect(() => {
+        dispatchEvent(null)
+    }, []);
     return (
         <>
             <div className={`${props.bgStyle ?? Style.bgImage} ${Style.bg}`} />
