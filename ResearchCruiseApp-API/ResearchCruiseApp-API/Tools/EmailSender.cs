@@ -1,14 +1,12 @@
 ﻿using System.Globalization;
-using System.Net;
-using System.Net.Mail;
 using System.Resources;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Data;
-using ResearchCruiseApp_API.Types;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using MimeKit;
+using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ResearchCruiseApp_API.Tools;
 
@@ -85,29 +83,57 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
     private async Task SendEmail(string email, string subject, string body)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");
-        
-        using var client = new SmtpClient(
+
+        using var client = new SmtpClient();
+        await client.ConnectAsync(
             smtpSettings.GetSection("SmtpServer").Value,
-            int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""));
-        client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential(
+            int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""),
+            true);
+        await client.AuthenticateAsync(
             smtpSettings.GetSection("SmtpUsername").Value,
             smtpSettings.GetSection("SmtpPassword").Value);
-        client.EnableSsl = true;
 
-        var from = new MailAddress(
-            smtpSettings.GetSection("SenderEmail").Value ?? "",
-            smtpSettings.GetSection("SenderName").Value);
-
-        var message = new MailMessage
+        var bodyBuilder = new BodyBuilder()
         {
-            From = from,
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = true
+            HtmlBody = body
         };
-        message.To.Add(email);
-
-        await client.SendMailAsync(message);
+            
+        var message = new MimeMessage()
+        {
+            Body = bodyBuilder.ToMessageBody()
+        };
+        message.From.Add(new MailboxAddress(
+            smtpSettings.GetSection("SenderName").Value,
+            smtpSettings.GetSection("SmtpUsername").Value)
+        );
+        message.To.Add(new MailboxAddress(email, email));
+        message.Subject = subject;
+            
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+        
+        // using var client = new SmtpClient(
+        //     smtpSettings.GetSection("SmtpServer").Value,
+        //     int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""));
+        // client.UseDefaultCredentials = false;
+        // client.Credentials = new NetworkCredential(
+        //     smtpSettings.GetSection("SmtpUsername").Value,
+        //     smtpSettings.GetSection("SmtpPassword").Value);
+        // client.EnableSsl = true;
+        //
+        // var from = new MailAddress(
+        //     smtpSettings.GetSection("SenderEmail").Value ?? "",
+        //     smtpSettings.GetSection("SenderName").Value);
+        //
+        // var message = new MailMessage
+        // {
+        //     From = from,
+        //     Subject = subject,
+        //     Body = body,
+        //     IsBodyHtml = true
+        // };
+        // message.To.Add(email);
+        //
+        // await client.SendMailAsync(message);
     }
 }
