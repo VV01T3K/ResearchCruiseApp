@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Net.Mail;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
@@ -58,11 +59,12 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return CreateValidationProblem(result);
             }
-            return TypedResults.Ok();
+           
             var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
             await emailSender.SendAccountConfirmationMessageAsync(
                 user, registerModel.Email, RoleName.CruiseManager, serviceProvider);
-      
+            
+            return TypedResults.Ok();
         }
         
         [HttpPost("login")]
