@@ -65,5 +65,18 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         //metoda zwracania formualrzy listy
+
+        
+        public async void AddLogicalCruise()
+        {
+            LogicalCruise newLogicalCruise = new()
+            {
+                Points = 0,
+                State = LogicalCruise.LogicalCruiseState.Planned
+            };
+
+            await researchCruiseContext.LogicalCruises.AddAsync(newLogicalCruise);
+            await researchCruiseContext.SaveChangesAsync();
+        }
     }
 }
