@@ -118,8 +118,8 @@ namespace ResearchCruiseApp_API.Controllers
             user.Accepted = true;
             await userManager.UpdateAsync(user);
 
-            var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
-            await emailSender.SendAccountAcceptedMessageAsync(user);
+         var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+         await emailSender.SendAccountAcceptedMessageAsync(user);
             
             return NoContent();
         }

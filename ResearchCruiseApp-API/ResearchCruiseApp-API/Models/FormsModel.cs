@@ -18,23 +18,28 @@ public struct DateRange
 
 public struct CruiseInfo
 {
+    public CruiseInfo()
+    {
+    }
     //podstawowe informacje
-    public string? Id { get; set; }
-    public string? CruiseManager { get; set; }
-    public string? DeputyManager { get; set; }
+    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
+    public string Id { get; set; } = null!;
+    //\p{L}\p{M}
+    public string CruiseManager { get; set; } = null!;
+    public string DeputyManager { get; set; } = null!;
     //(?) jaki format na rok
-    public string? Year { get; set; }
+    public string Year { get; set; } = null!;
     
     
     //Dopuszczlny termin rejsu (typ?)
     public DateRange AcceptablePeriod;
     //Optymalny termin rejsu (typ?)
     public DateRange OptimalPeriod;
-    public int CruiseHours { get; set; }
+    public int CruiseHours { get; set; } = 0;
     //Uwaga dotycząca terminu:
-    public string? DateComment { get; set; }
+    public string PeriodNotes { get; set; } = null!;
     //Czy statek na potrzeby badań będzie wykorzystywany
-    public string? ShipUsage { get; set; }
+    public string ShipUsage { get; set; } = null!;
 }
 
 public struct ResearchTask
@@ -139,9 +144,6 @@ public class FormsModel
     public int UGWorkers { get; set; } = 0;
     public int Students { get; set; } = 0;
     public int Guests { get; set; } = 0;
-    
-    //Zespół organizacyjny
-    public string? OrganizationalUnit { get; set; } = null!;
 
     
     //Zadania

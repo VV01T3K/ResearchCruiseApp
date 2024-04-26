@@ -39,6 +39,14 @@ builder.Services.AddDbContext<ResearchCruiseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+});
 
 var app = builder.Build();
 
@@ -77,7 +85,7 @@ using (var scope = app.Services.CreateScope())
     }
 
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    
+
     if (await userManager.FindByEmailAsync("admin@admin.com") == null)
     {
         var adminUser = new User()

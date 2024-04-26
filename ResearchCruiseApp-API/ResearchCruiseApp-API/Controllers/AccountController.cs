@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Net.Mail;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -57,10 +59,11 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return CreateValidationProblem(result);
             }
-            
+           
             var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
             await emailSender.SendAccountConfirmationMessageAsync(
                 user, registerModel.Email, RoleName.CruiseManager, serviceProvider);
+            
             return TypedResults.Ok();
         }
         

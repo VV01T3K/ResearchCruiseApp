@@ -16,28 +16,24 @@ function LoginForm(){
         return Api
             .post('/account/login', data)
             .then((response: { status: number; data: any; }) => {
-                    return response.data;
+                Object.entries(response.data).forEach(([key, value]) => {
+                    sessionStorage.setItem(key, value as string);
+                });
+                setError(null)
             }).catch(error => {
-                if (error.response && error.response.status === 401) {
-                    throw new Error("Nieprawidłowy adres e-mail lub hasło")
-                }});
+                if (error.response && error.response.status === 400) {
+                    setError("Użytkownik z podanym adresem email już istnieje")
+                }
+                else setError("Wystąpił problem z zalogowaniem, spróbuj ponownie później")
+                setValue('password', '');
+            });
     }
 
     const { dispatchEvent } = useCustomEvent('loginSuccessful');
 
     const onSubmit = async (data: FieldValues) => {
         setLoading(true);
-        try {
-            const auth = await loginUser(data);
-            Object.entries(auth).forEach(([key, value]) => {
-                sessionStorage.setItem(key, value as string);
-            });
-            setError(null)
-        }
-        catch (e) {
-            setError((e as Error).message)
-            setValue('password', '');
-        }
+        await loginUser(data);
         setLoading(false)
         dispatchEvent(null);
     }

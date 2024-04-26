@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -66,6 +69,11 @@ namespace ResearchCruiseApp_API.Controllers
 
             var mapper = MapperConfig.InitializeAutomapper();
             var formA = mapper.Map<FormA>(form);
+            
+            
+            
+            
+            
             researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
             
@@ -81,5 +89,30 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         //metoda zwracania formualrzy listy
+
+        
+        public async void AddLogicalCruise()
+        {
+            LogicalCruise newLogicalCruise = new()
+            {
+                Points = 0,
+                State = LogicalCruise.LogicalCruiseState.Planned
+            };
+
+            await researchCruiseContext.LogicalCruises.AddAsync(newLogicalCruise);
+            await researchCruiseContext.SaveChangesAsync();
+        }
+        
+        private int CalculatePoints(FormA formA)
+        {
+            IDictionary<string, string[]> s = new Dictionary<string, string[]>(){
+                {"klucz1", new string[] {"wartosc1a", "wartosc1b"}}, // Klucz "klucz1" z dwoma wartościami
+                {"klucz2", new string[] {"wartosc2"}} // Klucz "klucz2" z jedną wartością
+            };
+            return TypedResults.ValidationProblem(s);
+        }
     }
+    
+    
+
 }
