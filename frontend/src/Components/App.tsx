@@ -19,7 +19,6 @@ import useCustomEvent from "./Tools/useCustomEvent";
 import Page from "./Tools/Page";
 import MessagesPage from "./MessagesPage/MessagesPage";
 import SavedFormPage from "./SavedFormsPage/SavedFormPage";
-import history from "./Tools/History";
 import {setUpInterceptors} from "./Tools/Api";
 
 function App() {
