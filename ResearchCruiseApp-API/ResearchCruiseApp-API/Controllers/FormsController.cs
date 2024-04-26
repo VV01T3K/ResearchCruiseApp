@@ -109,7 +109,9 @@ namespace ResearchCruiseApp_API.Controllers
                 {"klucz1", new string[] {"wartosc1a", "wartosc1b"}}, // Klucz "klucz1" z dwoma wartościami
                 {"klucz2", new string[] {"wartosc2"}} // Klucz "klucz2" z jedną wartością
             };
-            return TypedResults.ValidationProblem(s);
+
+            return 0;
+            //return TypedResults.ValidationProblem(s);
         }
     }
     
