@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Tools;
@@ -22,19 +23,31 @@ namespace ResearchCruiseApp_API.Controllers
     {
         //metoda zwracania formualrza po id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFormById([FromRoute] string id)
+        public async Task<IActionResult> GetFormById([FromRoute] int id)
         {
-            await researchCruiseContext.FormsA.FindAsync(id);
+            var form = await researchCruiseContext.FormsA.FindAsync(id);
+            if (form == null)
+                return NotFound();
             
-            
-
-            return Ok();
+            var mapper = MapperConfig.InitializeAutomapper();
+            return Ok(mapper.Map<FormsModel>(form));
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetForms()
+        public async Task<IActionResult> GetAllForms()
         {
-            return Ok();
+            var forms = await researchCruiseContext.FormsA.ToListAsync();
+            var formModels = new List<FormsModel>();
+            var mapper = MapperConfig.InitializeAutomapper();
+
+            foreach (var form in forms)
+            {
+                formModels.Add(mapper.Map<FormsModel>(form));
+            }
+            
+            
+            
+            return Ok(formModels);
         }
         
         //metody do przyjmowania formularzy (POST) 
@@ -47,6 +60,9 @@ namespace ResearchCruiseApp_API.Controllers
             }
             
             Console.WriteLine("zapisywanie rozpoczete");
+            Console.WriteLine(form.CruiseInfoData.DateComment);
+            Console.WriteLine(form.CruiseInfoData.Year);
+            Console.WriteLine(form.CruiseInfoData.ShipUsage);
 
             var mapper = MapperConfig.InitializeAutomapper();
             var formA = mapper.Map<FormA>(form);
