@@ -73,6 +73,19 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         //metoda zwracania formualrzy listy
+
+        
+        public async void AddLogicalCruise()
+        {
+            LogicalCruise newLogicalCruise = new()
+            {
+                Points = 0,
+                State = LogicalCruise.LogicalCruiseState.Planned
+            };
+
+            await researchCruiseContext.LogicalCruises.AddAsync(newLogicalCruise);
+            await researchCruiseContext.SaveChangesAsync();
+        }
         
         private int CalculatePoints(FormA formA)
         {
@@ -81,7 +94,6 @@ namespace ResearchCruiseApp_API.Controllers
                 {"klucz2", new string[] {"wartosc2"}} // Klucz "klucz2" z jedną wartością
             };
             return TypedResults.ValidationProblem(s);
-
         }
     }
     
