@@ -1,4 +1,6 @@
-﻿namespace ResearchCruiseApp_API.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ResearchCruiseApp_API.Models;
 
 
 
@@ -16,26 +18,23 @@ public struct DateRange
 
 public struct CruiseInfo
 {
-    public CruiseInfo()
-    {
-    }
     //podstawowe informacje
-    public string Id { get; set; } = null!;
-    public string CruiseManager { get; set; } = null!;
-    public string DeputyManager { get; set; } = null!;
+    public string? Id { get; set; }
+    public string? CruiseManager { get; set; }
+    public string? DeputyManager { get; set; }
     //(?) jaki format na rok
-    public string Year { get; set; } = null!;
+    public string? Year { get; set; }
     
     
     //Dopuszczlny termin rejsu (typ?)
     public DateRange AcceptablePeriod;
     //Optymalny termin rejsu (typ?)
     public DateRange OptimalPeriod;
-    public int CruiseHours { get; set; } = 0;
+    public int CruiseHours { get; set; }
     //Uwaga dotycząca terminu:
-    public string PeriodNotes { get; set; } = null!;
+    public string? DateComment { get; set; }
     //Czy statek na potrzeby badań będzie wykorzystywany
-    public string ShipUsage { get; set; } = null!;
+    public string? ShipUsage { get; set; }
 }
 
 public struct ResearchTask
@@ -121,9 +120,9 @@ public struct Efects
 public class FormsModel
 {
     //Ogólne informacje
-    public CruiseInfo CruiseInfoData;
-    
-    
+    public CruiseInfo CruiseInfoData { get; set; }
+
+
     //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
     public string? Permissions { get; set; } = null!;
     
@@ -140,6 +139,9 @@ public class FormsModel
     public int UGWorkers { get; set; } = 0;
     public int Students { get; set; } = 0;
     public int Guests { get; set; } = 0;
+    
+    //Zespół organizacyjny
+    public string? OrganizationalUnit { get; set; } = null!;
 
     
     //Zadania
