@@ -35,7 +35,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FormsA");
+                    b.ToTable("FormsA", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.LogicalCruise", b =>
@@ -61,7 +61,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LogicalCruises");
+                    b.ToTable("LogicalCruises", (string)null);
                 });
 #pragma warning restore 612, 618
         }
