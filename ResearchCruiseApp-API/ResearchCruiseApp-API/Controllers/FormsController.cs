@@ -61,11 +61,8 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
             Console.WriteLine("zapisywanie rozpoczete");
-            Console.WriteLine(form.CruiseInfoData.DateComment);
-            Console.WriteLine(form.CruiseInfoData.Year);
-            Console.WriteLine(form.CruiseInfoData.ShipUsage);
 
             var mapper = MapperConfig.InitializeAutomapper();
             var formA = mapper.Map<FormA>(form);

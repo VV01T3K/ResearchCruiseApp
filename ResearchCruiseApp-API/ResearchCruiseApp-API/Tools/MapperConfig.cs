@@ -15,7 +15,7 @@ namespace ResearchCruiseApp_API.Tools
                 cfg.CreateMap<FormsModel, FormA>()
                     .ForMember(dest => dest.Year, act => act.MapFrom(src => src.CruiseInfoData.Year))
                     .ForMember(dest => dest.CruiseHours, act => act.MapFrom(src => src.CruiseInfoData.CruiseHours))
-                    .ForMember(dest => dest.DateComment, act => act.MapFrom(src => src.CruiseInfoData.DateComment))
+                    .ForMember(dest => dest.DateComment, act => act.MapFrom(src => src.CruiseInfoData.PeriodNotes))
                     .ForMember(dest => dest.ShipUsage, act => act.MapFrom(src => src.CruiseInfoData.ShipUsage))
                     ;// .ReverseMap()
                     // .ForPath(dest => dest.CruiseInfoData.Year, opt => opt.MapFrom(src => src.Year))
@@ -31,7 +31,9 @@ namespace ResearchCruiseApp_API.Tools
 
                 cfg.CreateMap<FormA, FormsModel>()
                     .ForMember(dest => dest.CruiseInfoData,
-                        opt => opt.MapFrom(src => new CruiseInfo() { Year = src.Year, CruiseHours = src.CruiseHours, DateComment = src.DateComment, ShipUsage = src.ShipUsage}));
+                        opt => 
+                            opt.MapFrom(src => 
+                                new CruiseInfo() { Year = src.Year, CruiseHours = src.CruiseHours, PeriodNotes = src.DateComment, ShipUsage = src.ShipUsage}));
 
             });
             

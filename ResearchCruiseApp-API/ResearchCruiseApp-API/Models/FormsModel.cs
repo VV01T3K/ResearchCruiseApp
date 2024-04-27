@@ -23,12 +23,12 @@ public struct CruiseInfo
     }
     //podstawowe informacje
     [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
-    public string Id { get; set; } = null!;
+    public Guid? Id { get; set; } = null!;
     //\p{L}\p{M}
-    public string CruiseManager { get; set; } = null!;
-    public string DeputyManager { get; set; } = null!;
+    public string? CruiseManager { get; set; } = null!;
+    public string? DeputyManager { get; set; } = null!;
     //(?) jaki format na rok
-    public string Year { get; set; } = null!;
+    public int Year { get; set; } = 0;
     
     
     //Dopuszczlny termin rejsu (typ?)
@@ -37,9 +37,9 @@ public struct CruiseInfo
     public DateRange OptimalPeriod;
     public int CruiseHours { get; set; } = 0;
     //Uwaga dotycząca terminu:
-    public string PeriodNotes { get; set; } = null!;
+    public string? PeriodNotes { get; set; } = null!;
     //Czy statek na potrzeby badań będzie wykorzystywany
-    public string ShipUsage { get; set; } = null!;
+    public int ShipUsage { get; set; } = 0;
 }
 
 public struct ResearchTask
