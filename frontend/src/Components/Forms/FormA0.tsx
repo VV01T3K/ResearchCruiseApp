@@ -48,20 +48,20 @@ function FormA0(props:{loadValues?:any}){
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
-                    <FormCreatableSelect className="col-12 col-md-6 col-xl-3"
+                    <FormSelect className="col-12 col-md-6 col-xl-4"
                                          name="cruiseManager"
                                          label="Kierownik rejsu"
-                                         values={["sss"]}
+                                         values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
                     />
-                    <FormSelect className="col-12 col-md-6 col-xl-3"
+                    <FormSelect className="col-12 col-md-6 col-xl-4"
                                 name="deputyManager"
                                 label="Zastępca"
-                                values={["sss"]}
+                                values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
                     />
-                    <FormSelect className="col-12 col-md-6 col-xl-3"
+                    <FormSelect className="col-12 col-md-6 col-xl-4"
                                 name="year"
                                 label="Rok rejsu"
-                                values={["sss"]}
+                                values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
                     />
                 </FormSection>
 

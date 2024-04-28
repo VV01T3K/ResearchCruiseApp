@@ -199,7 +199,7 @@ function TaskInput(props: Props) {
                                                                 handleChange(field, row, rowIndex, s, e.target.value )
                                                             } }/>
                                                         )
-                                                    case "Instytucja do której składany":
+                                                    case "Instytucja, do której składany":
                                                     case "Opis zajęcia dydaktycznego" :
                                                     case "Opis zadania" :
                                                         return (
@@ -231,7 +231,7 @@ function TaskInput(props: Props) {
                                                                //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
                                                                 showMonthYearPicker
                                                                 showMonthYearDropdown
-                                                                className={" text-center w-100"}
+                                                                className={" text-center w-100 "}
                                                                 selectsStart
                                                                 startDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
                                                                 maxDate={(val as time ).endDate ? new Date((val as time ).endDate) : null}

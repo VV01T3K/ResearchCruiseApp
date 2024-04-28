@@ -8,7 +8,7 @@ type Props = {
     className?: string,
     name: string,
     label: string,
-    values: any[]
+    values: [{lastName:string, firstName:string, email:string, id:string}]
     form?: {
         setValue(name: string, selectedOption: any, arg2: { shouldDirty: boolean; shouldValidate: boolean; shouldTouch: boolean; }): unknown;
         control: Control<FieldValues, any> | undefined;
@@ -31,20 +31,27 @@ function FormSelect(props: Props) {
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                     <Select minMenuHeight={300}
-                            {...field}
+                         //   {/*{...field}*/}
+
+                            value={props.values.find(item => item === field.value)}
                             styles={{
                                 control: (provided: any) => ({
                                     ...provided,
-                                    cursor: "pointer"
+                                    cursor: "pointer",
+                                    whiteSpace: "normal"
+
                                 }),
                                 menu: provided => ({
                                     ...provided,
-                                    zIndex: 9999
-                                })
+                                    zIndex: 9999,
+                                    whiteSpace: "normal"
+
+                                }),
+
                             }}
-                            options={props.values?.map(value => ({label: value, value}))}
+                            options={props.values?.map(value => ({label: value.firstName + " " + value.lastName + " (" + value.email + ")", value:value.id}))}
                             onChange={(selectedOption) => {
-                                props.form!.setValue(props.name, selectedOption, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                                props.form!.setValue(props.name, selectedOption.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                             }}
                     />
                 )}

@@ -26,11 +26,11 @@ function FormRadio(props: Props) {
                         {props.values.map((option, index) => (
                             // <label key={index}>
                                 <input
-                                    key={index} className={`btn ${field.value === option ? "btn-info":"btn-outline-info"} text-wrap m-1`} style={{fontSize:"inherit"}}
+                                    key={index} className={`btn ${field.value === index ? "btn-info":"btn-outline-info"} text-wrap m-1`} style={{fontSize:"inherit"}}
                                     type={"button"}
                                     value={option}
                                     onClick={(e) => {
-                                        props.form!.setValue(props.name, e.target.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                                        props.form!.setValue(props.name, index, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                                     }}
                                     // onBlur={
                                     // props.form!.setValue(props.name, field.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true })
