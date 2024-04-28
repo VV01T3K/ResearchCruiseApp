@@ -242,7 +242,7 @@ export default function SpubTasksInput(props: Props){
                                                         value={row.name}
                                                         onChange = {(e)=> {
                                                             row.name = e.target.value
-                                                            props.form!.setValue(
+                                                            props.form.setValue(
                                                                 props.name,
                                                                 field.value,
                                                                 {

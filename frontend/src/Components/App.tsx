@@ -21,6 +21,7 @@ import MessagesPage from "./MessagesPage/MessagesPage";
 import SavedFormPage from "./SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
 import CruisesPage from "./CruisesPage/CruisesPage";
+import CruisePointsPage from "./CruisePointsPage/CruisePointsPage";
 
 function App() {
 
@@ -108,8 +109,9 @@ function App() {
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
-                            <Route path="/Messages" element={<MessagesPage />}/>
-                            <Route path="/Cruises" element={<CruisesPage />}/>
+                            <Route path="/Messages" element={<MessagesPage />} />
+                            <Route path="/Cruises" element={<CruisesPage />} />
+                            <Route path="/CruisePoints/:logicalCruiseId" element={<CruisePointsPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&

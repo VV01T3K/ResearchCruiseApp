@@ -16,6 +16,10 @@ type Props = {
 function CruisesPage(props: Props) {
     type LogicalCruise = {
         id: string,
+        number: string,
+        year: string,
+        cruiseManagerFirstName: string,
+        cruiseManagerLastName: string,
         formAId: string | null,
         formBId: string | null,
         formCId: string | null,
@@ -24,10 +28,14 @@ function CruisesPage(props: Props) {
     }
 
     const generateLogicalCruises = () => {
-        const records = [];
+        const records: LogicalCruise[] = [];
         for (let i = 1; i <= 100; i++) {
-            const record = {
-                id: `2024/${i}`,
+            const record: LogicalCruise = {
+                id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
+                number: `2024/${i}`,
+                year: (2025 + Math.floor(Math.random() * 3)).toString(),
+                cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
+                cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
                 formAId: (i * 100).toString(),
                 formBId: i % 2 === 0 ? null : (i * 1000).toString(),
                 formCId:  null,
@@ -38,6 +46,9 @@ function CruisesPage(props: Props) {
         }
         return records;
     };
+
+    const [logicalCruises, setLogicalCruises]: [LogicalCruise[], Dispatch<any>]
+        = useState(generateLogicalCruises())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -53,87 +64,7 @@ function CruisesPage(props: Props) {
         []
     );
 
-    const [logicalCruises, setLogicalCruises]: [LogicalCruise[], Dispatch<any>]
-        = useState(generateLogicalCruises())
-
     const [sortAscending, setSortAscending] = useState(true)
-
-    const mapLogicalCruises = () =>
-        logicalCruises.map((row: LogicalCruise, index: number) => (
-            <div key={index}
-                 className="d-flex flex-wrap flex-row justify-content-center border bg-light"
-            >
-                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                     style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
-                >
-                    {row.id}
-                </div>
-                <div className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
-                    <b>Rejs {index + 1}.</b>
-                </div>
-
-                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                     style={{width: windowWidth >= 1200 ? "45%" : "100%"}}
-                >
-                    <div className="col-12 d-flex d-xl-none justify-content-center">Formularze</div>
-                    <Link
-                        className={`col-4 d-flex justify-content-center text-decoration-none ${!row.formAId ? "text-muted" : ""}`}
-                        to={row.formAId ? `/${row.formAId}` : "#"}
-                        style={!row.formAId ? {cursor: "default"} : {}}
-                    >
-                        Formularz A
-                    </Link>
-                    <Link
-                        className={`col-4 d-flex justify-content-center text-decoration-none ${!row.formBId ? "text-muted" : ""}`}
-                        to={row.formBId ? `/${row.formBId}` : "#"}
-                        style={!row.formBId ? {cursor: "default"} : {}}
-                    >
-                        Formularz B
-                    </Link>
-                    <Link
-                        className={`col-4 d-flex justify-content-center text-decoration-none ${!row.formCId ? "text-muted" : ""}`}
-                        to={row.formCId ? `/${row.formCId}` : "#"}
-                        style={!row.formCId ? {cursor: "default"} : {}}
-                    >
-                        Formularz C
-                    </Link>
-                </div>
-                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                     style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
-                >
-                    <div className="col-12 d-flex d-xl-none justify-content-center">Punkty</div>
-                    <div className="col-4 d-flex justify-content-center">
-                        {row!.points}
-                    </div>
-                </div>
-                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                     style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
-                >
-                    <div className="col-12 d-flex d-xl-none justify-content-center">Status</div>
-                    <div className="col-4 d-flex justify-content-center">
-                        <i>{row!.status}</i>
-                    </div>
-                </div>
-                <div className="d-flex justify-content-center align-items-center p-2"
-                     style={{width: windowWidth >= 1200 ? "8%" : "100%"}}
-                >
-                    RFU
-                    {/*<button type="button"*/}
-                    {/*        className="btn btn-info"*/}
-                    {/*        style={{fontSize:"inherit"}}*/}
-                    {/*        onClick={() => {*/}
-                    {/*        }}*/}
-                    {/*>*/}
-                    {/*    :)*/}
-                    {/*</button>*/}
-                </div>
-
-            </div>
-        ))
-
-    const [mappedLogicalCruises, setMappedLogicalCruises] = useState(
-        mapLogicalCruises()
-    )
 
     const sortLogicalCruisesByPoints = () => {
         setLogicalCruises(
@@ -142,22 +73,21 @@ function CruisesPage(props: Props) {
             )
         )
         setSortAscending(!sortAscending)
-        setMappedLogicalCruises(mapLogicalCruises())
     }
 
     const { dispatchEvent } = useCustomEvent('busy')
 
-    const fetchData = async () => {
-        return  Api.get(
-            '/Users',)
-            .then(response => {
-                return response.data;
-            })
-            .then(response => setUserList(response))
-            .finally(() => dispatchEvent(null))
-            .catch(()=>{})
-
-    }
+    // const fetchData = async () => {
+    //     return  Api.get(
+    //         '/Users',)
+    //         .then(response => {
+    //             return response.data;
+    //         })
+    //         .then(response => setUserList(response))
+    //         .finally(() => dispatchEvent(null))
+    //         .catch(()=>{})
+    //
+    // }
 
     return (
         <>
@@ -168,10 +98,16 @@ function CruisesPage(props: Props) {
                     <div className="table-striped w-100 p2 p-xl-5">
                         <div className="text-white text-center bg-primary">
                             <div className="d-flex flex-row center">
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "13%"}}>
                                     <b>Numer</b>
                                 </div>
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "45%"}}>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "13%"}}>
+                                    <b>Rok rejsu</b>
+                                </div>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "26%"}}>
+                                    <b>Kierownik</b>
+                                </div>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "21%"}}>
                                     <b>Formularze</b>
                                 </div>
                                 <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "12%", cursor: "pointer"}}
@@ -182,20 +118,105 @@ function CruisesPage(props: Props) {
                                         {sortAscending ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
                                     </div>
                                 </div>
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "20%"}}>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
                                     <b>Status</b>
                                 </div>
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "8%"}}>
-                                    <b>RFU</b>
+                                <div className="d-flex d-xl-none justify-content-center p-2 col-12">
+                                    <b>Rejsy</b>
                                 </div>
                             </div>
                         </div>
-                        {!logicalCruises.length &&
-                            <div className="d-flex flex-row bg-light p-2 justify-content-center border">
-                                <div className={"text-center"}>Brak rejsów</div>
-                            </div>
-                        }
-                        {mappedLogicalCruises}
+                        <div className="w-100 bg-light">
+                            {!logicalCruises.length &&
+                                <div className="d-flex flex-row bg-light p-2 justify-content-center border">
+                                    <div className={"text-center"}>Brak rejsów</div>
+                                </div>
+                            }
+                            {logicalCruises.map((row: LogicalCruise, index: number) => (
+                                <div key={index}
+                                     className="d-flex flex-wrap flex-row justify-content-center border bg-light"
+                                >
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                         style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
+                                    >
+                                        <div className="col-12 d-flex d-xl-none justify-content-center">Numer:</div>
+                                        {row.number}
+                                    </div>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                         style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
+                                    >
+                                        <div className="col-12 d-flex d-xl-none justify-content-center">Rok rejsu:</div>
+                                        <input
+                                            type="text"
+                                            className="d-flex text-center col-12 bg-light border-0 p-0"
+                                            value={row.year}
+                                            readOnly
+                                        />
+                                    </div>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                         style={{width: windowWidth >= 1200 ? "26%" : "100%"}}
+                                    >
+                                        <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik:</div>
+                                        <input
+                                            type="text"
+                                            className="d-flex text-center col-12 bg-light border-0 p-0"
+                                            value={row.cruiseManagerFirstName}
+                                            readOnly
+                                        />
+                                        <input
+                                            type="text"
+                                            className="d-flex text-center col-12 bg-light border-0 p-0"
+                                            value={row.cruiseManagerLastName}
+                                            readOnly
+                                        />
+                                    </div>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                                         style={{width: windowWidth >= 1200 ? "21%" : "100%"}}
+                                    >
+                                        <Link
+                                            className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}
+                                            to={row.formAId ? `/${row.formAId}` : "#"}
+                                            style={!row.formAId ? {cursor: "default"} : {}}
+                                        >
+                                            Formularz A
+                                        </Link>
+                                        <Link
+                                            className={`col-12 d-flex justify-content-center ${!row.formBId ? "text-muted text-decoration-none" : ""}`}
+                                            to={row.formBId ? `/${row.formBId}` : "#"}
+                                            style={!row.formBId ? {cursor: "default"} : {}}
+                                        >
+                                            Formularz B
+                                        </Link>
+                                        <Link
+                                            className={`col-12 d-flex justify-content-center ${!row.formCId ? "text-muted text-decoration-none" : ""}`}
+                                            to={row.formCId ? `/${row.formCId}` : "#"}
+                                            style={!row.formCId ? {cursor: "default"} : {}}
+                                        >
+                                            Formularz C
+                                        </Link>
+                                    </div>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                                         style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
+                                    >
+                                        <div className="col-12 d-flex d-xl-none justify-content-center">Punkty:</div>
+                                        <Link
+                                            className={`col-12 d-flex justify-content-center`}
+                                            to={"/cruisePoints/" + row.id}
+                                        >
+                                            {row!.points}
+                                        </Link>
+                                    </div>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                                         style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                                    >
+                                        <div className="col-12 d-flex d-xl-none justify-content-center">Status:</div>
+                                        <div className="col-4 d-flex justify-content-center">
+                                            <i>{row!.status}</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </Page>
