@@ -77,13 +77,13 @@ namespace ResearchCruiseApp_API.Controllers
         
         public async void AddLogicalCruise()
         {
-            LogicalCruise newLogicalCruise = new()
+            Application newApplication = new()
             {
                 Points = 0,
-                State = LogicalCruise.LogicalCruiseState.Planned
+                State = Application.ApplicationState.Planned
             };
 
-            await researchCruiseContext.LogicalCruises.AddAsync(newLogicalCruise);
+            await researchCruiseContext.Applications.AddAsync(newApplication);
             await researchCruiseContext.SaveChangesAsync();
         }
         

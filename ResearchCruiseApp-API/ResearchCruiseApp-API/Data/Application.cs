@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ResearchCruiseApp_API.Data;
 
-public class LogicalCruise
+public class Application
 {
-    public enum LogicalCruiseState
+    public enum ApplicationState
     {
         Planned,
         Accepted,
@@ -20,7 +20,7 @@ public class LogicalCruise
     
     public int Points { get; set; }
     
-    public LogicalCruiseState State { get; set; }
+    public ApplicationState State { get; set; }
     
     public string? FormA { get; set; } = null!;
     
