@@ -6,6 +6,7 @@ import useCustomEvent from "../Tools/useCustomEvent";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+import ReadOnlyTextInput from "../CommonComponents/ReadOnlyTextInput";
 
 
 type Props = {
@@ -13,9 +14,10 @@ type Props = {
 }
 
 
-function CruisesPage(props: Props) {
-    type LogicalCruise = {
+function ApplicationsPage(props: Props) {
+    type Application = {
         id: string,
+        date: string,
         number: string,
         year: string,
         cruiseManagerFirstName: string,
@@ -28,10 +30,11 @@ function CruisesPage(props: Props) {
     }
 
     const generateLogicalCruises = () => {
-        const records: LogicalCruise[] = [];
+        const records: Application[] = [];
         for (let i = 1; i <= 100; i++) {
-            const record: LogicalCruise = {
+            const record: Application = {
                 id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
+                date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
                 number: `2024/${i}`,
                 year: (2025 + Math.floor(Math.random() * 3)).toString(),
                 cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
@@ -40,14 +43,14 @@ function CruisesPage(props: Props) {
                 formBId: i % 2 === 0 ? null : (i * 1000).toString(),
                 formCId:  null,
                 points: (Math.floor(Math.random() * 300) + 1).toString(),
-                status: i % 2 === 0 ? "Odrzucony" : "Zgłoszony"
+                status: i % 2 === 0 ? "Odrzucone" : "Nowe"
             };
             records.push(record);
         }
         return records;
     };
 
-    const [logicalCruises, setLogicalCruises]: [LogicalCruise[], Dispatch<any>]
+    const [applications, setApplications]: [Application[], Dispatch<any>]
         = useState(generateLogicalCruises())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -66,9 +69,9 @@ function CruisesPage(props: Props) {
 
     const [sortAscending, setSortAscending] = useState(true)
 
-    const sortLogicalCruisesByPoints = () => {
-        setLogicalCruises(
-            logicalCruises?.sort((a: LogicalCruise, b: LogicalCruise): number =>
+    const sortApplicationsByPoints = () => {
+        setApplications(
+            applications?.sort((a: Application, b: Application): number =>
                 (parseInt(a.points) - parseInt(b.points)) * (sortAscending ? -1 : 1)
             )
         )
@@ -92,26 +95,26 @@ function CruisesPage(props: Props) {
     return (
         <>
             <Page className={props.className + " justify-content-center col-12 col-xl-9 bg-white"}>
-                <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start justify-content-center p-2">
-                   <h1 style={{fontSize:"2rem"}}>Rejsy</h1>
+                <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start justify-content-center p-2" style={{fontSize: "0.8rem"}}>
+                   <h1>Zgłoszenia</h1>
 
                     <div className="table-striped w-100 p2 p-xl-5">
                         <div className="text-white text-center bg-primary">
                             <div className="d-flex flex-row center">
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "13%"}}>
-                                    <b>Numer</b>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "14%"}}>
+                                    <b>Numer, data</b>
                                 </div>
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "13%"}}>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "9%"}}>
                                     <b>Rok rejsu</b>
                                 </div>
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "26%"}}>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "32%"}}>
                                     <b>Kierownik</b>
                                 </div>
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "21%"}}>
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "18%"}}>
                                     <b>Formularze</b>
                                 </div>
                                 <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "12%", cursor: "pointer"}}
-                                     onClick={sortLogicalCruisesByPoints}
+                                     onClick={sortApplicationsByPoints}
                                 >
                                     <b>Punkty</b>
                                     <div className="p-0 ms-2">
@@ -122,56 +125,42 @@ function CruisesPage(props: Props) {
                                     <b>Status</b>
                                 </div>
                                 <div className="d-flex d-xl-none justify-content-center p-2 col-12">
-                                    <b>Rejsy</b>
+                                    <b>Zgłoszenia</b>
                                 </div>
                             </div>
                         </div>
                         <div className="w-100 bg-light">
-                            {!logicalCruises.length &&
+                            {!applications.length &&
                                 <div className="d-flex flex-row bg-light p-2 justify-content-center border">
                                     <div className={"text-center"}>Brak rejsów</div>
                                 </div>
                             }
-                            {logicalCruises.map((row: LogicalCruise, index: number) => (
+                            {applications.map((row: Application, index: number) => (
                                 <div key={index}
                                      className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                 >
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                         style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
+                                         style={{width: windowWidth >= 1200 ? "14%" : "100%"}}
                                     >
-                                        <div className="col-12 d-flex d-xl-none justify-content-center">Numer:</div>
-                                        {row.number}
+                                        <div className="col-12 d-flex d-xl-none justify-content-center">Numer i data:</div>
+                                        <ReadOnlyTextInput value={row.number} />
+                                        <ReadOnlyTextInput value={row.date} />
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                         style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
+                                         style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                                     >
                                         <div className="col-12 d-flex d-xl-none justify-content-center">Rok rejsu:</div>
-                                        <input
-                                            type="text"
-                                            className="d-flex text-center col-12 bg-light border-0 p-0"
-                                            value={row.year}
-                                            readOnly
-                                        />
+                                        <ReadOnlyTextInput value={row.year} />
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                         style={{width: windowWidth >= 1200 ? "26%" : "100%"}}
+                                         style={{width: windowWidth >= 1200 ? "32%" : "100%"}}
                                     >
                                         <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik:</div>
-                                        <input
-                                            type="text"
-                                            className="d-flex text-center col-12 bg-light border-0 p-0"
-                                            value={row.cruiseManagerFirstName}
-                                            readOnly
-                                        />
-                                        <input
-                                            type="text"
-                                            className="d-flex text-center col-12 bg-light border-0 p-0"
-                                            value={row.cruiseManagerLastName}
-                                            readOnly
-                                        />
+                                        <ReadOnlyTextInput value={row.cruiseManagerFirstName} />
+                                        <ReadOnlyTextInput value={row.cruiseManagerLastName} />
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                         style={{width: windowWidth >= 1200 ? "21%" : "100%"}}
+                                         style={{width: windowWidth >= 1200 ? "18%" : "100%"}}
                                     >
                                         <Link
                                             className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}
@@ -225,4 +214,4 @@ function CruisesPage(props: Props) {
 }
 
 
-export default CruisesPage
+export default ApplicationsPage

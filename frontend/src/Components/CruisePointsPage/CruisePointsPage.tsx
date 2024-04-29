@@ -1,77 +1,20 @@
-import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import React, {Dispatch, useState} from 'react';
 import Page from "../Tools/Page";
-import Api from "../Tools/Api";
-import DataTable from 'react-data-table-component';
 import useCustomEvent from "../Tools/useCustomEvent";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
-import {Link, useParams} from "react-router-dom";
-import SpubTasksInput from "../Forms/Inputs/SpubTasksInput";
+import {useParams} from "react-router-dom";
+import EvaluatedSpubTasksSection from "./EvaluatedSections/EvaluatedSpubTasksSection";
+import EvaluatedSection from "./EvaluatedSections/EvaluatedSection";
+import FormTitle from "../Forms/Tools/FormTitle";
 
 
 function CruisePointsPage() {
-    type LogicalCruise = {
-        id: string,
-        year: string,
-        cruiseManagerFirstName: string,
-        cruiseManagerLastName: string,
-        formAId: string | null,
-        formBId: string | null,
-        formCId: string | null,
-        points: string,
-        status: string
-    }
-
     let { logicalCruiseId } = useParams()
 
-    const generateLogicalCruises = () => {
-        const records: LogicalCruise[] = [];
-        for (let i = 1; i <= 100; i++) {
-            const record: LogicalCruise = {
-                id: `2024/${i}`,
-                year: (2025 + Math.floor(Math.random() * 3)).toString(),
-                cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-                cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-                formAId: (i * 100).toString(),
-                formBId: i % 2 === 0 ? null : (i * 1000).toString(),
-                formCId:  null,
-                points: (Math.floor(Math.random() * 300) + 1).toString(),
-                status: i % 2 === 0 ? "Odrzucony" : "Zgłoszony"
-            };
-            records.push(record);
-        }
-        return records;
-    };
-
-    const [logicalCruises, setLogicalCruises]: [LogicalCruise[], Dispatch<any>]
-        = useState(generateLogicalCruises())
-
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
-
-    const [sortAscending, setSortAscending] = useState(true)
-
-    const sortLogicalCruisesByPoints = () => {
-        setLogicalCruises(
-            logicalCruises?.sort((a: LogicalCruise, b: LogicalCruise): number =>
-                (parseInt(a.points) - parseInt(b.points)) * (sortAscending ? -1 : 1)
-            )
-        )
-        setSortAscending(!sortAscending)
-    }
-
     const { dispatchEvent } = useCustomEvent('busy')
+
+    const [sections, setSections] : [Record<string, string>, Dispatch<any>] = useState({
+        "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
+    })
 
     // const fetchData = async () => {
     //     return  Api.get(
@@ -89,9 +32,40 @@ function CruisePointsPage() {
         <>
             <Page className="justify-content-center col-12 col-xl-9 bg-white">
                 <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start justify-content-center p-2">
-                   <h1 style={{fontSize:"2rem"}}>Rejs {logicalCruiseId}</h1>
+                    <FormTitle title={"SDsds"} sections={sections} />
 
-                    {/*<SpubTasksInput className={""} name={""} historicalSpubTasks={""} required={""} />*/}
+                    <EvaluatedSection id="1" title={sections.SPUB}>
+                        <EvaluatedSpubTasksSection
+                            className={"col12"}
+                            name={"evaluatedSpubTasks"}
+                            evaluatedSpubTasks={[
+                                {
+                                    yearFrom: "2024",
+                                    yearTo: "2025",
+                                    name: "Zadanie A",
+                                    points: "100"
+                                },
+                                {
+                                    yearFrom: "2024",
+                                    yearTo: "2025",
+                                    name: "Zadanie B",
+                                    points: "140"
+                                },
+                                {
+                                    yearFrom: "2024",
+                                    yearTo: "2025",
+                                    name: "Zadanie C",
+                                    points: "34"
+                                },
+                                {
+                                    yearFrom: "2024",
+                                    yearTo: "2025",
+                                    name: "Zadanie D",
+                                    points: "64"
+                                },
+                            ]}
+                        />
+                    </EvaluatedSection>
                 </div>
             </Page>
         </>

@@ -166,7 +166,7 @@ export default function SpubTasksInput(props: Props){
                                             <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "60%"}}>
                                                 <b>Nazwa zadania</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}}/>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}} />
 
                                             <div className="d-flex justify-content-center d-xl-none p-2 col-12">
                                                 <b>Zadania</b>
@@ -289,7 +289,7 @@ export default function SpubTasksInput(props: Props){
                                 <div className="d-flex flex-row flex-wrap justify-content-center w-100">
                                     <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
-                                            style={{fontSize:"inherit"}}
+                                            style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
                                                 ${ disabled ? "disabled" : ""}`
                                             }

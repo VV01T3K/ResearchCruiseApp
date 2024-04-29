@@ -20,8 +20,8 @@ import Page from "./Tools/Page";
 import MessagesPage from "./MessagesPage/MessagesPage";
 import SavedFormPage from "./SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
-import CruisesPage from "./CruisesPage/CruisesPage";
 import CruisePointsPage from "./CruisePointsPage/CruisePointsPage";
+import ApplicationsPage from "./ApplicationsPage/ApplicationsPage";
 
 function App() {
 
@@ -110,7 +110,7 @@ function App() {
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
                             <Route path="/Messages" element={<MessagesPage />} />
-                            <Route path="/Cruises" element={<CruisesPage />} />
+                            <Route path="/Applications" element={<ApplicationsPage />} />
                             <Route path="/CruisePoints/:logicalCruiseId" element={<CruisePointsPage />} />
                         </>
                     }
