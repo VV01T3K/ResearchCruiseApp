@@ -53,11 +53,16 @@ function FormTitle(props: Props){
 
             <div className={" d-flex align-items-center w-100 text-white bg-primary d-none d-lg-flex p-2 border-bottom"}>
                 {Object.entries(sections).map(([key, value], index) => {
-                    return <Link key={`${index}`}
-                                 style={{fontSize: "0.8rem"}}
-                                 className={`p-2 mx-auto text-nowrap text-truncate text-white text-decoration-none`}
+                    return (
+                        <Link key={`${index}`}
+                              style={{fontSize: "0.8rem"}}
+                              className={`p-2 mx-auto text-nowrap text-truncate text-white text-decoration-none`}
                               onClick={() => scrollSmoothTo(`${index + 1}`)}
-                                 to={""}>{key}{value ? "":"*"}</Link>
+                              to={""}
+                        >
+                            {key}{value ? "":"*"}
+                        </Link>
+                    )
                 })}
                 <div className={" bg-primary text-end me-0 ms-auto text-nowrap p-2"}
                      style={{fontSize: "1.3rem"}}>{props.title}</div>

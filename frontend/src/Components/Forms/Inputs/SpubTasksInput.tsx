@@ -166,7 +166,7 @@ export default function SpubTasksInput(props: Props){
                                             <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "60%"}}>
                                                 <b>Nazwa zadania</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}}/>
+                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}} />
 
                                             <div className="d-flex justify-content-center d-xl-none p-2 col-12">
                                                 <b>Zadania</b>
@@ -208,7 +208,8 @@ export default function SpubTasksInput(props: Props){
                                                         type="number"
                                                         min="1900"
                                                         max="2100"
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                     />
                                                 </div>
                                                 <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
@@ -230,7 +231,8 @@ export default function SpubTasksInput(props: Props){
                                                         type="number"
                                                         min="1900"
                                                         max="2100"
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                     />
                                                 </div>
                                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
@@ -242,7 +244,7 @@ export default function SpubTasksInput(props: Props){
                                                         value={row.name}
                                                         onChange = {(e)=> {
                                                             row.name = e.target.value
-                                                            props.form.setValue(
+                                                            props.form?.setValue(
                                                                 props.name,
                                                                 field.value,
                                                                 {
@@ -253,7 +255,8 @@ export default function SpubTasksInput(props: Props){
                                                             )
                                                             field.onChange(field.value)
                                                         }}
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                         rows={1}
                                                     />
                                                 </div>
@@ -289,7 +292,7 @@ export default function SpubTasksInput(props: Props){
                                 <div className="d-flex flex-row flex-wrap justify-content-center w-100">
                                     <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
-                                            style={{fontSize:"inherit"}}
+                                            style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
                                                 ${ disabled ? "disabled" : ""}`
                                             }

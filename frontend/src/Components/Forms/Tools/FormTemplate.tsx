@@ -65,7 +65,7 @@ function FormTemplate(props: Props) {
             {!isSaving &&
             <Page className="justify-content-center col-12 col-xl-9 bg-white">
                 <div className="d-flex flex-column w-100" style={{fontSize:"0.8rem"}}>
-                    <div className="d-flex flex-column align-items-center  w-100 overflow-auto ">
+                    <div className="d-flex flex-column align-items-center w-100 overflow-auto">
                         {props.children}
                     </div>
                     <div className="d-flex flex-row justify-content-center border-top border-black w-100 bg-white" style={{zIndex:9999}}>
