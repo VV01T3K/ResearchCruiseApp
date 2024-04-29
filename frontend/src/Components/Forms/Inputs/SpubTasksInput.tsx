@@ -208,7 +208,8 @@ export default function SpubTasksInput(props: Props){
                                                         type="number"
                                                         min="1900"
                                                         max="2100"
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                     />
                                                 </div>
                                                 <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
@@ -230,7 +231,8 @@ export default function SpubTasksInput(props: Props){
                                                         type="number"
                                                         min="1900"
                                                         max="2100"
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                     />
                                                 </div>
                                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
@@ -242,7 +244,7 @@ export default function SpubTasksInput(props: Props){
                                                         value={row.name}
                                                         onChange = {(e)=> {
                                                             row.name = e.target.value
-                                                            props.form.setValue(
+                                                            props.form?.setValue(
                                                                 props.name,
                                                                 field.value,
                                                                 {
@@ -253,7 +255,8 @@ export default function SpubTasksInput(props: Props){
                                                             )
                                                             field.onChange(field.value)
                                                         }}
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                         rows={1}
                                                     />
                                                 </div>

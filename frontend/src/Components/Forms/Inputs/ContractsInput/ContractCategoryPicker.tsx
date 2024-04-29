@@ -17,7 +17,7 @@ export default function ContractCategoryPicker(props: Props) {
     return (
         <Select
             minMenuHeight={300}
-            className="d-flex col-12 justify-content-center"
+            className="d-flex col-12 justify-content-center form-control p-1"
             menuPlacement="auto"
             placeholder="Wybierz"
             styles={{
@@ -27,11 +27,13 @@ export default function ContractCategoryPicker(props: Props) {
                     border: "1px solid grey",
                     width: "100%",
                     "border-radius": "2px",
-                    padding: "0px"
+                    padding: "0px",
+                    fontSize: "0.8em"
                 }),
                 menu: provided => ({
                     ...provided,
-                    zIndex: 9999
+                    zIndex: 9999,
+                    fontSize: "0.8em"
                 })
             }}
             options = {[

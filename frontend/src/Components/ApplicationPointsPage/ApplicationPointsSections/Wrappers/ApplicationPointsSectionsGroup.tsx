@@ -2,12 +2,12 @@ import React, {ReactNode} from "react";
 
 
 type Props = {
-    children?: React.ReactElement<any>,
+    children?: React.ReactElement<any>[],
     sections: any
 }
 
 
-function FormWithSections(props: Props){
+function ApplicationPointsSectionsGroup(props: Props){
 
     return (
         <div className="flex-grow-1 overflow-y-scroll justify-content-center">
@@ -21,4 +21,4 @@ function FormWithSections(props: Props){
 }
 
 
-export default FormWithSections
+export default ApplicationPointsSectionsGroup

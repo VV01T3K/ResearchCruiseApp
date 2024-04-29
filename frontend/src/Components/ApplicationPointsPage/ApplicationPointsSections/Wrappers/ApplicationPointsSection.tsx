@@ -12,7 +12,7 @@ type Props = {
 
 
 
-function FormSection(props: Props) {
+function ApplicationPointsSection(props: Props) {
     const [isActive, setIsActive] = useState(true);
 
     return  (
@@ -39,4 +39,4 @@ function FormSection(props: Props) {
 }
 
 
-export default FormSection
+export default ApplicationPointsSection

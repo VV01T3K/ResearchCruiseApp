@@ -2,14 +2,15 @@ import React, {Dispatch, useState} from 'react';
 import Page from "../Tools/Page";
 import useCustomEvent from "../Tools/useCustomEvent";
 import {useParams} from "react-router-dom";
-import EvaluatedSpubTasksSection from "./EvaluatedSections/EvaluatedSpubTasksSection";
-import EvaluatedSection from "./EvaluatedSections/Wrappers/EvaluatedSection";
+import SpubTasksPoints from "./ApplicationPointsSections/SpubTasksPoints";
 import FormTitle from "../Forms/Tools/FormTitle";
-import EvaluatedSections from "./EvaluatedSections/Wrappers/EvaluatedSections";
+import ApplicationPointsSectionsGroup from "./ApplicationPointsSections/Wrappers/ApplicationPointsSectionsGroup";
+import ApplicationPointsSection from "./ApplicationPointsSections/Wrappers/ApplicationPointsSection";
+import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 
 
-function CruisePointsPage() {
-    let { logicalCruiseId } = useParams()
+function ApplicationPointsPage() {
+    let { applicationId } = useParams()
 
     const { dispatchEvent } = useCustomEvent('busy')
 
@@ -35,9 +36,12 @@ function CruisePointsPage() {
             <Page className="justify-content-center col-12 col-xl-9 bg-white">
                 <div className="d-flex flex-column w-100" style={{fontSize:"0.8rem"}}>
                     <FormTitle title={"Punkty przyznane zgłoszeniu"} sections={sections} />
-                    <EvaluatedSections sections={sections}>
-                        <EvaluatedSection title={sections.SPUB}>
-                            <EvaluatedSpubTasksSection
+                    <ApplicationPointsSectionsGroup sections={sections}>
+                        <ApplicationPointsSection title={sections.Info}>
+                            <ApplicationInfo />
+                        </ApplicationPointsSection>
+                        <ApplicationPointsSection title={sections.SPUB}>
+                            <SpubTasksPoints
                                 name={"evaluatedSpubTasks"}
                                 evaluatedSpubTasks={[
                                     {
@@ -66,8 +70,8 @@ function CruisePointsPage() {
                                     },
                                 ]}
                             />
-                        </EvaluatedSection>
-                    </EvaluatedSections>
+                        </ApplicationPointsSection>
+                    </ApplicationPointsSectionsGroup>
                 </div>
             </Page>
         </>
@@ -75,4 +79,4 @@ function CruisePointsPage() {
 }
 
 
-export default CruisePointsPage
+export default ApplicationPointsPage

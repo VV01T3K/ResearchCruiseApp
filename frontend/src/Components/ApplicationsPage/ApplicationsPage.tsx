@@ -190,7 +190,7 @@ function ApplicationsPage(props: Props) {
                                         <div className="col-12 d-flex d-xl-none justify-content-center">Punkty:</div>
                                         <Link
                                             className={`col-12 d-flex justify-content-center`}
-                                            to={"/cruisePoints/" + row.id}
+                                            to={"/ApplicationPoints/" + row.id}
                                         >
                                             {row!.points}
                                         </Link>

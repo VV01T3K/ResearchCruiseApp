@@ -6,13 +6,13 @@ type Props = {
 }
 
 
-export default function ReadOnlyTextInput (props: Props) {
+export default function ReadOnlyTextArea (props: Props) {
     return (
-        <input
-            type="text"
+        <textarea
             className="d-flex form-control text-center col-12 p-1"
             style={{fontSize: "inherit"}}
             value={props.value}
+            rows={1}
             readOnly
         />
     )

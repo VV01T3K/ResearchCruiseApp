@@ -2,6 +2,8 @@ import React, { useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import Select from "react-select";
+import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
+import ReadOnlyTextArea from "../../CommonComponents/ReadOnlyTextArea";
 
 
 type EvaluatedSpubTask = {
@@ -17,7 +19,7 @@ type Props = {
 }
 
 
-export default function EvaluatedSpubTasksSection(props: Props){
+function SpubTasksPoints(props: Props){
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
         () => {
@@ -82,33 +84,19 @@ export default function EvaluatedSpubTasksSection(props: Props){
                                      style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
                                 >
                                     <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
-                                    <input
-                                        type="text"
-                                        className="d-flex text-center col-12 p-1"
-                                        value={row.yearFrom}
-                                        readOnly
-                                    />
+                                    <ReadOnlyTextInput value={row.yearFrom} />
                                 </div>
                                 <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
                                      style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
                                 >
                                     <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
-                                    <input
-                                        type="text"
-                                        className="d-flex text-center col-12 p-1"
-                                        value={row.yearTo}
-                                        readOnly
-                                    />
+                                    <ReadOnlyTextInput value={row.yearTo} />
                                 </div>
                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
                                      style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                                 >
                                     <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
-                                    <textarea
-                                        value={row.name}
-                                        className="d-flex col-12 p-1"
-                                        rows={1}
-                                    />
+                                    <ReadOnlyTextArea value={row.name} />
                                 </div>
                                 <div className="d-flex justify-content-center align-items-center p-2"
                                      style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
@@ -128,3 +116,6 @@ export default function EvaluatedSpubTasksSection(props: Props){
         </div>
     )
 }
+
+
+export default SpubTasksPoints
