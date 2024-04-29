@@ -101,12 +101,7 @@ function SpubTasksPoints(props: Props){
                                 <div className="d-flex justify-content-center align-items-center p-2"
                                      style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                                 >
-                                    <input
-                                        type="text"
-                                        className="d-flex text-center col-12 p-1"
-                                        value={row.points}
-                                        readOnly
-                                    />
+                                    <ReadOnlyTextInput value={row.points} />
                                 </div>
                             </div>
                         ))}
