@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from "react";
-import useCustomEvent from "../../Tools/useCustomEvent";
+import useCustomEvent from "../../../Tools/useCustomEvent";
 
 
 type Props = {
-    id?: string | undefined,
+    id?: string,
     children?:
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
     title: string,
-    sections?: { [x: string]: string; }
 }
 
 
@@ -27,7 +26,10 @@ function FormSection(props: Props) {
                     {props.id + '. ' + props.title} {isActive ? "▲" : "▼"}
                 </div>
             </div>
-            <div className={`d-flex flex-row flex-wrap justify-content-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}>
+            <div
+                className={`d-flex flex-row flex-wrap justify-content-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}
+                style={{fontSize:"0.8rem"}}
+            >
                 {React.Children.map(props.children, (child, index) =>
                     child
                 )}

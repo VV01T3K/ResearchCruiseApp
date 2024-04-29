@@ -12,7 +12,6 @@ type EvaluatedSpubTask = {
 }
 
 type Props = {
-    className: string,
     name: string,
     evaluatedSpubTasks: EvaluatedSpubTask[],
 }
@@ -34,7 +33,7 @@ export default function EvaluatedSpubTasksSection(props: Props){
     );
 
     return (
-        <div className={props.className + " p-3"}>
+        <div className="col-12 p-3">
             <>
                 <div className="table-striped w-100">
                     <div className="text-white text-center bg-primary">
