@@ -134,7 +134,7 @@ function FormA0(props:{loadValues?:any}){
                     />
                     {(() => {
                         // @ts-ignore
-                        if (form.watch("permissions") == "tak" ) {
+                        if (form.watch("permissions") == 0 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Jakie?"
