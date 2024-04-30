@@ -49,12 +49,12 @@ function FormA0(props:{loadValues?:any}){
             <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
                     <FormSelect className="col-12 col-md-6 col-xl-4"
-                                         name="cruiseManager"
+                                         name="cruiseManagerId"
                                          label="Kierownik rejsu"
                                          values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
                     />
                     <FormSelect className="col-12 col-md-6 col-xl-4"
-                                name="deputyManager"
+                                name="deputyManagerId"
                                 label="Zastępca"
                                 values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
                     />
