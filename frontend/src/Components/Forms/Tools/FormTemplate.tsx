@@ -3,6 +3,7 @@ import Page from "../../Tools/Page";
 import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import savedFormPage from "../../SavedFormsPage/SavedFormPage";
+import Api from "../../Tools/Api";
 
 
 type Props = {
@@ -58,6 +59,7 @@ function FormTemplate(props: Props) {
 
     const handleSubmit = () => {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
+        Api.post('/forms', props.form.getValues()).then(r => console.log(r))
     }
 
     return (
