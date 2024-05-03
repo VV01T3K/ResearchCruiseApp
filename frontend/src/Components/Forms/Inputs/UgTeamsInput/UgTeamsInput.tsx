@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import {administrationUnits} from "../../../../resources/administrationUnits";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
 
@@ -10,6 +9,7 @@ type Props = {
     name: string,
     form?:UseFormReturn
     required?: boolean,
+    values: string[]
 }
 function UgTeamsInput(props: Props) {
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
@@ -93,7 +93,7 @@ function UgTeamsInput(props: Props) {
                                     <div className="d-flex justify-content-center align-items-center p-2 border-end text-center"
                                          style={{width: windowWidth >= 1200 ? "36%" : "100%"}}
                                     >
-                                        <span>{item.value}</span>
+                                        <span>{props.values[item.value]}</span>
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                                          style={{width: windowWidth >= 1200 ? "22%" : "100%"}}
@@ -138,7 +138,6 @@ function UgTeamsInput(props: Props) {
                                             onChange={(e) => {
                                                 const sanitizedValue = parseInt(e.target.value);
                                                 var val = field.value;
-                                                console.log(sanitizedValue)
                                                 if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                     val[index].noOfStudents = sanitizedValue
                                                 }
@@ -211,22 +210,22 @@ function UgTeamsInput(props: Props) {
                                         })
                                     }}
                                     options={
-                                        administrationUnits
-                                            .filter(element =>
+                                        props.values
+                                            .filter((_, index) =>
                                                 !field.value
                                                     .map((item: {value:[]}) => item.value)
-                                                    .includes(element)
+                                                    .includes(index)
                                             )
-                                            ?.map(value => ({
+                                            ?.map((value) => ({
                                                 label: value,
-                                                value
+                                                value: props.values.findIndex(element => element === value)
                                             }))
                                         ?? { label: "", value: "" }
                                     }
                                     {...field}
                                     value={null}
                                     onChange={(selectedOption) => {
-                                        props.form!.setValue(props.name, [...field.value, {value: `${selectedOption!.label}`, noOfEmployees:"", noOfStudents:""}], {
+                                        props.form!.setValue(props.name, [...field.value, {value: selectedOption!.value, noOfEmployees:"", noOfStudents:""}], {
                                             shouldValidate: true,
                                             shouldDirty: true,
                                             shouldTouch: true
