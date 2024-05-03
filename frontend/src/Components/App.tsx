@@ -92,7 +92,7 @@ function App() {
     return (
         <div className="vh-100">
             <PageHeader name={userData ? userData.firstName : null} />
-            <div className={`${isBusy ? "d-none":""}`}>
+            <div className={`${isBusy ? "d-none":" h-100"}`}>
             <Routes  >
                     {userData && userData["roles"].includes("Shipowner") &&
                         <>
