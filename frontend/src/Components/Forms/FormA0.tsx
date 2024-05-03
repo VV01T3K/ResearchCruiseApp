@@ -174,8 +174,9 @@ function FormA0(props:{loadValues?:any}){
                 </FormSection>
 
                 <FormSection title={sections.Zadania}>
-                    <TaskInput name={"researchTasks"} historicalTasks={[
-
+                    <TaskInput
+                        name={"researchTasks"}
+                        historicalTasks={[
                             {
                                 "type": 5,
                                 "values": {
@@ -219,7 +220,10 @@ function FormA0(props:{loadValues?:any}){
                                     "title": "dsfdfsd"
                                 }
                             }
-                    ]} className={"col-12"} label={"ss"}/>
+                        ]}
+                        className="col-12"
+                        label="ss"
+                    />
                 </FormSection>
 
                 <FormSection title={sections.Umowy}>
