@@ -15,7 +15,7 @@ type Props = {
 
 
 function ApplicationsPage(props: Props) {
-    type Application = {
+    type ApplicationOverview = {
         id: string,
         date: string,
         number: string,
@@ -30,9 +30,9 @@ function ApplicationsPage(props: Props) {
     }
 
     const generateLogicalCruises = () => {
-        const records: Application[] = [];
+        const records: ApplicationOverview[] = [];
         for (let i = 1; i <= 100; i++) {
-            const record: Application = {
+            const record: ApplicationOverview = {
                 id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
                 date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
                 number: `2024/${i}`,
@@ -50,7 +50,7 @@ function ApplicationsPage(props: Props) {
         return records;
     };
 
-    const [applications, setApplications]: [Application[], Dispatch<any>]
+    const [applications, setApplications]: [ApplicationOverview[], Dispatch<any>]
         = useState(generateLogicalCruises())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -71,7 +71,7 @@ function ApplicationsPage(props: Props) {
 
     const sortApplicationsByPoints = () => {
         setApplications(
-            applications?.sort((a: Application, b: Application): number =>
+            applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
                 (parseInt(a.points) - parseInt(b.points)) * (sortAscending ? -1 : 1)
             )
         )
@@ -135,7 +135,7 @@ function ApplicationsPage(props: Props) {
                                     <div className={"text-center"}>Brak rejsów</div>
                                 </div>
                             }
-                            {applications.map((row: Application, index: number) => (
+                            {applications.map((row: ApplicationOverview, index: number) => (
                                 <div key={index}
                                      className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                 >
@@ -156,7 +156,7 @@ function ApplicationsPage(props: Props) {
                                          style={{width: windowWidth >= 1200 ? "32%" : "100%"}}
                                     >
                                         <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik:</div>
-                                        <ReadOnlyTextInput value={row.cruiseManagerFirstName} />
+                                        <ReadOnlyTextInput value={row.cruiseManagerFirstName} className="mb-1"/>
                                         <ReadOnlyTextInput value={row.cruiseManagerLastName} />
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
