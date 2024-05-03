@@ -19,6 +19,7 @@ import FormWithSections from "./Tools/FormWithSections";
 import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 import UgTeamsInput from "./Inputs/UgTeamsInput/UgTeamsInput";
+import {administrationUnits} from "../../resources/administrationUnits";
 
 
 function FormA0(props:{loadValues?:any}){
@@ -111,7 +112,7 @@ function FormA0(props:{loadValues?:any}){
                                ]}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == "w inny sposób" ) {
+                        if (form.watch("shipUsage") == 4 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -121,8 +122,11 @@ function FormA0(props:{loadValues?:any}){
                                 />
                             )
                         }
-                        else
-                            return <DummyTag required={false} />
+                        else{
+                            if(form.getValues("differentUsage") != undefined) {
+                                form.unregister("differentUsage")
+                            }
+                            return <DummyTag required={false} />}
                     })()}
                 </FormSection>
 
@@ -134,7 +138,7 @@ function FormA0(props:{loadValues?:any}){
                     />
                     {(() => {
                         // @ts-ignore
-                        if (form.watch("permissions") == 0 ) {
+                        if (form.watch("permissions") === 0 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Jakie?"
@@ -144,9 +148,12 @@ function FormA0(props:{loadValues?:any}){
                                 />
                             )
                         }
-                        else
-                            return <DummyTag required={false} />
-                    })()}
+                        else{
+
+                        if(form.getValues("additionalPermissions") != undefined) {
+                            form.unregister("additionalPermissions")
+                        }
+                        return <DummyTag required={false} />}                    })()}
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
@@ -289,6 +296,7 @@ function FormA0(props:{loadValues?:any}){
                         className="col-12 col-xl-6"
                         label="Uczestnictwo osób z jednostek organizacyjnych UG"
                         name="ugTeams"
+                        values={administrationUnits}
                     />
                     <GuestTeamsInput
                         required={false}
