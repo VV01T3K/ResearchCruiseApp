@@ -346,7 +346,11 @@ function TaskInput(props: Props) {
                             <Dropdown.Menu>
                                 {Object.keys(options).map((key, index) => (
                                     <Dropdown.Item key={index} onClick={() => {
-                                        props.form!.setValue(props.name, [...field.value, {type:index, values:defaultValues[index]}], {shouldValidate:true, shouldDirty:true, shouldTouch:true})
+                                        props.form!.setValue(
+                                            props.name,
+                                            [...field.value, { type: index, values: defaultValues[index] }],
+                                            {shouldValidate:true, shouldDirty:true, shouldTouch:true}
+                                        )
                                     }
                                     }>
                                         {key}
