@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate from "./Tools/FormTemplate";
 import FormTitle from "./Tools/FormTitle";
-import FormSelect from "./Inputs/FormSelect";
+import FormUserSelect from "./Inputs/FormUserSelect";
 import FormCreatableSelect from "./Inputs/FormCreatableSelect";
 import FormSection from "./Tools/FormSection";
 import MonthSlider from "./Inputs/MonthSlider";
@@ -54,15 +54,15 @@ function FormB0(props:{loadValues?:any}){
                                          label="Kierownik rejsu"
                                          values={["sss"]}
                     />
-                    <FormSelect className="col-12 col-md-6 col-xl-3"
-                                name="supplyManagers"
-                                label="Zastępca"
-                                values={["sss"]}
+                    <FormUserSelect className="col-12 col-md-6 col-xl-3"
+                                    name="supplyManagers"
+                                    label="Zastępca"
+                                    values={["sss"]}
                     />
-                    <FormSelect className="col-12 col-md-6 col-xl-3"
-                                name="years"
-                                label="Rok rejsu"
-                                values={["sss"]}
+                    <FormUserSelect className="col-12 col-md-6 col-xl-3"
+                                    name="years"
+                                    label="Rok rejsu"
+                                    values={["sss"]}
                     />
                 </FormSection>
 

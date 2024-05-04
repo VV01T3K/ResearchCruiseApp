@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useLayoutEffect, useMemo, useState} from 'react';
 import Page from "../../Tools/Page";
 import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../Tools/useCustomEvent";
@@ -36,10 +36,6 @@ function FormTemplate(props: Props) {
         // Zapisz zaktualizowane dane w localStorage
         localStorage.setItem('formData', JSON.stringify(formData));
 
-
-
-
-
         setTimeout(()=>{
             navigate("/savedForms")
             dispatchEvent(null)
@@ -53,6 +49,7 @@ function FormTemplate(props: Props) {
             });
         }
     }, [props.form.setValue]);
+
 
     const handleSubmit = () => {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
@@ -68,10 +65,10 @@ function FormTemplate(props: Props) {
                     </div>
                     <div className="d-flex flex-row justify-content-center border-top border-black w-100 bg-white" style={{zIndex:9999}}>
                         <div className="d-flex col-6 text-center p-2 justify-content-center">
-                            <button onClick={saveValues} className="btn btn-info w-100" style={{fontSize:"inherit"}}>Zapisz</button>
+                            <button onClick={saveValues} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
                         </div>
                         <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                            <button onClick={handleSubmit} className="btn btn-info w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                            <button onClick={handleSubmit} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
                         </div>
                     </div>
                 </div>

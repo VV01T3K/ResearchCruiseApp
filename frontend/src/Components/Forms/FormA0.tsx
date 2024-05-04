@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate from "./Tools/FormTemplate";
 import FormTitle from "./Tools/FormTitle";
-import FormSelect from "./Inputs/FormSelect";
+import FormUserSelect from "./Inputs/FormUserSelect";
 import FormCreatableSelect from "./Inputs/FormCreatableSelect";
 import FormSection from "./Tools/FormSection";
 import MonthSlider from "./Inputs/MonthSlider";
@@ -20,6 +20,11 @@ import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
 import UgTeamsInput from "./Inputs/UgTeamsInput/UgTeamsInput";
 import {administrationUnits} from "../../resources/administrationUnits";
+import useCustomEvent from "../Tools/useCustomEvent";
+import api from "../Tools/Api";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
+import FormYearSelect from "./Inputs/FormYearSelect";
 
 
 function FormA0(props:{loadValues?:any}){
@@ -44,25 +49,41 @@ function FormA0(props:{loadValues?:any}){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
+    const [formValues, setFormValues] = useState([])
+    const { dispatchEvent } = useCustomEvent('busy')
+    useEffect(() => {
+        api.get('/forms/GetData').then(response => setFormValues(response.data)).catch(error => console.log(error))
+        console.log(formValues)
+
+    },[]);
+
+    useEffect(() => {
+        console.log(formValues)
+
+    }, );
+
     return (
+
         <FormTemplate form={form} loadValues={props.loadValues} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}>
                 <FormSection title={sections.Kierownik}>
-                    <FormSelect className="col-12 col-md-6 col-xl-4"
+                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                          name="cruiseManagerId"
                                          label="Kierownik rejsu"
-                                         values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
+                                         values={formValues["CruiseManagers"]
+                    }
+                                    defaultValue={formValues["CruiseManagers"]}
                     />
-                    <FormSelect className="col-12 col-md-6 col-xl-4"
+                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                 name="deputyManagerId"
                                 label="Zastępca"
-                                values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
+                                values={formValues["DeputyManagers"]}
                     />
-                    <FormSelect className="col-12 col-md-6 col-xl-4"
+                    <FormYearSelect className="col-12 col-md-6 col-xl-4"
                                 name="year"
                                 label="Rok rejsu"
-                                values={[{firstName:"sadasd", lastName:"sadasd", email:"wewqe", id:"guid"}]}
+                                values={formValues["Years"]}
                     />
                 </FormSection>
 
@@ -102,17 +123,11 @@ function FormA0(props:{loadValues?:any}){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={[
-                                   "całą dobę",
-                                   "jedynie w ciągu dnia (maks. 8–12 h)",
-                                   "jedynie w nocy (maks. 8–12 h)",
-                                   "8–12 h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia" +
-                                       "o różnych porach",
-                                   "w inny sposób"
-                               ]}
+                               values={
+                                   formValues["ShipUsages"]}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == 4 ) {
+                        if (form.watch("shipUsage") == formValues["ShipUsages"]?.length-1 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -123,9 +138,6 @@ function FormA0(props:{loadValues?:any}){
                             )
                         }
                         else{
-                            if(form.getValues("differentUsage") != undefined) {
-                                form.unregister("differentUsage")
-                            }
                             return <DummyTag required={false} />}
                     })()}
                 </FormSection>
@@ -150,14 +162,17 @@ function FormA0(props:{loadValues?:any}){
                         }
                         else{
 
-                        if(form.getValues("additionalPermissions") != undefined) {
-                            form.unregister("additionalPermissions")
-                        }
+                            if(form.formState.errors["additionalPermissions"] != undefined) {
+                                //     form.unregister("differentUsage")
+                                form.clearErrors("additionalPermissions")
+                            }
                         return <DummyTag required={false} />}                    })()}
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap label="Obszar prowadzonych badań" name="researchArea" />
+                    <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
+                                  image={formValues["ResearchAreasMap"]}
+                                  regions={formValues["ResearchAreas"]} />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -170,7 +185,7 @@ function FormA0(props:{loadValues?:any}){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={["Naukowy", "Komercyjny", "Dydaktyczny"]}
+                               values={formValues["CruiseGoals"]}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"
