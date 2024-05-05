@@ -45,7 +45,15 @@ function FormTemplate(props: Props) {
     React.useEffect(() => {
         if (props.loadValues) {
             Object.entries(props.loadValues).forEach(([key, value]) => {
-                props.form.setValue(key, value, {shouldDirty:true, shouldValidate:true, shouldTouch:true});
+                props.form.setValue(
+                    key,
+                    value,
+                    {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                        shouldTouch: true
+                    }
+                );
             });
         }
     }, [props.form.setValue]);

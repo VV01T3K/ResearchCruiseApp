@@ -23,7 +23,7 @@ export type TaskValues =
     { title: string, time: Time, financingAmount: string } |
     { description: string }
 
-type Task = {
+export type Task = {
     type: number,
     values: TaskValues
 }
