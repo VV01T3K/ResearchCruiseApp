@@ -229,7 +229,7 @@ function ManageUsersPage(props: Props) {
                 <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start
                                 justify-content-center p-2"
                 >
-                   <h1 style={{fontSize:"2rem"}}>Zarządzanie użytkownikami</h1>
+                   <h1 style={{fontSize: "2rem"}}>Zarządzanie użytkownikami</h1>
 
                     <div className="d-flex flex-column flex-wrap justify-content-center  p-2 p-xl-5 align-items-center">
                         <DataTable className={"dataTable"}

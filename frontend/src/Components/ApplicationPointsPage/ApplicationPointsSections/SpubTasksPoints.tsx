@@ -96,9 +96,10 @@ function SpubTasksPoints(props: Props){
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
                                 <ReadOnlyTextArea value={row.name} />
                             </div>
-                            <div className="d-flex justify-content-center align-items-center p-2"
+                            <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                             >
+                                <div className="col-12 d-xl-none">Punkty</div>
                                 <ReadOnlyTextInput value={row.points} />
                             </div>
                         </div>

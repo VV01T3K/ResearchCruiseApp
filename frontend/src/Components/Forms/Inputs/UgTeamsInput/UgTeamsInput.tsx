@@ -3,14 +3,23 @@ import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
 
+
+export type UgTeam = {
+    value: string,
+    noOfEmployees: string,
+    noOfStudents: string
+}
+
 type Props = {
     className: string,
     label: string,
     name: string,
-    form?:UseFormReturn
+    form?: UseFormReturn
     required?: boolean,
     values: string[]
 }
+
+
 function UgTeamsInput(props: Props) {
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
     const disabled = props.form!.formState.errors[props.name] && props.form!.formState.errors[props.name]!.message != requiredMsg
@@ -77,7 +86,7 @@ function UgTeamsInput(props: Props) {
                                     <div className={"text-center"}>Nie dodano żadnej jednostki</div>
                                 </div>
                             }
-                            {field.value.map((item: {value: string, noOfEmployees: string, noOfStudents: string}, index: number) => (
+                            {field.value.map((item: UgTeam, index: number) => (
                                 <div className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                      key={index}
                                 >
@@ -225,11 +234,20 @@ function UgTeamsInput(props: Props) {
                                     {...field}
                                     value={null}
                                     onChange={(selectedOption) => {
-                                        props.form!.setValue(props.name, [...field.value, {value: selectedOption!.value, noOfEmployees:"", noOfStudents:""}], {
-                                            shouldValidate: true,
-                                            shouldDirty: true,
-                                            shouldTouch: true
-                                        })
+                                        const newUgTeam: UgTeam = {
+                                            value: selectedOption!.value,
+                                            noOfEmployees: "",
+                                            noOfStudents: ""
+                                        }
+                                        props.form!.setValue(
+                                            props.name,
+                                            [...field.value,newUgTeam],
+                                            {
+                                                shouldValidate: true,
+                                                shouldDirty: true,
+                                                shouldTouch: true
+                                            }
+                                        )
                                     }}
                             />
                             {props.form!.formState.errors[props.name] &&

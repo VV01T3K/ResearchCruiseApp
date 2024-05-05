@@ -43,7 +43,7 @@ function SavedFormPage(props: Props) {
                 <div className="d-flex flex-column p-4 center align-self-start justify-content-center w-100">
                     <h1 style={{fontSize: "2rem"}}>Zapisane formularze</h1>
                     <div className={"p-4"}>
-                        {savedData.length>0 &&
+                        {savedData?.length>0 &&
                     <div>
                         <div className={"bg-primary d-none d-xl-block text-white text-center"}>
                             <div className={"d-flex flex-row"}>
@@ -55,7 +55,7 @@ function SavedFormPage(props: Props) {
                             </div>
                         </div>
                         <div>
-                            {localStorage.getItem("formData") && savedData.map((form, index) =>
+                            {localStorage.getItem("formData") && savedData?.map((form, index) =>
                                 <div className={"d-flex flex-row flex-wrap border text-center align-items-center"} style={{cursor:"pointer"}}
                                      styleName={{cursor: "pointer"}}>
                                     <div style={{height:"10px"}} className={"col-12 d-xl-none d-flex flex-column  bg-primary"}/>
@@ -76,7 +76,7 @@ function SavedFormPage(props: Props) {
                                 </div>)}
                         </div>
                     </div>}
-                        {!savedData.length && <div className={"text-center"}>brak zapisanych formularzy</div>}
+                        {!savedData?.length && <div className={"text-center"}>Brak zapisanych formularzy</div>}
                     </div>
 
                 </div>

@@ -10,15 +10,15 @@ import NumberInput from "./Inputs/NumberInput";
 import TextArea from "./Inputs/TextArea";
 import FormRadio from "./Inputs/FormRadio";
 import ClickableMap from "./Inputs/ClickableMap";
-import TaskInput from "./Inputs/TaskInput/TaskInput";
-import GuestTeamsInput from "./Inputs/GuestTeamsInput/GuestTeamsInput";
-import SpubTasksInput from "./Inputs/SpubTasksInput";
+import TaskInput, {Task} from "./Inputs/TaskInput/TaskInput";
+import GuestTeamsInput, {GuestsTeam} from "./Inputs/GuestTeamsInput/GuestTeamsInput";
+import SpubTasksInput, {SpubTask} from "./Inputs/SpubTasksInput";
 import Api from "../Tools/Api";
 import {DummyTag} from "../Tools/DummyTag";
 import FormWithSections from "./Tools/FormWithSections";
-import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
+import ContractsInput, {Contract} from "./Inputs/ContractsInput/ContractsInput";
 import DateInput from "./Inputs/DateInput";
-import UgTeamsInput from "./Inputs/UgTeamsInput/UgTeamsInput";
+import UgTeamsInput, {UgTeam} from "./Inputs/UgTeamsInput/UgTeamsInput";
 import {administrationUnits} from "../../resources/administrationUnits";
 import useCustomEvent from "../Tools/useCustomEvent";
 import api from "../Tools/Api";
@@ -27,7 +27,34 @@ import error = Simulate.error;
 import FormYearSelect from "./Inputs/FormYearSelect";
 
 
-function FormA0(props:{loadValues?:any}){
+type FormA = {
+    cruiseManagerId: string,
+    deputyManagerId: string,
+    year: string,
+    acceptedPeriod: number[],
+    optimalPeriod: number[],
+    cruiseDays: string
+    cruiseHours: any,
+    periodNotes: string,
+    shipUsage: string,
+    permissions: string,
+    researchArea: string,
+    researchAreaInfo: string,
+    cruiseGoal: string,
+    cruiseGoalDescription: string,
+    researchTasks: Task[],
+    contracts: Contract[]
+    ugTeams: UgTeam[],
+    guestTeams: GuestsTeam[],
+    spubTasks: SpubTask[]
+}
+
+type Props = {
+    loadValues?: FormA
+}
+
+
+function FormA0(props: Props){
 
     const form = useForm({
         mode: 'onBlur',
@@ -65,7 +92,6 @@ function FormA0(props:{loadValues?:any}){
     // @ts-ignore
     // @ts-ignore
     return (
-
         <FormTemplate form={form} loadValues={props.loadValues} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
             <FormWithSections sections={sections} form={form}>
@@ -125,8 +151,7 @@ function FormA0(props:{loadValues?:any}){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={
-                                   formValues["ShipUsages"]}
+                               values={formValues["ShipUsages"]}
                     />
                     {(() => {
                         if (form.watch("shipUsage") == formValues["ShipUsages"]?.length-1 ) {
