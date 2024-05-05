@@ -53,7 +53,7 @@ function FormTemplate(props: Props) {
 
     const handleSubmit = () => {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
-        Api.post('/forms', props.form.getValues()).then(r => console.log(r))
+        Api.post('/forms/a', props.form.getValues()).then(r => console.log(r))
     }
 
     return (
