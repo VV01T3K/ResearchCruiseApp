@@ -15,12 +15,9 @@ type Props = {
 
 
 export default function FilePicker(props: Props) {
-    //const [fileName, setFileName] = useState("Brak")
-
     return (
         <div className="d-flex flex-wrap justify-content-center">
             <input
-                //{...props.field}
                 id={`contracts[${props.rowIdx}].fileInput`}
                 type="file"
                 hidden
@@ -48,7 +45,6 @@ export default function FilePicker(props: Props) {
                             }
                         }
                         reader.readAsDataURL(e.target.files[0])
-                        //setFileName(e.target.files[0].name)
                     }
                 }}
             />
