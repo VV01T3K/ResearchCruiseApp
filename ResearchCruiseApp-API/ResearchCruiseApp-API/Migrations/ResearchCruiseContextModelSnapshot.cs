@@ -24,18 +24,60 @@ namespace ResearchCruiseApp_API.Migrations
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AcceptablePeriodBeg")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("AcceptablePeriodEnd")
+                        .HasColumnType("int");
 
-                    b.Property<int>("Students")
+                    b.Property<string>("CruiseGoalDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CruiseGoalType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CruiseHours")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CruiseManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DeputyManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("OptimalPeriodBeg")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OptimalPeriodEnd")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PeriodNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Permissions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PermissionsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ResearchArea")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShipUsage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("FormsA", (string)null);
+                    b.ToTable("FormsA");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.LogicalCruise", b =>
@@ -61,7 +103,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LogicalCruises", (string)null);
+                    b.ToTable("LogicalCruises");
                 });
 #pragma warning restore 612, 618
         }
