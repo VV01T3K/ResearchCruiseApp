@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import ReadOnlyTextArea from "../../CommonComponents/ReadOnlyTextArea";
 import file_icon from "../../../resources/file_icon.png";
+import FileDownloader from "../../CommonComponents/FileDownloader";
 
 
 type EvaluatedContract = {
@@ -116,25 +117,15 @@ export default function ContractsPoints(props: Props){
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
-                                <img
-                                    src={file_icon}
-                                    height="45px"
-                                    width="45px"
-                                    className="rounded-2 p-1 d-flex"
-                                    onMouseEnter={e => {
-                                        const thisImage = e.target as HTMLImageElement
-                                        thisImage.style.backgroundColor = "#eeeeee"
-                                    }}
-                                    onMouseLeave={e => {
-                                        const thisImage = e.target as HTMLImageElement
-                                        thisImage.style.backgroundColor = "#f8f8f8"
-                                    }}
-                                    alt="File picker icon"
+                                <FileDownloader
+                                    fileName={row.scan.name}
+                                    fileContent={row.scan.content}
                                 />
                             </div>
-                            <div className="text-center d-flex justify-content-center align-items-center p-2"
+                            <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                             >
+                                <div className="col-12 d-xl-none">Punkty:</div>
                                 <ReadOnlyTextInput value={row.points} />
                             </div>
                         </div>

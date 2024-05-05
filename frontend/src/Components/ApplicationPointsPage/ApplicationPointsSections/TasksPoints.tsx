@@ -55,10 +55,12 @@ function TasksPoints(props: Props) {
                             <div className="text-center d-none d-xl-block border-end p-2" style={{width: "20%"}}>
                                 <b>Zadanie</b>
                             </div>
-                            <div className="text-center d-none d-xl-block border-end p-2" style={{width: "70%"}}>
+                            <div className="text-center d-none d-xl-block border-end p-2" style={{width: "66%"}}>
                                 <b>Szczegóły</b>
                             </div>
-                            <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}}/>
+                            <div className="text-center d-none d-xl-block p-2" style={{width: "9%"}}>
+                                <b>Punkty</b>
+                            </div>
 
                             <div className="text-center d-lg-block d-xl-none p-2 col-12">
                                 <b>Zadania</b>
@@ -86,7 +88,7 @@ function TasksPoints(props: Props) {
                                     {getTaskTitle(row)}
                                 </div>
                                 <div className="text-center d-flex border-end"
-                                     style={{width: windowWidth >= 1200 ? "70%" : "100%"}}
+                                     style={{width: windowWidth >= 1200 ? "66%" : "100%"}}
                                 >
                                     <div className="d-flex flex-wrap justify-content-center justify-content-xl-start pb-3 w-100">
                                         {getFields(row).map((val: string | Time, valIdx: number) => {
@@ -150,16 +152,12 @@ function TasksPoints(props: Props) {
                                         })}
                                     </div>
                                 </div>
-                                <div className="d-flex p-2 justify-content-center"
-                                     style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                <div className="d-flex text-center p-2 justify-content-center"
+                                     style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                                 >
+                                    <div className="col-12 d-xl-none">Punkty:</div>
                                     <div className={"align-items-center justify-content-center d-flex"}>
-                                    <button type="button"
-                                            style={{fontSize:"inherit"}}
-                                            className="btn btn-info"
-                                    >
-                                        :)
-                                    </button>
+                                        <ReadOnlyTextInput value={row.points} />
                                     </div>
                                 </div>
                             </div>
