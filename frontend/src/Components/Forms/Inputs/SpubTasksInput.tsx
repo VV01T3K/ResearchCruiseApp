@@ -4,7 +4,7 @@ import ErrorCode from "../../LoginPage/ErrorCode";
 import Select from "react-select";
 
 
-type SpubTask = {
+export type SpubTask = {
     yearFrom: string,
     yearTo: string,
     name: string

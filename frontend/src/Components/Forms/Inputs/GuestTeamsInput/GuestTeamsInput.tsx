@@ -13,7 +13,7 @@ type Props = {
     required? :boolean
 }
 
-type GuestsCount = {
+export type GuestsTeam = {
     institution: string,
     count: string
 }
@@ -78,7 +78,7 @@ function GuestTeamsInput(props: Props){
                                             <div className={"text-center"}>Nie dodano żadnej instytucji</div>
                                         </div>
                                     }
-                                    {field.value.map((row: GuestsCount, index: number) => (
+                                    {field.value.map((row: GuestsTeam, index: number) => (
                                         <div key={index}
                                              className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                         >
@@ -182,7 +182,7 @@ function GuestTeamsInput(props: Props){
                                             }
                                             type="button"
                                             onClick={() => {
-                                                const newGuestsCount: GuestsCount = {
+                                                const newGuestsCount: GuestsTeam = {
                                                     institution: "",
                                                     count: ""
                                                 }
@@ -235,20 +235,20 @@ function GuestTeamsInput(props: Props){
                                         value={""}
                                         onChange={(selectedOption: { label: string, value: string })=> {
                                             if (selectedOption) {
-                                                const newGuestsCount: GuestsCount = {
+                                                const newGuestsTeam: GuestsTeam = {
                                                     institution: selectedOption.value,
                                                     count: ""
                                                 }
                                                 props.form!.setValue(
                                                     props.name,
-                                                    [...field.value, newGuestsCount],
+                                                    [...field.value, newGuestsTeam],
                                                     {
                                                         shouldValidate: true,
                                                         shouldDirty: true,
                                                         shouldTouch: true
                                                     }
                                                 )
-                                                field.onChange([...field.value, newGuestsCount])
+                                                field.onChange([...field.value, newGuestsTeam])
                                             }
                                         }}
                                     />
