@@ -5,18 +5,9 @@ import pl from "date-fns/locale/pl";
 registerLocale("pl", pl);
 import 'react-dropdown/style.css';
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
+import {Time, TaskValues, taskFieldsOptions} from "../../Forms/Inputs/TaskInput/TaskInput";
 
 
-type Time = {
-    startDate: string,
-    endDate: string
-}
-
-type TaskValues =
-    { author: string, title: string } |
-    { title: string, institution: string, date: string} |
-    { title: string, time: Time, financingAmount: string } |
-    { description: string }
 
 type EvaluatedTask = {
     type: number,
@@ -30,27 +21,12 @@ type Props = {
 
 
 function TasksPoints(props: Props) {
-    const options= {
-        'Praca licencjacka': ["Autor", "Tytuł" ],
-        'Praca magisterska': ["Autor", "Tytuł" ],
-        'Praca doktorska': ["Autor", "Tytuł" ],
-        "Przygotowanie projektu naukowego": ["Tytuł", "Instytucja, do której składany", "Przewidywany termin składania"],
-        "Realizacja projektu krajowego (NCN, NCBiR, itp.)": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Realizacja projektu zagranicznego (ERC, Programy ramowe UE, fundusze norweskie, itp)": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Realizacja projektu wewnętrznego UG": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Realizacja innego projektu naukowego":["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Realizacja projektu komercyjnego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Dydaktyka": ["Opis zajęcia dydaktycznego"],
-        "Realizacja własnego zadania badawczego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
-        "Inne zadanie": ["Opis zadania"]
+    const getTaskTitle = (task: EvaluatedTask) => {
+        return Object.keys(taskFieldsOptions)[task.type]
     }
 
-    const getTaskTitle = (item: EvaluatedTask) => {
-        return Object.keys(options)[item.type]
-    }
-
-    const getFields = (item: EvaluatedTask) => {
-        return Object.values(item.values)
+    const getFields = (evaluatedTask: EvaluatedTask) => {
+        return Object.values(evaluatedTask.values)
     }
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -119,10 +95,10 @@ function TasksPoints(props: Props) {
                                                      className={`${getFields(row).length == 2 && "col-xl-6"} ${getFields(row).length == 3 && "col-xl-4"} col-12 p-1`}
                                                 >
                                                     <label className="d-flex justify-content-center align-items-center">
-                                                        {Object.values(options)[row.type][valIdx]}
+                                                        {Object.values(taskFieldsOptions)[row.type][valIdx]}
                                                     </label>
                                                     {(()=> {
-                                                        switch (Object.values(options)[row.type][valIdx]){
+                                                        switch (Object.values(taskFieldsOptions)[row.type][valIdx]){
                                                             case "Autor":
                                                             case "Tytuł":
                                                             case "Instytucja, do której składany":
@@ -132,7 +108,7 @@ function TasksPoints(props: Props) {
 
                                                             case "Przewidywany termin składania":
                                                                 return <ReadOnlyTextInput value={val as string} />
-                                                            case "Ramy czasowe" :
+                                                            case "Ramy czasowe":
                                                                 return (
                                                                     <>
                                                                         <DatePicker
@@ -165,7 +141,7 @@ function TasksPoints(props: Props) {
                                                                         />
                                                                     </>
                                                                 )
-                                                            case "Kwota finansowania" :
+                                                            case "Kwota finansowania":
                                                                 return <ReadOnlyTextInput value={val as string} />
                                                         }
                                                     })()}
