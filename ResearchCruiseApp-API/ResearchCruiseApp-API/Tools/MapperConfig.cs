@@ -13,9 +13,15 @@ namespace ResearchCruiseApp_API.Tools
             {
                 //Configuring FormsModel and FormA
                 cfg.CreateMap<FormsModel, FormA>()
+                    .ForMember(dest => dest.CruiseManagerId, act => act.MapFrom(src => src.CruiseInfoData.CruiseManagerId))
+                    .ForMember(dest => dest.DeputyManagerId, act => act.MapFrom(src => src.CruiseInfoData.DeputyManagerId))
                     .ForMember(dest => dest.Year, act => act.MapFrom(src => src.CruiseInfoData.Year))
+                    .ForMember(dest => dest.AcceptablePeriodBeg, act => act.MapFrom(src => src.CruiseInfoData.AcceptablePeriod!.Min()))
+                    .ForMember(dest => dest.AcceptablePeriodEnd, act => act.MapFrom(src => src.CruiseInfoData.AcceptablePeriod!.Max()))
+                    .ForMember(dest => dest.OptimalPeriodBeg, act => act.MapFrom(src => src.CruiseInfoData.OptimalPeriod!.Min()))
+                    .ForMember(dest => dest.OptimalPeriodEnd, act => act.MapFrom(src => src.CruiseInfoData.OptimalPeriod!.Max()))
                     .ForMember(dest => dest.CruiseHours, act => act.MapFrom(src => src.CruiseInfoData.CruiseHours))
-                    .ForMember(dest => dest.DateComment, act => act.MapFrom(src => src.CruiseInfoData.PeriodNotes))
+                    .ForMember(dest => dest.PeriodNotes, act => act.MapFrom(src => src.CruiseInfoData.PeriodNotes))
                     .ForMember(dest => dest.ShipUsage, act => act.MapFrom(src => src.CruiseInfoData.ShipUsage))
                     ;// .ReverseMap()
                     // .ForPath(dest => dest.CruiseInfoData.Year, opt => opt.MapFrom(src => src.Year))
@@ -33,7 +39,7 @@ namespace ResearchCruiseApp_API.Tools
                     .ForMember(dest => dest.CruiseInfoData,
                         opt => 
                             opt.MapFrom(src => 
-                                new CruiseInfo() { Year = src.Year, CruiseHours = src.CruiseHours, PeriodNotes = src.DateComment, ShipUsage = src.ShipUsage}));
+                                new CruiseInfo() { Id = src.Id, Year = src.Year, CruiseHours = src.CruiseHours, PeriodNotes = src.PeriodNotes, ShipUsage = src.ShipUsage}));
 
             });
             

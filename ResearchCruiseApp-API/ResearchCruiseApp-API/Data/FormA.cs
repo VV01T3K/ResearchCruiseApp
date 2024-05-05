@@ -13,60 +13,52 @@ public class FormA
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public User CruiseManager { get; set; }  //User
+    public Guid CruiseManagerId { get; set; }
     
-    public User Deputy { get; set; } //User
+    public Guid DeputyManagerId { get; set; }
     
-    [Range(2024, 2050)]
     public int Year { get; set; }
+  
+    public int AcceptablePeriodBeg { get; set; }
+    public int AcceptablePeriodEnd { get; set; }
     
-    [Length(2,2)]
-    [Range(0,24)]
-    public HashSet<int> PermissibleDate { get; set; }
+    public int OptimalPeriodBeg { get; set; }
+    public int OptimalPeriodEnd { get; set; }
     
-    [Length(2,2)]
-    [Range(0,24)]
-    public HashSet<int> OptimalDate { get; set; }
-    
-    [Range(1,99)]
     public int CruiseHours { get; set; }
+
+    public string PeriodNotes { get; set; }
     
-    [StringLength(200)]
-    public string DateComment { get; set; }
-    
-    [Range(0,4)]
     public int ShipUsage { get; set; }
     
-    private bool _addtionalPermissionsRequired;
-    public bool AddtionalPermissionsRequired
+    private bool _permissionsRequired;
+    public bool PermissionsRequired
     {
-        get{return _addtionalPermissionsRequired;}
+        get{return _permissionsRequired;}
         set
         {
-            _addtionalPermissionsRequired = value;
+            _permissionsRequired = value;
             if (!value)
             {
-                AdditionalPermissions = null;
+                Permissions = null;
             }
         }
     }
     
-    [MaxLength(200)]
-    public string? AdditionalPermissions { get; set; }
+    public string? Permissions { get; set; }
     /* TODO Zdobyć wymagania co do obszaru */
     
-    [Range(0,20)]
+    
     public int ResearchArea { get; set; } 
     
-    [MaxLength(200)]
-    public string CruiseGoal { get; set; }
+    public int CruiseGoalType { get; set; }
+    public string CruiseGoalDescription { get; set; }
     
     // public List<IResearchTask> ResearchTasks { get; set; } 
     
-    public List<Contract> Contracts { get; set; } 
+    //public List<Contract> Contracts { get; set; } 
     
     // public string OrganizationalUnit { get; set; } ;
-    // public List<Contract> ContractsList { get; set; } ;
 
     // public List<SPUBTask> SPUBTasks { get; set; } ;
     public FormA()

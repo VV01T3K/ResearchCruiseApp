@@ -25,20 +25,33 @@ public struct CruiseInfo
     [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid? Id { get; set; } = null!;
     //\p{L}\p{M}
-    public string? CruiseManager { get; set; } = null!;
-    public string? DeputyManager { get; set; } = null!;
+    public Guid? CruiseManagerId { get; set; } = null!;
+    public Guid? DeputyManagerId { get; set; } = null!;
+    
     //(?) jaki format na rok
+    [Range(2024, 2050)]
     public int Year { get; set; } = 0;
     
-    
     //Dopuszczlny termin rejsu (typ?)
-    public DateRange AcceptablePeriod;
+    //[Length(2,2)]
+    //[Range(0,24)]
+    public HashSet<int>? AcceptablePeriod { get; set; } = null!;
+    
+    
+    
     //Optymalny termin rejsu (typ?)
-    public DateRange OptimalPeriod;
+    //[Length(2,2)]
+    //[Range(0,24)]
+    public HashSet<int>? OptimalPeriod { get; set; } = null!;
+    
+    [Range(1,99)]
     public int CruiseHours { get; set; } = 0;
+    
     //Uwaga dotycząca terminu:
+    [StringLength(200)]
     public string? PeriodNotes { get; set; } = null!;
     //Czy statek na potrzeby badań będzie wykorzystywany
+    [Range(0,4)]
     public int ShipUsage { get; set; } = 0;
 }
 
@@ -129,21 +142,28 @@ public class FormsModel
 
 
     //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
-    public string? Permissions { get; set; } = null!;
+    public bool? PermissionsRequired { get; set; }
+    
+    [MaxLength(200)]
+    public string? Permissions { get; set; }
     
     
     //(?) opcjonalnie opis. 
-    public string? ResearchArea { get; set; } = null!;
+    [Range(0,20)]
+    public int? ResearchArea { get; set; }
     
     
     //Cel rejsu (opis max. 100 słów):
-    public string? CruiseGoal { get; set; } = null!;
+    public int? CruiseGoalType { get; set; }
+    
+    [MaxLength(200)]
+    public string? CruiseGoalDescription { get; set; }
     
     
     //Przewidywana liczba osób zamierzających uczestniczyć w rejsie, podać liczby osobno dla:
-    public int UGWorkers { get; set; } = 0;
-    public int Students { get; set; } = 0;
-    public int Guests { get; set; } = 0;
+    public int? UGWorkers { get; set; }
+    public int? Students { get; set; }
+    public int? Guests { get; set; }
 
     
     //Zadania
@@ -155,9 +175,9 @@ public class FormsModel
     
     
     //Zespoły badawcze
-    public string? ResearchersOutsideUG { get; set; } = null!;
-    public string? ResearchersOutsideWOIG { get; set; } = null;
-    public int ResearchersFromWOIG { get; set; } = 0;
+    public string? ResearchersOutsideUG { get; set; }
+    public string? ResearchersOutsideWOIG { get; set; }
+    public int? ResearchersFromWOIG { get; set; }
     
     
     //Publikacje i Prace
@@ -170,5 +190,5 @@ public class FormsModel
     
     
     //Zadanie SPUB
-    public string? ResearchTask { get; set; } = null!;
+    public string? ResearchTask { get; set; }
 }
