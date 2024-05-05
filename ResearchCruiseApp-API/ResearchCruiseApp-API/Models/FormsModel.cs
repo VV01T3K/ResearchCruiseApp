@@ -138,11 +138,43 @@ public struct Efects
 public class FormsModel
 {
     //Ogólne informacje
-    public CruiseInfo CruiseInfoData { get; set; }
+    //public CruiseInfo CruiseInfoData { get; set; }
+    
+    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
+    public Guid? Id { get; set; } = null!;
+    //\p{L}\p{M}
+    public Guid? CruiseManagerId { get; set; } = null!;
+    public Guid? DeputyManagerId { get; set; } = null!;
+    
+    //(?) jaki format na rok
+    [Range(2024, 2050)]
+    public int? Year { get; set; } = 0;
+    
+    //Dopuszczlny termin rejsu (typ?)
+    //[Length(2,2)]
+    //[Range(0,24)]
+    public HashSet<int>? AcceptablePeriod { get; set; } = null!;
+    
+    //Optymalny termin rejsu (typ?)
+    //[Length(2,2)]
+    //[Range(0,24)]
+    public HashSet<int>? OptimalPeriod { get; set; } = null!;
+    
+    [Range(1,99)]
+    public int? CruiseHours { get; set; } = 0;
+    
+    //Uwaga dotycząca terminu:
+    [StringLength(200)]
+    public string? PeriodNotes { get; set; } = null!;
+    //Czy statek na potrzeby badań będzie wykorzystywany
+    [Range(0,4)]
+    public int? ShipUsage { get; set; } = 0;
+    
+    //koniec CruiseInfo
 
 
     //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
-    public bool? PermissionsRequired { get; set; }
+    public int? PermissionsRequired { get; set; }
     
     [MaxLength(200)]
     public string? Permissions { get; set; }

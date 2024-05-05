@@ -57,8 +57,8 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         //metody do przyjmowania formularzy (POST) 
-        [HttpPost]
-        public async Task<IActionResult> AddForm([FromBody] FormsModel form)
+        [HttpPost("A")]
+        public async Task<IActionResult> AddFormA([FromBody] FormsModel form)
         {
             if (!ModelState.IsValid)
             {
