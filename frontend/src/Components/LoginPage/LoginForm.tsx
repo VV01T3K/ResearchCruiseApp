@@ -21,8 +21,8 @@ function LoginForm(){
                 });
                 setError(null)
             }).catch(error => {
-                if (error.response && error.response.status === 400) {
-                    setError("Użytkownik z podanym adresem email już istnieje")
+                if (error.response && error.response.status === 401) {
+                    setError("Podano błędne hasło lub użytkownik nie istnieje")
                 }
                 else setError("Wystąpił problem z zalogowaniem, spróbuj ponownie później")
                 setValue('password', '');

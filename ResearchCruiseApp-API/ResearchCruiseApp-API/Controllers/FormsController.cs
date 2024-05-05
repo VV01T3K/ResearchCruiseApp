@@ -1,11 +1,14 @@
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -16,7 +19,7 @@ namespace ResearchCruiseApp_API.Controllers
     [Route("[controller]")]
     [ApiController]
     public class FormsController(
-        ResearchCruiseContext researchCruiseContext) 
+        ResearchCruiseContext researchCruiseContext, UsersContext usersContext) 
         : ControllerBase
     //1 argument contextowy - jest to zbiór tabel bazodanowych
     
@@ -88,15 +91,24 @@ namespace ResearchCruiseApp_API.Controllers
         //metoda zwracania formualrzy listy
 
         
+        [HttpGet("GetData")]
+        public async Task<IActionResult> GetData()
+        {
+
+
+            var model = await new FormADataModel().GetFormADataModel(usersContext);
+            return Ok(model.ToJson());
+        }
+        
         public async void AddLogicalCruise()
         {
-            LogicalCruise newLogicalCruise = new()
+            Application newApplication = new()
             {
                 Points = 0,
-                State = LogicalCruise.LogicalCruiseState.Planned
+                State = Application.ApplicationState.Planned
             };
 
-            await researchCruiseContext.LogicalCruises.AddAsync(newLogicalCruise);
+            await researchCruiseContext.Applications.AddAsync(newApplication);
             await researchCruiseContext.SaveChangesAsync();
         }
         

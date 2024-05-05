@@ -20,6 +20,8 @@ import Page from "./Tools/Page";
 import MessagesPage from "./MessagesPage/MessagesPage";
 import SavedFormPage from "./SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
+import ApplicationPointsPage from "./ApplicationPointsPage/ApplicationPointsPage";
+import ApplicationsPage from "./ApplicationsPage/ApplicationsPage";
 
 function App() {
 
@@ -90,7 +92,7 @@ function App() {
     return (
         <div className="vh-100">
             <PageHeader name={userData ? userData.firstName : null} />
-            <div className={`${isBusy ? "d-none":""}`}>
+            <div className={`${isBusy ? "d-none":" h-100"}`}>
             <Routes  >
                     {userData && userData["roles"].includes("Shipowner") &&
                         <>
@@ -107,7 +109,9 @@ function App() {
                             <Route path="/FormC" element={<FormC0 />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
-                            <Route path="/Messages" element={<MessagesPage/>}/>
+                            <Route path="/Messages" element={<MessagesPage />} />
+                            <Route path="/Applications" element={<ApplicationsPage />} />
+                            <Route path="/ApplicationPoints/:applicationId" element={<ApplicationPointsPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&

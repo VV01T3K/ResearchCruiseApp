@@ -195,24 +195,36 @@ function TaskInput(props: Props) {
                                                     case "Tytuł":
 
                                                         return (
-                                                            <input className={"w-100"} {...field} value={val as string} onChange={(e)=>{
-                                                                handleChange(field, row, rowIndex, s, e.target.value )
-                                                            } }/>
+                                                            <input
+                                                                className={"w-100 form-control p-1"}
+                                                                style={{fontSize: "inherit"}}
+                                                                {...field}
+                                                                value={val as string}
+                                                                onChange={(e)=> {
+                                                                    handleChange(field, row, rowIndex, s, e.target.value )
+                                                                }}
+                                                            />
                                                         )
-                                                    case "Instytucja do której składany":
+                                                    case "Instytucja, do której składany":
                                                     case "Opis zajęcia dydaktycznego" :
                                                     case "Opis zadania" :
                                                         return (
-                                                            <input type="text" className={"w-100"}  style={{height:"100px"}} {...field} value={val as string} onChange={(e)=>{
-                                                                handleChange(field, row, rowIndex, s, e.target.value )
-                                                        } }/>
+                                                            <input
+                                                                type="text"
+                                                                className={"w-100 form-control p-1"}
+                                                                style={{height:"100px", fontSize: "inherit"}}
+                                                                {...field}
+                                                                value={val as string}
+                                                                onChange={(e)=> {
+                                                                    handleChange(field, row, rowIndex, s, e.target.value )
+                                                                }}
+                                                            />
                                                         )
                                                     case "Przewidywany termin składania":
                                                         return (
                                                             <DatePicker
                                                                 {...field}
-                                                                className={"text-center w-100"}
-
+                                                                className={"text-center w-100 rounded-1 p-1"}
                                                                 closeOnScroll={true}
                                                                 locale={"pl"}
                                                                 selected={val ? new Date(val as string) : null}
@@ -231,7 +243,8 @@ function TaskInput(props: Props) {
                                                                //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
                                                                 showMonthYearPicker
                                                                 showMonthYearDropdown
-                                                                className={" text-center w-100"}
+                                                                className={" text-center w-100 rounded-1 p-1"}
+                                                                style={{fontSize: "inherit"}}
                                                                 selectsStart
                                                                 startDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
                                                                 maxDate={(val as time ).endDate ? new Date((val as time ).endDate) : null}
@@ -253,7 +266,8 @@ function TaskInput(props: Props) {
                                                                 // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
                                                                 showYearDropdown
                                                                 showMonthYearPicker
-                                                                className={"text-center w-100"}
+                                                                className={"text-center w-100 rounded-1 p-1"}
+                                                                style={{fontSize: "inherit"}}
                                                                 startDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
                                                                 endDate={(val as time ).endDate ? new Date((val as time ).endDate) : null}
                                                                 minDate={(val as time ).startDate ? new Date((val as time ).startDate) : null}
@@ -278,7 +292,8 @@ function TaskInput(props: Props) {
                                                             <input
                                                                 {...field}
                                                                 type="text" // Zmieniamy typ na text
-                                                                className="text-center placeholder-glow w-100"
+                                                                className="text-center placeholder-glow w-100 form-control p-1"
+                                                                style={{font: "inherit"}}
                                                                 value={val as string}
                                                                 onChange={ (e) =>  handleChange(field, row, rowIndex, s, e.target.value )}
                                                                 onBlur ={(e) => {
@@ -331,7 +346,11 @@ function TaskInput(props: Props) {
                             <Dropdown.Menu>
                                 {Object.keys(options).map((key, index) => (
                                     <Dropdown.Item key={index} onClick={() => {
-                                        props.form!.setValue(props.name, [...field.value, {type:index, values:defaultValues[index]}], {shouldValidate:true, shouldDirty:true, shouldTouch:true})
+                                        props.form!.setValue(
+                                            props.name,
+                                            [...field.value, { type: index, values: defaultValues[index] }],
+                                            {shouldValidate:true, shouldDirty:true, shouldTouch:true}
+                                        )
                                     }
                                     }>
                                         {key}

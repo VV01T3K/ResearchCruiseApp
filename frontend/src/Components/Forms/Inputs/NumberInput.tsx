@@ -1,6 +1,8 @@
 import {Controller} from "react-hook-form";
 import React from "react";
 import InputWrapper from "./InputWrapper";
+import {unregister} from "../../../serviceWorkerRegistration";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
@@ -21,7 +23,7 @@ function NumberInput(props: Props){
         if (re.test(e.target.value)) {
             props.form!.setValue(
                 props.name,
-                String(parseInt(e.target.value) > props.maxVal ? props.maxVal : parseInt(e.target.value)),
+                parseInt(e.target.value) > props.maxVal ? props.maxVal : parseInt(e.target.value),
                 { shouldDirty: true, shouldValidate: true, shouldTouch:true }
             )
         }
@@ -40,14 +42,14 @@ function NumberInput(props: Props){
                                if (re.test(e.target.value)) {
                                    props.form!.setValue(
                                        props.name,
-                                       String(parseInt(e.target.value)),
+                                       parseInt(e.target.value),
                                        {shouldDirty: true, shouldValidate: true, shouldTouch: true}
                                    )
 
                                    if (props.connectedName && props.newVal) {
                                        props.form!.setValue(
                                            props.connectedName,
-                                           String(props.newVal(parseInt(e.target.value))),
+                                           props.newVal(parseInt(e.target.value)),
                                            {shouldDirty: true, shouldValidate: true, shouldTouch: true}
                                        )
                                    }

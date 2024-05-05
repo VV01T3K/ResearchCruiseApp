@@ -98,7 +98,8 @@ function GuestTeamsInput(props: Props){
                                                     <textarea
                                                         {...field}
                                                         value={row.institution}
-                                                        className="col-12 p-1"
+                                                        className="col-12 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                         onChange={(e) => {
                                                             if (e.target.value.length < 100) {
                                                                 row.institution = e.target.value
@@ -124,7 +125,8 @@ function GuestTeamsInput(props: Props){
                                                     <input
                                                         type="text"
                                                         {...field}
-                                                        className="text-center placeholder-glow w-100 p-1"
+                                                        className="text-center placeholder-glow w-100 p-1 form-control"
+                                                        style={{fontSize: "inherit"}}
                                                         value={row.count}
                                                         onChange={(e) => {
                                                             const sanitizedValue = parseInt(e.target.value);
@@ -143,7 +145,6 @@ function GuestTeamsInput(props: Props){
                                                             })
                                                             field.onChange(val)
                                                         }}
-                                                        placeholder="0"
                                                     />
                                                 </div>
                                                 <div className="d-flex justify-content-center align-items-center p-2"

@@ -9,7 +9,7 @@ type Props = {
     className?: string,
     label: string,
     name: string,
-    values: string[], form?: any
+    values?: string[], form?: any
 }
 
 
@@ -23,14 +23,14 @@ function FormRadio(props: Props) {
                 control={props.form!.control}
                 render={({field}) => (
                     <div className="d-flex flex-column justify-content-center align-content-center">
-                        {props.values.map((option, index) => (
+                        {props.values?.map((option, index) => (
                             // <label key={index}>
                                 <input
-                                    key={index} className={`btn ${field.value === option ? "btn-info":"btn-outline-info"} text-wrap m-1`} style={{fontSize:"inherit"}}
+                                    key={index} className={`btn ${field.value === index ? "btn-info":"btn-outline-info"} text-wrap m-1`} style={{fontSize:"inherit"}}
                                     type={"button"}
                                     value={option}
                                     onClick={(e) => {
-                                        props.form!.setValue(props.name, e.target.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                                        props.form!.setValue(props.name, index, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                                     }}
                                     // onBlur={
                                     // props.form!.setValue(props.name, field.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true })

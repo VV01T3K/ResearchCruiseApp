@@ -1,6 +1,6 @@
 import {Control, Controller, FieldError, FieldErrorsImpl, FieldValues, Merge} from "react-hook-form";
 import Select from "react-select";
-import React from "react";
+import React, {useEffect} from "react";
 import InputWrapper from "./InputWrapper";
 
 
@@ -8,7 +8,7 @@ type Props = {
     className?: string,
     name: string,
     label: string,
-    values: any[]
+    values?: number[]
     form?: {
         setValue(name: string, selectedOption: any, arg2: { shouldDirty: boolean; shouldValidate: boolean; shouldTouch: boolean; }): unknown;
         control: Control<FieldValues, any> | undefined;
@@ -21,30 +21,43 @@ type Props = {
 }
 
 
-function FormSelect(props: Props) {
+
+function FormYearSelect(props: Props) {
+
+    useEffect(() => {
+        if(!props.form!.getValues(props.name) && props.values)
+            props.form!.setValue(props.name, props.values[0], { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+    });
+
     return (
         <InputWrapper {...props}>
             <Controller
-                defaultValue={""}
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                     <Select minMenuHeight={300}
-                            {...field}
+
+                             value={{label:field.value, value:field.value}}
                             styles={{
                                 control: (provided: any) => ({
                                     ...provided,
-                                    cursor: "pointer"
+                                    cursor: "pointer",
+                                    whiteSpace: "normal"
+
                                 }),
                                 menu: provided => ({
                                     ...provided,
-                                    zIndex: 9999
-                                })
+                                    zIndex: 9999,
+                                    whiteSpace: "normal"
+
+                                }),
+
                             }}
-                            options={props.values?.map(value => ({label: value, value}))}
+                            options={props.values?.map(value => ({value:value, label:value}))}
                             onChange={(selectedOption) => {
-                                props.form!.setValue(props.name, selectedOption, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                                console.log(field.value)
+                                props.form!.setValue(props.name, selectedOption.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                             }}
                     />
                 )}
@@ -54,4 +67,4 @@ function FormSelect(props: Props) {
 }
 
 
-export default FormSelect
+export default FormYearSelect

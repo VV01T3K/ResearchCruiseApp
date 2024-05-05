@@ -19,6 +19,7 @@ type Props = {
     label: string,
     name: string,
     required?: boolean,
+    regions?: [{Name:string, X:number[], Y:number[]}]
     form?
 }
 
@@ -28,31 +29,15 @@ function ClickableMap(props: Props) {
         useState({ x: 0, y: 0 });
     const imageRef = useRef(null);
 
-    const regions = [
-        [
-            "Gdynia",
-            [301, 263, 294, 370, 472, 565, 541, 407],
-            [316, 392, 435, 408, 407, 311, 290, 272]
-        ],
-        [
-            "Gdańsk",
-            [479, 392, 374, 300, 304, 356, 400, 464, 522, 582, 653, 566],
-            [409, 415, 456, 437, 549, 540, 598, 523, 538, 598, 384, 314]
-        ],
-        ["Woda",
-            [172, 251, 279, 322, 361, 473, 533, 795, 964, 1144, 1129, 172, 0, 3, 175],
-            [62, 66, 94, 115, 139, 205, 286, 507, 415, 152, 6, 6, 2, 95, 76]
-        ]
-    ]
 
     const handleClick = (e) => {
         const boundingRect = imageRef.current.getBoundingClientRect();
         const offsetX = e.clientX - boundingRect.left;
         const offsetY = e.clientY - boundingRect.top;
 
-        regions.forEach((region)=> {
-            if (isInside({ x: offsetX, y: offsetY }, region[1], region[2]))
-                props.form.setValue(props.name, region[0], { shouldDirty: true, shouldTouch:true });
+        regions?.forEach((region, index)=> {
+            if (isInside({ x: offsetX, y: offsetY }, region.X, region.Y))
+                props.form.setValue(props.name, index, { shouldDirty: true, shouldTouch:true });
             // setClickPosition({ x: offsetX, y: offsetY });
         })
     }
@@ -83,6 +68,7 @@ function ClickableMap(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
+                defaultValue={""}
                 render={({ field}) =>
                     <div className="d-flex flex-column">
                         <Select minMenuHeight={300}
@@ -94,8 +80,8 @@ function ClickableMap(props: Props) {
                                 }}
                                 placeHolder={"Wybierz"}
                             // styles={{}}
-                            value={{label: field.value, value:field.value}}
-                                options={regions.map(value => ({label: value[0], value:value[0]}))}
+                            value={{label:((props.regions && field.value !== "") ? props.regions[field.value].Name : ""), value:field.value}}
+                                options={props.regions?.map((value, index) => ({label: value.Name, value:index}))}
                             // closeMenuOnScroll={() => true}
                                 onChange={(selectedOption) => {
                                     props.form.setValue(props.name, selectedOption.value, { shouldDirty: true, shouldTouch:true });

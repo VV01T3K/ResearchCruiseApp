@@ -136,7 +136,8 @@ export default function ContractsInput(props: Props){
                                             <div className="col-12">Nazwa instytucji</div>
                                             <input {...field}
                                                    type="text"
-                                                   className="col-12 p-1"
+                                                   className="col-12 p-1 form-control"
+                                                   style={{fontSize: "inherit"}}
                                                    value={row.institution.name}
                                                    onChange = {(e)=> {
                                                        row.institution.name = e.target.value
@@ -156,7 +157,8 @@ export default function ContractsInput(props: Props){
                                             <div className="col-12">Jednostka</div>
                                             <input {...field}
                                                    type="text"
-                                                   className="col-12 p-1"
+                                                   className="col-12 p-1 form-control"
+                                                   style={{fontSize: "inherit"}}
                                                    value={row.institution.unit}
                                                    onChange = {(e)=> {
                                                        row.institution.unit = e.target.value
@@ -176,7 +178,8 @@ export default function ContractsInput(props: Props){
                                             <div className="col-12">Lokalizacja instytucji</div>
                                             <input {...field}
                                                    type="text"
-                                                   className="col-12 p-1"
+                                                   className="col-12 p-1 form-control"
+                                                   style={{fontSize: "inherit"}}
                                                    value={row.institution.localization}
                                                    onChange = {(e)=> {
                                                        row.institution.localization = e.target.value
@@ -199,7 +202,8 @@ export default function ContractsInput(props: Props){
                                             <div className="col-12 d-xl-none">Opis</div>
                                             <textarea
                                                 {...field}
-                                                className="col-12 p-1"
+                                                className="col-12 p-1 form-control"
+                                                style={{fontSize: "inherit"}}
                                                 value={row.description}
                                                 onChange = {(e)=> {
                                                     row.description = e.target.value
