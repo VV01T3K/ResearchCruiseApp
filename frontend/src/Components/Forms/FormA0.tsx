@@ -342,7 +342,7 @@ function FormA0(props:{loadValues?:any}){
                         label="Publikacje"
                         name="publications"
                         historicalGuestsInstitutions={[
-                            "A. Temat", "A. Dopisek", "Instytucja 3"
+                            "A. Temat", "B. Dopisek", "Instytucja 3"
                         ]}
                     />
                     <h5>Prace dyplomowe/doktorskie zawierające dopisek</h5>
