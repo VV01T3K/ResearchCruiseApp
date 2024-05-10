@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
+
+*{
+  font-family: "Poppins", sans-serif;
+}
+
+h1 {
+  color: #052d73;
+}
+
+
+.bgImage {
+  background-image: url("../../../resources/Oceanograf.jpg");
+  animation: zoomin 30s infinite alternate;
+}
+
+
+@keyframes zoomin {
+  0% {
+    background-size: cover;
+    transform: scale(1);
+  }
+  98% {
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: scale(1.5);
+  }
+}
+
