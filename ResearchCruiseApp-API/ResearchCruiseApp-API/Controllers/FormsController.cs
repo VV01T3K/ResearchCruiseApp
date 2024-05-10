@@ -83,7 +83,7 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(model.ToJson());
         }
         
-        public async void AddLogicalCruise()
+        public async void AddApplication()
         {
             Application newApplication = new()
             {
