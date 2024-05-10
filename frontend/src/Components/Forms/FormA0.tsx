@@ -25,6 +25,9 @@ import api from "../Tools/Api";
 import {Simulate} from "react-dom/test-utils";
 import error = Simulate.error;
 import FormYearSelect from "./Inputs/FormYearSelect";
+import ThesisInput from "./Inputs/ThesisInput/ThesisInput"
+import PublicationsInput from "./Inputs/PublicationsInput/PublicationsInput";
+
 
 
 export interface FormAValues extends FormValues {
@@ -364,7 +367,30 @@ function FormA0(props: Props){
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                   <DummyTag/>
+                    <h5>Publikacje związane tematycznie</h5>
+                    <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w realizację rejsu, z afiliacją UG.</strong></p>
+                    <h5>Publikacje zawierające dopisek</h5>
+                    <p>Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w treści publikacji (w wersji angielskiej lub w innym języku): <strong>„…the research/study was conducted onboard r/v Oceanograf (the research vessel owned by the University of Gdańsk)…” lub „… samples for the present study were collected during a research cruise onboard r/v Oceanograf…” </strong>lub podobny, ale wskazujący jednoznacznie że badania w ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
+                    <PublicationsInput
+                        required={false}
+                        className="col-12"
+                        label="Publikacje"
+                        name="publications"
+                        historicalGuestsInstitutions={[
+                            "A. Temat", "B. Dopisek", "Instytucja 3"
+                        ]}
+                    />
+                    <h5>Prace dyplomowe/doktorskie zawierające dopisek</h5>
+                    <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z pokładu jednostki RV Oceanograf.</strong></p>
+                    <ThesisInput
+                        required={false}
+                        className="col-12"
+                        label="Prace"
+                        name="works"
+                        historicalGuestsInstitutions={[
+                            "Instytucja 1", "Instytucja 2", "Instytucja 3"
+                        ]}
+                    />
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
