@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate from "./Tools/FormTemplate";
+import FormTemplate, {FormValue, FormValues} from "./Tools/FormTemplate";
 import FormTitle from "./Tools/FormTitle";
 import FormUserSelect from "./Inputs/FormUserSelect";
 import FormCreatableSelect from "./Inputs/FormCreatableSelect";
@@ -27,7 +27,7 @@ import error = Simulate.error;
 import FormYearSelect from "./Inputs/FormYearSelect";
 
 
-type FormA = {
+export interface FormAValues extends FormValues {
     cruiseManagerId: string,
     deputyManagerId: string,
     year: string,
@@ -49,8 +49,18 @@ type FormA = {
     spubTasks: SpubTask[]
 }
 
+export type FormAValue =
+    string |
+    number[] |
+    any |
+    Task[] |
+    Contract[] |
+    UgTeam[] |
+    GuestsTeam[] |
+    SpubTask []
+
 type Props = {
-    loadValues?: FormA
+    loadValues?: FormAValues
 }
 
 

@@ -4,15 +4,28 @@ import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import savedFormPage from "../../SavedFormsPage/SavedFormPage";
 import Api from "../../Tools/Api";
+import {FormAValues, FormAValue} from "../FormA0";
+import {UseFormReturn} from "react-hook-form";
 
+
+export interface FormValues {}
+
+type FormValue =
+    FormAValue // | FormBValue | FormCValue
+
+type SavedFormData = {
+    type: string,
+    id: number,
+    date: string,
+    data: FormValues
+}
 
 type Props = {
     children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>[]
-    form,
-    loadValues?,
-    type:string
+    form: UseFormReturn,
+    loadValues?: FormValues,
+    type: string
 }
-
 
 
 function FormTemplate(props: Props) {
@@ -22,19 +35,24 @@ function FormTemplate(props: Props) {
     const saveValues = () => {
         dispatchEvent("Trwa zapisywanie")
 
-        var data = localStorage.getItem('formData');
-        var formData = []
+        const savedFormsDataString = localStorage.getItem('formData');
+        let savedFormsData: SavedFormData[] = [];
         // Jeśli nie ma jeszcze żadnych danych w localStorage, utwórz nową tablicę
-        if (data) {
-            formData = JSON.parse(data);
+        if (savedFormsDataString) {
+            savedFormsData = JSON.parse(savedFormsDataString);
         }
 
         // Dodaj nowy formularz do tablicy
-
-        formData.push({type:props.type, id:Math.random(), date:new Date().toString(), data:props.form.getValues()});
+        const newSavedForm: SavedFormData = {
+            type: props.type,
+            id: Math.random(),
+            date: new Date().toString(),
+            data: props.form.getValues() as FormValues
+        }
+        savedFormsData.push(newSavedForm);
 
         // Zapisz zaktualizowane dane w localStorage
-        localStorage.setItem('formData', JSON.stringify(formData));
+        localStorage.setItem('formData', JSON.stringify(savedFormsData));
 
         setTimeout(()=>{
             navigate("/savedForms")
@@ -42,21 +60,24 @@ function FormTemplate(props: Props) {
         },5000);
     };
 
-    React.useEffect(() => {
-        if (props.loadValues) {
-            Object.entries(props.loadValues).forEach(([key, value]) => {
-                props.form.setValue(
-                    key,
-                    value,
-                    {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                        shouldTouch: true
-                    }
-                );
-            });
-        }
-    }, [props.form.setValue]);
+    React.useEffect(
+        () => {
+            if (props.loadValues) {
+                Object.entries(props.loadValues).forEach(([key, value]: [string, FormValue]) => {
+                    props.form.setValue(
+                        key,
+                        value,
+                        {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                            shouldTouch: true
+                        }
+                    );
+                });
+            }
+        },
+        [props.form.setValue]
+    );
 
 
     const handleSubmit = () => {
