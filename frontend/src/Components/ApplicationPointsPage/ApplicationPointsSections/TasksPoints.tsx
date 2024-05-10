@@ -109,7 +109,18 @@ function TasksPoints(props: Props) {
                                                                 return <ReadOnlyTextInput value={val as string} />
 
                                                             case "Przewidywany termin składania":
-                                                                return <ReadOnlyTextInput value={val as string} />
+                                                                return (
+                                                                    <DatePicker
+                                                                        showMonthYearPicker
+                                                                        showMonthYearDropdown
+                                                                        className={" text-center w-100 rounded-1 p-1"}
+                                                                        style={{fontSize: "inherit"}}
+                                                                        locale={"pl"}
+                                                                        selected={val as Time}
+                                                                        dateFormat="dd/MM/yyyy"
+                                                                        readOnly
+                                                                    />
+                                                                )
                                                             case "Ramy czasowe":
                                                                 return (
                                                                     <>
