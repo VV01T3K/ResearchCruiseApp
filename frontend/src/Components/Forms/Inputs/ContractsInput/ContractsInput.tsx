@@ -123,7 +123,6 @@ export default function ContractsInput(props: Props){
                                         >
                                             <div className="col-12 d-xl-none">Kategoria</div>
                                             <ContractCategoryPicker
-                                                {...field}
                                                 name={props.name}
                                                 row={row}
                                                 field={field}

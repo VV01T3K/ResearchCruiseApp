@@ -135,7 +135,6 @@ function PublicationsInput(props: Props){
                                                     className="col-12 d-flex d-xl-none justify-content-center">Instytucja
                                                 </div>
                                                 <PublicationsCategoryPicker
-                                                    {...field}
                                                     name={props.name}
                                                     row={row}
                                                     field={field}
@@ -149,7 +148,8 @@ function PublicationsInput(props: Props){
                                                 <div className="col-12">DOI</div>
                                                 <input {...field}
                                                        type="text"
-                                                       className="col-12 p-1"
+                                                       className="col-12 p-1 form-control"
+                                                       style={{fontSize: "inherit"}}
                                                        value={row.info.DOI}
                                                        onChange={(e) => {
                                                            row.info.DOI = e.target.value

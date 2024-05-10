@@ -127,7 +127,6 @@ function WorkList(props: Props){
                                                     className="col-12 d-flex d-xl-none justify-content-center">Instytucja
                                                 </div>
                                                 <ThesisCategoryPicker
-                                                    {...field}
                                                     name={props.name}
                                                     row={row}
                                                     field={field}
