@@ -11,22 +11,25 @@ type Props = {
 
 
 function SavedFormPage(props: Props) {
-    const { addEventListener:saveListener } = useCustomEvent('saveSuccessful');
+    const { addEventListener: saveListener } = useCustomEvent('saveSuccessful');
 
     const [form, setForm] = useState(null)
-    useEffect(() => {
-        const unsubscribeLogin = saveListener(()=>{setForm(null)
-            setSavedData(JSON.parse(localStorage.getItem("formData")))
-        });
-        return () => {
-            unsubscribeLogin();
-        };
-    }, [saveListener]);
+    useEffect(
+        () => {
+            const unsubscribeLogin = saveListener(()=>{
+                setForm(null)
+                setSavedData(JSON.parse(localStorage.getItem("formData")))
+            });
+            return () => {
+                unsubscribeLogin();
+            };
+        },
+        [saveListener]
+    );
 
     const [savedData, setSavedData] = useState(JSON.parse(localStorage.getItem("formData")))
 
     const handleRemove = (form) => {
-
         var data = JSON.parse(localStorage.getItem('formData'));
         console.log(data)
         console.log(form)
