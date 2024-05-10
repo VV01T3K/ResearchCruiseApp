@@ -102,6 +102,8 @@ function FormA0(props: Props){
 
     }, );
 
+    // @ts-ignore
+    // @ts-ignore
     return (
         <FormTemplate form={form} loadValues={props.loadValues} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
@@ -128,7 +130,7 @@ function FormA0(props: Props){
 
                 <FormSection title={sections.Czas}>
                     <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
-                                 name="acceptedPeriod"
+                                 name="acceptablePeriod"
                                  connectedName="optimalPeriod"
                                  label="Dopuszczalny okres, w którym miałby się odbywać rejs:"
                     />
@@ -183,16 +185,16 @@ function FormA0(props: Props){
                 <FormSection title={sections.Pozwolenia}>
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?"
-                               name="permissions"
+                               name="permissionsRequired"
                                values={["tak", "nie"]}
                     />
                     {(() => {
                         // @ts-ignore
-                        if (form.watch("permissions") === 0 ) {
+                        if (form.watch("permissionsRequired") === 0 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Jakie?"
-                                          name="additionalPermissions"
+                                          name="permissions"
                                           required="Podaj jakie"
                                           resize="none"
                                 />
@@ -200,9 +202,9 @@ function FormA0(props: Props){
                         }
                         else{
 
-                            if(form.formState.errors["additionalPermissions"] != undefined) {
+                            if(form.formState.errors["permissions"] != undefined) {
                                 //     form.unregister("differentUsage")
-                                form.clearErrors("additionalPermissions")
+                                form.clearErrors("permissions")
                             }
                         return <DummyTag required={false} />}                    })()}
                 </FormSection>
