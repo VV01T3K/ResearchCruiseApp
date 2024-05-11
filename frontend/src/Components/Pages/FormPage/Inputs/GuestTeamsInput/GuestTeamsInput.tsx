@@ -10,7 +10,8 @@ type Props = {
     name:string,
     form?: UseFormReturn,
     historicalGuestsInstitutions: string[],
-    required? :boolean
+    required? :boolean,
+    readonly?: boolean
 }
 
 export type GuestsTeam = {
@@ -97,6 +98,7 @@ function GuestTeamsInput(props: Props){
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Instytucja</div>
                                                     <textarea
                                                         {...field}
+                                                        disabled={props.readonly ?? false}
                                                         value={row.institution}
                                                         className="col-12 p-1 form-control"
                                                         style={{fontSize: "inherit"}}
@@ -125,6 +127,7 @@ function GuestTeamsInput(props: Props){
                                                     <input
                                                         type="text"
                                                         {...field}
+                                                        disabled={props.readonly ?? false}
                                                         className="text-center placeholder-glow w-100 p-1 form-control"
                                                         style={{fontSize: "inherit"}}
                                                         value={row.count}
@@ -151,7 +154,7 @@ function GuestTeamsInput(props: Props){
                                                      style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                                 >
                                                     <button type="button"
-                                                            className="btn btn-info"
+                                                            className={`btn btn-info ${props.readonly ? 'd-none':''}`}
                                                             style={{fontSize:"inherit"}}
                                                             onClick={() => {
                                                                 const val = field.value;
@@ -173,7 +176,7 @@ function GuestTeamsInput(props: Props){
                                     ))}
                                 </div>
 
-                                <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                                <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? 'd-none':''}`}>
                                     <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize:"inherit"}}

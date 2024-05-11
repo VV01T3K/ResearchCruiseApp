@@ -13,7 +13,8 @@ type Props = {
     newVal?: (arg0: number) => any,
     connectedName?: string,
     form?: any,
-    notZero?: boolean
+    notZero?: boolean,
+    readonly?:boolean
 }
 
 
@@ -36,6 +37,7 @@ function NumberInput(props: Props){
             <Controller
                 render={({ field}) =>
                     <input className="text-center placeholder-glow"
+                           disabled={props.readonly ?? false}
                            value={field.value}
                            onBlur={
                         (e) => {

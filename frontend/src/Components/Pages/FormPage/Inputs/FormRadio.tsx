@@ -9,7 +9,8 @@ type Props = {
     className?: string,
     label: string,
     name: string,
-    values?: string[], form?: any
+    values?: string[], form?: any,
+    readonly? :boolean
 }
 
 
@@ -26,7 +27,8 @@ function FormRadio(props: Props) {
                         {props.values?.map((option, index) => (
                             // <label key={index}>
                                 <input
-                                    key={index} className={`btn ${field.value === index ? "btn-info":"btn-outline-info"} text-wrap m-1`} style={{fontSize:"inherit"}}
+                                    disabled={props.readonly ?? false}
+                                    key={index} className={`btn ${field.value === index ? "btn-info":"btn-outline-info"} ${(field.value !== index) && (props.readonly ?? false) ? "d-none": "" } text-wrap m-1`} style={{fontSize:"inherit"}}
                                     type={"button"}
                                     value={option}
                                     onClick={(e) => {

@@ -16,7 +16,8 @@ type Props = {
     form?: {
         setValue: (arg0: string, arg1: string) => void;
         control: Control<Record<string, any>, any> | undefined;
-    }
+    },
+    readonly?:boolean
 }
 
 
@@ -36,6 +37,7 @@ function TextArea(props: Props) {
                 render={({ field}) =>
                     <textarea className={"h-100"}
                               {...field}
+                                disabled={props.readonly ?? false}
                               value={field.value ?? ''}
                         // @ts-ignore
                               style={{resize: props.resize ?? "true"}}

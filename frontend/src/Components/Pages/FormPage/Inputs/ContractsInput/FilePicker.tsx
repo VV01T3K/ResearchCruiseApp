@@ -2,6 +2,7 @@ import file_icon from "../../../../../resources/file_icon.png";
 import React from "react";
 import {UseFormReturn} from "react-hook-form";
 import {Contract} from "./ContractsInput";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
@@ -22,6 +23,7 @@ export default function FilePicker(props: Props) {
                 type="file"
                 hidden
                 onChange={e => {
+                    console.log(props.field)
                     if (e.target.files && e.target.files.length) {
                         const reader = new FileReader()
                         const fileName = e.target.files[0].name

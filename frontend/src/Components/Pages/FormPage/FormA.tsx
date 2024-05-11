@@ -59,7 +59,8 @@ export type FormAValue =
     SpubTask []
 
 type Props = {
-    loadValues?: FormAValues
+    loadValues?: FormAValues,
+    readonly?: boolean
 }
 
 
@@ -100,9 +101,9 @@ function FormA(props: Props){
     // @ts-ignore
     // @ts-ignore
     return (
-        <FormTemplate form={form} loadValues={props.loadValues} type='A'>
+        <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
-            <FormWithSections sections={sections} form={form}>
+            <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Kierownik}>
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                          name="cruiseManagerId"
@@ -131,7 +132,7 @@ function FormA(props: Props){
                     />
                     <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
                                  name="optimalPeriod"
-                                 range={form.getValues("acceptedPeriod")}
+                                 range={form.getValues("acceptablePeriod")}
                                  label="Optymalny okres, w którym miałby się odbywać rejs"
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
@@ -364,7 +365,7 @@ function FormA(props: Props){
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                    <div className={"pb-0 p-4"}>
+                    <div className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
                         <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
                         <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
                             do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
@@ -386,7 +387,7 @@ function FormA(props: Props){
                             "A. Temat", "B. Dopisek", "Instytucja 3"
                         ]}
                     />
-                    <div className={"pb-0 p-4"}>
+                    <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
                             wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z

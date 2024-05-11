@@ -33,7 +33,8 @@ type Props = {
     label:string,
     form?: UseFormReturn,
     name: string,
-    historicalTasks: any
+    historicalTasks: any,
+    readonly? : boolean
 }
 
 
@@ -235,6 +236,8 @@ function TaskInput(props: Props) {
                                                                                 className={"w-100 form-control p-1"}
                                                                                 style={{fontSize: "inherit"}}
                                                                                 {...field}
+                                                                                disabled={props.readonly ?? false}
+
                                                                                 value={val as string}
                                                                                 onChange={(e)=> {
                                                                                     handleChange(field, row, rowIndex, valIdx, e.target.value)
@@ -245,11 +248,13 @@ function TaskInput(props: Props) {
                                                                     case "Opis zajęcia dydaktycznego":
                                                                     case "Opis zadania":
                                                                         return (
-                                                                            <input
-                                                                                type="text"
+                                                                            <textarea
+                                                                                // type="text"
                                                                                 className={"w-100 form-control p-1"}
                                                                                 style={{height: "100px", fontSize: "inherit"}}
                                                                                 {...field}
+                                                                                disabled={props.readonly ?? false}
+
                                                                                 value={val as string}
                                                                                 onChange={(e)=> {
                                                                                     handleChange(field, row, rowIndex, valIdx, e.target.value)
@@ -260,6 +265,8 @@ function TaskInput(props: Props) {
                                                                         return (
                                                                             <DatePicker
                                                                                 {...field}
+                                                                                disabled={props.readonly ?? false}
+
                                                                                 className={"text-center w-100 rounded-1 p-1"}
                                                                                 closeOnScroll={true}
                                                                                 locale={"pl"}
@@ -277,6 +284,8 @@ function TaskInput(props: Props) {
                                                                             <>
                                                                                 <DatePicker
                                                                                     {...field}
+                                                                                    disabled={props.readonly ?? false}
+
                                                                                     //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
                                                                                     showMonthYearPicker
                                                                                     showMonthYearDropdown
@@ -300,6 +309,7 @@ function TaskInput(props: Props) {
                                                                                 />
                                                                                 <DatePicker
                                                                                     {...field}
+                                                                                    disabled={props.readonly ?? false}
                                                                                     // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
                                                                                     showYearDropdown
                                                                                     showMonthYearPicker
@@ -351,7 +361,7 @@ function TaskInput(props: Props) {
                                                 })}
                                             </div>
                                         </div>
-                                        <div className="d-flex p-2 justify-content-center"
+                                        <div className={`d-flex p-2 justify-content-center ${props.readonly ? "d-none" : ""}`}
                                              style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                         >
                                             <div className={"align-items-center justify-content-center d-flex"}>
@@ -380,7 +390,7 @@ function TaskInput(props: Props) {
                                 ))}
                             </div>
 
-                            <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                            <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? "d-none" : ""}`}>
                                 <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                     <ButtonGroup
                                         as={Dropdown}

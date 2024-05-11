@@ -9,13 +9,15 @@ type Props = {
     name: string,
     row: Contract,
     field: ControllerRenderProps<FieldValues, string>,
-    form: UseFormReturn
+    form: UseFormReturn,
+    readonly? :boolean
 }
 
 
 export default function ContractCategoryPicker(props: Props) {
     return (
         <Select
+            isDisabled={props.readonly ?? false}
             minMenuHeight={300}
             className="d-flex col-12 justify-content-center form-control p-1"
             menuPlacement="auto"

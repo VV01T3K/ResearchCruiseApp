@@ -17,6 +17,8 @@ type Props = {
         setValue: (arg0: string, arg1: any, arg2: { shouldDirty?: boolean; shouldTouch?: boolean; }) => void;
         control: Control<FieldValues, any> | undefined;
     }
+    readonly?:boolean
+
 }
 
 
@@ -77,13 +79,14 @@ const MonthSlider = (props: Props) => {
                 render={({ field}) => (
                     <>
                         <Slider style={{height: "77px"}}
+
                                 pushable={true}
                                 allowCross={false}
                                 {...field}
                                 range
                                 min={minVal}
                                 max={maxVal}
-                                onChange={(e
+                                onChange={props.readonly ? ()=>{} : (e
                                 )=>{
                                     props.form!.setValue(props.name, e, { shouldDirty: true, shouldTouch: true, shouldValidate:true })
 
@@ -98,7 +101,7 @@ const MonthSlider = (props: Props) => {
                                         return acc;
                                     }, {})}
                         />
-                        <label className=" text-center">
+                        <label className={` text-center ${props.readonly ? "d-none": ""}`}>
                             Wybrano okres:
                             od początku {labels[field.value[0]] + " "}
                             do końca {labels[field.value[1] - 1]}.

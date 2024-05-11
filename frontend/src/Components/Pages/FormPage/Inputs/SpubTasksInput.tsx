@@ -2,6 +2,7 @@ import React, { useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import Select from "react-select";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 export type SpubTask = {
@@ -15,7 +16,8 @@ type Props = {
     name: string,
     form?: UseFormReturn,
     historicalSpubTasks: SpubTask[],
-    required: boolean
+    required: boolean,
+    readonly?:boolean
 }
 
 
@@ -198,6 +200,7 @@ export default function SpubTasksInput(props: Props){
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
                                                     <input
                                                         {...field}
+                                                        disabled={props.readonly ?? false}
                                                         value={row.yearFrom}
                                                         onChange={(e) => {
                                                             onYearChange(e, row, true,  field)
@@ -218,6 +221,7 @@ export default function SpubTasksInput(props: Props){
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
                                                     <input
                                                         {...field}
+                                                        disabled={props.readonly ?? false}
                                                         value={row.yearTo}
                                                         onChange={(e) => {
                                                             onYearChange(e, row, false,  field)
@@ -241,6 +245,7 @@ export default function SpubTasksInput(props: Props){
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
                                                     <textarea
                                                         {...field}
+                                                        disabled={props.readonly ?? false}
                                                         value={row.name}
                                                         onChange = {(e)=> {
                                                             row.name = e.target.value
@@ -265,7 +270,7 @@ export default function SpubTasksInput(props: Props){
                                                 >
                                                     <button type="button"
                                                             style={{fontSize:"inherit"}}
-                                                            className="btn btn-info"
+                                                            className={`btn btn-info ${props.readonly ? 'd-none':''}`}
                                                             onClick={() => {
                                                                 const val: SpubTask[] = field.value;
 
@@ -289,7 +294,7 @@ export default function SpubTasksInput(props: Props){
                                     </div>
                                 </div>
 
-                                <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                                <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? 'd-none':''}`}>
                                     <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize: "inherit"}}

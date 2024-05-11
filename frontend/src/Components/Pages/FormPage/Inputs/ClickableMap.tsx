@@ -20,7 +20,8 @@ type Props = {
     name: string,
     required?: boolean,
     regions?: [{Name:string, X:number[], Y:number[]}]
-    form?
+    form?,
+    readonly?:boolean
 }
 
 
@@ -73,6 +74,7 @@ function ClickableMap(props: Props) {
                     <div className="d-flex flex-column">
                         <Select minMenuHeight={300}
                             // className={"text-white"}
+                            isDisabled={props.readonly ?? false}
                                 menuPlacement="auto"
                                 placeholder={"Wybierz opcję lub wyszukaj"}
                                 styles={{
@@ -94,7 +96,7 @@ function ClickableMap(props: Props) {
                              style={{cursor: "pointer"}}
                              src={Map}
                              alt="Obszary"
-                             onClick={handleClick}
+                             onClick={props.readonly ? ()=>null : handleClick}
                         />
                     </div>
                 }

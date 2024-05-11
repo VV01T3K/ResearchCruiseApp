@@ -19,6 +19,7 @@ type Props = {
             };
         };
     }
+    readonly? :boolean
 }
 
 
@@ -50,9 +51,11 @@ function FormUserSelect(props: Props) {
                 name={props.name}
                 control={props.form!.control}
                 rules={{required: 'Wybierz jedną z opcji'}}
+
                 render={({field}) => (
                     <Select minMenuHeight={300}
                          //   {/*{...field}*/}
+                            isDisabled={props.readonly ?? false}
                             value={{label:findLabel(field), value:field.value}}
                             styles={{
                                 control: (provided: any) => ({

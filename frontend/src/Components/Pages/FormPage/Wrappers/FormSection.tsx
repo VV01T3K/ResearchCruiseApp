@@ -12,7 +12,8 @@ type Props = {
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
     title: string,
-    sections?: { [x: string]: string; }
+    sections?: { [x: string]: string; },
+    readonly?:boolean
 }
 
 
@@ -74,7 +75,7 @@ function FormSection(props: Props) {
             </div>
             <div className={`d-flex flex-row flex-wrap justify-content-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}>
                 {React.Children.map(props.children, (child, index) => {
-                    return React.cloneElement(child as React.ReactElement, {form: props.form});
+                    return React.cloneElement(child as React.ReactElement, {form: props.form, readonly:props.readonly});
                 })}
             </div>
         </div>

@@ -18,6 +18,7 @@ type Props = {
             };
         };
     }
+    readonly?:boolean
 }
 
 
@@ -37,7 +38,7 @@ function FormYearSelect(props: Props) {
                 rules={{required: 'Wybierz jedną z opcji'}}
                 render={({field}) => (
                     <Select minMenuHeight={300}
-
+                            isDisabled={props.readonly ?? false}
                              value={{label:field.value, value:field.value}}
                             styles={{
                                 control: (provided: any) => ({

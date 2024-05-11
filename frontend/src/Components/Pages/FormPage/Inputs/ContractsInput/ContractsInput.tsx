@@ -4,6 +4,8 @@ import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
 import FilePicker from "./FilePicker";
 import ContractCategoryPicker from "./ContractCategoryPicker";
+import FileDownloader from "../../../../CommonComponents/FileDownloader";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 export type Contract = {
@@ -25,7 +27,8 @@ type Props = {
     name: string,
     form?: UseFormReturn,
     historicalContracts: Contract[],
-    required: boolean
+    required: boolean,
+    readonly?:boolean
 }
 
 
@@ -123,6 +126,7 @@ export default function ContractsInput(props: Props){
                                         >
                                             <div className="col-12 d-xl-none">Kategoria</div>
                                             <ContractCategoryPicker
+                                                readonly={props.readonly}
                                                 name={props.name}
                                                 row={row}
                                                 field={field}
@@ -134,6 +138,7 @@ export default function ContractsInput(props: Props){
                                         >
                                             <div className="col-12">Nazwa instytucji</div>
                                             <input {...field}
+                                                   disabled={props.readonly ?? false}
                                                    type="text"
                                                    className="col-12 p-1 form-control"
                                                    style={{fontSize: "inherit"}}
@@ -155,6 +160,7 @@ export default function ContractsInput(props: Props){
 
                                             <div className="col-12">Jednostka</div>
                                             <input {...field}
+                                                   disabled={props.readonly ?? false}
                                                    type="text"
                                                    className="col-12 p-1 form-control"
                                                    style={{fontSize: "inherit"}}
@@ -176,6 +182,7 @@ export default function ContractsInput(props: Props){
 
                                             <div className="col-12">Lokalizacja instytucji</div>
                                             <input {...field}
+                                                   disabled={props.readonly ?? false}
                                                    type="text"
                                                    className="col-12 p-1 form-control"
                                                    style={{fontSize: "inherit"}}
@@ -201,6 +208,7 @@ export default function ContractsInput(props: Props){
                                             <div className="col-12 d-xl-none">Opis</div>
                                             <textarea
                                                 {...field}
+                                                disabled={props.readonly ?? false}
                                                 className="col-12 p-1 form-control"
                                                 style={{fontSize: "inherit"}}
                                                 value={row.description}
@@ -223,6 +231,8 @@ export default function ContractsInput(props: Props){
                                              style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
+                                            {props.readonly && <FileDownloader fileName={field.value[index].scan.name} fileContent={field.value[index].scan.content}/>}
+                                            {!props.readonly &&
                                             <FilePicker
                                                 field={field}
                                                 name={props.name}
@@ -231,12 +241,13 @@ export default function ContractsInput(props: Props){
                                                 rowIdx={index}
                                                 form={props.form!}
                                             />
+                                            }
                                         </div>
-                                        <div className="text-center d-flex justify-content-center align-items-center p-2"
+                                        <div className={`text-center d-flex justify-content-center align-items-center p-2`}
                                              style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                         >
                                             <button type="button"
-                                                    className="btn btn-info"
+                                                    className={`btn btn-info ${props.readonly ? "d-none": ""}`}
                                                     style={{fontSize:"inherit"}}
                                                     onClick={() => {
                                                         const val: Contract[] = field.value;
@@ -260,7 +271,7 @@ export default function ContractsInput(props: Props){
                             </div>
                         </div>
 
-                        <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                        <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? "d-none": ""}`}>
                             <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
                                 justify-content-center"
                             >

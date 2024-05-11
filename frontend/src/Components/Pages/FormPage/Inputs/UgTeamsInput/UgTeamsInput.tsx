@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 export type UgTeam = {
@@ -16,7 +17,8 @@ type Props = {
     name: string,
     form?: UseFormReturn
     required?: boolean,
-    values: string[]
+    values: string[],
+    readonly?:boolean
 }
 
 
@@ -111,6 +113,7 @@ function UgTeamsInput(props: Props) {
                                         <input
                                             type="text"
                                             {...field}
+                                            disabled={props.readonly ?? false}
                                             className="text-center placeholder-glow w-100 p-1 form-control"
                                             style={{fontSize: "inherit"}}
                                             value={item.noOfEmployees}
@@ -141,6 +144,7 @@ function UgTeamsInput(props: Props) {
                                         <input
                                             type="text"
                                             {...field}
+                                            disabled={props.readonly ?? false}
                                             className="text-center placeholder-glow w-100 p-1 form-control"
                                             style={{fontSize: "inherit"}}
                                             value={item.noOfStudents}
@@ -162,12 +166,12 @@ function UgTeamsInput(props: Props) {
                                             }}
                                         />
                                     </div>
-                                    <div className="d-flex justify-content-center align-items-center p-2"
+                                    <div className={`d-flex justify-content-center align-items-center p-2`}
                                          style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                     >
                                         <button
                                             type="button"
-                                            className="btn btn-info"
+                                            className={`btn btn-info ${props.readonly ? "d-none":""}`}
                                             style={{fontSize:"inherit"}}
                                             onClick={() => {
                                                 const val = field.value;
@@ -187,7 +191,7 @@ function UgTeamsInput(props: Props) {
                             ))}
                         </div>
 
-                        <div className="d-flex flex-row flex-wrap justify-content-center w-100 pt-2 pb-1">
+                        <div className={`d-flex flex-row flex-wrap justify-content-center w-100 pt-2 pb-1 ${props.readonly ? 'd-none':""}`}>
                             <Select minMenuHeight={300}
                                     menuPlacement="auto"
                                     isDisabled={disabled}
