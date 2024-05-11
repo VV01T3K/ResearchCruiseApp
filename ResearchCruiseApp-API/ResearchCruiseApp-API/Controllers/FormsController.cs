@@ -29,25 +29,42 @@ namespace ResearchCruiseApp_API.Controllers
     {
         //metoda zwracania formualrza po id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFormById([FromRoute] string id)
+        public async Task<IActionResult> GetFormById([FromRoute] int id)
         {
-            await researchCruiseContext.FormsA.FindAsync(id);
+            var form = await researchCruiseContext.FormsA.FindAsync(id);
+            if (form == null)
+                return NotFound();
             
-            
-
-            return Ok();
+            var mapper = MapperConfig.InitializeAutomapper();
+            return Ok(mapper.Map<FormsModel>(form));
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAllForms()
+        {
+            var forms = await researchCruiseContext.FormsA.ToListAsync();
+            var formModels = new List<FormsModel>();
+            var mapper = MapperConfig.InitializeAutomapper();
 
+            foreach (var form in forms)
+            {
+                formModels.Add(mapper.Map<FormsModel>(form));
+            }
+            
+            
+            
+            return Ok(formModels);
+        }
         
         //metody do przyjmowania formularzy (POST) 
         [HttpPost("A")]
-        public async Task<IActionResult> AddForm([FromBody] FormsModel form)
+        public async Task<IActionResult> AddFormA([FromBody] FormsModel form)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
+
             Console.WriteLine("zapisywanie rozpoczete");
 
             var mapper = MapperConfig.InitializeAutomapper();
@@ -83,7 +100,7 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(model.ToJson());
         }
         
-        public async void AddLogicalCruise()
+        public async void AddApplication()
         {
             Application newApplication = new()
             {

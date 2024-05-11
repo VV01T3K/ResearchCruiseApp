@@ -1,27 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
-import LoginPage from "./LoginPage/LoginPage";
+import LoginPage from "./Pages/LoginPage/LoginPage";
 import {Route, Routes, useNavigate} from "react-router-dom"
-import AdminPanel from "./HomePage/AdminPanel"
-import PageHeader from "./PageHeader/PageHeader";
-import NewFormPage from "./NewFormPage/NewFormPage";
+import AdminPanel from "./Pages/HomePage/AdminPanel"
+import PageHeader from "./Pages/PageHeader/PageHeader";
+import NewFormPage from "./Pages/NewFormPage/NewFormPage";
 import './../scss/app.scss';
-import FormB0 from "./Forms/FormB0";
-import FormC0 from "./Forms/FormC0";
-import ManagerPanel from "./HomePage/ManagerPanel";
-import ShipOwnerPanel from "./HomePage/ShipOwnerPanel";
-import LogoutPage from "./LoginPage/LogoutPage";
-import AccountPage from "./AccountPage/AccountPage";
-import ManageUsersPage from "./ManageUsersPage/ManageUsersPage";
-import EmailConfirmPage from "./LoginPage/EmailConfirmPage";
+import FormB from "./Pages/FormPage/FormB";
+import FormC from "./Pages/FormPage/FormC";
+import ManagerPanel from "./Pages/HomePage/ManagerPanel";
+import ShipOwnerPanel from "./Pages/HomePage/ShipOwnerPanel";
+import LogoutPage from "./Pages/LoginPage/LogoutPage";
+import AccountPage from "./Pages/AccountPage/AccountPage";
+import ManageUsersPage from "./Pages/ManageUsersPage/ManageUsersPage";
+import EmailConfirmPage from "./Pages/LoginPage/EmailConfirmPage";
 import Api from "./Tools/Api";
 import useCustomEvent from "./Tools/useCustomEvent";
-import Page from "./Tools/Page";
-import MessagesPage from "./MessagesPage/MessagesPage";
-import SavedFormPage from "./SavedFormsPage/SavedFormPage";
+import Page from "./Pages/Page";
+import MessagesPage from "./Pages/MessagesPage/MessagesPage";
+import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
-import ApplicationPointsPage from "./ApplicationPointsPage/ApplicationPointsPage";
-import ApplicationsPage from "./ApplicationsPage/ApplicationsPage";
+import ApplicationPointsPage from "./Pages/ApplicationPointsPage/ApplicationPointsPage";
+import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 
 function App() {
 
@@ -105,8 +105,8 @@ function App() {
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormB" element={<FormB0 />} />
-                            <Route path="/FormC" element={<FormC0 />} />
+                            <Route path="/FormB" element={<FormB />} />
+                            <Route path="/FormC" element={<FormC />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
                             <Route path="/Messages" element={<MessagesPage />} />
@@ -117,8 +117,8 @@ function App() {
                     {userData && userData["roles"].includes("CruiseManager") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormB" element={<FormB0 />} />
-                            <Route path="/FormC" element={<FormC0 />} />
+                            <Route path="/FormB" element={<FormB />} />
+                            <Route path="/FormC" element={<FormC />} />
                             <Route path="/*" element={<ManagerPanel />} />
                         </>
                     }

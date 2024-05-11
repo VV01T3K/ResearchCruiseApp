@@ -14,7 +14,7 @@ public class FormADataModel
     public List<String> ShipUsages = null!;
     public List<ResearchAreaModel> ResearchAreas = null!;
     public List<String> CruiseGoals = null!;
-    public List<IResearchTask> HistoricalTasks = null!;
+    public List<ResearchTask> HistoricalTasks = null!;
 
     
     public async Task<FormADataModel> GetFormADataModel(UsersContext usersContext)
@@ -65,9 +65,7 @@ public class FormADataModel
             )
         ]);
         
-        var historicalTasks = new List<IResearchTask>();
-        historicalTasks.Add( new OtherTask(0, "sss"));
-        historicalTasks.Add(new BachelorThesis(0, "aaa", "asdasd"));
+        var historicalTasks = new List<ResearchTask>();
             
         
         var model = new FormADataModel()

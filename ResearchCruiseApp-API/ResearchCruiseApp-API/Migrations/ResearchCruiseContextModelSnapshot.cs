@@ -22,7 +22,65 @@ namespace ResearchCruiseApp_API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Application", b =>
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AcceptablePeriodBeg")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AcceptablePeriodEnd")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CruiseGoalDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CruiseGoalType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CruiseHours")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CruiseManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DeputyManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("OptimalPeriodBeg")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OptimalPeriodEnd")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PeriodNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Permissions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PermissionsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ResearchArea")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShipUsage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FormsA");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.LogicalCruise", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,195 +103,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Applications");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Contract", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("File")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("FormAId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Institution")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.ToTable("Contract");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdditionalPermissions")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<bool>("AddtionalPermissionsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CruiseGoal")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("CruiseHours")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CruiseManagerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DateComment")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("DeputyId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OptimalDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PermissibleDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ResearchArea")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShipUsage")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CruiseManagerId");
-
-                    b.HasIndex("DeputyId");
-
-                    b.ToTable("FormsA");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Contract", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
-                        .WithMany("Contracts")
-                        .HasForeignKey("FormAId");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.User", "CruiseManager")
-                        .WithMany()
-                        .HasForeignKey("CruiseManagerId");
-
-                    b.HasOne("ResearchCruiseApp_API.Data.User", "Deputy")
-                        .WithMany()
-                        .HasForeignKey("DeputyId");
-
-                    b.Navigation("CruiseManager");
-
-                    b.Navigation("Deputy");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
-                {
-                    b.Navigation("Contracts");
+                    b.ToTable("LogicalCruises");
                 });
 #pragma warning restore 612, 618
         }
