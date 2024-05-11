@@ -51,9 +51,9 @@ function FormTemplate(props: Props) {
     }, [props.form.setValue]);
 
 
-    const handleSubmit = () => {
+    const handleSubmit = (data) => {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
-        Api.post('/forms/'+props.type, props.form.getValues()).catch((err)=>null)
+        Api.post('/forms/'+props.type, data).catch((err)=>null)
     }
 
     return (
@@ -68,7 +68,7 @@ function FormTemplate(props: Props) {
                             <button onClick={saveValues} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
                         </div>
                         <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                            <button onClick={handleSubmit} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                            <button onClick={props.form.handleSubmit(handleSubmit)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
                         </div>
                     </div>
                 </div>
