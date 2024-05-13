@@ -10,6 +10,7 @@ import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
 import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
+import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
 
 
 type ApplicationSpecifics = {
@@ -44,7 +45,7 @@ function ApplicationPointsPage() {
         "Zadania": "Zadania do zrealizowania w trakcie rejsu",
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
-        "Publikacje/prace": "Publikacje i prace",
+        "Publikacje": "Publikacje",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
@@ -201,7 +202,7 @@ function ApplicationPointsPage() {
                             <div>Brak danych o nowej punktacji</div>
                         </ApplicationPointsSection>
 
-                        <ApplicationPointsSection title={sections["Publikacje/prace"]}>
+                        <ApplicationPointsSection title={sections["Publikacje"]}>
                             <PublicationsPoints
                                 evaluatedPublications={[
                                     {
