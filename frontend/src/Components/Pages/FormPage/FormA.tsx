@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate, {FormValues} from "./Wrappers/FormTemplate";
+import FormTemplate from "./Wrappers/FormTemplate";
 import FormTitle from "./CommonComponents/FormTitle";
 import FormUserSelect from "./Inputs/FormUserSelect";
-import FormCreatableSelect from "./Inputs/FormCreatableSelect";
 import FormSection from "./Wrappers/FormSection";
 import MonthSlider from "./Inputs/MonthSlider";
 import NumberInput from "./Inputs/NumberInput";
@@ -26,25 +25,25 @@ import PublicationsInput from "./Inputs/PublicationsInput/PublicationsInput";
 
 
 
-export interface FormAValues extends FormValues {
-    cruiseManagerId: string,
-    deputyManagerId: string,
-    year: string,
-    acceptedPeriod: number[],
-    optimalPeriod: number[],
+export type FormAValues = {
+    cruiseManagerId: string
+    deputyManagerId: string
+    year: string
+    acceptedPeriod: number[]
+    optimalPeriod: number[]
     cruiseDays: string
-    cruiseHours: any,
-    periodNotes: string,
-    shipUsage: string,
-    permissions: string,
-    researchArea: string,
-    researchAreaInfo: string,
-    cruiseGoal: string,
-    cruiseGoalDescription: string,
-    researchTasks: Task[],
+    cruiseHours: any
+    periodNotes: string
+    shipUsage: string
+    permissions: string
+    researchArea: string
+    researchAreaInfo: string
+    cruiseGoal: string
+    cruiseGoalDescription: string
+    researchTasks: Task[]
     contracts: Contract[]
-    ugTeams: UgTeam[],
-    guestTeams: GuestsTeam[],
+    ugTeams: UgTeam[]
+    guestTeams: GuestsTeam[]
     spubTasks: SpubTask[]
 }
 

@@ -1,20 +1,19 @@
-import React, {useEffect, useLayoutEffect, useMemo, useState} from 'react';
+import React from 'react';
 import Page from "../../Page";
 import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../../Tools/useCustomEvent";
-import savedFormPage from "../../SavedFormsPage/SavedFormPage";
 import Api from "../../../Tools/Api";
-import {FormAValues, FormAValue} from "../FormA";
+import {FormAValue, FormAValues} from "../FormA";
 import {UseFormReturn} from "react-hook-form";
-import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
-export interface FormValues {}
+type FormValues =
+    FormAValues // | FormBValues | FormCValues
 
 type FormValue =
     FormAValue // | FormBValue | FormCValue
 
-type SavedFormData = {
+export type SavedFormData = {
     type: string,
     id: number,
     date: string,

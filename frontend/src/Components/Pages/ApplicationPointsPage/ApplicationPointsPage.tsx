@@ -9,6 +9,7 @@ import ApplicationPointsSection from "./ApplicationPointsSections/Wrappers/Appli
 import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
+import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
 
 
 type ApplicationSpecifics = {
@@ -201,7 +202,46 @@ function ApplicationPointsPage() {
                         </ApplicationPointsSection>
 
                         <ApplicationPointsSection title={sections["Publikacje/prace"]}>
-                            <div>Do uzupełnienia</div>
+                            <PublicationsPoints
+                                evaluatedPublications={[
+                                    {
+                                        category: "postscript",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        info: {
+                                            DOI: "8t23467",
+                                            authors: "Autor A",
+                                            title: "Tytuł A",
+                                            magazine: "Czasopismo A"
+                                        },
+                                        points: "200"
+                                    },
+                                    {
+                                        category: "author",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        info: {
+                                            DOI: "2345v6b",
+                                            authors: "Autor B",
+                                            title: "Tytuł B",
+                                            magazine: "Czasopismo B"
+                                        },
+                                        points: "100"
+                                    },
+                                    {
+                                        category: "postscript",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        info: {
+                                            DOI: "234tv",
+                                            authors: "Autor C",
+                                            title: "Tytuł C",
+                                            magazine: "Czasopismo C"
+                                        },
+                                        points: "200"
+                                    },
+                                ]}
+                            />
                         </ApplicationPointsSection>
 
                         <ApplicationPointsSection title={sections.SPUB}>

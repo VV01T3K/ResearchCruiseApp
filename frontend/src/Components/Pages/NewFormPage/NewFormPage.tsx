@@ -27,7 +27,7 @@ function NewFormPage(props: Props) {
                 </Page>
             }
             {selectedForm == 'A' &&
-                <FormA readonly={true}/>}
+                <FormA />}
             {selectedForm == 'B' &&
                 <FormB/>}
             {selectedForm == 'C' &&
