@@ -5,7 +5,8 @@ import ReadOnlyTextInput from "./ReadOnlyTextInput";
 
 type Props = {
     fileName: string,
-    fileContent: string
+    fileContent: string,
+    bg: string
 }
 
 
@@ -13,7 +14,7 @@ export default function FileDownloader(props: Props) {
     return (
         <div className="d-flex flex-wrap justify-content-center">
             <a
-                className="w-100 bg-light d-flex justify-content-center"
+                className={`w-100 ${props.bg} d-flex justify-content-center`}
                 style={{
                     cursor: "pointer"
                 }}
@@ -31,7 +32,7 @@ export default function FileDownloader(props: Props) {
                     }}
                     onMouseLeave={e => {
                         const thisImage = e.target as HTMLImageElement
-                        thisImage.style.backgroundColor = "#f8f8f8"
+                        thisImage.style.backgroundColor = props.bg == "bg-light" ? "#f8f8f8" : "#ffffff"
                     }}
                     alt="File picker icon"
                 />

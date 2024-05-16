@@ -49,28 +49,28 @@ function PublicationsInput(props: Props){
                 <div className="text-white text-center bg-secondary">
                     <div className="d-flex flex-row center">
                         <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
                             style={{width: "5%"}}>
                             <b>Lp.</b>
                         </div>
                         <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
                             style={{width: "15%"}}>
                             <b>Kategoria</b>
                         </div>
                         <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
                             style={{width: "51%"}}>
                             <b>Informacje</b>
                         </div>
 
                         <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
                             style={{width: "10%"}}>
                             <b>Rok wydania</b>
                         </div>
                         <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
                             style={{width: "10%"}}>
                             <b>Punkty ministerialne</b>
                         </div>
@@ -89,10 +89,10 @@ function PublicationsInput(props: Props){
                 }
                 {props.evaluatedPublications.map((row: EvaluatedPublication, index: number) => (
                     <div key={index}
-                         className="d-flex flex-wrap flex-row justify-content-center border bg-light"
+                         className={`d-flex flex-wrap flex-row justify-content-center border-bottom border-start border-end ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                     >
                         <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
                             style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                         >
                             {index + 1}.
@@ -103,7 +103,7 @@ function PublicationsInput(props: Props){
                         </div>
 
                         <div
-                            className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                            className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                             style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">
@@ -112,7 +112,7 @@ function PublicationsInput(props: Props){
                             <ReadOnlyTextInput value={row.category} />
                         </div>
                         <div
-                            className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                             style={{width: windowWidth >= 1200 ? "51%" : "100%"}}
                         >
                             <div className="col-12 mb-1">DOI</div>
@@ -130,7 +130,7 @@ function PublicationsInput(props: Props){
                         </div>
 
                         <div
-                            className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            className="d-flex flex-wrap justify-content-center align-items-center p-2"
                             style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">
@@ -139,7 +139,7 @@ function PublicationsInput(props: Props){
                             <ReadOnlyTextInput value={row.year} />
                         </div>
                         <div
-                            className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            className="d-flex flex-wrap justify-content-center align-items-center p-2"
                             style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">
@@ -148,7 +148,7 @@ function PublicationsInput(props: Props){
                             <ReadOnlyTextInput value={row.ministerialPoints} />
                         </div>
                         <div
-                            className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            className="d-flex flex-wrap justify-content-center align-items-center p-2 border-start"
                             style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">

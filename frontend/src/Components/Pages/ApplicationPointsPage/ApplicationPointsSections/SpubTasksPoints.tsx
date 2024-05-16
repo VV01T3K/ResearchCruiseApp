@@ -38,19 +38,19 @@ function SpubTasksPoints(props: Props){
             <div className="table-striped w-100">
                 <div className="text-white text-center bg-primary">
                     <div className="d-flex flex-row center">
-                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
+                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}}>
                             <b>Lp.</b>
                         </div>
-                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "13%"}}>
+                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "13%"}}>
                             <b>Rok rozpoczęcia</b>
                         </div>
-                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "13%"}}>
+                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "13%"}}>
                             <b>Rok zakończenia</b>
                         </div>
-                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "60%"}}>
+                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "60%"}}>
                             <b>Nazwa zadania</b>
                         </div>
-                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "9%"}}>
+                        <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "9%"}}>
                             <b>Punkty</b>
                         </div>
 
@@ -67,9 +67,9 @@ function SpubTasksPoints(props: Props){
                     }
                     {props.evaluatedSpubTasks.map((row: EvaluatedSpubTask, index: number) => (
                         <div key={index}
-                             className="d-flex flex-wrap flex-row justify-content-center border bg-light"
+                             className={`d-flex flex-wrap flex-row justify-content-center border-bottom border-start border-end ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                         >
-                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                             >
                                 {index + 1}.
@@ -78,25 +78,25 @@ function SpubTasksPoints(props: Props){
                                 <b>Zadanie {index + 1}.</b>
                             </div>
 
-                            <div className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
+                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
                                 <ReadOnlyTextInput value={row.yearFrom} />
                             </div>
-                            <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
+                            <div className="d-flex flex-wrap ustify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
                                 <ReadOnlyTextInput value={row.yearTo} />
                             </div>
-                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
                                 <ReadOnlyTextArea value={row.name} />
                             </div>
-                            <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2"
+                            <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2 border-start"
                                  style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Punkty</div>

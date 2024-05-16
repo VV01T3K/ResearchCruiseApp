@@ -10,7 +10,6 @@ import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
 import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
-import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
 
 
 type ApplicationSpecifics = {
