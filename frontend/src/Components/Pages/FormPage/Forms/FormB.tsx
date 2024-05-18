@@ -1,22 +1,22 @@
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate from "./Wrappers/FormTemplate";
-import FormTitle from "./CommonComponents/FormTitle";
-import FormUserSelect from "./Inputs/FormUserSelect";
-import FormCreatableSelect from "./Inputs/FormCreatableSelect";
-import FormSection from "./Wrappers/FormSection";
-import MonthSlider from "./Inputs/MonthSlider";
-import NumberInput from "./Inputs/NumberInput";
-import TextArea from "./Inputs/TextArea";
-import FormRadio from "./Inputs/FormRadio";
-import ClickableMap from "./Inputs/ClickableMap";
-import TaskInput from "./Inputs/TaskInput/TaskInput";
-import BlockList from "./Inputs/UgTeamsInput/UgTeamsInput";
-import GuestTeamsInput from "./Inputs/GuestTeamsInput/GuestTeamsInput";
-import SpubTasksInput from "./Inputs/SpubTasksInput";
-import {DummyTag} from "../../Tools/DummyTag";
-import FormWithSections from "./Wrappers/FormWithSections";
-import ContractsInput from "./Inputs/ContractsInput/ContractsInput";
+import FormTemplate from "../Wrappers/FormTemplate";
+import FormTitle from "../CommonComponents/FormTitle";
+import FormUserSelect from "../Inputs/FormUserSelect";
+import FormCreatableSelect from "../Inputs/FormCreatableSelect";
+import FormSection from "../Wrappers/FormSection";
+import MonthSlider from "../Inputs/MonthSlider";
+import NumberInput from "../Inputs/NumberInput";
+import TextArea from "../Inputs/TextArea";
+import FormRadio from "../Inputs/FormRadio";
+import ClickableMap from "../Inputs/ClickableMap";
+import TaskInput from "../Inputs/TaskInput/TaskInput";
+import BlockList from "../Inputs/UgTeamsInput/UgTeamsInput";
+import GuestTeamsInput from "../Inputs/GuestTeamsInput/GuestTeamsInput";
+import SpubTasksInput from "../Inputs/SpubTasksInput";
+import {DummyTag} from "../../../Tools/DummyTag";
+import FormWithSections from "../Wrappers/FormWithSections";
+import ContractsInput from "../Inputs/ContractsInput/ContractsInput";
 
 
 function FormB(props:{loadValues?:any}){
@@ -40,7 +40,6 @@ function FormB(props:{loadValues?:any}){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
-    // @ts-ignore
     return (
         <FormTemplate form={form} loadValues={props.loadValues} type='B'>
             <FormTitle sections={sections} title={"Formularz B"} />

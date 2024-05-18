@@ -5,31 +5,32 @@ import DataTable from 'react-data-table-component';
 import useCustomEvent from "../../Tools/useCustomEvent";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import PageTitle from "../PageTitle";
+import LinkWithState from "../../CommonComponents/LinkWithState";
 
 
 type Props = {
     className?: string
 }
 
+type ApplicationOverview = {
+    id: string,
+    date: string,
+    number: string,
+    year: string,
+    cruiseManagerFirstName: string,
+    cruiseManagerLastName: string,
+    formAId: string | null,
+    formBId: string | null,
+    formCId: string | null,
+    points: string,
+    status: string
+}
+
 
 function ApplicationsPage(props: Props) {
-    type ApplicationOverview = {
-        id: string,
-        date: string,
-        number: string,
-        year: string,
-        cruiseManagerFirstName: string,
-        cruiseManagerLastName: string,
-        formAId: string | null,
-        formBId: string | null,
-        formCId: string | null,
-        points: string,
-        status: string
-    }
-
     const generateLogicalCruises = () => {
         const records: ApplicationOverview[] = [];
         for (let i = 1; i <= 100; i++) {
@@ -102,19 +103,19 @@ function ApplicationsPage(props: Props) {
                         <div className="table-striped w-100 overflow-y-scroll">
                             <div className="text-white text-center bg-primary">
                                 <div className="d-flex flex-row center">
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "14%"}}>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "14%"}}>
                                         <b>Numer, data</b>
                                     </div>
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "9%"}}>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "9%"}}>
                                         <b>Rok rejsu</b>
                                     </div>
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "32%"}}>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "32%"}}>
                                         <b>Kierownik</b>
                                     </div>
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "18%"}}>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "18%"}}>
                                         <b>Formularze</b>
                                     </div>
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "12%", cursor: "pointer"}}
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "12%", cursor: "pointer"}}
                                          onClick={sortApplicationsByPoints}
                                     >
                                         <b>Punkty</b>
@@ -138,65 +139,84 @@ function ApplicationsPage(props: Props) {
                                 }
                                 {applications.map((row: ApplicationOverview, index: number) => (
                                     <div key={index}
-                                         className="d-flex flex-wrap flex-row justify-content-center border bg-light"
+                                         className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                                     >
-                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                                              style={{width: windowWidth >= 1200 ? "14%" : "100%"}}
                                         >
                                             <div className="col-12 d-flex d-xl-none justify-content-center">Numer i data:</div>
                                             <ReadOnlyTextInput value={row.number} className="mb-1" />
                                             <ReadOnlyTextInput value={row.date} />
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                                              style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                                         >
                                             <div className="col-12 d-flex d-xl-none justify-content-center">Rok rejsu:</div>
                                             <ReadOnlyTextInput value={row.year} />
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                                              style={{width: windowWidth >= 1200 ? "32%" : "100%"}}
                                         >
                                             <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik:</div>
                                             <ReadOnlyTextInput value={row.cruiseManagerFirstName} className="mb-1"/>
                                             <ReadOnlyTextInput value={row.cruiseManagerLastName} />
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "18%" : "100%"}}
                                         >
-                                            <Link
+                                            {/*<Link*/}
+                                            {/*    className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}*/}
+                                            {/*    to={row.formAId ? `/${row.formAId}` : "#"}*/}
+                                            {/*    style={!row.formAId ? {cursor: "default"} : {}}*/}
+                                            {/*>*/}
+                                            {/*    Formularz A*/}
+                                            {/*</Link>*/}
+                                            <LinkWithState
+                                                to="/Form"
+                                                state={{
+                                                    formType: "A",
+                                                    formId: row.formAId ?? undefined,
+                                                    readonly: true
+                                                }}
+                                                label="Formularz A"
                                                 className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}
-                                                to={row.formAId ? `/${row.formAId}` : "#"}
-                                                style={!row.formAId ? {cursor: "default"} : {}}
-                                            >
-                                                Formularz A
-                                            </Link>
-                                            <Link
+                                                style={!row.formAId ? {cursor: "default"} : undefined}
+                                            />
+                                            <LinkWithState
+                                                to="/Form"
+                                                state={{
+                                                    formType: "B",
+                                                    formId: row.formBId ?? undefined,
+                                                    readonly: true
+                                                }}
+                                                label="Formularz B"
                                                 className={`col-12 d-flex justify-content-center ${!row.formBId ? "text-muted text-decoration-none" : ""}`}
-                                                to={row.formBId ? `/${row.formBId}` : "#"}
-                                                style={!row.formBId ? {cursor: "default"} : {}}
-                                            >
-                                                Formularz B
-                                            </Link>
-                                            <Link
+                                                style={!row.formBId ? {cursor: "default"} : undefined}
+                                            />
+                                            <LinkWithState
+                                                to="/Form"
+                                                state={{
+                                                    formType: "C",
+                                                    formId: row.formCId ?? undefined,
+                                                    readonly: true
+                                                }}
+                                                label="Formularz A"
                                                 className={`col-12 d-flex justify-content-center ${!row.formCId ? "text-muted text-decoration-none" : ""}`}
-                                                to={row.formCId ? `/${row.formCId}` : "#"}
-                                                style={!row.formCId ? {cursor: "default"} : {}}
-                                            >
-                                                Formularz C
-                                            </Link>
+                                                style={!row.formCId ? {cursor: "default"} : undefined}
+                                            />
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
                                         >
                                             <div className="col-12 d-flex d-xl-none justify-content-center">Punkty:</div>
-                                            <Link
-                                                className={`col-12 d-flex justify-content-center`}
-                                                to={"/ApplicationPoints/" + row.id}
-                                            >
-                                                {row!.points}
-                                            </Link>
+                                            <LinkWithState
+                                                to="/ApplicationPoints"
+                                                state={{ applicationId: row.id }}
+                                                label={row!.points}
+                                                className="col-12 d-flex justify-content-center"
+                                            />
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
+                                        <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                         >
                                             <div className="col-12 d-flex d-xl-none justify-content-center">Status:</div>

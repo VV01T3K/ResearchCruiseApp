@@ -1,50 +1,49 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate, {FormValues} from "./Wrappers/FormTemplate";
-import FormTitle from "./CommonComponents/FormTitle";
-import FormUserSelect from "./Inputs/FormUserSelect";
-import FormCreatableSelect from "./Inputs/FormCreatableSelect";
-import FormSection from "./Wrappers/FormSection";
-import MonthSlider from "./Inputs/MonthSlider";
-import NumberInput from "./Inputs/NumberInput";
-import TextArea from "./Inputs/TextArea";
-import FormRadio from "./Inputs/FormRadio";
-import ClickableMap from "./Inputs/ClickableMap";
-import TaskInput, {Task} from "./Inputs/TaskInput/TaskInput";
-import GuestTeamsInput, {GuestsTeam} from "./Inputs/GuestTeamsInput/GuestTeamsInput";
-import SpubTasksInput, {SpubTask} from "./Inputs/SpubTasksInput";
-import {DummyTag} from "../../Tools/DummyTag";
-import FormWithSections from "./Wrappers/FormWithSections";
-import ContractsInput, {Contract} from "./Inputs/ContractsInput/ContractsInput";
-import UgTeamsInput, {UgTeam} from "./Inputs/UgTeamsInput/UgTeamsInput";
-import {administrationUnits} from "../../../resources/administrationUnits";
-import useCustomEvent from "../../Tools/useCustomEvent";
-import api from "../../Tools/Api";
-import FormYearSelect from "./Inputs/FormYearSelect";
-import ThesisInput from "./Inputs/ThesisInput/ThesisInput"
-import PublicationsInput from "./Inputs/PublicationsInput/PublicationsInput";
+import FormTemplate from "../Wrappers/FormTemplate";
+import FormTitle from "../CommonComponents/FormTitle";
+import FormUserSelect from "../Inputs/FormUserSelect";
+import FormSection from "../Wrappers/FormSection";
+import MonthSlider from "../Inputs/MonthSlider";
+import NumberInput from "../Inputs/NumberInput";
+import TextArea from "../Inputs/TextArea";
+import FormRadio from "../Inputs/FormRadio";
+import ClickableMap from "../Inputs/ClickableMap";
+import TaskInput, {Task} from "../Inputs/TaskInput/TaskInput";
+import GuestTeamsInput, {GuestsTeam} from "../Inputs/GuestTeamsInput/GuestTeamsInput";
+import SpubTasksInput, {SpubTask} from "../Inputs/SpubTasksInput";
+import {DummyTag} from "../../../Tools/DummyTag";
+import FormWithSections from "../Wrappers/FormWithSections";
+import ContractsInput, {Contract} from "../Inputs/ContractsInput/ContractsInput";
+import UgTeamsInput, {UgTeam} from "../Inputs/UgTeamsInput/UgTeamsInput";
+import {administrationUnits} from "../../../../resources/administrationUnits";
+import useCustomEvent from "../../../Tools/useCustomEvent";
+import api from "../../../Tools/Api";
+import FormYearSelect from "../Inputs/FormYearSelect";
+import ThesisInput from "../Inputs/ThesisInput/ThesisInput"
+import PublicationsInput from "../Inputs/PublicationsInput/PublicationsInput";
 
 
 
-export interface FormAValues extends FormValues {
-    cruiseManagerId: string,
-    deputyManagerId: string,
-    year: string,
-    acceptedPeriod: number[],
-    optimalPeriod: number[],
+export type FormAValues = {
+    cruiseManagerId: string
+    deputyManagerId: string
+    year: string
+    acceptedPeriod: number[]
+    optimalPeriod: number[]
     cruiseDays: string
-    cruiseHours: any,
-    periodNotes: string,
-    shipUsage: string,
-    permissions: string,
-    researchArea: string,
-    researchAreaInfo: string,
-    cruiseGoal: string,
-    cruiseGoalDescription: string,
-    researchTasks: Task[],
+    cruiseHours: any
+    periodNotes: string
+    shipUsage: string
+    permissions: string
+    researchArea: string
+    researchAreaInfo: string
+    cruiseGoal: string
+    cruiseGoalDescription: string
+    researchTasks: Task[]
     contracts: Contract[]
-    ugTeams: UgTeam[],
-    guestTeams: GuestsTeam[],
+    ugTeams: UgTeam[]
+    guestTeams: GuestsTeam[]
     spubTasks: SpubTask[]
 }
 
@@ -60,7 +59,7 @@ export type FormAValue =
 
 type Props = {
     loadValues?: FormAValues,
-    readonly?: boolean
+    readonly: boolean
 }
 
 
@@ -85,21 +84,19 @@ function FormA(props: Props){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
-    const [formValues, setFormValues] = useState([])
+    const [formInitValues, setFormInitValues] = useState([])
     const { dispatchEvent } = useCustomEvent('busy')
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormValues(response.data)).catch(error => console.log(error))
-        console.log(formValues)
+        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
+        console.log(formInitValues)
 
     },[]);
 
     useEffect(() => {
-        console.log(formValues)
+        console.log(formInitValues)
 
     }, );
 
-    // @ts-ignore
-    // @ts-ignore
     return (
         <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
@@ -108,19 +105,19 @@ function FormA(props: Props){
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                          name="cruiseManagerId"
                                          label="Kierownik rejsu"
-                                         values={formValues["CruiseManagers"]
+                                         values={formInitValues["CruiseManagers"]
                     }
-                                    defaultValue={formValues["CruiseManagers"]}
+                                    defaultValue={formInitValues["CruiseManagers"]}
                     />
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                 name="deputyManagerId"
                                 label="Zastępca"
-                                values={formValues["DeputyManagers"]}
+                                values={formInitValues["DeputyManagers"]}
                     />
                     <FormYearSelect className="col-12 col-md-6 col-xl-4"
                                 name="year"
                                 label="Rok rejsu"
-                                values={formValues["Years"]}
+                                values={formInitValues["Years"]}
                     />
                 </FormSection>
 
@@ -160,10 +157,10 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={formValues["ShipUsages"]}
+                               values={formInitValues["ShipUsages"]}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == formValues["ShipUsages"]?.length-1 ) {
+                        if (form.watch("shipUsage") == formInitValues["ShipUsages"]?.length-1 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -207,8 +204,8 @@ function FormA(props: Props){
 
                 <FormSection title={sections.Rejon}>
                     <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
-                                  image={formValues["ResearchAreasMap"]}
-                                  regions={formValues["ResearchAreas"]} />
+                                  image={formInitValues["ResearchAreasMap"]}
+                                  regions={formInitValues["ResearchAreas"]} />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -221,7 +218,7 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={formValues["CruiseGoals"]}
+                               values={formInitValues["CruiseGoals"]}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"

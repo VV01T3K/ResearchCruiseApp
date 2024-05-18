@@ -1,7 +1,7 @@
 import React, {Dispatch, useState} from 'react';
 import Page from "../Page";
 import useCustomEvent from "../../Tools/useCustomEvent";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import SpubTasksPoints from "./ApplicationPointsSections/SpubTasksPoints";
 import FormTitle from "../FormPage/CommonComponents/FormTitle";
 import ApplicationPointsSectionsGroup from "./ApplicationPointsSections/Wrappers/ApplicationPointsSectionsGroup";
@@ -9,6 +9,7 @@ import ApplicationPointsSection from "./ApplicationPointsSections/Wrappers/Appli
 import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
+import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
 
 
 type ApplicationSpecifics = {
@@ -24,7 +25,9 @@ type ApplicationSpecifics = {
 
 
 function ApplicationPointsPage() {
-    let { applicationId } = useParams()
+    const location = useLocation()
+    const { applicationId } = location.state || { }
+
     const applicationSpecifics: ApplicationSpecifics = {
         id: applicationId!,
         date: "2024-04-28",
@@ -43,7 +46,7 @@ function ApplicationPointsPage() {
         "Zadania": "Zadania do zrealizowania w trakcie rejsu",
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
-        "Publikacje/prace": "Publikacje i prace",
+        "Publikacje": "Publikacje",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
@@ -64,7 +67,6 @@ function ApplicationPointsPage() {
             <Page className="justify-content-center col-12 col-xl-9 bg-white">
                 <div className="d-flex flex-column w-100 h-100" style={{fontSize:"0.8rem"}}>
                     <FormTitle title={"Punkty przyznane zgłoszeniu"} sections={sections} />
-
                     <ApplicationPointsSectionsGroup sections={sections}>
                         <ApplicationPointsSection title={sections.Informacje}>
                             <ApplicationInfo
@@ -200,8 +202,47 @@ function ApplicationPointsPage() {
                             <div>Brak danych o nowej punktacji</div>
                         </ApplicationPointsSection>
 
-                        <ApplicationPointsSection title={sections["Publikacje/prace"]}>
-                            <div>Do uzupełnienia</div>
+                        <ApplicationPointsSection title={sections["Publikacje"]}>
+                            <PublicationsPoints
+                                evaluatedPublications={[
+                                    {
+                                        category: "postscript",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        info: {
+                                            DOI: "8t23467",
+                                            authors: "Autor A",
+                                            title: "Tytuł A",
+                                            magazine: "Czasopismo A"
+                                        },
+                                        points: "200"
+                                    },
+                                    {
+                                        category: "author",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        info: {
+                                            DOI: "2345v6b",
+                                            authors: "Autor B",
+                                            title: "Tytuł B",
+                                            magazine: "Czasopismo B"
+                                        },
+                                        points: "100"
+                                    },
+                                    {
+                                        category: "postscript",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        info: {
+                                            DOI: "234tv",
+                                            authors: "Autor C",
+                                            title: "Tytuł C",
+                                            magazine: "Czasopismo C"
+                                        },
+                                        points: "200"
+                                    },
+                                ]}
+                            />
                         </ApplicationPointsSection>
 
                         <ApplicationPointsSection title={sections.SPUB}>

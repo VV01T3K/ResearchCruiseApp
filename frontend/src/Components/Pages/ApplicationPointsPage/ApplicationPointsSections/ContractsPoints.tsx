@@ -45,19 +45,19 @@ export default function ContractsPoints(props: Props){
             <div className="table-striped w-100">
                 <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
                     <div className="d-flex flex-row center align-items-center">
-                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "5%"}}>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}}>
                             <b>Lp.</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "15%"}}>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "15%"}}>
                             <b>Kategoria</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "25%"}}>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "25%"}}>
                             <b>Instytucja</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "36%"}}>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "36%"}}>
                             <b>Opis</b>
                         </div>
-                        <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "10%"}}>
+                        <div className="text-center d-none d-xl-block p-2" style={{width: "10%"}}>
                             <b>Skan</b>
                         </div>
                         <div className="text-center d-none d-xl-block p-2" style={{width: "9%"}}>
@@ -77,10 +77,9 @@ export default function ContractsPoints(props: Props){
                     }
                     {props.evaluatedContracts.map((row: EvaluatedContract, index: number) => (
                         <div key={index}
-                             className="d-flex flex-wrap flex-row justify-content-center border bg-light"
+                             className={`d-flex flex-wrap flex-row justify-content-center border-bottom border-start border-end ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                         >
-                            <div className="text-center d-none d-xl-flex justify-content-center align-items-center p-2
-                                 border-end"
+                            <div className="text-center d-none d-xl-flex justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                             >
                                 {index + 1}.
@@ -89,13 +88,13 @@ export default function ContractsPoints(props: Props){
                                 <b>Umowa {index + 1}.</b>
                             </div>
 
-                            <div className="text-center d-inline-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            <div className="text-center d-inline-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Kategoria</div>
                                 <ReadOnlyTextInput value={row.category == "international" ? "Międynarodowa" : "Krajowa"} />
                             </div>
-                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                             >
                                 <div className="col-12 mb-1">Nazwa instytucji</div>
@@ -107,22 +106,23 @@ export default function ContractsPoints(props: Props){
                                 <div className="col-12 mb-1 mt-1">Lokalizacja instytucji</div>
                                 <ReadOnlyTextInput value={row.institution.localization} />
                             </div>
-                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                            <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "36%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Opis</div>
                                 <ReadOnlyTextArea value={row.description} />
                             </div>
-                            <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
+                            <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2"
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
                                 <FileDownloader
                                     fileName={row.scan.name}
                                     fileContent={row.scan.content}
+                                    bg={index % 2 == 0 ? "bg-light" : "bg-white"}
                                 />
                             </div>
-                            <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2"
+                            <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2 border-start"
                                  style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Punkty:</div>
