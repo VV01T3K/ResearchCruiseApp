@@ -1,27 +1,27 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate from "./Wrappers/FormTemplate";
-import FormTitle from "./CommonComponents/FormTitle";
-import FormUserSelect from "./Inputs/FormUserSelect";
-import FormSection from "./Wrappers/FormSection";
-import MonthSlider from "./Inputs/MonthSlider";
-import NumberInput from "./Inputs/NumberInput";
-import TextArea from "./Inputs/TextArea";
-import FormRadio from "./Inputs/FormRadio";
-import ClickableMap from "./Inputs/ClickableMap";
-import TaskInput, {Task} from "./Inputs/TaskInput/TaskInput";
-import GuestTeamsInput, {GuestsTeam} from "./Inputs/GuestTeamsInput/GuestTeamsInput";
-import SpubTasksInput, {SpubTask} from "./Inputs/SpubTasksInput";
-import {DummyTag} from "../../Tools/DummyTag";
-import FormWithSections from "./Wrappers/FormWithSections";
-import ContractsInput, {Contract} from "./Inputs/ContractsInput/ContractsInput";
-import UgTeamsInput, {UgTeam} from "./Inputs/UgTeamsInput/UgTeamsInput";
-import {administrationUnits} from "../../../resources/administrationUnits";
-import useCustomEvent from "../../Tools/useCustomEvent";
-import api from "../../Tools/Api";
-import FormYearSelect from "./Inputs/FormYearSelect";
-import ThesisInput from "./Inputs/ThesisInput/ThesisInput"
-import PublicationsInput from "./Inputs/PublicationsInput/PublicationsInput";
+import FormTemplate from "../Wrappers/FormTemplate";
+import FormTitle from "../CommonComponents/FormTitle";
+import FormUserSelect from "../Inputs/FormUserSelect";
+import FormSection from "../Wrappers/FormSection";
+import MonthSlider from "../Inputs/MonthSlider";
+import NumberInput from "../Inputs/NumberInput";
+import TextArea from "../Inputs/TextArea";
+import FormRadio from "../Inputs/FormRadio";
+import ClickableMap from "../Inputs/ClickableMap";
+import TaskInput, {Task} from "../Inputs/TaskInput/TaskInput";
+import GuestTeamsInput, {GuestsTeam} from "../Inputs/GuestTeamsInput/GuestTeamsInput";
+import SpubTasksInput, {SpubTask} from "../Inputs/SpubTasksInput";
+import {DummyTag} from "../../../Tools/DummyTag";
+import FormWithSections from "../Wrappers/FormWithSections";
+import ContractsInput, {Contract} from "../Inputs/ContractsInput/ContractsInput";
+import UgTeamsInput, {UgTeam} from "../Inputs/UgTeamsInput/UgTeamsInput";
+import {administrationUnits} from "../../../../resources/administrationUnits";
+import useCustomEvent from "../../../Tools/useCustomEvent";
+import api from "../../../Tools/Api";
+import FormYearSelect from "../Inputs/FormYearSelect";
+import ThesisInput from "../Inputs/ThesisInput/ThesisInput"
+import PublicationsInput from "../Inputs/PublicationsInput/PublicationsInput";
 
 
 

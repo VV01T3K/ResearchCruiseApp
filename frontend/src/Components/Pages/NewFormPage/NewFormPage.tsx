@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import Page from "../Page";
 import {Link} from "react-router-dom";
-import FormA from "../FormPage/FormA";
-import FormC from "../FormPage/FormC";
-import FormB from "../FormPage/FormB";
+import FormA from "../FormPage/Forms/FormA";
+import FormC from "../FormPage/Forms/FormC";
+import FormB from "../FormPage/Forms/FormB";
 
 
 type Props = {
@@ -29,9 +29,9 @@ function NewFormPage(props: Props) {
             {selectedForm == 'A' &&
                 <FormA />}
             {selectedForm == 'B' &&
-                <FormB/>}
+                <FormB />}
             {selectedForm == 'C' &&
-                <FormC/>}
+                <FormC />}
         </>
     )
 }

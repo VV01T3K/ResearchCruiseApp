@@ -1,7 +1,7 @@
 import React, {Dispatch, useState} from 'react';
 import Page from "../Page";
 import useCustomEvent from "../../Tools/useCustomEvent";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import SpubTasksPoints from "./ApplicationPointsSections/SpubTasksPoints";
 import FormTitle from "../FormPage/CommonComponents/FormTitle";
 import ApplicationPointsSectionsGroup from "./ApplicationPointsSections/Wrappers/ApplicationPointsSectionsGroup";
@@ -25,7 +25,8 @@ type ApplicationSpecifics = {
 
 
 function ApplicationPointsPage() {
-    let { applicationId } = useParams()
+    const location = useLocation()
+    const { applicationId } = location.state || { }
     const applicationSpecifics: ApplicationSpecifics = {
         id: applicationId!,
         date: "2024-04-28",
@@ -65,7 +66,6 @@ function ApplicationPointsPage() {
             <Page className="justify-content-center col-12 col-xl-9 bg-white">
                 <div className="d-flex flex-column w-100 h-100" style={{fontSize:"0.8rem"}}>
                     <FormTitle title={"Punkty przyznane zgłoszeniu"} sections={sections} />
-
                     <ApplicationPointsSectionsGroup sections={sections}>
                         <ApplicationPointsSection title={sections.Informacje}>
                             <ApplicationInfo

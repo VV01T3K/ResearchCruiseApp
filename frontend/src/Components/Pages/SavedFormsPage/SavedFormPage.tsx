@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Page from "../Page";
-import FormA from "../FormPage/FormA";
+import FormA from "../FormPage/Forms/FormA";
 import useCustomEvent from "../../Tools/useCustomEvent";
 
 

@@ -5,31 +5,32 @@ import DataTable from 'react-data-table-component';
 import useCustomEvent from "../../Tools/useCustomEvent";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import PageTitle from "../PageTitle";
+import LinkWithState from "../../CommonComponents/LinkWithState";
 
 
 type Props = {
     className?: string
 }
 
+type ApplicationOverview = {
+    id: string,
+    date: string,
+    number: string,
+    year: string,
+    cruiseManagerFirstName: string,
+    cruiseManagerLastName: string,
+    formAId: string | null,
+    formBId: string | null,
+    formCId: string | null,
+    points: string,
+    status: string
+}
+
 
 function ApplicationsPage(props: Props) {
-    type ApplicationOverview = {
-        id: string,
-        date: string,
-        number: string,
-        year: string,
-        cruiseManagerFirstName: string,
-        cruiseManagerLastName: string,
-        formAId: string | null,
-        formBId: string | null,
-        formCId: string | null,
-        points: string,
-        status: string
-    }
-
     const generateLogicalCruises = () => {
         const records: ApplicationOverview[] = [];
         for (let i = 1; i <= 100; i++) {
@@ -189,12 +190,11 @@ function ApplicationsPage(props: Props) {
                                              style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
                                         >
                                             <div className="col-12 d-flex d-xl-none justify-content-center">Punkty:</div>
-                                            <Link
-                                                className={`col-12 d-flex justify-content-center`}
-                                                to={"/ApplicationPoints/" + row.id}
-                                            >
-                                                {row!.points}
-                                            </Link>
+                                            <LinkWithState
+                                                to="/ApplicationPoints"
+                                                state={{ applicationId: row.id }}
+                                                label={row!.points}
+                                            />
                                         </div>
                                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "15%" : "100%"}}

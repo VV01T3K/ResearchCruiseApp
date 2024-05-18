@@ -6,8 +6,8 @@ import AdminPanel from "./Pages/HomePage/AdminPanel"
 import PageHeader from "./Pages/PageHeader/PageHeader";
 import NewFormPage from "./Pages/NewFormPage/NewFormPage";
 import './../scss/app.scss';
-import FormB from "./Pages/FormPage/FormB";
-import FormC from "./Pages/FormPage/FormC";
+import FormB from "./Pages/FormPage/Forms/FormB";
+import FormC from "./Pages/FormPage/Forms/FormC";
 import ManagerPanel from "./Pages/HomePage/ManagerPanel";
 import ShipOwnerPanel from "./Pages/HomePage/ShipOwnerPanel";
 import LogoutPage from "./Pages/LoginPage/LogoutPage";
@@ -111,7 +111,7 @@ function App() {
                             <Route path="/*" element={<AdminPanel />} />
                             <Route path="/Messages" element={<MessagesPage />} />
                             <Route path="/Applications" element={<ApplicationsPage />} />
-                            <Route path="/ApplicationPoints/:applicationId" element={<ApplicationPointsPage />} />
+                            <Route path="/ApplicationPoints" element={<ApplicationPointsPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&
