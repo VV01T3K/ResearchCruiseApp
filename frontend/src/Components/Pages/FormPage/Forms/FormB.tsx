@@ -40,7 +40,6 @@ function FormB(props:{loadValues?:any}){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
-    // @ts-ignore
     return (
         <FormTemplate form={form} loadValues={props.loadValues} type='B'>
             <FormTitle sections={sections} title={"Formularz B"} />

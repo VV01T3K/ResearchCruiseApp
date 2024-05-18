@@ -9,7 +9,8 @@ type Props = {
 }
 
 
-
+// The component only handles the forms saved in the local storage and is a temporary solution
+// which will be deleted soon
 function SavedFormPage(props: Props) {
     const { addEventListener: saveListener } = useCustomEvent('saveSuccessful');
 

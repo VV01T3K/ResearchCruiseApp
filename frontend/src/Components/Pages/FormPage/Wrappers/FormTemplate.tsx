@@ -7,7 +7,7 @@ import {FormAValue, FormAValues} from "../Forms/FormA";
 import {UseFormReturn} from "react-hook-form";
 
 
-type FormValues =
+export type FormValues =
     FormAValues // | FormBValues | FormCValues
 
 type FormValue =

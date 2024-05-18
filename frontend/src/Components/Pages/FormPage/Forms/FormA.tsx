@@ -59,7 +59,7 @@ export type FormAValue =
 
 type Props = {
     loadValues?: FormAValues,
-    readonly?: boolean
+    readonly: boolean
 }
 
 
@@ -84,21 +84,19 @@ function FormA(props: Props){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
-    const [formValues, setFormValues] = useState([])
+    const [formInitValues, setFormInitValues] = useState([])
     const { dispatchEvent } = useCustomEvent('busy')
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormValues(response.data)).catch(error => console.log(error))
-        console.log(formValues)
+        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
+        console.log(formInitValues)
 
     },[]);
 
     useEffect(() => {
-        console.log(formValues)
+        console.log(formInitValues)
 
     }, );
 
-    // @ts-ignore
-    // @ts-ignore
     return (
         <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='A'>
             <FormTitle sections={sections} title={"Formularz A"} />
@@ -107,19 +105,19 @@ function FormA(props: Props){
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                          name="cruiseManagerId"
                                          label="Kierownik rejsu"
-                                         values={formValues["CruiseManagers"]
+                                         values={formInitValues["CruiseManagers"]
                     }
-                                    defaultValue={formValues["CruiseManagers"]}
+                                    defaultValue={formInitValues["CruiseManagers"]}
                     />
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
                                 name="deputyManagerId"
                                 label="Zastępca"
-                                values={formValues["DeputyManagers"]}
+                                values={formInitValues["DeputyManagers"]}
                     />
                     <FormYearSelect className="col-12 col-md-6 col-xl-4"
                                 name="year"
                                 label="Rok rejsu"
-                                values={formValues["Years"]}
+                                values={formInitValues["Years"]}
                     />
                 </FormSection>
 
@@ -159,10 +157,10 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={formValues["ShipUsages"]}
+                               values={formInitValues["ShipUsages"]}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == formValues["ShipUsages"]?.length-1 ) {
+                        if (form.watch("shipUsage") == formInitValues["ShipUsages"]?.length-1 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -206,8 +204,8 @@ function FormA(props: Props){
 
                 <FormSection title={sections.Rejon}>
                     <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
-                                  image={formValues["ResearchAreasMap"]}
-                                  regions={formValues["ResearchAreas"]} />
+                                  image={formInitValues["ResearchAreasMap"]}
+                                  regions={formInitValues["ResearchAreas"]} />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -220,7 +218,7 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={formValues["CruiseGoals"]}
+                               values={formInitValues["CruiseGoals"]}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"

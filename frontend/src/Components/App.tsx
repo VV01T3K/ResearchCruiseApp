@@ -22,6 +22,7 @@ import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
 import ApplicationPointsPage from "./Pages/ApplicationPointsPage/ApplicationPointsPage";
 import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
+import FormPage from "./Pages/FormPage/FormPage";
 
 function App() {
 
@@ -105,6 +106,7 @@ function App() {
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
+                            <Route path="/Form" element={<FormPage />} />
                             <Route path="/FormB" element={<FormB />} />
                             <Route path="/FormC" element={<FormC />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />

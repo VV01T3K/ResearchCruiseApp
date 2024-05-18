@@ -27,6 +27,7 @@ type ApplicationSpecifics = {
 function ApplicationPointsPage() {
     const location = useLocation()
     const { applicationId } = location.state || { }
+
     const applicationSpecifics: ApplicationSpecifics = {
         id: applicationId!,
         date: "2024-04-28",
