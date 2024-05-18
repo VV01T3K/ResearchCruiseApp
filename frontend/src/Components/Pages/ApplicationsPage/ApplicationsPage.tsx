@@ -164,27 +164,46 @@ function ApplicationsPage(props: Props) {
                                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "18%" : "100%"}}
                                         >
-                                            <Link
+                                            {/*<Link*/}
+                                            {/*    className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}*/}
+                                            {/*    to={row.formAId ? `/${row.formAId}` : "#"}*/}
+                                            {/*    style={!row.formAId ? {cursor: "default"} : {}}*/}
+                                            {/*>*/}
+                                            {/*    Formularz A*/}
+                                            {/*</Link>*/}
+                                            <LinkWithState
+                                                to="/Form"
+                                                state={{
+                                                    formType: "A",
+                                                    formId: row.formAId ?? undefined,
+                                                    readonly: true
+                                                }}
+                                                label="Formularz A"
                                                 className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}
-                                                to={row.formAId ? `/${row.formAId}` : "#"}
-                                                style={!row.formAId ? {cursor: "default"} : {}}
-                                            >
-                                                Formularz A
-                                            </Link>
-                                            <Link
+                                                style={!row.formAId ? {cursor: "default"} : undefined}
+                                            />
+                                            <LinkWithState
+                                                to="/Form"
+                                                state={{
+                                                    formType: "B",
+                                                    formId: row.formBId ?? undefined,
+                                                    readonly: true
+                                                }}
+                                                label="Formularz B"
                                                 className={`col-12 d-flex justify-content-center ${!row.formBId ? "text-muted text-decoration-none" : ""}`}
-                                                to={row.formBId ? `/${row.formBId}` : "#"}
-                                                style={!row.formBId ? {cursor: "default"} : {}}
-                                            >
-                                                Formularz B
-                                            </Link>
-                                            <Link
+                                                style={!row.formBId ? {cursor: "default"} : undefined}
+                                            />
+                                            <LinkWithState
+                                                to="/Form"
+                                                state={{
+                                                    formType: "C",
+                                                    formId: row.formCId ?? undefined,
+                                                    readonly: true
+                                                }}
+                                                label="Formularz A"
                                                 className={`col-12 d-flex justify-content-center ${!row.formCId ? "text-muted text-decoration-none" : ""}`}
-                                                to={row.formCId ? `/${row.formCId}` : "#"}
-                                                style={!row.formCId ? {cursor: "default"} : {}}
-                                            >
-                                                Formularz C
-                                            </Link>
+                                                style={!row.formCId ? {cursor: "default"} : undefined}
+                                            />
                                         </div>
                                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
@@ -194,6 +213,7 @@ function ApplicationsPage(props: Props) {
                                                 to="/ApplicationPoints"
                                                 state={{ applicationId: row.id }}
                                                 label={row!.points}
+                                                className="col-12 d-flex justify-content-center"
                                             />
                                         </div>
                                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
