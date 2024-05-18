@@ -38,6 +38,8 @@ export type FormPageLocationState = {
 
 // This component was created to enable the loading of the form values from the database
 function FormPage(){
+    // Get state from the navigation location. Navigating to this component is performed with
+    // useNavigate (in LinkWithState component), not with the Link component
     const location = useLocation()
     const {
         formType,
@@ -46,8 +48,9 @@ function FormPage(){
         readonly
     } = location.state as FormPageLocationState
 
+    // Set the values to be loaded to the form if applicable
     const loadValues =
-        formId && "Fetch data" || // Temporary string value to be replaced with an actual API call
+        formId && { periodNotes: formId } || // Temporary value to be replaced with an actual API call
         localStorageValues
 
     const { dispatchEvent } = useCustomEvent('busy')
@@ -56,18 +59,18 @@ function FormPage(){
         <>
             {formType == "A" &&
                 <FormA
-                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary string value of loadValues
+                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                     readonly={readonly}
                 />
             }
             {formType == "B" &&
                 <FormB
-                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary string value of loadValues
+                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                 />
             }
             {formType == "C" &&
                 <FormC
-                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary string value of loadValues
+                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                 />
             }
         </>
