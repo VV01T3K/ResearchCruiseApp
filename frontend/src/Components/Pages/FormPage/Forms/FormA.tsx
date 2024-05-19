@@ -20,8 +20,8 @@ import {administrationUnits} from "../../../../resources/administrationUnits";
 import useCustomEvent from "../../../Tools/useCustomEvent";
 import api from "../../../Tools/Api";
 import FormYearSelect from "../Inputs/FormYearSelect";
-import ThesisInput from "../Inputs/ThesisInput/ThesisInput"
-import PublicationsInput from "../Inputs/PublicationsInput/PublicationsInput";
+import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
+import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
 
 
 
@@ -44,6 +44,8 @@ export type FormAValues = {
     contracts: Contract[]
     ugTeams: UgTeam[]
     guestTeams: GuestsTeam[]
+    publications: Publication[]
+    thesis: Thesis[]
     spubTasks: SpubTask[]
 }
 
@@ -55,6 +57,8 @@ export type FormAValue =
     Contract[] |
     UgTeam[] |
     GuestsTeam[] |
+    Publication[] |
+    Thesis[] |
     SpubTask []
 
 type Props = {
@@ -380,8 +384,44 @@ function FormA(props: Props){
                         className="col-12"
                         label="Publikacje"
                         name="publications"
-                        historicalGuestsInstitutions={[
-                            "A. Temat", "B. Dopisek", "Instytucja 3"
+                        historicalPublications={[
+                            {
+                                category: "subject",
+                                DOI: "10.1016/j.marenvres.2023.106132",
+                                authors: "Urszula Kwasigroch, Katarzyna Łukawska-Matuszewska, Agnieszka Jędruch, Olga Brocławik, Magdalena Bełdowska",
+                                title: "Mobility and bioavailability of mercury in sediments of the southern Baltic sea in relation to the chemical fractions of iron: Spatial and temporal patterns",
+                                magazine: "Marine Environmental Research",
+                                year: "2023",
+                                points: "0"
+
+                            },
+                            {
+                                category: "subject",
+                                DOI: "10.1016/j.csr.2018.08.008",
+                                authors: "Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska",
+                                title: "Porewater dissolved organic and inorganic carbon in relation to methane occurrence in sediments of the Gdańsk Basin (southern Baltic Sea)",
+                                magazine: "Continental Shelf Research",
+                                year: "2018",
+                                points: "30"
+                            },
+                            {
+                                category: "postscript",
+                                DOI: "10.3390/biology12020147",
+                                authors: "Natalia Miernik, Urszula Janas, Halina Kendzierska",
+                                title: "Role of macrofaunal communities in the Vistula River plume, the Baltic Sea - bioturbation and bioirrigation potential",
+                                magazine: "Biology",
+                                year: "2023",
+                                points: "100"
+                            },
+                            {
+                                category: "postscript",
+                                DOI: "10.1016/j.scitotenv.2020.140306",
+                                authors: "Jakub Idczak, Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska, Bożena Graca, Natalia Gorska, Zygmunt Klusek, Patryk Pezacki, Jerzy Bolałek",
+                                title: "A geophysical, geochemical and microbiological study of a newly discovered pockmark with active gas seepage and submarine groundwater discharge (MET1-BH, central Gulf of Gdańsk, southern Baltic Sea)",
+                                magazine: "Science of the Total Environment",
+                                year: "2020",
+                                points: "200"
+                            }
                         ]}
                     />
                     <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
@@ -395,8 +435,29 @@ function FormA(props: Props){
                             className="col-12"
                             label="Prace"
                             name="works"
-                            historicalGuestsInstitutions={[
-                                "Instytucja 1", "Instytucja 2", "Instytucja 3"
+                            historicalThesis={[
+                                {
+                                    category: "doctor",
+                                    author: "Marian Domogolski",
+                                    title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                    promoter: "Elżbieta Widłogrodzka",
+                                    year: "2020"
+
+                                },
+                                {
+                                    category: "master",
+                                    author: "Marian Domogolski",
+                                    title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                    promoter: "Elżbieta Widłogrodzka",
+                                    year: "2020"
+                                },
+                                {
+                                    category: "bachelor",
+                                    author: "Marian Domogolski",
+                                    title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                    promoter: "Elżbieta Widłogrodzka",
+                                    year: "2020"
+                                }
                             ]}
                         />
                 </FormSection>

@@ -2,23 +2,21 @@ import React, {useEffect, useState} from "react";
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 
 
-type EvaluatedPublication = {
+type EvaluatedThesis = {
     category: string,
     year: string,
     ministerialPoints: string,
-    DOI: string,
-    authors: string,
+    author: string,
     title: string,
-    magazine: string,
-    points: string
+    promoter: string
 }
 
 type Props = {
-    evaluatedPublications: EvaluatedPublication[]
+    evaluatedPublications: EvaluatedThesis[]
 }
 
 
-function PublicationsInput(props: Props){
+function ThesisInput(props: Props){
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
         () => {
@@ -39,7 +37,7 @@ function PublicationsInput(props: Props){
                 <div className="text-white text-center bg-primary">
                     <div className="d-flex flex-row center">
                         <div className="w-100 p-2">
-                            <b>Publikacje</b>
+                            <b>Prace</b>
                         </div>
                     </div>
                 </div>
@@ -64,19 +62,13 @@ function PublicationsInput(props: Props){
 
                         <div
                             className="d-none d-xl-flex justify-content-center align-items-center p-2"
-                            style={{width: "10%"}}>
+                            style={{width: "15%"}}>
                             <b>Rok wydania</b>
                         </div>
                         <div
                             className="d-none d-xl-flex justify-content-center align-items-center p-2"
-                            style={{width: "10%"}}>
+                            style={{width: "14%"}}>
                             <b>Punkty ministerialne</b>
-                        </div>
-                        <div
-                            className="d-none d-xl-flex justify-content-center align-items-center p-2"
-                            style={{width: "9%"}}
-                        >
-                            <b>Punkty</b>
                         </div>
                     </div>
                 </div>
@@ -85,7 +77,7 @@ function PublicationsInput(props: Props){
                         <div className={"text-center"}>Nie dodano żadnej publikacji</div>
                     </div>
                 }
-                {props.evaluatedPublications.map((row: EvaluatedPublication, index: number) => (
+                {props.evaluatedPublications.map((row: EvaluatedThesis, index: number) => (
                     <div key={index}
                          className={`d-flex flex-wrap flex-row justify-content-center border-bottom border-start border-end ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                     >
@@ -113,46 +105,34 @@ function PublicationsInput(props: Props){
                             className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                             style={{width: windowWidth >= 1200 ? "51%" : "100%"}}
                         >
-                            <div className="col-12 mb-1">DOI</div>
-                            <ReadOnlyTextInput value={row.DOI} />
-
-                            <div className="col-12 mb-1 mt-1">Autorzy</div>
-                            <ReadOnlyTextInput value={row.authors} />
+                            <div className="col-12 mb-1">Autor</div>
+                            <ReadOnlyTextInput value={row.author} />
 
                             <div className="col-12 mb-1 mt-1">Tytuł</div>
                             <ReadOnlyTextInput value={row.title} />
 
-                            <div className="col-12 mb-1 mt-1">Czasopismo</div>
-                            <ReadOnlyTextInput value={row.magazine} />
+                            <div className="col-12 mb-1 mt-1">Promotor</div>
+                            <ReadOnlyTextInput value={row.promoter} />
 
                         </div>
 
                         <div
                             className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                            style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                            style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">
-                                Rok wydania
+                                Rok obrony
                             </div>
                             <ReadOnlyTextInput value={row.year} />
                         </div>
                         <div
                             className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                            style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                            style={{width: windowWidth >= 1200 ? "14%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">
                                 Punkty ministerialne
                             </div>
                             <ReadOnlyTextInput value={row.ministerialPoints} />
-                        </div>
-                        <div
-                            className="d-flex flex-wrap justify-content-center align-items-center p-2 border-start"
-                            style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
-                        >
-                            <div className="col-12 d-flex d-xl-none justify-content-center">
-                                Punkty
-                            </div>
-                            <ReadOnlyTextInput value={row.points} />
                         </div>
                     </div>
                 ))}
@@ -162,4 +142,4 @@ function PublicationsInput(props: Props){
 }
 
 
-export default PublicationsInput
+export default ThesisInput
