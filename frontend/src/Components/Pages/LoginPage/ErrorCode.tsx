@@ -10,7 +10,7 @@ type Props = {
 function ErrorCode(props: Props){
     if(props.code)
     return (
-        <p className="m-1 text-center text-danger">
+        <p className={"m-1 text-center text-danger " + props.className}>
             {typeof props.code == "string" ? props.code: ""}
         </p>
     )
