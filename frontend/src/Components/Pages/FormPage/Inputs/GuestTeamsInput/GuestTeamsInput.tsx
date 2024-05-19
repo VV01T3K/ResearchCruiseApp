@@ -42,7 +42,7 @@ function GuestTeamsInput(props: Props){
                         rules = {{required:props.required ?? true,validate: {
                             notEmpty: (value) => {
                                 for (const key in value) {
-                                    if (value.hasOwnProperty(key) && (value[key].value === "" || value[key].count === "")) {
+                                    if (value.hasOwnProperty(key) && (value[key].value === "" || value[key].count === "" || value[key].institution === "")) {
                                         return "Uzupełnij wszystkie pola";
                                     }
                                 }
