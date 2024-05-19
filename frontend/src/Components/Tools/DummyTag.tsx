@@ -1,8 +1,9 @@
 type Props = {
-    required?: any
+    required?: any,
+    className?:string
 }
 
 
 export const DummyTag = (props: Props) => {
-    return <></>
+    return <div className={props.className}></div>
 }

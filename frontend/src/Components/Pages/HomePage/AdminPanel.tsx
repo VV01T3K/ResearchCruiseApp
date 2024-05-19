@@ -8,7 +8,6 @@ import MessagesTile from "./Tiles/MessagesTile";
 import ViewFormsTile from "./Tiles/ViewFormsTile";
 import React from "react";
 import Tiles from "./Tiles/TilesMenu";
-import AccountPage from "../AccountPage/AccountPage";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 import ScheduleTile from "./Tiles/ScheduleTile";
 import ApplicationsTile from "./Tiles/ApplicationsTile";

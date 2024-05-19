@@ -1,6 +1,7 @@
 import file_icon from "../../resources/file_icon.png";
 import React from "react";
 import ReadOnlyTextInput from "./ReadOnlyTextInput";
+import Style from "./FileIcon.module.css";
 
 
 type Props = {
@@ -12,7 +13,8 @@ type Props = {
 
 export default function FileDownloader(props: Props) {
     return (
-        <div className="d-flex flex-wrap justify-content-center">
+        <>
+        <div className="d-flex flex-wrap justify-content-center text-break">
             <a
                 className={`w-100 ${props.bg} d-flex justify-content-center`}
                 style={{
@@ -25,19 +27,13 @@ export default function FileDownloader(props: Props) {
                     src={file_icon}
                     height="45px"
                     width="45px"
-                    className="rounded-2 p-1 d-flex"
-                    onMouseEnter={e => {
-                        const thisImage = e.target as HTMLImageElement
-                        thisImage.style.backgroundColor = "#eeeeee"
-                    }}
-                    onMouseLeave={e => {
-                        const thisImage = e.target as HTMLImageElement
-                        thisImage.style.backgroundColor = props.bg == "bg-light" ? "#f8f8f8" : "#ffffff"
-                    }}
+                    className={"rounded-2 p-1 d-flex " + props.bg == 'bg-light' ? Style.img: Style.imgDark}
                     alt="File picker icon"
                 />
             </a>
-            <ReadOnlyTextInput value={props.fileName} />
+            {props.fileName}
         </div>
+
+        </>
     )
 }
