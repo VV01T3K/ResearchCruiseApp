@@ -3,6 +3,7 @@ import {Controller, ControllerRenderProps, FieldValues, UseFormReturn} from "rea
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
 import PublicationsCategoryPicker from "./PublicationsCategoryPicker"
+import {Contract} from "../ContractsInput/ContractsInput";
 
 
 type Props = {
@@ -10,20 +11,19 @@ type Props = {
     label: string,
     name:string,
     form?: UseFormReturn,
-    historicalGuestsInstitutions: string[],
-    required? :boolean
+    historicalPublications: Publication[],
+    required? :boolean,
+    readonly?: boolean
 }
 
-export type Attributes = {
+export type Publication = {
     category: string,
+    DOI: string,
+    authors: string,
+    title: string,
+    magazine: string,
     year: string,
-    points: string,
-    info: {
-        DOI: string,
-        authors: string,
-        title: string,
-        magazine: string
-    }
+    points: string
 }
 
 
@@ -48,16 +48,27 @@ function PublicationsInput(props: Props){
         <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
-                        rules = {{required:props.required ?? true,validate: {
-                                notEmpty: (value) => {
-                                    for (const key in value) {
-                                        if (value.hasOwnProperty(key) && (value[key].value === "" || value[key].count === "")) {
-                                            return "Uzupełnij wszystkie pola";
-                                        }
-                                    }
-                                    return true;
+                        rules = {{
+                            required: false,
+                            validate: {
+                                noEmptyInputs: (value: Publication[]) => {
+                                    if (value.some((row: Publication) => {
+                                        return Object
+                                            .values(row)
+                                            .some((rowField: object | string) => {
+                                                if (typeof rowField == 'object') {
+                                                    return Object
+                                                        .values(rowField)
+                                                        .some((rowSubField: string) => !rowSubField)
+                                                }
+                                                return !rowField
+                                            })
+                                    })
+                                    )
+                                        return "Wypełnij wszystkie pola"
                                 }
-                            }}}
+                            }
+                        }}
 
                         render={({field}) => (
                             <>
@@ -109,10 +120,10 @@ function PublicationsInput(props: Props){
                                     </div>
                                     {!field.value.length &&
                                         <div className="d-flex flex-row bg-light p-2 justify-content-center border">
-                                            <div className={"text-center"}>Nie dodano żadnej pracy</div>
+                                            <div className={"text-center"}>Nie dodano żadnej publikacji</div>
                                         </div>
                                     }
-                                    {field.value.map((row: Attributes, index: number) => (
+                                    {field.value.map((row: Publication, index: number) => (
                                         <div key={index}
                                              className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                         >
@@ -124,7 +135,7 @@ function PublicationsInput(props: Props){
                                             </div>
                                             <div
                                                 className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
-                                                <b>Instytucja {index + 1}.</b>
+                                                <b>Publikacja {index + 1}.</b>
                                             </div>
 
                                             <div
@@ -132,7 +143,7 @@ function PublicationsInput(props: Props){
                                                 style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                             >
                                                 <div
-                                                    className="col-12 d-flex d-xl-none justify-content-center">Instytucja
+                                                    className="col-12 d-flex d-xl-none justify-content-center">Kategoria
                                                 </div>
                                                 <PublicationsCategoryPicker
                                                     name={props.name}
@@ -146,92 +157,114 @@ function PublicationsInput(props: Props){
                                                 style={{width: windowWidth >= 1200 ? "55%" : "100%"}}
                                             >
                                                 <div className="col-12">DOI</div>
-                                                <input {...field}
-                                                       type="text"
-                                                       className="col-12 p-1 form-control"
-                                                       style={{fontSize: "inherit"}}
-                                                       value={row.info.DOI}
-                                                       onChange={(e) => {
-                                                           row.info.DOI = e.target.value
-                                                           props.form!.setValue(
-                                                               props.name,
-                                                               field.value,
-                                                               {
-                                                                   shouldTouch: true,
-                                                                   shouldValidate: true,
-                                                                   shouldDirty: true
-                                                               }
-                                                           )
-                                                           field.onChange(field.value)
-                                                       }}
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.DOI}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.DOI = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={1}
                                                 />
 
                                                 <div className="col-12">Autorzy</div>
-                                                <input {...field}
-                                                       type="text"
-                                                       className="col-12 p-1"
-                                                       value={row.info.authors}
-                                                       onChange={(e) => {
-                                                           row.info.authors = e.target.value
-                                                           props.form!.setValue(
-                                                               props.name,
-                                                               field.value,
-                                                               {
-                                                                   shouldTouch: true,
-                                                                   shouldValidate: true,
-                                                                   shouldDirty: true
-                                                               }
-                                                           )
-                                                           field.onChange(field.value)
-                                                       }}
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.authors}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.authors = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={2}
                                                 />
 
                                                 <div className="col-12">Tytuł</div>
-                                                <input {...field}
-                                                       type="text"
-                                                       className="col-12 p-1"
-                                                       value={row.info.title}
-                                                       onChange={(e) => {
-                                                           row.info.title = e.target.value
-                                                           props.form!.setValue(
-                                                               props.name,
-                                                               field.value,
-                                                               {
-                                                                   shouldTouch: true,
-                                                                   shouldValidate: true,
-                                                                   shouldDirty: true
-                                                               }
-                                                           )
-                                                           field.onChange(field.value)
-                                                       }}
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.title}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.title = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={2}
                                                 />
 
                                                 <div className="col-12">Czasopismo</div>
-                                                <input {...field}
-                                                       type="text"
-                                                       className="col-12 p-1"
-                                                       value={row.info.magazine}
-                                                       onChange={(e) => {
-                                                           row.info.magazine = e.target.value
-                                                           props.form!.setValue(
-                                                               props.name,
-                                                               field.value,
-                                                               {
-                                                                   shouldTouch: true,
-                                                                   shouldValidate: true,
-                                                                   shouldDirty: true
-                                                               }
-                                                           )
-                                                           field.onChange(field.value)
-                                                       }}
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.magazine}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.magazine = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={1}
                                                 />
 
                                             </div>
 
                                             <div
-                                                className="d-flex justify-content-center align-items-center p-2 border-end"
+                                                className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                                                 style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                             >
+                                                <div className="col-12 d-flex d-xl-none justify-content-center">Rok
+                                                    wydania
+                                                </div>
                                                 <input
                                                     type="text"
                                                     {...field}
@@ -259,9 +292,11 @@ function PublicationsInput(props: Props){
                                             </div>
 
                                             <div
-                                                className="d-flex justify-content-center align-items-center p-2 border-end"
+                                                className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                                                 style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                             >
+                                                <div className="col-12 d-flex d-xl-none justify-content-center">Punkty
+                                                </div>
                                                 <input
                                                     type="text"
                                                     {...field}
@@ -325,29 +360,27 @@ function PublicationsInput(props: Props){
                                             }
                                             type="button"
                                             onClick={() => {
-                                                const newGuestsCount: Attributes = {
+                                                const newPublication: Publication = {
                                                     category: "",
+                                                    DOI: "",
+                                                    authors: "",
+                                                    title: "",
+                                                    magazine: "",
                                                     year: "",
-                                                    points: "",
-                                                    info: {
-                                                        DOI: "",
-                                                        authors: "",
-                                                        title: "",
-                                                        magazine: ""
-                                                    }
+                                                    points: ""
                                                 }
                                                 props.form!.setValue(
                                                     props.name,
-                                                    [...field.value, newGuestsCount],
+                                                    [...field.value, newPublication],
                                                     {
                                                         shouldValidate: true,
                                                         shouldDirty: true
                                                     }
                                                 )
-                                                field.onChange([...field.value, newGuestsCount])
+                                                field.onChange([...field.value, newPublication])
                                             }}
                                         >
-                                            Dodaj nową pracę
+                                            Dodaj nową publikację
                                         </button>
                                     </div>
                                     <Select
@@ -376,29 +409,51 @@ function PublicationsInput(props: Props){
                                                 zIndex: 9999
                                             })
                                         }}
-                                        options={
-                                            props.historicalGuestsInstitutions.map((institution: string) => ({
-                                                label: institution,
-                                                value: institution
-                                            }))
-                                        }
+                                        options ={[
+                                            {
+                                                label: "Temat",
+                                                options:
+                                                    props.historicalPublications
+                                                        .filter((publication: Publication) => publication.category == "subject")
+                                                        .map((publication: Publication) => ({
+                                                            label: `DOI: ${publication.DOI}\n
+                                                                    Autorzy: ${publication.authors}\n
+                                                                    Tytuł: ${publication.title}\n
+                                                                    Czasopismo: ${publication.magazine}\n
+                                                                    Rok wydania: ${publication.year}\n
+                                                                    Punkty: ${publication.points}`,
+                                                            value: publication
+                                                        }))
+                                            },
+                                            {
+                                                label: "Dopisek",
+                                                options:
+                                                    props.historicalPublications
+                                                        .filter((publication: Publication) => publication.category == "postscript")
+                                                        .map((publication: Publication) => ({
+                                                            label: `DOI: ${publication.DOI}\n
+                                                                    Autorzy: ${publication.authors}\n
+                                                                    Tytuł: ${publication.title}\n
+                                                                    Czasopismo: ${publication.magazine}\n
+                                                                    Rok wydania: ${publication.year}\n
+                                                                    Punkty: ${publication.points}`,
+                                                            value: publication
+                                                        }))
+                                            }
+                                        ]}
                                         value={""}
-                                        onChange={(selectedOption: { label: string, value: string }) => {
+                                        onChange={(selectedOption: { label: string, value: Publication })=> {
                                             if (selectedOption) {
-                                                const newGuestsCount: Attributes = {
-                                                    institution: selectedOption.value,
-                                                    count: ""
-                                                }
                                                 props.form!.setValue(
                                                     props.name,
-                                                    [...field.value, newGuestsCount],
+                                                    [...field.value, selectedOption.value],
                                                     {
                                                         shouldValidate: true,
                                                         shouldDirty: true,
                                                         shouldTouch: true
                                                     }
                                                 )
-                                                field.onChange([...field.value, newGuestsCount])
+                                                field.onChange([...field.value, selectedOption.value])
                                             }
                                         }}
                                     />

@@ -10,6 +10,7 @@ import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
 import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
+import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
 
 
 type ApplicationSpecifics = {
@@ -47,6 +48,7 @@ function ApplicationPointsPage() {
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje": "Publikacje",
+        "Prace": "Prace",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
@@ -209,37 +211,62 @@ function ApplicationPointsPage() {
                                         category: "postscript",
                                         year: "2000",
                                         ministerialPoints: "200",
-                                        info: {
-                                            DOI: "8t23467",
-                                            authors: "Autor A",
-                                            title: "Tytuł A",
-                                            magazine: "Czasopismo A"
-                                        },
+                                        DOI: "8t23467",
+                                        authors: "Autor A",
+                                        title: "Tytuł A",
+                                        magazine: "Czasopismo A",
                                         points: "200"
                                     },
                                     {
-                                        category: "author",
+                                        category: "subject",
                                         year: "2000",
                                         ministerialPoints: "200",
-                                        info: {
-                                            DOI: "2345v6b",
-                                            authors: "Autor B",
-                                            title: "Tytuł B",
-                                            magazine: "Czasopismo B"
-                                        },
+                                        DOI: "2345v6b",
+                                        authors: "Autor B",
+                                        title: "Tytuł B",
+                                        magazine: "Czasopismo B",
                                         points: "100"
                                     },
                                     {
                                         category: "postscript",
                                         year: "2000",
                                         ministerialPoints: "200",
-                                        info: {
-                                            DOI: "234tv",
-                                            authors: "Autor C",
-                                            title: "Tytuł C",
-                                            magazine: "Czasopismo C"
-                                        },
+                                        DOI: "234tv",
+                                        authors: "Autor C",
+                                        title: "Tytuł C",
+                                        magazine: "Czasopismo C",
                                         points: "200"
+                                    },
+                                ]}
+                            />
+                        </ApplicationPointsSection>
+
+                        <ApplicationPointsSection title={sections["Prace"]}>
+                            <ThesisPoints
+                                evaluatedPublications={[
+                                    {
+                                        category: "bachelor",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        author: "Autor A",
+                                        title: "Tytuł A",
+                                        promoter: "Promotor A"
+                                    },
+                                    {
+                                        category: "master",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        author: "Autor B",
+                                        title: "Tytuł B",
+                                        promoter: "Promotor B"
+                                    },
+                                    {
+                                        category: "doctor",
+                                        year: "2000",
+                                        ministerialPoints: "200",
+                                        author: "Autor C",
+                                        title: "Tytuł C",
+                                        promoter: "Promotor C"
                                     },
                                 ]}
                             />
