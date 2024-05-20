@@ -22,6 +22,8 @@ import PublicationsInput from "../Inputs/PublicationsInput/PublicationsInput";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import ActionInput from "../Inputs/ActionInput/ActionInput";
 import DetailedPlanInput from "../Inputs/DetailedPlanInput";
+import EquipmentInput from "../Inputs/EquipmentInput";
+import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
 
 
 
@@ -357,10 +359,9 @@ function FormB(props: Props){
                         className="col-12"
                         label="Publikacje"
                         name="publications"
-                        historicalGuestsInstitutions={[
-                            "A. Temat", "B. Dopisek", "Instytucja 3"
-                        ]}
-                    />
+                     historicalPublications={[
+                         "A. Temat", "B. Dopisek", "Instytucja 3"
+                     ]}/>
                     <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
@@ -372,10 +373,9 @@ function FormB(props: Props){
                         className="col-12"
                         label="Prace"
                         name="works"
-                        historicalGuestsInstitutions={[
-                            "Instytucja 1", "Instytucja 2", "Instytucja 3"
-                        ]}
-                    />
+                     historicalThesis={[
+                         "Instytucja 1", "Instytucja 2", "Instytucja 3"
+                     ]}/>
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
@@ -473,6 +473,8 @@ function FormB(props: Props){
                         }
                     })()}
                     <DetailedPlanInput className={"col-12"} name={"plan"}/>
+                    <EquipmentInput className={"col-12"} name={"equipment2"}/>
+                    <TechnicalElementsUsedInput className={"col-12"} name={"technical"}/>
                 </FormSection>
 
             </FormWithSections>
