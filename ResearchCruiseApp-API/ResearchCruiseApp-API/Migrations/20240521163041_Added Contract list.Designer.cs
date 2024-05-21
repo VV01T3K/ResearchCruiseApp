@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    partial class ResearchCruiseContextModelSnapshot : ModelSnapshot
+    [Migration("20240521163041_Added Contract list")]
+    partial class AddedContractlist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,34 +149,6 @@ namespace ResearchCruiseApp_API.Migrations
                     b.ToTable("FormsA");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.SPUBTask", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormAId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("YearFrom")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("YearTo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.ToTable("SPUBTask");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Contract", b =>
                 {
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
@@ -181,18 +156,9 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasForeignKey("FormAId");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.SPUBTask", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
-                        .WithMany("SPUBTasks")
-                        .HasForeignKey("FormAId");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
                 {
                     b.Navigation("Contracts");
-
-                    b.Navigation("SPUBTasks");
                 });
 #pragma warning restore 612, 618
         }

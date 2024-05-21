@@ -54,13 +54,13 @@ public class FormA
     public int CruiseGoalType { get; set; }
     public string CruiseGoalDescription { get; set; }
     
-    // public List<IResearchTask> ResearchTasks { get; set; } 
+    //public List<ResearchTask.ResearchTask> ResearchTasks { get; set; } 
     
-    //public List<Contract> Contracts { get; set; } 
+    public List<Contract> Contracts { get; set; } 
     
     // public string OrganizationalUnit { get; set; } ;
 
-    // public List<SPUBTask> SPUBTasks { get; set; } ;
+    public List<SPUBTask> SPUBTasks { get; set; } 
     public FormA()
     {
         // Domyślnie właściwości CruiseManager i Deputy będą miały wartość null
