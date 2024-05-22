@@ -164,13 +164,6 @@ function ApplicationsPage(props: Props) {
                                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "18%" : "100%"}}
                                         >
-                                            {/*<Link*/}
-                                            {/*    className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}*/}
-                                            {/*    to={row.formAId ? `/${row.formAId}` : "#"}*/}
-                                            {/*    style={!row.formAId ? {cursor: "default"} : {}}*/}
-                                            {/*>*/}
-                                            {/*    Formularz A*/}
-                                            {/*</Link>*/}
                                             <LinkWithState
                                                 to="/Form"
                                                 state={{

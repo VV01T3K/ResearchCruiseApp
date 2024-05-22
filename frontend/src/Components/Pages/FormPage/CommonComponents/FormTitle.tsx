@@ -11,7 +11,7 @@ type Props = {
 function FormTitle(props: Props){
     function scrollSmoothTo(elementId: string){
         var element = document.getElementById(elementId);
-        element!.scrollIntoView({
+        element?.scrollIntoView({
             block: 'start',
             behavior: 'smooth'
         });
