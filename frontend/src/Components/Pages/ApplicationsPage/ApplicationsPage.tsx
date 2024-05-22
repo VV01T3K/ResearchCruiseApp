@@ -31,7 +31,7 @@ type ApplicationOverview = {
 
 
 function ApplicationsPage(props: Props) {
-    const generateLogicalCruises = () => {
+    const generateApplications = () => {
         const records: ApplicationOverview[] = [];
         for (let i = 1; i <= 100; i++) {
             const record: ApplicationOverview = {
@@ -53,7 +53,7 @@ function ApplicationsPage(props: Props) {
     };
 
     const [applications, setApplications]: [ApplicationOverview[], Dispatch<any>]
-        = useState(generateLogicalCruises())
+        = useState(generateApplications())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -75,6 +75,24 @@ function ApplicationsPage(props: Props) {
         setApplications(
             applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
                 (parseInt(a.points) - parseInt(b.points)) * (sortAscending ? -1 : 1)
+            )
+        )
+        setSortAscending(!sortAscending)
+    }
+
+    const sortApplicationsByDate = () => {
+        setApplications(
+            applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
+                (Date.parse(a.date) - Date.parse(b.date)) * (sortAscending ? -1 : 1)
+            )
+        )
+        setSortAscending(!sortAscending)
+    }
+
+    const sortApplicationsByYear = () => {
+        setApplications(
+            applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
+                (parseInt(a.year) - parseInt(b.year)) * (sortAscending ? -1 : 1)
             )
         )
         setSortAscending(!sortAscending)
@@ -103,11 +121,21 @@ function ApplicationsPage(props: Props) {
                         <div className="table-striped w-100 overflow-y-scroll">
                             <div className="text-white text-center bg-primary">
                                 <div className="d-flex flex-row center">
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "14%"}}>
-                                        <b>Numer, data</b>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "14%", cursor: "pointer"}}
+                                         onClick={sortApplicationsByDate}
+                                    >
+                                        <b>Numer<br/>data</b>
+                                        <div className="btn btn-sm btn-dark px-1 py-0 ms-2">
+                                            <FontAwesomeIcon icon={faArrowDown} />
+                                        </div>
                                     </div>
-                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "9%"}}>
+                                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "9%", cursor: "pointer"}}
+                                         onClick={sortApplicationsByYear}
+                                    >
                                         <b>Rok rejsu</b>
+                                        <div className="btn btn-sm btn-dark px-1 py-0 ms-2">
+                                            <FontAwesomeIcon icon={faArrowDown} />
+                                        </div>
                                     </div>
                                     <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "32%"}}>
                                         <b>Kierownik</b>
@@ -119,8 +147,8 @@ function ApplicationsPage(props: Props) {
                                          onClick={sortApplicationsByPoints}
                                     >
                                         <b>Punkty</b>
-                                        <div className="p-0 ms-2">
-                                            {sortAscending ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
+                                        <div className="btn btn-sm btn-dark px-1 py-0 ms-2">
+                                            <FontAwesomeIcon icon={faArrowDown} />
                                         </div>
                                     </div>
                                     <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
