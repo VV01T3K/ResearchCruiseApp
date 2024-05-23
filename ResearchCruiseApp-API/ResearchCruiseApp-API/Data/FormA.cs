@@ -62,7 +62,6 @@ public class FormA
     
     //TODO GuestTeams
     
-    //TODO Publications
     public List<Publication> Publications { get; set; }
     
     public List<Work> Works { get; set; }
