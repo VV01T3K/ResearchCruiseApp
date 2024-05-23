@@ -17,6 +17,9 @@ namespace ResearchCruiseApp_API.Tools
             {
                 cfg.CreateMap<Models.SPUBTask, Data.SPUBTask>()
                     ;
+                
+                cfg.CreateMap<Models.GuestTeam, Data.GuestTeam>()
+                    ;
 
                 cfg.CreateMap<Publication, Data.Publication>()
                     .ForMember(dest => dest.DOI, act => act.MapFrom(src => src.Info.DOI))

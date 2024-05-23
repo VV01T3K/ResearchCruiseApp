@@ -61,6 +61,7 @@ public class FormA
     //TODO UGTeams
     
     //TODO GuestTeams
+    public List<GuestTeam> GuestTeams { get; set; }
     
     public List<Publication> Publications { get; set; }
     
