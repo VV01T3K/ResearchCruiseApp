@@ -46,8 +46,8 @@ public class ResearchTask
         public string? Date { get; set; }
         public class Time_type
         {
-            public string? StartDate { get; set; }
-            public string? EndDate { get; set; }
+            public string? StartDate { get; set; } = null!;
+            public string? EndDate { get; set; } = null!;
         }
         public Time_type? Time { get; set; }
         //TODO zmienić w frontendzie na int
@@ -108,7 +108,7 @@ public class Work
     {
         public string Author { get; set; }
         public string Title { get; set; }
-        public string? Promotor { get; set; }
+        public string? Promoter { get; set; }
     }
 }
 
@@ -189,13 +189,6 @@ public class FormsModel
     
     [MaxLength(200)]
     public string? CruiseGoalDescription { get; set; }
-    
-    
-    //Przewidywana liczba osób zamierzających uczestniczyć w rejsie, podać liczby osobno dla:
-    // public int? UGWorkers { get; set; }
-    // public int? Students { get; set; }
-    // public int? Guests { get; set; }
-    // nieaktualne pola
 
     
     //Zadania
@@ -214,19 +207,9 @@ public class FormsModel
     public List<GuestTeam>? GuestTeams { get; set; }
     
     
-    //Zespoły badawcze
-    // public string? ResearchersOutsideUG { get; set; }
-    // public string? ResearchersOutsideWOIG { get; set; }
-    // public int? ResearchersFromWOIG { get; set; }
-    
-    
     //Publikacje i Prace
     public List<Publication>? Publications { get; set; }
     public List<Work>? Works { get; set; }
-    
-    
-    //Efekty rejsu (do usunięcia?)
-    // public List<Efects>? EfectsList;
     
     
     //Zadania SPUB

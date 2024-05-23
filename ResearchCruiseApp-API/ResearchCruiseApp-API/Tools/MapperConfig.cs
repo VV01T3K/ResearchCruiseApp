@@ -2,6 +2,9 @@ using AutoMapper;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using Contract = ResearchCruiseApp_API.Data.Contract;
+using Publication = ResearchCruiseApp_API.Models.Publication;
+using ResearchTask = ResearchCruiseApp_API.Models.ResearchTask;
+using Work = ResearchCruiseApp_API.Models.Work;
 
 namespace ResearchCruiseApp_API.Tools
 {
@@ -15,6 +18,30 @@ namespace ResearchCruiseApp_API.Tools
                 cfg.CreateMap<Models.SPUBTask, Data.SPUBTask>()
                     ;
 
+                cfg.CreateMap<Publication, Data.Publication>()
+                    .ForMember(dest => dest.DOI, act => act.MapFrom(src => src.Info.DOI))
+                    .ForMember(dest => dest.Authors, act => act.MapFrom(src => src.Info.Authors))
+                    .ForMember(dest => dest.Title, act => act.MapFrom(src => src.Info.Title))
+                    .ForMember(dest => dest.Magazine, act => act.MapFrom(src => src.Info.Magazine))
+                    ;
+
+                cfg.CreateMap<Work, Data.Work>()
+                    .ForMember(dest => dest.Author, act => act.MapFrom(src => src.Info.Author))
+                    .ForMember(dest => dest.Title, act => act.MapFrom(src => src.Info.Title))
+                    .ForMember(dest => dest.Promoter, act => act.MapFrom(src => src.Info.Promoter))
+                    ;
+                
+                cfg.CreateMap<ResearchTask, Data.ResearchTask>()
+                    .ForMember(dest => dest.Title, act => act.MapFrom(src => src.Values.Title))
+                    .ForMember(dest => dest.Author, act => act.MapFrom(src => src.Values.Author))
+                    .ForMember(dest => dest.Institution, act => act.MapFrom(src => src.Values.Institution))
+                    .ForMember(dest => dest.Date, act => act.MapFrom(src => src.Values.Date))
+                    .ForMember(dest => dest.StartDate, act => act.MapFrom(src => src.Values.Time.StartDate))
+                    .ForMember(dest => dest.EndDate, act => act.MapFrom(src => src.Values.Time.EndDate))
+                    .ForMember(dest => dest.FinancingAmount, act => act.MapFrom(src => src.Values.FinancingAmount))
+                    .ForMember(dest => dest.Description, act => act.MapFrom(src => src.Values.Description))
+                    ;
+
                 cfg.CreateMap<Models.Contract, Data.Contract>()
                     .ForMember(dest => dest.Institution, act => act.MapFrom(src => src.Institution.Name))
                     .ForMember(dest => dest.Unit, act => act.MapFrom(src => src.Institution.Unit))
@@ -22,27 +49,13 @@ namespace ResearchCruiseApp_API.Tools
                     ;
                 //Configuring FormsModel and FormA
                 cfg.CreateMap<FormsModel, FormA>()
-                    // .ForMember(dest => dest.CruiseManagerId, act => act.MapFrom(src => src.CruiseInfoData.CruiseManagerId))
-                    // .ForMember(dest => dest.DeputyManagerId, act => act.MapFrom(src => src.CruiseInfoData.DeputyManagerId))
-                    // .ForMember(dest => dest.Year, act => act.MapFrom(src => src.CruiseInfoData.Year))
                     .ForMember(dest => dest.AcceptablePeriodBeg, act => act.MapFrom(src => src.AcceptablePeriod!.Min()))
                     .ForMember(dest => dest.AcceptablePeriodEnd, act => act.MapFrom(src => src.AcceptablePeriod!.Max()))
                     .ForMember(dest => dest.OptimalPeriodBeg, act => act.MapFrom(src => src.OptimalPeriod!.Min()))
                     .ForMember(dest => dest.OptimalPeriodEnd, act => act.MapFrom(src => src.OptimalPeriod!.Max()))
-                    
                     ;
 
-                // cfg.CreateMap<FormA, FormsModel>()
-                //     .ForPath(dest => dest.CruiseInfoData.Year, opt => opt.MapFrom(src => src.Year))
-                //     .ForPath(dest => dest.CruiseInfoData.CruiseHours, opt => opt.MapFrom(src => src.CruiseHours))
-                //     .ForPath(dest => dest.CruiseInfoData.DateComment, opt => opt.MapFrom(src => src.DateComment))
-                //     .ForPath(dest => dest.CruiseInfoData.ShipUsage, opt => opt.MapFrom(src => src.ShipUsage));
-
                 cfg.CreateMap<FormA, FormsModel>();
-                // .ForMember(dest => dest.CruiseInfoData,
-                //     opt => 
-                //         opt.MapFrom(src => 
-                //             new CruiseInfo() { Id = src.Id, Year = src.Year, CruiseHours = src.CruiseHours, PeriodNotes = src.PeriodNotes, ShipUsage = src.ShipUsage}));
 
             });
             

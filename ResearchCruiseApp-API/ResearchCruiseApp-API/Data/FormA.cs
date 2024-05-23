@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices.JavaScript;
 using NuGet.Protocol.Plugins;
-using ResearchCruiseApp_API.Data.ResearchTask;
+using ResearchCruiseApp_API.Data.ResearchTaskFolder;
 using ResearchCruiseApp_API.Models;
 
 namespace ResearchCruiseApp_API.Data;
@@ -54,11 +54,18 @@ public class FormA
     public int CruiseGoalType { get; set; }
     public string CruiseGoalDescription { get; set; }
     
-    //public List<ResearchTask.ResearchTask> ResearchTasks { get; set; } 
+    public List<ResearchTask> ResearchTasks { get; set; } 
     
     public List<Contract> Contracts { get; set; } 
     
-    // public string OrganizationalUnit { get; set; } ;
+    //TODO UGTeams
+    
+    //TODO GuestTeams
+    
+    //TODO Publications
+    public List<Publication> Publications { get; set; }
+    
+    public List<Work> Works { get; set; }
 
     public List<SPUBTask> SPUBTasks { get; set; } 
     public FormA()

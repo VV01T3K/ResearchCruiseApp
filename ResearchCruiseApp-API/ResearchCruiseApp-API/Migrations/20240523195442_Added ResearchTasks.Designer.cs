@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    partial class ResearchCruiseContextModelSnapshot : ModelSnapshot
+    [Migration("20240523195442_Added ResearchTasks")]
+    partial class AddedResearchTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,47 +149,6 @@ namespace ResearchCruiseApp_API.Migrations
                     b.ToTable("FormsA");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Publication", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Authors")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DOI")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("FormAId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Magazine")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Points")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.ToTable("Publication");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.ResearchTask", b =>
                 {
                     b.Property<Guid>("Id")
@@ -258,52 +220,10 @@ namespace ResearchCruiseApp_API.Migrations
                     b.ToTable("SPUBTask");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Work", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("FormAId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Promoter")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.ToTable("Work");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Contract", b =>
                 {
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
                         .WithMany("Contracts")
-                        .HasForeignKey("FormAId");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Publication", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
-                        .WithMany("Publications")
                         .HasForeignKey("FormAId");
                 });
 
@@ -321,24 +241,13 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasForeignKey("FormAId");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Work", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
-                        .WithMany("Works")
-                        .HasForeignKey("FormAId");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
                 {
                     b.Navigation("Contracts");
 
-                    b.Navigation("Publications");
-
                     b.Navigation("ResearchTasks");
 
                     b.Navigation("SPUBTasks");
-
-                    b.Navigation("Works");
                 });
 #pragma warning restore 612, 618
         }
