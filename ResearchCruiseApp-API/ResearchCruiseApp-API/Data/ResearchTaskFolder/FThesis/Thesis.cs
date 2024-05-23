@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-namespace  ResearchCruiseApp_API.Data.ResearchTask.FThesis;
-public abstract class Thesis: ResearchTask
+namespace  ResearchCruiseApp_API.Data.ResearchTaskFolder.FThesis;
+public abstract class Thesis
 {
   [MaxLength(20)] public string Author { get; set; }
   
