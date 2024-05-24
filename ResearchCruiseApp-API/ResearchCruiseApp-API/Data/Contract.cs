@@ -12,16 +12,16 @@ public class Contract
       public string Category { get; set; }
       
       [MaxLength(50)]
-      public string Institution { get; set; }
+      public string InstitutionName { get; set; }
       
       [MaxLength(200)]
       public string Description { get; set; }
   
       [MaxLength(50)]
-      public string Location { get; set; }
+      public string InstitutionLocation { get; set; }
 
       [MaxLength(50)] 
-      public string Unit { get; set; }
+      public string InstitutionUnit { get; set; }
 
       //public string File { get; set; }
 }

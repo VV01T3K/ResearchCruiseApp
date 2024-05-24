@@ -58,7 +58,6 @@ public class FormA
     
     public List<Contract> Contracts { get; set; } 
     
-    //TODO UGTeams
     public List<UGTeam> UGTeams { get; set; }
     
     public List<GuestTeam> GuestTeams { get; set; }
