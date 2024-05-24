@@ -107,7 +107,7 @@ function PublicationsInput(props: Props){
                             <div className="col-12 d-flex d-xl-none justify-content-center">
                                 Kategoria
                             </div>
-                            <ReadOnlyTextInput value={row.category} />
+                            <ReadOnlyTextInput value={row.category == "subject" ? "Temat" : "Dopisek"} />
                         </div>
                         <div
                             className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"

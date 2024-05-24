@@ -25,14 +25,15 @@ export default function TilesComponent(props: Props) {
 
     return (
         <div className="tileContainer bg-primary bg-opacity-25" style={{display: "flex", justifyContent: "center"}}>
-            <TilesContainer className={tilesDndStyle}
-                            data={props.tilesMenu}
-                            disabled={true}
-                            renderTile={render}
-                            tileSize={tileSize}
-                            forceTileWidth={150}
-                            forceTileHeight={150}
-                            style={{justifyContent: "center"}}
+            <TilesContainer
+                className={tilesDndStyle}
+                data={props.tilesMenu}
+                disabled={true}
+                renderTile={render}
+                tileSize={tileSize}
+                forceTileWidth={150}
+                forceTileHeight={150}
+                style={{justifyContent: "center"}}
             />
         </div>
     );

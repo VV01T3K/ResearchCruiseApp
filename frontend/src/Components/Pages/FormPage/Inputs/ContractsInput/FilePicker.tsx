@@ -3,6 +3,7 @@ import React from "react";
 import {UseFormReturn} from "react-hook-form";
 import {Contract} from "./ContractsInput";
 import Style from "../../../../CommonComponents/FileIcon.module.css";
+import ReadOnlyTextInput from "../../../../CommonComponents/ReadOnlyTextInput";
 
 
 type Props = {
@@ -50,7 +51,7 @@ export default function FilePicker(props: Props) {
             />
             <label
                 htmlFor={`${props.name}[${props.rowIdx}].fileInput`}
-                className="w-100 bg-light d-flex justify-content-center clickable"
+                className="w-100 bg-light d-flex justify-content-center clickable pb-1"
             >
                 <img
                     src={file_icon}
@@ -60,9 +61,10 @@ export default function FilePicker(props: Props) {
                     alt="File picker icon"
                 />
             </label>
-            <div className="text-secondary">
-                {props.row.scan.name || "Brak"}
-            </div>
+            <ReadOnlyTextInput
+                className="text-secondary"
+                value={props.row.scan.name || "Brak"}
+            />
         </div>
     )
 }

@@ -13,7 +13,7 @@ import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
 import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
 
 
-type ApplicationSpecifics = {
+type ApplicationDetails = {
     id: string,
     date: string,
     number: string,
@@ -25,11 +25,11 @@ type ApplicationSpecifics = {
 }
 
 
-function ApplicationPointsPage() {
+function ApplicationDetailsPage() {
     const location = useLocation()
     const { applicationId } = location.state || { }
 
-    const applicationSpecifics: ApplicationSpecifics = {
+    const applicationSpecifics: ApplicationDetails = {
         id: applicationId!,
         date: "2024-04-28",
         number: "2024/34",
@@ -310,4 +310,4 @@ function ApplicationPointsPage() {
 }
 
 
-export default ApplicationPointsPage
+export default ApplicationDetailsPage

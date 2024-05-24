@@ -20,10 +20,10 @@ import Page from "./Pages/Page";
 import MessagesPage from "./Pages/MessagesPage/MessagesPage";
 import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
-import ApplicationPointsPage from "./Pages/ApplicationPointsPage/ApplicationPointsPage";
+import ApplicationDetailsPage from "./Pages/ApplicationDetailsPage/ApplicationDetailsPage";
 import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 import FormPage from "./Pages/FormPage/FormPage";
-import SchedulePage from "./Pages/SchedulePage/SchedulePage"
+import CruisesPage from "./Pages/CruisesPage/CruisesPage"
 
 function App() {
 
@@ -106,7 +106,7 @@ function App() {
                     {userData && userData["roles"].includes("Administrator") &&
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
-                            <Route path="/Schedule" element={<SchedulePage />} />
+                            <Route path="/Cruises" element={<CruisesPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
                             <Route path="/Form" element={<FormPage />} />
                             <Route path="/FormB" element={<FormB />} />
@@ -115,7 +115,7 @@ function App() {
                             <Route path="/*" element={<AdminPanel />} />
                             <Route path="/Messages" element={<MessagesPage />} />
                             <Route path="/Applications" element={<ApplicationsPage />} />
-                            <Route path="/ApplicationPoints" element={<ApplicationPointsPage />} />
+                            <Route path="/ApplicationDetails" element={<ApplicationDetailsPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&
