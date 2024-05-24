@@ -1,50 +1,51 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate, {FormValues} from "./Wrappers/FormTemplate";
-import FormTitle from "./CommonComponents/FormTitle";
-import FormUserSelect from "./Inputs/FormUserSelect";
-import FormCreatableSelect from "./Inputs/FormCreatableSelect";
-import FormSection from "./Wrappers/FormSection";
-import MonthSlider from "./Inputs/MonthSlider";
-import NumberInput from "./Inputs/NumberInput";
-import TextArea from "./Inputs/TextArea";
-import FormRadio from "./Inputs/FormRadio";
-import ClickableMap from "./Inputs/ClickableMap";
-import TaskInput, {Task} from "./Inputs/TaskInput/TaskInput";
-import GuestTeamsInput, {GuestsTeam} from "./Inputs/GuestTeamsInput/GuestTeamsInput";
-import SpubTasksInput, {SpubTask} from "./Inputs/SpubTasksInput";
-import {DummyTag} from "../../Tools/DummyTag";
-import FormWithSections from "./Wrappers/FormWithSections";
-import ContractsInput, {Contract} from "./Inputs/ContractsInput/ContractsInput";
-import UgTeamsInput, {UgTeam} from "./Inputs/UgTeamsInput/UgTeamsInput";
-import {administrationUnits} from "../../../resources/administrationUnits";
-import useCustomEvent from "../../Tools/useCustomEvent";
-import api from "../../Tools/Api";
-import FormYearSelect from "./Inputs/FormYearSelect";
-import ThesisInput from "./Inputs/ThesisInput/ThesisInput"
-import PublicationsInput from "./Inputs/PublicationsInput/PublicationsInput";
+import FormTemplate from "../Wrappers/FormTemplate";
+import FormTitle from "../CommonComponents/FormTitle";
+import FormUserSelect from "../Inputs/FormUserSelect";
+import FormSection from "../Wrappers/FormSection";
+import TextArea from "../Inputs/TextArea";
+import FormRadio from "../Inputs/FormRadio";
+import ClickableMap from "../Inputs/ClickableMap";
+import TaskInput, {Task} from "../Inputs/TaskInput/TaskInput";
+import GuestTeamsInput, {GuestsTeam} from "../Inputs/GuestTeamsInput/GuestTeamsInput";
+import SpubTasksInput, {SpubTask} from "../Inputs/SpubTasksInput";
+import {DummyTag} from "../../../Tools/DummyTag";
+import FormWithSections from "../Wrappers/FormWithSections";
+import ContractsInput, {Contract} from "../Inputs/ContractsInput/ContractsInput";
+import UgTeamsInput, {UgTeam} from "../Inputs/UgTeamsInput/UgTeamsInput";
+import {administrationUnits} from "../../../../resources/administrationUnits";
+import useCustomEvent from "../../../Tools/useCustomEvent";
+import api from "../../../Tools/Api";
+import ThesisInput from "../Inputs/ThesisInput/ThesisInput"
+import PublicationsInput from "../Inputs/PublicationsInput/PublicationsInput";
+import ErrorCode from "../../LoginPage/ErrorCode";
+import ActionInput from "../Inputs/ActionInput/ActionInput";
+import DetailedPlanInput from "../Inputs/DetailedPlanInput";
+import EquipmentInput from "../Inputs/EquipmentInput";
+import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
 
 
 
-export interface FormAValues extends FormValues {
-    cruiseManagerId: string,
-    deputyManagerId: string,
-    year: string,
-    acceptedPeriod: number[],
-    optimalPeriod: number[],
+export type FormAValues = {
+    cruiseManagerId: string
+    deputyManagerId: string
+    year: string
+    acceptedPeriod: number[]
+    optimalPeriod: number[]
     cruiseDays: string
-    cruiseHours: any,
-    periodNotes: string,
-    shipUsage: string,
-    permissions: string,
-    researchArea: string,
-    researchAreaInfo: string,
-    cruiseGoal: string,
-    cruiseGoalDescription: string,
-    researchTasks: Task[],
+    cruiseHours: any
+    periodNotes: string
+    shipUsage: string
+    permissions: string
+    researchArea: string
+    researchAreaInfo: string
+    cruiseGoal: string
+    cruiseGoalDescription: string
+    researchTasks: Task[]
     contracts: Contract[]
-    ugTeams: UgTeam[],
-    guestTeams: GuestsTeam[],
+    ugTeams: UgTeam[]
+    guestTeams: GuestsTeam[]
     spubTasks: SpubTask[]
 }
 
@@ -60,11 +61,11 @@ export type FormAValue =
 
 type Props = {
     loadValues?: FormAValues,
-    readonly?: boolean
+    readonly: boolean
 }
 
 
-function FormA(props: Props){
+function FormB(props: Props){
     const form = useForm({
         mode: 'onBlur',
         // defaultValues: defaultValues,
@@ -73,6 +74,7 @@ function FormA(props: Props){
 
 
     const [sections, setSections] = useState({
+        "Rejs":"Rejs",
         "Kierownik":"Kierownik zgłaszanego rejsu",
         "Czas":"Czas trwania zgłaszanego rejsu",
         "Pozwolenia": "Dodatkowe pozwolenia do planowanych podczas rejsu badań",
@@ -82,75 +84,47 @@ function FormA(props: Props){
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
-        "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
+        "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie",
+        "Szczegóły":"Szczegóły rejsu"
     })
 
-    const [formValues, setFormValues] = useState([])
+    const [formInitValues, setFormInitValues] = useState([])
     const { dispatchEvent } = useCustomEvent('busy')
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormValues(response.data)).catch(error => console.log(error))
-        console.log(formValues)
+        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
+        console.log(formInitValues)
 
     },[]);
 
     useEffect(() => {
-        console.log(formValues)
+        console.log(formInitValues)
 
     }, );
 
-    // @ts-ignore
-    // @ts-ignore
     return (
-        <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='A'>
-            <FormTitle sections={sections} title={"Formularz A"} />
+        <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='B'>
+            <FormTitle sections={sections} title={"Formularz B"} />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
+                <FormSection title={sections.Rejs}>
+                    <ErrorCode code={"Numer ewidencyjny rejsu (nadawany przez Biuro Armatora): "}/>
+                </FormSection>
                 <FormSection title={sections.Kierownik}>
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                         name="cruiseManagerId"
-                                         label="Kierownik rejsu"
-                                         values={formValues["CruiseManagers"]
-                    }
-                                    defaultValue={formValues["CruiseManagers"]}
+                                    name="cruiseManagerId"
+                                    label="Kierownik rejsu"
+                                    values={formInitValues["CruiseManagers"]
+                                    }
+                                    defaultValue={formInitValues["CruiseManagers"]}
                     />
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                name="deputyManagerId"
-                                label="Zastępca"
-                                values={formValues["DeputyManagers"]}
-                    />
-                    <FormYearSelect className="col-12 col-md-6 col-xl-4"
-                                name="year"
-                                label="Rok rejsu"
-                                values={formValues["Years"]}
+                                    name="deputyManagerId"
+                                    label="Zastępca"
+                                    values={formInitValues["DeputyManagers"]}
                     />
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
-                                 name="acceptablePeriod"
-                                 connectedName="optimalPeriod"
-                                 label="Dopuszczalny okres, w którym miałby się odbywać rejs:"
-                    />
-                    <MonthSlider className="col-12 col-md-12 col-xl-6 p-4 pb-0 pt-2"
-                                 name="optimalPeriod"
-                                 range={form.getValues("acceptablePeriod")}
-                                 label="Optymalny okres, w którym miałby się odbywać rejs"
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6"
-                                 name="cruiseDays"
-                                 label="Liczba planowanych dób rejsowych"
-                                 connectedName="cruiseHours"
-                                 notZero
-                                 newVal={(e) => 24*e}
-                                 maxVal={99}
-                    />
-                    <NumberInput className="col-12 col-md-12 col-xl-6"
-                                 notZero
-                                 name="cruiseHours"
-                                 label="Liczba planowanych godzin rejsowych"
-                                 connectedName="cruiseDays"
-                                 newVal={(e) => Number((e/24).toFixed(2))}
-                                 maxVal={99}
-                    />
+               <ErrorCode code={"Dokładny czas trwania rejsu: (DD-MM-RR GG.MM - DD-MM-RR GG.MM)\n"}/>
                     <TextArea className="col-12 p-3"
                               required={false}
                               label="Uwagi dotyczące teminu"
@@ -160,10 +134,10 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={formValues["ShipUsages"]}
+                               values={formInitValues["ShipUsages"]}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == formValues["ShipUsages"]?.length-1 ) {
+                        if (form.watch("shipUsage") == formInitValues["ShipUsages"]?.length-1 ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -202,13 +176,14 @@ function FormA(props: Props){
                                 //     form.unregister("differentUsage")
                                 form.clearErrors("permissions")
                             }
-                        return <DummyTag required={false} />}                    })()}
+                            return <DummyTag required={false} />}                    })()}
+                    {/*<ErrorCode code={"załączyć kopię"}/>*/}
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
                     <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
-                                  image={formValues["ResearchAreasMap"]}
-                                  regions={formValues["ResearchAreas"]} />
+                                  image={formInitValues["ResearchAreasMap"]}
+                                  regions={formInitValues["ResearchAreas"]} />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -221,7 +196,7 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={formValues["CruiseGoals"]}
+                               values={formInitValues["CruiseGoals"]}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"
@@ -362,6 +337,7 @@ function FormA(props: Props){
                             "Instytucja 1", "Instytucja 2", "Instytucja 3"
                         ]}
                     />
+                    <ErrorCode code={"Uwaga: Na tym etapie należy załączyć szczegółową listę załogi naukowej (tzw. crew list), mającej uczestniczyć w rejsie, w oparciu o załącznik „Crew List”.\n"}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
@@ -383,25 +359,23 @@ function FormA(props: Props){
                         className="col-12"
                         label="Publikacje"
                         name="publications"
-                        historicalGuestsInstitutions={[
-                            "A. Temat", "B. Dopisek", "Instytucja 3"
-                        ]}
-                    />
+                     historicalPublications={[
+                         "A. Temat", "B. Dopisek", "Instytucja 3"
+                     ]}/>
                     <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
                             wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
                                 pokładu jednostki RV Oceanograf.</strong></p>
                     </div>
-                        <ThesisInput
-                            required={false}
-                            className="col-12"
-                            label="Prace"
-                            name="works"
-                            historicalGuestsInstitutions={[
-                                "Instytucja 1", "Instytucja 2", "Instytucja 3"
-                            ]}
-                        />
+                    <ThesisInput
+                        required={false}
+                        className="col-12"
+                        label="Prace"
+                        name="works"
+                     historicalThesis={[
+                         "Instytucja 1", "Instytucja 2", "Instytucja 3"
+                     ]}/>
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
@@ -428,6 +402,80 @@ function FormA(props: Props){
                         required={false}
                     />
                 </FormSection>
+                <FormSection title={sections["Szczegóły"]}>
+                    <h5 required={false} className={`pb-0 p-4 col-12 text-center ${props.readonly ? 'd-none' : ''}`}>Czy w ramach rejsu planuje
+                        się:</h5>
+                    <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentOutsideRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
+                               label="Wystawianie sprzętu
+                        badawczego (boje, c-pody, sieci itp.) poza statek w ramach czasu trwania rejsu"
+                               name="equipmentOutsideRequired"
+                               values={["tak", "nie"]}
+                    />
+                    {(() => {
+                        // @ts-ignore
+                        if (form.watch("equipmentOutsideRequired") === 0) {
+                            return (
+                                <ActionInput className="col-12 col-xl-9" name={"equipment"} actionName={"Sprzęt"}/>
+
+                            )
+                        } else {
+
+                            if (form.formState.errors["equipment"] != undefined) {
+                                //     form.unregister("differentUsage")
+                                form.clearErrors("equipment")
+                            }
+                            return <DummyTag required={false}/>
+                        }
+                    })()}
+
+                    <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
+                               label="Pozostawianie sprzętu (boje,
+                        c-pody, sieci itp.) na dłuższy okres lub zbieranie pozostawionego podczas wcześniejszych rejsów
+                        sprzętu"
+                               name="equipmentLeaveRequired"
+                               values={["tak", "nie"]}
+                    />
+                    {(() => {
+                        // @ts-ignore
+                        if (form.watch("equipmentLeaveRequired") === 0) {
+                            return (
+                                <ActionInput className="col-12 col-xl-9" name={"equipmentLeave"} actionName={"Sprzęt"}/>
+
+                            )
+                        } else {
+
+                            if (form.formState.errors["equipmentLeave"] != undefined) {
+                                //     form.unregister("differentUsage")
+                                form.clearErrors("equipmentLeave")
+                            }
+                            return <DummyTag required={false}/>
+                        }
+                    })()}
+                    <FormRadio className={`col-12 col-md-12 ${form.watch("portLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
+                               label="Dodatkowe wchodzenie i wychodzenie z portu"
+                               name="portLeaveRequired"
+                               values={["tak", "nie"]}
+                    />
+                    {(() => {
+                        // @ts-ignore
+                        if (form.watch("portLeaveRequired") === 0) {
+                            return (
+                                <ActionInput className="col-12 col-xl-9" name={"portLeave"} actionName={"Port"}/>
+
+                            )
+                        } else {
+
+                            if (form.formState.errors["portLeave"] != undefined) {
+                                //     form.unregister("differentUsage")
+                                form.clearErrors("portLeave")
+                            }
+                            return <DummyTag required={false}/>
+                        }
+                    })()}
+                    <DetailedPlanInput className={"col-12"} name={"plan"}/>
+                    <EquipmentInput className={"col-12"} name={"equipment2"}/>
+                    <TechnicalElementsUsedInput className={"col-12"} name={"technical"}/>
+                </FormSection>
 
             </FormWithSections>
         </FormTemplate>
@@ -435,4 +483,4 @@ function FormA(props: Props){
 }
 
 
-export default FormA
+export default FormB

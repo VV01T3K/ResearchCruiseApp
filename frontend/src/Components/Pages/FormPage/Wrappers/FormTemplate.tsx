@@ -1,20 +1,19 @@
-import React, {useEffect, useLayoutEffect, useMemo, useState} from 'react';
+import React from 'react';
 import Page from "../../Page";
 import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../../Tools/useCustomEvent";
-import savedFormPage from "../../SavedFormsPage/SavedFormPage";
 import Api from "../../../Tools/Api";
-import {FormAValues, FormAValue} from "../FormA";
+import {FormAValue, FormAValues} from "../Forms/FormA";
 import {UseFormReturn} from "react-hook-form";
-import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
-export interface FormValues {}
+export type FormValues =
+    FormAValues // | FormBValues | FormCValues
 
 type FormValue =
     FormAValue // | FormBValue | FormCValue
 
-type SavedFormData = {
+export type SavedFormData = {
     type: string,
     id: number,
     date: string,
@@ -28,7 +27,6 @@ type Props = {
     type: string,
     readonly?:boolean
 }
-
 
 
 function FormTemplate(props: Props) {
@@ -126,7 +124,7 @@ function FormTemplate(props: Props) {
                             <button onClick={saveValues} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
                         </div>
                         <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                            <button onClick={props.form.handleSubmit(handleSubmit)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                            <button onClick={handleSubmit} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
                         </div>
                             </>
                         }

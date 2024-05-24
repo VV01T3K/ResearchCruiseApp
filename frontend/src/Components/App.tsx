@@ -6,8 +6,8 @@ import AdminPanel from "./Pages/HomePage/AdminPanel"
 import PageHeader from "./Pages/PageHeader/PageHeader";
 import NewFormPage from "./Pages/NewFormPage/NewFormPage";
 import './../scss/app.scss';
-import FormB from "./Pages/FormPage/FormB";
-import FormC from "./Pages/FormPage/FormC";
+import FormB from "./Pages/FormPage/Forms/FormB";
+import FormC from "./Pages/FormPage/Forms/FormC";
 import ManagerPanel from "./Pages/HomePage/ManagerPanel";
 import ShipOwnerPanel from "./Pages/HomePage/ShipOwnerPanel";
 import LogoutPage from "./Pages/LoginPage/LogoutPage";
@@ -22,6 +22,8 @@ import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import {setUpInterceptors} from "./Tools/Api";
 import ApplicationPointsPage from "./Pages/ApplicationPointsPage/ApplicationPointsPage";
 import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
+import FormPage from "./Pages/FormPage/FormPage";
+import SchedulePage from "./Pages/SchedulePage/SchedulePage"
 
 function App() {
 
@@ -104,14 +106,16 @@ function App() {
                     {userData && userData["roles"].includes("Administrator") &&
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
+                            <Route path="/Schedule" element={<SchedulePage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
+                            <Route path="/Form" element={<FormPage />} />
                             <Route path="/FormB" element={<FormB />} />
                             <Route path="/FormC" element={<FormC />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
                             <Route path="/Messages" element={<MessagesPage />} />
                             <Route path="/Applications" element={<ApplicationsPage />} />
-                            <Route path="/ApplicationPoints/:applicationId" element={<ApplicationPointsPage />} />
+                            <Route path="/ApplicationPoints" element={<ApplicationPointsPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&

@@ -49,13 +49,13 @@ function TasksPoints(props: Props) {
                 <div className="table-striped w-100">
                     <div className="text-white text-center bg-primary">
                         <div className="d-flex flex-row center align-items-center">
-                            <div className="text-center d-none d-xl-block border-end p-2" style={{width: "5%"}}>
+                            <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}}>
                                 <b>Lp.</b>
                             </div>
-                            <div className="text-center d-none d-xl-block border-end p-2" style={{width: "20%"}}>
+                            <div className="text-center d-none d-xl-block p-2" style={{width: "20%"}}>
                                 <b>Zadanie</b>
                             </div>
-                            <div className="text-center d-none d-xl-block border-end p-2" style={{width: "66%"}}>
+                            <div className="text-center d-none d-xl-block p-2" style={{width: "66%"}}>
                                 <b>Szczegóły</b>
                             </div>
                             <div className="text-center d-none d-xl-block p-2" style={{width: "9%"}}>
@@ -74,27 +74,32 @@ function TasksPoints(props: Props) {
                             </div>
                         }
                         {props.evaluatedTasks.map((row: EvaluatedTask, rowIndex: number) => (
-                            <div key={rowIndex} className="d-flex flex-wrap border bg-light">
-                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
+                            <div
+                                key={rowIndex}
+                                className={`d-flex flex-wrap border-bottom border-start border-end ${rowIndex % 2 == 0 ? "bg-light" : "bg-white"}`}
+                            >
+                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2"
+                                     style={{width: "5%"}}
+                                >
                                     {rowIndex + 1}.
                                 </div>
                                 <div className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
                                     <b>Zadanie {rowIndex + 1}.</b>
                                 </div>
 
-                                <div className="text-center align-items-center justify-content-center p-2 d-inline-flex border-end"
+                                <div className="text-center align-items-center justify-content-center p-2 d-inline-flex"
                                      style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
                                 >
                                     {getTaskTitle(row)}
                                 </div>
-                                <div className="text-center d-flex border-end"
+                                <div className="text-center d-flex"
                                      style={{width: windowWidth >= 1200 ? "66%" : "100%"}}
                                 >
                                     <div className="d-flex flex-wrap justify-content-center justify-content-xl-start pb-3 w-100">
                                         {getFields(row).map((val: string | Time, valIdx: number) => {
                                             return (
                                                 <div key={valIdx}
-                                                     className={`${getFields(row).length == 2 && "col-xl-6"} ${getFields(row).length == 3 && "col-xl-4"} col-12 p-1`}
+                                                     className={`${getFields(row).length == 2 && "col-xl-6"} ${getFields(row).length == 3 && "col-xl-4"} col-12 p-2`}
                                                 >
                                                     <label className="d-flex justify-content-center align-items-center">
                                                         {Object.values(taskFieldsOptions)[row.type][valIdx]}
@@ -110,48 +115,45 @@ function TasksPoints(props: Props) {
 
                                                             case "Przewidywany termin składania":
                                                                 return (
-                                                                    <DatePicker
-                                                                        showMonthYearPicker
-                                                                        showMonthYearDropdown
-                                                                        className={" text-center w-100 rounded-1 p-1"}
-                                                                        style={{fontSize: "inherit"}}
-                                                                        locale={"pl"}
-                                                                        selected={val as Time}
-                                                                        dateFormat="dd/MM/yyyy"
-                                                                        readOnly
-                                                                    />
+                                                                    // <DatePicker
+                                                                    //     showMonthYearPicker
+                                                                    //     showMonthYearDropdown
+                                                                    //     className={"text-center w-100 p-1 form-control"}
+                                                                    //     style={{fontSize: "inherit"}}
+                                                                    //     locale={"pl"}
+                                                                    //     selected={val as Time}
+                                                                    //     dateFormat="dd/MM/yyyy"
+                                                                    //     readOnly
+                                                                    // />
+                                                                    <ReadOnlyTextInput value={val as string} />
                                                                 )
                                                             case "Ramy czasowe":
                                                                 return (
                                                                     <>
-                                                                        <DatePicker
-                                                                            showMonthYearPicker
-                                                                            showMonthYearDropdown
-                                                                            className={" text-center w-100 rounded-1 p-1"}
-                                                                            style={{fontSize: "inherit"}}
-                                                                            selectsStart
-                                                                            startDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}
-                                                                            maxDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
-                                                                            endDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
-                                                                            locale={"pl"}
-                                                                            selected={(val as Time).startDate ? new Date((val as Time).startDate) : null}
-                                                                            dateFormat="dd/MM/yyyy"
-                                                                            readOnly
-                                                                        />
-                                                                        <DatePicker
-                                                                            showYearDropdown
-                                                                            showMonthYearPicker
-                                                                            className={"text-center w-100 rounded-1 p-1"}
-                                                                            style={{fontSize: "inherit"}}
-                                                                            startDate={(val as Time ).startDate ? new Date((val as Time ).startDate) : null}
-                                                                            endDate={(val as Time ).endDate ? new Date((val as Time ).endDate) : null}
-                                                                            minDate={(val as Time ).startDate ? new Date((val as Time ).startDate) : null}
-                                                                            selectsEnd
-                                                                            locale={"pl"}
-                                                                            selected={(val as Time ).endDate ? new Date((val as Time ).endDate) : null}
-                                                                            dateFormat="dd/MM/yyyy"
-                                                                            readOnly
-                                                                        />
+                                                                        {/*<DatePicker*/}
+                                                                        {/*    showMonthYearPicker*/}
+                                                                        {/*    showMonthYearDropdown*/}
+                                                                        {/*    className={" text-center w-100 p-1 form-control"}*/}
+                                                                        {/*    style={{fontSize: "inherit"}}*/}
+                                                                        {/*    selectsStart*/}
+                                                                        {/*    locale={"pl"}*/}
+                                                                        {/*    selected={(val as Time).startDate ? new Date((val as Time).startDate) : null}*/}
+                                                                        {/*    dateFormat="dd/MM/yyyy"*/}
+                                                                        {/*    readOnly*/}
+                                                                        {/*/>*/}
+                                                                        <ReadOnlyTextInput value={(val as Time).startDate ? (val as Time).startDate : ""} />
+                                                                        {/*<DatePicker*/}
+                                                                        {/*    showYearDropdown*/}
+                                                                        {/*    showMonthYearPicker*/}
+                                                                        {/*    className={"text-center w-100 p-1 form-control"}*/}
+                                                                        {/*    style={{fontSize: "inherit"}}*/}
+                                                                        {/*    selectsEnd*/}
+                                                                        {/*    locale={"pl"}*/}
+                                                                        {/*    selected={(val as Time ).endDate ? new Date((val as Time ).endDate) : null}*/}
+                                                                        {/*    dateFormat="dd/MM/yyyy"*/}
+                                                                        {/*    readOnly*/}
+                                                                        {/*/>*/}
+                                                                        <ReadOnlyTextInput value={(val as Time).endDate ? (val as Time).endDate : ""} />
                                                                     </>
                                                                 )
                                                             case "Kwota finansowania":
@@ -163,11 +165,11 @@ function TasksPoints(props: Props) {
                                         })}
                                     </div>
                                 </div>
-                                <div className="d-flex text-center p-2 justify-content-center"
+                                <div className="d-flex flex-wrap text-center p-2 justify-content-center border-start"
                                      style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                                 >
                                     <div className="col-12 d-xl-none">Punkty:</div>
-                                    <div className={"align-items-center justify-content-center d-flex"}>
+                                    <div className={"col-12 align-items-center justify-content-center d-flex"}>
                                         <ReadOnlyTextInput value={row.points} />
                                     </div>
                                 </div>
