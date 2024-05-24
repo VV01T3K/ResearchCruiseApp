@@ -10,19 +10,39 @@ namespace ResearchCruiseApp_API.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Promotor",
+            migrationBuilder.CreateTable(
+                name: "Work",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Promoter = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FormAId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Work", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Work_FormsA_FormAId",
+                        column: x => x.FormAId,
+                        principalTable: "FormsA",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Work_FormAId",
                 table: "Work",
-                newName: "Promoter");
+                column: "FormAId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Promoter",
-                table: "Work",
-                newName: "Promotor");
+            migrationBuilder.DropTable(
+                name: "Work");
         }
     }
 }
