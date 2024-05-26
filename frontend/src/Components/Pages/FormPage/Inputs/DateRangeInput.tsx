@@ -90,7 +90,7 @@ function DateRangeInput(props: Props) {
                         locale={"pl"}
                         selected={field.value ? new Date(field.value) : null}
                         onChange={(selectedOption) => {
-                            props.form!.setValue(props.name+".startDate", selectedOption ? new Date(selectedOption) : "", {
+                            props.form!.setValue(props.name+".startDate", selectedOption ? new Date(selectedOption).toISOString() : "", {
                                 shouldDirty: true,
                                 shouldValidate: true,
                                 shouldTouch: true
@@ -132,7 +132,7 @@ function DateRangeInput(props: Props) {
                         locale={"pl"}
                         selected={field.value ? new Date(field.value) : null}
                         onChange={(selectedOption) => {
-                            props.form!.setValue(props.name+".endDate", selectedOption ? new Date(selectedOption) : "", {
+                            props.form!.setValue(props.name+".endDate", selectedOption ? new Date(selectedOption).toISOString() : "", {
                                 shouldDirty: true,
                                 shouldValidate: true,
                                 shouldTouch: true

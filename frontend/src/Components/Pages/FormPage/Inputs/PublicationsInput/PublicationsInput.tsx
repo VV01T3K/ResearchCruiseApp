@@ -146,6 +146,8 @@ function PublicationsInput(props: Props){
                                                     className="col-12 d-flex d-xl-none justify-content-center">Kategoria
                                                 </div>
                                                 <PublicationsCategoryPicker
+                                                    readonly={props.readonly ?? false}
+
                                                     name={props.name}
                                                     row={row}
                                                     field={field}
@@ -266,6 +268,8 @@ function PublicationsInput(props: Props){
                                                     wydania
                                                 </div>
                                                 <input
+                                                    disabled = {props.readonly ?? false}
+
                                                     type="text"
                                                     {...field}
                                                     className="text-center placeholder-glow w-100 p-1 form-control"
@@ -298,6 +302,7 @@ function PublicationsInput(props: Props){
                                                 <div className="col-12 d-flex d-xl-none justify-content-center">Punkty
                                                 </div>
                                                 <input
+                                                    disabled = {props.readonly ?? false}
                                                     type="text"
                                                     {...field}
                                                     className="text-center placeholder-glow w-100 p-1 form-control"
@@ -327,7 +332,7 @@ function PublicationsInput(props: Props){
                                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                             >
                                                 <button type="button"
-                                                        className="btn btn-info"
+                                                        className={`${props.readonly ? "d-none": ""} btn btn-info`}
                                                         style={{fontSize: "inherit"}}
                                                         onClick={() => {
                                                             const val = field.value;
@@ -350,7 +355,7 @@ function PublicationsInput(props: Props){
                                     ))}
                                 </div>
 
-                                <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                                <div className={`${props.readonly ? "d-none": "d-flex"} flex-row flex-wrap justify-content-center w-100`}>
                                     <div
                                         className="d-flex col-12 col-xl-3 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button

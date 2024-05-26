@@ -17,6 +17,7 @@ export type SavedFormData = {
     type: string,
     id: number,
     date: string,
+    percentComplete: number,
     data: FormValues
 }
 
@@ -35,7 +36,6 @@ function FormTemplate(props: Props) {
     const navigate = useNavigate();
     const saveValues = () => {
         dispatchEvent("Trwa zapisywanie")
-
         const savedFormsDataString = localStorage.getItem('formData');
         let savedFormsData: SavedFormData[] = [];
         // Jeśli nie ma jeszcze żadnych danych w localStorage, utwórz nową tablicę
@@ -47,7 +47,8 @@ function FormTemplate(props: Props) {
         const newSavedForm: SavedFormData = {
             type: props.type,
             id: Math.random(),
-            date: new Date().toString(),
+            date: new Date().toISOString(),
+            percentComplete: ((24 - Object.entries(props.form.formState.errors).length)/24*100).toFixed(0) ?? 100,
             data: props.form.getValues() as FormValues
         }
         savedFormsData.push(newSavedForm);
@@ -107,8 +108,29 @@ function FormTemplate(props: Props) {
 
     const handleSubmit = (data) => {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
-        Api.post('/forms/'+props.type, data).catch((err)=>null)
-    }
+        dispatchEvent("Trwa wysyłanie")
+
+        const savedFormsDataString = localStorage.getItem('sentFormData');
+        let savedFormsData: SavedFormData[] = [];
+        // Jeśli nie ma jeszcze żadnych danych w localStorage, utwórz nową tablicę
+        if (savedFormsDataString) {
+            savedFormsData = JSON.parse(savedFormsDataString);
+        }
+
+        // Dodaj nowy formularz do tablicy
+        const newSavedForm: SavedFormData = {
+            type: props.type,
+            id: Math.random(),
+            date: new Date().toISOString(),
+            percentComplete: ((24 - Object.entries(props.form.formState.errors).length)/24*100).toFixed(0) ?? 100,
+            data: props.form.getValues() as FormValues
+        }
+        savedFormsData.push(newSavedForm);
+
+        // Zapisz zaktualizowane dane w localStorage
+        localStorage.setItem('sentFormData', JSON.stringify(savedFormsData));
+        Api.post('/forms/'+props.type, data).catch((err)=>null).then(()=>{setTimeout(()=>{dispatchEvent(null); navigate("/ViewForms")},1000)
+    })}
 
     return (
         <>
@@ -121,10 +143,10 @@ function FormTemplate(props: Props) {
                         {!props.readonly &&
                             <>
                         <div className="d-flex col-6 text-center p-2 justify-content-center">
-                            <button onClick={saveValues} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
+                            <button onClick={props.form.handleSubmit(saveValues,saveValues)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
                         </div>
                         <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                            <button onClick={handleSubmit} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                            <button onClick={props.form.handleSubmit(handleSubmit)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
                         </div>
                             </>
                         }

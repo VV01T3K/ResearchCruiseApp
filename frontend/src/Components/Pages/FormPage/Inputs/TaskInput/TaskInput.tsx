@@ -272,7 +272,7 @@ function TaskInput(props: Props) {
                                                                                 locale={"pl"}
                                                                                 selected={val ? new Date(val as string) : null}
                                                                                 onChange={(e: Date)=>{
-                                                                                    handleChange(field, row, rowIndex, valIdx, e.toString())
+                                                                                    handleChange(field, row, rowIndex, valIdx, e.toISOString())
                                                                                 }}
                                                                                 // getPopupContainer={trigger => trigger.parentElement}
                                                                                 dateFormat="dd/MM/yyyy"
@@ -300,7 +300,7 @@ function TaskInput(props: Props) {
                                                                                     onChange={(e: Date)=> {
                                                                                         if (e != null) {
                                                                                             const tmp = val as Time;
-                                                                                            tmp["startDate"] = e.toString();
+                                                                                            tmp["startDate"] = e.toISOString();
                                                                                             handleChange(field, row, rowIndex, valIdx, tmp)
                                                                                         }
                                                                                     }}
@@ -324,7 +324,7 @@ function TaskInput(props: Props) {
                                                                                     onChange={(e: Date)=> {
                                                                                         if (e != null) {
                                                                                             const tmp = val as Time;
-                                                                                            tmp["endDate"] = e.toString();
+                                                                                            tmp["endDate"] = e.toISOString();
                                                                                             handleChange(field, row, rowIndex, valIdx, tmp)
                                                                                         }
                                                                                     }}

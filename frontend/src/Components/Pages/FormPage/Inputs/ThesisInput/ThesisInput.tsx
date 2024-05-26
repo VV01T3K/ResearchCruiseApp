@@ -5,6 +5,7 @@ import Select from "react-select";
 import ThesisCategoryPicker from "./ThesisCategoryPicker";
 import {Publication} from "../PublicationsInput/PublicationsInput";
 import {Contract} from "../ContractsInput/ContractsInput";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 
@@ -139,6 +140,7 @@ function WorkList(props: Props){
                                                     className="col-12 d-flex d-xl-none justify-content-center">Kategoria
                                                 </div>
                                                 <ThesisCategoryPicker
+                                                    readonly={props.readonly ?? false}
                                                     name={props.name}
                                                     row={row}
                                                     field={field}
@@ -233,6 +235,7 @@ function WorkList(props: Props){
                                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok obrony
                                                 </div>
                                                 <input
+                                                    disabled = {props.readonly ?? false}
                                                     type="text"
                                                     {...field}
                                                     className="text-center placeholder-glow w-100 p-1 form-control"
@@ -261,7 +264,7 @@ function WorkList(props: Props){
                                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                             >
                                                 <button type="button"
-                                                        className="btn btn-info"
+                                                        className={`${props.readonly ? "d-none": ""} btn-info`}
                                                         style={{fontSize: "inherit"}}
                                                         onClick={() => {
                                                             const val = field.value;
@@ -284,7 +287,7 @@ function WorkList(props: Props){
                                     ))}
                                 </div>
 
-                                <div className="d-flex flex-row flex-wrap justify-content-center w-100">
+                                <div className={`${props.readonly ? "d-none":"d-flex"} flex-row flex-wrap justify-content-center w-100`}>
                                     <div
                                         className="d-flex col-12 col-xl-3 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    partial class ResearchCruiseContextModelSnapshot : ModelSnapshot
+    [Migration("20240523202549_Added Publications")]
+    partial class AddedPublications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,17 +69,17 @@ namespace ResearchCruiseApp_API.Migrations
                     b.Property<Guid?>("FormAId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("InstitutionLocation")
+                    b.Property<string>("Institution")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("InstitutionName")
+                    b.Property<string>("Location")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("InstitutionUnit")
+                    b.Property<string>("Unit")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -144,29 +147,6 @@ namespace ResearchCruiseApp_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FormsA");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.GuestTeam", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("FormAId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Institution")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.ToTable("GuestTeam");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Publication", b =>
@@ -281,31 +261,6 @@ namespace ResearchCruiseApp_API.Migrations
                     b.ToTable("SPUBTask");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.UGTeam", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormAId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("NoOfEmployees")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NoOfStudents")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.ToTable("UGTeam");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Work", b =>
                 {
                     b.Property<Guid>("Id")
@@ -348,13 +303,6 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasForeignKey("FormAId");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.GuestTeam", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
-                        .WithMany("GuestTeams")
-                        .HasForeignKey("FormAId");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Publication", b =>
                 {
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
@@ -376,13 +324,6 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasForeignKey("FormAId");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.UGTeam", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
-                        .WithMany("UGTeams")
-                        .HasForeignKey("FormAId");
-                });
-
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Work", b =>
                 {
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
@@ -394,15 +335,11 @@ namespace ResearchCruiseApp_API.Migrations
                 {
                     b.Navigation("Contracts");
 
-                    b.Navigation("GuestTeams");
-
                     b.Navigation("Publications");
 
                     b.Navigation("ResearchTasks");
 
                     b.Navigation("SPUBTasks");
-
-                    b.Navigation("UGTeams");
 
                     b.Navigation("Works");
                 });

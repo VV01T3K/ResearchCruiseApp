@@ -24,6 +24,7 @@ import ApplicationDetailsPage from "./Pages/ApplicationDetailsPage/ApplicationDe
 import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import CruisesPage from "./Pages/CruisesPage/CruisesPage"
+import SentFormPage from "./Pages/SentFormsPage/SentFormPage";
 
 function App() {
 
@@ -107,6 +108,7 @@ function App() {
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
                             <Route path="/Cruises" element={<CruisesPage />} />
+                            <Route path="/ViewForms" element={<SentFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
                             <Route path="/Form" element={<FormPage />} />
                             <Route path="/FormB" element={<FormB />} />

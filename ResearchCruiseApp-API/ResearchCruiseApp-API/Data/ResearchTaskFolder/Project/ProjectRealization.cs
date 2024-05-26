@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices.JavaScript;
 
-namespace ResearchCruiseApp_API.Data.ResearchTask.Project;
+namespace ResearchCruiseApp_API.Data.ResearchTaskFolder.Project;
 
 public abstract class ProjectRealization:Project
 {
