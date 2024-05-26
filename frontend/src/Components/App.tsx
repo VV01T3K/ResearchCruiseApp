@@ -24,6 +24,7 @@ import ApplicationPointsPage from "./Pages/ApplicationPointsPage/ApplicationPoin
 import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import SchedulePage from "./Pages/SchedulePage/SchedulePage"
+import SentFormPage from "./Pages/SentFormsPage/SentFormPage";
 
 function App() {
 
@@ -106,6 +107,8 @@ function App() {
                     {userData && userData["roles"].includes("Administrator") &&
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
+                            <Route path="/ViewForms" element={<SentFormPage />} />
+
                             <Route path="/Schedule" element={<SchedulePage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
                             <Route path="/Form" element={<FormPage />} />
