@@ -9,6 +9,7 @@ type Props = {
     cruiseManagerFirstName: string,
     cruiseManagerLastName: string,
     status: string,
+    points: string
 }
 
 
@@ -35,6 +36,10 @@ function ApplicationInfo(props: Props) {
             <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
                 <div className="d-flex col-12 justify-content-center mb-1">Status zgłoszenia:</div>
                 <ReadOnlyTextInput value={props.status} className="align-self-start"/>
+            </div>
+            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
+                <div className="d-flex col-12 justify-content-center mb-1">Punkty:</div>
+                <ReadOnlyTextInput value={props.points} className="align-self-start"/>
             </div>
         </div>
     )

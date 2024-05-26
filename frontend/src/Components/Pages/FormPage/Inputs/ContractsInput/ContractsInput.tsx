@@ -272,9 +272,7 @@ export default function ContractsInput(props: Props){
                         </div>
 
                         <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? "d-none": ""}`}>
-                            <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2
-                                justify-content-center"
-                            >
+                            <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                 <button
                                     style={{fontSize:"inherit"}}
                                     className={`btn btn-info w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}

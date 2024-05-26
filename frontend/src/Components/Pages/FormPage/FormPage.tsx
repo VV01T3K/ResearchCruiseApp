@@ -42,36 +42,31 @@ function FormPage(){
     // Get state from the navigation location. Navigating to this component is performed with
     // useNavigate (in LinkWithState component), not with the Link component
     const location = useLocation()
-    const {
-        formType,
-        formId,
-        localStorageValues, // To be deleted soon
-        readonly,
-        loadValues
-    } = location.state as FormPageLocationState
+    const [locationState, _]
+        = useState<FormPageLocationState | null>(location.state);
 
     // Set the values to be loaded to the form if applicable
-    const loadLocalValues = loadValues ??(
-        formId && { periodNotes: formId } || // Temporary value to be replaced with an actual API call
-        localStorageValues
-    )
+    const loadValues =
+        locationState?.formId && { periodNotes: locationState?.formId } || // Temporary value to be replaced with an actual API call
+        locationState?.localStorageValues
 
     const { dispatchEvent } = useCustomEvent('busy')
 
     return (
         <>
-            {formType == "A" &&
+            {locationState?.formType == "A" &&
                 <FormA
-                    loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
-                    readonly={readonly}
+                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    readonly={locationState?.readonly}
                 />
             }
-            {formType == "B" &&
+            {locationState?.formType == "B" &&
                 <FormB
-                    loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    readonly={locationState?.readonly}
                 />
             }
-            {formType == "C" &&
+            {locationState?.formType == "C" &&
                 <FormC
                     loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                 />

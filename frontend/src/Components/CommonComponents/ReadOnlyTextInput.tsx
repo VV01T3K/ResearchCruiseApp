@@ -12,7 +12,7 @@ export default function ReadOnlyTextInput (props: Props) {
         <input
             type="text"
             className={"d-flex form-control text-center col-12 p-1 " + props.className}
-            style={{fontSize: "inherit"}}
+            style={{fontSize: "inherit", cursor: "default"}}
             value={props.value}
             readOnly
         />

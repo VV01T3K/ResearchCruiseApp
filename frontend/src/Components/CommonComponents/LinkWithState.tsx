@@ -17,7 +17,7 @@ export default function LinkWithState(props: Props) {
     return (
         <a
             className={props.className ?? ""}
-            style={props.style ?? { cursor: "pointer" }}
+            style={props.style ?? { cursor: "pointer", fontSize: "inherit" }}
             onClick={() =>
                 navigate(props.to, {
                         state: props.state

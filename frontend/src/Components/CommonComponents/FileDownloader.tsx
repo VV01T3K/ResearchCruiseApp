@@ -16,7 +16,7 @@ export default function FileDownloader(props: Props) {
         <>
         <div className="d-flex flex-wrap justify-content-center text-break">
             <a
-                className={`w-100 ${props.bg} d-flex justify-content-center`}
+                className={`w-100 ${props.bg} d-flex justify-content-center pb-1`}
                 style={{
                     cursor: "pointer"
                 }}
@@ -27,13 +27,14 @@ export default function FileDownloader(props: Props) {
                     src={file_icon}
                     height="45px"
                     width="45px"
-                    className={"rounded-2 p-1 d-flex " + props.bg == 'bg-light' ? Style.img: Style.imgDark}
+                    className={"rounded-2 p-1 d-flex" + props.bg == 'bg-light' ? Style.img: Style.imgDark}
                     alt="File picker icon"
                 />
             </a>
-            {props.fileName}
+            <ReadOnlyTextInput
+                value={props.fileName}
+            />
         </div>
-
         </>
     )
 }
