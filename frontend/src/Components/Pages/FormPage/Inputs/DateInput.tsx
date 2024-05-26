@@ -34,7 +34,7 @@ function DateInput(props: Props) {
                         locale={"pl"}
                         selected={field.value ? new Date(field.value) : null}
                         onChange={(selectedOption) => {
-                            props.form!.setValue(props.name, selectedOption ? new Date(selectedOption): "", { shouldDirty: true, shouldValidate: true, shouldTouch:true });
+                            props.form!.setValue(props.name, selectedOption ? new Date(selectedOption).toISOString(): "", { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                         }}
                         onBlur={field.onBlur}
                         getPopupContainer={trigger => trigger.parentElement}

@@ -10,12 +10,14 @@ type Props = {
     row: Attributes,
     field: ControllerRenderProps<FieldValues, string>,
     form: UseFormReturn
+    readonly:boolean,
 }
 
 
 export default function PublicationCategoryPicker(props: Props) {
     return (
         <Select
+            isDisabled={props.readonly ?? false}
             minMenuHeight={300}
             className="d-flex col-12 justify-content-center"
             menuPlacement="auto"

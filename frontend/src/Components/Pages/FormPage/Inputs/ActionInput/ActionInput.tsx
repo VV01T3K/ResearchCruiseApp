@@ -124,7 +124,7 @@ export default function ActionInput(props: Props){
                                                         onChange={(e: Date)=> {
                                                             if (e != null) {
                                                                 const tmp = row;
-                                                                tmp["startDate"] = e.toString();
+                                                                tmp["startDate"] = e.toISOString();
                                                                 props.form!.setValue(
                                                                     props.name,
                                                                     field.value,
@@ -162,7 +162,7 @@ export default function ActionInput(props: Props){
                                                         onChange={(e: Date)=> {
                                                             if (e != null) {
                                                                 const tmp = row;
-                                                                tmp["endDate"] = e.toString();
+                                                                tmp["endDate"] = e.toISOString();
                                                                 props.form!.setValue(
                                                                     props.name,
                                                                     field.value,

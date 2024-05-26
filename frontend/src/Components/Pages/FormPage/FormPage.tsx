@@ -32,6 +32,7 @@ export type FormPageLocationState = {
     formType: string,
     formId?: string,  // The id of the form to be loaded from the database if applicable
     localStorageValues?: FormValues, // To be deleted soon
+    loadValues,
     readonly: boolean
 }
 
@@ -45,13 +46,15 @@ function FormPage(){
         formType,
         formId,
         localStorageValues, // To be deleted soon
-        readonly
+        readonly,
+        loadValues
     } = location.state as FormPageLocationState
 
     // Set the values to be loaded to the form if applicable
-    const loadValues =
+    const loadLocalValues = loadValues ??(
         formId && { periodNotes: formId } || // Temporary value to be replaced with an actual API call
         localStorageValues
+    )
 
     const { dispatchEvent } = useCustomEvent('busy')
 
@@ -59,18 +62,18 @@ function FormPage(){
         <>
             {formType == "A" &&
                 <FormA
-                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                     readonly={readonly}
                 />
             }
             {formType == "B" &&
                 <FormB
-                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                 />
             }
             {formType == "C" &&
                 <FormC
-                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                 />
             }
         </>
