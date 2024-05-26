@@ -1,8 +1,7 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
-using ResearchCruiseApp_API.Data.ResearchTask;
-using ResearchCruiseApp_API.Data.ResearchTask.FThesis;
+using ResearchCruiseApp_API.Data.ResearchTaskFolder.FThesis;
 
 namespace ResearchCruiseApp_API.Models.Users;
 

@@ -1,12 +1,20 @@
-﻿namespace ResearchCruiseApp_API.Data;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ResearchCruiseApp_API.Data;
 
 public class Work
 {
-    // public int Id { get; set; }
-    // public string Cathegory { get; set; } = null!;
-    // public string Author { get; set; } = null!;
-    // public string Title { get; set; } = null!;
-    // public string Promotor { get; set; } = null!;
-    // public int Year_of_defence { get; set; }
-    // public List<FormA> FormsA { get; set; } = null!;
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; }
+    
+    public string Category { get; set; }
+    
+    public int Year { get; set; }
+    
+    //File_type
+    public string Author { get; set; }
+    
+    public string Title { get; set; }
+    
+    public string Promoter { get; set; }
 }

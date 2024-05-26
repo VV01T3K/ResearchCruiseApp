@@ -42,16 +42,26 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllForms()
         {
-            var forms = await researchCruiseContext.FormsA.ToListAsync();
+            var forms = await researchCruiseContext.FormsA
+                .Include(o => o.Contracts)
+                .Include(o => o.Publications)
+                .Include(o => o.Works)
+                .Include(o => o.GuestTeams)
+                .Include(o => o.ResearchTasks)
+                .Include(o => o.UGTeams)
+                .Include(o => o.SPUBTasks)
+                .ToListAsync();
+            //return Ok(forms);
             var formModels = new List<FormsModel>();
             var mapper = MapperConfig.InitializeAutomapper();
 
             foreach (var form in forms)
             {
+                //var ContractsList = from Contracts in researchCruiseContext.FormsA where Contracts.Id == form.Id select Contracts;
                 formModels.Add(mapper.Map<FormsModel>(form));
             }
-            
-            
+
+
             
             return Ok(formModels);
         }
