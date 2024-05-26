@@ -32,7 +32,6 @@ export type FormPageLocationState = {
     formType: string,
     formId?: string,  // The id of the form to be loaded from the database if applicable
     localStorageValues?: FormValues, // To be deleted soon
-    loadValues,
     readonly: boolean
 }
 
@@ -68,7 +67,7 @@ function FormPage(){
             }
             {locationState?.formType == "C" &&
                 <FormC
-                    loadValues={loadLocalValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
                 />
             }
         </>
