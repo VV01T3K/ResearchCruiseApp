@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import Page from "../Page";
 import FormA from "../FormPage/Forms/FormA";
 import useCustomEvent from "../../Tools/useCustomEvent";
-import {useNavigate} from "react-router-dom";
 import {FormValues} from "../FormPage/Wrappers/FormTemplate";
 import DisabledByDefaultTextArea from "../FormPage/Inputs/DisabledByDefaultTextArea";
 import {FormPageLocationState} from "../FormPage/FormPage";
@@ -35,7 +34,6 @@ function SavedFormPage(props: Props) {
     );
 
     const [savedData, setSavedData] = useState(JSON.parse(localStorage.getItem("formData")))
-    const navigate = useNavigate()
 
     const navigateToFormPage = (formType: string, loadValues) => {
         const locationState: FormPageLocationState = {
@@ -45,17 +43,6 @@ function SavedFormPage(props: Props) {
         }
         navigate("/Form", {
             state: locationState
-        })
-    }
-
-    const selectForm = (form) => {
-        setForm(form)
-        navigate("/Form", {
-            state: {
-                formType: form.type,
-                localStorageValues: form.data,
-                readonly: false
-            }
         })
     }
 
@@ -138,11 +125,6 @@ function SavedFormPage(props: Props) {
                     </div>}
                     {!savedData?.length && <div className={"text-center"}>Brak zapisanych formularzy</div>}
                 </div>
-                            </div>
-                        </div>)}
-                </div>
-            </div>}
-                {!savedData?.length && <div className={"text-center"}>Brak zapisanych formularzy</div>}
             </div>
         </Page>
     )
