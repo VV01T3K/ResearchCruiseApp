@@ -11,29 +11,14 @@ import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
 import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
 import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
-
-
-type ApplicationDetails = {
-    id: string,
-    date: string,
-    number: string,
-    year: string,
-    cruiseManagerFirstName: string,
-    cruiseManagerLastName: string,
-    formAId: string | null,
-    formBId: string | null,
-    formCId: string | null,
-    status: string,
-    points: string,
-    pointsDetails: any
-}
+import {Application} from "../ApplicationsPage/ApplicationsPage";
 
 
 function ApplicationDetailsPage() {
     const location = useLocation()
     const { applicationId } = location.state || { }
 
-    const applicationSpecifics: ApplicationDetails = {
+    const applications: Application = {
         id: applicationId!,
         date: "2024-04-28",
         number: "2024/34",
@@ -80,14 +65,14 @@ function ApplicationDetailsPage() {
                     <ApplicationPointsSectionsGroup sections={sections}>
                         <ApplicationPointsSection title={sections.Informacje}>
                             <ApplicationInfo
-                                id={applicationSpecifics.id}
-                                date={applicationSpecifics.date}
-                                number={applicationSpecifics.number}
-                                year={applicationSpecifics.year}
-                                cruiseManagerFirstName={applicationSpecifics.cruiseManagerFirstName}
-                                cruiseManagerLastName={applicationSpecifics.cruiseManagerLastName}
-                                status={applicationSpecifics.status}
-                                points={applicationSpecifics.points}
+                                id={applications.id}
+                                date={applications.date}
+                                number={applications.number}
+                                year={applications.year}
+                                cruiseManagerFirstName={applications.cruiseManagerFirstName}
+                                cruiseManagerLastName={applications.cruiseManagerLastName}
+                                status={applications.status}
+                                points={applications.points}
                             />
                         </ApplicationPointsSection>
 

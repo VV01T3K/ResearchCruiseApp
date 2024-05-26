@@ -15,6 +15,13 @@ type Props = {
     className?: string
 }
 
+export type ApplicationShortInfo = {
+    id: string,
+    number: string,
+    cruiseManagerFirstName: string,
+    cruiseManagerLastName: string
+}
+
 type ApplicationOverview = {
     id: string,
     date: string,
@@ -27,6 +34,21 @@ type ApplicationOverview = {
     formCId: string | null,
     points: string,
     status: string
+}
+
+export type Application = {
+    id: string,
+    date: string,
+    number: string,
+    year: string,
+    cruiseManagerFirstName: string,
+    cruiseManagerLastName: string,
+    formAId: string | null,
+    formBId: string | null,
+    formCId: string | null,
+    status: string,
+    points: string,
+    pointsDetails: any
 }
 
 
@@ -272,7 +294,7 @@ function ApplicationsPage(props: Props) {
                                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                              style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
                                         >
-                                            <div className={"btn-group-vertical"}>
+                                            <div className="btn-group-vertical">
                                                 <LinkWithState
                                                     className="btn btn-info"
                                                     to="/ApplicationDetails"

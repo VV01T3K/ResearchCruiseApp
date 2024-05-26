@@ -55,7 +55,7 @@ function FormSection(props: Props) {
 
 
     return  (
-        <div className="accordion-item border-2 border-black border-bottom">
+        <div className="accordion-item border-2 border-dark-subtle border-bottom">
             <div onClick={() => setIsActive(!isActive)}
                  id={props.id}
                  className={"accordion-title d-flex flex-row pt-2 pb-2 ps-3 pe-3 bg-light sticky-top z-2 border-bottom "}
