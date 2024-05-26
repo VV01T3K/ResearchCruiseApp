@@ -62,6 +62,7 @@ function FormPage(){
             {locationState?.formType == "B" &&
                 <FormB
                     loadValues={loadValues as FormValues} // Temporary type casting because of the possible temporary value of loadValues
+                    readonly={locationState?.readonly}
                 />
             }
             {locationState?.formType == "C" &&
