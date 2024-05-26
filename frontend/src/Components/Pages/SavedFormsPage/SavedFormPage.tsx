@@ -35,11 +35,11 @@ function SavedFormPage(props: Props) {
 
     const [savedData, setSavedData] = useState(JSON.parse(localStorage.getItem("formData")))
 
-    const navigateToFormPage = (formType: string, loadValues) => {
+    const navigateToFormPage = (form) => {
         const locationState: FormPageLocationState = {
-            formType: formType,
+            formType: form.type,
             readonly: false,
-            loadValues: loadValues
+            localStorageValues: form.data
         }
         navigate("/Form", {
             state: locationState
@@ -112,7 +112,7 @@ function SavedFormPage(props: Props) {
                                     <div
                                         className={"col-12 col-xl-2 d-flex flex-row flex-wrap justify-content-center"}>
                                         <div className={"btn btn-primary col-12 col-xl-6"}
-                                             onClick={() => navigateToFormPage(form.type, form.data)}>+
+                                             onClick={() => navigateToFormPage(form)}>+
                                         </div>
 
                                         <div className={"btn btn-danger col-12 col-xl-6"}
