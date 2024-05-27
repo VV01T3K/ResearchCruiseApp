@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import useCustomEvent from "../../../Tools/useCustomEvent";
+import useCustomEvent from "../Tools/useCustomEvent";
 
 type Props = {
     title: string,
-    sections: {}
+    sections: {},
+    showRequiredSections: boolean
 }
 
 
-function FormTitle(props: Props){
+function PageTitleWithNavigation(props: Props){
     function scrollSmoothTo(elementId: string){
         var element = document.getElementById(elementId);
         element?.scrollIntoView({
@@ -51,13 +52,13 @@ function FormTitle(props: Props){
             <div className={" d-flex align-items-center w-100 text-white bg-primary d-none d-lg-flex p-2 border-bottom"}>
                 {Object.entries(sections).map(([key, value], index) => {
                     return (
-                        <button key={`${index}`}
-                              style={{fontSize: "0.8rem"}}
-                              className={`p-2 mx-auto text-nowrap text-truncate text-white bg-primary border-0 text-decoration-none`}
-                              onClick={() => scrollSmoothTo(`${index + 1}`)}
-                              // to={"/Form"}
+                        <button
+                            key={`${index}`}
+                            style={{fontSize: "0.8rem"}}
+                            className={`p-2 mx-auto text-nowrap text-truncate text-white bg-primary border-0 text-decoration-none`}
+                            onClick={() => scrollSmoothTo(`${index + 1}`)}
                         >
-                            {key}{value ? "":"*"}
+                            {key}{props.showRequiredSections && (value ? "":"*")}
                         </button>
                     )
                 })}
@@ -70,4 +71,4 @@ function FormTitle(props: Props){
 }
 
 
-export default FormTitle
+export default PageTitleWithNavigation

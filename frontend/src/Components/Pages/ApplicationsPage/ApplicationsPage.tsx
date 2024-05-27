@@ -299,7 +299,8 @@ function ApplicationsPage(props: Props) {
                                                     className="btn btn-info"
                                                     to="/ApplicationDetails"
                                                     label="Szczegóły"
-                                                    state={{ applicationId: row.id }}
+                                                    state={{ application: row
+                                                    }}
                                                 />
                                             </div>
                                         </div>

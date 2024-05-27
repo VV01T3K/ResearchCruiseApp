@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate, {FormValues} from "./Wrappers/FormTemplate";
-import FormTitle from "./CommonComponents/FormTitle";
+import PageTitleWithNavigation from "../PageTitleWithNavigation";
 import FormUserSelect from "./Inputs/FormUserSelect";
 import FormSection from "./Wrappers/FormSection";
 import MonthSlider from "./Inputs/MonthSlider";

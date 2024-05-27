@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate from "../Wrappers/FormTemplate";
-import FormTitle from "../CommonComponents/FormTitle";
+import PageTitleWithNavigation from "../../PageTitleWithNavigation";
 import FormUserSelect from "../Inputs/FormUserSelect";
 import FormSection from "../Wrappers/FormSection";
 import MonthSlider from "../Inputs/MonthSlider";
@@ -103,7 +103,11 @@ function FormA(props: Props){
 
     return (
         <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='A'>
-            <FormTitle sections={sections} title={"Formularz A"} />
+            <PageTitleWithNavigation
+                sections={sections}
+                title={"Formularz A"}
+                showRequiredSections={true}
+            />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Kierownik}>
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
