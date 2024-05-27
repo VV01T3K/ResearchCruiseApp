@@ -124,9 +124,9 @@ export default function CruisesList(props: Props) {
                             <div className="btn-group-vertical">
                                 <LinkWithState
                                     className="btn btn-info"
-                                    to="/"
-                                    label="Akcja"
-                                    state={{}}
+                                    to="/CruiseDetails"
+                                    label="Szczegóły"
+                                    state={{ cruise: row }}
                                 />
                             </div>
                         </div>

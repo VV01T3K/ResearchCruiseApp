@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import useCustomEvent from "../../../../Tools/useCustomEvent";
+import useCustomEvent from "../../Tools/useCustomEvent";
 
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 
 
-function ApplicationPointsSection(props: Props) {
+function PageSection(props: Props) {
     const [isActive, setIsActive] = useState(true);
 
     return  (
@@ -39,4 +39,4 @@ function ApplicationPointsSection(props: Props) {
 }
 
 
-export default ApplicationPointsSection
+export default PageSection

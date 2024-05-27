@@ -7,7 +7,7 @@ type Props = {
 }
 
 
-function ApplicationPointsSectionsGroup(props: Props){
+function PageSectionsGroup(props: Props){
 
     return (
         <div className="flex-grow-1 overflow-y-scroll justify-content-center">
@@ -21,4 +21,4 @@ function ApplicationPointsSectionsGroup(props: Props){
 }
 
 
-export default ApplicationPointsSectionsGroup
+export default PageSectionsGroup

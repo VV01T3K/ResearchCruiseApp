@@ -3,9 +3,9 @@ import Page from "../Page";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import {useLocation, useParams} from "react-router-dom";
 import SpubTasksPoints from "./ApplicationPointsSections/SpubTasksPoints";
-import PageTitleWithNavigation from "../PageTitleWithNavigation";
-import ApplicationPointsSectionsGroup from "./ApplicationPointsSections/Wrappers/ApplicationPointsSectionsGroup";
-import ApplicationPointsSection from "./ApplicationPointsSections/Wrappers/ApplicationPointsSection";
+import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
+import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
+import PageSection from "../CommonComponents/PageSection";
 import ApplicationInfo from "./ApplicationPointsSections/ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
@@ -34,18 +34,18 @@ function ApplicationDetailsPage() {
             <Page className="justify-content-center col-12 col-xl-9 bg-white">
                 <div className="d-flex flex-column w-100 h-100" style={{fontSize:"0.8rem"}}>
                     <PageTitleWithNavigation
-                        title={"Punkty przyznane zgłoszeniu"}
+                        title="Szczegóły zgłoszenia"
                         sections={sections}
                         showRequiredSections={false}
                     />
-                    <ApplicationPointsSectionsGroup sections={sections}>
-                        <ApplicationPointsSection title={sections.Informacje}>
+                    <PageSectionsGroup sections={sections}>
+                        <PageSection title={sections.Informacje}>
                             <ApplicationInfo
                                 application={application}
                             />
-                        </ApplicationPointsSection>
+                        </PageSection>
 
-                        <ApplicationPointsSection title={sections.Zadania}>
+                        <PageSection title={sections.Zadania}>
                             <TasksPoints
                                 evaluatedTasks={[
                                     {
@@ -98,9 +98,9 @@ function ApplicationDetailsPage() {
                                     }
                                 ]}
                             />
-                        </ApplicationPointsSection>
+                        </PageSection>
 
-                        <ApplicationPointsSection title={sections.Umowy}>
+                        <PageSection title={sections.Umowy}>
                             <ContractsPoints
                                 evaluatedContracts={[
                                     {
@@ -161,13 +161,13 @@ function ApplicationDetailsPage() {
                                     }
                                 ]}
                             />
-                        </ApplicationPointsSection>
+                        </PageSection>
 
-                        <ApplicationPointsSection title={sections["Z. badawcze"]}>
+                        <PageSection title={sections["Z. badawcze"]}>
                             <div>Brak danych o nowej punktacji</div>
-                        </ApplicationPointsSection>
+                        </PageSection>
 
-                        <ApplicationPointsSection title={sections["Publikacje"]}>
+                        <PageSection title={sections["Publikacje"]}>
                             <PublicationsPoints
                                 evaluatedPublications={[
                                     {
@@ -202,9 +202,9 @@ function ApplicationDetailsPage() {
                                     },
                                 ]}
                             />
-                        </ApplicationPointsSection>
+                        </PageSection>
 
-                        <ApplicationPointsSection title={sections.SPUB}>
+                        <PageSection title={sections.SPUB}>
                             <SpubTasksPoints
                                 evaluatedSpubTasks={[
                                     {
@@ -233,8 +233,8 @@ function ApplicationDetailsPage() {
                                     },
                                 ]}
                             />
-                        </ApplicationPointsSection>
-                    </ApplicationPointsSectionsGroup>
+                        </PageSection>
+                    </PageSectionsGroup>
                 </div>
             </Page>
         </>
