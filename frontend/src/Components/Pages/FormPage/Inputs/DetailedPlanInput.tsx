@@ -11,6 +11,7 @@ import {Simulate} from "react-dom/test-utils";
 import resize = Simulate.resize;
 import {SpubTask} from "./SpubTasksInput";
 import TextArea from "./TextArea";
+import {Action} from "./EquipmentInput";
 
 export type DetailedPlan = {
     day:string, hours:string, taskName:string, region:string, position:string, notes:string
@@ -20,6 +21,7 @@ type Props = {
     className?: string,
     name: string,
     form?: UseFormReturn,
+    history?: Action[],
     required?: boolean,
     readonly?:boolean,
 }
@@ -93,6 +95,7 @@ export default function DetailedPlanInput(props: Props){
                                 {/*    </Tbody>*/}
                                 {/*</Table>*/}
                                 <div className="table-striped w-100">
+
                                     <div className="text-white text-center bg-primary">
                                         <div className="d-flex flex-row center">
                                             <div
@@ -116,11 +119,13 @@ export default function DetailedPlanInput(props: Props){
                                                 <b>Pozycja*</b>
                                             </div>
                                             <div
-                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end col-2" style={{width: windowWidth >= 1200 ? "20%": "5%"}}>
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end col-2"
+                                                style={{width: windowWidth >= 1200 ? "20%" : "5%"}}>
                                                 <b>Uwagi**</b>
                                             </div>
                                             <div
-                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: windowWidth >= 1200 ? "5%": "100%"}}>
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                style={{width: windowWidth >= 1200 ? "5%" : "100%"}}>
 
                                             </div>
                                             <div
@@ -132,7 +137,7 @@ export default function DetailedPlanInput(props: Props){
                                     <div className="w-100 bg-light">
                                         {!field.value.length &&
                                             <div className="d-flex flex-row justify-content-center bg-light p-2 border">
-                                                <div className="text-center">Nie dodano żadnego zadania </div>
+                                                <div className="text-center">Nie dodano żadnego zadania</div>
                                             </div>
                                         }
                                         {field.value.sort((a, b) => a.day - b.day).map((row: DetailedPlan, index: number) => (
@@ -158,7 +163,7 @@ export default function DetailedPlanInput(props: Props){
                                                         className="col-12 d-flex d-xl-none justify-content-center">Liczba
                                                         godzin
                                                     </div>
-                                                    <textarea className={'w-100 text-center'} style={{resize:"none"}}
+                                                    <textarea className={'w-100 text-center'} style={{resize: "none"}}
                                                               value={row.hours}
 
                                                               onChange={(e) => {
@@ -176,20 +181,20 @@ export default function DetailedPlanInput(props: Props){
                                                                   })
                                                                   // field.onChange(val)
                                                               }}
-                                                              // onChange={(e) => {
-                                                              //     const tmp = row;
-                                                              //     tmp.hours = e.target.value;
-                                                              //     props.form!.setValue(
-                                                              //         props.name,
-                                                              //         field.value,
-                                                              //         {
-                                                              //             shouldTouch: true,
-                                                              //             shouldValidate: true,
-                                                              //             shouldDirty: true
-                                                              //         }
-                                                              //     )
-                                                              //     // handleChange(field, row, rowIndex, valIdx, tmp)
-                                                              // }}
+                                                        // onChange={(e) => {
+                                                        //     const tmp = row;
+                                                        //     tmp.hours = e.target.value;
+                                                        //     props.form!.setValue(
+                                                        //         props.name,
+                                                        //         field.value,
+                                                        //         {
+                                                        //             shouldTouch: true,
+                                                        //             shouldValidate: true,
+                                                        //             shouldDirty: true
+                                                        //         }
+                                                        //     )
+                                                        //     // handleChange(field, row, rowIndex, valIdx, tmp)
+                                                        // }}
                                                     />
                                                 </div>
                                                 <div
@@ -200,7 +205,8 @@ export default function DetailedPlanInput(props: Props){
                                                         className="col-12 d-flex d-xl-none justify-content-center">Nazwa
                                                         zadania
                                                     </div>
-                                                    <textarea className={'w-100 text-center'} style={{resize:"none"}} rows={2}
+                                                    <textarea className={'w-100 text-center'} style={{resize: "none"}}
+                                                              rows={2}
                                                               value={row.taskName}
                                                               onChange={(e) => {
                                                                   const tmp = row;
@@ -226,7 +232,8 @@ export default function DetailedPlanInput(props: Props){
                                                         className="col-12 d-flex d-xl-none justify-content-center">Rejon
                                                         zadania
                                                     </div>
-                                                    <textarea className={'w-100 text-center'} style={{resize:"none"}} rows={2}
+                                                    <textarea className={'w-100 text-center'} style={{resize: "none"}}
+                                                              rows={2}
                                                               value={row.region}
                                                               onChange={(e) => {
                                                                   const tmp = row;
@@ -251,7 +258,8 @@ export default function DetailedPlanInput(props: Props){
                                                     <div
                                                         className="col-12 d-flex d-xl-none justify-content-center">Pozycja*
                                                     </div>
-                                                    <textarea className={'w-100 text-center'} style={{resize:"none"}} rows={2}
+                                                    <textarea className={'w-100 text-center'} style={{resize: "none"}}
+                                                              rows={2}
                                                               value={row.position}
                                                               onChange={(e) => {
                                                                   const tmp = row;
@@ -275,7 +283,8 @@ export default function DetailedPlanInput(props: Props){
                                                     <div
                                                         className="col-12 d-flex d-xl-none justify-content-center">Uwagi**
                                                     </div>
-                                                    <textarea className={'w-100 text-center'} style={{resize:"none"}} rows={2}
+                                                    <textarea className={'w-100 text-center'} style={{resize: "none"}}
+                                                              rows={2}
                                                               value={row.notes}
                                                               onChange={(e) => {
                                                                   const tmp = row;
@@ -296,26 +305,26 @@ export default function DetailedPlanInput(props: Props){
                                                 <div
                                                     className="d-flex col-12 col-xl-2 flex-wrap justify-content-center align-items-center border-end p-2"
                                                     style={{width: windowWidth >= 1200 ? "5%" : "100%"}}>
-                                                        <button type="button"
-                                                                style={{fontSize:"inherit"}}
-                                                                className={`btn btn-info ${props.readonly ? 'd-none':''}`}
-                                                                onClick={() => {
-                                                                    const val: Action[] = field.value;
+                                                    <button type="button"
+                                                            style={{fontSize: "inherit"}}
+                                                            className={`btn btn-info ${props.readonly ? 'd-none' : ''}`}
+                                                            onClick={() => {
+                                                                const val: Action[] = field.value;
 
-                                                                    val.splice(index, 1)
-                                                                    props.form!.setValue(
-                                                                        props.name,
-                                                                        val,
-                                                                        {
-                                                                            shouldValidate: true,
-                                                                            shouldDirty: true,
-                                                                            shouldTouch: true
-                                                                        }
-                                                                    )
-                                                                }}
-                                                        >
-                                                            -
-                                                        </button>
+                                                                val.splice(index, 1)
+                                                                props.form!.setValue(
+                                                                    props.name,
+                                                                    val,
+                                                                    {
+                                                                        shouldValidate: true,
+                                                                        shouldDirty: true,
+                                                                        shouldTouch: true
+                                                                    }
+                                                                )
+                                                            }}
+                                                    >
+                                                        -
+                                                    </button>
                                                 </div>
 
                                                 {/*<div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"*/}
