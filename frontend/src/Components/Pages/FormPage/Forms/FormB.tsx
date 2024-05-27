@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate from "../Wrappers/FormTemplate";
-import FormTitle from "../CommonComponents/FormTitle";
+import PageTitleWithNavigation from "../../PageTitleWithNavigation";
 import FormUserSelect from "../Inputs/FormUserSelect";
 import FormSection from "../Wrappers/FormSection";
 import TextArea from "../Inputs/TextArea";
@@ -113,7 +113,11 @@ function FormB(props: Props){
 
     return (
         <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='B'>
-            <FormTitle sections={sections} title={"Formularz B"} />
+            <PageTitleWithNavigation
+                sections={sections}
+                title={"Formularz B"}
+                showRequiredSections={true}
+            />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Rejs}>
                     <RegistrationNumber className="col-12 col-md-12 col-xl-6 p-3"
