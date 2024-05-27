@@ -22,20 +22,6 @@ export type ApplicationShortInfo = {
     cruiseManagerLastName: string
 }
 
-type ApplicationOverview = {
-    id: string,
-    date: string,
-    number: string,
-    year: string,
-    cruiseManagerFirstName: string,
-    cruiseManagerLastName: string,
-    formAId: string | null,
-    formBId: string | null,
-    formCId: string | null,
-    points: string,
-    status: string
-}
-
 export type Application = {
     id: string,
     date: string,
@@ -43,6 +29,8 @@ export type Application = {
     year: string,
     cruiseManagerFirstName: string,
     cruiseManagerLastName: string,
+    deputyManagerFirstName: string,
+    deputyManagerLastName: string,
     formAId: string | null,
     formBId: string | null,
     formCId: string | null,
@@ -56,27 +44,30 @@ function ApplicationsPage(props: Props) {
     const navigate = useNavigate()
 
     const generateApplications = () => {
-        const records: ApplicationOverview[] = [];
+        const records: Application[] = [];
         for (let i = 1; i <= 100; i++) {
-            const record: ApplicationOverview = {
+            const record: Application = {
                 id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
                 date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
                 number: `2024/${i}`,
                 year: (2025 + Math.floor(Math.random() * 3)).toString(),
                 cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
                 cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
+                deputyManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Maciej" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Paweł" : "Sławomir"),
+                deputyManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Domorowicz" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Międzypodczas" : "Golałchowski"),
                 formAId: (i * 100).toString(),
                 formBId: i % 2 === 0 ? null : (i * 1000).toString(),
                 formCId:  null,
+                status: "Nowe",
                 points: (Math.floor(Math.random() * 300) + 1).toString(),
-                status: i % 2 === 0 ? "Odrzucone" : "Nowe"
+                pointsDetails: [{}, {}]
             };
             records.push(record);
         }
         return records;
     };
 
-    const [applications, setApplications]: [ApplicationOverview[], Dispatch<any>]
+    const [applications, setApplications]: [Application[], Dispatch<any>]
         = useState(generateApplications())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -97,7 +88,7 @@ function ApplicationsPage(props: Props) {
 
     const sortApplicationsByPoints = () => {
         setApplications(
-            applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
+            applications?.sort((a: Application, b: Application): number =>
                 (parseInt(a.points) - parseInt(b.points)) * (sortAscending ? -1 : 1)
             )
         )
@@ -106,7 +97,7 @@ function ApplicationsPage(props: Props) {
 
     const sortApplicationsByDate = () => {
         setApplications(
-            applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
+            applications?.sort((a: Application, b: Application): number =>
                 (Date.parse(a.date) - Date.parse(b.date)) * (sortAscending ? -1 : 1)
             )
         )
@@ -115,7 +106,7 @@ function ApplicationsPage(props: Props) {
 
     const sortApplicationsByYear = () => {
         setApplications(
-            applications?.sort((a: ApplicationOverview, b: ApplicationOverview): number =>
+            applications?.sort((a: Application, b: Application): number =>
                 (parseInt(a.year) - parseInt(b.year)) * (sortAscending ? -1 : 1)
             )
         )
@@ -197,7 +188,7 @@ function ApplicationsPage(props: Props) {
                                         <div className={"text-center"}>Brak rejsów</div>
                                     </div>
                                 }
-                                {applications.map((row: ApplicationOverview, index: number) => (
+                                {applications.map((row: Application, index: number) => (
                                     <div
                                         key={index}
                                         className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${getRowBackground(index)}`}
@@ -299,8 +290,7 @@ function ApplicationsPage(props: Props) {
                                                     className="btn btn-info"
                                                     to="/ApplicationDetails"
                                                     label="Szczegóły"
-                                                    state={{ application: row
-                                                    }}
+                                                    state={{ application: row }}
                                                 />
                                             </div>
                                         </div>

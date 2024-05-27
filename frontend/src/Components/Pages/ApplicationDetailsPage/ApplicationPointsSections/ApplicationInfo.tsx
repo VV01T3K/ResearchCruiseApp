@@ -1,46 +1,83 @@
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import React from "react";
+import {Application} from "../../ApplicationsPage/ApplicationsPage";
+import LinkWithState from "../../../CommonComponents/LinkWithState";
+import ApplicationInfoSection from "./Wrappers/ApplicationInfoSection";
+
 
 type Props = {
-    id: string,
-    date: string,
-    number: string,
-    year: string,
-    cruiseManagerFirstName: string,
-    cruiseManagerLastName: string,
-    status: string,
-    points: string
+    application: Application
 }
 
 
 function ApplicationInfo(props: Props) {
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center">
-            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
-                <div className="d-flex col-12 justify-content-center mb-1">Numer zgłoszenia:</div>
-                <ReadOnlyTextInput value={props.number} />
-            </div>
-            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
-                <div className="d-flex col-12 justify-content-center mb-1">Data:</div>
-                <ReadOnlyTextInput value={props.date} />
-            </div>
-            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
-                <div className="d-flex col-12 justify-content-center mb-1">Rok rejsu:</div>
-                <ReadOnlyTextInput value={props.year} />
-            </div>
-            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
-                <div className="d-flex col-12 justify-content-center mb-1">Kierownik:</div>
-                <ReadOnlyTextInput value={props.cruiseManagerFirstName} />
-                <ReadOnlyTextInput value={props.cruiseManagerLastName} className="mt-1"/>
-            </div>
-            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
-                <div className="d-flex col-12 justify-content-center mb-1">Status zgłoszenia:</div>
-                <ReadOnlyTextInput value={props.status} className="align-self-start"/>
-            </div>
-            <div className="d-flex col-12 col-xl-4 flex-wrap justify-content-center align-items-center p-2">
-                <div className="d-flex col-12 justify-content-center mb-1">Punkty:</div>
-                <ReadOnlyTextInput value={props.points} className="align-self-start"/>
-            </div>
+            <ApplicationInfoSection title="Numer zgłoszenia">
+                <ReadOnlyTextInput value={props.application.number} />
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Data">
+                <ReadOnlyTextInput value={props.application.date} />
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Rok rejsu">
+                <ReadOnlyTextInput value={props.application.year} />
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Kierownik">
+                <ReadOnlyTextInput value={props.application.cruiseManagerFirstName} />
+                <ReadOnlyTextInput value={props.application.cruiseManagerLastName} className="mt-1"/>
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Zastępca kierownika">
+                <ReadOnlyTextInput value={props.application.deputyManagerFirstName} />
+                <ReadOnlyTextInput value={props.application.deputyManagerLastName} className="mt-1"/>
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Formularze">
+                <LinkWithState
+                    to="/Form"
+                    state={{
+                        formType: "A",
+                        formId: props.application.formAId ?? undefined,
+                        readonly: true
+                    }}
+                    label="Formularz A"
+                    className={`col-12 d-flex justify-content-center ${!props.application.formAId ? "text-muted text-decoration-none" : ""}`}
+                    style={!props.application.formAId ? {cursor: "default"} : undefined}
+                />
+                <LinkWithState
+                    to="/Form"
+                    state={{
+                        formType: "B",
+                        formId: props.application.formBId ?? undefined,
+                        readonly: true
+                    }}
+                    label="Formularz B"
+                    className={`col-12 d-flex justify-content-center ${!props.application.formBId ? "text-muted text-decoration-none" : ""}`}
+                    style={!props.application.formBId ? {cursor: "default"} : undefined}
+                />
+                <LinkWithState
+                    to="/Form"
+                    state={{
+                        formType: "C",
+                        formId: props.application.formCId ?? undefined,
+                        readonly: true
+                    }}
+                    label="Formularz C"
+                    className={`col-12 d-flex justify-content-center ${!props.application.formCId ? "text-muted text-decoration-none" : ""}`}
+                    style={!props.application.formCId ? {cursor: "default"} : undefined}
+                />
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Status zgłoszenia">
+                <ReadOnlyTextInput value={props.application.status} className="align-self-start"/>
+            </ApplicationInfoSection>
+
+            <ApplicationInfoSection title="Punkty">
+                <ReadOnlyTextInput value={props.application.points} className="align-self-start"/>
+            </ApplicationInfoSection>
         </div>
     )
 }

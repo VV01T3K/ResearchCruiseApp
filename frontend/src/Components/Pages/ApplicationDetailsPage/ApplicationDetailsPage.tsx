@@ -26,7 +26,6 @@ function ApplicationDetailsPage() {
         "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje": "Publikacje",
-        "Prace": "Prace",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
@@ -42,14 +41,7 @@ function ApplicationDetailsPage() {
                     <ApplicationPointsSectionsGroup sections={sections}>
                         <ApplicationPointsSection title={sections.Informacje}>
                             <ApplicationInfo
-                                id={application.id}
-                                date={application.date}
-                                number={application.number}
-                                year={application.year}
-                                cruiseManagerFirstName={application.cruiseManagerFirstName}
-                                cruiseManagerLastName={application.cruiseManagerLastName}
-                                status={application.status}
-                                points={application.points}
+                                application={application}
                             />
                         </ApplicationPointsSection>
 
