@@ -5,6 +5,7 @@ import LinkWithState from "../../CommonComponents/LinkWithState";
 import React, {useEffect, useState} from "react";
 import {Cruise} from "./CruisesPage";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
+import CruiseApplicationsList from "./CruiseApplicationsList";
 
 
 type Props = {
@@ -99,24 +100,7 @@ export default function CruisesList(props: Props) {
                              style={{width: windowWidth >= 1200 ? "44%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
-                            {row.applicationsShortInfo.map((application: ApplicationShortInfo) => (
-                                <div className="d-flex col-12">
-                                    <div className="d-flex flex-wrap align-content-center col-3 mt-2">
-                                        <div className="d-flex justify-content-center w-100">Numer:</div>
-                                        <LinkWithState
-                                            className="text-center w-100"
-                                            to="/ApplicationDetails"
-                                            label={application.number}
-                                            state={{ applicationId: application.id }}
-                                        />
-                                    </div>
-                                    <div className="d-flex flex-wrap align-content-center col-9 mb-2">
-                                        <div className="d-flex justify-content-center w-100">Kierownik:</div>
-                                        <ReadOnlyTextInput value={application.cruiseManagerFirstName} className="d-flex w-100 mb-1" />
-                                        <ReadOnlyTextInput value={application.cruiseManagerLastName} className="d-flex w-100" />
-                                    </div>
-                                </div>
-                            ))}
+                            <CruiseApplicationsList applicationsShortInfo={row.applicationsShortInfo} />
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                              style={{width: windowWidth >= 1200 ? "16%" : "100%"}}

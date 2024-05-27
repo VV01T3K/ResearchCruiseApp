@@ -1,8 +1,8 @@
-import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
+import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import React from "react";
-import {Application} from "../../ApplicationsPage/ApplicationsPage";
-import LinkWithState from "../../../CommonComponents/LinkWithState";
-import ApplicationInfoSection from "./Wrappers/ApplicationInfoSection";
+import {Application} from "../ApplicationsPage/ApplicationsPage";
+import LinkWithState from "../../CommonComponents/LinkWithState";
+import SimpleInfoTile from "../../CommonComponents/SimpleInfoTile";
 
 
 type Props = {
@@ -12,30 +12,30 @@ type Props = {
 
 function ApplicationInfo(props: Props) {
     return (
-        <div className="d-flex flex-wrap flex-row justify-content-center">
-            <ApplicationInfoSection title="Numer zgłoszenia">
+        <div className="d-flex flex-wrap flex-row justify-content-center col-12">
+            <SimpleInfoTile title="Numer zgłoszenia" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.number} />
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Data">
+            <SimpleInfoTile title="Data" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.date} />
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Rok rejsu">
+            <SimpleInfoTile title="Rok rejsu" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.year} />
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Kierownik">
+            <SimpleInfoTile title="Kierownik" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.cruiseManagerFirstName} />
                 <ReadOnlyTextInput value={props.application.cruiseManagerLastName} className="mt-1"/>
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Zastępca kierownika">
+            <SimpleInfoTile title="Zastępca kierownika" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.deputyManagerFirstName} />
                 <ReadOnlyTextInput value={props.application.deputyManagerLastName} className="mt-1"/>
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Formularze">
+            <SimpleInfoTile title="Formularze" colsXl={4}>
                 <LinkWithState
                     to="/Form"
                     state={{
@@ -69,15 +69,15 @@ function ApplicationInfo(props: Props) {
                     className={`col-12 d-flex justify-content-center ${!props.application.formCId ? "text-muted text-decoration-none" : ""}`}
                     style={!props.application.formCId ? {cursor: "default"} : undefined}
                 />
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Status zgłoszenia">
+            <SimpleInfoTile title="Status zgłoszenia" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.status} className="align-self-start"/>
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
 
-            <ApplicationInfoSection title="Punkty">
+            <SimpleInfoTile title="Punkty" colsXl={4}>
                 <ReadOnlyTextInput value={props.application.points} className="align-self-start"/>
-            </ApplicationInfoSection>
+            </SimpleInfoTile>
         </div>
     )
 }
