@@ -45,7 +45,10 @@ export default function TechnicalElementsUsedInput(props: Props){
                         }}
                         render={({ field}) => (
                             <>
+                            <div className="table-striped w-100">
+
                                 <div className={"w-100 d-flex flex-row border flex-wrap p-3"}>
+
                                     <div
                                         className={"col-12 d-flex flex-row align-items-center justify-content-center border"}>
                                         <div className={"col-4 border h-100 "}>Żurawiki hydrograficzne
@@ -106,9 +109,12 @@ export default function TechnicalElementsUsedInput(props: Props){
                                     </div>
 
                                 </div>
+                            </div>
                             </>
                         )}
             />
+
+
         </div>
     )
 }

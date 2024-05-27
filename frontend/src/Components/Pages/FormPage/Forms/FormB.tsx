@@ -17,17 +17,20 @@ import UgTeamsInput, {UgTeam} from "../Inputs/UgTeamsInput/UgTeamsInput";
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import useCustomEvent from "../../../Tools/useCustomEvent";
 import api from "../../../Tools/Api";
-import ThesisInput from "../Inputs/ThesisInput/ThesisInput"
-import PublicationsInput from "../Inputs/PublicationsInput/PublicationsInput";
+import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
+import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import ActionInput from "../Inputs/ActionInput/ActionInput";
 import DetailedPlanInput from "../Inputs/DetailedPlanInput";
 import EquipmentInput from "../Inputs/EquipmentInput";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
+import RegistrationNumber from "../Inputs/RegistrationNumber";
+import DurationInput from "../Inputs/DurationInput";
 
 
 
-export type FormAValues = {
+export type FormBValues = {
+    registrationNumber: string
     cruiseManagerId: string
     deputyManagerId: string
     year: string
@@ -46,10 +49,12 @@ export type FormAValues = {
     contracts: Contract[]
     ugTeams: UgTeam[]
     guestTeams: GuestsTeam[]
+    publications: Publication[]
+    thesis: Thesis[]
     spubTasks: SpubTask[]
 }
 
-export type FormAValue =
+export type FormBValue =
     string |
     number[] |
     any |
@@ -57,10 +62,12 @@ export type FormAValue =
     Contract[] |
     UgTeam[] |
     GuestsTeam[] |
+    Publication[] |
+    Thesis[] |
     SpubTask []
 
 type Props = {
-    loadValues?: FormAValues,
+    loadValues?: FormBValues,
     readonly: boolean
 }
 
@@ -74,7 +81,7 @@ function FormB(props: Props){
 
 
     const [sections, setSections] = useState({
-        "Rejs":"Rejs",
+        "Rejs":"Numer ewidencyjny rejsu",
         "Kierownik":"Kierownik zgłaszanego rejsu",
         "Czas":"Czas trwania zgłaszanego rejsu",
         "Pozwolenia": "Dodatkowe pozwolenia do planowanych podczas rejsu badań",
@@ -85,7 +92,10 @@ function FormB(props: Props){
         "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
         "Publikacje/prace": "Publikacje i prace",
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie",
-        "Szczegóły":"Szczegóły rejsu"
+        "Szczegóły":"Szczegóły rejsu",
+        "Plan": "Szczegółowy plan zadań do realizacji podczas rejsu",
+        "Sprzęt": "Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu",
+        "E. techniczne": "Elementy techniczne statku wykorzystywane podczas rejsu"
     })
 
     const [formInitValues, setFormInitValues] = useState([])
@@ -106,7 +116,13 @@ function FormB(props: Props){
             <FormTitle sections={sections} title={"Formularz B"} />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Rejs}>
-                    <ErrorCode code={"Numer ewidencyjny rejsu (nadawany przez Biuro Armatora): "}/>
+                    <RegistrationNumber className="col-12 col-md-12 col-xl-6 p-3"
+                              required={false}
+                              label="Numer ewidencyjny rejsu (nadawany przez Biuro Armatora): "
+                              name="Number"
+                              resize="none"
+                    />
+
                 </FormSection>
                 <FormSection title={sections.Kierownik}>
                     <FormUserSelect className="col-12 col-md-6 col-xl-4"
@@ -124,13 +140,9 @@ function FormB(props: Props){
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-               <ErrorCode code={"Dokładny czas trwania rejsu: (DD-MM-RR GG.MM - DD-MM-RR GG.MM)\n"}/>
-                    <TextArea className="col-12 p-3"
-                              required={false}
-                              label="Uwagi dotyczące teminu"
-                              name="periodNotes"
-                              resize="none"
-                    />
+
+                    <DurationInput className="col-12 col-xl-9" name={"diff"} actionName={"Port"}/>
+
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
@@ -359,9 +371,45 @@ function FormB(props: Props){
                         className="col-12"
                         label="Publikacje"
                         name="publications"
-                     historicalPublications={[
-                         "A. Temat", "B. Dopisek", "Instytucja 3"
-                     ]}/>
+                        historicalPublications={[
+                            {
+                                category: "subject",
+                                DOI: "10.1016/j.marenvres.2023.106132",
+                                authors: "Urszula Kwasigroch, Katarzyna Łukawska-Matuszewska, Agnieszka Jędruch, Olga Brocławik, Magdalena Bełdowska",
+                                title: "Mobility and bioavailability of mercury in sediments of the southern Baltic sea in relation to the chemical fractions of iron: Spatial and temporal patterns",
+                                magazine: "Marine Environmental Research",
+                                year: "2023",
+                                points: "0"
+
+                            },
+                            {
+                                category: "subject",
+                                DOI: "10.1016/j.csr.2018.08.008",
+                                authors: "Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska",
+                                title: "Porewater dissolved organic and inorganic carbon in relation to methane occurrence in sediments of the Gdańsk Basin (southern Baltic Sea)",
+                                magazine: "Continental Shelf Research",
+                                year: "2018",
+                                points: "30"
+                            },
+                            {
+                                category: "postscript",
+                                DOI: "10.3390/biology12020147",
+                                authors: "Natalia Miernik, Urszula Janas, Halina Kendzierska",
+                                title: "Role of macrofaunal communities in the Vistula River plume, the Baltic Sea - bioturbation and bioirrigation potential",
+                                magazine: "Biology",
+                                year: "2023",
+                                points: "100"
+                            },
+                            {
+                                category: "postscript",
+                                DOI: "10.1016/j.scitotenv.2020.140306",
+                                authors: "Jakub Idczak, Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska, Bożena Graca, Natalia Gorska, Zygmunt Klusek, Patryk Pezacki, Jerzy Bolałek",
+                                title: "A geophysical, geochemical and microbiological study of a newly discovered pockmark with active gas seepage and submarine groundwater discharge (MET1-BH, central Gulf of Gdańsk, southern Baltic Sea)",
+                                magazine: "Science of the Total Environment",
+                                year: "2020",
+                                points: "200"
+                            }
+                        ]}/>
                     <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
@@ -373,9 +421,30 @@ function FormB(props: Props){
                         className="col-12"
                         label="Prace"
                         name="works"
-                     historicalThesis={[
-                         "Instytucja 1", "Instytucja 2", "Instytucja 3"
-                     ]}/>
+                        historicalThesis={[
+                            {
+                                category: "doctor",
+                                author: "Marian Domogolski",
+                                title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                promoter: "Elżbieta Widłogrodzka",
+                                year: "2020"
+
+                            },
+                            {
+                                category: "master",
+                                author: "Marian Domogolski",
+                                title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                promoter: "Elżbieta Widłogrodzka",
+                                year: "2020"
+                            },
+                            {
+                                category: "bachelor",
+                                author: "Marian Domogolski",
+                                title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                promoter: "Elżbieta Widłogrodzka",
+                                year: "2020"
+                            }
+                        ]}/>
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
@@ -472,8 +541,14 @@ function FormB(props: Props){
                             return <DummyTag required={false}/>
                         }
                     })()}
+                </FormSection>
+                <FormSection title={sections["Plan"]}>
                     <DetailedPlanInput className={"col-12"} name={"plan"}/>
+                </FormSection>
+                <FormSection title={sections["Sprzęt"]}>
                     <EquipmentInput className={"col-12"} name={"equipment2"}/>
+                </FormSection>
+                <FormSection title={sections["E. techniczne"]}>
                     <TechnicalElementsUsedInput className={"col-12"} name={"technical"}/>
                 </FormSection>
 
