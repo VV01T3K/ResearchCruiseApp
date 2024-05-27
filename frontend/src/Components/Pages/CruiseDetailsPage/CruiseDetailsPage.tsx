@@ -6,6 +6,7 @@ import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation
 import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
 import CruiseBasicInfo from "./CruiseDetailsSections/CruiseBasicInfo";
+import CruiseDate from "./CruiseDetailsSections/CruiseDate";
 
 
 type Props = {
@@ -44,7 +45,7 @@ export default function CruiseDetailsPage(props: Props) {
                         </PageSection>
 
                         <PageSection title={sections["Termin"]}>
-                            <CruiseBasicInfo cruise={locationState.cruise} />
+                            <CruiseDate cruise={locationState.cruise} />
                         </PageSection>
 
                         <PageSection title={sections["Zgłoszenia"]}>

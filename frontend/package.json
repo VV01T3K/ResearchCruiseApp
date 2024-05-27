@@ -82,6 +82,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/bootstrap": "^5.2.9",
     "@types/react-big-calendar": "^1.8.9",
-    "@types/react-css-modules": "^4.6.8"
+    "@types/react-css-modules": "^4.6.8",
+    "@types/react-datepicker": "^6.2.0"
   }
 }
