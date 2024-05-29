@@ -1,22 +1,22 @@
 import React, {useEffect, useState} from "react";
-import useCustomEvent from "../../../../Tools/useCustomEvent";
+import useCustomEvent from "../../Tools/useCustomEvent";
 
 
 type Props = {
     id?: string,
     children?:
-        React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
-        React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
+        React.ReactElement<any>[] |
+        React.ReactElement<any>,
     title: string,
 }
 
 
 
-function ApplicationPointsSection(props: Props) {
+function PageSection(props: Props) {
     const [isActive, setIsActive] = useState(true);
 
     return  (
-        <div className="accordion-item border-2 border-black border-bottom">
+        <div className="accordion-item border-2 border-dark-subtle border-bottom">
             <div onClick={() => setIsActive(!isActive)}
                  id={props.id}
                  className={"accordion-title d-flex flex-row pt-2 pb-2 ps-3 pe-3 bg-light sticky-top z-2 border-bottom "}
@@ -39,4 +39,4 @@ function ApplicationPointsSection(props: Props) {
 }
 
 
-export default ApplicationPointsSection
+export default PageSection

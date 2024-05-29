@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import useCustomEvent from "../Tools/useCustomEvent";
+import useCustomEvent from "../../Tools/useCustomEvent";
 
 
 type Props = {

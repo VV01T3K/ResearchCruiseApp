@@ -1,7 +1,7 @@
 import React, {Dispatch, useState} from 'react';
 import Page from "../Page";
 import "react-big-calendar/lib/css/react-big-calendar.css"
-import PageTitle from "../PageTitle";
+import PageTitle from "../CommonComponents/PageTitle";
 import CruisesCalendar from "./CruisesCalendar";
 import ReactSwitch from 'react-switch';
 import CruisesList from "./CruisesList";

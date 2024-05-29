@@ -60,7 +60,7 @@ export default function NewCruiseForm(props: Props) {
                 </div>
             </div>
             <div className="w-100 bg-light">
-                {[1, 2, 3].map((row: number, index: number) => (
+                {[1].map((row: number, index: number) => (
                     <div key={index}
                          className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                     >
@@ -68,19 +68,19 @@ export default function NewCruiseForm(props: Props) {
                              style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Czas rozpoczęcia:</div>
-                            <ReadOnlyTextInput value={row} />
+                            <ReadOnlyTextInput value={row.toString()} />
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                              style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Czas zakończenia:</div>
-                            <ReadOnlyTextInput value={row} className="mb-1"/>
+                            <ReadOnlyTextInput value={row.toString()} className="mb-1"/>
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                              style={{width: windowWidth >= 1200 ? "44%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
-                            {[1, 2, 3].map((application: number) => (
+                            {[1].map((application: number) => (
                                 <div className="d-flex col-12">
                                     <div className="d-flex flex-wrap align-content-center col-3 mt-2">
                                         <div className="d-flex justify-content-center w-100">Numer:</div>
@@ -93,8 +93,8 @@ export default function NewCruiseForm(props: Props) {
                                     </div>
                                     <div className="d-flex flex-wrap align-content-center col-9 mb-2">
                                         <div className="d-flex justify-content-center w-100">Kierownik:</div>
-                                        <ReadOnlyTextInput value={application} className="d-flex w-100 mb-1" />
-                                        <ReadOnlyTextInput value={application} className="d-flex w-100" />
+                                        <ReadOnlyTextInput value={application.toString()} className="d-flex w-100 mb-1" />
+                                        <ReadOnlyTextInput value={application.toString()} className="d-flex w-100" />
                                     </div>
                                 </div>
                             ))}

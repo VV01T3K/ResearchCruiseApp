@@ -142,12 +142,12 @@ function FormTemplate(props: Props) {
                     <div className={`d-flex flex-row justify-content-center border-top border-black w-100 bg-white`} style={{zIndex:9999}}>
                         {!props.readonly &&
                             <>
-                        <div className="d-flex col-6 text-center p-2 justify-content-center">
-                            <button onClick={props.form.handleSubmit(saveValues,saveValues)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
-                        </div>
-                        <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                            <button onClick={props.form.handleSubmit(handleSubmit)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
-                        </div>
+                                <div className="d-flex col-6 text-center p-2 justify-content-center">
+                                    <button onClick={props.form.handleSubmit(saveValues,saveValues)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
+                                </div>
+                                <div className="d-flex col-6 text-center p-2 justify-content-center" >
+                                    <button onClick={props.form.handleSubmit(handleSubmit)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                                </div>
                             </>
                         }
                         {props.readonly &&

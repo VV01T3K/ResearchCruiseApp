@@ -267,7 +267,7 @@ function TaskInput(props: Props) {
                                                                                 {...field}
                                                                                 disabled={props.readonly ?? false}
 
-                                                                                className={"text-center w-100 rounded-1 p-1"}
+                                                                                className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
                                                                                 closeOnScroll={true}
                                                                                 locale={"pl"}
                                                                                 selected={val ? new Date(val as string) : null}
@@ -289,8 +289,7 @@ function TaskInput(props: Props) {
                                                                                     //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
                                                                                     showMonthYearPicker
                                                                                     showMonthYearDropdown
-                                                                                    className={"text-center w-100 rounded-1 p-1"}
-                                                                                    style={{fontSize: "inherit"}}
+                                                                                    className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
                                                                                     selectsStart
                                                                                     startDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}
                                                                                     maxDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
@@ -313,8 +312,7 @@ function TaskInput(props: Props) {
                                                                                     // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
                                                                                     showYearDropdown
                                                                                     showMonthYearPicker
-                                                                                    className={"text-center w-100 rounded-1 p-1"}
-                                                                                    style={{fontSize: "inherit"}}
+                                                                                    className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
                                                                                     startDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}
                                                                                     endDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
                                                                                     minDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}

@@ -112,8 +112,7 @@ export default function ActionInput(props: Props){
                                                         //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
                                                         showMonthYearPicker
                                                         showMonthYearDropdown
-                                                        className={"text-center w-100 rounded-1 p-1"}
-                                                        style={{fontSize: "inherit"}}
+                                                        className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
                                                         selectsStart
                                                         startDate={row.startDate ? new Date(row.startDate) : null}
                                                         maxDate={row.endDate ? new Date(row.endDate) : null}
@@ -151,8 +150,7 @@ export default function ActionInput(props: Props){
                                                         // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
                                                         showYearDropdown
                                                         showTimeSelect
-                                                        className={"text-center w-100 rounded-1 p-1"}
-                                                        style={{fontSize: "inherit"}}
+                                                        className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
                                                         startDate={row.startDate ? new Date(row.startDate) : null}
                                                         endDate={row.endDate ? new Date(row.endDate) : null}
                                                         minDate={row.startDate ? new Date(row.startDate) : null}

@@ -25,6 +25,7 @@ import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import CruisesPage from "./Pages/CruisesPage/CruisesPage"
 import SentFormPage from "./Pages/SentFormsPage/SentFormPage";
+import CruiseDetailsPage from "./Pages/CruiseDetailsPage/CruiseDetailsPage";
 
 function App() {
 
@@ -107,24 +108,21 @@ function App() {
                     {userData && userData["roles"].includes("Administrator") &&
                         <>
                             <Route path="/SavedForms" element={<SavedFormPage />} />
-                            <Route path="/Cruises" element={<CruisesPage />} />
                             <Route path="/ViewForms" element={<SentFormPage />} />
                             <Route path="/NewForm" element={<NewFormPage />} />
                             <Route path="/Form" element={<FormPage />} />
-                            <Route path="/FormB" element={<FormB />} />
-                            <Route path="/FormC" element={<FormC />} />
                             <Route path="/ManageUsers" element={<ManageUsersPage />} />
                             <Route path="/*" element={<AdminPanel />} />
                             <Route path="/Messages" element={<MessagesPage />} />
                             <Route path="/Applications" element={<ApplicationsPage />} />
                             <Route path="/ApplicationDetails" element={<ApplicationDetailsPage />} />
+                            <Route path="/Cruises" element={<CruisesPage />} />
+                            <Route path="/CruiseDetails" element={<CruiseDetailsPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
-                            <Route path="/FormB" element={<FormB />} />
-                            <Route path="/FormC" element={<FormC />} />
                             <Route path="/*" element={<ManagerPanel />} />
                         </>
                     }
