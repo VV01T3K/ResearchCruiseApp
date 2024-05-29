@@ -2,7 +2,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
-import React, {Dispatch, useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Application} from "./ApplicationsPage";
 import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../Tools/useCustomEvent";
@@ -12,6 +12,16 @@ type Props = {
     // Only defined if the component is called from the cruise's details page.
     // It then contains the applications assigned to the cruise
     boundedValues?: Application[]
+
+    // Callback to the function in the parent component that updates the applications
+    // assigned to a cruise
+    setBoundedValues?: Dispatch<SetStateAction<Application[]>> | ((applications: Application[]) => void)
+
+    // Indicates if the list should allow adding an application to a cruise
+    addingMode?: boolean,
+
+    // Indicated if the list should allow deleting applications from a cruise
+    deletionMode?: boolean
 }
 
 
@@ -43,7 +53,7 @@ export default function ApplicationsList(props: Props) {
     };
 
     const [applications, setApplications]: [Application[], Dispatch<any>]
-        = useState(props.boundedValues ?? generateApplications())
+        = useState(generateApplications())
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -96,7 +106,14 @@ export default function ApplicationsList(props: Props) {
 
     return (
         <div className="table-striped w-100 overflow-auto">
-            <div className="text-white text-center bg-primary">
+            {props.addingMode &&
+                <div className="text-white text-center bg-primary w-100">
+                    <div className="d-flex justify-content-center align-items-center p-2">
+                        <b>Dołączanie zgłoszenia</b>
+                    </div>
+                </div>
+            }
+            <div className={`text-white text-center w-100 ${props.addingMode ? "bg-secondary" : "bg-primary"}`}>
                 <div className="d-flex flex-row center">
                     <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "14%", cursor: "pointer"}}
                          onClick={sortApplicationsByDate}
@@ -131,7 +148,7 @@ export default function ApplicationsList(props: Props) {
                     <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "15%"}}>
                         <b>Status</b>
                     </div>
-                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "16%"}}>
+                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "16%"}}>
                         <b>Akcje</b>
                     </div>
 
@@ -142,11 +159,11 @@ export default function ApplicationsList(props: Props) {
             </div>
             <div className="w-100 bg-light">
                 {!applications.length &&
-                    <div className="d-flex flex-row bg-light p-2 justify-content-center border">
+                    <div className="d-flex flex-row bg-light p-2 justify-content-center border-bottom">
                         <div className={"text-center"}>Brak zgłoszeń</div>
                     </div>
                 }
-                {applications.map((row: Application, index: number) => (
+                {(props.deletionMode ? props.boundedValues : applications)!.map((row: Application, index: number) => (
                     <div
                         key={index}
                         className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${getRowBackground(index)}`}
@@ -251,19 +268,32 @@ export default function ApplicationsList(props: Props) {
                                     state={{ application: row }}
                                 />
 
-                                {props.boundedValues &&
-                                    // Show only if the component was called from inside the cruises details page
+                                {props.deletionMode &&
+                                    // Show only if the component represents a cruise's applications
                                     <a
                                         className="btn btn-danger"
                                         style={{ fontSize: "inherit" }}
                                         onClick={() => {
                                             // Remove the application from the list
-                                            const updatedApplications = applications.filter((_, i) => i != index)
-                                            setApplications(updatedApplications)
-                                            console.log(props.boundedValues)
+                                            const updatedApplications = props.boundedValues!.filter((_, i) => i != index)
+                                            props.setBoundedValues!(updatedApplications)
                                         }}
                                     >
                                         Usuń
+                                    </a>
+                                }
+                                {props.addingMode &&
+                                    // Show only if the component enables adding applications to a cruise
+                                    <a
+                                        className="btn btn-outline-success"
+                                        style={{ fontSize: "inherit" }}
+                                        onClick={() => {
+                                            // Add the application to the list
+                                            const updatedApplications = [...props.boundedValues!, row]
+                                            props.setBoundedValues!(updatedApplications)
+                                        }}
+                                    >
+                                        Dołącz
                                     </a>
                                 }
                             </div>
