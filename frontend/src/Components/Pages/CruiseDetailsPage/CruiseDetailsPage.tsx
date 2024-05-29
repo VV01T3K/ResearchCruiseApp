@@ -28,6 +28,8 @@ export default function CruiseDetailsPage() {
         "Zgłoszenia": "Zgłoszenia przypisane do rejsu"
     })
 
+    const [applicationsAddingMode, setApplicationsAddingMode] = useState(false)
+
     const fetchApplications = (applicationsShortInfo: ApplicationShortInfo[]) => {
         // Temporary solution. Here an actual API call will be performed
 
@@ -76,6 +78,8 @@ export default function CruiseDetailsPage() {
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
                                 applications={fetchApplications(locationState.cruise.applicationsShortInfo)}
+                                addingMode={applicationsAddingMode}
+                                setAddingMode={setApplicationsAddingMode}
                             />
                         </PageSection>
                     </PageSectionsGroup>

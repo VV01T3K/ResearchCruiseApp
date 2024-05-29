@@ -1,46 +1,58 @@
 import ApplicationsList from "../../ApplicationsPage/ApplicationsList";
 import {Application} from "../../ApplicationsPage/ApplicationsPage";
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 
 type Props = {
-    applications: Application[]
+    applications: Application[],
+    addingMode: boolean,
+    setAddingMode: Dispatch<SetStateAction<boolean>>
 }
 
 
 export default function CruiseApplications(props: Props) {
-    const [addingMode, setAddingMode] = useState(false)
     const [applications, setApplications] = useState(props.applications)
 
     const updateApplications = (applications: Application[]) => {
         setApplications(applications)
-        setAddingMode(false)
+        props.setAddingMode(false)
     }
 
     return (
-        <>
+        <div className="p-2">
             <ApplicationsList
-                boundedValues={applications}
-                setBoundedValues={setApplications}
+                boundedApplications={applications}
+                setBoundedApplications={setApplications}
                 deletionMode={true}
             />
-            <div className="d-flex w-100 justify-content-center">
-                <a
-                    className={`btn btn-info col-12 my-2 ${addingMode && "d-none"}`}
-                    style={{ font: "inherit" }}
-                    onClick={() => setAddingMode(true)}
-                >
-                    Dołącz zgłoszenie
-                </a>
+            <div className="d-flex w-100 justify-content-center mt-3">
+                {!props.addingMode &&
+                    <a
+                        className="btn btn-info col-12"
+                        style={{ font: "inherit" }}
+                        onClick={() => props.setAddingMode(true)}
+                    >
+                        Dołącz zgłoszenie
+                    </a>
+                }
+                {props.addingMode &&
+                    <a
+                        className="btn btn-outline-dark col-12"
+                        style={{ font: "inherit" }}
+                        onClick={() => props.setAddingMode(false)}
+                    >
+                        Anuluj dołączanie zgłoszenia
+                    </a>
+                }
             </div>
-            {addingMode &&
-                <div className="mt-4">
+            {props.addingMode &&
+                <div className="mt-3">
                     <ApplicationsList
                         addingMode={true}
-                        boundedValues={applications}
-                        setBoundedValues={updateApplications}
+                        boundedApplications={applications}
+                        setBoundedApplications={updateApplications}
                     />
                 </div>
             }
-        </>
+        </div>
     )
 }

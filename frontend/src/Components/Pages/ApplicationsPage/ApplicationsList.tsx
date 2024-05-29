@@ -10,12 +10,12 @@ import {addPlugins} from "workbox-precaching";
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.
-    // It then contains the applications assigned to the cruise
-    boundedValues?: Application[]
+    // It then contains the applications already assigned to a cruise
+    boundedApplications?: Application[]
 
     // Callback to the function in the parent component that updates the applications
     // assigned to a cruise
-    setBoundedValues?: Dispatch<SetStateAction<Application[]>> | ((applications: Application[]) => void)
+    setBoundedApplications?: Dispatch<SetStateAction<Application[]>> | ((applications: Application[]) => void)
 
     // Indicates if the list should allow adding an application to a cruise
     addingMode?: boolean,
@@ -163,7 +163,18 @@ export default function ApplicationsList(props: Props) {
                         <div className={"text-center"}>Brak zgłoszeń</div>
                     </div>
                 }
-                {(props.deletionMode ? props.boundedValues : applications)!.map((row: Application, index: number) => (
+                {(props.deletionMode ? props.boundedApplications : applications)!.map((row: Application, index: number) => (
+                    (
+                        (
+                            // if the application is not already assigned to the cruise
+                            props.addingMode &&
+                            !props.boundedApplications!.filter(application => application.number == row.number).length
+                        ) ||
+                        (
+                            // if this list does not enable adding applications to a cruise
+                            !props.addingMode
+                        )
+                    ) &&
                     <div
                         key={index}
                         className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${getRowBackground(index)}`}
@@ -207,7 +218,7 @@ export default function ApplicationsList(props: Props) {
                              style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
                         >
                             <LinkWithState
-                                to="/Form"
+                                to={row.formAId ? "/Form" : ""}
                                 state={{
                                     formType: "A",
                                     formId: row.formAId ?? undefined,
@@ -218,7 +229,7 @@ export default function ApplicationsList(props: Props) {
                                 style={!row.formAId ? {cursor: "default"} : undefined}
                             />
                             <LinkWithState
-                                to="/Form"
+                                to={row.formBId ? "/Form" : ""}
                                 state={{
                                     formType: "B",
                                     formId: row.formBId ?? undefined,
@@ -229,7 +240,7 @@ export default function ApplicationsList(props: Props) {
                                 style={!row.formBId ? {cursor: "default"} : undefined}
                             />
                             <LinkWithState
-                                to="/Form"
+                                to={row.formCId ? "/Form" : ""}
                                 state={{
                                     formType: "C",
                                     formId: row.formCId ?? undefined,
@@ -265,18 +276,18 @@ export default function ApplicationsList(props: Props) {
                                     className="btn btn-info"
                                     to="/ApplicationDetails"
                                     label="Szczegóły"
-                                    state={{ application: row }}
+                                    state={{application: row}}
                                 />
 
                                 {props.deletionMode &&
                                     // Show only if the component represents a cruise's applications
                                     <a
                                         className="btn btn-danger"
-                                        style={{ fontSize: "inherit" }}
+                                        style={{fontSize: "inherit"}}
                                         onClick={() => {
                                             // Remove the application from the list
-                                            const updatedApplications = props.boundedValues!.filter((_, i) => i != index)
-                                            props.setBoundedValues!(updatedApplications)
+                                            const updatedApplications = props.boundedApplications!.filter((_, i) => i != index)
+                                            props.setBoundedApplications!(updatedApplications)
                                         }}
                                     >
                                         Usuń
@@ -286,11 +297,11 @@ export default function ApplicationsList(props: Props) {
                                     // Show only if the component enables adding applications to a cruise
                                     <a
                                         className="btn btn-outline-success"
-                                        style={{ fontSize: "inherit" }}
+                                        style={{fontSize: "inherit"}}
                                         onClick={() => {
                                             // Add the application to the list
-                                            const updatedApplications = [...props.boundedValues!, row]
-                                            props.setBoundedValues!(updatedApplications)
+                                            const updatedApplications = [...props.boundedApplications!, row]
+                                            props.setBoundedApplications!(updatedApplications)
                                         }}
                                     >
                                         Dołącz
