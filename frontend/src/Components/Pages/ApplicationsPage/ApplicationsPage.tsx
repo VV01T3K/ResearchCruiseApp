@@ -21,9 +21,9 @@ export type ApplicationShortInfo = {
 
 export type Application = {
     id: string,
-    date: string,
     number: string,
-    year: string,
+    date: string,
+    year: number,
     cruiseManagerFirstName: string,
     cruiseManagerLastName: string,
     deputyManagerFirstName: string,
@@ -38,19 +38,6 @@ export type Application = {
 
 
 function ApplicationsPage() {
-
-
-    // const fetchData = async () => {
-    //     return  Api.get(
-    //         '/Users',)
-    //         .then(response => {
-    //             return response.data;
-    //         })
-    //         .then(response => setUserList(response))
-    //         .finally(() => dispatchEvent(null))
-    //         .catch(()=>{})
-    //
-    // }
 
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white">

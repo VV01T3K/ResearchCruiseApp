@@ -91,9 +91,11 @@ function FormA(props: Props){
     const [formInitValues, setFormInitValues] = useState([])
     const { dispatchEvent } = useCustomEvent('busy')
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
+        api
+            .get('/forms/GetData')
+            .then(response => setFormInitValues(response.data))
+            .catch(error => console.log(error))
         console.log(formInitValues)
-
     },[]);
 
     useEffect(() => {

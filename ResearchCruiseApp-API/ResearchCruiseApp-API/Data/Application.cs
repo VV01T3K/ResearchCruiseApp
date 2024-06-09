@@ -7,7 +7,7 @@ public class Application
 {
     public enum ApplicationState
     {
-        Planned,
+        New,
         Accepted,
         Denied,
         Undertaken,
@@ -17,14 +17,18 @@ public class Application
     
     [DatabaseGenerated((DatabaseGeneratedOption.Identity))]
     public Guid Id { get; set; }
+
+    public string Number { get; set; } = null!;
+
+    public DateOnly Date { get; set; }
+    
+    public FormA? FormA { get; set; } = null!;
+    
+    public FormA? FormB { get; set; } = null!;
+    
+    public FormA? FormC { get; set; } = null!;
     
     public int Points { get; set; }
     
     public ApplicationState State { get; set; }
-    
-    public string? FormA { get; set; } = null!;
-    
-    public string? FormB { get; set; } = null!;
-    
-    public string? FormC { get; set; } = null!;
 }

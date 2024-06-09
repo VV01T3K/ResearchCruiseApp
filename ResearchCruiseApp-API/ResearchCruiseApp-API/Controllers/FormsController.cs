@@ -60,8 +60,6 @@ namespace ResearchCruiseApp_API.Controllers
                 //var ContractsList = from Contracts in researchCruiseContext.FormsA where Contracts.Id == form.Id select Contracts;
                 formModels.Add(mapper.Map<FormsModel>(form));
             }
-
-
             
             return Ok(formModels);
         }
@@ -79,10 +77,6 @@ namespace ResearchCruiseApp_API.Controllers
 
             var mapper = MapperConfig.InitializeAutomapper();
             var formA = mapper.Map<FormA>(form);
-            
-            
-            
-            
             
             researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
@@ -115,7 +109,7 @@ namespace ResearchCruiseApp_API.Controllers
             Application newApplication = new()
             {
                 Points = 0,
-                State = Application.ApplicationState.Planned
+                State = Application.ApplicationState.New
             };
 
             await researchCruiseContext.Applications.AddAsync(newApplication);

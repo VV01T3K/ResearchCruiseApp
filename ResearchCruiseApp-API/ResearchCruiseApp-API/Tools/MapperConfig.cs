@@ -76,7 +76,6 @@ namespace ResearchCruiseApp_API.Tools
                     ;
 
                 cfg.CreateMap<FormA, FormsModel>();
-
             });
             
             //Create an Instance of Mapper and return that Instance
