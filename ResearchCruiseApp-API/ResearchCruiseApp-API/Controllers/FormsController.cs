@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -80,6 +81,7 @@ namespace ResearchCruiseApp_API.Controllers
             
             researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
+            await AddApplicationAsync(formA);
             
             // var form1 = new FormA()
             // {
@@ -91,8 +93,6 @@ namespace ResearchCruiseApp_API.Controllers
 
             return Ok();
         }
-        
-        //metoda zwracania formualrzy listy
 
         
         [HttpGet("GetData")]
@@ -104,10 +104,24 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(model.ToJson());
         }
         
-        public async void AddApplication()
+        public async Task AddApplicationAsync(FormA formA)
         {
-            Application newApplication = new()
+            // Create a new application number
+            var currentYear = DateTime.Now.Year.ToString();
+            var ordinalNumberStartIdx = currentYear.Length + 1;
+            var applications = await researchCruiseContext.Applications.ToListAsync();
+            var maxCurrentYearOrdinalNumber = applications
+                .Where(a => a.Number.StartsWith(currentYear))
+                .MaxBy(a => a.Number[ordinalNumberStartIdx..])?
+                .Number[ordinalNumberStartIdx..] ?? "0";
+            
+            var newApplication = new Application
             {
+                Number = $"{currentYear}/{int.Parse(maxCurrentYearOrdinalNumber) + 1}",
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                FormA = formA,
+                FormB = null,
+                FormC = null,
                 Points = 0,
                 State = Application.ApplicationState.New
             };

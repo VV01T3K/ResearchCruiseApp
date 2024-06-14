@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +13,12 @@ namespace ResearchCruiseApp_API.Controllers
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [Route("[controller]")]
     [ApiController]
-    public class ApplicationsController(ResearchCruiseContext researchCruiseContext) : ControllerBase
+    public class ApplicationsController(ResearchCruiseContext researchCruiseContext, IMapper mapper) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAllApplications()
         {
             var applications = await researchCruiseContext.Applications.ToListAsync();
-
-            var mapper = MapperConfig.InitializeAutomapper();
             var applicationModels = applications
                 .Select(application => mapper.Map<ApplicationModel>(application));
 
