@@ -51,7 +51,7 @@ public class FormA
     
     public int ResearchArea { get; set; } 
     
-    public int CruiseGoalType { get; set; }
+    public int CruiseGoal { get; set; }
     public string CruiseGoalDescription { get; set; }
     
     public List<ResearchTask> ResearchTasks { get; set; } 

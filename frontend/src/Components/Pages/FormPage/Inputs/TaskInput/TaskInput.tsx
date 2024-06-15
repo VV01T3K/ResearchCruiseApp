@@ -149,7 +149,7 @@ function TaskInput(props: Props) {
                 rules = {{
                     required: requiredMsg,
                     validate: {
-                        notEmptyArray: (value)=> {
+                        notEmptyArray: (value) => {
                             if (value.some((val: { values: object }) => {
                                 return Object
                                     .values(val.values)
@@ -157,7 +157,7 @@ function TaskInput(props: Props) {
                                         if (typeof x === 'string' && x.trim() === '') {
                                             return true;
                                         }
-                                        else if (typeof x === 'object') {
+                                        else if (typeof x === 'object' && x !== null) {
                                             if (Object
                                                 .values(x)
                                                 .some(y => y == '')

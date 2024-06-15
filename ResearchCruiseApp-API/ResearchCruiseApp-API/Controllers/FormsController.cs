@@ -32,7 +32,15 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetFormById([FromRoute] Guid id)
         {
-            var form = await researchCruiseContext.FormsA.FindAsync(id);
+            var form = await researchCruiseContext.FormsA
+                .Include(o => o.Contracts)
+                .Include(o => o.Publications)
+                .Include(o => o.Works)
+                .Include(o => o.GuestTeams)
+                .Include(o => o.ResearchTasks)
+                .Include(o => o.UGTeams)
+                .Include(o => o.SPUBTasks)
+                .FirstOrDefaultAsync(form => form.Id == id);
             if (form == null)
                 return NotFound();
             

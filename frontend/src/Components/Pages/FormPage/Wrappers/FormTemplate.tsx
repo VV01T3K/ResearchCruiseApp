@@ -89,7 +89,6 @@ function FormTemplate(props: Props) {
     useEffect(
         () => {
             if (props.loadValues) {
-                console.log("Yes")
                 Object
                     .entries(props.loadValues)
                     .forEach(([key, value]: [string, FormValue]) => {
@@ -104,8 +103,6 @@ function FormTemplate(props: Props) {
                         )
                     })
             }
-            else
-                console.log("No")
         },
         [props.loadValues]
     );
