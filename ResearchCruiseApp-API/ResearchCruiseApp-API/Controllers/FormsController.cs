@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,10 +29,18 @@ namespace ResearchCruiseApp_API.Controllers
     
     {
         //metoda zwracania formualrza po id
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetFormById([FromRoute] int id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetFormById([FromRoute] Guid id)
         {
-            var form = await researchCruiseContext.FormsA.FindAsync(id);
+            var form = await researchCruiseContext.FormsA
+                .Include(o => o.Contracts)
+                .Include(o => o.Publications)
+                .Include(o => o.Works)
+                .Include(o => o.GuestTeams)
+                .Include(o => o.ResearchTasks)
+                .Include(o => o.UGTeams)
+                .Include(o => o.SPUBTasks)
+                .FirstOrDefaultAsync(form => form.Id == id);
             if (form == null)
                 return NotFound();
             
@@ -60,8 +69,6 @@ namespace ResearchCruiseApp_API.Controllers
                 //var ContractsList = from Contracts in researchCruiseContext.FormsA where Contracts.Id == form.Id select Contracts;
                 formModels.Add(mapper.Map<FormsModel>(form));
             }
-
-
             
             return Ok(formModels);
         }
@@ -80,12 +87,9 @@ namespace ResearchCruiseApp_API.Controllers
             var mapper = MapperConfig.InitializeAutomapper();
             var formA = mapper.Map<FormA>(form);
             
-            
-            
-            
-            
             researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
+            await AddApplicationAsync(formA);
             
             // var form1 = new FormA()
             // {
@@ -97,8 +101,6 @@ namespace ResearchCruiseApp_API.Controllers
 
             return Ok();
         }
-        
-        //metoda zwracania formualrzy listy
 
         
         [HttpGet("GetData")]
@@ -110,12 +112,26 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(model.ToJson());
         }
         
-        public async void AddApplication()
+        public async Task AddApplicationAsync(FormA formA)
         {
-            Application newApplication = new()
+            // Create a new application number
+            var currentYear = DateTime.Now.Year.ToString();
+            var ordinalNumberStartIdx = currentYear.Length + 1;
+            var applications = await researchCruiseContext.Applications.ToListAsync();
+            var maxCurrentYearOrdinalNumber = applications
+                .Where(a => a.Number.StartsWith(currentYear))
+                .MaxBy(a => a.Number[ordinalNumberStartIdx..])?
+                .Number[ordinalNumberStartIdx..] ?? "0";
+            
+            var newApplication = new Application
             {
+                Number = $"{currentYear}/{int.Parse(maxCurrentYearOrdinalNumber) + 1}",
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                FormA = formA,
+                FormB = null,
+                FormC = null,
                 Points = 0,
-                State = Application.ApplicationState.Planned
+                Status = Application.ApplicationStatus.New
             };
 
             await researchCruiseContext.Applications.AddAsync(newApplication);

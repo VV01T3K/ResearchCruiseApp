@@ -20,8 +20,8 @@ export default function CruiseApplications(props: Props) {
     return (
         <div className="p-2">
             <ApplicationsList
-                boundedApplications={applications}
-                setBoundedApplications={setApplications}
+                boundApplications={applications}
+                setBoundApplications={setApplications}
                 deletionMode={true}
             />
             <div className="d-flex w-100 justify-content-center mt-3">
@@ -48,8 +48,8 @@ export default function CruiseApplications(props: Props) {
                 <div className="mt-3">
                     <ApplicationsList
                         addingMode={true}
-                        boundedApplications={applications}
-                        setBoundedApplications={updateApplications}
+                        boundApplications={applications}
+                        setBoundApplications={updateApplications}
                     />
                 </div>
             }

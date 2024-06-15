@@ -103,8 +103,8 @@ const MonthSlider = (props: Props) => {
                         />
                         <label className={` text-center ${props.readonly ? "d-none": ""}`}>
                             Wybrano okres:
-                            od początku {labels[field.value[0]] + " "}
-                            do końca {labels[field.value[1] - 1]}.
+                            od początku {field.value && labels[field.value[0]] + " "}
+                            do końca {field.value && labels[field.value[1] - 1]}.
                         </label>
                     </>
                 )}

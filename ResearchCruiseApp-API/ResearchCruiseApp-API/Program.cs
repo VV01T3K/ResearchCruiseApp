@@ -38,6 +38,8 @@ builder.Services.AddDbContext<UsersContext>(options =>
 builder.Services.AddDbContext<ResearchCruiseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<IdentityOptions>(options =>
 {

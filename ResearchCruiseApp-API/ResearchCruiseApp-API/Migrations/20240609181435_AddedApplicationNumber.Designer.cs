@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    partial class ResearchCruiseContextModelSnapshot : ModelSnapshot
+    [Migration("20240609181435_AddedApplicationNumber")]
+    partial class AddedApplicationNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,17 +31,14 @@ namespace ResearchCruiseApp_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
+                    b.Property<string>("FormA")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("FormAId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("FormB")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormCId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("FormC")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Number")
                         .IsRequired()
@@ -47,16 +47,10 @@ namespace ResearchCruiseApp_API.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("State")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FormAId");
-
-                    b.HasIndex("FormBId");
-
-                    b.HasIndex("FormCId");
 
                     b.ToTable("Applications");
                 });
@@ -113,12 +107,12 @@ namespace ResearchCruiseApp_API.Migrations
                     b.Property<int>("AcceptablePeriodEnd")
                         .HasColumnType("int");
 
-                    b.Property<int>("CruiseGoal")
-                        .HasColumnType("int");
-
                     b.Property<string>("CruiseGoalDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CruiseGoalType")
+                        .HasColumnType("int");
 
                     b.Property<int>("CruiseHours")
                         .HasColumnType("int");
@@ -352,27 +346,6 @@ namespace ResearchCruiseApp_API.Migrations
                     b.HasIndex("FormAId");
 
                     b.ToTable("Work");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Data.Application", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", "FormA")
-                        .WithMany()
-                        .HasForeignKey("FormAId");
-
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", "FormB")
-                        .WithMany()
-                        .HasForeignKey("FormBId");
-
-                    b.HasOne("ResearchCruiseApp_API.Data.FormA", "FormC")
-                        .WithMany()
-                        .HasForeignKey("FormCId");
-
-                    b.Navigation("FormA");
-
-                    b.Navigation("FormB");
-
-                    b.Navigation("FormC");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Contract", b =>

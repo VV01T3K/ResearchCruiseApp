@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate from "../Wrappers/FormTemplate";
+import FormTemplate, {FormValues} from "../Wrappers/FormTemplate";
 import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
 import FormUserSelect from "../Inputs/FormUserSelect";
 import FormSection from "../Wrappers/FormSection";
@@ -74,7 +74,6 @@ function FormA(props: Props){
         shouldUnregister: false
     });
 
-
     const [sections, setSections] = useState({
         "Kierownik":"Kierownik zgłaszanego rejsu",
         "Czas":"Czas trwania zgłaszanego rejsu",
@@ -91,18 +90,19 @@ function FormA(props: Props){
     const [formInitValues, setFormInitValues] = useState([])
     const { dispatchEvent } = useCustomEvent('busy')
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
-        console.log(formInitValues)
-
+        api
+            .get('/forms/GetData')
+            .then(response => setFormInitValues(response.data))
+            .catch(error => console.log(error))
     },[]);
 
-    useEffect(() => {
-        console.log(formInitValues)
-
-    }, );
-
     return (
-        <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='A'>
+        <FormTemplate
+            form={form}
+            loadValues={props.loadValues}
+            readonly={props.readonly}
+            type='A'
+        >
             <PageTitleWithNavigation
                 sections={sections}
                 title={"Formularz A"}
