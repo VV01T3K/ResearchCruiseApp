@@ -18,9 +18,15 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllApplications()
         {
-            var applications = await researchCruiseContext.Applications.ToListAsync();
+            var applications = await researchCruiseContext.Applications
+                .Include(application => application.FormA)
+                .Include(application => application.FormB)
+                .Include(application => application.FormC)
+                .ToListAsync();
+            
             var applicationModels = applications
-                .Select(application => mapper.Map<ApplicationModel>(application));
+                .Select(mapper.Map<ApplicationModel>)
+                .ToList();
 
             return Ok(applicationModels);
         }

@@ -16,6 +16,10 @@ public class ApplicationModel
 
     public string CruiseManagerLastName { get; set; } = null!;
     
+    public string DeputyManagerFirstName { get; set; } = null!;
+
+    public string DeputyManagerLastName { get; set; } = null!;
+    
     public Guid? FormAId { get; set; } = null!;
     
     public Guid? FormBId { get; set; } = null!;
@@ -24,7 +28,7 @@ public class ApplicationModel
     
     public int Points { get; set; }
 
-    public Application.ApplicationState State { get; set; }
+    public string Status { get; set; }
 
     public string? PointsDetails { get; set; }
 }   

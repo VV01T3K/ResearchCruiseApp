@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,10 +6,10 @@ namespace ResearchCruiseApp_API.Data;
 
 public class Application
 {
-    public enum ApplicationState
+    public enum ApplicationStatus
     {
         New,
-        Accepted,
+        Planned,
         Denied,
         Undertaken,
         Reported
@@ -30,5 +31,5 @@ public class Application
     
     public int Points { get; set; }
     
-    public ApplicationState State { get; set; }
+    public ApplicationStatus Status { get; set; }
 }

@@ -123,7 +123,7 @@ namespace ResearchCruiseApp_API.Controllers
                 FormB = null,
                 FormC = null,
                 Points = 0,
-                State = Application.ApplicationState.New
+                Status = Application.ApplicationStatus.New
             };
 
             await researchCruiseContext.Applications.AddAsync(newApplication);
