@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp_API.Data;
+using static ResearchCruiseApp_API.Data.Application;
 
 namespace ResearchCruiseApp_API.Models.MapProfiles;
 
@@ -9,18 +10,6 @@ public class ApplicationProfile : Profile
     public ApplicationProfile()
     {
         CreateMap<Application, ApplicationModel>()
-            .ForMember(
-                dest => dest.Id,
-                options =>
-                    options.MapFrom(src => src.Id))
-            .ForMember(
-                dest => dest.Number,
-                options =>
-                    options.MapFrom(src => src.Number))
-            .ForMember(
-                dest => dest.Date,
-                options =>
-                    options.MapFrom(src => src.Date))
             .ForMember(
                 dest => dest.Year,
                 options =>
@@ -33,7 +22,25 @@ public class ApplicationProfile : Profile
             .ForMember(
                 dest => dest.CruiseManagerLastName,
                 options =>
-                    options.MapFrom<CruiseManagerLastNameResolver>());
+                    options.MapFrom<CruiseManagerLastNameResolver>())
+            .ForMember(
+                dest => dest.DeputyManagerFirstName,
+                options =>
+                    options.MapFrom<DeputyManagerFirstNameResolver>())
+            .ForMember(
+                dest => dest.DeputyManagerLastName,
+                options =>
+                    options.MapFrom<DeputyManagerLastNameResolver>())
+            .ForMember(
+                dest => dest.Status,
+                options =>
+                    options.MapFrom(src => 
+                        src.Status == ApplicationStatus.New ? "Nowe" :
+                            src.Status == ApplicationStatus.Planned ? "Zaplanowane" :
+                                src.Status == ApplicationStatus.Denied ? "Odrzucone" :
+                                    src.Status == ApplicationStatus.Undertaken ? "Zrealizowane" :
+                                        src.Status == ApplicationStatus.Reported ? "Rozliczone" : ""
+                    ));
     }
 
 
@@ -64,6 +71,36 @@ public class ApplicationProfile : Profile
 
             var cruiseManager = userManager.FindByIdAsync(src.FormA.CruiseManagerId.ToString()).Result;
             return cruiseManager == null ? "" : cruiseManager.LastName;
+        }
+    }
+    
+    private class DeputyManagerFirstNameResolver(
+        ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
+        : IValueResolver<Application, ApplicationModel, string>
+    {
+        public string Resolve(
+            Application src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
+        {
+            if (src.FormA == null)
+                return "";
+
+            var deputyManager = userManager.FindByIdAsync(src.FormA.DeputyManagerId.ToString()).Result;
+            return deputyManager == null ? "" : deputyManager.FirstName;
+        }
+    }
+    
+    private class DeputyManagerLastNameResolver(
+        ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
+        : IValueResolver<Application, ApplicationModel, string>
+    {
+        public string Resolve(
+            Application src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
+        {
+            if (src.FormA == null)
+                return "";
+
+            var deputyManager = userManager.FindByIdAsync(src.FormA.DeputyManagerId.ToString()).Result;
+            return deputyManager == null ? "" : deputyManager.LastName;
         }
     }
 }
