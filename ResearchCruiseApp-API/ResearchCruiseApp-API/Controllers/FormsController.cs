@@ -29,8 +29,8 @@ namespace ResearchCruiseApp_API.Controllers
     
     {
         //metoda zwracania formualrza po id
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetFormById([FromRoute] int id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetFormById([FromRoute] Guid id)
         {
             var form = await researchCruiseContext.FormsA.FindAsync(id);
             if (form == null)

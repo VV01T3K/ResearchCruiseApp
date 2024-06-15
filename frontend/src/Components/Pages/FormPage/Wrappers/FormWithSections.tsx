@@ -5,7 +5,7 @@ type Props = {
     form: any,
     children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>[],
     sections: any,
-    readonly?:boolean
+    readonly?: boolean
 }
 
 

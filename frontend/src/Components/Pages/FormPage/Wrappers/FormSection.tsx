@@ -61,13 +61,13 @@ function FormSection(props: Props) {
                  className={"accordion-title d-flex flex-row pt-2 pb-2 ps-3 pe-3 bg-light sticky-top z-2 border-bottom "}
                  style={{cursor:"pointer"}}
             >
-                <div className={"d-flex flex-column col-10"} style={{fontSize: "1rem"}}>
-                    {props.id + '. ' + props.title} {isActive ? "▲" : "▼"}
+                <div
+                    className={"d-flex flex-column col-10"}
+                    style={{fontSize: "1rem"}}>
+                    {props.id + '. ' + props.title}
+                    {isActive ? "▲" : "▼"}
                 </div>
-                <div className={
-                        `d-flex flex-column col-2 text-end ${isCompleted ? "text-success" : "text-danger"}
-                      `
-                    }
+                <div className={`d-flex flex-column col-2 text-end ${isCompleted ? "text-success" : "text-danger"}`}
                     style={{fontSize: "1rem"}}
                 >
                     {isCompleted ? "+" : "!"}
@@ -75,7 +75,7 @@ function FormSection(props: Props) {
             </div>
             <div className={`d-flex flex-row flex-wrap justify-content-center align-items-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}>
                 {React.Children.map(props.children, (child, index) => {
-                    return React.cloneElement(child as React.ReactElement, {form: props.form, readonly:props.readonly});
+                    return React.cloneElement(child as React.ReactElement, { form: props.form, readonly: props.readonly });
                 })}
             </div>
         </div>

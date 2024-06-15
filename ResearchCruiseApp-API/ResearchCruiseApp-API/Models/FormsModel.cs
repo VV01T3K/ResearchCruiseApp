@@ -185,7 +185,7 @@ public class FormsModel
     
     
     //Cel rejsu (opis max. 100 słów):
-    public int? CruiseGoalType { get; set; }
+    public int? CruiseGoal { get; set; }
     
     [MaxLength(200)]
     public string? CruiseGoalDescription { get; set; }

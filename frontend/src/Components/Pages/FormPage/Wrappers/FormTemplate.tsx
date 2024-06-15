@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Page from "../../Page";
 import {useNavigate} from "react-router-dom";
 import useCustomEvent from "../../../Tools/useCustomEvent";
@@ -86,23 +86,28 @@ function FormTemplate(props: Props) {
         return `Formularz_${props.type}_${day}.${month}.${year}`;
     }
 
-    React.useEffect(
+    useEffect(
         () => {
             if (props.loadValues) {
-                Object.entries(props.loadValues).forEach(([key, value]: [string, FormValue]) => {
-                    props.form.setValue(
-                        key,
-                        value,
-                        {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                            shouldTouch: true
-                        }
-                    );
-                });
+                console.log("Yes")
+                Object
+                    .entries(props.loadValues)
+                    .forEach(([key, value]: [string, FormValue]) => {
+                        props.form.setValue(
+                            key,
+                            value,
+                            {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                                shouldTouch: true
+                            }
+                        )
+                    })
             }
+            else
+                console.log("No")
         },
-        [props.form.setValue]
+        [props.loadValues]
     );
 
 
