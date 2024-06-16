@@ -1,7 +1,10 @@
-﻿using ResearchCruiseApp_API.Data;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using ResearchCruiseApp_API.Data;
 
-namespace ResearchCruiseApp_API.Models.Users;
+namespace ResearchCruiseApp_API.Models;
 
+[JsonObject(NamingStrategyType = typeof (CamelCaseNamingStrategy))]
 public class FormUserModel
 {
     public string Id { get; set; } = null!; 

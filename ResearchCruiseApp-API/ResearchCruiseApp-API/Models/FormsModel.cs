@@ -1,9 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ResearchCruiseApp_API.Data;
 
 namespace ResearchCruiseApp_API.Models;
-
-
 
 public struct DateRange
 {
