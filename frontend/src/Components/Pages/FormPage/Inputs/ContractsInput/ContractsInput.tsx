@@ -57,6 +57,8 @@ export default function ContractsInput(props: Props){
                     required: false,
                     validate: {
                         noEmptyInputs: (value: Contract[]) => {
+                            if (props.readonly)
+                                return undefined
                             if (value.some((row: Contract) => {
                                 return Object
                                     .values(row)
@@ -231,7 +233,7 @@ export default function ContractsInput(props: Props){
                                              style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
-                                            {props.readonly && <FileDownloader fileName={field.value[index].scan.name} fileContent={field.value[index].scan.content}/>}
+                                            {props.readonly && <FileDownloader fileName={field.value[index].scan?.name} fileContent={field.value[index].scan?.content}/>}
                                             {!props.readonly &&
                                             <FilePicker
                                                 field={field}
