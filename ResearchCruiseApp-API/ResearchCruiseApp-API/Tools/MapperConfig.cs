@@ -78,7 +78,18 @@ namespace ResearchCruiseApp_API.Tools
                     .ForMember(dest => dest.OptimalPeriodEnd, act => act.MapFrom(src => src.OptimalPeriod!.Max()))
                     ;
 
-                cfg.CreateMap<FormA, FormsModel>();
+                cfg.CreateMap<FormA, FormsModel>()
+                    .ForMember(
+                        dest => dest.AcceptablePeriod,
+                        options =>
+                            options.MapFrom(src =>
+                                new HashSet<int> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }
+                            ))
+                    .ForMember(
+                        dest => dest.OptimalPeriod,
+                        options =>
+                            options.MapFrom(src =>
+                                new HashSet<int> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }));
             });
             
             //Create an Instance of Mapper and return that Instance

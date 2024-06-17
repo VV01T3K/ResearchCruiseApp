@@ -10,5 +10,6 @@ public class ResearchCruiseContext(DbContextOptions<ResearchCruiseContext> optio
     public DbSet<Application> Applications { get; set; } = null!;
     // public DbSet<Contract> Contracts { get; init; } = null!;
     // public DbSet<TaskToDo> TasksToDo { get; init; } = null!;
-    // public DbSet<SPUBTask> SPUBTasks { get; init; } = null!;
+    public DbSet<SPUBTask> SPUBTasks { get; init; } = null!;
+    public DbSet<GuestTeam> GuestTeams { get; set; } = null!;
 }

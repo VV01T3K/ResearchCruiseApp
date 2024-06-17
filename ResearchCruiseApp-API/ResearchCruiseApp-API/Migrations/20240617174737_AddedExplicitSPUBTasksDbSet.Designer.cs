@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    partial class ResearchCruiseContextModelSnapshot : ModelSnapshot
+    [Migration("20240617174737_AddedExplicitSPUBTasksDbSet")]
+    partial class AddedExplicitSPUBTasksDbSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,7 +182,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("GuestTeams");
+                    b.ToTable("GuestTeam");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Publication", b =>
