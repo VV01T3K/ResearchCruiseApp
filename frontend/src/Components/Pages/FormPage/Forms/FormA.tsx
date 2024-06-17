@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate, {FormValues} from "../Wrappers/FormTemplate";
 import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
-import FormUserSelect from "../Inputs/FormUserSelect";
+import FormUserSelect, {FormUser} from "../Inputs/FormUserSelect";
 import FormSection from "../Wrappers/FormSection";
 import MonthSlider from "../Inputs/MonthSlider";
 import NumberInput from "../Inputs/NumberInput";
@@ -24,6 +24,21 @@ import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
 
 
+export type ResearchArea = {
+    name: string,
+    x: number[],
+    y: number[]
+}
+
+type FormAInitValues = {
+    cruiseManagers: FormUser[],
+    deputyManagers: FormUser[],
+    years: number[],
+    shipUsages: string[],
+    researchAreas: ResearchArea[],
+    cruiseGoals: string[],
+    historicalTasks: Task[]
+}
 
 export type FormAValues = {
     cruiseManagerId: string
@@ -87,14 +102,23 @@ function FormA(props: Props){
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
-    const [formInitValues, setFormInitValues] = useState([])
-    const { dispatchEvent } = useCustomEvent('busy')
+    const [formInitValues, setFormInitValues]
+        = useState<FormAInitValues>()
     useEffect(() => {
         api
-            .get('/forms/GetData')
-            .then(response => setFormInitValues(response.data))
+            .get('/Forms/A/InitData')
+            .then(response => {
+                    setFormInitValues(response.data)
+                    console.log(response.data as FormAInitValues)
+            })
             .catch(error => console.log(error))
     },[]);
+
+    useEffect(() => {
+        console.log(formInitValues)
+    }, [formInitValues])
+
+    const { dispatchEvent } = useCustomEvent('busy')
 
     return (
         <FormTemplate
@@ -110,22 +134,23 @@ function FormA(props: Props){
             />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Kierownik}>
-                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                         name="cruiseManagerId"
-                                         label="Kierownik rejsu"
-                                         values={formInitValues["CruiseManagers"]
-                    }
-                                    defaultValue={formInitValues["CruiseManagers"]}
+                    <FormUserSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="cruiseManagerId"
+                        label="Kierownik rejsu"
+                        values={formInitValues?.cruiseManagers}
                     />
-                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                name="deputyManagerId"
-                                label="Zastępca"
-                                values={formInitValues["DeputyManagers"]}
+                    <FormUserSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="deputyManagerId"
+                        label="Zastępca"
+                        values={formInitValues?.deputyManagers}
                     />
-                    <FormYearSelect className="col-12 col-md-6 col-xl-4"
-                                name="year"
-                                label="Rok rejsu"
-                                values={formInitValues["Years"]}
+                    <FormYearSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="year"
+                        label="Rok rejsu"
+                        values={formInitValues?.years}
                     />
                 </FormSection>
 
@@ -165,10 +190,12 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={formInitValues["ShipUsages"]}
+                               values={formInitValues?.shipUsages}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == formInitValues["ShipUsages"]?.length-1 ) {
+                        if (formInitValues?.shipUsages?.length &&
+                            form.watch("shipUsage") == formInitValues?.shipUsages?.length - 1
+                        ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -211,9 +238,11 @@ function FormA(props: Props){
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
-                                  image={formInitValues["ResearchAreasMap"]}
-                                  regions={formInitValues["ResearchAreas"]} />
+                    <ClickableMap
+                        label="Obszar prowadzonych badań" name="researchArea"
+                        // image={formInitValues?.researchAreasMap}
+                        regions={formInitValues?.researchAreas}
+                    />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -226,7 +255,7 @@ function FormA(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={formInitValues["CruiseGoals"]}
+                               values={formInitValues?.cruiseGoals}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"

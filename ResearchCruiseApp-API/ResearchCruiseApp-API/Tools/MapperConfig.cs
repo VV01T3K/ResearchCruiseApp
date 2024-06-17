@@ -2,8 +2,11 @@ using AutoMapper;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using Contract = ResearchCruiseApp_API.Data.Contract;
+using GuestTeam = ResearchCruiseApp_API.Models.GuestTeam;
 using Publication = ResearchCruiseApp_API.Models.Publication;
 using ResearchTask = ResearchCruiseApp_API.Models.ResearchTask;
+using SPUBTask = ResearchCruiseApp_API.Models.SPUBTask;
+using UGTeam = ResearchCruiseApp_API.Models.UGTeam;
 using Work = ResearchCruiseApp_API.Models.Work;
 
 namespace ResearchCruiseApp_API.Tools
@@ -15,15 +18,15 @@ namespace ResearchCruiseApp_API.Tools
             //Provide all the Mapping Configuration
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Models.SPUBTask, Data.SPUBTask>()
+                cfg.CreateMap<SPUBTask, Data.SPUBTask>()
                     .ReverseMap()
                     ;
                 
-                cfg.CreateMap<Models.GuestTeam, Data.GuestTeam>()
+                cfg.CreateMap<GuestTeam, Data.GuestTeam>()
                     .ReverseMap()
                     ;
                 
-                cfg.CreateMap<Models.UGTeam, Data.UGTeam>()
+                cfg.CreateMap<UGTeam, Data.UGTeam>()
                     .ReverseMap()
                     ;
 

@@ -4,7 +4,7 @@ import {
     FieldError,
     FieldErrorsImpl,
     FieldValues,
-    Merge,
+    Merge, UseFormReturn,
 } from "react-hook-form";
 import React, {useRef, useState} from "react";
 import ErrorCode from "../../LoginPage/ErrorCode";
@@ -12,6 +12,7 @@ import Map from '../../../../resources/GraniceSamorzadow.jpg'
 import InputWrapper from "./InputWrapper";
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import Select from "react-select";
+import {ResearchArea} from "../Forms/FormA";
 
 
 type Props = {
@@ -19,9 +20,9 @@ type Props = {
     label: string,
     name: string,
     required?: boolean,
-    regions?: [{Name:string, X:number[], Y:number[]}]
-    form?,
-    readonly?:boolean
+    regions?: ResearchArea[],
+    form?: UseFormReturn,
+    readonly?: boolean
 }
 
 
@@ -72,23 +73,34 @@ function ClickableMap(props: Props) {
                 defaultValue={""}
                 render={({ field}) =>
                     <div className="d-flex flex-column">
-                        <Select minMenuHeight={300}
+                        <Select
+                            minMenuHeight={300}
                             // className={"text-white"}
                             isDisabled={props.readonly ?? false}
-                                menuPlacement="auto"
-                                placeholder={"Wybierz opcję lub wyszukaj"}
-                                styles={{
-                                    menu: provided => ({...provided, zIndex: 9999})
-                                }}
-                                placeHolder={"Wybierz"}
-                            // styles={{}}
-                            value={{label:((props.regions && field.value !== "") ? props.regions[field.value].Name : ""), value:field.value}}
-                                options={props.regions?.map((value, index) => ({label: value.Name, value:index}))}
+                            menuPlacement="auto"
+                            styles={{
+                                menu: provided => ({
+                                    ...provided,
+                                    zIndex: 9999
+                                })
+                            }}
+                            placeholder={"Wybierz"}
+                            value={{
+                                label: ((props.regions && field.value !== "") ? props.regions[field.value].name : ""),
+                                value: field.value
+                            }}
+                            options={props.regions?.map((value, index) => ({
+                                label: value.name,
+                                value: index
+                            }))}
                             // closeMenuOnScroll={() => true}
-                                onChange={(selectedOption) => {
-                                    props.form.setValue(props.name, selectedOption.value, { shouldDirty: true, shouldTouch:true });
-
-                                }}
+                            onChange={(selectedOption) => {
+                                props.form?.setValue(
+                                    props.name,
+                                    selectedOption?.value,
+                                    { shouldDirty: true, shouldTouch:true }
+                                );
+                            }}
                         />
                         <img ref={imageRef}
                              className="shadow m-2 bg-white rounded w-100"
@@ -101,7 +113,7 @@ function ClickableMap(props: Props) {
                     </div>
                 }
                 name={props.name}
-                control={props.form.control}
+                control={props.form?.control}
                 rules={{
                     required: "Wybierz obszar"
                 }}
