@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ResearchCruiseApp_API.Models;
 
@@ -36,19 +37,33 @@ public class ResearchTask
     public int Type { get; set; }
     public class Value
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Title { get; set; }
+        
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Author { get; set; }
+        
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Institution { get; set; }
+        
         //TODO zmienić w frontendzie na DATETIME
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Date { get; set; }
+        
         public class Time_type
         {
             public string? StartDate { get; set; } = null!;
             public string? EndDate { get; set; } = null!;
         }
+        
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Time_type? Time { get; set; }
+        
         //TODO zmienić w frontendzie na int
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? FinancingAmount { get; set; }
+        
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Description { get; set; }
     }
     public Value Values { get; set; } 
