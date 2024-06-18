@@ -114,7 +114,7 @@ function UgTeamsInput(props: Props) {
                                             type="text"
                                             {...field}
                                             disabled={props.readonly ?? false}
-                                            className="text-center placeholder-glow w-100 p-1 form-control"
+                                            className="text-center placeholder-glow w-100 p-1 form-control bg-light"
                                             style={{fontSize: "inherit"}}
                                             value={item.noOfEmployees}
                                             onChange={(e) => {
@@ -145,7 +145,7 @@ function UgTeamsInput(props: Props) {
                                             type="text"
                                             {...field}
                                             disabled={props.readonly ?? false}
-                                            className="text-center placeholder-glow w-100 p-1 form-control"
+                                            className="text-center placeholder-glow w-100 p-1 form-control bg-light"
                                             style={{fontSize: "inherit"}}
                                             value={item.noOfStudents}
                                             onChange={(e) => {

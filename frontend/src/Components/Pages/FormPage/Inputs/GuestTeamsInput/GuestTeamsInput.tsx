@@ -100,7 +100,7 @@ function GuestTeamsInput(props: Props){
                                                         {...field}
                                                         disabled={props.readonly ?? false}
                                                         value={row.institution}
-                                                        className="col-12 p-1 form-control"
+                                                        className="col-12 p-1 form-control bg-white"
                                                         style={{fontSize: "inherit"}}
                                                         onChange={(e) => {
                                                             if (e.target.value.length < 100) {
@@ -128,7 +128,7 @@ function GuestTeamsInput(props: Props){
                                                         type="text"
                                                         {...field}
                                                         disabled={props.readonly ?? false}
-                                                        className="text-center placeholder-glow w-100 p-1 form-control"
+                                                        className="text-center placeholder-glow w-100 p-1 form-control bg-white"
                                                         style={{fontSize: "inherit"}}
                                                         value={row.count}
                                                         onChange={(e) => {

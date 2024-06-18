@@ -142,7 +142,7 @@ export default function ContractsInput(props: Props){
                                             <input {...field}
                                                    disabled={props.readonly ?? false}
                                                    type="text"
-                                                   className="col-12 p-1 form-control"
+                                                   className="col-12 p-1 form-control bg-white"
                                                    style={{fontSize: "inherit"}}
                                                    value={row.institution.name}
                                                    onChange = {(e)=> {
@@ -164,7 +164,7 @@ export default function ContractsInput(props: Props){
                                             <input {...field}
                                                    disabled={props.readonly ?? false}
                                                    type="text"
-                                                   className="col-12 p-1 form-control"
+                                                   className="col-12 p-1 form-control bg-white"
                                                    style={{fontSize: "inherit"}}
                                                    value={row.institution.unit}
                                                    onChange = {(e)=> {
@@ -186,7 +186,7 @@ export default function ContractsInput(props: Props){
                                             <input {...field}
                                                    disabled={props.readonly ?? false}
                                                    type="text"
-                                                   className="col-12 p-1 form-control"
+                                                   className="col-12 p-1 form-control bg-white"
                                                    style={{fontSize: "inherit"}}
                                                    value={row.institution.localization}
                                                    onChange = {(e)=> {
@@ -211,7 +211,7 @@ export default function ContractsInput(props: Props){
                                             <textarea
                                                 {...field}
                                                 disabled={props.readonly ?? false}
-                                                className="col-12 p-1 form-control"
+                                                className="col-12 p-1 form-control bg-white"
                                                 style={{fontSize: "inherit"}}
                                                 value={row.description}
                                                 onChange = {(e)=> {
@@ -233,7 +233,13 @@ export default function ContractsInput(props: Props){
                                              style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
-                                            {props.readonly && <FileDownloader fileName={field.value[index].scan?.name} fileContent={field.value[index].scan?.content}/>}
+                                            {props.readonly &&
+                                                <FileDownloader
+                                                    fileName={field.value[index].scan?.name}
+                                                    fileContent={field.value[index].scan?.content}
+                                                    bg="bg-light"
+                                                />
+                                            }
                                             {!props.readonly &&
                                             <FilePicker
                                                 field={field}

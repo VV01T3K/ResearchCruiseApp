@@ -32,18 +32,6 @@ type Props = {
 
 
 function FormUserSelect(props: Props) {
-    const [defaultValue, setDefaultValue] = useState("")
-
-    // useEffect(() => {
-    //     if(!props.form!.getValues(props.name) && props.defaultValue) {
-    //         props.form!.setValue(
-    //             props.name,
-    //             props.defaultValue[0].Id,
-    //             { shouldDirty: true, shouldValidate: true, shouldTouch: true}
-    //         );
-    //     }
-    // });
-
     function findLabel(field: ControllerRenderProps){
         const item = props.values?.find(item => item.id === field.value)
         if(item)
@@ -81,6 +69,7 @@ function FormUserSelect(props: Props) {
                                 wordWrap: "break-word"
                             }),
                             singleValue: provided => ({
+                                ...provided,
                                 whiteSpace: 'pre-wrap',  // Ensure selected value text wraps
                                 display: 'flex',
                                 alignItems: 'center',

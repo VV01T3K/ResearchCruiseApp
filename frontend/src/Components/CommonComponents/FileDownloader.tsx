@@ -33,6 +33,7 @@ export default function FileDownloader(props: Props) {
             </a>
             <ReadOnlyTextInput
                 value={props.fileName}
+                className="bg-light"
             />
         </div>
         </>

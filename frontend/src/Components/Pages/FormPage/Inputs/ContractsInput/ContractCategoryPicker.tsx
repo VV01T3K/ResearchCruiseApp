@@ -36,6 +36,18 @@ export default function ContractCategoryPicker(props: Props) {
                     ...provided,
                     zIndex: 9999,
                     fontSize: "0.8em"
+                }),
+                singleValue:  (provided) => ({
+                    ...provided,
+                    "background-color": "white"
+                }),
+                valueContainer: (provided) => ({
+                    ...provided,
+                    "background-color": "white"
+                }),
+                dropdownIndicator:  (provided) => ({
+                    ...provided,
+                    "background-color": "white"
                 })
             }}
             options = {[

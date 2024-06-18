@@ -1,19 +1,17 @@
 import React, {useEffect, useState} from "react";
 import useCustomEvent from "../../../Tools/useCustomEvent";
+import {UseFormReturn} from "react-hook-form";
 
 
 type Props = {
-    form?: {
-        formState: { dirtyFields: any; touchedFields: any; errors: any; }
-        watch: () => unknown;
-    },
+    form?: UseFormReturn,
     id?: string | undefined,
     children?:
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
         React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
     title: string,
     sections?: { [x: string]: string; },
-    readonly?:boolean
+    readonly?: boolean
 }
 
 
@@ -70,7 +68,7 @@ function FormSection(props: Props) {
                 <div className={`d-flex flex-column col-2 text-end ${isCompleted ? "text-success" : "text-danger"}`}
                     style={{fontSize: "1rem"}}
                 >
-                    {isCompleted ? "+" : "!"}
+                    {!props.readonly && (isCompleted ? "+" : "!")}
                 </div>
             </div>
             <div className={`d-flex flex-row flex-wrap justify-content-center align-items-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}>
