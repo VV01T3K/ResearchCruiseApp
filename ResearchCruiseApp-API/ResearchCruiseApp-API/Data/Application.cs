@@ -1,10 +1,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp_API.Data.Interfaces;
 
 namespace ResearchCruiseApp_API.Data;
 
-public class Application
+public class Application : IYearBasedNumberedEntity
 {
     public enum ApplicationStatus
     {
@@ -18,7 +19,7 @@ public class Application
     
     [DatabaseGenerated((DatabaseGeneratedOption.Identity))]
     public Guid Id { get; set; }
-
+    
     public string Number { get; set; } = null!;
 
     public DateOnly Date { get; set; }

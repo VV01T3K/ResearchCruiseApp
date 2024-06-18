@@ -41,6 +41,9 @@ public class ApplicationProfile : Profile
                                     src.Status == ApplicationStatus.Undertaken ? "Zrealizowane" :
                                         src.Status == ApplicationStatus.Reported ? "Rozliczone" : ""
                     ));
+        
+        // CreateMap<Application, Cruise>()
+        //     .ForMember()
     }
 
 

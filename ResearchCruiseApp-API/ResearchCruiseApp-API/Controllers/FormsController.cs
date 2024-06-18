@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NuGet.Protocol;
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Tools;
@@ -26,15 +27,10 @@ namespace ResearchCruiseApp_API.Controllers
     [Route("[controller]")]
     [ApiController]
     public class FormsController(
-        ResearchCruiseContext researchCruiseContext, UsersContext usersContext) 
-        : ControllerBase
-    //1 argument contextowy - jest to zbiór tabel bazodanowych
-    
-    //stworzyć model (obiekt transferu danych) dla formularza A
-    //w katalogu Models stworzyć schemat json DTO
-    
+        ResearchCruiseContext researchCruiseContext,
+        UsersContext usersContext,
+        IYearBasedKeyGenerator yearBasedKeyGenerator) : ControllerBase
     {
-        //metoda zwracania formualrza po id
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetFormById([FromRoute] Guid id)
         {
@@ -79,7 +75,6 @@ namespace ResearchCruiseApp_API.Controllers
             return Ok(formModels);
         }
         
-        //metody do przyjmowania formularzy (POST) 
         [HttpPost("A")]
         public async Task<IActionResult> AddFormA([FromBody] FormsModel form)
         {
@@ -118,18 +113,9 @@ namespace ResearchCruiseApp_API.Controllers
         
         public async Task AddApplicationAsync(FormA formA)
         {
-            // Create a new application number
-            var currentYear = DateTime.Now.Year.ToString();
-            var ordinalNumberStartIdx = currentYear.Length + 1;
-            var applications = await researchCruiseContext.Applications.ToListAsync();
-            var maxCurrentYearOrdinalNumber = applications
-                .Where(a => a.Number.StartsWith(currentYear))
-                .MaxBy(a => a.Number[ordinalNumberStartIdx..])?
-                .Number[ordinalNumberStartIdx..] ?? "0";
-            
             var newApplication = new Application
             {
-                Number = $"{currentYear}/{int.Parse(maxCurrentYearOrdinalNumber) + 1}",
+                Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Applications),
                 Date = DateOnly.FromDateTime(DateTime.Now),
                 FormA = formA,
                 FormB = null,

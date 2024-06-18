@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../LoginPage/ErrorCode";
-import Select from "react-select";
+import Select, {SingleValue} from "react-select";
 
 
 type Props = {
