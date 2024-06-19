@@ -23,31 +23,46 @@ namespace ResearchCruiseApp_API.Controllers
                 .Include(application => application.FormA)
                 .ToListAsync();
             var cruises = researchCruiseContext.Cruises;
-
+        
             foreach (var application in applications)
             {
                 if (application.FormA == null)
                     continue;
-                
+        
                 var cruiseDates = GetAutoCalculatedCruiseDate(application.FormA);
                 var newCruise = new Cruise
                 {
-                    Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Cruises),
                     MainCruiseManagerId = application.FormA.CruiseManagerId,
                     MainDeputyManagerId = application.FormA.DeputyManagerId,
                     StartDate = cruiseDates.Item1,
                     EndDate = cruiseDates.Item2,
-                    Applications = [application]
+                    //Applications = [application]
                 };
-
-                cruises.Add(newCruise);
+                
+                // Using transaction to prevent multiple users from generating a cruise with the same number
+                await using var transaction =
+                    await researchCruiseContext.Database.BeginTransactionAsync(
+                        System.Data.IsolationLevel.Serializable);
+                try
+                {
+                    newCruise.Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Cruises);
+                    cruises.Add(newCruise);
+        
+                    await researchCruiseContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
             }
-
-            await researchCruiseContext.SaveChangesAsync();
+        
+        
             return NoContent();
         }
-
-
+        
+        
         private Tuple<DateTime, DateTime> GetAutoCalculatedCruiseDate(FormA formA)
         {
             // Optimal period beg/end is a number from range 0...24 representing a point in a year
@@ -59,7 +74,7 @@ namespace ResearchCruiseApp_API.Controllers
             
             var startDate = new DateTime(formA.Year, startMonth, startDay, 8, 0, 0);
             var endDate = startDate.AddHours(formA.CruiseHours);
-
+        
             return new Tuple<DateTime, DateTime>(startDate, endDate);
         }
     }

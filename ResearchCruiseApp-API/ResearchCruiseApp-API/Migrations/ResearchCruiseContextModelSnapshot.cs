@@ -63,7 +63,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormCId");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Contract", b =>
@@ -103,7 +103,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("Contract");
+                    b.ToTable("Contract", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Cruise", b =>
@@ -130,7 +130,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cruises");
+                    b.ToTable("Cruises", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
@@ -188,7 +188,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FormsA");
+                    b.ToTable("FormsA", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.GuestTeam", b =>
@@ -211,7 +211,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("GuestTeams");
+                    b.ToTable("GuestTeams", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Publication", b =>
@@ -252,7 +252,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("Publication");
+                    b.ToTable("Publication", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.ResearchTask", b =>
@@ -295,7 +295,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("ResearchTask");
+                    b.ToTable("ResearchTask", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.SPUBTask", b =>
@@ -323,7 +323,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("SPUBTasks");
+                    b.ToTable("SPUBTasks", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.UGTeam", b =>
@@ -348,7 +348,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("UGTeam");
+                    b.ToTable("UGTeam", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Work", b =>
@@ -383,7 +383,7 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.ToTable("Work");
+                    b.ToTable("Work", (string)null);
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Application", b =>
