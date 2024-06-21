@@ -6,10 +6,11 @@ import React, {useEffect, useState} from "react";
 import {Cruise} from "./CruisesPage";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import CruiseApplicationsList from "./CruiseApplicationsList";
+import DatePicker from "react-datepicker";
 
 
 type Props = {
-    cruises: Cruise[]
+    cruises?: Cruise[]
 }
 
 
@@ -40,7 +41,7 @@ export default function CruisesList(props: Props) {
                         {/*    <FontAwesomeIcon icon={faArrowDown} />*/}
                         {/*</div>*/}
                     </div>
-                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "15%", cursor: "pointer"}}
+                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "16%", cursor: "pointer"}}
                          onClick={() => {}}
                     >
                         <b>Czas rozpoczęcia</b>
@@ -48,7 +49,7 @@ export default function CruisesList(props: Props) {
                         {/*    <FontAwesomeIcon icon={faArrowDown} />*/}
                         {/*</div>*/}
                     </div>
-                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "15%", cursor: "pointer"}}
+                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "16%", cursor: "pointer"}}
                          onClick={() => {}}
                     >
                         <b>Czas zakończenia</b>
@@ -56,7 +57,10 @@ export default function CruisesList(props: Props) {
                         {/*    <FontAwesomeIcon icon={faArrowDown} />*/}
                         {/*</div>*/}
                     </div>
-                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "44%"}}>
+                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "23%"}}>
+                        <b>Kierownik główny</b>
+                    </div>
+                    <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "19%"}}>
                         <b>Zgłoszenia</b>
                     </div>
                     <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "16%"}}>
@@ -69,12 +73,12 @@ export default function CruisesList(props: Props) {
                 </div>
             </div>
             <div className="w-100 bg-light">
-                {!props.cruises.length &&
+                {!props.cruises || !props.cruises.length &&
                     <div className="d-flex flex-row bg-light p-2 justify-content-center border">
                         <div className={"text-center"}>Brak rejsów</div>
                     </div>
                 }
-                {props.cruises.map((row: Cruise, index: number) => (
+                {props.cruises?.map((row: Cruise, index: number) => (
                     <div key={index}
                          className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                     >
@@ -85,19 +89,41 @@ export default function CruisesList(props: Props) {
                             <ReadOnlyTextInput value={row.number} />
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                             style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                             style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Czas rozpoczęcia:</div>
-                            <ReadOnlyTextInput value={row.startDate} />
+                            <DatePicker
+                                className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
+                                readOnly={true}
+                                locale={"pl"}
+                                selected={row.startDate ? new Date(row.startDate) : null}
+                                dateFormat="dd/MM/yyyy HH:mm"
+                                onChange={() => {}}
+                            />
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                             style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                             style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Czas zakończenia:</div>
-                            <ReadOnlyTextInput value={row.endDate} className="mb-1"/>
+                            <DatePicker
+                                className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
+                                closeOnScroll={true}
+                                readOnly={true}
+                                locale={"pl"}
+                                selected={row.endDate ? new Date(row.endDate) : null}
+                                dateFormat="dd/MM/yyyy HH:mm"
+                                onChange={() => {}}
+                            />
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-center align-content-center p-2"
+                             style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
+                        >
+                            <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik główny:</div>
+                            <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
+                            <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                             style={{width: windowWidth >= 1200 ? "44%" : "100%"}}
+                             style={{width: windowWidth >= 1200 ? "19%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
                             <CruiseApplicationsList applicationsShortInfo={row.applicationsShortInfo} />

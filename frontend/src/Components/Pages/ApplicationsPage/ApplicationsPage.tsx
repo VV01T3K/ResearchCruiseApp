@@ -15,8 +15,7 @@ import ApplicationsList from "./ApplicationsList";
 export type ApplicationShortInfo = {
     id: string,
     number: string,
-    cruiseManagerFirstName: string,
-    cruiseManagerLastName: string
+    points: number
 }
 
 export type Application = {

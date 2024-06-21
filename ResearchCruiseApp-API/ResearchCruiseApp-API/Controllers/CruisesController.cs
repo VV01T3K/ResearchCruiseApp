@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Data.Interfaces;
+using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Tools;
 
 namespace ResearchCruiseApp_API.Controllers
@@ -14,8 +15,23 @@ namespace ResearchCruiseApp_API.Controllers
     [ApiController]
     public class CruisesController(
         ResearchCruiseContext researchCruiseContext,
-        IYearBasedKeyGenerator yearBasedKeyGenerator) : ControllerBase
+        IYearBasedKeyGenerator yearBasedKeyGenerator,
+        IMapper mapper) : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAllCruises()
+        {
+            var cruises = await researchCruiseContext.Cruises
+                .Include(cruise => cruise.Applications)
+                .ToListAsync();
+
+            var cruisesModels = cruises
+                .Select(mapper.Map<CruiseModel>)
+                .ToList();
+
+            return Ok(cruisesModels);
+        }
+        
         [HttpPut("autoAdded")]
         public async Task<IActionResult> AutoAddCruises()
         {
@@ -36,7 +52,7 @@ namespace ResearchCruiseApp_API.Controllers
                     MainDeputyManagerId = application.FormA.DeputyManagerId,
                     StartDate = cruiseDates.Item1,
                     EndDate = cruiseDates.Item2,
-                    //Applications = [application]
+                    Applications = [application]
                 };
                 
                 // Using transaction to prevent multiple users from generating a cruise with the same number

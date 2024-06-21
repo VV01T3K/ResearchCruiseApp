@@ -4,7 +4,7 @@ import moment from "moment/moment";
 import {Cruise} from "./CruisesPage";
 
 type Props = {
-    cruises: Cruise[]
+    cruises?: Cruise[]
 }
 
 

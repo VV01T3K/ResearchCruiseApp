@@ -1,4 +1,4 @@
-import React, {Dispatch, useState} from 'react';
+import React, {Dispatch, useEffect, useState} from 'react';
 import Page from "../Page";
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import PageTitle from "../CommonComponents/PageTitle";
@@ -15,6 +15,8 @@ export type Cruise = {
     number: string,
     startDate: string,
     endDate: string,
+    mainCruiseManagerFirstName: string,
+    mainCruiseManagerLastName: string,
     applicationsShortInfo: ApplicationShortInfo[]
 }
 
@@ -41,18 +43,18 @@ export default function CruisesPage(props: Props) {
                 number: `2024/${i}`,
                 startDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
                 endDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
+                mainCruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
+                mainCruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
                 applicationsShortInfo: [
                     {
                         id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
                         number: `2024/${Math.floor(Math.random() * i)}`,
-                        cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-                        cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
+                        points: Math.floor(Math.random() * 300)
                     },
                     {
                         id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
                         number: `2024/${Math.floor(Math.random() * 2 * i)}`,
-                        cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-                        cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
+                        points: Math.floor(Math.random() * 300),
                     }
                 ]
             };
@@ -61,7 +63,18 @@ export default function CruisesPage(props: Props) {
         return records;
     };
 
-    const [cruises, setCruises]: [Cruise[], Dispatch<any>] = useState(generateCruises())
+    const [cruises, setCruises] = useState<Cruise[]>()
+    useEffect(() => {
+        Api
+            .get(
+                '/api/Cruises',)
+            .then(response =>
+                setCruises(response.data)
+            )
+            .catch(exception => {
+                console.log(exception.message)
+            })
+    },[]);
 
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white">
@@ -103,8 +116,8 @@ export default function CruisesPage(props: Props) {
                         </div>
                     </div> {/* Menu bar */}
                     {showNewCruiseForm && <NewCruiseForm />}
-                    {listView && <CruisesCalendar cruises={cruises} />}
-                    {!listView && <CruisesList cruises={cruises} />}
+                    {!listView && <CruisesCalendar cruises={cruises} />}
+                    {listView && <CruisesList cruises={cruises} />}
                 </div>
             </div>
         </Page>
