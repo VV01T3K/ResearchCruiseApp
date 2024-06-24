@@ -4,24 +4,23 @@ import {Dispatch, SetStateAction, useState} from "react";
 
 type Props = {
     applications: Application[],
+    setApplications: (applications: Application[]) => void,
     addingMode: boolean,
     setAddingMode: Dispatch<SetStateAction<boolean>>
 }
 
 
 export default function CruiseApplications(props: Props) {
-    const [applications, setApplications] = useState(props.applications)
-
     const updateApplications = (applications: Application[]) => {
-        setApplications(applications)
+        props.setApplications(applications)
         props.setAddingMode(false)
     }
 
     return (
-        <div className="p-2">
+        <div className="p-2 w-100">
             <ApplicationsList
-                boundApplications={applications}
-                setBoundApplications={setApplications}
+                boundApplications={props.applications}
+                setBoundApplications={props.setApplications}
                 deletionMode={true}
             />
             <div className="d-flex w-100 justify-content-center mt-3">
@@ -48,7 +47,7 @@ export default function CruiseApplications(props: Props) {
                 <div className="mt-3">
                     <ApplicationsList
                         addingMode={true}
-                        boundApplications={applications}
+                        boundApplications={props.applications}
                         setBoundApplications={updateApplications}
                     />
                 </div>

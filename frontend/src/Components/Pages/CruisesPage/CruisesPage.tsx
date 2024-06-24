@@ -63,11 +63,10 @@ export default function CruisesPage(props: Props) {
         return records;
     };
 
-    const [cruises, setCruises] = useState<Cruise[]>()
+    const [cruises, setCruises] = useState<Cruise[]>([])
     useEffect(() => {
         Api
-            .get(
-                '/api/Cruises',)
+            .get('/api/Cruises',)
             .then(response =>
                 setCruises(response.data)
             )
