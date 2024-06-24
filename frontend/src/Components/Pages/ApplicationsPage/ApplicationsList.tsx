@@ -58,15 +58,17 @@ export default function ApplicationsList(props: Props) {
     const [applications, setApplications]: [Application[], Dispatch<any>]
         = useState([])
     useEffect(() => {
-        Api
-            .get(
-                '/Applications',)
-            .then(response =>
-                setApplications(response.data)
-            )
-            .catch(() => {
-            })
-        },[]);
+        if (!props.boundApplications) {
+            Api
+                .get(
+                    '/api/Applications',)
+                .then(response =>
+                    setApplications(response.data)
+                )
+                .catch(() => {
+                })
+        }
+    },[]);
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
@@ -171,7 +173,7 @@ export default function ApplicationsList(props: Props) {
                 </div>
             </div>
             <div className="w-100 bg-light">
-                {!applications.length &&
+                {!(props.deletionMode ? props.boundApplications : applications)!.length &&
                     <div className="d-flex flex-row bg-light p-2 justify-content-center border-bottom">
                         <div className={"text-center"}>Brak zgłoszeń</div>
                     </div>

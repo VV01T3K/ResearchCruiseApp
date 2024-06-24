@@ -1,5 +1,5 @@
 import Page from "../Page";
-import React, {Dispatch, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
 import PageSection from "../CommonComponents/PageSection";
 import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
@@ -10,6 +10,7 @@ import CruiseDate from "./CruiseDetailsSections/CruiseDate";
 import {useForm} from "react-hook-form";
 import CruiseApplications from "./CruiseDetailsSections/CruiseApplications";
 import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
+import Api from "../../Tools/Api";
 
 
 type CruiseDetailsPageLocationState = {
@@ -28,33 +29,49 @@ export default function CruiseDetailsPage() {
         "Zgłoszenia": "Zgłoszenia przypisane do rejsu"
     })
 
-    const [applicationsAddingMode, setApplicationsAddingMode] = useState(false)
+    const [applicationsAddingMode, setApplicationsAddingMode] =
+        useState(false)
 
-    const fetchApplications = (applicationsShortInfo: ApplicationShortInfo[]) => {
-        // Temporary solution. Here an actual API call will be performed
+    const [applications, setApplications] =
+        useState<Application[]>([])
+    useEffect(() => {
+        locationState.cruise.applicationsShortInfo.forEach(applicationShortInfo => {
+            Api
+                .get(`/api/Applications/${applicationShortInfo.id}`)
+                .then(response =>
+                    setApplications([...applications, response.data])
+                )
+                .catch(error =>
+                    console.log(error.message)
+                )
+        })
+    }, []);
 
-        const records: Application[] = [];
-        for (let i = 1; i <= 2; i++) {
-            const record: Application = {
-                id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-                date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
-                number: `2024/${i}`,
-                year: 2025 + Math.floor(Math.random() * 3),
-                cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-                cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-                deputyManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Maciej" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Paweł" : "Sławomir"),
-                deputyManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Domorowicz" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Międzypodczas" : "Golałchowski"),
-                formAId: (i * 100).toString(),
-                formBId: i % 2 === 0 ? null : (i * 1000).toString(),
-                formCId:  null,
-                status: "Nowe",
-                points: (Math.floor(Math.random() * 300) + 1).toString(),
-                pointsDetails: [{}, {}]
-            };
-            records.push(record);
-        }
-        return records;
-    }
+    // const fetchApplications = (applicationsShortInfo: ApplicationShortInfo[]) => {
+    //     // Temporary solution. Here an actual API call will be performed
+    //
+    //     const records: Application[] = [];
+    //     for (let i = 1; i <= 2; i++) {
+    //         const record: Application = {
+    //             id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
+    //             date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
+    //             number: `2024/${i}`,
+    //             year: 2025 + Math.floor(Math.random() * 3),
+    //             cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
+    //             cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
+    //             deputyManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Maciej" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Paweł" : "Sławomir"),
+    //             deputyManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Domorowicz" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Międzypodczas" : "Golałchowski"),
+    //             formAId: (i * 100).toString(),
+    //             formBId: i % 2 === 0 ? null : (i * 1000).toString(),
+    //             formCId:  null,
+    //             status: "Nowe",
+    //             points: (Math.floor(Math.random() * 300) + 1).toString(),
+    //             pointsDetails: [{}, {}]
+    //         };
+    //         records.push(record);
+    //     }
+    //     return records;
+    // }
 
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white" >
@@ -77,7 +94,8 @@ export default function CruiseDetailsPage() {
 
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
-                                applications={fetchApplications(locationState.cruise.applicationsShortInfo)}
+                                applications={applications}
+                                setApplications={setApplications}
                                 addingMode={applicationsAddingMode}
                                 setAddingMode={setApplicationsAddingMode}
                             />
