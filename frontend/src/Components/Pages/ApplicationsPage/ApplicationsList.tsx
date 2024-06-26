@@ -58,7 +58,7 @@ export default function ApplicationsList(props: Props) {
     const [applications, setApplications]: [Application[], Dispatch<any>]
         = useState([])
     useEffect(() => {
-        if (!props.boundApplications) {
+        if (!props.deletionMode) {
             Api
                 .get(
                     '/api/Applications',)
