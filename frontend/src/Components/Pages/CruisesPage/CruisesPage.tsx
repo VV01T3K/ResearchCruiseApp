@@ -20,12 +20,9 @@ export type Cruise = {
     applicationsShortInfo: ApplicationShortInfo[]
 }
 
-type Props = {
-}
 
-
-export default function CruisesPage(props: Props) {
-    const [listView, setListView] = useState(false)
+export default function CruisesPage() {
+    const [listView, setListView] = useState(true)
     const [showNewCruiseForm, setShowNewCruiseForm] = useState(false)
 
     const autoAddCruises = () => {

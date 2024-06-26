@@ -7,7 +7,7 @@ import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
 import CruiseBasicInfo from "./CruiseDetailsSections/CruiseBasicInfo";
 import CruiseDate from "./CruiseDetailsSections/CruiseDate";
-import {useForm} from "react-hook-form";
+import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import CruiseApplications from "./CruiseDetailsSections/CruiseApplications";
 import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
@@ -22,6 +22,10 @@ export default function CruiseDetailsPage() {
     const location = useLocation()
     const [locationState, _]: [CruiseDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
+
+    const cruiseDetailsForm = useForm({
+        defaultValues: locationState.cruise
+    })
 
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
         "Podstawowe": "Podstawowe informacje o rejsie",
@@ -89,7 +93,9 @@ export default function CruiseDetailsPage() {
                         </PageSection>
 
                         <PageSection title={sections["Termin"]}>
-                            <CruiseDate cruise={locationState.cruise} />
+                            <CruiseDate
+                                cruiseDetailsForm={cruiseDetailsForm}
+                            />
                         </PageSection>
 
                         <PageSection title={sections["Zgłoszenia"]}>
@@ -104,7 +110,13 @@ export default function CruiseDetailsPage() {
                 </div>
                 <div className={`d-flex flex-row justify-content-center border-top border-black w-100 bg-white`} style={{zIndex:9999}}>
                     <div className="d-flex col-6 text-center p-2 justify-content-center">
-                        <button className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz zmiany</button>
+                        <button
+                            className="btn btn-primary w-100"
+                            style={{fontSize:"inherit"}}
+                            onClick={() => console.log(cruiseDetailsForm.getValues())}
+                        >
+                            Zapisz zmiany
+                        </button>
                     </div>
                     <div className="d-flex col-6 text-center p-2 justify-content-center" >
                         <button className="btn btn-primary w-100" style={{fontSize:"inherit"}}>:)</button>
