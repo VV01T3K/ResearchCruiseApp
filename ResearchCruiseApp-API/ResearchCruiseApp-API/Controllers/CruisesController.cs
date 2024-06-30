@@ -1,11 +1,7 @@
-using System.Runtime.InteropServices.JavaScript;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
-using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Tools;
 

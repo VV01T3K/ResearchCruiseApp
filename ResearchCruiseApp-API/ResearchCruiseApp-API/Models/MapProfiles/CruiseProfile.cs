@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp_API.Data;
@@ -18,6 +19,15 @@ public class CruiseProfile : Profile
                 dest => dest.MainCruiseManagerLastName,
                 options =>
                     options.MapFrom<MainCruiseManagerLastNameResolver>())
+            .ForMember(
+                dest => dest.Date,
+                options =>
+                    options.MapFrom(src =>
+                        new StringRange
+                        {
+                            Start = src.StartDate.ToString(new CultureInfo("pl-PL")),
+                            End = src.EndDate.ToString(new CultureInfo("pl-PL"))
+                        }))
             .ForMember(
                 dest => dest.ApplicationsShortInfo,
                 options =>
