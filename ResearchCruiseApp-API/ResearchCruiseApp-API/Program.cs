@@ -39,14 +39,19 @@ builder.Services
     .AddApiEndpoints();
 
 builder.Services.AddDbContext<UsersContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ResearchCruiseApp-DB"),
+        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 builder.Services.AddDbContext<ResearchCruiseContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ResearchCruiseApp-DB"),
+        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
+builder.Services.AddSingleton<IApplicationEvaluator, ApplicationEvaluator>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;

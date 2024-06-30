@@ -12,7 +12,7 @@ import {Time, TaskValues, taskFieldsOptions} from "../../FormPage/Inputs/TaskInp
 type EvaluatedTask = {
     type: number,
     values: TaskValues
-    points: string
+    calculatedPoints: string
 }
 
 type Props = {
@@ -170,7 +170,7 @@ function TasksPoints(props: Props) {
                                 >
                                     <div className="col-12 d-xl-none">Punkty:</div>
                                     <div className={"col-12 align-items-center justify-content-center d-flex"}>
-                                        <ReadOnlyTextInput value={row.points} />
+                                        <ReadOnlyTextInput value={row.calculatedPoints} />
                                     </div>
                                 </div>
                             </div>

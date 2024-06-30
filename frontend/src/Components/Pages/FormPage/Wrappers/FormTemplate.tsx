@@ -112,26 +112,26 @@ function FormTemplate(props: Props) {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
         dispatchEvent("Trwa wysyłanie")
 
-        const savedFormsDataString = localStorage.getItem('sentFormData');
-        let savedFormsData: SavedFormData[] = [];
-        // Jeśli nie ma jeszcze żadnych danych w localStorage, utwórz nową tablicę
-        if (savedFormsDataString) {
-            savedFormsData = JSON.parse(savedFormsDataString);
-        }
-
-        // Dodaj nowy formularz do tablicy
-        const newSavedForm: SavedFormData = {
-            type: props.type,
-            id: Math.random(),
-            date: new Date().toISOString(),
-            percentComplete: ((24 - Object.entries(props.form.formState.errors).length)/24*100).toFixed(0) ?? 100,
-            data: props.form.getValues() as FormValues
-        }
-        savedFormsData.push(newSavedForm);
-
-        // Zapisz zaktualizowane dane w localStorage
-        localStorage.setItem('sentFormData', JSON.stringify(savedFormsData));
-        Api.post('/forms/'+props.type, data).catch((err)=>null).then(()=>{setTimeout(()=>{dispatchEvent(null); navigate("/ViewForms")},1000)
+        // const savedFormsDataString = localStorage.getItem('sentFormData');
+        // let savedFormsData: SavedFormData[] = [];
+        // // Jeśli nie ma jeszcze żadnych danych w localStorage, utwórz nową tablicę
+        // if (savedFormsDataString) {
+        //     savedFormsData = JSON.parse(savedFormsDataString);
+        // }
+        //
+        // // Dodaj nowy formularz do tablicy
+        // const newSavedForm: SavedFormData = {
+        //     type: props.type,
+        //     id: Math.random(),
+        //     date: new Date().toISOString(),
+        //     percentComplete: ((24 - Object.entries(props.form.formState.errors).length)/24*100).toFixed(0) ?? 100,
+        //     data: props.form.getValues() as FormValues
+        // }
+        // savedFormsData.push(newSavedForm);
+        //
+        // // Zapisz zaktualizowane dane w localStorage
+        // localStorage.setItem('sentFormData', JSON.stringify(savedFormsData));
+        Api.post('/formsA/'+props.type, data).catch((err)=>null).then(()=>{setTimeout(()=>{dispatchEvent(null); navigate("/ViewForms")},1000)
     })}
 
     return (

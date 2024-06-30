@@ -1,4 +1,4 @@
-import React, {Dispatch, useState} from 'react';
+import React, {Dispatch, useEffect, useState} from 'react';
 import Page from "../Page";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import {useLocation, useParams} from "react-router-dom";
@@ -12,6 +12,10 @@ import TasksPoints from "./ApplicationPointsSections/TasksPoints";
 import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
 import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
 import {Application} from "../ApplicationsPage/ApplicationsPage";
+import {FormValues} from "../FormPage/Wrappers/FormTemplate";
+import Api from "../../Tools/Api";
+import UgTeams from "./ApplicationPointsSections/UgTeams";
+import GuestTeams from "./ApplicationPointsSections/GuestTeams";
 
 
 type ApplicationDetailsPageLocationState = {
@@ -35,6 +39,27 @@ function ApplicationDetailsPage() {
         "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
     })
 
+    // Set the values to be loaded to the form if applicable
+    const [evaluatedApplication, setEvaluatedApplication]
+        = useState<FormValues | undefined>()
+    useEffect(() => {
+        if (locationState?.application.id) {
+            console.log(locationState)
+            Api
+                .get(
+                    `/applications/${locationState?.application.id}/points`
+                )
+                .then(response => {
+                    setEvaluatedApplication(response.data)
+                    }
+                )
+                .catch(error =>
+                    console.log(error)
+                )
+        }
+    },[locationState]);
+    console.log(evaluatedApplication)
+
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white">
             <div className="d-flex flex-column w-100 h-100" style={{fontSize:"0.8rem"}}>
@@ -52,62 +77,15 @@ function ApplicationDetailsPage() {
 
                     <PageSection title={sections.Zadania}>
                         <TasksPoints
-                            evaluatedTasks={[
-                                {
-                                    type: 5,
-                                    values: {
-                                        title: "3re",
-                                        time: {
-                                            startDate: "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
-                                            endDate: "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
-                                        },
-                                        financingAmount: "0.00"
-                                    },
-                                    points: "20"
-                                },
-                                {
-                                    type: 5,
-                                    values: {
-                                        title: "3re",
-                                        time: {
-                                            startDate: "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
-                                            endDate: "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
-                                        },
-                                        financingAmount: "0.00"
-                                    },
-                                    points: "30"
-                                },
-                                {
-                                    type: 11,
-                                    values: {
-                                        description: "rtetretret"
-                                    },
-                                    points: "40"
-                                },
-                                {
-                                    type: 3,
-                                    values: {
-                                        title: "fsdfds",
-                                        institution: "ffsdff",
-                                        date: "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
-                                    },
-                                    points: "50"
-                                },
-                                {
-                                    type: 0,
-                                    values: {
-                                        author: "dfdsf",
-                                        title: "dsfdfsd"
-                                    },
-                                    points: "60"
-                                }
-                            ]}
+                            evaluatedTasks={evaluatedApplication?.researchTasks ?? []}
                         />
                     </PageSection>
 
                     <PageSection title={sections.Umowy}>
                         <ContractsPoints
-                            evaluatedContracts={[
+                            evaluatedContracts={
+                            // evaluatedApplication?.contracts ?? []
+                            [
                                 {
                                     category: "international",
                                     institution: {
@@ -169,74 +147,27 @@ function ApplicationDetailsPage() {
                     </PageSection>
 
                     <PageSection title={sections["Z. badawcze"]}>
-                        <div>Brak danych o nowej punktacji</div>
+                        <div className={"d-flex"}>
+                        <UgTeams ugTeams={evaluatedApplication?.ugTeams ?? []}/>
+                        <GuestTeams guestTeams={evaluatedApplication?.guestTeams ?? []}/>
+                        </div>
+                        <div className={" w-100 d-flex flex-column justify-content-center align-items-center"}>
+                            Przyznane punkty
+                            <input disabled className="text-center placeholder-glow p-1 w-25 form-control bg-light"
+                                   value={evaluatedApplication?.ugTeamsPoints}
+                            ></input>
+                        </div>
                     </PageSection>
 
                     <PageSection title={sections["Publikacje"]}>
                         <PublicationsPoints
-                            evaluatedPublications={[
-                                {
-                                    category: "postscript",
-                                    year: "2000",
-                                    ministerialPoints: "200",
-                                    DOI: "8t23467",
-                                    authors: "Autor A",
-                                    title: "Tytuł A",
-                                    magazine: "Czasopismo A",
-                                    points: "200"
-                                },
-                                {
-                                    category: "subject",
-                                    year: "2000",
-                                    ministerialPoints: "200",
-                                    DOI: "2345v6b",
-                                    authors: "Autor B",
-                                    title: "Tytuł B",
-                                    magazine: "Czasopismo B",
-                                    points: "100"
-                                },
-                                {
-                                    category: "postscript",
-                                    year: "2000",
-                                    ministerialPoints: "200",
-                                    DOI: "234tv",
-                                    authors: "Autor C",
-                                    title: "Tytuł C",
-                                    magazine: "Czasopismo C",
-                                    points: "200"
-                                },
-                            ]}
+                            evaluatedPublications={evaluatedApplication?.publications ?? []}
                         />
                     </PageSection>
 
                     <PageSection title={sections.SPUB}>
                         <SpubTasksPoints
-                            evaluatedSpubTasks={[
-                                {
-                                    yearFrom: "2024",
-                                    yearTo: "2025",
-                                    name: "Zadanie A",
-                                    points: "100"
-                                },
-                                {
-                                    yearFrom: "2024",
-                                    yearTo: "2025",
-                                    name: "Zadanie B",
-                                    points: "100"
-                                },
-                                {
-                                    yearFrom: "2024",
-                                    yearTo: "2025",
-                                    name: "Zadanie C",
-                                    points: "100"
-                                },
-                                {
-                                    yearFrom: "2024",
-                                    yearTo: "2025",
-                                    name: "Zadanie D",
-                                    points: "100"
-                                },
-                            ]}
+                            evaluatedSpubTasks={evaluatedApplication?.spubTasks ?? []}
                         />
                     </PageSection>
                 </PageSectionsGroup>
