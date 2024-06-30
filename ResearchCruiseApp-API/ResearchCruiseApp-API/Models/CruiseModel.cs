@@ -8,7 +8,7 @@ public class CruiseModel
 
     public string Number { get; set; } = null!;
 
-    public StringRange Date { get; set; } 
+    public DateTimeRange Date { get; set; } 
 
     public string MainCruiseManagerFirstName { get; set; } = null!;
 

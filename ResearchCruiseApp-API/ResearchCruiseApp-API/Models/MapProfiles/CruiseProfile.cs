@@ -23,10 +23,10 @@ public class CruiseProfile : Profile
                 dest => dest.Date,
                 options =>
                     options.MapFrom(src =>
-                        new StringRange
+                        new DateTimeRange
                         {
-                            Start = src.StartDate.ToString(new CultureInfo("pl-PL")),
-                            End = src.EndDate.ToString(new CultureInfo("pl-PL"))
+                            Start = src.StartDate,
+                            End = src.EndDate
                         }))
             .ForMember(
                 dest => dest.ApplicationsShortInfo,

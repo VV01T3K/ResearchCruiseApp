@@ -8,13 +8,13 @@ import CruisesList from "./CruisesList";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import NewCruiseForm from "./NewCruiseForm";
 import Api from "../../Tools/Api";
+import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 
 
 export type Cruise = {
     id: string,
     number: string,
-    startDate: string,
-    endDate: string,
+    date: Time,
     mainCruiseManagerFirstName: string,
     mainCruiseManagerLastName: string,
     applicationsShortInfo: ApplicationShortInfo[]
