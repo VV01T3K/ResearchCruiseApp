@@ -1,7 +1,7 @@
 namespace ResearchCruiseApp_API.Models;
 
-public struct DateTimeRange
+public struct StringRange
 {
-    public DateTime Start { get; set; }
-    public DateTime End { get; set; }
+    public string Start { get; set; }
+    public string End { get; set; }
 }
