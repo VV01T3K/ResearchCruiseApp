@@ -28,7 +28,6 @@ namespace ResearchCruiseApp_API.Controllers
             var mapper = MapperConfig.InitializeAutomapper();
             return Ok(mapper.Map<FormsModel>(form));
         }
-
         public IIncludableQueryable<FormC, List<Data.SPUBTask>> GetFormsQuery()
         {
             return researchCruiseContext.FormsC

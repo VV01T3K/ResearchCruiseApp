@@ -29,7 +29,7 @@ namespace ResearchCruiseApp_API.Controllers
             var mapper = MapperConfig.InitializeAutomapper();
             return Ok(mapper.Map<FormsModel>(form));
         }
-
+        
         private static IIncludableQueryable<FormA, List<Data.SPUBTask>>GetFormsQuery(
             ResearchCruiseContext researchCruiseContext)
         {
@@ -58,7 +58,6 @@ namespace ResearchCruiseApp_API.Controllers
             
             return Ok(formModels);
         }
-        
         [HttpPost("A")]
         public async Task<IActionResult> AddForm([FromBody] FormAModel form)
         {
@@ -87,7 +86,6 @@ namespace ResearchCruiseApp_API.Controllers
         
         public async Task AddApplicationAsync(FormA formA)
         {
-            
             var mapper = MapperConfig.InitializeAutomapper();
             var formAModel = mapper.Map<FormAModel>(formA);
 
@@ -101,7 +99,7 @@ namespace ResearchCruiseApp_API.Controllers
             await researchCruiseContext.SaveChangesAsync();
 
             var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplicationModel);
-            
+
             var newApplication = new Application
             {
                 Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Applications),
