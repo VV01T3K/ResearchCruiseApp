@@ -3,6 +3,7 @@ import LinkWithState from "../../CommonComponents/LinkWithState";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import React, {useEffect, useState} from "react";
 import Api from "../../Tools/Api";
+import {fetchApplications} from "../../Tools/Fetchers";
 
 
 type Props = {
@@ -14,16 +15,7 @@ export default function CruiseApplicationsList(props: Props) {
     const [applications, setApplications] =
         useState<Application[]>([])
     useEffect(() => {
-        props.applicationsShortInfo.forEach(applicationShortInfo => {
-            Api
-                .get(`/api/Applications/${applicationShortInfo.id}`)
-                .then(response =>
-                    setApplications([...applications, response.data])
-                )
-                .catch(error =>
-                    console.log(error.message)
-                )
-        })
+        fetchApplications(props.applicationsShortInfo, setApplications)
     }, []);
 
     return (

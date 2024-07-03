@@ -11,7 +11,14 @@ import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import CruiseApplications from "./CruiseDetailsSections/CruiseApplications";
 import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
+import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
+import {fetchApplications} from "../../Tools/Fetchers";
 
+
+export type EditCruiseFormValues = {
+    date: Time,
+    applicationsIds: string[]
+}
 
 type CruiseDetailsPageLocationState = {
     cruise: Cruise
@@ -23,9 +30,27 @@ export default function CruiseDetailsPage() {
     const [locationState, _]: [CruiseDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
 
-    const cruiseDetailsForm = useForm({
-        defaultValues: locationState.cruise
+    const editCruiseForm = useForm<EditCruiseFormValues>({
+        defaultValues: {
+            date: locationState.cruise.date,
+            applicationsIds: locationState.cruise.applicationsShortInfo.map(app => app.id)
+        }
     })
+
+    const sendEditCruiseForm = () => {
+        console.log(editCruiseForm.getValues())
+        Api
+            .patch(
+                `/api/Cruises/${locationState.cruise.id}`,
+                editCruiseForm.getValues()
+            )
+            .then(_ =>
+                console.log("Success")
+            )
+            .catch(__ =>
+                console.log("Error")
+            )
+    }
 
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
         "Podstawowe": "Podstawowe informacje o rejsie",
@@ -39,16 +64,7 @@ export default function CruiseDetailsPage() {
     const [applications, setApplications] =
         useState<Application[]>([])
     useEffect(() => {
-        locationState.cruise.applicationsShortInfo.forEach(applicationShortInfo => {
-            Api
-                .get(`/api/Applications/${applicationShortInfo.id}`)
-                .then(response =>
-                    setApplications([...applications, response.data])
-                )
-                .catch(error =>
-                    console.log(error.message)
-                )
-        })
+        fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
     }, []);
 
     // const fetchApplications = (applicationsShortInfo: ApplicationShortInfo[]) => {
@@ -94,12 +110,13 @@ export default function CruiseDetailsPage() {
 
                         <PageSection title={sections["Termin"]}>
                             <CruiseDate
-                                cruiseDetailsForm={cruiseDetailsForm}
+                                cruiseDetailsForm={editCruiseForm}
                             />
                         </PageSection>
 
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
+                                cruiseDetailsForm={editCruiseForm}
                                 applications={applications}
                                 setApplications={setApplications}
                                 addingMode={applicationsAddingMode}
@@ -113,7 +130,7 @@ export default function CruiseDetailsPage() {
                         <button
                             className="btn btn-primary w-100"
                             style={{fontSize:"inherit"}}
-                            onClick={() => console.log(cruiseDetailsForm.getValues())}
+                            onClick={sendEditCruiseForm}
                         >
                             Zapisz zmiany
                         </button>

@@ -1,12 +1,15 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
 {
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [Route("api/[controller]")]
     [ApiController]
     public class CruisesController(
@@ -26,6 +29,40 @@ namespace ResearchCruiseApp_API.Controllers
                 .ToList();
 
             return Ok(cruisesModels);
+        }
+
+        [HttpPatch("{id:guid}")]
+        public async Task<IActionResult> EditCruise(Guid id, EditCruiseModel editCruiseModel)
+        {
+            var cruise = await researchCruiseContext.Cruises
+                .Include(cruise => cruise.Applications)
+                .Where(cruise => cruise.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (cruise == null)
+                return NotFound();
+            
+            var startDateUtc = DateTime.ParseExact(
+                editCruiseModel.Date.Start,
+                "yyyy-MM-ddTHH:mm:ss.fffK",
+                null,
+                System.Globalization.DateTimeStyles.RoundtripKind);
+            var endDateUtc = DateTime.ParseExact(
+                editCruiseModel.Date.End,
+                "yyyy-MM-ddTHH:mm:ss.fffK",
+                null,
+                System.Globalization.DateTimeStyles.RoundtripKind);
+
+            cruise.StartDate = TimeZoneInfo.ConvertTimeFromUtc(startDateUtc, TimeZoneInfo.Local);
+            cruise.EndDate = TimeZoneInfo.ConvertTimeFromUtc(endDateUtc, TimeZoneInfo.Local);
+
+            var newCruiseApplications = await researchCruiseContext.Applications
+                .Where(application => editCruiseModel.ApplicationsIds.Contains(application.Id))
+                .ToListAsync();
+            cruise.Applications = newCruiseApplications;
+
+            await researchCruiseContext.SaveChangesAsync();
+            return NoContent();
         }
         
         [HttpPut("autoAdded")]

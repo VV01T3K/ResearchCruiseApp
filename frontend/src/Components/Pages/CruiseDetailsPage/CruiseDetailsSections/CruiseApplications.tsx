@@ -1,8 +1,11 @@
 import ApplicationsList from "../../ApplicationsPage/ApplicationsList";
 import {Application} from "../../ApplicationsPage/ApplicationsPage";
 import {Dispatch, SetStateAction, useState} from "react";
+import {UseFormReturn} from "react-hook-form";
+import {EditCruiseFormValues} from "../CruiseDetailsPage";
 
 type Props = {
+    cruiseDetailsForm: UseFormReturn<EditCruiseFormValues>,
     applications: Application[],
     setApplications: (applications: Application[]) => void,
     addingMode: boolean,
@@ -13,14 +16,20 @@ type Props = {
 export default function CruiseApplications(props: Props) {
     const updateApplications = (applications: Application[]) => {
         props.setApplications(applications)
-        props.setAddingMode(false)
+        props.cruiseDetailsForm.setValue(
+            "applicationsIds",
+            applications.map(app => app.id)
+        )
+
+        if (props.addingMode)
+            props.setAddingMode(false)
     }
 
     return (
         <div className="p-2 w-100">
             <ApplicationsList
                 boundApplications={props.applications}
-                setBoundApplications={props.setApplications}
+                setBoundApplications={updateApplications}
                 deletionMode={true}
             />
             <div className="d-flex w-100 justify-content-center mt-3">

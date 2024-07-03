@@ -1,8 +1,6 @@
-using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp_API.Data;
-using static ResearchCruiseApp_API.Data.Application;
 
 namespace ResearchCruiseApp_API.Models.MapProfiles;
 
@@ -23,10 +21,10 @@ public class CruiseProfile : Profile
                 dest => dest.Date,
                 options =>
                     options.MapFrom(src =>
-                        new DateTimeRange
+                        new StringRange
                         {
-                            Start = src.StartDate,
-                            End = src.EndDate
+                            Start = src.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK"),
+                            End = src.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK")
                         }))
             .ForMember(
                 dest => dest.ApplicationsShortInfo,
@@ -58,6 +56,22 @@ public class CruiseProfile : Profile
         {
             var mainCruiseManager = userManager.FindByIdAsync(src.MainCruiseManagerId.ToString()).Result;
             return mainCruiseManager == null ? "" : mainCruiseManager.LastName;
+        }
+    }
+    
+    private class DateResolver(
+        ResearchCruiseContext researchCruiseContext,
+        UserManager<User> userManager)
+        : IValueResolver<Cruise, CruiseModel, StringRange>
+    {
+        public StringRange Resolve(
+            Cruise src, CruiseModel dest, StringRange date, ResolutionContext context)
+        {
+            return new StringRange
+            {
+                Start = src.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK"),
+                End = src.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK")
+            };
         }
     }
     
