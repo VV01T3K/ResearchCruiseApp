@@ -30,31 +30,6 @@ type Props = {
 export default function ApplicationsList(props: Props) {
     const navigate = useNavigate()
 
-    // const generateApplications = () => {
-    //     const records: Application[] = [];
-    //     for (let i = 1; i <= 100; i++) {
-    //         const record: Application = {
-    //             id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-    //             date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
-    //             number: `2024/${i}`,
-    //             year: 2025 + Math.floor(Math.random() * 3),
-    //             cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-    //             cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-    //             deputyManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Maciej" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Paweł" : "Sławomir"),
-    //             deputyManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Domorowicz" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Międzypodczas" : "Golałchowski"),
-    //             formAId: (i * 100).toString(),
-    //             formBId: i % 2 === 0 ? null : (i * 1000).toString(),
-    //             formCId:  null,
-    //             status: "Nowe",
-    //             points: (Math.floor(Math.random() * 300) + 1).toString(),
-    //             pointsDetails: [{}, {}]
-    //         };
-    //         records.push(record);
-    //     }
-    //     console.log(records)
-    //     return records;
-    // };
-
     const [applications, setApplications]: [Application[], Dispatch<any>]
         = useState([])
     useEffect(() => {
@@ -183,7 +158,9 @@ export default function ApplicationsList(props: Props) {
                         (
                             // if the application is not already assigned to the cruise
                             props.addingMode &&
-                            !props.boundApplications!.filter(application => application.number == row.number).length
+                            !props.boundApplications!
+                                .filter(application => application.number == row.number)
+                                .length
                         ) ||
                         (
                             // if this list does not enable adding applications to a cruise
