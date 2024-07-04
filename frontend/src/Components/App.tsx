@@ -123,6 +123,7 @@ function App() {
                     {userData && userData["roles"].includes("CruiseManager") &&
                         <>
                             <Route path="/NewForm" element={<NewFormPage />} />
+                            <Route path="/Form" element={<FormPage />} />
                             <Route path="/*" element={<ManagerPanel />} />
                         </>
                     }

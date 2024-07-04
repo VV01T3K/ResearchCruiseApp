@@ -13,10 +13,17 @@ import {Application, ApplicationShortInfo} from "../ApplicationsPage/Application
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import {fetchApplications} from "../../Tools/Fetchers";
+import CruiseManagers from "./CruiseDetailsSections/CruiseManagers";
 
+
+type CruiseManagersTeam = {
+    mainCruiseManagerId: string,
+    mainDeputyManagerId: string
+}
 
 export type EditCruiseFormValues = {
     date: Time,
+    managersTeam: CruiseManagersTeam,
     applicationsIds: string[]
 }
 
@@ -33,6 +40,10 @@ export default function CruiseDetailsPage() {
     const editCruiseForm = useForm<EditCruiseFormValues>({
         defaultValues: {
             date: locationState.cruise.date,
+            managersTeam: {
+                mainCruiseManagerId: locationState.cruise.mainCruiseManagerId,
+                mainDeputyManagerId: locationState.cruise.mainDeputyManagerId
+            },
             applicationsIds: locationState.cruise.applicationsShortInfo.map(app => app.id)
         }
     })
@@ -55,6 +66,7 @@ export default function CruiseDetailsPage() {
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
         "Podstawowe": "Podstawowe informacje o rejsie",
         "Termin": "Termin rejsu",
+        "Kierownicy": "Kierownik główny i zastępca kierownika głównego",
         "Zgłoszenia": "Zgłoszenia przypisane do rejsu"
     })
 
@@ -66,32 +78,6 @@ export default function CruiseDetailsPage() {
     useEffect(() => {
         fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
     }, []);
-
-    // const fetchApplications = (applicationsShortInfo: ApplicationShortInfo[]) => {
-    //     // Temporary solution. Here an actual API call will be performed
-    //
-    //     const records: Application[] = [];
-    //     for (let i = 1; i <= 2; i++) {
-    //         const record: Application = {
-    //             id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-    //             date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
-    //             number: `2024/${i}`,
-    //             year: 2025 + Math.floor(Math.random() * 3),
-    //             cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-    //             cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-    //             deputyManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Maciej" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Paweł" : "Sławomir"),
-    //             deputyManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Domorowicz" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Międzypodczas" : "Golałchowski"),
-    //             formAId: (i * 100).toString(),
-    //             formBId: i % 2 === 0 ? null : (i * 1000).toString(),
-    //             formCId:  null,
-    //             status: "Nowe",
-    //             points: (Math.floor(Math.random() * 300) + 1).toString(),
-    //             pointsDetails: [{}, {}]
-    //         };
-    //         records.push(record);
-    //     }
-    //     return records;
-    // }
 
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white" >
@@ -109,14 +95,19 @@ export default function CruiseDetailsPage() {
                         </PageSection>
 
                         <PageSection title={sections["Termin"]}>
-                            <CruiseDate
-                                cruiseDetailsForm={editCruiseForm}
+                            <CruiseDate editCruiseForm={editCruiseForm} />
+                        </PageSection>
+
+                        <PageSection title={sections["Kierownicy"]}>
+                            <CruiseManagers
+                                applications={applications}
+                                editCruiseForm={editCruiseForm}
                             />
                         </PageSection>
 
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
-                                cruiseDetailsForm={editCruiseForm}
+                                editCruiseForm={editCruiseForm}
                                 applications={applications}
                                 setApplications={setApplications}
                                 addingMode={applicationsAddingMode}

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const defaultServerAddress = 'http://localhost:5000';
+const defaultServerAddress = 'http://localhost:8080';
 export const setUpInterceptors = (navigate, setUserData) => {
 
 const setAccessToken = (config: { url?: string; headers?: any; }) => {

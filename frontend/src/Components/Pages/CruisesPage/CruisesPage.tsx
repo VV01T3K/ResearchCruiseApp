@@ -15,8 +15,10 @@ export type Cruise = {
     id: string,
     number: string,
     date: Time,
+    mainCruiseManagerId: string,
     mainCruiseManagerFirstName: string,
     mainCruiseManagerLastName: string,
+    mainDeputyManagerId: string,
     applicationsShortInfo: ApplicationShortInfo[]
 }
 

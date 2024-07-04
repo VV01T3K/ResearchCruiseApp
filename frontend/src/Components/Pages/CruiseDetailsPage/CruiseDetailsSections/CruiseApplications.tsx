@@ -5,7 +5,7 @@ import {UseFormReturn} from "react-hook-form";
 import {EditCruiseFormValues} from "../CruiseDetailsPage";
 
 type Props = {
-    cruiseDetailsForm: UseFormReturn<EditCruiseFormValues>,
+    editCruiseForm: UseFormReturn<EditCruiseFormValues>,
     applications: Application[],
     setApplications: (applications: Application[]) => void,
     addingMode: boolean,
@@ -16,7 +16,7 @@ type Props = {
 export default function CruiseApplications(props: Props) {
     const updateApplications = (applications: Application[]) => {
         props.setApplications(applications)
-        props.cruiseDetailsForm.setValue(
+        props.editCruiseForm.setValue(
             "applicationsIds",
             applications.map(app => app.id)
         )

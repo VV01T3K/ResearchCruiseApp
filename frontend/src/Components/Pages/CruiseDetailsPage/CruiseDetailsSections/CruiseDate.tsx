@@ -7,17 +7,17 @@ import {EditCruiseFormValues} from "../CruiseDetailsPage";
 import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
 
 type Props = {
-    cruiseDetailsForm: UseFormReturn<EditCruiseFormValues>
+    editCruiseForm: UseFormReturn<EditCruiseFormValues>
 }
 
 
 export default function CruiseDate(props: Props) {
     const startWatch = useWatch({
-        control: props.cruiseDetailsForm.control,
+        control: props.editCruiseForm.control,
         name: "date.start"
     })
     const endWatch = useWatch({
-        control: props.cruiseDetailsForm.control,
+        control: props.editCruiseForm.control,
         name: "date.end"
     })
 
@@ -25,7 +25,7 @@ export default function CruiseDate(props: Props) {
         <div className="d-flex flex-wrap flex-row justify-content-center col-12 h-100">
             <Controller
                 name="date"
-                control={props.cruiseDetailsForm.control}
+                control={props.editCruiseForm.control}
                 rules={{
                     validate: {
                         startBeforeEnd: (value) => {
@@ -52,7 +52,7 @@ export default function CruiseDate(props: Props) {
                                         start: selectedOption ? new Date(selectedOption).toISOString() : "",
                                         end: endWatch
                                     }
-                                    props.cruiseDetailsForm.setValue(
+                                    props.editCruiseForm.setValue(
                                         "date",
                                         newValue,
                                         { shouldDirty: true, shouldValidate: true, shouldTouch: true }
@@ -76,7 +76,7 @@ export default function CruiseDate(props: Props) {
                                         start: startWatch,
                                         end: selectedOption ? new Date(selectedOption).toISOString() : ""
                                     }
-                                    props.cruiseDetailsForm.setValue(
+                                    props.editCruiseForm.setValue(
                                         "date",
                                         newValue,
                                         { shouldDirty: true, shouldValidate: true, shouldTouch: true }
@@ -88,8 +88,8 @@ export default function CruiseDate(props: Props) {
                     </>
                 )}
             />
-            {props.cruiseDetailsForm?.formState.errors.date &&
-                <ErrorCode code={props.cruiseDetailsForm?.formState.errors.date.message} />
+            {props.editCruiseForm?.formState.errors.date &&
+                <ErrorCode code={props.editCruiseForm?.formState.errors.date.message} />
             }
         </div>
     )

@@ -25,9 +25,8 @@ type Props = {
     name: string,
     label: string,
     values?: FormUser[]
-    //defaultValue?: string,
-    form?: UseFormReturn,
-    readonly? :boolean
+    form?: UseFormReturn<any>,
+    readonly?: boolean
 }
 
 

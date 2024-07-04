@@ -9,6 +9,10 @@ public class CruiseProfile : Profile
     public CruiseProfile()
     {
         CreateMap<Cruise, CruiseModel>()
+            .ForMember(dest => dest.MainCruiseManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.MainCruiseManagerId))
             .ForMember(
                 dest => dest.MainCruiseManagerFirstName,
                 options =>
@@ -17,6 +21,10 @@ public class CruiseProfile : Profile
                 dest => dest.MainCruiseManagerLastName,
                 options =>
                     options.MapFrom<MainCruiseManagerLastNameResolver>())
+            .ForMember(dest => dest.MainDeputyManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.MainDeputyManagerId))
             .ForMember(
                 dest => dest.Date,
                 options =>
