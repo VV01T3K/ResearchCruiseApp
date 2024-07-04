@@ -30,7 +30,7 @@ export default function CruiseDate(props: Props) {
                     validate: {
                         startBeforeEnd: (value) => {
                             if (new Date(value.end) <= new Date(value.start)) {
-                                return "Data rozpoczęcia musi być wcześniejsza niż data zakończenia"
+                                return "Czas rozpoczęcia musi być wcześniejszy niż czas zakończenia"
                             }
                         }
                     }

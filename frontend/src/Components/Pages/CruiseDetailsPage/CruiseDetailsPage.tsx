@@ -14,6 +14,8 @@ import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import {fetchApplications} from "../../Tools/Fetchers";
 import CruiseManagers from "./CruiseDetailsSections/CruiseManagers";
+import {Simulate} from "react-dom/test-utils";
+import reset = Simulate.reset;
 
 
 type CruiseManagersTeam = {
@@ -37,15 +39,16 @@ export default function CruiseDetailsPage() {
     const [locationState, _]: [CruiseDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
 
+    const editCruiseFormDefaultValues: EditCruiseFormValues = {
+        date: locationState.cruise.date,
+        managersTeam: {
+            mainCruiseManagerId: locationState.cruise.mainCruiseManagerId,
+            mainDeputyManagerId: locationState.cruise.mainDeputyManagerId
+        },
+        applicationsIds: locationState.cruise.applicationsShortInfo.map(app => app.id)
+    }
     const editCruiseForm = useForm<EditCruiseFormValues>({
-        defaultValues: {
-            date: locationState.cruise.date,
-            managersTeam: {
-                mainCruiseManagerId: locationState.cruise.mainCruiseManagerId,
-                mainDeputyManagerId: locationState.cruise.mainDeputyManagerId
-            },
-            applicationsIds: locationState.cruise.applicationsShortInfo.map(app => app.id)
-        }
+        defaultValues: editCruiseFormDefaultValues
     })
 
     const sendEditCruiseForm = () => {
@@ -61,6 +64,10 @@ export default function CruiseDetailsPage() {
             .catch(__ =>
                 console.log("Error")
             )
+    }
+    const resetEditCruiseForm = () => {
+        editCruiseForm.reset(editCruiseFormDefaultValues)
+        fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
     }
 
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
@@ -121,13 +128,19 @@ export default function CruiseDetailsPage() {
                         <button
                             className="btn btn-primary w-100"
                             style={{fontSize:"inherit"}}
-                            onClick={sendEditCruiseForm}
+                            onClick={editCruiseForm.handleSubmit(sendEditCruiseForm)}
                         >
                             Zapisz zmiany
                         </button>
                     </div>
                     <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                        <button className="btn btn-primary w-100" style={{fontSize:"inherit"}}>:)</button>
+                        <button
+                            className="btn btn-primary w-100"
+                            style={{fontSize:"inherit"}}
+                            onClick={resetEditCruiseForm}
+                        >
+                            Cofnij zmiany
+                        </button>
                     </div>
                 </div>
             </div>

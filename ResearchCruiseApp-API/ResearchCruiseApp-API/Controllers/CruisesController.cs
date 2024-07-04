@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
@@ -14,6 +15,7 @@ namespace ResearchCruiseApp_API.Controllers
     [ApiController]
     public class CruisesController(
         ResearchCruiseContext researchCruiseContext,
+        UserManager<User> userManager,
         IYearBasedKeyGenerator yearBasedKeyGenerator,
         IMapper mapper) : ControllerBase
     {
@@ -56,6 +58,17 @@ namespace ResearchCruiseApp_API.Controllers
             cruise.StartDate = TimeZoneInfo.ConvertTimeFromUtc(startDateUtc, TimeZoneInfo.Local);
             cruise.EndDate = TimeZoneInfo.ConvertTimeFromUtc(endDateUtc, TimeZoneInfo.Local);
 
+            var newMainCruiseManager =
+                await userManager.FindByIdAsync(editCruiseModel.ManagersTeam.MainCruiseManagerId.ToString());
+            var newMainDeputyManager =
+                await userManager.FindByIdAsync(editCruiseModel.ManagersTeam.MainDeputyManagerId.ToString());
+
+            if (newMainCruiseManager == null || newMainDeputyManager == null)
+                return NotFound();
+
+            cruise.MainCruiseManagerId = Guid.Parse(newMainCruiseManager.Id);
+            cruise.MainDeputyManagerId = Guid.Parse(newMainDeputyManager.Id);
+            
             var newCruiseApplications = await researchCruiseContext.Applications
                 .Where(application => editCruiseModel.ApplicationsIds.Contains(application.Id))
                 .ToListAsync();
