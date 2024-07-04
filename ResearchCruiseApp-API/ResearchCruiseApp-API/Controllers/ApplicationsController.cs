@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
@@ -11,7 +12,7 @@ using ResearchCruiseApp_API.Types;
 namespace ResearchCruiseApp_API.Controllers
 {
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ApplicationsController(ResearchCruiseContext researchCruiseContext, IMapper mapper) : ControllerBase
     {
@@ -29,6 +30,20 @@ namespace ResearchCruiseApp_API.Controllers
                 .ToList();
 
             return Ok(applicationModels);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetApplicationById(Guid id)
+        {
+            var application = await researchCruiseContext.Applications
+                .Include(application => application.FormA)
+                .FirstOrDefaultAsync(application => application.Id == id);
+            
+            if (application == null)
+                return NotFound();
+            
+            var applicationModel = mapper.Map<ApplicationModel>(application);
+            return Ok(applicationModel);
         }
     }
 }

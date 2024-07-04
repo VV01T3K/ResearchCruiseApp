@@ -58,8 +58,8 @@ function ApplicationDetailsPage() {
                                     values: {
                                         title: "3re",
                                         time: {
-                                            startDate: "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
-                                            endDate: "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                            start: "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
+                                            end: "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
                                         },
                                         financingAmount: "0.00"
                                     },
@@ -70,8 +70,8 @@ function ApplicationDetailsPage() {
                                     values: {
                                         title: "3re",
                                         time: {
-                                            startDate: "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
-                                            endDate: "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
+                                            start: "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
+                                            end: "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
                                         },
                                         financingAmount: "0.00"
                                     },

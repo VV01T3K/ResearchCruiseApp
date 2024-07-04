@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Tls;
 using ResearchCruiseApp_API.Data;
 using static ResearchCruiseApp_API.Data.Application;
 
@@ -15,6 +16,14 @@ public class ApplicationProfile : Profile
                 options =>
                     options.MapFrom(src =>
                         src.FormA != null ? src.FormA.Year : 0))
+            .ForMember(dest => dest.CruiseManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.FormA != null ? src.FormA.CruiseManagerId : Guid.Empty))
+            .ForMember(
+                dest => dest.CruiseManagerEmail,
+                options =>
+                    options.MapFrom<CruiseManagerEmailResolver>())
             .ForMember(
                 dest => dest.CruiseManagerFirstName,
                 options =>
@@ -23,6 +32,14 @@ public class ApplicationProfile : Profile
                 dest => dest.CruiseManagerLastName,
                 options =>
                     options.MapFrom<CruiseManagerLastNameResolver>())
+            .ForMember(dest => dest.DeputyManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.FormA != null ? src.FormA.DeputyManagerId : Guid.Empty))
+            .ForMember(
+                dest => dest.DeputyManagerEmail,
+                options =>
+                    options.MapFrom<DeputyManagerEmailResolver>())
             .ForMember(
                 dest => dest.DeputyManagerFirstName,
                 options =>
@@ -46,6 +63,21 @@ public class ApplicationProfile : Profile
     }
 
 
+    private class CruiseManagerEmailResolver(
+        ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
+        : IValueResolver<Application, ApplicationModel, string?>
+    {
+        public string? Resolve(
+            Application src, ApplicationModel dest, string? cruiseManagerEmail, ResolutionContext context)
+        {
+            if (src.FormA == null)
+                return string.Empty;
+
+            var cruiseManager = userManager.FindByIdAsync(src.FormA.CruiseManagerId.ToString()).Result;
+            return cruiseManager == null ? string.Empty : cruiseManager.Email;
+        }
+    }
+    
     private class CruiseManagerFirstNameResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
         : IValueResolver<Application, ApplicationModel, string>
@@ -73,6 +105,21 @@ public class ApplicationProfile : Profile
 
             var cruiseManager = userManager.FindByIdAsync(src.FormA.CruiseManagerId.ToString()).Result;
             return cruiseManager == null ? "" : cruiseManager.LastName;
+        }
+    }
+    
+    private class DeputyManagerEmailResolver(
+        ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
+        : IValueResolver<Application, ApplicationModel, string?>
+    {
+        public string? Resolve(
+            Application src, ApplicationModel dest, string? deputyManagerEmail, ResolutionContext context)
+        {
+            if (src.FormA == null)
+                return string.Empty;
+
+            var deputyManager = userManager.FindByIdAsync(src.FormA.DeputyManagerId.ToString()).Result;
+            return deputyManager == null ? string.Empty : deputyManager.Email;
         }
     }
     

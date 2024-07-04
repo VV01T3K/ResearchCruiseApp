@@ -3,6 +3,7 @@ import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import React from "react";
 import {Cruise} from "../../CruisesPage/CruisesPage";
 import CruiseApplicationsList from "../../CruisesPage/CruiseApplicationsList";
+import {UseFormReturn} from "react-hook-form";
 
 
 type Props = {

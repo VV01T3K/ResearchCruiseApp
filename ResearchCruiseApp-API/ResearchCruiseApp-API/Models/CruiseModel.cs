@@ -8,13 +8,14 @@ public class CruiseModel
 
     public string Number { get; set; } = null!;
 
-    public DateTime StartDate { get; set; }
-    
-    public DateTime EndDate { get; set; }
+    public StringRange Date { get; set; }
 
+    public Guid MainCruiseManagerId { get; set; }
     public string MainCruiseManagerFirstName { get; set; } = null!;
 
     public string MainCruiseManagerLastName { get; set; } = null!;
+
+    public Guid MainDeputyManagerId { get; set; }
 
     public List<ApplicationShortInfoModel> ApplicationsShortInfo { get; set; } = null!;
 }   

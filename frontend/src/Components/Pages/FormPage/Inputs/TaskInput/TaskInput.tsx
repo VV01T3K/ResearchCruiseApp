@@ -13,8 +13,8 @@ import ErrorCode from "../../../LoginPage/ErrorCode";
 
 
 export type Time = {
-    startDate: string,
-    endDate: string
+    start: string,
+    end: string
 }
 
 export type TaskValues =
@@ -60,13 +60,13 @@ function TaskInput(props: Props) {
         { author: "", title: ""},
         { author: "", title: ""},
         { title: "", institution: "", date: ""},
-        { title: "", time: { startDate: "", endDate: ""}, financingAmount: "" },
-        { title: "", time: { startDate: "", endDate: ""}, financingAmount: "" },
-        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
-        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
-        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
+        { title: "", time: { start: "", end: ""}, financingAmount: "" },
+        { title: "", time: { start: "", end: ""}, financingAmount: "" },
+        { title: "", time: { start: "", end: "" }, financingAmount: "" },
+        { title: "", time: { start: "", end: "" }, financingAmount: "" },
+        { title: "", time: { start: "", end: "" }, financingAmount: "" },
         { description: "" },
-        { title: "", time: { startDate: "", endDate: "" }, financingAmount: "" },
+        { title: "", time: { start: "", end: "" }, financingAmount: "" },
         { description: "" },
     ]
 
@@ -290,15 +290,15 @@ function TaskInput(props: Props) {
                                                                                     showMonthYearDropdown
                                                                                     className={"text-center w-100 border border-opacity-75 rounded-2 p-1 bg-light"}
                                                                                     selectsStart
-                                                                                    startDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}
-                                                                                    maxDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
-                                                                                    endDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
+                                                                                    startDate={(val as Time).start ? new Date((val as Time).start) : null}
+                                                                                    maxDate={(val as Time).end ? new Date((val as Time).end) : null}
+                                                                                    endDate={(val as Time).end ? new Date((val as Time).end) : null}
                                                                                     locale={"pl"}
-                                                                                    selected={(val as Time).startDate ? new Date((val as Time).startDate) : null}
+                                                                                    selected={(val as Time).start ? new Date((val as Time).start) : null}
                                                                                     onChange={(e: Date)=> {
                                                                                         if (e != null) {
                                                                                             const tmp = val as Time;
-                                                                                            tmp["startDate"] = e.toISOString();
+                                                                                            tmp["start"] = e.toISOString();
                                                                                             handleChange(field, row, rowIndex, valIdx, tmp)
                                                                                         }
                                                                                     }}
@@ -312,16 +312,16 @@ function TaskInput(props: Props) {
                                                                                     showYearDropdown
                                                                                     showMonthYearPicker
                                                                                     className={"text-center w-100 border border-opacity-75 rounded-2 p-1 bg-light"}
-                                                                                    startDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}
-                                                                                    endDate={(val as Time).endDate ? new Date((val as Time).endDate) : null}
-                                                                                    minDate={(val as Time).startDate ? new Date((val as Time).startDate) : null}
+                                                                                    startDate={(val as Time).start ? new Date((val as Time).start) : null}
+                                                                                    endDate={(val as Time).end ? new Date((val as Time).end) : null}
+                                                                                    minDate={(val as Time).start ? new Date((val as Time).start) : null}
                                                                                     selectsEnd
                                                                                     locale={"pl"}
-                                                                                    selected={(val as Time).endDate ? new Date((val as Time).endDate) : null}
+                                                                                    selected={(val as Time).end ? new Date((val as Time).end) : null}
                                                                                     onChange={(e: Date)=> {
                                                                                         if (e != null) {
                                                                                             const tmp = val as Time;
-                                                                                            tmp["endDate"] = e.toISOString();
+                                                                                            tmp["end"] = e.toISOString();
                                                                                             handleChange(field, row, rowIndex, valIdx, tmp)
                                                                                         }
                                                                                     }}

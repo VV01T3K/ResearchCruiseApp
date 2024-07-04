@@ -96,7 +96,7 @@ export default function CruisesList(props: Props) {
                                 className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
                                 readOnly={true}
                                 locale={"pl"}
-                                selected={row.startDate ? new Date(row.startDate) : null}
+                                selected={row.date.start ? new Date(row.date.start) : null}
                                 dateFormat="dd/MM/yyyy HH:mm"
                                 onChange={() => {}}
                             />
@@ -110,7 +110,7 @@ export default function CruisesList(props: Props) {
                                 closeOnScroll={true}
                                 readOnly={true}
                                 locale={"pl"}
-                                selected={row.endDate ? new Date(row.endDate) : null}
+                                selected={row.date.end ? new Date(row.date.end) : null}
                                 dateFormat="dd/MM/yyyy HH:mm"
                                 onChange={() => {}}
                             />

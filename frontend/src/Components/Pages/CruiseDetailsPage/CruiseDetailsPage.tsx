@@ -1,5 +1,5 @@
 import Page from "../Page";
-import React, {Dispatch, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
 import PageSection from "../CommonComponents/PageSection";
 import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
@@ -7,10 +7,27 @@ import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
 import CruiseBasicInfo from "./CruiseDetailsSections/CruiseBasicInfo";
 import CruiseDate from "./CruiseDetailsSections/CruiseDate";
-import {useForm} from "react-hook-form";
+import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import CruiseApplications from "./CruiseDetailsSections/CruiseApplications";
 import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
+import Api from "../../Tools/Api";
+import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
+import {fetchApplications} from "../../Tools/Fetchers";
+import CruiseManagers from "./CruiseDetailsSections/CruiseManagers";
+import {Simulate} from "react-dom/test-utils";
+import reset = Simulate.reset;
 
+
+type CruiseManagersTeam = {
+    mainCruiseManagerId: string,
+    mainDeputyManagerId: string
+}
+
+export type EditCruiseFormValues = {
+    date: Time,
+    managersTeam: CruiseManagersTeam,
+    applicationsIds: string[]
+}
 
 type CruiseDetailsPageLocationState = {
     cruise: Cruise
@@ -22,39 +39,52 @@ export default function CruiseDetailsPage() {
     const [locationState, _]: [CruiseDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
 
+    const editCruiseFormDefaultValues: EditCruiseFormValues = {
+        date: locationState.cruise.date,
+        managersTeam: {
+            mainCruiseManagerId: locationState.cruise.mainCruiseManagerId,
+            mainDeputyManagerId: locationState.cruise.mainDeputyManagerId
+        },
+        applicationsIds: locationState.cruise.applicationsShortInfo.map(app => app.id)
+    }
+    const editCruiseForm = useForm<EditCruiseFormValues>({
+        defaultValues: editCruiseFormDefaultValues
+    })
+
+    const sendEditCruiseForm = () => {
+        console.log(editCruiseForm.getValues())
+        Api
+            .patch(
+                `/api/Cruises/${locationState.cruise.id}`,
+                editCruiseForm.getValues()
+            )
+            .then(_ =>
+                console.log("Success")
+            )
+            .catch(__ =>
+                console.log("Error")
+            )
+    }
+    const resetEditCruiseForm = () => {
+        editCruiseForm.reset(editCruiseFormDefaultValues)
+        fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
+    }
+
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
         "Podstawowe": "Podstawowe informacje o rejsie",
         "Termin": "Termin rejsu",
+        "Kierownicy": "Kierownik główny i zastępca kierownika głównego",
         "Zgłoszenia": "Zgłoszenia przypisane do rejsu"
     })
 
-    const [applicationsAddingMode, setApplicationsAddingMode] = useState(false)
+    const [applicationsAddingMode, setApplicationsAddingMode] =
+        useState(false)
 
-    const fetchApplications = (applicationsShortInfo: ApplicationShortInfo[]) => {
-        // Temporary solution. Here an actual API call will be performed
-
-        const records: Application[] = [];
-        for (let i = 1; i <= 2; i++) {
-            const record: Application = {
-                id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-                date: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}`,
-                number: `2024/${i}`,
-                year: 2025 + Math.floor(Math.random() * 3),
-                cruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-                cruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-                deputyManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Maciej" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Paweł" : "Sławomir"),
-                deputyManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Domorowicz" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Międzypodczas" : "Golałchowski"),
-                formAId: (i * 100).toString(),
-                formBId: i % 2 === 0 ? null : (i * 1000).toString(),
-                formCId:  null,
-                status: "Nowe",
-                points: (Math.floor(Math.random() * 300) + 1).toString(),
-                pointsDetails: [{}, {}]
-            };
-            records.push(record);
-        }
-        return records;
-    }
+    const [applications, setApplications] =
+        useState<Application[]>([])
+    useEffect(() => {
+        fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
+    }, []);
 
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white" >
@@ -72,12 +102,21 @@ export default function CruiseDetailsPage() {
                         </PageSection>
 
                         <PageSection title={sections["Termin"]}>
-                            <CruiseDate cruise={locationState.cruise} />
+                            <CruiseDate editCruiseForm={editCruiseForm} />
+                        </PageSection>
+
+                        <PageSection title={sections["Kierownicy"]}>
+                            <CruiseManagers
+                                applications={applications}
+                                editCruiseForm={editCruiseForm}
+                            />
                         </PageSection>
 
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
-                                applications={fetchApplications(locationState.cruise.applicationsShortInfo)}
+                                editCruiseForm={editCruiseForm}
+                                applications={applications}
+                                setApplications={setApplications}
                                 addingMode={applicationsAddingMode}
                                 setAddingMode={setApplicationsAddingMode}
                             />
@@ -86,10 +125,22 @@ export default function CruiseDetailsPage() {
                 </div>
                 <div className={`d-flex flex-row justify-content-center border-top border-black w-100 bg-white`} style={{zIndex:9999}}>
                     <div className="d-flex col-6 text-center p-2 justify-content-center">
-                        <button className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz zmiany</button>
+                        <button
+                            className="btn btn-primary w-100"
+                            style={{fontSize:"inherit"}}
+                            onClick={editCruiseForm.handleSubmit(sendEditCruiseForm)}
+                        >
+                            Zapisz zmiany
+                        </button>
                     </div>
                     <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                        <button className="btn btn-primary w-100" style={{fontSize:"inherit"}}>:)</button>
+                        <button
+                            className="btn btn-primary w-100"
+                            style={{fontSize:"inherit"}}
+                            onClick={resetEditCruiseForm}
+                        >
+                            Cofnij zmiany
+                        </button>
                     </div>
                 </div>
             </div>

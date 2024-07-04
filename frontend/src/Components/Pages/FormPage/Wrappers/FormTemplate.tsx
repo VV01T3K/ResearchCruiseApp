@@ -131,8 +131,21 @@ function FormTemplate(props: Props) {
 
         // Zapisz zaktualizowane dane w localStorage
         localStorage.setItem('sentFormData', JSON.stringify(savedFormsData));
-        Api.post('/forms/'+props.type, data).catch((err)=>null).then(()=>{setTimeout(()=>{dispatchEvent(null); navigate("/ViewForms")},1000)
-    })}
+        Api
+            .post(
+                '/forms/'+props.type,
+                data
+            )
+            .catch(err =>
+                null
+            )
+            .then(()=> {
+                setTimeout(()=> {
+                    dispatchEvent(null)
+                    navigate("/ViewForms")
+                }, 1000)
+            })
+    }
 
     return (
         <>
