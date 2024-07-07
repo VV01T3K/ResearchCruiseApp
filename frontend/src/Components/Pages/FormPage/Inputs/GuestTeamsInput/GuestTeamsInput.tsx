@@ -37,7 +37,8 @@ function GuestTeamsInput(props: Props){
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>
-            <Controller name={props.name}  control={props.form!.control}
+            <Controller name={props.name}
+                        control={props.form!.control}
                         defaultValue={[]}
                         rules = {{required:props.required ?? true,validate: {
                             notEmpty: (value) => {

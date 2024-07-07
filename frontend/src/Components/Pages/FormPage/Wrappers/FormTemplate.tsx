@@ -111,7 +111,6 @@ function FormTemplate(props: Props) {
     const handleSubmit = (data) => {
         console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
         dispatchEvent("Trwa wysyłanie")
-
         // const savedFormsDataString = localStorage.getItem('sentFormData');
         // let savedFormsData: SavedFormData[] = [];
         // // Jeśli nie ma jeszcze żadnych danych w localStorage, utwórz nową tablicę
@@ -133,7 +132,6 @@ function FormTemplate(props: Props) {
         // localStorage.setItem('sentFormData', JSON.stringify(savedFormsData));
         Api.post('/formsA/'+props.type, data).catch((err)=>null).then(()=>{setTimeout(()=>{dispatchEvent(null); navigate("/ViewForms")},1000)
     })}
-
     return (
         <>
             <Page className="justify-content-center col-12 col-xl-9 bg-white" >

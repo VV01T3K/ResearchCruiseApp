@@ -139,11 +139,11 @@ namespace ResearchCruiseApp_API.Controllers
             var rolesNames = await roleManager.Roles
                 .Select(role => role.Name!)
                 .ToListAsync();
-            
+
             if (rolesNames.Contains(toggleUserRoleModel.RoleName))
                 await userManager.AddToRoleAsync(user, toggleUserRoleModel.RoleName);
             else
-                return BadRequest(new {Message = "Role does not exist"});
+                return BadRequest(new { Message = "Role does not exist" });
 
             if (toggleUserRoleModel.AddRole)
                 await userManager.AddToRoleAsync(user, toggleUserRoleModel.RoleName);

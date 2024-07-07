@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
@@ -14,7 +15,7 @@ using Microsoft.EntityFrameworkCore.Query;
 namespace ResearchCruiseApp_API.Controllers
 {
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ApplicationsController(
         ResearchCruiseContext researchCruiseContext,

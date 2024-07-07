@@ -8,24 +8,23 @@ import CruisesList from "./CruisesList";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import NewCruiseForm from "./NewCruiseForm";
 import Api from "../../Tools/Api";
+import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 
 
 export type Cruise = {
     id: string,
     number: string,
-    startDate: string,
-    endDate: string,
+    date: Time,
+    mainCruiseManagerId: string,
     mainCruiseManagerFirstName: string,
     mainCruiseManagerLastName: string,
+    mainDeputyManagerId: string,
     applicationsShortInfo: ApplicationShortInfo[]
 }
 
-type Props = {
-}
 
-
-export default function CruisesPage(props: Props) {
-    const [listView, setListView] = useState(false)
+export default function CruisesPage() {
+    const [listView, setListView] = useState(true)
     const [showNewCruiseForm, setShowNewCruiseForm] = useState(false)
 
     const autoAddCruises = () => {
@@ -35,39 +34,38 @@ export default function CruisesPage(props: Props) {
             .catch(error => console.log(error.message))
     }
 
-    const generateCruises = () => {
-        const records: Cruise[] = [];
-        for (let i = 1; i <= 10; i++) {
-            const record: Cruise = {
-                id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-                number: `2024/${i}`,
-                startDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
-                endDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
-                mainCruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-                mainCruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-                applicationsShortInfo: [
-                    {
-                        id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-                        number: `2024/${Math.floor(Math.random() * i)}`,
-                        points: Math.floor(Math.random() * 300)
-                    },
-                    {
-                        id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-                        number: `2024/${Math.floor(Math.random() * 2 * i)}`,
-                        points: Math.floor(Math.random() * 300),
-                    }
-                ]
-            };
-            records.push(record);
-        }
-        return records;
-    };
+    // const generateCruises = () => {
+    //     const records: Cruise[] = [];
+    //     for (let i = 1; i <= 10; i++) {
+    //         const record: Cruise = {
+    //             id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
+    //             number: `2024/${i}`,
+    //             startDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
+    //             endDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
+    //             mainCruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
+    //             mainCruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
+    //             applicationsShortInfo: [
+    //                 {
+    //                     id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
+    //                     number: `2024/${Math.floor(Math.random() * i)}`,
+    //                     points: Math.floor(Math.random() * 300)
+    //                 },
+    //                 {
+    //                     id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
+    //                     number: `2024/${Math.floor(Math.random() * 2 * i)}`,
+    //                     points: Math.floor(Math.random() * 300),
+    //                 }
+    //             ]
+    //         };
+    //         records.push(record);
+    //     }
+    //     return records;
+    // };
 
-    const [cruises, setCruises] = useState<Cruise[]>()
+    const [cruises, setCruises] = useState<Cruise[]>([])
     useEffect(() => {
         Api
-            .get(
-                '/api/Cruises',)
+            .get('/api/Cruises',)
             .then(response =>
                 setCruises(response.data)
             )

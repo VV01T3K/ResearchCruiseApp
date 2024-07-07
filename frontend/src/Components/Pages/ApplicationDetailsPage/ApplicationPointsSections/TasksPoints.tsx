@@ -141,7 +141,7 @@ function TasksPoints(props: Props) {
                                                                         {/*    dateFormat="dd/MM/yyyy"*/}
                                                                         {/*    readOnly*/}
                                                                         {/*/>*/}
-                                                                        <ReadOnlyTextInput value={(val as Time).startDate ? (val as Time).startDate : ""} />
+                                                                        <ReadOnlyTextInput value={(val as Time).start ? (val as Time).start : ""} />
                                                                         {/*<DatePicker*/}
                                                                         {/*    showYearDropdown*/}
                                                                         {/*    showMonthYearPicker*/}
@@ -153,7 +153,7 @@ function TasksPoints(props: Props) {
                                                                         {/*    dateFormat="dd/MM/yyyy"*/}
                                                                         {/*    readOnly*/}
                                                                         {/*/>*/}
-                                                                        <ReadOnlyTextInput value={(val as Time).endDate ? (val as Time).endDate : ""} />
+                                                                        <ReadOnlyTextInput value={(val as Time).end ? (val as Time).end : ""} />
                                                                     </>
                                                                 )
                                                             case "Kwota finansowania":
