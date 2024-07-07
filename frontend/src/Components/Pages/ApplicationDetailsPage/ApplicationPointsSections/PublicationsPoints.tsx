@@ -10,7 +10,7 @@ type EvaluatedPublication = {
     authors: string,
     title: string,
     magazine: string,
-    points: string
+    calculatedPoints: string
 }
 
 type Props = {
@@ -152,7 +152,7 @@ function PublicationsInput(props: Props){
                             <div className="col-12 d-flex d-xl-none justify-content-center">
                                 Punkty
                             </div>
-                            <ReadOnlyTextInput value={row.points} />
+                            <ReadOnlyTextInput value={row.calculatedPoints} />
                         </div>
                     </div>
                 ))}

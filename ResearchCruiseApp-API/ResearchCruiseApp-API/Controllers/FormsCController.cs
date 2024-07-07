@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using NuGet.Protocol;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
@@ -19,7 +20,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetFormById([FromRoute] Guid id)
         {
-            var form = await GetAllFormsFromDb()
+            var form = await GetFormsQuery()
                 .FirstOrDefaultAsync(form => form.Id == id);
             if (form == null)
                 return NotFound();
@@ -27,8 +28,7 @@ namespace ResearchCruiseApp_API.Controllers
             var mapper = MapperConfig.InitializeAutomapper();
             return Ok(mapper.Map<FormsModel>(form));
         }
-
-        public Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ResearchCruiseApp_API.Data.FormC,System.Collections.Generic.List<ResearchCruiseApp_API.Data.SPUBTask>> GetAllFormsFromDb()
+        public IIncludableQueryable<FormC, List<Data.SPUBTask>> GetFormsQuery()
         {
             return researchCruiseContext.FormsC
                 .Include(o => o.Contracts)
@@ -43,7 +43,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllForms()
         {
-            var forms = await GetAllFormsFromDb().ToListAsync();
+            var forms = await GetFormsQuery().ToListAsync();
             var formModels = new List<FormCModel>();
             var mapper = MapperConfig.InitializeAutomapper();
 

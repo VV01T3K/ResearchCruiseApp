@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using NuGet.Protocol;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
@@ -14,12 +15,13 @@ namespace ResearchCruiseApp_API.Controllers
     public class FormsAController(
         ResearchCruiseContext researchCruiseContext,
         UsersContext usersContext,
-        IYearBasedKeyGenerator yearBasedKeyGenerator) : ControllerBase
+        IYearBasedKeyGenerator yearBasedKeyGenerator,
+        IApplicationEvaluator applicationEvaluator) : ControllerBase
     {
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetFormById([FromRoute] Guid id)
         {
-            var form = await GetAllFormsFromDb()
+            var form = await GetFormsQuery(researchCruiseContext)
                 .FirstOrDefaultAsync(form => form.Id == id);
             if (form == null)
                 return NotFound();
@@ -27,8 +29,9 @@ namespace ResearchCruiseApp_API.Controllers
             var mapper = MapperConfig.InitializeAutomapper();
             return Ok(mapper.Map<FormsModel>(form));
         }
-
-        public Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ResearchCruiseApp_API.Data.FormA,System.Collections.Generic.List<ResearchCruiseApp_API.Data.SPUBTask>> GetAllFormsFromDb()
+        
+        private static IIncludableQueryable<FormA, List<Data.SPUBTask>>GetFormsQuery(
+            ResearchCruiseContext researchCruiseContext)
         {
             // TODO include appropriate entities
             return researchCruiseContext.FormsA
@@ -44,7 +47,7 @@ namespace ResearchCruiseApp_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllForms()
         {
-            var forms = await GetAllFormsFromDb().ToListAsync();
+            var forms = await GetFormsQuery(researchCruiseContext).ToListAsync();
             var formModels = new List<FormAModel>();
             var mapper = MapperConfig.InitializeAutomapper();
 
@@ -55,8 +58,7 @@ namespace ResearchCruiseApp_API.Controllers
             
             return Ok(formModels);
         }
-        
-        [HttpPost]
+        [HttpPost("A")]
         public async Task<IActionResult> AddForm([FromBody] FormAModel form)
         {
             if (!ModelState.IsValid)
@@ -84,6 +86,20 @@ namespace ResearchCruiseApp_API.Controllers
         
         public async Task AddApplicationAsync(FormA formA)
         {
+            var mapper = MapperConfig.InitializeAutomapper();
+            var formAModel = mapper.Map<FormAModel>(formA);
+
+            
+            var evaluatedApplicationModel = applicationEvaluator.EvaluateApplication(formAModel, []);
+            
+            var evaluatedApplication = mapper.Map<EvaluatedApplication>(evaluatedApplicationModel);
+            
+        
+            await researchCruiseContext.EvaluatedApplications.AddAsync(evaluatedApplication);
+            await researchCruiseContext.SaveChangesAsync();
+
+            var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplicationModel);
+
             var newApplication = new Application
             {
                 Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Applications),
@@ -91,7 +107,8 @@ namespace ResearchCruiseApp_API.Controllers
                 FormA = formA,
                 FormB = null,
                 FormC = null,
-                Points = 0,
+                EvaluatedApplication = evaluatedApplication,
+                Points = calculatedPoints,
                 Status = Application.ApplicationStatus.New
             };
 

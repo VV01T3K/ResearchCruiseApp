@@ -10,7 +10,7 @@ type EvaluatedSpubTask = {
     yearFrom: string,
     yearTo: string,
     name: string,
-    points: string
+    calculatedPoints: string
 }
 
 type Props = {
@@ -100,7 +100,7 @@ function SpubTasksPoints(props: Props){
                                  style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Punkty</div>
-                                <ReadOnlyTextInput value={row.points} />
+                                <ReadOnlyTextInput value={row.calculatedPoints} />
                             </div>
                         </div>
                     ))}

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Data;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Data;
 namespace ResearchCruiseApp_API.Migrations
 {
     [DbContext(typeof(ResearchCruiseContext))]
-    partial class ResearchCruiseContextModelSnapshot : ModelSnapshot
+    [Migration("20240630134446_AddedEvaluatedApplication")]
+    partial class AddedEvaluatedApplication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +36,9 @@ namespace ResearchCruiseApp_API.Migrations
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
+
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("FormAId")
                         .HasColumnType("uniqueidentifier");
@@ -56,6 +62,8 @@ namespace ResearchCruiseApp_API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CruiseId");
+
+                    b.HasIndex("EvaluatedApplicationId");
 
                     b.HasIndex("FormAId");
 
@@ -141,6 +149,189 @@ namespace ResearchCruiseApp_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cruises");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedApplication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UgTeamsPoints")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EvaluatedApplications");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CalculatedPoints")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("InstitutionLocation")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("InstitutionName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("InstitutionUnit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EvaluatedApplicationId");
+
+                    b.ToTable("EvaluatedContract");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedPublication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Authors")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CalculatedPoints")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DOI")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Magazine")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EvaluatedApplicationId");
+
+                    b.ToTable("EvaluatedPublication");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedResearchTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Author")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CalculatedPoints")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Date")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EndDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("EvaluatedApplicationId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FinancingAmount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Institution")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StartDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EvaluatedApplicationId");
+
+                    b.HasIndex("EvaluatedApplicationId1");
+
+                    b.ToTable("EvaluatedResearchTask");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedSPUBTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CalculatedPoints")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YearFrom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YearTo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EvaluatedApplicationId");
+
+                    b.ToTable("EvaluatedSPUBTask");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>
@@ -328,6 +519,9 @@ namespace ResearchCruiseApp_API.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("FormAId")
                         .HasColumnType("uniqueidentifier");
 
@@ -342,6 +536,8 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EvaluatedApplicationId");
 
                     b.HasIndex("FormAId");
 
@@ -500,6 +696,9 @@ namespace ResearchCruiseApp_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("EvaluatedApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("FormAId")
                         .HasColumnType("uniqueidentifier");
 
@@ -519,6 +718,8 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EvaluatedApplicationId");
 
                     b.HasIndex("FormAId");
 
@@ -580,6 +781,10 @@ namespace ResearchCruiseApp_API.Migrations
                         .WithMany("Applications")
                         .HasForeignKey("CruiseId");
 
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", "EvaluatedApplication")
+                        .WithMany()
+                        .HasForeignKey("EvaluatedApplicationId");
+
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", "FormA")
                         .WithMany()
                         .HasForeignKey("FormAId");
@@ -591,6 +796,8 @@ namespace ResearchCruiseApp_API.Migrations
                     b.HasOne("ResearchCruiseApp_API.Data.FormC", "FormC")
                         .WithMany()
                         .HasForeignKey("FormCId");
+
+                    b.Navigation("EvaluatedApplication");
 
                     b.Navigation("FormA");
 
@@ -614,8 +821,44 @@ namespace ResearchCruiseApp_API.Migrations
                         .HasForeignKey("FormCId");
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedContract", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("Contracts")
+                        .HasForeignKey("EvaluatedApplicationId");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedPublication", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("Publications")
+                        .HasForeignKey("EvaluatedApplicationId");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedResearchTask", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("CruiseEffects")
+                        .HasForeignKey("EvaluatedApplicationId");
+
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("ResearchTasks")
+                        .HasForeignKey("EvaluatedApplicationId1");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedSPUBTask", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("SpubTasks")
+                        .HasForeignKey("EvaluatedApplicationId");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp_API.Data.GuestTeam", b =>
                 {
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("GuestTeams")
+                        .HasForeignKey("EvaluatedApplicationId");
+
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
                         .WithMany("GuestTeams")
                         .HasForeignKey("FormAId");
@@ -676,6 +919,10 @@ namespace ResearchCruiseApp_API.Migrations
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.UGTeam", b =>
                 {
+                    b.HasOne("ResearchCruiseApp_API.Data.EvaluatedApplication", null)
+                        .WithMany("UgTeams")
+                        .HasForeignKey("EvaluatedApplicationId");
+
                     b.HasOne("ResearchCruiseApp_API.Data.FormA", null)
                         .WithMany("UGTeams")
                         .HasForeignKey("FormAId");
@@ -707,6 +954,23 @@ namespace ResearchCruiseApp_API.Migrations
             modelBuilder.Entity("ResearchCruiseApp_API.Data.Cruise", b =>
                 {
                     b.Navigation("Applications");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Data.EvaluatedApplication", b =>
+                {
+                    b.Navigation("Contracts");
+
+                    b.Navigation("CruiseEffects");
+
+                    b.Navigation("GuestTeams");
+
+                    b.Navigation("Publications");
+
+                    b.Navigation("ResearchTasks");
+
+                    b.Navigation("SpubTasks");
+
+                    b.Navigation("UgTeams");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Data.FormA", b =>

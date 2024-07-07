@@ -10,7 +10,7 @@ public class ResearchCruiseContext(DbContextOptions<ResearchCruiseContext> optio
     public DbSet<FormB> FormsB { get; init; } = null!;
     public DbSet<FormC> FormsC { get; init; } = null!;
     public DbSet<Application> Applications { get; init; } = null!;
-
+    public DbSet<EvaluatedApplication> EvaluatedApplications { get; init; } = null!;
     public DbSet<Cruise> Cruises { get; init; } = null!;
     // public DbSet<Contract> Contracts { get; init; } = null!;
     // public DbSet<TaskToDo> TasksToDo { get; init; } = null!;

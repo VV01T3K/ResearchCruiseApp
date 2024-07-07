@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Text.Json.Serialization;
+using ResearchCruiseApp_API.Data.Interfaces;
 
 namespace ResearchCruiseApp_API.Models;
 
@@ -17,7 +19,7 @@ public struct DateRange
 
 public class UGTeam
 {
-    public int Value { get; set; }
+    public int UnitId { get; set; }
     public int? NoOfEmployees { get; set; }
     public int? NoOfStudents { get; set; }
 }
@@ -69,6 +71,22 @@ public class ResearchTask
     public Value Values { get; set; } 
 }
 
+public class EvaluatedResearchTask : ResearchTask, IEvaluatedField
+{
+    public int CalculatedPoints { get; set; }
+    public EvaluatedResearchTask(ResearchTask task, int points)
+    {
+        this.Type = task.Type;
+        this.Values = task.Values;
+        this.CalculatedPoints = points;
+    }
+
+    public EvaluatedResearchTask()
+    {
+        
+    }
+}
+
 public class Contract
 {
     //Lista umów współpracy
@@ -93,6 +111,24 @@ public class Contract
 
 }
 
+public class EvaluatedContract : Contract, IEvaluatedField
+{
+    public int CalculatedPoints { get; set; }
+    public EvaluatedContract(Contract contract, int points)
+    {
+        this.Category = contract.Category;
+        this.Description = contract.Description;
+        this.Institution = contract.Institution;
+        this.Scan = contract.Scan;
+        this.CalculatedPoints = points;
+    }
+
+    EvaluatedContract()
+    {
+        
+    }
+}
+
 public class Publication
 {
     //Publikacje
@@ -108,6 +144,24 @@ public class Publication
         public string Magazine { get; set; }
     }
 }
+
+public class EvaluatedPublication : Publication, IEvaluatedField
+{
+    public int CalculatedPoints { get; set; }
+    public EvaluatedPublication(Publication publication,  int points)
+    {
+        this.Category = publication.Category;
+        this.Year = publication.Year;
+        this.Points = publication.Points;
+        this.Info = publication.Info;
+        this.CalculatedPoints = points;
+    }
+    EvaluatedPublication()
+    {
+        
+    }
+}
+
 
 public class Work
 {
@@ -144,6 +198,24 @@ public class SPUBTask
     public string YearTo { get; set; } = null!;
     public string Name { get; set; } = null!;
 
+}
+
+public class EvaluatedSPUBTask : SPUBTask, IEvaluatedField
+{
+    public int CalculatedPoints { get; set; }
+
+    public EvaluatedSPUBTask(SPUBTask spubTask,  int points)
+    {
+        this.YearFrom = spubTask.YearFrom;
+        this.YearTo = spubTask.YearTo;
+        this.Name = spubTask.Name;
+        this.CalculatedPoints = points;
+    }
+    
+    EvaluatedSPUBTask()
+    {
+        
+    }
 }
 
 public class FormsModel
