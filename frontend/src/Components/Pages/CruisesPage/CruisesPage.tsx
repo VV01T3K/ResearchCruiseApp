@@ -85,7 +85,12 @@ export default function CruisesPage() {
                         </div>
                     </div> {/* Menu bar */}
                     {!listView && <CruisesCalendar cruises={cruises} />}
-                    {listView && <CruisesList cruises={cruises} />}
+                    {listView &&
+                        <CruisesList
+                            cruises={cruises}
+                            setCruises={setCruises}
+                        />
+                    }
                 </div>
             </div>
         </Page>

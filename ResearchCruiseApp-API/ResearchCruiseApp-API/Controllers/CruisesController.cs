@@ -59,7 +59,7 @@ namespace ResearchCruiseApp_API.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> EditCruise(Guid id, CruiseFormModel cruiseFormModel)
+        public async Task<IActionResult> EditCruise([FromRoute] Guid id, [FromBody] CruiseFormModel cruiseFormModel)
         {
             var cruise = await researchCruiseContext.Cruises
                 .Include(cruise => cruise.Applications)
@@ -116,6 +116,23 @@ namespace ResearchCruiseApp_API.Controllers
             await CheckEditedCruisesManagersTeams(affectedCruises);
             
             await researchCruiseContext.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteCruise([FromRoute] Guid id)
+        {
+            var cruise = await researchCruiseContext.Cruises
+                .Include(cruise => cruise.Applications)
+                .Where(cruise => cruise.Id == id)
+                .SingleOrDefaultAsync();
+
+            if (cruise is null)
+                return NotFound();
+
+            researchCruiseContext.Cruises.Remove(cruise);
+            await researchCruiseContext.SaveChangesAsync();
+
             return NoContent();
         }
         

@@ -2,15 +2,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {Cruise} from "./CruisesPage";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import CruiseApplicationsList from "./CruiseApplicationsList";
 import DatePicker from "react-datepicker";
+import Api from "../../Tools/Api";
 
 
 type Props = {
-    cruises?: Cruise[]
+    cruises?: Cruise[],
+    setCruises?: Dispatch<any>
 }
 
 
@@ -28,6 +30,19 @@ export default function CruisesList(props: Props) {
         },
         []
     );
+
+    const handleDeleteCruise = (id: string) => {
+        Api
+            .delete(`/api/Cruises/${id}`)
+            .then(response => {
+                const newCruises: Cruise[] = props.cruises!
+                    .filter(cruise => cruise.id != id)
+                props.setCruises!(newCruises)
+            })
+            .catch(error =>
+                console.log(error.message)
+            )
+    }
 
     return (
         <div className="table-striped w-100">
@@ -143,6 +158,13 @@ export default function CruisesList(props: Props) {
                                     label="Szczegóły"
                                     state={{ cruise: row }}
                                 />
+                                <button
+                                    className="btn btn-danger"
+                                    style={{fontSize: "inherit"}}
+                                    onClick={() => handleDeleteCruise(row.id)}
+                                >
+                                    Usuń
+                                </button>
                             </div>
                         </div>
                     </div>
