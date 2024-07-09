@@ -119,8 +119,13 @@ export default function CruisesList(props: Props) {
                              style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik główny:</div>
-                            <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
-                            <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
+                            {row.mainCruiseManagerId == "00000000-0000-0000-0000-000000000000" ?
+                                <div>Nie przypisano</div> :
+                                <>
+                                    <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
+                                    <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
+                                </>
+                            }
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                              style={{width: windowWidth >= 1200 ? "19%" : "100%"}}

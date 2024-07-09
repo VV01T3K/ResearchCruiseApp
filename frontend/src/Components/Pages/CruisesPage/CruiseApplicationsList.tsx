@@ -20,6 +20,11 @@ export default function CruiseApplicationsList(props: Props) {
 
     return (
         <>
+            {applications.length == 0 &&
+                <div>
+                    Brak zgłoszeń
+                </div>
+            }
             {applications.map((application: Application, index: number) => (
                     <div
                         key={index}
