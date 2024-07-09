@@ -7,7 +7,7 @@ import {UseFormReturn} from "react-hook-form";
 
 
 type Props = {
-    cruise: Cruise
+    cruise?: Cruise
 }
 
 
@@ -15,7 +15,10 @@ export default function CruiseBasicInfo(props: Props) {
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center col-12">
             <SimpleInfoTile title="Numer rejsu" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruise.number} />
+                <ReadOnlyTextInput
+                    value={props.cruise?.number ?? ""}
+                    className={!props.cruise ? "bg-light" : ""}
+                />
             </SimpleInfoTile>
         </div>
     )

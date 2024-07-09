@@ -25,7 +25,7 @@ import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import CruisesPage from "./Pages/CruisesPage/CruisesPage"
 import SentFormPage from "./Pages/SentFormsPage/SentFormPage";
-import CruiseDetailsPage from "./Pages/CruiseDetailsPage/CruiseDetailsPage";
+import CruiseFormPage from "./Pages/CruiseFormPage/CruiseFormPage";
 
 function App() {
 
@@ -117,7 +117,7 @@ function App() {
                             <Route path="/Applications" element={<ApplicationsPage />} />
                             <Route path="/ApplicationDetails" element={<ApplicationDetailsPage />} />
                             <Route path="/Cruises" element={<CruisesPage />} />
-                            <Route path="/CruiseDetails" element={<CruiseDetailsPage />} />
+                            <Route path="/CruiseForm" element={<CruiseFormPage />} />
                         </>
                     }
                     {userData && userData["roles"].includes("CruiseManager") &&

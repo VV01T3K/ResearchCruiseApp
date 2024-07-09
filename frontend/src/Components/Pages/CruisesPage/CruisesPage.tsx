@@ -6,7 +6,6 @@ import CruisesCalendar from "./CruisesCalendar";
 import ReactSwitch from 'react-switch';
 import CruisesList from "./CruisesList";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
-import NewCruiseForm from "./NewCruiseForm";
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
@@ -78,14 +77,13 @@ export default function CruisesPage() {
                             <div className="d-flex justify-content-end align-items-center w-100">
                                 <LinkWithState
                                     className="btn btn-info w-50 p-2"
-                                    to="/CruiseDetails"
+                                    to="/CruiseForm"
                                     label="Dodaj nowy rejs"
                                     state={{ }}
                                 />
                             </div>
                         </div>
                     </div> {/* Menu bar */}
-                    {showNewCruiseForm && <NewCruiseForm />}
                     {!listView && <CruisesCalendar cruises={cruises} />}
                     {listView && <CruisesList cruises={cruises} />}
                 </div>
