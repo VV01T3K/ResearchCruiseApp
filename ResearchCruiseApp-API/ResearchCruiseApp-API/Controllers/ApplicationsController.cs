@@ -34,6 +34,20 @@ namespace ResearchCruiseApp_API.Controllers
 
             return Ok(applicationModels);
         }
+        
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetApplicationById(Guid id)
+        {
+            var application = await researchCruiseContext.Applications
+                .Include(application => application.FormA)
+                .FirstOrDefaultAsync(application => application.Id == id);
+
+            if (application == null)
+                return NotFound();
+
+            var applicationModel = mapper.Map<ApplicationModel>(application);
+            return Ok(applicationModel);
+        }
 
         private IIncludableQueryable<Application, FormC?> GetApplicationsQuery()
         {

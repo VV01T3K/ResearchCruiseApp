@@ -30,7 +30,7 @@ export type EditCruiseFormValues = {
 }
 
 type CruiseDetailsPageLocationState = {
-    cruise: Cruise
+    cruise?: Cruise
 }
 
 
@@ -40,7 +40,7 @@ export default function CruiseDetailsPage() {
         = useState(location.state || { })
 
     const editCruiseFormDefaultValues: EditCruiseFormValues = {
-        date: locationState.cruise.date,
+        date: locationState.cruise?.date ?? { start: "", end: "" },
         managersTeam: {
             mainCruiseManagerId: locationState.cruise.mainCruiseManagerId,
             mainDeputyManagerId: locationState.cruise.mainDeputyManagerId

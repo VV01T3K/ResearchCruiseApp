@@ -9,6 +9,7 @@ import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import NewCruiseForm from "./NewCruiseForm";
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
+import LinkWithState from "../../CommonComponents/LinkWithState";
 
 
 export type Cruise = {
@@ -33,34 +34,6 @@ export default function CruisesPage() {
             .then(response => console.log(response))
             .catch(error => console.log(error.message))
     }
-
-    // const generateCruises = () => {
-    //     const records: Cruise[] = [];
-    //     for (let i = 1; i <= 10; i++) {
-    //         const record: Cruise = {
-    //             id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-    //             number: `2024/${i}`,
-    //             startDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
-    //             endDate: `2024-${Math.floor(Math.random() * 2 + 10)}-${Math.floor(Math.random() * 10 + 20)}, ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}`,
-    //             mainCruiseManagerFirstName: i % 3 == (Math.floor(Math.random() * 3)) ? "Sławomir" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Mieczysław" : "Trzebiesław"),
-    //             mainCruiseManagerLastName: i % 3 == (Math.floor(Math.random() * 3)) ? "Kiędonorski" : (i % 3 == (Math.floor(Math.random() * 3)) ? "Adamczykowski" : "Sokołogonogonogonogonowski"),
-    //             applicationsShortInfo: [
-    //                 {
-    //                     id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-    //                     number: `2024/${Math.floor(Math.random() * i)}`,
-    //                     points: Math.floor(Math.random() * 300)
-    //                 },
-    //                 {
-    //                     id: (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString() + "-" + (Math.floor(Math.random() * 1000)).toString(),
-    //                     number: `2024/${Math.floor(Math.random() * 2 * i)}`,
-    //                     points: Math.floor(Math.random() * 300),
-    //                 }
-    //             ]
-    //         };
-    //         records.push(record);
-    //     }
-    //     return records;
-    // };
 
     const [cruises, setCruises] = useState<Cruise[]>([])
     useEffect(() => {
@@ -103,13 +76,12 @@ export default function CruisesPage() {
                                 </button>
                             </div>
                             <div className="d-flex justify-content-end align-items-center w-100">
-                                <button
+                                <LinkWithState
                                     className="btn btn-info w-50 p-2"
-                                    style={{ font: "inherit" }}
-                                    onClick={() => setShowNewCruiseForm(!showNewCruiseForm)}
-                                >
-                                    Dodaj nowy rejs
-                                </button>
+                                    to="/CruiseDetails"
+                                    label="Dodaj nowy rejs"
+                                    state={{ }}
+                                />
                             </div>
                         </div>
                     </div> {/* Menu bar */}

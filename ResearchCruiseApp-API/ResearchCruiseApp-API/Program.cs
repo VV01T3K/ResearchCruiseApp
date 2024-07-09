@@ -39,13 +39,9 @@ builder.Services
     .AddApiEndpoints();
 
 builder.Services.AddDbContext<UsersContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("ResearchCruiseApp-DB"),
-        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 builder.Services.AddDbContext<ResearchCruiseContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("ResearchCruiseApp-DB"),
-        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

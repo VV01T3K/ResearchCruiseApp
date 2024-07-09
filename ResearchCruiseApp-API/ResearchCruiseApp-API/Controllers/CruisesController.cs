@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -68,12 +69,28 @@ namespace ResearchCruiseApp_API.Controllers
 
             cruise.MainCruiseManagerId = Guid.Parse(newMainCruiseManager.Id);
             cruise.MainDeputyManagerId = Guid.Parse(newMainDeputyManager.Id);
-            
-            var newCruiseApplications = await researchCruiseContext.Applications
-                .Where(application => editCruiseModel.ApplicationsIds.Contains(application.Id))
-                .ToListAsync();
-            cruise.Applications = newCruiseApplications;
 
+            var newCruiseApplicationsQuery = researchCruiseContext.Applications
+                .Where(application => editCruiseModel.ApplicationsIds.Contains(application.Id));
+            
+            // Cruises that already contain any of newCruiseApplications. The application will be deleted from them
+            // since an application cannot be assigned to more than one cruise
+            var affectedCruises = researchCruiseContext.Cruises
+                .Include(affectedCruise => affectedCruise.Applications)
+                .Where(affectedCruise => newCruiseApplicationsQuery.Any(newApp =>
+                    affectedCruise.Applications.Contains(newApp)))
+                .ToList();
+            if (!affectedCruises.Contains(cruise))
+            {
+                affectedCruises = affectedCruises
+                    .Append(cruise) // The explicitly edited cruise is of course also affected
+                    .ToList();
+            }
+
+            cruise.Applications = await newCruiseApplicationsQuery.ToListAsync();
+            
+            await CheckEditedCruisesManagersTeams(affectedCruises);
+            
             await researchCruiseContext.SaveChangesAsync();
             return NoContent();
         }
@@ -125,7 +142,7 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         
-        private Tuple<DateTime, DateTime> GetAutoCalculatedCruiseDate(FormA formA)
+        private static Tuple<DateTime, DateTime> GetAutoCalculatedCruiseDate(FormA formA)
         {
             // Optimal period beg/end is a number from range 0...24 representing a point in a year
             
@@ -138,6 +155,33 @@ namespace ResearchCruiseApp_API.Controllers
             var endDate = startDate.AddHours(formA.CruiseHours);
         
             return new Tuple<DateTime, DateTime>(startDate, endDate);
+        }
+
+        private async Task CheckEditedCruisesManagersTeams(List<Cruise> cruises)
+        {
+            foreach (var cruise in cruises)
+            {
+                foreach (var application in cruise.Applications)
+                {
+                    await researchCruiseContext.Entry(application)
+                        .Reference(applicationEntry => applicationEntry.FormA)
+                        .LoadAsync();
+                }
+                    
+                if (cruise.Applications.Any(app => app.FormA == null))
+                    continue;
+
+                var managersAvailable = cruise.Applications
+                    .Select(app => app.FormA!.CruiseManagerId)
+                    .Union(cruise.Applications
+                        .Select(app => app.FormA!.DeputyManagerId))
+                    .ToList();
+
+                if (!managersAvailable.Contains(cruise.MainCruiseManagerId))
+                    cruise.MainCruiseManagerId = Guid.Empty;
+                if (!managersAvailable.Contains(cruise.MainDeputyManagerId))
+                    cruise.MainDeputyManagerId = Guid.Empty;
+            }
         }
     }
 }
