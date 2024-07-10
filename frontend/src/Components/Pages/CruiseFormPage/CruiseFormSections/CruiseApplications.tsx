@@ -2,7 +2,7 @@ import ApplicationsList from "../../ApplicationsPage/ApplicationsList";
 import {Application} from "../../ApplicationsPage/ApplicationsPage";
 import {Dispatch, SetStateAction, useState} from "react";
 import {UseFormReturn} from "react-hook-form";
-import {EditCruiseFormValues} from "../CruiseDetailsPage";
+import {EditCruiseFormValues} from "../CruiseFormPage";
 
 type Props = {
     editCruiseForm: UseFormReturn<EditCruiseFormValues>,

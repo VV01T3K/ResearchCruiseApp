@@ -2,15 +2,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {Cruise} from "./CruisesPage";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import CruiseApplicationsList from "./CruiseApplicationsList";
 import DatePicker from "react-datepicker";
+import Api from "../../Tools/Api";
 
 
 type Props = {
-    cruises?: Cruise[]
+    cruises?: Cruise[],
+    setCruises?: Dispatch<any>
 }
 
 
@@ -28,6 +30,19 @@ export default function CruisesList(props: Props) {
         },
         []
     );
+
+    const handleDeleteCruise = (id: string) => {
+        Api
+            .delete(`/api/Cruises/${id}`)
+            .then(response => {
+                const newCruises: Cruise[] = props.cruises!
+                    .filter(cruise => cruise.id != id)
+                props.setCruises!(newCruises)
+            })
+            .catch(error =>
+                console.log(error.message)
+            )
+    }
 
     return (
         <div className="table-striped w-100">
@@ -119,8 +134,13 @@ export default function CruisesList(props: Props) {
                              style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
                         >
                             <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik główny:</div>
-                            <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
-                            <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
+                            {row.mainCruiseManagerId == "00000000-0000-0000-0000-000000000000" ?
+                                <div>Nie przypisano</div> :
+                                <>
+                                    <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
+                                    <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
+                                </>
+                            }
                         </div>
                         <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                              style={{width: windowWidth >= 1200 ? "19%" : "100%"}}
@@ -134,10 +154,17 @@ export default function CruisesList(props: Props) {
                             <div className="btn-group-vertical">
                                 <LinkWithState
                                     className="btn btn-info"
-                                    to="/CruiseDetails"
+                                    to="/CruiseForm"
                                     label="Szczegóły"
                                     state={{ cruise: row }}
                                 />
+                                <button
+                                    className="btn btn-danger"
+                                    style={{fontSize: "inherit"}}
+                                    onClick={() => handleDeleteCruise(row.id)}
+                                >
+                                    Usuń
+                                </button>
                             </div>
                         </div>
                     </div>

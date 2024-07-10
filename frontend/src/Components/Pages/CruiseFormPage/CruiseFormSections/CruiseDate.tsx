@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import DatePicker from "react-datepicker";
 import {Controller, set, UseFormReturn, useWatch} from "react-hook-form";
 import ErrorCode from "../../LoginPage/ErrorCode";
-import {EditCruiseFormValues} from "../CruiseDetailsPage";
+import {EditCruiseFormValues} from "../CruiseFormPage";
 import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
 
 type Props = {

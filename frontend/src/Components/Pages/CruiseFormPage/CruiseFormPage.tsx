@@ -5,15 +5,15 @@ import PageSection from "../CommonComponents/PageSection";
 import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
 import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
-import CruiseBasicInfo from "./CruiseDetailsSections/CruiseBasicInfo";
-import CruiseDate from "./CruiseDetailsSections/CruiseDate";
+import CruiseBasicInfo from "./CruiseFormSections/CruiseBasicInfo";
+import CruiseDate from "./CruiseFormSections/CruiseDate";
 import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
-import CruiseApplications from "./CruiseDetailsSections/CruiseApplications";
+import CruiseApplications from "./CruiseFormSections/CruiseApplications";
 import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import {fetchApplications} from "../../Tools/Fetchers";
-import CruiseManagers from "./CruiseDetailsSections/CruiseManagers";
+import CruiseManagers from "./CruiseFormSections/CruiseManagers";
 import {Simulate} from "react-dom/test-utils";
 import reset = Simulate.reset;
 
@@ -29,34 +29,58 @@ export type EditCruiseFormValues = {
     applicationsIds: string[]
 }
 
-type CruiseDetailsPageLocationState = {
-    cruise: Cruise
+type CruiseFormPageLocationState = {
+    cruise?: Cruise
 }
 
 
-export default function CruiseDetailsPage() {
+export default function CruiseFormPage() {
+    const EMPTY_GUID: string = "00000000-0000-0000-0000-000000000000"
+
     const location = useLocation()
-    const [locationState, _]: [CruiseDetailsPageLocationState, Dispatch<any>]
+    const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
         = useState(location.state || { })
 
     const editCruiseFormDefaultValues: EditCruiseFormValues = {
-        date: locationState.cruise.date,
+        date:
+            locationState.cruise?.date ??
+            { start: "", end: "" },
         managersTeam: {
-            mainCruiseManagerId: locationState.cruise.mainCruiseManagerId,
-            mainDeputyManagerId: locationState.cruise.mainDeputyManagerId
+            mainCruiseManagerId:
+                locationState.cruise?.mainCruiseManagerId ??
+                EMPTY_GUID,
+            mainDeputyManagerId:
+                locationState.cruise?.mainDeputyManagerId ??
+                EMPTY_GUID
         },
-        applicationsIds: locationState.cruise.applicationsShortInfo.map(app => app.id)
+        applicationsIds:
+            locationState.cruise?.applicationsShortInfo.map(app => app.id) ??
+            []
     }
-    const editCruiseForm = useForm<EditCruiseFormValues>({
+    const cruiseForm = useForm<EditCruiseFormValues>({
         defaultValues: editCruiseFormDefaultValues
     })
 
-    const sendEditCruiseForm = () => {
-        console.log(editCruiseForm.getValues())
+    const handleEditCruise = () => {
+        console.log(cruiseForm.getValues())
         Api
             .patch(
-                `/api/Cruises/${locationState.cruise.id}`,
-                editCruiseForm.getValues()
+                `/api/Cruises/${locationState.cruise!.id}`,
+                cruiseForm.getValues()
+            )
+            .then(_ =>
+                console.log("Success")
+            )
+            .catch(__ =>
+                console.log("Error")
+            )
+    }
+    const handleAddCruise = () => {
+        console.log(cruiseForm.getValues())
+        Api
+            .post(
+                `/api/Cruises`,
+                cruiseForm.getValues()
             )
             .then(_ =>
                 console.log("Success")
@@ -66,8 +90,10 @@ export default function CruiseDetailsPage() {
             )
     }
     const resetEditCruiseForm = () => {
-        editCruiseForm.reset(editCruiseFormDefaultValues)
-        fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
+        cruiseForm.reset(editCruiseFormDefaultValues)
+
+        if (locationState.cruise)
+            fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
     }
 
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
@@ -83,7 +109,8 @@ export default function CruiseDetailsPage() {
     const [applications, setApplications] =
         useState<Application[]>([])
     useEffect(() => {
-        fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
+        if (locationState.cruise)
+            fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
     }, []);
 
     return (
@@ -91,7 +118,7 @@ export default function CruiseDetailsPage() {
             <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
                 <div className="d-flex flex-column align-items-center w-100 h-100 overflow-auto" >
                     <PageTitleWithNavigation
-                        title="Szczegóły rejsu"
+                        title={locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs"}
                         sections={sections}
                         showRequiredSections={false}
                     />
@@ -102,19 +129,19 @@ export default function CruiseDetailsPage() {
                         </PageSection>
 
                         <PageSection title={sections["Termin"]}>
-                            <CruiseDate editCruiseForm={editCruiseForm} />
+                            <CruiseDate editCruiseForm={cruiseForm} />
                         </PageSection>
 
                         <PageSection title={sections["Kierownicy"]}>
                             <CruiseManagers
                                 applications={applications}
-                                editCruiseForm={editCruiseForm}
+                                editCruiseForm={cruiseForm}
                             />
                         </PageSection>
 
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
-                                editCruiseForm={editCruiseForm}
+                                editCruiseForm={cruiseForm}
                                 applications={applications}
                                 setApplications={setApplications}
                                 addingMode={applicationsAddingMode}
@@ -128,7 +155,10 @@ export default function CruiseDetailsPage() {
                         <button
                             className="btn btn-primary w-100"
                             style={{fontSize:"inherit"}}
-                            onClick={editCruiseForm.handleSubmit(sendEditCruiseForm)}
+                            onClick={locationState.cruise ?
+                                cruiseForm.handleSubmit(handleEditCruise) :
+                                cruiseForm.handleSubmit(handleAddCruise)
+                            }
                         >
                             Zapisz zmiany
                         </button>

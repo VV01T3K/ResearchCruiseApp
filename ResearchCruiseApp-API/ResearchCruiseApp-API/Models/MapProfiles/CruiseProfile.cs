@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 
 namespace ResearchCruiseApp_API.Models.MapProfiles;
@@ -38,6 +39,31 @@ public class CruiseProfile : Profile
                 dest => dest.ApplicationsShortInfo,
                 options =>
                     options.MapFrom<ApplicationsShortInfoResolver>());
+
+        CreateMap<CruiseFormModel, Cruise>()
+            .ForMember(dest => dest.MainCruiseManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.ManagersTeam.MainCruiseManagerId))
+            .ForMember(dest => dest.MainDeputyManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.ManagersTeam.MainDeputyManagerId))
+            .ForMember(dest => dest.Number,
+                options =>
+                    options.MapFrom(src =>
+                        ""))
+            .ForMember(dest => dest.StartDate,
+                options =>
+                    options.MapFrom(src =>
+                        src.Date.Start))
+            .ForMember(dest => dest.EndDate,
+                options =>
+                    options.MapFrom(src =>
+                        src.Date.End))
+            .ForMember(dest => dest.Applications,
+                options =>
+                    options.MapFrom<CruiseApplicationsResolver>());
     }
 
 
@@ -97,6 +123,26 @@ public class CruiseProfile : Profile
         {
             var result = src.Applications
                 .Select(mapper.Map<ApplicationShortInfoModel>)
+                .ToList();
+            return result;
+        }
+    }
+    
+    private class CruiseApplicationsResolver(
+        ResearchCruiseContext researchCruiseContext,
+        UserManager<User> userManager,
+        IMapper mapper)
+        : IValueResolver<CruiseFormModel, Cruise, List<Application>>
+    {
+        public List<Application> Resolve(
+            CruiseFormModel src,
+            Cruise dest,
+            List<Application> applications,
+            ResolutionContext context)
+        {
+            var result = researchCruiseContext.Applications
+                //.AsEnumerable()
+                .Where(application => src.ApplicationsIds.Contains(application.Id))
                 .ToList();
             return result;
         }

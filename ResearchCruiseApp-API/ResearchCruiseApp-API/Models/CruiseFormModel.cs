@@ -1,6 +1,6 @@
 namespace ResearchCruiseApp_API.Models;
 
-public class EditCruiseModel
+public class CruiseFormModel
 {
     public StringRange Date { get; set; }
 
