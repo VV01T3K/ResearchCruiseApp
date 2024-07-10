@@ -7,7 +7,7 @@ import ReadOnlyTextInput from "../../../../CommonComponents/ReadOnlyTextInput";
 
 
 type Props = {
-    field: {value:string},
+    field: { value: string },
     name: string,
     fileFieldName: string,
     row: Contract,
@@ -17,11 +17,27 @@ type Props = {
 
 
 export default function FilePicker(props: Props) {
+    const handleRemoveScan = () => {
+        props.row.scan.name = ""
+        props.row.scan.content = ""
+
+        props.form!.setValue(
+            props.name,
+            props.field.value,
+            {
+                shouldTouch: true,
+                shouldValidate: true,
+                shouldDirty: true
+            }
+        )
+    }
+
     return (
         <div className="d-flex flex-wrap justify-content-center text-break">
             <input
                 id={`contracts[${props.rowIdx}].fileInput`}
                 type="file"
+                accept=".pdf"
                 hidden
                 onChange={e => {
                     if (e.target.files && e.target.files.length) {
@@ -62,9 +78,18 @@ export default function FilePicker(props: Props) {
                 />
             </label>
             <ReadOnlyTextInput
-                className="text-secondary"
+                className="text-secondary col-12"
                 value={props.row.scan.name || "Brak"}
             />
+            {props.row.scan.content != "" &&
+                <a
+                    className="d-flex btn btn-outline-danger col-12 justify-content-center mt-1"
+                    style={{ fontSize: "inherit" }}
+                    onClick={handleRemoveScan}
+                >
+                    Usuń skan
+                </a>
+            }
         </div>
     )
 }
