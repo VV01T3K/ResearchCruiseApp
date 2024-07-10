@@ -28,7 +28,7 @@ export default function ContractCategoryPicker(props: Props) {
                     boxShadow: "none",
                     border: "1px solid grey",
                     width: "100%",
-                    "border-radius": "2px",
+                    borderRadius: "2px",
                     padding: "0px",
                     fontSize: "0.8em"
                 }),
@@ -39,15 +39,15 @@ export default function ContractCategoryPicker(props: Props) {
                 }),
                 singleValue:  (provided) => ({
                     ...provided,
-                    "background-color": "white"
+                    backgroundColor: "white"
                 }),
                 valueContainer: (provided) => ({
                     ...provided,
-                    "background-color": "white"
+                    backgroundColor: "white"
                 }),
                 dropdownIndicator:  (provided) => ({
                     ...provided,
-                    "background-color": "white"
+                    backgroundColor: "white"
                 })
             }}
             options = {[

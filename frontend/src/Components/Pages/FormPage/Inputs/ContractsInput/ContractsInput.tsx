@@ -90,10 +90,10 @@ export default function ContractsInput(props: Props){
                                     <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "25%"}}>
                                         <b>Instytucja</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "40%"}}>
+                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "30%"}}>
                                         <b>Opis</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "10%"}}>
+                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "20%"}}>
                                         <b>Skan</b>
                                     </div>
                                     <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}} />
@@ -205,7 +205,7 @@ export default function ContractsInput(props: Props){
                                             />
                                         </div>
                                         <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                             style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
+                                             style={{width: windowWidth >= 1200 ? "30%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Opis</div>
                                             <textarea
@@ -230,7 +230,7 @@ export default function ContractsInput(props: Props){
                                             />
                                         </div>
                                         <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
-                                             style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                                             style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
                                             {props.readonly &&
