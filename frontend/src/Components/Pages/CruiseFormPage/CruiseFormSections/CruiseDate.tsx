@@ -28,6 +28,10 @@ export default function CruiseDate(props: Props) {
                 control={props.editCruiseForm.control}
                 rules={{
                     validate: {
+                        noEmptyDate: (value) => {
+                            if (value.start == "" || value.end == "")
+                                return "Wybierz czas rozpoczęcia i zakończenia"
+                        },
                         startBeforeEnd: (value) => {
                             if (new Date(value.end) <= new Date(value.start)) {
                                 return "Czas rozpoczęcia musi być wcześniejszy niż czas zakończenia"
