@@ -16,7 +16,7 @@ export default function CruiseApplicationsList(props: Props) {
         useState<Application[]>([])
     useEffect(() => {
         fetchApplications(props.applicationsShortInfo, setApplications)
-    }, []);
+    }, [props.applicationsShortInfo]);
 
     return (
         <>

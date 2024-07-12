@@ -25,17 +25,8 @@ export type Cruise = {
 
 export default function CruisesPage() {
     const [listView, setListView] = useState(true)
-    const [showNewCruiseForm, setShowNewCruiseForm] = useState(false)
 
-    const autoAddCruises = () => {
-        Api
-            .put('/api/Cruises/autoAdded')
-            .then(response => console.log(response))
-            .catch(error => console.log(error.message))
-    }
-
-    const [cruises, setCruises] = useState<Cruise[]>([])
-    useEffect(() => {
+    const fetchCruises = () => {
         Api
             .get('/api/Cruises',)
             .then(response =>
@@ -44,6 +35,22 @@ export default function CruisesPage() {
             .catch(exception => {
                 console.log(exception.message)
             })
+    }
+
+    const autoAddCruises = () => {
+        Api
+            .put('/api/Cruises/autoAdded')
+            .then(response =>
+                fetchCruises()
+            )
+            .catch(error =>
+                console.log(error.message)
+            )
+    }
+
+    const [cruises, setCruises] = useState<Cruise[]>([])
+    useEffect(() => {
+        fetchCruises()
     },[]);
 
     return (

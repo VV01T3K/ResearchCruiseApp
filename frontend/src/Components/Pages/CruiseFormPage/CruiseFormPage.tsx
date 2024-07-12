@@ -4,7 +4,7 @@ import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
 import PageSection from "../CommonComponents/PageSection";
 import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
 import {Cruise} from "../CruisesPage/CruisesPage";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import CruiseBasicInfo from "./CruiseFormSections/CruiseBasicInfo";
 import CruiseDate from "./CruiseFormSections/CruiseDate";
 import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
@@ -16,6 +16,7 @@ import {fetchApplications} from "../../Tools/Fetchers";
 import CruiseManagers from "./CruiseFormSections/CruiseManagers";
 import {Simulate} from "react-dom/test-utils";
 import reset = Simulate.reset;
+import useCustomEvent from "../../Tools/useCustomEvent";
 
 
 type CruiseManagersTeam = {
@@ -36,6 +37,9 @@ type CruiseFormPageLocationState = {
 
 export default function CruiseFormPage() {
     const EMPTY_GUID: string = "00000000-0000-0000-0000-000000000000"
+
+    const { dispatchEvent } = useCustomEvent('busy');
+    const navigate = useNavigate()
 
     const location = useLocation()
     const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
@@ -62,32 +66,31 @@ export default function CruiseFormPage() {
     })
 
     const handleEditCruise = () => {
-        console.log(cruiseForm.getValues())
+        dispatchEvent("Trwa zapisywanie")
         Api
             .patch(
                 `/api/Cruises/${locationState.cruise!.id}`,
                 cruiseForm.getValues()
             )
             .then(_ =>
-                console.log("Success")
+                navigate("/Cruises")
             )
-            .catch(__ =>
+            .catch(_ => {
                 console.log("Error")
-            )
+            })
     }
     const handleAddCruise = () => {
-        console.log(cruiseForm.getValues())
         Api
             .post(
                 `/api/Cruises`,
                 cruiseForm.getValues()
             )
             .then(_ =>
-                console.log("Success")
+                navigate("/Cruises")
             )
-            .catch(__ =>
+            .catch(__ => {
                 console.log("Error")
-            )
+            })
     }
     const resetEditCruiseForm = () => {
         cruiseForm.reset(editCruiseFormDefaultValues)
@@ -160,7 +163,7 @@ export default function CruiseFormPage() {
                                 cruiseForm.handleSubmit(handleAddCruise)
                             }
                         >
-                            Zapisz zmiany
+                            Zapisz rejs
                         </button>
                     </div>
                     <div className="d-flex col-6 text-center p-2 justify-content-center" >
@@ -169,7 +172,7 @@ export default function CruiseFormPage() {
                             style={{fontSize:"inherit"}}
                             onClick={resetEditCruiseForm}
                         >
-                            Cofnij zmiany
+                            {locationState.cruise ? "Cofnij zmiany" : "Wyczyść formularz"}
                         </button>
                     </div>
                 </div>

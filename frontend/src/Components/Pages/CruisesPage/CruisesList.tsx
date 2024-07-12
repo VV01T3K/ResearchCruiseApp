@@ -37,6 +37,8 @@ export default function CruisesList(props: Props) {
             .then(response => {
                 const newCruises: Cruise[] = props.cruises!
                     .filter(cruise => cruise.id != id)
+                console.log(props.cruises)
+                console.log(newCruises)
                 props.setCruises!(newCruises)
             })
             .catch(error =>

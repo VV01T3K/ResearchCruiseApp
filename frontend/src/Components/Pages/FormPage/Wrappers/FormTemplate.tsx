@@ -86,30 +86,29 @@ function FormTemplate(props: Props) {
         return `Formularz_${props.type}_${day}.${month}.${year}`;
     }
 
-    useEffect(
-        () => {
-            if (props.loadValues) {
-                Object
-                    .entries(props.loadValues)
-                    .forEach(([key, value]: [string, FormValue]) => {
-                        props.form.setValue(
-                            key,
-                            value,
-                            {
-                                shouldDirty: true,
-                                shouldValidate: true,
-                                shouldTouch: true
-                            }
-                        )
-                    })
-            }
-        },
-        [props.loadValues]
-    );
+    useEffect(() => {
+        if (props.loadValues) {
+            Object
+                .entries(props.loadValues)
+                .forEach(([key, value]: [string, FormValue]) => {
+                    props.form.setValue(
+                        key,
+                        value,
+                        {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                            shouldTouch: true
+                        }
+                    )
+                })
+        }
+    },[props.loadValues])
 
 
     const handleSubmit = (data) => {
-        console.log(props.form.getValues()); console.log(props.form.formState.errors); console.log(props.form.formState.touchedFields)
+        console.log(props.form.getValues())
+        console.log(props.form.formState.errors)
+        console.log(props.form.formState.touchedFields)
         dispatchEvent("Trwa wysyłanie")
         // const savedFormsDataString = localStorage.getItem('sentFormData');
         // let savedFormsData: SavedFormData[] = [];
@@ -130,8 +129,22 @@ function FormTemplate(props: Props) {
         //
         // // Zapisz zaktualizowane dane w localStorage
         // localStorage.setItem('sentFormData', JSON.stringify(savedFormsData));
-        Api.post('/formsA/'+props.type, data).catch((err)=>null).then(()=>{setTimeout(()=>{dispatchEvent(null); navigate("/ViewForms")},1000)
-    })}
+        Api
+            .post(
+                '/formsA/'+props.type,
+                data
+            )
+            .catch(err =>
+                null
+            )
+            .then(()=> {
+                setTimeout(()=> {
+                    dispatchEvent(null)
+                    navigate("/ViewForms")
+                },1000)
+            })
+    }
+
     return (
         <>
             <Page className="justify-content-center col-12 col-xl-9 bg-white" >
