@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import DatePicker, {registerLocale} from 'react-datepicker';
+import {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import pl from "date-fns/locale/pl";
 registerLocale("pl", pl);
@@ -90,22 +90,22 @@ function TasksPoints(props: Props) {
                                 <div className="text-center align-items-center justify-content-center p-2 d-inline-flex"
                                      style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
                                 >
-                                    {getTaskTitle(row)}
+                                    {getTaskTitle(row.researchTask)}
                                 </div>
                                 <div className="text-center d-flex"
                                      style={{width: windowWidth >= 1200 ? "66%" : "100%"}}
                                 >
                                     <div className="d-flex flex-wrap justify-content-center justify-content-xl-start pb-3 w-100">
-                                        {getFields(row).map((val: string | Time, valIdx: number) => {
+                                        {getFields(row.researchTask).map((val: string | Time, valIdx: number) => {
                                             return (
                                                 <div key={valIdx}
                                                      className={`${getFields(row).length == 2 && "col-xl-6"} ${getFields(row).length == 3 && "col-xl-4"} col-12 p-2`}
                                                 >
                                                     <label className="d-flex justify-content-center align-items-center">
-                                                        {Object.values(taskFieldsOptions)[row.type][valIdx]}
+                                                        {Object.values(taskFieldsOptions)[row.researchTask.type][valIdx]}
                                                     </label>
                                                     {(()=> {
-                                                        switch (Object.values(taskFieldsOptions)[row.type][valIdx]){
+                                                        switch (Object.values(taskFieldsOptions)[row.researchTask.type][valIdx]){
                                                             case "Autor":
                                                             case "Tytuł":
                                                             case "Instytucja, do której składany":

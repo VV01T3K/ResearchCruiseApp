@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import ReadOnlyTextArea from "../../../CommonComponents/ReadOnlyTextArea";
-import file_icon from "../../../../resources/file_icon.png";
 import FileDownloader from "../../../CommonComponents/FileDownloader";
 
 
@@ -92,33 +91,33 @@ export default function ContractsPoints(props: Props){
                                  style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Kategoria</div>
-                                <ReadOnlyTextInput value={row.category == "international" ? "Międynarodowa" : "Krajowa"} />
+                                <ReadOnlyTextInput value={row.contract.category == "international" ? "Międynarodowa" : "Krajowa"} />
                             </div>
                             <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                             >
                                 <div className="col-12 mb-1">Nazwa instytucji</div>
-                                <ReadOnlyTextInput value={row.institution.name} />
+                                <ReadOnlyTextInput value={row.contract.institution.name} />
 
                                 <div className="col-12 mb-1 mt-1">Jednostka</div>
-                                <ReadOnlyTextInput value={row.institution.unit} />
+                                <ReadOnlyTextInput value={row.contract.institution.unit} />
 
                                 <div className="col-12 mb-1 mt-1">Lokalizacja instytucji</div>
-                                <ReadOnlyTextInput value={row.institution.localization} />
+                                <ReadOnlyTextInput value={row.contract.institution.localization} />
                             </div>
                             <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "36%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Opis</div>
-                                <ReadOnlyTextArea value={row.description} />
+                                <ReadOnlyTextArea value={row.contract.description} />
                             </div>
                             <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2"
                                  style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
                             >
                                 <div className="col-12 d-xl-none">Skan</div>
                                 <FileDownloader
-                                    fileName={row.scan.name}
-                                    fileContent={row.scan.content}
+                                    fileName={row.contract.scan.name}
+                                    fileContent={row.contract.scan.content}
                                     bg={index % 2 == 0 ? "bg-light" : "bg-white"}
                                 />
                             </div>

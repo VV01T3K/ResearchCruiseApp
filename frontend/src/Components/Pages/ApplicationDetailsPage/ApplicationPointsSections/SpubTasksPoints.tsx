@@ -1,7 +1,4 @@
 import React, { useEffect, useState} from "react";
-import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../LoginPage/ErrorCode";
-import Select from "react-select";
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import ReadOnlyTextArea from "../../../CommonComponents/ReadOnlyTextArea";
 
@@ -82,19 +79,19 @@ function SpubTasksPoints(props: Props){
                                  style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
-                                <ReadOnlyTextInput value={row.yearFrom} />
+                                <ReadOnlyTextInput value={row.spubTask.yearFrom} />
                             </div>
                             <div className="d-flex flex-wrap ustify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "13%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
-                                <ReadOnlyTextInput value={row.yearTo} />
+                                <ReadOnlyTextInput value={row.spubTask.yearTo} />
                             </div>
                             <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
                                  style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                             >
                                 <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
-                                <ReadOnlyTextArea value={row.name} />
+                                <ReadOnlyTextArea value={row.spubTask.name} />
                             </div>
                             <div className="d-flex flex-wrap text-center justify-content-center align-items-center p-2 border-start"
                                  style={{width: windowWidth >= 1200 ? "9%" : "100%"}}
