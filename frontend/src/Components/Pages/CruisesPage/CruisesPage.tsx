@@ -9,6 +9,7 @@ import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
+import PageMenuBar from "../CommonComponents/PageMenuBar";
 
 
 export type Cruise = {
@@ -58,7 +59,7 @@ export default function CruisesPage() {
             <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
                 <PageTitle title="Rejsy" />
                 <div className="d-flex flex-column align-items-center w-100 h-100 overflow-y-scroll">
-                    <div className="d-flex w-100 border-bottom border-dark-subtle"> {/* Menu bar */}
+                    <PageMenuBar>
                         <div className="d-flex justify-content-start align-items-center w-50 p-3">
                             <div className="d-flex pe-2">Widok kalendarza</div>
                             <ReactSwitch
@@ -90,14 +91,9 @@ export default function CruisesPage() {
                                 />
                             </div>
                         </div>
-                    </div> {/* Menu bar */}
+                    </PageMenuBar>
                     {!listView && <CruisesCalendar cruises={cruises} />}
-                    {listView &&
-                        <CruisesList
-                            cruises={cruises}
-                            setCruises={setCruises}
-                        />
-                    }
+                    {listView && <CruisesList cruises={cruises} setCruises={setCruises} />}
                 </div>
             </div>
         </Page>

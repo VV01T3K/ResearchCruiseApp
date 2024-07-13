@@ -1,12 +1,9 @@
-import React, {useEffect, useState} from "react";
-import useCustomEvent from "../../Tools/useCustomEvent";
+import React, {ReactElement, useState} from "react";
 
 
 type Props = {
     id?: string,
-    children?:
-        React.ReactElement<any>[] |
-        React.ReactElement<any>,
+    children?: ReactElement[] | ReactElement,
     title: string,
 }
 

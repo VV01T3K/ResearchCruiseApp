@@ -10,7 +10,15 @@ import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import PageTitle from "../CommonComponents/PageTitle";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import ApplicationsList from "./ApplicationsList";
+import PageMenuBar from "../CommonComponents/PageMenuBar";
 
+
+export enum ApplicationStatus {
+    New = "Nowe",
+    Accepted = "Zaakceptowane",
+    Undertaken = "Zrealizowane",
+    Reported = "Rozliczone"
+}
 
 export type ApplicationShortInfo = {
     id: string,
@@ -34,7 +42,7 @@ export type Application = {
     formAId: string | null,
     formBId: string | null,
     formCId: string | null,
-    status: string,
+    status: ApplicationStatus,
     points: string,
     pointsDetails: any
 }

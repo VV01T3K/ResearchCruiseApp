@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Tls;
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Tools.Extensions;
 using static ResearchCruiseApp_API.Data.Application;
 
 namespace ResearchCruiseApp_API.Models.MapProfiles;
@@ -52,11 +53,7 @@ public class ApplicationProfile : Profile
                 dest => dest.Status,
                 options =>
                     options.MapFrom(src => 
-                        src.Status == ApplicationStatus.New ? "Nowe" :
-                            src.Status == ApplicationStatus.Planned ? "Zaplanowane" :
-                                src.Status == ApplicationStatus.Denied ? "Odrzucone" :
-                                    src.Status == ApplicationStatus.Undertaken ? "Zrealizowane" :
-                                        src.Status == ApplicationStatus.Reported ? "Rozliczone" : ""
+                        src.Status.GetStringValue()
                     ));
 
         CreateMap<Application, ApplicationShortInfoModel>();
