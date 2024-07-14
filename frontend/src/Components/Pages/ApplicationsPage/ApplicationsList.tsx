@@ -152,9 +152,18 @@ export default function ApplicationsList(props: Props) {
 
     const applyFilters = (row: Application): boolean => {
         return (
-            (yearFilter == "" || row.year.toString() == yearFilter) &&
-            (cruiseManagerLastNameFilter == "" || row.cruiseManagerLastName == cruiseManagerLastNameFilter) &&
-            (statusFilter == "" || row.status.toString() == statusFilter)
+            (
+                yearFilter == "" ||
+                row.year.toString().toLowerCase().includes(yearFilter.toLowerCase())
+            ) &&
+            (
+                cruiseManagerLastNameFilter == "" ||
+                row.cruiseManagerLastName.toLowerCase().includes(cruiseManagerLastNameFilter.toLowerCase())
+            ) &&
+            (
+                statusFilter == "" ||
+                row.status.toString() == statusFilter
+            )
         )
     }
     const rowShouldBeShown = (row: Application): boolean => {
