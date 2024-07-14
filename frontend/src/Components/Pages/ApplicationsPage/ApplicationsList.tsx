@@ -196,7 +196,6 @@ export default function ApplicationsList(props: Props) {
                 />
                 <ListFilterMenu
                     className="col-12 col-xl-5"
-                    collection={applications}
                     anyStringFilters={anyStringFilterOptions}
                     selectStringFilters={selectStringFilterOptions}
                 />

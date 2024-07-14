@@ -106,6 +106,15 @@ export default function CruisesList(props: Props) {
         }
     ]
 
+    const applyFilters = (row: Cruise): boolean => {
+        return (
+            (
+                cruiseManagerLastNameFilter == "" ||
+                row.mainCruiseManagerLastName.toLowerCase().includes(cruiseManagerLastNameFilter.toLowerCase())
+            )
+        )
+    }
+
     return (
         <>
             <PageMenuBar>
@@ -149,87 +158,96 @@ export default function CruisesList(props: Props) {
                     </div>
                 </div>
                 <div className="w-100 bg-light">
-                    {!props.cruises || !props.cruises.length &&
+                    {
+                        (
+                            !props.cruises ||
+                            props.cruises
+                                .filter(row => applyFilters(row))
+                                .length == 0
+                        ) &&
                         <div className="d-flex flex-row bg-light p-2 justify-content-center border">
                             <div className={"text-center"}>Brak rejsów</div>
                         </div>
                     }
-                    {props.cruises?.map((row: Cruise, index: number) => (
-                        <div key={index}
-                             className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
-                        >
-                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                    {props.cruises
+                        ?.filter(row => applyFilters(row))
+                        .map((row: Cruise, index: number) => (
+                            <div key={index}
+                                 className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${index % 2 == 0 ? "bg-light" : "bg-white"}`}
                             >
-                                <div className="col-12 d-flex d-xl-none justify-content-center">Numer</div>
-                                <ReadOnlyTextInput value={row.number} />
-                            </div>
-                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
-                            >
-                                <div className="col-12 d-flex d-xl-none justify-content-center">Czas rozpoczęcia:</div>
-                                <DatePicker
-                                    className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
-                                    readOnly={true}
-                                    locale={"pl"}
-                                    selected={row.date.start ? new Date(row.date.start) : null}
-                                    dateFormat="dd/MM/yyyy HH:mm"
-                                    onChange={() => {}}
-                                />
-                            </div>
-                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
-                            >
-                                <div className="col-12 d-flex d-xl-none justify-content-center">Czas zakończenia:</div>
-                                <DatePicker
-                                    className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
-                                    closeOnScroll={true}
-                                    readOnly={true}
-                                    locale={"pl"}
-                                    selected={row.date.end ? new Date(row.date.end) : null}
-                                    dateFormat="dd/MM/yyyy HH:mm"
-                                    onChange={() => {}}
-                                />
-                            </div>
-                            <div className="d-flex flex-wrap justify-content-center align-content-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
-                            >
-                                <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik główny:</div>
-                                {row.mainCruiseManagerId == "00000000-0000-0000-0000-000000000000" ?
-                                    <div>Nie przypisano</div> :
-                                    <>
-                                        <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
-                                        <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
-                                    </>
-                                }
-                            </div>
-                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
-                                 style={{width: windowWidth >= 1200 ? "19%" : "100%"}}
-                            >
-                                <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
-                                <CruiseApplicationsList applicationsShortInfo={row.applicationsShortInfo} />
-                            </div>
-                            <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
-                                 style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
-                            >
-                                <div className="btn-group-vertical">
-                                    <LinkWithState
-                                        className="btn btn-info"
-                                        to="/CruiseForm"
-                                        label="Szczegóły"
-                                        state={{ cruise: row }}
+                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
+                                     style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                                >
+                                    <div className="col-12 d-flex d-xl-none justify-content-center">Numer</div>
+                                    <ReadOnlyTextInput value={row.number} />
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
+                                     style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
+                                >
+                                    <div className="col-12 d-flex d-xl-none justify-content-center">Czas rozpoczęcia:</div>
+                                    <DatePicker
+                                        className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
+                                        readOnly={true}
+                                        locale={"pl"}
+                                        selected={row.date.start ? new Date(row.date.start) : null}
+                                        dateFormat="dd/MM/yyyy HH:mm"
+                                        onChange={() => {}}
                                     />
-                                    <button
-                                        className="btn btn-outline-danger"
-                                        style={{fontSize: "inherit"}}
-                                        onClick={() => handleDeleteCruise(row.id)}
-                                    >
-                                        Usuń
-                                    </button>
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
+                                     style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
+                                >
+                                    <div className="col-12 d-flex d-xl-none justify-content-center">Czas zakończenia:</div>
+                                    <DatePicker
+                                        className={"d-flex w-100 text-center border border-opacity-75 rounded-2 p-1"}
+                                        closeOnScroll={true}
+                                        readOnly={true}
+                                        locale={"pl"}
+                                        selected={row.date.end ? new Date(row.date.end) : null}
+                                        dateFormat="dd/MM/yyyy HH:mm"
+                                        onChange={() => {}}
+                                    />
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-center align-content-center p-2"
+                                     style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
+                                >
+                                    <div className="col-12 d-flex d-xl-none justify-content-center">Kierownik główny:</div>
+                                    {row.mainCruiseManagerId == "00000000-0000-0000-0000-000000000000" ?
+                                        <div>Nie przypisano</div> :
+                                        <>
+                                            <ReadOnlyTextInput value={row.mainCruiseManagerFirstName} className="d-flex w-100 mb-1" />
+                                            <ReadOnlyTextInput value={row.mainCruiseManagerLastName} className="d-flex w-100" />
+                                        </>
+                                    }
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2"
+                                     style={{width: windowWidth >= 1200 ? "19%" : "100%"}}
+                                >
+                                    <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
+                                    <CruiseApplicationsList applicationsShortInfo={row.applicationsShortInfo} />
+                                </div>
+                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
+                                     style={{width: windowWidth >= 1200 ? "16%" : "100%"}}
+                                >
+                                    <div className="btn-group-vertical">
+                                        <LinkWithState
+                                            className="btn btn-info"
+                                            to="/CruiseForm"
+                                            label="Szczegóły"
+                                            state={{ cruise: row }}
+                                        />
+                                        <button
+                                            className="btn btn-outline-danger"
+                                            style={{fontSize: "inherit"}}
+                                            onClick={() => handleDeleteCruise(row.id)}
+                                        >
+                                            Usuń
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    }
                 </div>
             </div>
         </>
