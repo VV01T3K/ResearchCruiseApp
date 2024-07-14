@@ -19,10 +19,10 @@ export default function ListSortMenu(props: Props) {
     const [showDropDown, setShowDropDown] = useState(false)
 
     return (
-        <div className={`d-flex flex-wrap justify-content-start align-items-start p-3 ${props.className ?? ""}`}>
+        <div className={`d-flex flex-wrap justify-content-start align-items-start p-2 ${props.className ?? ""}`}>
             <div className="d-flex flex-wrap justify-content-start align-items-center col-12">
                 <button
-                    className="btn btn-outline-info d-flex mb-2"
+                    className="btn btn-outline-info mb-2"
                     onClick={() => setShowDropDown(!showDropDown)}
                     style={{ fontSize: "inherit" }}
                 >

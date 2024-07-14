@@ -12,7 +12,7 @@ import app from "../../App";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
 import {sort} from "react-data-table-component/dist/DataTable/util";
-import ListFilterMenu, {ListFilterOption} from "../CommonComponents/ListFilterMenu";
+import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.
@@ -82,8 +82,12 @@ export default function ApplicationsList(props: Props) {
         ])
     }
 
-    const [yearFilter, setYearFilter] = useState("")
-    const [statusFilter, setStatusFilter] = useState("")
+    const [yearFilter, setYearFilter]
+        = useState("")
+    const [cruiseManagerLastNameFilter, setCruiseManagerLastNameFilter]
+        = useState("")
+    const [statusFilter, setStatusFilter]
+        = useState("")
 
     const sortOptions: ListSortOption[] = [
         {
@@ -123,13 +127,25 @@ export default function ApplicationsList(props: Props) {
             directionAscending: false
         }
     ]
-    const filterOptions: ListFilterOption[] = [
+    const anyStringFilterOptions: AnyStringFilterOption[] = [
         {
             label: "Rok",
             setFilter: setYearFilter
         },
         {
+            label: "Nazwisko kierownika",
+            setFilter: setCruiseManagerLastNameFilter
+        }
+    ]
+    const selectStringFilterOptions: SelectStringFilterOption[] = [
+        {
             label: "Status",
+            selectValues: [
+                ApplicationStatus.New,
+                ApplicationStatus.Accepted,
+                ApplicationStatus.Undertaken,
+                ApplicationStatus.Reported
+            ],
             setFilter: setStatusFilter
         }
     ]
@@ -137,6 +153,7 @@ export default function ApplicationsList(props: Props) {
     const applyFilters = (row: Application): boolean => {
         return (
             (yearFilter == "" || row.year.toString() == yearFilter) &&
+            (cruiseManagerLastNameFilter == "" || row.cruiseManagerLastName == cruiseManagerLastNameFilter) &&
             (statusFilter == "" || row.status.toString() == statusFilter)
         )
     }
@@ -169,9 +186,10 @@ export default function ApplicationsList(props: Props) {
                     options={sortOptions}
                 />
                 <ListFilterMenu
-                    className="col-12 col-xl-4"
+                    className="col-12 col-xl-5"
                     collection={applications}
-                    customStringFilters={filterOptions}
+                    anyStringFilters={anyStringFilterOptions}
+                    selectStringFilters={selectStringFilterOptions}
                 />
             </PageMenuBar>
 

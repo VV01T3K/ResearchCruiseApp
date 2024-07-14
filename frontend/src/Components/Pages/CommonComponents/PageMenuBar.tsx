@@ -8,7 +8,7 @@ type Props = {
 
 export default function PageMenuBar(props: Props) {
     return (
-        <div className="d-flex flex-wrap w-100 border-bottom border-dark-subtle">
+        <div className="d-flex flex-wrap w-100">
             {props.children}
         </div>
     )
