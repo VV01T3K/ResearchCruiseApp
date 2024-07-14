@@ -15,7 +15,6 @@ export type SelectStringFilterOption = {
 
 type Props = {
     className?: string,
-    collection: any[],
     anyStringFilters: AnyStringFilterOption[]
     selectStringFilters: SelectStringFilterOption[]
 }

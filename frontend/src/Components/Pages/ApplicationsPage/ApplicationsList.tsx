@@ -129,7 +129,7 @@ export default function ApplicationsList(props: Props) {
     ]
     const anyStringFilterOptions: AnyStringFilterOption[] = [
         {
-            label: "Rok",
+            label: "Rok rejsu",
             setFilter: setYearFilter
         },
         {
@@ -351,7 +351,7 @@ export default function ApplicationsList(props: Props) {
                                         {props.deletionMode &&
                                             // Show only if the component represents a cruise's applications
                                             <a
-                                                className="btn btn-danger"
+                                                className="btn btn-outline-danger"
                                                 style={{fontSize: "inherit"}}
                                                 onClick={() => {
                                                     // Remove the application from the list
