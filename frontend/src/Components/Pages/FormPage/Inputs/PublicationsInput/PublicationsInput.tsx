@@ -278,7 +278,6 @@ function PublicationsInput(props: Props){
                                                     onChange={(e) => {
                                                         const sanitizedValue = parseInt(e.target.value);
                                                         var val = field.value;
-                                                        console.log(sanitizedValue)
                                                         if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                             val[index].year = sanitizedValue
                                                         } else {
@@ -311,7 +310,6 @@ function PublicationsInput(props: Props){
                                                     onChange={(e) => {
                                                         const sanitizedValue = parseInt(e.target.value);
                                                         var val = field.value;
-                                                        console.log(sanitizedValue)
                                                         if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                             val[index].points = sanitizedValue
                                                         } else {

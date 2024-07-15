@@ -1,25 +1,11 @@
-using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Extensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using NuGet.Protocol;
 using ResearchCruiseApp_API.Data;
-using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
-using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -100,6 +86,20 @@ namespace ResearchCruiseApp_API.Controllers
             // researchCruiseContext.FormsA.Add(form1);
             // await researchCruiseContext.SaveChangesAsync();
 
+            return Ok();
+        }
+
+        [HttpPost("A/Save")]
+        public async Task<IActionResult> SaveAForm([FromBody] FormAModel form)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var mapper = MapperConfig.InitializeAutomapper();
+            var formA = mapper.Map<FormA>(form);
+            
+            
+            
             return Ok();
         }
 

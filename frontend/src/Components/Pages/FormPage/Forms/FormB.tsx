@@ -101,15 +101,9 @@ function FormB(props: Props){
     const [formInitValues, setFormInitValues] = useState([])
     const { dispatchEvent } = useCustomEvent('busy')
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
-        console.log(formInitValues)
+        api.get('/forms/GetData').then(response => setFormInitValues(response.data))
 
     },[]);
-
-    useEffect(() => {
-        console.log(formInitValues)
-
-    }, );
 
     return (
         <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='B'>

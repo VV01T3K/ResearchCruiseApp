@@ -14,8 +14,8 @@ function LoginForm(){
 
     async function loginUser(data: FieldValues){
         return Api
-            .post('/account/login', data)
-            .then((response: { status: number; data: any; }) => {
+            .post('/account/login', data, {raw: true})
+            .then((response) => {
                 Object.entries(response.data).forEach(([key, value]) => {
                     sessionStorage.setItem(key, value as string);
                 });
