@@ -43,13 +43,15 @@ export default function CruiseApplications(props: Props) {
                     </a>
                 }
                 {props.addingMode &&
-                    <a
-                        className="btn btn-outline-dark col-12"
-                        style={{ font: "inherit" }}
-                        onClick={() => props.setAddingMode(false)}
-                    >
-                        Anuluj dołączanie zgłoszenia
-                    </a>
+                    <div className="d-flex col-12 border-bottom border-dark-subtle pb-4">
+                        <a
+                            className="btn btn-outline-dark col-12"
+                            style={{ font: "inherit" }}
+                            onClick={() => props.setAddingMode(false)}
+                        >
+                            Anuluj dołączanie zgłoszenia
+                        </a>
+                    </div>
                 }
             </div>
             {props.addingMode &&

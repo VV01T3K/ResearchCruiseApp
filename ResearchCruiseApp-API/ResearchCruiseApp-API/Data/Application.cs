@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Tools.Attributes;
 
 namespace ResearchCruiseApp_API.Data;
 
@@ -10,10 +11,16 @@ public class Application : IYearBasedNumberedEntity
 {
     public enum ApplicationStatus
     {
+        [StringValue("Nowe")]
         New,
-        Planned,
-        Denied,
+        
+        [StringValue("Zaakceptowane")]
+        Accepted,
+        
+        [StringValue("Zrealizowane")]
         Undertaken,
+        
+        [StringValue("Rozliczone")]
         Reported
     }
     
