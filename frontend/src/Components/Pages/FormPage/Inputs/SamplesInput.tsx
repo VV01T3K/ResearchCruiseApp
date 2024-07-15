@@ -172,7 +172,6 @@ export default function SamplesInput(props: Props){
                                                         onChange={(e) => {
                                                             const sanitizedValue = parseInt(e.target.value);
                                                             var val = field.value;
-                                                            console.log(sanitizedValue)
                                                             if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                                 val[index].amount = sanitizedValue
                                                             } else {

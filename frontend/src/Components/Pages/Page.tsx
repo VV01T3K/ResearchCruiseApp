@@ -11,10 +11,10 @@ type Props = {
 
 
 function Page(props: Props){
-    const { dispatchEvent } = useCustomEvent('busy')
-    useEffect(() => {
-        dispatchEvent(null)
-    }, []);
+    // const { dispatchEvent } = useCustomEvent('busy')
+    // useEffect(() => {
+    //     dispatchEvent(null)
+    // }, []);
     return (
         <>
             <div className={`${props.bgStyle ?? Style.bgImage} ${Style.bg}`} />

@@ -36,7 +36,6 @@ export default function ActionInput(props: Props){
         },
         []
     );
-    console.log(props.form!.formState.errors[props.name])
     const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
 
     return (

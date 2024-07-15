@@ -6,7 +6,7 @@ import MobileMenu from "./MobileMenu";
 
 type Props = {
     className?: string,
-    name?: string | null
+    text: string | null
 }
 
 
@@ -29,7 +29,7 @@ function PageHeader(props: Props) {
                             <img src={Logo} alt="Strona główna" className="d-inline align-top h-100" />
                         </a>
                         <div className="h-100 text-light text-nowrap align-self-center text-center navbar me-3">
-                            {props.name && "Witaj, " + props.name}
+                            {props.text}
                         </div>
                         <button className="d-md-flex d-md-none navbar-toggler navbar-dark ms-auto me-0 pe-3"
                                 onClick={() => setToggle(!toggledButton)}

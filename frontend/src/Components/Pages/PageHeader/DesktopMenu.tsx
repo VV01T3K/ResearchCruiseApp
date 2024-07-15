@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {Link} from "react-router-dom";
 import useCustomEvent from "../../Tools/useCustomEvent";
+import UserDataManager from "../../CommonComponents/UserDataManager";
 
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
 
 function DesktopMenu(props: Props){
     const loggedIn = sessionStorage.getItem("accessToken") ?? false
-    const { dispatchEvent } = useCustomEvent('logoutSuccessful');
+    const {Logout} = UserDataManager()
     return (
         <div className="row d-flex">
             <div className="col text-center border-end border-light">
@@ -47,7 +48,7 @@ function DesktopMenu(props: Props){
                 </Link>
             </div>
             {loggedIn &&    <div className="col text-center">
-                <Link onClick={()=>dispatchEvent(null)} to="/"
+                <Link onClick={Logout} to="/"
                       style={{"textDecoration":"none", "fontSize": "20px","color": "white"}}
                 >
                     Wyloguj

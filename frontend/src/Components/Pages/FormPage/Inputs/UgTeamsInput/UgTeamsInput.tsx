@@ -120,7 +120,6 @@ function UgTeamsInput(props: Props) {
                                             onChange={(e) => {
                                                 const sanitizedValue = parseInt(e.target.value);
                                                 var val = field.value;
-                                                console.log(sanitizedValue)
                                                 if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                     val[index].noOfEmployees = sanitizedValue
 
