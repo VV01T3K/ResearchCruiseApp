@@ -1,7 +1,6 @@
 import React, {Dispatch, useEffect, useState} from 'react';
 import Page from "../Page";
-import useCustomEvent from "../../Tools/useCustomEvent";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import SpubTasksPoints from "./ApplicationPointsSections/SpubTasksPoints";
 import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
 import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
@@ -10,7 +9,6 @@ import ApplicationInfo from "./ApplicationInfo";
 import ContractsPoints from "./ApplicationPointsSections/ContractsPoints";
 import TasksPoints from "./ApplicationPointsSections/TasksPoints";
 import PublicationsPoints from "./ApplicationPointsSections/PublicationsPoints";
-import ThesisPoints from "./ApplicationPointsSections/ThesisPoints";
 import {Application} from "../ApplicationsPage/ApplicationsPage";
 import {FormValues} from "../FormPage/Wrappers/FormTemplate";
 import Api from "../../Tools/Api";
@@ -27,8 +25,6 @@ function ApplicationDetailsPage() {
     const location = useLocation()
     const [locationState, _]: [ApplicationDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
-
-    const { dispatchEvent } = useCustomEvent('busy')
 
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
         "Informacje": "Informacje o zgłoszeniu",
@@ -47,7 +43,7 @@ function ApplicationDetailsPage() {
             console.log(locationState)
             Api
                 .get(
-                    `/applications/${locationState?.application.id}/points`
+                    `/api/applications/${locationState?.application.id}/points`
                 )
                 .then(response => {
                     setEvaluatedApplication(response.data)
@@ -84,70 +80,13 @@ function ApplicationDetailsPage() {
                     <PageSection title={sections.Umowy}>
                         <ContractsPoints
                             evaluatedContracts={
-                            // evaluatedApplication?.contracts ?? []
-                            [
-                                {
-                                    category: "international",
-                                    institution: {
-                                        name: "Instytucja 1",
-                                        unit: "Jednostka 1",
-                                        localization: "Lokalizacja 1"
-                                    },
-                                    description: "Opis 1",
-                                    scan: {
-                                        name: "Prezentacja.pdf",
-                                        content:"data:application/pdfbase64JVBERi0xLjQKJSD"
-                                    },
-                                    points: "300"
-                                },
-                                {
-                                    category: "international",
-                                    institution: {
-                                        name: "Instytucja 2",
-                                        unit: "Jednostka 2",
-                                        localization: "Lokalizacja 2"
-                                    },
-                                    description: "Opis 2",
-                                    scan: {
-                                        name: "Eksperyment",
-                                        content: ""
-                                    },
-                                    points: "300"
-                                },
-                                {
-                                    category: "domestic",
-                                    institution: {
-                                        name: "Instytucja 3",
-                                        unit: "Jednostka 3",
-                                        localization: "Lokalizacja 3"
-                                    },
-                                    description: "Opis 3",
-                                    scan: {
-                                        name: "Eksperyment",
-                                        content: ""
-                                    },
-                                    points: "150"
-                                },
-                                {
-                                    category: "domestic",
-                                    institution: {
-                                        name: "Instytucja 4",
-                                        unit: "Jednostka 4",
-                                        localization: "Lokalizacja 4"
-                                    },
-                                    description: "Opis 4",
-                                    scan: {
-                                        name: "teoria.pdf",
-                                        content: "data:application/pdf;base64JVBERi0xLjUKJdDUxdgKMSA"
-                                    },
-                                    points: "150"
-                                }
-                            ]}
+                             evaluatedApplication?.contracts ?? []
+                           }
                         />
                     </PageSection>
 
                     <PageSection title={sections["Z. badawcze"]}>
-                        <div className={"d-flex"}>
+                        <div className={"d-flex w-100"}>
                         <UgTeams ugTeams={evaluatedApplication?.ugTeams ?? []}/>
                         <GuestTeams guestTeams={evaluatedApplication?.guestTeams ?? []}/>
                         </div>

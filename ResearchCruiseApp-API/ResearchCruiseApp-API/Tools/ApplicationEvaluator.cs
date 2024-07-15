@@ -1,5 +1,14 @@
 using System.Globalization;
+using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
+using Contract = ResearchCruiseApp_API.Data.Contract;
+using EvaluatedContract = ResearchCruiseApp_API.Data.EvaluatedContract;
+using EvaluatedPublication = ResearchCruiseApp_API.Data.EvaluatedPublication;
+using EvaluatedResearchTask = ResearchCruiseApp_API.Data.EvaluatedResearchTask;
+using EvaluatedSPUBTask = ResearchCruiseApp_API.Data.EvaluatedSPUBTask;
+using Publication = ResearchCruiseApp_API.Data.Publication;
+using ResearchTask = ResearchCruiseApp_API.Data.ResearchTask;
+using SPUBTask = ResearchCruiseApp_API.Data.SPUBTask;
 
 namespace ResearchCruiseApp_API.Tools;
 
@@ -58,9 +67,9 @@ public class ApplicationEvaluator : IApplicationEvaluator
     private const int SpubTaskPoints = 100;
 
 
-    public EvaluatedApplicationModel EvaluateApplication(FormAModel formA, List<ResearchTask> cruiseEffects)
+    public EvaluatedApplication EvaluateApplication(FormA formA, List<ResearchTask> cruiseEffects)
     {
-        var evaluatedApplication = new EvaluatedApplicationModel();
+        var evaluatedApplication = new EvaluatedApplication();
 
         if (formA.ResearchTasks != null)
         {
@@ -78,22 +87,16 @@ public class ApplicationEvaluator : IApplicationEvaluator
             }
         }
 
-        if (formA.GuestTeams != null)
-            evaluatedApplication.GuestTeams = formA.GuestTeams;
-
-        if (formA.UgTeams != null)
-            evaluatedApplication.UgTeams = formA.UgTeams;
-
         var emptyTeams = 0;
-        foreach (var ugTeam in evaluatedApplication.UgTeams)
+        foreach (var ugTeam in formA.UGTeams)
         {
             if (ugTeam.NoOfEmployees <= 0 && ugTeam.NoOfStudents <= 0)
                 emptyTeams++;
         }
 
-        if (evaluatedApplication.UgTeams.Count - emptyTeams >= 3)
+        if (formA.UGTeams.Count - emptyTeams >= 3)
             evaluatedApplication.UgTeamsPoints = UgTeamPointsFromAtLeast3Units;
-        else if (evaluatedApplication.UgTeams.Count - emptyTeams >= 2)
+        else if (formA.UGTeams.Count - emptyTeams >= 2)
             evaluatedApplication.UgTeamsPoints = UgTeamPointsFromAtLeast2Units;
         else
             evaluatedApplication.UgTeamsPoints = DefaultPoints;
@@ -108,7 +111,7 @@ public class ApplicationEvaluator : IApplicationEvaluator
              evaluatedApplication.CruiseEffects.Add(EvaluateResearchTask(cruiseEffect));   
         }
 
-        foreach (var spubTask in formA.SpubTasks)
+        foreach (var spubTask in formA.SPUBTasks)
         {
             evaluatedApplication.SpubTasks.Add(EvaluateSpubTask(spubTask));
         }
@@ -117,75 +120,81 @@ public class ApplicationEvaluator : IApplicationEvaluator
     }
 
     
-    private EvaluatedResearchTask EvaluateResearchTask(ResearchTask researchTask)
+    public EvaluatedResearchTask EvaluateResearchTask(ResearchTask researchTask)
     {
         if (researchTask.Type == BaThesis)
-            return new EvaluatedResearchTask(researchTask, BaThesisPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = BaThesisPoints};
         if (researchTask.Type == MScThesis)
-            return new EvaluatedResearchTask(researchTask, MScThesisPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = MScThesisPoints};
         if (researchTask.Type == PhDThesis)
-            return new EvaluatedResearchTask(researchTask, PhDThesisPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = PhDThesisPoints};
         if (researchTask.Type == ScOrRdProject)
         {
             //  if(researchTask.isFinancingApproved)
-            //     return new EvaluatedResearchTask(researchTask,
-            //          C.ScOrRdProjectFinancingApprovedPoints);
+            //     return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = 
+            //          C.ScOrRdProjectFinancingApprovedPoints};
 
-            return new EvaluatedResearchTask(researchTask,
-                ScOrRdProjectFinancingNotApprovedPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, 
+                CalculatedPoints = ScOrRdProjectFinancingNotApprovedPoints};
 
         }
 
         if (researchTask.Type == DomesticProject)
-            return new EvaluatedResearchTask(researchTask, (int)(DomesticProjectPoints
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = (int)(DomesticProjectPoints
                                                                  * Math.Floor(
-                                                                     float.Parse(researchTask.Values.FinancingAmount, CultureInfo.InvariantCulture)
-                                                                     * DomesticProjectPointsRatio)));
+                                                                     float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
+                                                                     * DomesticProjectPointsRatio))};
         if (researchTask.Type == ForeignProject)
-            return new EvaluatedResearchTask(researchTask, (int)(ForeignProjectPoints
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = (int)(ForeignProjectPoints
                                                                  * Math.Floor(
-                                                                     float.Parse(researchTask.Values.FinancingAmount, CultureInfo.InvariantCulture)
-                                                                     * ForeignProjectPointsRatio)));
+                                                                     float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
+                                                                     * ForeignProjectPointsRatio))};
         if (researchTask.Type == InternalProject)
-            return new EvaluatedResearchTask(researchTask, InternalProjectPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = InternalProjectPoints};
         if (researchTask.Type == CommercialProject)
-            return new EvaluatedResearchTask(researchTask, DefaultPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
         if (researchTask.Type == DidacticsProject)
-            return new EvaluatedResearchTask(researchTask, DefaultPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
         if (researchTask.Type == OwnProjectRealizationProject)
-            return new EvaluatedResearchTask(researchTask, OwnProjectRealizationPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = OwnProjectRealizationPoints};
         if (researchTask.Type == OtherProject)
-            return new EvaluatedResearchTask(researchTask, DefaultPoints);
+            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
 
-        return new EvaluatedResearchTask(researchTask, DefaultPoints);
+        return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
     }
 
     private EvaluatedContract EvaluateContract(Contract contract)
     {
         if (contract.Category == DomesticContract)
-            return new EvaluatedContract(contract, DomesticContractPoints);
+            return new EvaluatedContract{Contract = contract, CalculatedPoints = DomesticContractPoints};
         if (contract.Category == InternationalContract)
-            return new EvaluatedContract(contract, ForeignContractPoints);
+            return new EvaluatedContract { Contract = contract, CalculatedPoints = ForeignContractPoints };
 
-        return new EvaluatedContract(contract, DefaultPoints);
+        return new EvaluatedContract{Contract = contract, CalculatedPoints = DefaultPoints};
     }
 
     private EvaluatedPublication EvaluatePublication(Publication publication)
     {
         if (publication.Category == DefaultPublication)
-            return new EvaluatedPublication(publication, (int)(DefaultPublicationPointRatio * publication.Points));
+            return new EvaluatedPublication{Publication = publication,
+                CalculatedPoints = (int)(DefaultPublicationPointRatio * publication.Points)};
         if (publication.Category == PublicationFromRV)
-            return new EvaluatedPublication(publication, (int)(PublicationFromRVPointRatio * publication.Points));
+            return new EvaluatedPublication
+            {
+                Publication = publication,
+                CalculatedPoints = (int)(PublicationFromRVPointRatio * publication.Points)
+            };
 
-        return new EvaluatedPublication(publication, DefaultPoints);
+        return new EvaluatedPublication{Publication = publication,
+            CalculatedPoints = DefaultPoints};
     }
 
     private EvaluatedSPUBTask EvaluateSpubTask(SPUBTask spubTask)
     {
-        return new EvaluatedSPUBTask(spubTask, SpubTaskPoints);
+        return new EvaluatedSPUBTask{SpubTask = spubTask, CalculatedPoints = SpubTaskPoints};
     }
     
-    public int CalculateSumOfPoints(EvaluatedApplicationModel evaluatedApplication)
+    public int CalculateSumOfPoints(EvaluatedApplication evaluatedApplication)
     {
         var sum = 0;
 

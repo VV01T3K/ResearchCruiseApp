@@ -19,7 +19,7 @@ public struct DateRange
 
 public class UGTeam
 {
-    public int UnitId { get; set; }
+    public int Value { get; set; }
     public int? NoOfEmployees { get; set; }
     public int? NoOfStudents { get; set; }
 }
@@ -71,19 +71,21 @@ public class ResearchTask
     public Value Values { get; set; } 
 }
 
-public class EvaluatedResearchTask : ResearchTask, IEvaluatedField
+public class EvaluatedResearchTask : ResearchTask , IEvaluatedField
 {
+    public Guid Id;
+    public ResearchTask ResearchTask { get; set; }
     public int CalculatedPoints { get; set; }
-    public EvaluatedResearchTask(ResearchTask task, int points)
-    {
-        this.Type = task.Type;
-        this.Values = task.Values;
-        this.CalculatedPoints = points;
-    }
 
     public EvaluatedResearchTask()
     {
         
+    }
+
+    public EvaluatedResearchTask(ResearchTask task, int calculatedPoints)
+    {
+        this.ResearchTask = task;
+        this.CalculatedPoints = calculatedPoints;
     }
 }
 
@@ -113,19 +115,19 @@ public class Contract
 
 public class EvaluatedContract : Contract, IEvaluatedField
 {
+    public Guid Id;
     public int CalculatedPoints { get; set; }
-    public EvaluatedContract(Contract contract, int points)
-    {
-        this.Category = contract.Category;
-        this.Description = contract.Description;
-        this.Institution = contract.Institution;
-        this.Scan = contract.Scan;
-        this.CalculatedPoints = points;
-    }
+    public Contract Contract { get; set; }
 
-    EvaluatedContract()
+    public EvaluatedContract()
     {
         
+    }
+
+    public EvaluatedContract(Contract contract, int calculatedPoints)
+    {
+        this.Contract = contract;
+        this.CalculatedPoints = calculatedPoints;
     }
 }
 
@@ -147,18 +149,17 @@ public class Publication
 
 public class EvaluatedPublication : Publication, IEvaluatedField
 {
+    public Guid Id;
+    public Publication Publication { get; set; }
     public int CalculatedPoints { get; set; }
-    public EvaluatedPublication(Publication publication,  int points)
-    {
-        this.Category = publication.Category;
-        this.Year = publication.Year;
-        this.Points = publication.Points;
-        this.Info = publication.Info;
-        this.CalculatedPoints = points;
-    }
-    EvaluatedPublication()
+    public EvaluatedPublication()
     {
         
+    }
+    public EvaluatedPublication(Publication publication, int calculatedPoints)
+    {
+        this.Publication = publication;
+        this.CalculatedPoints = calculatedPoints;
     }
 }
 
@@ -202,19 +203,19 @@ public class SPUBTask
 
 public class EvaluatedSPUBTask : SPUBTask, IEvaluatedField
 {
+    public Guid Id;
+    public SPUBTask SpubTask { get; set; }
     public int CalculatedPoints { get; set; }
-
-    public EvaluatedSPUBTask(SPUBTask spubTask,  int points)
-    {
-        this.YearFrom = spubTask.YearFrom;
-        this.YearTo = spubTask.YearTo;
-        this.Name = spubTask.Name;
-        this.CalculatedPoints = points;
-    }
     
-    EvaluatedSPUBTask()
+    public EvaluatedSPUBTask()
     {
         
+    }
+
+    public EvaluatedSPUBTask(SPUBTask spubTask, int calculatedPoints)
+    {
+        this.SpubTask = spubTask;
+        this.CalculatedPoints = calculatedPoints;
     }
 }
 

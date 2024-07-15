@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,9 @@ using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 using ResearchCruiseApp_API.Controllers;
 using Microsoft.EntityFrameworkCore.Query;
+using Contract = ResearchCruiseApp_API.Models.Contract;
+using GuestTeam = ResearchCruiseApp_API.Models.GuestTeam;
+using UGTeam = ResearchCruiseApp_API.Models.UGTeam;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -72,16 +76,19 @@ namespace ResearchCruiseApp_API.Controllers
                 .Include(application => application.EvaluatedApplication)
                 .Include(application =>
                     application.EvaluatedApplication != null ? application.EvaluatedApplication.Contracts : null)
+                .Include(application => application.FormA.Contracts != null ? application.FormA.Contracts:null  )
                 .Include(application =>
                     application.EvaluatedApplication != null ? application.EvaluatedApplication.Publications : null)
-                .Include(application =>
-                    application.EvaluatedApplication != null ? application.EvaluatedApplication.GuestTeams : null)
+                .Include(application => application.FormA.Publications != null ? application.FormA.Publications:null  )
+                .Include(application => application.FormA.GuestTeams != null ? application.FormA.GuestTeams:null  )
+                .Include(application => application.FormA.UGTeams != null ? application.FormA.UGTeams:null  )
+
                 .Include(application =>
                     application.EvaluatedApplication != null ? application.EvaluatedApplication.ResearchTasks : null)
-                .Include(application =>
-                    application.EvaluatedApplication != null ? application.EvaluatedApplication.UgTeams : null)
+                .Include(application => application.FormA.ResearchTasks != null ? application.FormA.ResearchTasks:null  )
                 .Include(application =>
                     application.EvaluatedApplication != null ? application.EvaluatedApplication.SpubTasks : null)
+                .Include(application => application.FormA.SPUBTasks != null ? application.FormA.SPUBTasks:null  )
                 .FirstOrDefaultAsync(application => application.Id == applicationId);
 
             if (application == null)
@@ -93,7 +100,14 @@ namespace ResearchCruiseApp_API.Controllers
             var mapper = MapperConfig.InitializeAutomapper();
 
             var evaluatedApplicationModel = mapper.Map<EvaluatedApplicationModel>(application.EvaluatedApplication);
-            
+            foreach (var ugTeam in application.FormA.UGTeams)
+            {
+                evaluatedApplicationModel.UgTeams.Add(mapper.Map<UGTeam>(ugTeam)); 
+            }
+            foreach (var guestTeam in application.FormA.GuestTeams)
+            {
+                evaluatedApplicationModel.GuestTeams.Add(mapper.Map<GuestTeam>(guestTeam)); 
+            }
             return Ok(evaluatedApplicationModel);
         }
     }

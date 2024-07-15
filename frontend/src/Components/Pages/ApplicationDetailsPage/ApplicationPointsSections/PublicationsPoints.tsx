@@ -107,23 +107,23 @@ function PublicationsInput(props: Props){
                             <div className="col-12 d-flex d-xl-none justify-content-center">
                                 Kategoria
                             </div>
-                            <ReadOnlyTextInput value={row.category == "subject" ? "Temat" : "Dopisek"} />
+                            <ReadOnlyTextInput value={row.publication.category == "subject" ? "Temat" : "Dopisek"} />
                         </div>
                         <div
                             className="text-center d-flex flex-wrap justify-content-center align-items-center p-2"
                             style={{width: windowWidth >= 1200 ? "51%" : "100%"}}
                         >
                             <div className="col-12 mb-1">DOI</div>
-                            <ReadOnlyTextInput value={row.DOI} />
+                            <ReadOnlyTextInput value={row.publication.DOI} />
 
                             <div className="col-12 mb-1 mt-1">Autorzy</div>
-                            <ReadOnlyTextInput value={row.authors} />
+                            <ReadOnlyTextInput value={row.publication.authors} />
 
                             <div className="col-12 mb-1 mt-1">Tytuł</div>
-                            <ReadOnlyTextInput value={row.title} />
+                            <ReadOnlyTextInput value={row.publication.title} />
 
                             <div className="col-12 mb-1 mt-1">Czasopismo</div>
-                            <ReadOnlyTextInput value={row.magazine} />
+                            <ReadOnlyTextInput value={row.publication.magazine} />
 
                         </div>
 
@@ -134,7 +134,7 @@ function PublicationsInput(props: Props){
                             <div className="col-12 d-flex d-xl-none justify-content-center">
                                 Rok wydania
                             </div>
-                            <ReadOnlyTextInput value={row.year} />
+                            <ReadOnlyTextInput value={row.publication.year} />
                         </div>
                         <div
                             className="d-flex flex-wrap justify-content-center align-items-center p-2"
@@ -143,7 +143,7 @@ function PublicationsInput(props: Props){
                             <div className="col-12 d-flex d-xl-none justify-content-center">
                                 Punkty ministerialne
                             </div>
-                            <ReadOnlyTextInput value={row.ministerialPoints} />
+                            <ReadOnlyTextInput value={row.publication.ministerialPoints} />
                         </div>
                         <div
                             className="d-flex flex-wrap justify-content-center align-items-center p-2 border-start"

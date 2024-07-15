@@ -90,15 +90,15 @@ namespace ResearchCruiseApp_API.Controllers
             var formAModel = mapper.Map<FormAModel>(formA);
 
             
-            var evaluatedApplicationModel = applicationEvaluator.EvaluateApplication(formAModel, []);
+            var evaluatedApplication= applicationEvaluator.EvaluateApplication(formA, []);
             
-            var evaluatedApplication = mapper.Map<EvaluatedApplication>(evaluatedApplicationModel);
+            //var evaluatedApplication = mapper.Map<EvaluatedApplication>(evaluatedApplicationModel);
             
         
             await researchCruiseContext.EvaluatedApplications.AddAsync(evaluatedApplication);
             await researchCruiseContext.SaveChangesAsync();
 
-            var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplicationModel);
+            var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplication);
 
             var newApplication = new Application
             {
