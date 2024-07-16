@@ -15,7 +15,7 @@ export default function ShipOwnerPanel() {
 
     const tilesMenu = [
         { element: <UserTile />, cols: 1, rows: 1 },
-        { element:<NewFormTile />, cols: 1, rows: 1 },
+        { element: <NewFormTile />, cols: 1, rows: 1 },
         { element: <AccountSettingsTile />, cols: 1, rows: 1 },
         { element: <ManageUserTile />, cols: 1, rows: 1 },
     ];

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Tools.Extensions;
 using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Controllers
@@ -48,8 +50,12 @@ namespace ResearchCruiseApp_API.Controllers
         public async Task<IActionResult> AddUser(
             [FromBody] RegisterModel registerModel, [FromServices] IServiceProvider serviceProvider)
         {
+            var emailAddressAttribute = new EmailAddressAttribute();
+            if (string.IsNullOrEmpty(registerModel.Email) || !emailAddressAttribute.IsValid(registerModel.Email))
+                return BadRequest("Adres e-mail jest niepoprawny");
+            
             if (await userManager.FindByEmailAsync(registerModel.Email) != null)
-                return Conflict();
+                return Conflict("Użytkownik o tym adresie e-mail już istnieje");
             
             string? responseMessage = null;
             var roleName = string.Empty;

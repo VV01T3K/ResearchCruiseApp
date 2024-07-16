@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Tools.Extensions;
 using ResearchCruiseApp_API.Types;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -17,7 +17,7 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
         
-        string subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu";
+        var subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu";
         
         var code = changeEmail
             ? await userManager.GenerateChangeEmailTokenAsync(user, user.Email!)
@@ -111,29 +111,5 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
             
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
-        
-        // using var client = new SmtpClient(
-        //     smtpSettings.GetSection("SmtpServer").Value,
-        //     int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""));
-        // client.UseDefaultCredentials = false;
-        // client.Credentials = new NetworkCredential(
-        //     smtpSettings.GetSection("SmtpUsername").Value,
-        //     smtpSettings.GetSection("SmtpPassword").Value);
-        // client.EnableSsl = true;
-        //
-        // var from = new MailAddress(
-        //     smtpSettings.GetSection("SenderEmail").Value ?? "",
-        //     smtpSettings.GetSection("SenderName").Value);
-        //
-        // var message = new MailMessage
-        // {
-        //     From = from,
-        //     Subject = subject,
-        //     Body = body,
-        //     IsBodyHtml = true
-        // };
-        // message.To.Add(email);
-        //
-        // await client.SendMailAsync(message);
     }
 }

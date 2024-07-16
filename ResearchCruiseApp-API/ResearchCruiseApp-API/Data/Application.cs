@@ -4,27 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Tools.Attributes;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Data;
 
 public class Application : IYearBasedNumberedEntity
 {
-    public enum ApplicationStatus
-    {
-        [StringValue("Nowe")]
-        New,
-        
-        [StringValue("Zaakceptowane")]
-        Accepted,
-        
-        [StringValue("Zrealizowane")]
-        Undertaken,
-        
-        [StringValue("Rozliczone")]
-        Reported
-    }
-    
-    
     [DatabaseGenerated((DatabaseGeneratedOption.Identity))]
     public Guid Id { get; set; }
     

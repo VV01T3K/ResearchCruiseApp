@@ -109,7 +109,7 @@ namespace ResearchCruiseApp_API.Controllers
                 FormC = null,
                 EvaluatedApplication = evaluatedApplication,
                 Points = calculatedPoints,
-                Status = Application.ApplicationStatus.New
+                Status = ApplicationStatus.New
             };
 
             await researchCruiseContext.Applications.AddAsync(newApplication);

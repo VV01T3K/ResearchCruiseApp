@@ -1,9 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Org.BouncyCastle.Tls;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Tools.Extensions;
-using static ResearchCruiseApp_API.Data.Application;
 
 namespace ResearchCruiseApp_API.Models.MapProfiles;
 

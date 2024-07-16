@@ -4,6 +4,9 @@ import Api from "../../Tools/Api";
 import DataTable from 'react-data-table-component';
 import './ManageUsersPage.css'
 import useCustomEvent from "../../Tools/useCustomEvent";
+import AddUserForm from "./AddUserForm/AddUserForm";
+import PageMenuBar from "../CommonComponents/PageMenuBar";
+import PageTitle from "../CommonComponents/PageTitle";
 type Props = {
     className?: string
 }
@@ -224,12 +227,13 @@ function ManageUsersPage(props: Props) {
     }, [selectedRows, toggleCleared]);
 
     return (
-        <>
-            <Page className={props.className + " justify-content-center "}>
-                <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start
-                                justify-content-center p-2"
-                >
-                   <h1 style={{fontSize: "2rem"}}>Zarządzanie użytkownikami</h1>
+        <Page className="justify-content-center col-12 col-xl-9 bg-white">
+            <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
+                <PageTitle title="Zarządzanie użytkownikami" />
+                <div className="d-flex flex-column align-items-center w-100 h-100 overflow-y-scroll">
+                    <PageMenuBar className="justify-content-start">
+                        <AddUserForm />
+                    </PageMenuBar>
 
                     <div className="d-flex flex-column flex-wrap justify-content-center  p-2 p-xl-5 align-items-center">
                         <DataTable className={"dataTable"}
@@ -254,8 +258,8 @@ function ManageUsersPage(props: Props) {
                         />
                     </div>
                 </div>
-            </Page>
-        </>
+            </div>
+        </Page>
     )
 }
 

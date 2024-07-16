@@ -5,6 +5,7 @@ import "./style.css"
 import {Link, useLocation} from "react-router-dom";
 import {ErrorMessage} from "react-image-size/lib/lib/constants";
 import ErrorCode from "./ErrorCode";
+import Api from "../../Tools/Api";
 
 
 function EmailConfirmPage(){
@@ -18,24 +19,15 @@ function EmailConfirmPage(){
             const userIdParam = searchParams.get('userId');
             const codeParam = searchParams.get('code');
 
-            async function confirmEmail() {
-                try {
-                    const response = await fetch(
-                        `http://localhost:8080/account/confirmEmail?userId=${userIdParam}&code=${codeParam}`,
-                        {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                        })
-                        .then(data => {
-                            if (!data.ok)
-                                throw new Error("Wystąpił problem")
-                        })
-                    setConfirmed(true)
-                } catch (e) {
-                    setErrorMsg(e.message)
-                }
+            function confirmEmail(){
+                Api.
+                    get(`/account/confirmEmail?userId=${userIdParam}&code=${codeParam}`)
+                    .then(response =>
+                        setConfirmed(true)
+                    )
+                    .catch(error => {
+                        setErrorMsg(error.message)
+                    })
             }
 
             confirmEmail();

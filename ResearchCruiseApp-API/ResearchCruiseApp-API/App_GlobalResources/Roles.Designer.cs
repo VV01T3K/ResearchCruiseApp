@@ -78,15 +78,6 @@ namespace ResearchCruiseApp_API.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Czas dodać nowy string.
-        /// </summary>
-        internal static string EmailSender_SendAccountConfirmationMessageAsync_Czas_dodać_nowy_string {
-            get {
-                return ResourceManager.GetString("EmailSender_SendAccountConfirmationMessageAsync_Czas_dodać_nowy_string", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Shipowner.
         /// </summary>
         internal static string Shipowner {
