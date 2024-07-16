@@ -28,7 +28,7 @@ export type Thesis = {
 }
 
 
-function WorkList(props: Props){
+function CrewInput(props: Props){
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
         () => {
@@ -90,18 +90,18 @@ function WorkList(props: Props){
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                                                 style={{width: "20%"}}>
-                                                <b>Kategoria</b>
+                                                <b>Imię</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                                                 style={{width: "55%"}}>
-                                                <b>Informacje</b>
+                                                <b>Nazwisko</b>
                                             </div>
 
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                                                 style={{width: "15%"}}>
-                                                <b>Rok obrony</b>
+                                                <b>Tytuł</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2"
@@ -410,4 +410,4 @@ function WorkList(props: Props){
 }
 
 
-export default WorkList
+export default CrewInput

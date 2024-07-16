@@ -413,7 +413,7 @@ function FormA(props: Props){
                             ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
                     </div>
                     <PublicationsInput
-                        required={false}
+                        required={true}
                         className="col-12"
                         label="Publikacje"
                         name="publications"
@@ -464,7 +464,7 @@ function FormA(props: Props){
                                 pokładu jednostki RV Oceanograf.</strong></p>
                     </div>
                         <ThesisInput
-                            required={false}
+                            required={true}
                             className="col-12"
                             label="Prace"
                             name="works"
