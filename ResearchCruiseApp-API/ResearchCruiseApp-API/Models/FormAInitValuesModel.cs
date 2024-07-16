@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ResearchCruiseApp_API.Data;
-using ResearchTask = ResearchCruiseApp_API.Models.ResearchTask;
+using ResearchTask = ResearchCruiseApp_API.Models.DataTypes.ResearchTask;
 
 namespace ResearchCruiseApp_API.Models;
 

@@ -64,7 +64,7 @@ public class FormB
     
     public List<Publication> Publications { get; set; }
     
-    public List<Work> Works { get; set; }
+    public List<Thesis> Theses { get; set; }
 
     public List<SPUBTask> SPUBTasks { get; set; } 
     

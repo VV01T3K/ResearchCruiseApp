@@ -16,7 +16,7 @@ public class ResearchTask
         public string? Institution { get; set; }
         
         //TODO zmienić w frontendzie na DATETIME
-        public DateTime? Date { get; set; }
+        public string? Date { get; set; }
         
         public class Time_type
         {
@@ -31,5 +31,5 @@ public class ResearchTask
         
         public string? Description { get; set; }
     }
-    public Value Values { get; set; } 
+    public Value? Values { get; set; } 
 }

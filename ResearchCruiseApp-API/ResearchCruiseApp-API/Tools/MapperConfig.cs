@@ -71,6 +71,7 @@ namespace ResearchCruiseApp_API.Tools
                     .ForMember(dest => dest.Description, act => act.MapFrom(src => src.Values.Description))
                     .ReverseMap()
                     ;
+                
                 cfg.CreateMap<Models.DataTypes.Contract, Data.Contract>()
                     .ForMember(dest => dest.InstitutionName, act => act.MapFrom(src => src.Institution.Name))
                     .ForMember(dest => dest.InstitutionUnit, act => act.MapFrom(src => src.Institution.Unit))
@@ -100,7 +101,7 @@ namespace ResearchCruiseApp_API.Tools
                                 new HashSet<int> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }));
                 
                 
-                cfg.CreateMap<Models.EvaluatedResearchTask, Data.EvaluatedResearchTask>()
+                /*cfg.CreateMap<Models.EvaluatedResearchTask, Data.EvaluatedResearchTask>()
                     .ForPath(dest => dest.ResearchTask.Title, act => act.MapFrom(src => src.Values.Title))
                     .ForPath(dest => dest.ResearchTask.Author, act => act.MapFrom(src => src.Values.Author))
                     .ForPath(dest => dest.ResearchTask.Institution, act => act.MapFrom(src => src.Values.Institution))
@@ -108,7 +109,9 @@ namespace ResearchCruiseApp_API.Tools
                     .ForPath(dest => dest.ResearchTask.StartDate, act => act.MapFrom(src => src.Values.Time.StartDate))
                     .ForPath(dest => dest.ResearchTask.EndDate, act => act.MapFrom(src => src.Values.Time.EndDate))
                     .ForPath(dest => dest.ResearchTask.FinancingAmount, act => act.MapFrom(src => src.Values.FinancingAmount))
-                    .ForPath(dest => dest.ResearchTask.Description, act => act.MapFrom(src => src.Values.Description)).ReverseMap();
+                    .ForPath(dest => dest.ResearchTask.Description, act => act.MapFrom(src => src.Values.Description))
+                    .ReverseMap()
+                    ;*/
                 
                 cfg.CreateMap<EvaluatedApplicationModel, EvaluatedApplication>()
                     .ReverseMap()
