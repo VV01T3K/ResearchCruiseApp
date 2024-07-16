@@ -20,6 +20,7 @@ using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using Task = System.Threading.Tasks.Task;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -37,7 +38,7 @@ namespace ResearchCruiseApp_API.Controllers
             var form = await researchCruiseContext.FormsA
                 .Include(o => o.Contracts)
                 .Include(o => o.Publications)
-                .Include(o => o.Works)
+                .Include(o => o.Theses)
                 .Include(o => o.GuestTeams)
                 .Include(o => o.ResearchTasks)
                 .Include(o => o.UGTeams)
@@ -47,7 +48,7 @@ namespace ResearchCruiseApp_API.Controllers
                 return NotFound();
             
             var mapper = MapperConfig.InitializeAutomapper();
-            return Ok(mapper.Map<FormsModel>(form));
+            return Ok(mapper.Map<FormAModel>(form));
         }
         
         [HttpGet]
@@ -56,27 +57,27 @@ namespace ResearchCruiseApp_API.Controllers
             var forms = await researchCruiseContext.FormsA
                 .Include(o => o.Contracts)
                 .Include(o => o.Publications)
-                .Include(o => o.Works)
+                .Include(o => o.Theses)
                 .Include(o => o.GuestTeams)
                 .Include(o => o.ResearchTasks)
                 .Include(o => o.UGTeams)
                 .Include(o => o.SPUBTasks)
                 .ToListAsync();
             //return Ok(forms);
-            var formModels = new List<FormsModel>();
+            var formModels = new List<FormAModel>();
             var mapper = MapperConfig.InitializeAutomapper();
 
             foreach (var form in forms)
             {
                 //var ContractsList = from Contracts in researchCruiseContext.FormsA where Contracts.Id == form.Id select Contracts;
-                formModels.Add(mapper.Map<FormsModel>(form));
+                formModels.Add(mapper.Map<FormAModel>(form));
             }
             
             return Ok(formModels);
         }
         
         [HttpPost("A")]
-        public async Task<IActionResult> AddFormA([FromBody] FormsModel form)
+        public async Task<IActionResult> AddFormA([FromBody] FormAModel formAmodel)
         {
             if (!ModelState.IsValid)
             {
@@ -86,7 +87,7 @@ namespace ResearchCruiseApp_API.Controllers
             Console.WriteLine("zapisywanie rozpoczete");
 
             var mapper = MapperConfig.InitializeAutomapper();
-            var formA = mapper.Map<FormA>(form);
+            var formA = mapper.Map<FormA>(formAmodel);
             
             researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
