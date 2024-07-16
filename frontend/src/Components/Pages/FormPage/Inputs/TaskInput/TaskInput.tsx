@@ -20,7 +20,7 @@ export type Time = {
 export type TaskValues =
     { author: string, title: string } |
     { title: string, institution: string, date: string} |
-    { title: string, time: Time, financingAmount: string } |
+    { title: string, time: Time, financingAmount: number } |
     { description: string }
 
 export type Task = {
