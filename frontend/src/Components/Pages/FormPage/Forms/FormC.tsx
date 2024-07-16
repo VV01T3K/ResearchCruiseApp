@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate from "../Wrappers/FormTemplate";
-import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
-import FormUserSelect from "../Inputs/FormUserSelect";
+import FormTemplate, {FormValues} from "../Wrappers/FormTemplate";
+import FormUserSelect, {FormUser} from "../Inputs/FormUserSelect";
 import FormSection from "../Wrappers/FormSection";
+import MonthSlider from "../Inputs/MonthSlider";
+import NumberInput from "../Inputs/NumberInput";
 import TextArea from "../Inputs/TextArea";
 import FormRadio from "../Inputs/FormRadio";
 import ClickableMap from "../Inputs/ClickableMap";
-import TaskInput, {Task} from "../Inputs/TaskInput/TaskInput";
+import TaskInput, {Task, Time} from "../Inputs/TaskInput/TaskInput";
 import GuestTeamsInput, {GuestsTeam} from "../Inputs/GuestTeamsInput/GuestTeamsInput";
 import SpubTasksInput, {SpubTask} from "../Inputs/SpubTasksInput";
 import {DummyTag} from "../../../Tools/DummyTag";
@@ -17,18 +18,37 @@ import UgTeamsInput, {UgTeam} from "../Inputs/UgTeamsInput/UgTeamsInput";
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import useCustomEvent from "../../../Tools/useCustomEvent";
 import api from "../../../Tools/Api";
+import FormYearSelect from "../Inputs/FormYearSelect";
 import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
+import {Cruise} from "../../CruisesPage/CruisesPage";
+import {useLocation} from "react-router-dom";
+import CruiseBasicInfo from "../../CruiseFormPage/CruiseFormSections/CruiseBasicInfo";
+import CruiseDate from "../../CruiseFormPage/CruiseFormSections/CruiseDate";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import ActionInput from "../Inputs/ActionInput/ActionInput";
 import DetailedPlanInput from "../Inputs/DetailedPlanInput";
 import EquipmentInput from "../Inputs/EquipmentInput";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
-import RegistrationNumber from "../Inputs/RegistrationNumber";
-import DurationInput from "../Inputs/DurationInput";
 import SamplesInput from "../Inputs/SamplesInput";
+import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
 
 
+export type ResearchArea = {
+    name: string,
+    x: number[],
+    y: number[]
+}
+
+type FormCInitValues = {
+    cruiseManagers: FormUser[],
+    deputyManagers: FormUser[],
+    years: number[],
+    shipUsages: string[],
+    researchAreas: ResearchArea[],
+    cruiseGoals: string[],
+    historicalTasks: Task[]
+}
 
 export type FormCValues = {
     cruiseManagerId: string
@@ -71,6 +91,20 @@ type Props = {
     readonly: boolean
 }
 
+type CruiseManagersTeam = {
+    mainCruiseManagerId: string,
+    mainDeputyManagerId: string
+}
+
+export type EditCruiseFormValues = {
+    date: Time,
+    managersTeam: CruiseManagersTeam,
+    applicationsIds: string[]
+}
+
+type CruiseFormPageLocationState = {
+    cruise?: Cruise
+}
 
 function FormC(props: Props){
     const form = useForm({
@@ -78,6 +112,10 @@ function FormC(props: Props){
         // defaultValues: defaultValues,
         shouldUnregister: false
     });
+
+    const location = useLocation()
+    const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
+        = useState(location.state || { })
 
 
     const [sections, setSections] = useState({
@@ -100,21 +138,54 @@ function FormC(props: Props){
         "Podsumowanie": "Podsumowanie"
     })
 
-    const [formInitValues, setFormInitValues] = useState([])
-    const { dispatchEvent } = useCustomEvent('busy')
+    const [formInitValues, setFormInitValues]
+        = useState<FormCInitValues>()
     useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
-        console.log(formInitValues)
-
+        api
+            .get('/Forms/A/InitData')
+            .then(response => {
+                setFormInitValues(response.data)
+                console.log(response.data as FormCInitValues)
+            })
+            .catch(error => console.log(error))
     },[]);
 
     useEffect(() => {
         console.log(formInitValues)
+    }, [formInitValues])
 
-    }, );
+    const { dispatchEvent } = useCustomEvent('busy')
+
+    const EMPTY_GUID: string = "00000000-0000-0000-0000-000000000000"
+
+    const editCruiseFormDefaultValues: EditCruiseFormValues = {
+        date:
+            locationState.cruise?.date ??
+            { start: "", end: "" },
+        managersTeam: {
+            mainCruiseManagerId:
+                locationState.cruise?.mainCruiseManagerId ??
+                EMPTY_GUID,
+            mainDeputyManagerId:
+                locationState.cruise?.mainDeputyManagerId ??
+                EMPTY_GUID
+        },
+        applicationsIds:
+            locationState.cruise?.applicationsShortInfo.map(app => app.id) ??
+            []
+    }
+
+    const cruiseForm = useForm<EditCruiseFormValues>({
+        defaultValues: editCruiseFormDefaultValues
+    })
 
     return (
-        <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='B'>
+        <FormTemplate
+            form={form}
+            loadValues={props.loadValues}
+            readonly={props.readonly}
+            type='C'
+        >
             <PageTitleWithNavigation
                 sections={sections}
                 title={"Formularz C"}
@@ -122,38 +193,35 @@ function FormC(props: Props){
             />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Rejs}>
-                    <RegistrationNumber className="col-12 col-md-12 col-xl-6 p-3"
-                                        required={false}
-                                        label="Numer ewidencyjny rejsu (nadawany przez Biuro Armatora): "
-                                        name="NumberC"
-                                        resize="none"
-                    />
+                    <CruiseBasicInfo cruise={locationState.cruise} />
+
                 </FormSection>
                 <FormSection title={sections.Kierownik}>
-                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                    name="cruiseManagerId"
-                                    label="Kierownik rejsu"
-                                    values={formInitValues["CruiseManagers"]
-                                    }
-                                    defaultValue={formInitValues["CruiseManagers"]}
+                    <FormUserSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="cruiseManagerId"
+                        label="Kierownik rejsu"
+                        values={formInitValues?.cruiseManagers}
                     />
-                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                    name="deputyManagerId"
-                                    label="Zastępca"
-                                    values={formInitValues["DeputyManagers"]}
+                    <FormUserSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="deputyManagerId"
+                        label="Zastępca"
+                        values={formInitValues?.deputyManagers}
                     />
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-                    <DurationInput className="col-12 col-xl-9" name={"diffC"} actionName={"Port"}/>
-
+                    <CruiseDate editCruiseForm={cruiseForm} />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
-                               label="Statek na potrzeby badań był wykorzystywany:"
+                               label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={formInitValues["ShipUsages"]}
+                               values={formInitValues?.shipUsages}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == formInitValues["ShipUsages"]?.length-1 ) {
+                        if (formInitValues?.shipUsages?.length &&
+                            form.watch("shipUsage") == formInitValues?.shipUsages?.length - 1
+                        ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -170,7 +238,7 @@ function FormC(props: Props){
 
                 <FormSection title={sections.Pozwolenia}>
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
-                               label="Czy do badań prowadzonych podczas rejsu były potrzebne dodatkowe pozwolenia?"
+                               label="Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?"
                                name="permissionsRequired"
                                values={["tak", "nie"]}
                     />
@@ -193,13 +261,14 @@ function FormC(props: Props){
                                 form.clearErrors("permissions")
                             }
                             return <DummyTag required={false} />}                    })()}
-                    {/*<ErrorCode code={"załączyć kopię"}/>*/}
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
-                                  image={formInitValues["ResearchAreasMap"]}
-                                  regions={formInitValues["ResearchAreas"]} />
+                    <ClickableMap
+                        label="Obszar prowadzonych badań" name="researchArea"
+                        // image={formInitValues?.researchAreasMap}
+                        regions={formInitValues?.researchAreas}
+                    />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -212,7 +281,7 @@ function FormC(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={formInitValues["CruiseGoals"]}
+                               values={formInitValues?.cruiseGoals}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"
@@ -353,11 +422,10 @@ function FormC(props: Props){
                             "Instytucja 1", "Instytucja 2", "Instytucja 3"
                         ]}
                     />
-                    <ErrorCode code={"Uwaga: Na tym etapie należy załączyć szczegółową listę załogi naukowej (tzw. crew list), mającej uczestniczyć w rejsie, w oparciu o załącznik „Crew List”.\n"}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                    <div className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
+                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
                         <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
                         <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
                             do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
@@ -371,27 +439,86 @@ function FormC(props: Props){
                             ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
                     </div>
                     <PublicationsInput
-                        required={false}
+                        required={true}
                         className="col-12"
                         label="Publikacje"
                         name="publications"
                         historicalPublications={[
-                            "A. Temat", "B. Dopisek", "Instytucja 3"
-                        ]}/>
-                    <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
+                            {
+                                category: "subject",
+                                DOI: "10.1016/j.marenvres.2023.106132",
+                                authors: "Urszula Kwasigroch, Katarzyna Łukawska-Matuszewska, Agnieszka Jędruch, Olga Brocławik, Magdalena Bełdowska",
+                                title: "Mobility and bioavailability of mercury in sediments of the southern Baltic sea in relation to the chemical fractions of iron: Spatial and temporal patterns",
+                                magazine: "Marine Environmental Research",
+                                year: "2023",
+                                points: "0"
+
+                            },
+                            {
+                                category: "subject",
+                                DOI: "10.1016/j.csr.2018.08.008",
+                                authors: "Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska",
+                                title: "Porewater dissolved organic and inorganic carbon in relation to methane occurrence in sediments of the Gdańsk Basin (southern Baltic Sea)",
+                                magazine: "Continental Shelf Research",
+                                year: "2018",
+                                points: "30"
+                            },
+                            {
+                                category: "postscript",
+                                DOI: "10.3390/biology12020147",
+                                authors: "Natalia Miernik, Urszula Janas, Halina Kendzierska",
+                                title: "Role of macrofaunal communities in the Vistula River plume, the Baltic Sea - bioturbation and bioirrigation potential",
+                                magazine: "Biology",
+                                year: "2023",
+                                points: "100"
+                            },
+                            {
+                                category: "postscript",
+                                DOI: "10.1016/j.scitotenv.2020.140306",
+                                authors: "Jakub Idczak, Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska, Bożena Graca, Natalia Gorska, Zygmunt Klusek, Patryk Pezacki, Jerzy Bolałek",
+                                title: "A geophysical, geochemical and microbiological study of a newly discovered pockmark with active gas seepage and submarine groundwater discharge (MET1-BH, central Gulf of Gdańsk, southern Baltic Sea)",
+                                magazine: "Science of the Total Environment",
+                                year: "2020",
+                                points: "200"
+                            }
+                        ]}
+                    />
+                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
                             wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
                                 pokładu jednostki RV Oceanograf.</strong></p>
                     </div>
                     <ThesisInput
-                        required={false}
+                        required={true}
                         className="col-12"
                         label="Prace"
                         name="works"
                         historicalThesis={[
-                            "Instytucja 1", "Instytucja 2", "Instytucja 3"
-                        ]}/>
+                            {
+                                category: "doctor",
+                                author: "Marian Domogolski",
+                                title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                promoter: "Elżbieta Widłogrodzka",
+                                year: "2020"
+
+                            },
+                            {
+                                category: "master",
+                                author: "Marian Domogolski",
+                                title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                promoter: "Elżbieta Widłogrodzka",
+                                year: "2020"
+                            },
+                            {
+                                category: "bachelor",
+                                author: "Marian Domogolski",
+                                title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
+                                promoter: "Elżbieta Widłogrodzka",
+                                year: "2020"
+                            }
+                        ]}
+                    />
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
@@ -417,20 +544,13 @@ function FormC(props: Props){
                         ]}
                         required={false}
                     />
-
-                    <TextArea className="col-12 col-md-12 p-3"
-                              required={false}
-                              label="Dodatkowe dane do raportu SPUB"
-                              name="researchAreaInfo"
-                              resize="none"
-                    />
                 </FormSection>
                 <FormSection title={sections["Szczegóły"]}>
-                    <h5 required={false} className={`pb-0 p-4 col-12 text-center ${props.readonly ? 'd-none' : ''}`}>Czy w ramach rejsu
-                        </h5>
+                    <h5 required={false} className={`pb-0 p-4 col-12 text-center ${props.readonly ? 'd-none' : ''}`}>Czy w ramach rejsu planuje
+                        się:</h5>
                     <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentOutsideRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
-                               label="Wystawiano sprzęt
-                        badawczy (boje, c-pody, sieci itp.) poza statek w ramach czasu trwania rejsu"
+                               label="Wystawianie sprzętu
+                        badawczego (boje, c-pody, sieci itp.) poza statek w ramach czasu trwania rejsu"
                                name="equipmentOutsideRequired"
                                values={["tak", "nie"]}
                     />
@@ -452,7 +572,7 @@ function FormC(props: Props){
                     })()}
 
                     <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
-                               label="Pozostawiano sprzęt (boje,
+                               label="Pozostawianie sprzętu (boje,
                         c-pody, sieci itp.) na dłuższy okres lub zbieranie pozostawionego podczas wcześniejszych rejsów
                         sprzętu"
                                name="equipmentLeaveRequired"
@@ -475,7 +595,7 @@ function FormC(props: Props){
                         }
                     })()}
                     <FormRadio className={`col-12 col-md-12 ${form.watch("portLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
-                               label="Odbywało się dodatkowo wchodzenie i wychodzenie z portu"
+                               label="Dodatkowe wchodzenie i wychodzenie z portu"
                                name="portLeaveRequired"
                                values={["tak", "nie"]}
                     />
@@ -497,13 +617,13 @@ function FormC(props: Props){
                     })()}
                 </FormSection>
                 <FormSection title={sections["Plan"]}>
-                    <DetailedPlanInput className={"col-12"} name={"planC"}/>
+                    <DetailedPlanInput className={"col-12"} name={"plan"}/>
                 </FormSection>
                 <FormSection title={sections["Sprzęt"]}>
-                    <EquipmentInput className={"col-12"} name={"equipment2C"}/>
+                    <EquipmentInput className={"col-12"} name={"equipment2"}/>
                 </FormSection>
                 <FormSection title={sections["E. techniczne"]}>
-                    <TechnicalElementsUsedInput className={"col-12"} name={"technicalC"}/>
+                    <TechnicalElementsUsedInput className={"col-12"} name={"technical"}/>
                 </FormSection>
                 <FormSection title={sections["Próbki"]}>
                     <SamplesInput className={"col-12"} name={"fffff"}/>

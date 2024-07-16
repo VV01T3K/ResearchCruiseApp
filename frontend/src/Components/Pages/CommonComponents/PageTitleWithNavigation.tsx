@@ -21,24 +21,25 @@ function PageTitleWithNavigation(props: Props){
 
     const [sections, setSections] = useState(
         Object.keys(props.sections).reduce((acc, key) => {
-        // @ts-ignore
+            // @ts-ignore
             acc[key] = false;
-        return acc;
-    }, {})
+            return acc;
+        }, {})
     )
+
 
 
     const { addEventListener:sectionStateListener } = useCustomEvent('sectionStateChange');
 
     useEffect(() => {
         const unsubscribeLogin = sectionStateListener((data: any) => {
-                setSections((sections) => ({
-               ...sections,
-                    // @ts-ignore
-               [Object.keys(data)]:Object.values(data)[0]
-           }))}
+            setSections((sections) => ({
+                ...sections,
+                // @ts-ignore
+                [Object.keys(data)]:Object.values(data)[0]
+            }))}
 
-            );
+        );
         return () => {
             unsubscribeLogin();
         };
@@ -46,10 +47,11 @@ function PageTitleWithNavigation(props: Props){
 
 
     return (
-        // <div className={" flex-row bg-primary mb-2  bg-light z-0 ps-2 pe-2 "}>
+        <div className={" d-flex align-items-center w-100 text-white bg-primary d-none d-lg-flex p-2 border-bottom"}>
 
 
-            <div className={" d-flex align-items-center w-100 text-white bg-primary d-none d-lg-flex p-2 border-bottom"}>
+            <div
+            >
                 {Object.entries(sections).map(([key, value], index) => {
                     return (
                         <button
@@ -58,15 +60,17 @@ function PageTitleWithNavigation(props: Props){
                             className={`p-2 mx-auto text-nowrap text-truncate text-white bg-primary border-0 text-decoration-none`}
                             onClick={() => scrollSmoothTo(`${index + 1}`)}
                         >
-                            {key}{props.showRequiredSections && (value ? "":"*")}
+                            {key}{props.showRequiredSections && (value ? "" : "*")}
                         </button>
                     )
                 })}
-                <div className={" bg-primary text-end me-0 ms-auto text-nowrap p-2"}
-                     style={{fontSize: "1.3rem"}}>{props.title}</div>
-            </div>
 
-        // </div>
+            </div>
+            <div className={" bg-primary text-end me-0 ms-auto text-nowrap p-2"}
+                 style={{fontSize: "1.3rem"}}>{props.title}</div>
+
+
+        </div>
     )
 }
 

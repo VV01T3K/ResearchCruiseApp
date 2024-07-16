@@ -72,7 +72,7 @@ export default function SamplesInput(props: Props){
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                                                 style={{width: "23%"}}>
-                                                <b>Rodzaj materiału badawczego/próbek/danych</b>
+                                                <b>Rodzaj materiału badawczego / próbek / danych</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
@@ -129,7 +129,7 @@ export default function SamplesInput(props: Props){
                                                     style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
                                                 >
                                                     <div
-                                                        className="col-12 d-flex d-xl-none justify-content-center">Rodzaj materiału badawczego/próbek/danych
+                                                        className="col-12 d-flex d-xl-none justify-content-center">Rodzaj materiału badawczego / próbek / danych
                                                     </div>
                                                     <textarea
                                                         {...field}

@@ -358,16 +358,16 @@ function TaskInput(props: Props) {
                                                 })}
                                             </div>
                                         </div>
-                                        <div className={`d-flex p-2 justify-content-center ${props.readonly ? "d-none" : ""}`}
+                                        <div className="d-flex justify-content-center align-items-center p-2"
                                              style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                         >
                                             <div className={"align-items-center justify-content-center d-flex"}>
                                                 <button type="button"
-                                                        style={{fontSize:"inherit"}}
-                                                        className="btn btn-info"
+                                                        className={`${props.readonly ? "d-none" : ""} btn btn-info`}
+                                                        style={{fontSize: "inherit"}}
                                                         onClick={() => {
                                                             const val = field.value;
-                                                            val.splice(rowIndex,1)
+                                                            val.splice(rowIndex, 1)
                                                             props.form!.setValue(
                                                                 props.name,
                                                                 val,

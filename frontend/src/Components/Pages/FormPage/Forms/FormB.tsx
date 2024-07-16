@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import FormTemplate from "../Wrappers/FormTemplate";
-import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
-import FormUserSelect from "../Inputs/FormUserSelect";
+import FormTemplate, {FormValues} from "../Wrappers/FormTemplate";
+import FormUserSelect, {FormUser} from "../Inputs/FormUserSelect";
 import FormSection from "../Wrappers/FormSection";
 import TextArea from "../Inputs/TextArea";
 import FormRadio from "../Inputs/FormRadio";
 import ClickableMap from "../Inputs/ClickableMap";
-import TaskInput, {Task} from "../Inputs/TaskInput/TaskInput";
+import TaskInput, {Task, Time} from "../Inputs/TaskInput/TaskInput";
 import GuestTeamsInput, {GuestsTeam} from "../Inputs/GuestTeamsInput/GuestTeamsInput";
 import SpubTasksInput, {SpubTask} from "../Inputs/SpubTasksInput";
 import {DummyTag} from "../../../Tools/DummyTag";
@@ -17,20 +16,38 @@ import UgTeamsInput, {UgTeam} from "../Inputs/UgTeamsInput/UgTeamsInput";
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import useCustomEvent from "../../../Tools/useCustomEvent";
 import api from "../../../Tools/Api";
+import FormYearSelect from "../Inputs/FormYearSelect";
 import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
+import {Cruise} from "../../CruisesPage/CruisesPage";
+import {useLocation} from "react-router-dom";
+import CruiseBasicInfo from "../../CruiseFormPage/CruiseFormSections/CruiseBasicInfo";
+import CruiseDate from "../../CruiseFormPage/CruiseFormSections/CruiseDate";
 import ErrorCode from "../../LoginPage/ErrorCode";
 import ActionInput from "../Inputs/ActionInput/ActionInput";
 import DetailedPlanInput from "../Inputs/DetailedPlanInput";
 import EquipmentInput from "../Inputs/EquipmentInput";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
-import RegistrationNumber from "../Inputs/RegistrationNumber";
-import DurationInput from "../Inputs/DurationInput";
+import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
 
 
+export type ResearchArea = {
+    name: string,
+    x: number[],
+    y: number[]
+}
+
+type FormBInitValues = {
+    cruiseManagers: FormUser[],
+    deputyManagers: FormUser[],
+    years: number[],
+    shipUsages: string[],
+    researchAreas: ResearchArea[],
+    cruiseGoals: string[],
+    historicalTasks: Task[]
+}
 
 export type FormBValues = {
-    registrationNumber: string
     cruiseManagerId: string
     deputyManagerId: string
     year: string
@@ -71,6 +88,20 @@ type Props = {
     readonly: boolean
 }
 
+type CruiseManagersTeam = {
+    mainCruiseManagerId: string,
+    mainDeputyManagerId: string
+}
+
+export type EditCruiseFormValues = {
+    date: Time,
+    managersTeam: CruiseManagersTeam,
+    applicationsIds: string[]
+}
+
+type CruiseFormPageLocationState = {
+    cruise?: Cruise
+}
 
 function FormB(props: Props){
     const form = useForm({
@@ -78,6 +109,10 @@ function FormB(props: Props){
         // defaultValues: defaultValues,
         shouldUnregister: false
     });
+
+    const location = useLocation()
+    const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
+        = useState(location.state || { })
 
 
     const [sections, setSections] = useState({
@@ -98,21 +133,58 @@ function FormB(props: Props){
         "E. techniczne": "Elementy techniczne statku wykorzystywane podczas rejsu"
     })
 
-    const [formInitValues, setFormInitValues] = useState([])
-    const { dispatchEvent } = useCustomEvent('busy')
-    useEffect(() => {
-        api.get('/forms/GetData').then(response => setFormInitValues(response.data)).catch(error => console.log(error))
-        console.log(formInitValues)
 
+
+
+
+    const [formInitValues, setFormInitValues]
+        = useState<FormBInitValues>()
+    useEffect(() => {
+        api
+            .get('/Forms/A/InitData')
+            .then(response => {
+                setFormInitValues(response.data)
+                console.log(response.data as FormBInitValues)
+            })
+            .catch(error => console.log(error))
     },[]);
 
     useEffect(() => {
         console.log(formInitValues)
+    }, [formInitValues])
 
-    }, );
+    const { dispatchEvent } = useCustomEvent('busy')
+
+    const EMPTY_GUID: string = "00000000-0000-0000-0000-000000000000"
+
+    const editCruiseFormDefaultValues: EditCruiseFormValues = {
+        date:
+            locationState.cruise?.date ??
+            { start: "", end: "" },
+        managersTeam: {
+            mainCruiseManagerId:
+                locationState.cruise?.mainCruiseManagerId ??
+                EMPTY_GUID,
+            mainDeputyManagerId:
+                locationState.cruise?.mainDeputyManagerId ??
+                EMPTY_GUID
+        },
+        applicationsIds:
+            locationState.cruise?.applicationsShortInfo.map(app => app.id) ??
+            []
+    }
+
+    const cruiseForm = useForm<EditCruiseFormValues>({
+        defaultValues: editCruiseFormDefaultValues
+    })
 
     return (
-        <FormTemplate form={form} loadValues={props.loadValues} readonly={props.readonly} type='B'>
+        <FormTemplate
+            form={form}
+            loadValues={props.loadValues}
+            readonly={props.readonly}
+            type='B'
+        >
             <PageTitleWithNavigation
                 sections={sections}
                 title={"Formularz B"}
@@ -120,40 +192,35 @@ function FormB(props: Props){
             />
             <FormWithSections sections={sections} form={form} readonly={props.readonly}>
                 <FormSection title={sections.Rejs}>
-                    <RegistrationNumber className="col-12 col-md-12 col-xl-6 p-3"
-                              required={false}
-                              label="Numer ewidencyjny rejsu (nadawany przez Biuro Armatora): "
-                              name="Number"
-                              resize="none"
-                    />
+                    <CruiseBasicInfo cruise={locationState.cruise} />
 
                 </FormSection>
                 <FormSection title={sections.Kierownik}>
-                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                    name="cruiseManagerId"
-                                    label="Kierownik rejsu"
-                                    values={formInitValues["CruiseManagers"]
-                                    }
-                                    defaultValue={formInitValues["CruiseManagers"]}
+                    <FormUserSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="cruiseManagerId"
+                        label="Kierownik rejsu"
+                        values={formInitValues?.cruiseManagers}
                     />
-                    <FormUserSelect className="col-12 col-md-6 col-xl-4"
-                                    name="deputyManagerId"
-                                    label="Zastępca"
-                                    values={formInitValues["DeputyManagers"]}
+                    <FormUserSelect
+                        className="col-12 col-md-6 col-xl-4"
+                        name="deputyManagerId"
+                        label="Zastępca"
+                        values={formInitValues?.deputyManagers}
                     />
                 </FormSection>
 
                 <FormSection title={sections.Czas}>
-
-                    <DurationInput className="col-12 col-xl-9" name={"diff"} actionName={"Port"}/>
-
+                    <CruiseDate editCruiseForm={cruiseForm} />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
                                name="shipUsage"
-                               values={formInitValues["ShipUsages"]}
+                               values={formInitValues?.shipUsages}
                     />
                     {(() => {
-                        if (form.watch("shipUsage") == formInitValues["ShipUsages"]?.length-1 ) {
+                        if (formInitValues?.shipUsages?.length &&
+                            form.watch("shipUsage") == formInitValues?.shipUsages?.length - 1
+                        ) {
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
@@ -193,13 +260,14 @@ function FormB(props: Props){
                                 form.clearErrors("permissions")
                             }
                             return <DummyTag required={false} />}                    })()}
-                    {/*<ErrorCode code={"załączyć kopię"}/>*/}
                 </FormSection>
 
                 <FormSection title={sections.Rejon}>
-                    <ClickableMap label="Obszar prowadzonych badań" name="researchArea"
-                                  image={formInitValues["ResearchAreasMap"]}
-                                  regions={formInitValues["ResearchAreas"]} />
+                    <ClickableMap
+                        label="Obszar prowadzonych badań" name="researchArea"
+                        // image={formInitValues?.researchAreasMap}
+                        regions={formInitValues?.researchAreas}
+                    />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
@@ -212,7 +280,7 @@ function FormB(props: Props){
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
                                name="cruiseGoal"
-                               values={formInitValues["CruiseGoals"]}
+                               values={formInitValues?.cruiseGoals}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"
@@ -353,11 +421,10 @@ function FormB(props: Props){
                             "Instytucja 1", "Instytucja 2", "Instytucja 3"
                         ]}
                     />
-                    <ErrorCode code={"Uwaga: Na tym etapie należy załączyć szczegółową listę załogi naukowej (tzw. crew list), mającej uczestniczyć w rejsie, w oparciu o załącznik „Crew List”.\n"}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                    <div className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
+                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
                         <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
                         <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
                             do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
@@ -371,7 +438,7 @@ function FormB(props: Props){
                             ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
                     </div>
                     <PublicationsInput
-                        required={false}
+                        required={true}
                         className="col-12"
                         label="Publikacje"
                         name="publications"
@@ -413,15 +480,16 @@ function FormB(props: Props){
                                 year: "2020",
                                 points: "200"
                             }
-                        ]}/>
-                    <div className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
+                        ]}
+                    />
+                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
                             wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
                                 pokładu jednostki RV Oceanograf.</strong></p>
                     </div>
                     <ThesisInput
-                        required={false}
+                        required={true}
                         className="col-12"
                         label="Prace"
                         name="works"
@@ -448,7 +516,8 @@ function FormB(props: Props){
                                 promoter: "Elżbieta Widłogrodzka",
                                 year: "2020"
                             }
-                        ]}/>
+                        ]}
+                    />
                 </FormSection>
 
                 <FormSection title={sections.SPUB}>
