@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Text.Json.Serialization;
+using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Data.Interfaces;
 
 namespace ResearchCruiseApp_API.Models;
 
-public struct DateRange
+/*public struct DateRange
 {
     public DateRange()
     {
@@ -29,10 +30,10 @@ public class GuestTeam
 
     public string? Institution { get; set; } = null!;
     public int? Count { get; set; }
-}
+}*/
 
 
-public class ResearchTask
+/*public class ResearchTask
 {
     //Zadania
     //typ zadania np licencjacka, magisterska
@@ -69,7 +70,7 @@ public class ResearchTask
         public string? Description { get; set; }
     }
     public Value Values { get; set; } 
-}
+}*/
 
 public class EvaluatedResearchTask : ResearchTask , IEvaluatedField
 {
@@ -89,7 +90,7 @@ public class EvaluatedResearchTask : ResearchTask , IEvaluatedField
     }
 }
 
-public class Contract
+/*public class Contract
 {
     //Lista umów współpracy
     public string Category { get; set; }
@@ -111,7 +112,7 @@ public class Contract
     public ScanType? Scan { get; set; }
 
 
-}
+}*/
 
 public class EvaluatedContract : Contract, IEvaluatedField
 {
@@ -131,7 +132,7 @@ public class EvaluatedContract : Contract, IEvaluatedField
     }
 }
 
-public class Publication
+/*public class Publication
 {
     //Publikacje
     public string Category { get; set; } = null!;
@@ -145,7 +146,7 @@ public class Publication
         public string Title { get; set; }
         public string Magazine { get; set; }
     }
-}
+}*/
 
 public class EvaluatedPublication : Publication, IEvaluatedField
 {
@@ -164,7 +165,7 @@ public class EvaluatedPublication : Publication, IEvaluatedField
 }
 
 
-public class Work
+/*public class Work
 {
     //Prace
     public string Category { get; set; } = null!;
@@ -177,7 +178,7 @@ public class Work
         public string Title { get; set; }
         public string? Promoter { get; set; }
     }
-}
+}*/
 
 // public struct Efects
 // {
@@ -192,14 +193,14 @@ public class Work
 //     //(...)
 // }
 
-public class SPUBTask
+/*public class SPUBTask
 {
     //Dlaczego data nie jest int ??? ??? ???
     public string YearFrom { get; set; } = null!;
     public string YearTo { get; set; } = null!;
     public string Name { get; set; } = null!;
 
-}
+}*/
 
 public class EvaluatedSPUBTask : SPUBTask, IEvaluatedField
 {
@@ -294,7 +295,7 @@ public class FormsModel
     
     //Publikacje i Prace
     public List<Publication>? Publications { get; set; }
-    public List<Work>? Works { get; set; }
+    public List<Thesis>? Theses { get; set; }
     
     
     //Zadania SPUB

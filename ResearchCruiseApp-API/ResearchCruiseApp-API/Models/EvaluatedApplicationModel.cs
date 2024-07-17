@@ -7,10 +7,10 @@ public class EvaluatedApplicationModel
     
     public List<EvaluatedContract> Contracts { get; set; }  = [];
     
-    public List<UGTeam> UgTeams { get; set; } = [];
+    public List<DataTypes.UGTeam> UgTeams { get; set; } = [];
     public int UgTeamsPoints { get; set; }
 
-    public List<GuestTeam> GuestTeams { get; set; } = [];
+    public List<DataTypes.GuestTeam> GuestTeams { get; set; } = [];
 
     public List<EvaluatedPublication> Publications { get; set; } = [];
 

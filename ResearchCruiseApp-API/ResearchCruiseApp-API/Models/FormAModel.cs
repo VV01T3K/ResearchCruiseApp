@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ResearchCruiseApp_API.Models.DataTypes;
 
 namespace ResearchCruiseApp_API.Models;
 
@@ -77,7 +78,7 @@ public class FormAModel
     
     //Publikacje i Prace
     public List<Publication>? Publications { get; set; }
-    public List<Work>? Works { get; set; }
+    public List<Thesis>? Theses { get; set; }
     
     
     //Zadania SPUB

@@ -33,7 +33,7 @@ namespace ResearchCruiseApp_API.Controllers
             return researchCruiseContext.FormsC
                 .Include(o => o.Contracts)
                 .Include(o => o.Publications)
-                .Include(o => o.Works)
+                .Include(o => o.Theses)
                 .Include(o => o.GuestTeams)
                 .Include(o => o.ResearchTasks)
                 .Include(o => o.UGTeams)

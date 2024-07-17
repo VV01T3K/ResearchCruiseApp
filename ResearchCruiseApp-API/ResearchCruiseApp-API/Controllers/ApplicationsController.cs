@@ -12,9 +12,9 @@ using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
 using ResearchCruiseApp_API.Controllers;
 using Microsoft.EntityFrameworkCore.Query;
-using Contract = ResearchCruiseApp_API.Models.Contract;
-using GuestTeam = ResearchCruiseApp_API.Models.GuestTeam;
-using UGTeam = ResearchCruiseApp_API.Models.UGTeam;
+using Contract = ResearchCruiseApp_API.Models.DataTypes.Contract;
+using GuestTeam = ResearchCruiseApp_API.Models.DataTypes.GuestTeam;
+using UGTeam = ResearchCruiseApp_API.Models.DataTypes.UGTeam;
 
 namespace ResearchCruiseApp_API.Controllers
 {

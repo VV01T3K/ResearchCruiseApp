@@ -14,7 +14,7 @@ public class Publication
     public int Points { get; set; }
     
     //Info_type
-    public int DOI { get; set; }
+    public string DOI { get; set; }
     
     public string Authors { get; set; }
     
