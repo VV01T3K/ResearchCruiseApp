@@ -1,4 +1,4 @@
-import ErrorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import React from "react";
 
 

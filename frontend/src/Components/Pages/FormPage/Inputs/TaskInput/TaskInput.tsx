@@ -9,7 +9,7 @@ import 'react-dropdown/style.css';
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Style from "./TaskInput.module.css";
 import Select from "react-select";
-import ErrorCode from "../../../LoginPage/ErrorCode";
+import ErrorCode from "../../../CommonComponents/ErrorCode";
 
 
 export type Time = {

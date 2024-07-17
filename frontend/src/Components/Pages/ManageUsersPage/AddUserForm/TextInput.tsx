@@ -1,4 +1,4 @@
-import ErrorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import React from "react";
 import {UseFormReturn} from "react-hook-form";
 import {NewUserFormValues} from "./AddUserForm";
@@ -34,7 +34,10 @@ export default function TextInput(props: Props) {
                         props.name,
                         {
                             required: "Pole wymagane",
-                            maxLength: 30,
+                            maxLength: {
+                                value: 256,
+                                message: "Wprowadź maksymalnie 256 znaków"
+                            },
                             pattern: props.validationPattern && {
                                 value: props.validationPattern,
                                 message: props.validationPatternMessage ?? ""

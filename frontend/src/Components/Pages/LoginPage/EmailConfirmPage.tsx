@@ -4,7 +4,7 @@ import Page from "../Page";
 import "./style.css"
 import {Link, useLocation} from "react-router-dom";
 import {ErrorMessage} from "react-image-size/lib/lib/constants";
-import ErrorCode from "./ErrorCode";
+import ErrorCode from "../CommonComponents/ErrorCode";
 import Api from "../../Tools/Api";
 
 

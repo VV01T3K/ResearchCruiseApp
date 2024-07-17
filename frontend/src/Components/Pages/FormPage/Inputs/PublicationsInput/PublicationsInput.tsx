@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../../LoginPage/ErrorCode";
+import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import PublicationsCategoryPicker from "./PublicationsCategoryPicker"
 import {Contract} from "../ContractsInput/ContractsInput";

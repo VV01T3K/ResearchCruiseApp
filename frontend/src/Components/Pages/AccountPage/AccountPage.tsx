@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Page from "../Page";
 import UserImg from "../../../resources/user.png"
-import ErrorCode from "../LoginPage/ErrorCode";
+import ErrorCode from "../CommonComponents/ErrorCode";
 import {FieldValues, useForm} from "react-hook-form";
 import Api from "../../Tools/Api";
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import Select from "react-select";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import DatePicker  from 'react-datepicker';
 
 export type Action = {

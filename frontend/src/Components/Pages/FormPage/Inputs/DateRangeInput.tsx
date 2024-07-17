@@ -8,7 +8,7 @@ import {
 } from "react-hook-form";
 import React, {useEffect} from "react";
 import InputWrapper from "./InputWrapper";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import {Error} from "react-image-size";
 
 

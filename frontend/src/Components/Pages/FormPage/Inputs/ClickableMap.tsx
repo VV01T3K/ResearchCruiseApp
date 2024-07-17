@@ -7,7 +7,7 @@ import {
     Merge, UseFormReturn,
 } from "react-hook-form";
 import React, {useRef, useState} from "react";
-import ErrorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import Map from '../../../../resources/GraniceSamorzadow.jpg'
 import InputWrapper from "./InputWrapper";
 import {administrationUnits} from "../../../../resources/administrationUnits";

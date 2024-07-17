@@ -4,8 +4,9 @@ import TextInput from "./TextInput";
 import RoleInput from "./RoleInput";
 import Api from "../../../Tools/Api";
 import {disable} from "workbox-navigation-preload";
-import ErrorCode from "../../LoginPage/ErrorCode";
-import errorCode from "../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
+import errorCode from "../../CommonComponents/ErrorCode";
+import SuccessMessage from "../../CommonComponents/SuccessMessage";
 
 
 export enum Role {
@@ -15,7 +16,6 @@ export enum Role {
     Guest = "Guest"
 }
 
-
 export type NewUserFormValues = {
     role: Role,
     email: string,
@@ -24,8 +24,12 @@ export type NewUserFormValues = {
     lastName: string
 }
 
+type Props = {
+    fetchUsers: () => void
+}
 
-export default function AddUserForm() {
+
+export default function AddUserForm(props: Props) {
     const newUserFormDefaultValues: NewUserFormValues = {
         role: Role.Guest,
         email: "",
@@ -40,9 +44,11 @@ export default function AddUserForm() {
     const [showDropDown, setShowDropDown] = useState(false)
     const [sending, setSending] = useState(false)
     const [sendingError, setSendingError] = useState("")
+    const [success, setSuccess] = useState(false)
 
     const handleSubmit = () => {
         setSendingError("")
+        setSuccess(false)
         setSending(true)
         Api.
             post(
@@ -51,7 +57,8 @@ export default function AddUserForm() {
             )
             .then(response => {
                 setSending(false)
-                newUserForm.reset()
+                setSuccess(true)
+                props.fetchUsers()
             })
             .catch(error => {
                 setSendingError(error.response.data)
@@ -81,8 +88,8 @@ export default function AddUserForm() {
                         form={newUserForm}
                         label="E-mail"
                         name="email"
-                        // validationPattern={/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/}
-                        // validationPatternMessage="Nieprawidłowy adres e-mail"
+                        validationPattern={/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/}
+                        validationPatternMessage="Nieprawidłowy adres e-mail"
                         disabled={sending}
                     />
                     <TextInput
@@ -120,6 +127,11 @@ export default function AddUserForm() {
                     {sendingError != "" &&
                         <div className="d-flex col-12 justify-content-end">
                             <ErrorCode className="w-100" code={sendingError} />
+                        </div>
+                    }
+                    {success &&
+                        <div className="d-flex col-12 justify-content-end">
+                            <SuccessMessage className="w-100" message="Użytkownik dodany poprawnie" />
                         </div>
                     }
                 </div>

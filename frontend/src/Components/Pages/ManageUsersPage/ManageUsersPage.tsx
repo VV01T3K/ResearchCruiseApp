@@ -7,6 +7,8 @@ import useCustomEvent from "../../Tools/useCustomEvent";
 import AddUserForm from "./AddUserForm/AddUserForm";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 import PageTitle from "../CommonComponents/PageTitle";
+
+
 type Props = {
     className?: string
 }
@@ -232,7 +234,7 @@ function ManageUsersPage(props: Props) {
                 <PageTitle title="Zarządzanie użytkownikami" />
                 <div className="d-flex flex-column align-items-center w-100 h-100 overflow-y-scroll">
                     <PageMenuBar className="justify-content-start">
-                        <AddUserForm />
+                        <AddUserForm fetchUsers={fetchData} />
                     </PageMenuBar>
 
                     <div className="d-flex flex-column flex-wrap justify-content-center  p-2 p-xl-5 align-items-center">

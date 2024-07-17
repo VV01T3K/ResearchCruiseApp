@@ -21,11 +21,11 @@ import api from "../../../Tools/Api";
 import FormYearSelect from "../Inputs/FormYearSelect";
 import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import {Cruise} from "../../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
 import CruiseBasicInfo from "../../CruiseFormPage/CruiseFormSections/CruiseBasicInfo";
 import CruiseDate from "../../CruiseFormPage/CruiseFormSections/CruiseDate";
-import ErrorCode from "../../LoginPage/ErrorCode";
 import ActionInput from "../Inputs/ActionInput/ActionInput";
 import DetailedPlanInput from "../Inputs/DetailedPlanInput";
 import EquipmentInput from "../Inputs/EquipmentInput";

@@ -16,19 +16,22 @@ namespace ResearchCruiseApp_API.Controllers
     [Route("[controller]")]
     [ApiController]
     public class UsersController(
-        UsersContext usersContext, UserManager<User> userManager)
+        UsersContext usersContext,
+        UserManager<User> userManager,
+        IUserPermissionVerifier userPermissionVerifier)
         : ControllerBase
     {
-        [Authorize(Roles = RoleName.Administrator)]
+        [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await usersContext.Users.ToListAsync();
-            var userModels = new List<UserModel>();
+            var allUsers = await usersContext.Users.ToListAsync();
 
-            foreach (var user in users)
+            var userModels = new List<UserModel>();
+            foreach (var user in allUsers)
             {
-                userModels.Add(await UserModel.GetUserModel(user, userManager));
+                if (await userPermissionVerifier.CanUserAccessAsync(User.Claims, user))
+                    userModels.Add(await UserModel.GetAsync(user, userManager));
             }
             
             return Ok(userModels);
@@ -42,23 +45,33 @@ namespace ResearchCruiseApp_API.Controllers
             if (user == null)
                 return NotFound();
             
-            return Ok(await UserModel.GetUserModel(user, userManager));
+            return Ok(await UserModel.GetAsync(user, userManager));
         }
         
-        [Authorize(Roles = RoleName.Administrator)]
+        [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
         [HttpPost]
         public async Task<IActionResult> AddUser(
             [FromBody] RegisterModel registerModel, [FromServices] IServiceProvider serviceProvider)
         {
+            if (registerModel.Role is null)
+                return BadRequest("Nie wybrano roli dla nowego użytkownika");
+            
             var emailAddressAttribute = new EmailAddressAttribute();
             if (string.IsNullOrEmpty(registerModel.Email) || !emailAddressAttribute.IsValid(registerModel.Email))
                 return BadRequest("Adres e-mail jest niepoprawny");
             
+            if (!await userPermissionVerifier.CanUserAssignRoleAsync(User.Claims, registerModel.Role))
+                return StatusCode(StatusCodes.Status403Forbidden, "Nie można nadać tej roli");
+            
             if (await userManager.FindByEmailAsync(registerModel.Email) != null)
                 return Conflict("Użytkownik o tym adresie e-mail już istnieje");
             
-            string? responseMessage = null;
-            var roleName = string.Empty;
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var rolesNames = await roleManager.Roles
+                .Select(role => role.Name)
+                .ToListAsync();
+            if (!rolesNames.Contains(registerModel.Role))
+                return BadRequest("Rola nie istnieje");
             
             var newUser = new User()
             {
@@ -69,30 +82,13 @@ namespace ResearchCruiseApp_API.Controllers
                 Accepted = true
             };
             await userManager.CreateAsync(newUser, registerModel.Password);
-
-            if (registerModel.Role is not null)
-            {
-                var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var rolesNames = await roleManager.Roles
-                    .Select(role => role.Name!)
-                    .ToListAsync();
-
-                if (rolesNames.Contains(registerModel.Role))
-                {
-                    await userManager.AddToRoleAsync(newUser, registerModel.Role);
-                    roleName = registerModel.Role;
-                }
-                else
-                    responseMessage = "Role does not exist";
-            }
+            await userManager.AddToRoleAsync(newUser, registerModel.Role);
 
             var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
             await emailSender.SendAccountConfirmationMessageAsync(
-                newUser, registerModel.Email, roleName, serviceProvider);
-            
-            return CreatedAtAction(nameof(GetUserById),
-                new { id = newUser.Id, controller = "Users" },
-                new {Id = newUser.Id, message = responseMessage});
+                newUser, registerModel.Email, registerModel.Role, serviceProvider);
+
+            return Created();
         }
 
         [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -106,7 +102,7 @@ namespace ResearchCruiseApp_API.Controllers
 
             foreach (var user in users)
             {
-                userModels.Add(await UserModel.GetUserModel(user, userManager));
+                userModels.Add(await UserModel.GetAsync(user, userManager));
             }
 
             return Ok(userModels);
@@ -158,26 +154,5 @@ namespace ResearchCruiseApp_API.Controllers
 
             return NoContent();
         }
-
-        // [Authorize(Roles = RoleName.Administrator)]
-        // [HttpGet("locked")]
-        // public async Task<IActionResult> GetAllLockedUsers()
-        // {
-        //     
-        // }
-        //
-        // [Authorize(Roles = RoleName.Administrator)]
-        // [HttpPatch("locked/{id}")]
-        // public async Task<IActionResult> SetLocked([FromRoute] string id, [FromQuery] bool setLocked)
-        // {
-        //     var user = await userManager.FindByIdAsync(id);
-        //     if (user == null)
-        //         return NotFound();
-        //
-        //     var um = userManager;
-        //     await userManager.SetLockoutEnabledAsync(user, setLocked);
-        //
-        //     return NoContent();
-        // }
     }
 }
