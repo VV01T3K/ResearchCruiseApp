@@ -60,7 +60,7 @@ export type FormAValues = {
     ugTeams: UgTeam[]
     guestTeams: GuestsTeam[]
     publications: Publication[]
-    thesis: Thesis[]
+    theses: Thesis[]
     spubTasks: SpubTask[]
 }
 
@@ -467,7 +467,7 @@ function FormA(props: Props){
                             required={true}
                             className="col-12"
                             label="Prace"
-                            name="works"
+                            name="theses"
                             historicalThesis={[
                                 {
                                     category: "doctor",

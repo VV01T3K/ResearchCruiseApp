@@ -493,7 +493,7 @@ function FormC(props: Props){
                         required={true}
                         className="col-12"
                         label="Prace"
-                        name="works"
+                        name="theses"
                         historicalThesis={[
                             {
                                 category: "doctor",
