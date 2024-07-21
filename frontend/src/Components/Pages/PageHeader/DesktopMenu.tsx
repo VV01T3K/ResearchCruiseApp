@@ -1,57 +1,24 @@
-import React, {useEffect} from 'react';
-import {Link} from "react-router-dom";
-import useCustomEvent from "../../Tools/useCustomEvent";
+import React from 'react';
+import UserDataManager from "../../CommonComponents/UserDataManager";
+import {HomeLink, LogoutLink, OutlookLink, RadioMorsLink} from "./PageHeaderCommon";
 
 
-type Props = {
-    className?: string
-}
 
-
-function DesktopMenu(props: Props){
-    const loggedIn = sessionStorage.getItem("accessToken") ?? false
-    const { dispatchEvent } = useCustomEvent('logoutSuccessful');
+function DesktopMenu(){
+    const {UserLoggedIn} = UserDataManager()
     return (
-        <div className="row d-flex">
+        <div className="row d-flex align-items-center">
             <div className="col text-center border-end border-light">
-                <Link id="radiomors"
-                      to=""
-                      onClick={() => window.open(
-                          'http://player.mors.ug.edu.pl/sites/all/modules/jplayer/mors_popup.html',
-                          'newWin',
-                          'width=280,height=220'
-                      )}
-                      tabIndex={1}
-                      title="Słucha Radia MORS"
-                >
-                    <img alt="Radio MORS" src="https://ug.edu.pl/themes/ug_faculty/images/radio.svg" />
-                </Link>
+                <RadioMorsLink/>
             </div>
             <div className="col text-center border-end border-light">
-                <Link to="https://outlook.com/ug.edu.pl"
-                      id="webmail"
-                      title="Poczta uniwersytecka"
-                >
-                    <img alt="Poczta UG" src="https://ug.edu.pl/themes/ug_faculty/images/mail.svg" />
-                </Link>
+                <OutlookLink/>
             </div>
-            <div className={`col text-center ${loggedIn ? "border-end border-light ":""}`}>
-                <Link to="/"
-                      id="english"
-                      lang="en"
-                      title="English Version"
-                      tabIndex={0}
-                      style={{"textDecoration":"none", "fontSize": "20px","fontWeight": "500","color": "white"}}
-                >
-                    HOME
-                </Link>
+            <div className={`col text-center ${UserLoggedIn() ? "border-end border-light ":""}`}>
+                <HomeLink/>
             </div>
-            {loggedIn &&    <div className="col text-center">
-                <Link onClick={()=>dispatchEvent(null)} to="/"
-                      style={{"textDecoration":"none", "fontSize": "20px","color": "white"}}
-                >
-                    Wyloguj
-                </Link>
+            {UserLoggedIn() &&    <div className="col text-center">
+                <LogoutLink/>
             </div>}
         </div>
     )

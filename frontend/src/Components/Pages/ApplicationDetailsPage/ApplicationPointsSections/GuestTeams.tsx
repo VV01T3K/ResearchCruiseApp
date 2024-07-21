@@ -1,7 +1,4 @@
 import React, {useEffect, useState} from "react";
-import  {UgTeam} from "../../FormPage/Inputs/UgTeamsInput/UgTeamsInput";
-
-import {administrationUnits} from "../../../../resources/administrationUnits";
 import {GuestsTeam} from "../../FormPage/Inputs/GuestTeamsInput/GuestTeamsInput";
 
 type Props = {
@@ -9,20 +6,29 @@ type Props = {
 }
 
 
-export default function GuestTeams(props: Props){
+function useWindowWidth(){
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(
         () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
+            const handleResize = () =>
+            {
+                setWindowWidth(window.innerWidth)
             };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
+            window.addEventListener('resize', handleResize)
+            return () =>
+            {
+                window.removeEventListener('resize', handleResize)
+            }
         },
         []
     );
+    return windowWidth
+}
+
+
+
+export default function GuestTeams(props: Props){
+    const windowWidth = useWindowWidth();
 
     return (
         <div className="table-striped w-100 p-3">

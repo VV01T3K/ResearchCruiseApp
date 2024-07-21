@@ -40,7 +40,6 @@ function ApplicationDetailsPage() {
         = useState<FormValues | undefined>()
     useEffect(() => {
         if (locationState?.application.id) {
-            console.log(locationState)
             Api
                 .get(
                     `/api/applications/${locationState?.application.id}/points`
@@ -49,12 +48,8 @@ function ApplicationDetailsPage() {
                     setEvaluatedApplication(response.data)
                     }
                 )
-                .catch(error =>
-                    console.log(error)
-                )
         }
     },[locationState]);
-    console.log(evaluatedApplication)
 
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white">

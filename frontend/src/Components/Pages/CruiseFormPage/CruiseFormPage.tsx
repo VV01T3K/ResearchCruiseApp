@@ -75,9 +75,6 @@ export default function CruiseFormPage() {
             .then(_ =>
                 navigate("/Cruises")
             )
-            .catch(_ => {
-                console.log("Error")
-            })
     }
     const handleAddCruise = () => {
         Api
@@ -88,9 +85,6 @@ export default function CruiseFormPage() {
             .then(_ =>
                 navigate("/Cruises")
             )
-            .catch(__ => {
-                console.log("Error")
-            })
     }
     const resetEditCruiseForm = () => {
         cruiseForm.reset(editCruiseFormDefaultValues)

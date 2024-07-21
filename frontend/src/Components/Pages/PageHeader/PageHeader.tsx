@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
-import Logo from "../../../resources/logo.svg"
 import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
+import PageHeaderText from "../../Tools/PageHeaderText";
+import {UgPageLink} from "./PageHeaderCommon";
 
 
 type Props = {
     className?: string,
-    name?: string | null
 }
 
 
 function PageHeader(props: Props) {
     const [toggledButton, setToggle] = useState(false)
-
+    const {pageHeaderText} = PageHeaderText()
     return(
         <div className="fixed-top">
             <div className={props.className+ " bg-primary fixed-top text-light w-100 z-1 appHeader"}
@@ -21,15 +21,9 @@ function PageHeader(props: Props) {
                     <div className="d-flex container-xxl flex-row justify-content-start flex-nowrap  h-100
                                     w-100"
                     >
-                        <a className="navbar-brand pe-3 h-100 border-end"
-                           href="https://ug.edu.pl/"
-                           title="Strona główna"
-                           rel="home"
-                        >
-                            <img src={Logo} alt="Strona główna" className="d-inline align-top h-100" />
-                        </a>
+                        <UgPageLink/>
                         <div className="h-100 text-light text-nowrap align-self-center text-center navbar me-3">
-                            {props.name && "Witaj, " + props.name}
+                            {pageHeaderText}
                         </div>
                         <button className="d-md-flex d-md-none navbar-toggler navbar-dark ms-auto me-0 pe-3"
                                 onClick={() => setToggle(!toggledButton)}

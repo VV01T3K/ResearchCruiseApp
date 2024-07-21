@@ -57,7 +57,6 @@ function FormYearSelect(props: Props) {
                             }}
                             options={props.values?.map(value => ({value:value, label:value}))}
                             onChange={(selectedOption) => {
-                                console.log(field.value)
                                 props.form!.setValue(props.name, selectedOption.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
                             }}
                     />

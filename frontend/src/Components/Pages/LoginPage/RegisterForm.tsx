@@ -34,7 +34,6 @@ function RegisterForm(){
     }
 
     const onSubmit = async (data: FieldValues)=> {
-        console.log("sadsdas")
         setLoading(true);
         await registerUser(data);
         setLoading(false)

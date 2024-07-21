@@ -41,11 +41,8 @@ export default function ApplicationsList(props: Props) {
             Api
                 .get(
                     '/api/Applications',)
-                .then(response =>
-                    setApplications(response.data)
+                .then(response => response ? setApplications(response?.data): ()=>{}
                 )
-                .catch(() => {
-                })
         }
     },[]);
 

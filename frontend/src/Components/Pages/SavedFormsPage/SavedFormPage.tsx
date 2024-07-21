@@ -48,8 +48,6 @@ function SavedFormPage(props: Props) {
 
     const handleRemove = (form) => {
         var data = JSON.parse(localStorage.getItem('formData'));
-        console.log(data)
-        console.log(form)
         const data2 = data.filter((item) => item.id != form.id)
         // Zapisz zaktualizowane dane w localStorage
         localStorage.setItem('formData', JSON.stringify(data2));
@@ -81,7 +79,7 @@ function SavedFormPage(props: Props) {
                         </div>
                         <div className={"overflow-auto h-100"}>
                             {localStorage.getItem("formData") && savedData?.map((form, index) =>
-                                <div className={"d-flex flex-row flex-wrap border text-center align-items-center"}
+                                <div key={index} className={"d-flex flex-row flex-wrap border text-center align-items-center"}
                                 >
                                     <div style={{height: "10px"}}
                                          className={"col-12 d-xl-none d-flex flex-column  bg-primary"}/>

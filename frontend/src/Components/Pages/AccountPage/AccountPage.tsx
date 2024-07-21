@@ -4,15 +4,21 @@ import UserImg from "../../../resources/user.png"
 import ErrorCode from "../CommonComponents/ErrorCode";
 import {FieldValues, useForm} from "react-hook-form";
 import Api from "../../Tools/Api";
+import {UserData} from "../../CommonComponents/DataTypes";
+import userDataManager from "../../CommonComponents/UserDataManager";
+
 
 
 type Props = {
     className?: string,
-    userData: { [x: string]: any; }
 }
 
 
 function AccountPage(props: Props) {
+    const {userData, GetUserData} = userDataManager()
+    useEffect(() => {
+        GetUserData()
+    }, []);
     const [loading2, setLoading2 ] = useState(false);
 
     // const [changeMailError, setChangeMailError] = useState<null|string>(null)
@@ -121,16 +127,16 @@ function AccountPage(props: Props) {
                                  alt="Zdjęcie użytkownika"
                             />
                             <div className="h6">
-                                {props.userData["role"]}
+                                {userData?.roles}
                             </div>
                             <div className="p-1">
-                                {props.userData["firstName"] + " " + props.userData["lastName"]}
-                                {!props.userData["accepted"] && <ErrorCode code="użytkownik nie został zaakceptowany" />}
+                                {userData?.firstName + " " + userData?.lastName}
+                                {userData?.accepted && <ErrorCode code="użytkownik nie został zaakceptowany" />}
                             </div>
 
                             <div className={"p-1 h5"}>
-                                {props.userData["email"]}
-                                {!props.userData["emailConfirmed"] && <ErrorCode code="email nie został potwierdzony" />}
+                                {userData?.email}
+                                {userData?.emailConfirmed && <ErrorCode code="email nie został potwierdzony" />}
                             </div>
                             {credentialsError && <ErrorCode code={credentialsError}/>}
                         </div>
