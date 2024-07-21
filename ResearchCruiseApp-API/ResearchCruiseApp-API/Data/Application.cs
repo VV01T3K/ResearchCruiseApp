@@ -3,21 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Tools.Attributes;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Data;
 
 public class Application : IYearBasedNumberedEntity
 {
-    public enum ApplicationStatus
-    {
-        New,
-        Planned,
-        Denied,
-        Undertaken,
-        Reported
-    }
-    
-    
     [DatabaseGenerated((DatabaseGeneratedOption.Identity))]
     public Guid Id { get; set; }
     

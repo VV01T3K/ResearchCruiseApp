@@ -187,7 +187,7 @@ namespace ResearchCruiseApp_API.Controllers
             var user = await userManager.FindByNameAsync(userName);
             
             if (user != null)
-                return Ok(await UserModel.GetUserModel(user, userManager));
+                return Ok(await UserModel.GetAsync(user, userManager));
             return NotFound();
         }
 

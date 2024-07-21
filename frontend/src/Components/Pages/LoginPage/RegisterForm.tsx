@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {FieldValues, useForm} from "react-hook-form";
-import ErrorCode from "./ErrorCode";
+import ErrorCode from "../CommonComponents/ErrorCode";
 import {Link} from "react-router-dom";
 import Api from "../../Tools/Api";
 import {Error} from "react-image-size";

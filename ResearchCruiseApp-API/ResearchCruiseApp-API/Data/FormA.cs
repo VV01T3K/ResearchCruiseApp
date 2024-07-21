@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices.JavaScript;
 using NuGet.Protocol.Plugins;
 using ResearchCruiseApp_API.Data.ResearchTaskFolder;
-using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Models.DataTypes;
 
 namespace ResearchCruiseApp_API.Data;
 
@@ -63,8 +63,8 @@ public class FormA
     public List<GuestTeam> GuestTeams { get; set; }
     
     public List<Publication> Publications { get; set; }
-    
-    public List<Work> Works { get; set; }
+    //TODO zmienić na Thesis
+    public List<Thesis> Theses { get; set; }
 
     public List<SPUBTask> SPUBTasks { get; set; } 
     public FormA()

@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp_API.Data;
 
-public class Work
+public class Thesis
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }

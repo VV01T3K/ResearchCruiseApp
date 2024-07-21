@@ -1,11 +1,26 @@
+using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using NuGet.Protocol;
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Data.Interfaces;
 using ResearchCruiseApp_API.Models;
+using ResearchCruiseApp_API.Models.Users;
 using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Types;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using Task = System.Threading.Tasks.Task;
 
 namespace ResearchCruiseApp_API.Controllers
 {
@@ -23,7 +38,7 @@ namespace ResearchCruiseApp_API.Controllers
             var form = await researchCruiseContext.FormsA
                 .Include(o => o.Contracts)
                 .Include(o => o.Publications)
-                .Include(o => o.Works)
+                .Include(o => o.Theses)
                 .Include(o => o.GuestTeams)
                 .Include(o => o.ResearchTasks)
                 .Include(o => o.UGTeams)
@@ -33,7 +48,7 @@ namespace ResearchCruiseApp_API.Controllers
                 return NotFound();
             
             var mapper = MapperConfig.InitializeAutomapper();
-            return Ok(mapper.Map<FormsModel>(form));
+            return Ok(mapper.Map<FormAModel>(form));
         }
         
         [HttpGet]
@@ -42,27 +57,27 @@ namespace ResearchCruiseApp_API.Controllers
             var forms = await researchCruiseContext.FormsA
                 .Include(o => o.Contracts)
                 .Include(o => o.Publications)
-                .Include(o => o.Works)
+                .Include(o => o.Theses)
                 .Include(o => o.GuestTeams)
                 .Include(o => o.ResearchTasks)
                 .Include(o => o.UGTeams)
                 .Include(o => o.SPUBTasks)
                 .ToListAsync();
             //return Ok(forms);
-            var formModels = new List<FormsModel>();
+            var formModels = new List<FormAModel>();
             var mapper = MapperConfig.InitializeAutomapper();
 
             foreach (var form in forms)
             {
                 //var ContractsList = from Contracts in researchCruiseContext.FormsA where Contracts.Id == form.Id select Contracts;
-                formModels.Add(mapper.Map<FormsModel>(form));
+                formModels.Add(mapper.Map<FormAModel>(form));
             }
             
             return Ok(formModels);
         }
         
         [HttpPost("A")]
-        public async Task<IActionResult> AddFormA([FromBody] FormsModel form)
+        public async Task<IActionResult> AddFormA([FromBody] FormAModel formAmodel)
         {
             if (!ModelState.IsValid)
             {
@@ -72,7 +87,7 @@ namespace ResearchCruiseApp_API.Controllers
             Console.WriteLine("zapisywanie rozpoczete");
 
             var mapper = MapperConfig.InitializeAutomapper();
-            var formA = mapper.Map<FormA>(form);
+            var formA = mapper.Map<FormA>(formAmodel);
             
             researchCruiseContext.FormsA.Add(formA);
             await researchCruiseContext.SaveChangesAsync();
@@ -86,20 +101,6 @@ namespace ResearchCruiseApp_API.Controllers
             // researchCruiseContext.FormsA.Add(form1);
             // await researchCruiseContext.SaveChangesAsync();
 
-            return Ok();
-        }
-
-        [HttpPost("A/Save")]
-        public async Task<IActionResult> SaveAForm([FromBody] FormAModel form)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var mapper = MapperConfig.InitializeAutomapper();
-            var formA = mapper.Map<FormA>(form);
-            
-            
-            
             return Ok();
         }
 
@@ -121,7 +122,7 @@ namespace ResearchCruiseApp_API.Controllers
                 FormB = null,
                 FormC = null,
                 Points = 0,
-                Status = Application.ApplicationStatus.New
+                Status = ApplicationStatus.New
             };
 
             await researchCruiseContext.Applications.AddAsync(newApplication);

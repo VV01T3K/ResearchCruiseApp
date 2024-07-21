@@ -9,7 +9,7 @@ import 'react-dropdown/style.css';
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Style from "./TaskInput.module.css";
 import Select from "react-select";
-import ErrorCode from "../../../LoginPage/ErrorCode";
+import ErrorCode from "../../../CommonComponents/ErrorCode";
 
 
 export type Time = {
@@ -20,7 +20,7 @@ export type Time = {
 export type TaskValues =
     { author: string, title: string } |
     { title: string, institution: string, date: string} |
-    { title: string, time: Time, financingAmount: string } |
+    { title: string, time: Time, financingAmount: number } |
     { description: string }
 
 export type Task = {
@@ -358,16 +358,16 @@ function TaskInput(props: Props) {
                                                 })}
                                             </div>
                                         </div>
-                                        <div className={`d-flex p-2 justify-content-center ${props.readonly ? "d-none" : ""}`}
+                                        <div className="d-flex justify-content-center align-items-center p-2"
                                              style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                         >
                                             <div className={"align-items-center justify-content-center d-flex"}>
                                                 <button type="button"
-                                                        style={{fontSize:"inherit"}}
-                                                        className="btn btn-info"
+                                                        className={`${props.readonly ? "d-none" : ""} btn btn-info`}
+                                                        style={{fontSize: "inherit"}}
                                                         onClick={() => {
                                                             const val = field.value;
-                                                            val.splice(rowIndex,1)
+                                                            val.splice(rowIndex, 1)
                                                             props.form!.setValue(
                                                                 props.name,
                                                                 val,

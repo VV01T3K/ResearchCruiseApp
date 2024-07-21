@@ -16,7 +16,7 @@ import ApplicationsTile from "./Tiles/ApplicationsTile";
 export default function AdminPanel() {
     const tilesMenu = [
         { element: <UserTile />, cols: 1, rows: 1 },
-        { element:<NewFormTile />, cols: 1, rows: 1 },
+        { element: <NewFormTile />, cols: 1, rows: 1 },
         { element: <SavedFormsTile />, cols: 2, rows: 2 },
         { element: <FormsRequestsTile />, cols: 2, rows: 2 },
         { element: <ManageUserTile />, cols: 1, rows: 1 },

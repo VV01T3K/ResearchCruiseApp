@@ -37,7 +37,7 @@ namespace ResearchCruiseApp_API.Controllers
             return researchCruiseContext.FormsA
                 .Include(o => o.Contracts)
                 .Include(o => o.Publications)
-                .Include(o => o.Works)
+                .Include(o => o.Theses)
                 .Include(o => o.GuestTeams)
                 .Include(o => o.ResearchTasks)
                 .Include(o => o.UGTeams)
@@ -109,7 +109,7 @@ namespace ResearchCruiseApp_API.Controllers
                 FormC = null,
                 EvaluatedApplication = evaluatedApplication,
                 Points = calculatedPoints,
-                Status = Application.ApplicationStatus.New
+                Status = ApplicationStatus.New
             };
 
             await researchCruiseContext.Applications.AddAsync(newApplication);

@@ -27,7 +27,4 @@
     <data name="CruiseManager" xml:space="preserve">
         <value>Cruise manager</value>
     </data>
-    <data name="EmailSender_SendAccountConfirmationMessageAsync_Czas_dodać_nowy_string" xml:space="preserve">
-        <value>Czas dodać nowy string</value>
-    </data>
 </root>

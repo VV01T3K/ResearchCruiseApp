@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Tools.Extensions;
 using ResearchCruiseApp_API.Types;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,9 +46,10 @@ builder.Services.AddDbContext<ResearchCruiseContext>(options =>
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
-builder.Services.AddSingleton<IApplicationEvaluator, ApplicationEvaluator>();
+builder.Services.AddScoped<IApplicationEvaluator, ApplicationEvaluator>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
