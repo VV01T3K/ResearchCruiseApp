@@ -6,6 +6,7 @@ import FilePicker from "./FilePicker";
 import ContractCategoryPicker from "./ContractCategoryPicker";
 import FileDownloader from "../../../../CommonComponents/FileDownloader";
 import {prop} from "react-data-table-component/dist/DataTable/util";
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
 export type Contract = {
@@ -33,19 +34,7 @@ type Props = {
 
 
 export default function ContractsInput(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3"}>

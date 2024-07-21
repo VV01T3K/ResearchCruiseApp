@@ -11,6 +11,7 @@ import Api from "../../Tools/Api";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
 import ListFilterMenu, {AnyStringFilterOption} from "../CommonComponents/ListFilterMenu";
+import useWindowWidth from "../../CommonComponents/useWindowWidth";
 
 
 type Props = {
@@ -20,19 +21,8 @@ type Props = {
 
 
 export default function CruisesList(props: Props) {
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
+
 
     const handleDeleteCruise = (id: string) => {
         Api
@@ -40,13 +30,8 @@ export default function CruisesList(props: Props) {
             .then(response => {
                 const newCruises: Cruise[] = props.cruises!
                     .filter(cruise => cruise.id != id)
-                console.log(props.cruises)
-                console.log(newCruises)
                 props.setCruises!(newCruises)
             })
-            .catch(error =>
-                console.log(error.message)
-            )
     }
 
     const sortCruisesByNumber = (directionAscending: boolean) => {

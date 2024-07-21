@@ -6,6 +6,7 @@ import ThesisCategoryPicker from "./ThesisCategoryPicker";
 import {Publication} from "../PublicationsInput/PublicationsInput";
 import {Contract} from "../ContractsInput/ContractsInput";
 import {prop} from "react-data-table-component/dist/DataTable/util";
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
 
@@ -29,19 +30,7 @@ export type Thesis = {
 
 
 function WorkList(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>
@@ -245,7 +234,6 @@ function WorkList(props: Props){
                                                     onChange={(e) => {
                                                         const sanitizedValue = parseInt(e.target.value);
                                                         var val = field.value;
-                                                        console.log(sanitizedValue)
                                                         if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                             val[index].year = sanitizedValue
                                                         } else {

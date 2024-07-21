@@ -10,6 +10,7 @@ import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Style from "./TaskInput.module.css";
 import Select from "react-select";
 import ErrorCode from "../../../CommonComponents/ErrorCode";
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
 export type Time = {
@@ -126,19 +127,7 @@ function TaskInput(props: Props) {
     const requiredMsg = "Dodaj przynajmniej jedno zadanie"
     const disabled = props.form?.formState.errors[props.name] && props.form?.formState.errors[props.name]?.message != requiredMsg
 
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3"}>

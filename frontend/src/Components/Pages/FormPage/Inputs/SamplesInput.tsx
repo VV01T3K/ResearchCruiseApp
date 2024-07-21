@@ -4,6 +4,7 @@ import ErrorCode from "../../CommonComponents/ErrorCode";
 import Select from "react-select";
 
 import DatePicker  from 'react-datepicker';
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 export type Action = {
     material: string,
@@ -23,19 +24,8 @@ type Props = {
 
 
 export default function SamplesInput(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
+
     const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
 
     return (
@@ -172,7 +162,6 @@ export default function SamplesInput(props: Props){
                                                         onChange={(e) => {
                                                             const sanitizedValue = parseInt(e.target.value);
                                                             var val = field.value;
-                                                            console.log(sanitizedValue)
                                                             if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                                 val[index].amount = sanitizedValue
                                                             } else {

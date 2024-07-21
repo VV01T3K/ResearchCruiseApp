@@ -12,6 +12,7 @@ import resize = Simulate.resize;
 import {SpubTask} from "./SpubTasksInput";
 import TextArea from "./TextArea";
 import {Action} from "./EquipmentInput";
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 export type DetailedPlan = {
     day:string, hours:string, taskName:string, region:string, position:string, notes:string
@@ -30,19 +31,7 @@ type Props = {
 export default function DetailedPlanInput(props: Props){
     const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
     let x = 7;
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3"}>

@@ -33,9 +33,6 @@ export default function CruisesPage() {
             .then(response =>
                 setCruises(response.data)
             )
-            .catch(exception => {
-                console.log(exception.message)
-            })
     }
 
     const autoAddCruises = () => {
@@ -43,9 +40,6 @@ export default function CruisesPage() {
             .put('/api/Cruises/autoAdded')
             .then(response =>
                 fetchCruises()
-            )
-            .catch(error =>
-                console.log(error.message)
             )
     }
 

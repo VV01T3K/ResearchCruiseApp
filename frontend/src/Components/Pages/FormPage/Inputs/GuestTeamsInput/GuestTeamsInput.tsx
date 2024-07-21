@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select, {SingleValue} from "react-select";
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
 type Props = {
@@ -21,19 +22,7 @@ export type GuestsTeam = {
 
 
 function GuestTeamsInput(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>
@@ -135,7 +124,6 @@ function GuestTeamsInput(props: Props){
                                                         onChange={(e) => {
                                                             const sanitizedValue = parseInt(e.target.value);
                                                             var val = field.value;
-                                                            console.log(sanitizedValue)
                                                             if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
                                                                 val[index].count = sanitizedValue
                                                             }

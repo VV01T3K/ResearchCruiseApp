@@ -3,7 +3,7 @@ import Style from './style.css'
 
 
 type Props = {
-    children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>
+    children?: React.ReactElement
 }
 
 

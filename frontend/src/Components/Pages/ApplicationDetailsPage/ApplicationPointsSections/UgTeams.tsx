@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import  {UgTeam} from "../../FormPage/Inputs/UgTeamsInput/UgTeamsInput";
 
 import {administrationUnits} from "../../../../resources/administrationUnits";
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 type Props = {
     ugTeams: UgTeam[],
@@ -9,19 +10,7 @@ type Props = {
 
 
 export default function UgTeams(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className="table-striped w-100 p-3">

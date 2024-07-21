@@ -109,14 +109,8 @@ function FormA(props: Props){
             .get('/Forms/A/InitData')
             .then(response => {
                     setFormInitValues(response.data)
-                    console.log(response.data as FormAInitValues)
             })
-            .catch(error => console.log(error))
     },[]);
-
-    useEffect(() => {
-        console.log(formInitValues)
-    }, [formInitValues])
 
     const { dispatchEvent } = useCustomEvent('busy')
 
@@ -399,19 +393,19 @@ function FormA(props: Props){
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
-                        <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
-                        <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
-                            do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
-                                realizację rejsu, z afiliacją UG.</strong></p>
-                        <h5 className={"text-center"}>Publikacje zawierające dopisek</h5>
-                        <p>Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w
-                            treści publikacji (w wersji angielskiej lub w innym języku): <strong>„…the research/study
-                                was conducted onboard r/v Oceanograf (the research vessel owned by the University of
-                                Gdańsk)…” lub „… samples for the present study were collected during a research cruise
-                                onboard r/v Oceanograf…” </strong>lub podobny, ale wskazujący jednoznacznie że badania w
-                            ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
-                    </div>
+                    {/*<div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>*/}
+                    {/*    <h5 className={"text-center"}>Publikacje związane tematycznie</h5>*/}
+                    {/*    <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami*/}
+                    {/*        do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w*/}
+                    {/*            realizację rejsu, z afiliacją UG.</strong></p>*/}
+                    {/*    <h5 className={"text-center"}>Publikacje zawierające dopisek</h5>*/}
+                    {/*    <p>Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w*/}
+                    {/*        treści publikacji (w wersji angielskiej lub w innym języku): <strong>„…the research/study*/}
+                    {/*            was conducted onboard r/v Oceanograf (the research vessel owned by the University of*/}
+                    {/*            Gdańsk)…” lub „… samples for the present study were collected during a research cruise*/}
+                    {/*            onboard r/v Oceanograf…” </strong>lub podobny, ale wskazujący jednoznacznie że badania w*/}
+                    {/*        ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>*/}
+                    {/*</div>*/}
                     <PublicationsInput
                         required={true}
                         className="col-12"
@@ -457,12 +451,12 @@ function FormA(props: Props){
                             }
                         ]}
                     />
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
-                        <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
-                        <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
-                            wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
-                                pokładu jednostki RV Oceanograf.</strong></p>
-                    </div>
+                    {/*<div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>*/}
+                    {/*    <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>*/}
+                    {/*    <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy*/}
+                    {/*        wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z*/}
+                    {/*            pokładu jednostki RV Oceanograf.</strong></p>*/}
+                    {/*</div>*/}
                         <ThesisInput
                             required={true}
                             className="col-12"

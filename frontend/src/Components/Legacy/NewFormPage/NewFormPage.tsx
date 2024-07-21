@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import Page from "../Page";
+import Page from "../../Pages/Page";
 import {Link, useNavigate} from "react-router-dom";
-import FormA from "../FormPage/Forms/FormA";
-import FormC from "../FormPage/Forms/FormC";
-import FormB from "../FormPage/Forms/FormB";
-import {FormPageLocationState} from "../FormPage/FormPage";
+import FormA from "../../Pages/FormPage/Forms/FormA";
+import FormC from "../../Pages/FormPage/Forms/FormC";
+import FormB from "../../Pages/FormPage/Forms/FormB";
+import {FormPageLocationState} from "../../Pages/FormPage/FormPage";
 
 
 type Props = {

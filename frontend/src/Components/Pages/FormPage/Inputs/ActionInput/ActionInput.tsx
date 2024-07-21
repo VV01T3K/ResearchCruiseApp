@@ -4,6 +4,7 @@ import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select from "react-select";
 
 import DatePicker  from 'react-datepicker';
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 export type Action = {
     startDate: string,
@@ -23,20 +24,8 @@ type Props = {
 
 
 export default function ActionInput(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
-    console.log(props.form!.formState.errors[props.name])
+    const windowWidth = useWindowWidth()
+
     const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
 
     return (
