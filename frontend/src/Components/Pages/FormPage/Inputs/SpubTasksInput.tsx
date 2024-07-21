@@ -6,8 +6,8 @@ import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 export type SpubTask = {
-    yearFrom: string,
-    yearTo: string,
+    yearFrom: number,
+    yearTo: number,
     name: string
 }
 
@@ -50,16 +50,14 @@ export default function SpubTasksInput(props: Props){
         const re = /^[0-9\b]+$/;
 
         if (re.test(e.target.value)) {
-            let newRowFieldValueInt = parseInt(e.target.value)
-            const newRowFieldValue = String(
+            let newRowFieldValue = parseInt(e.target.value)
+            newRowFieldValue =
                 // We cannot check if newRowFieldValueInt >= minYear because first it will be 1 digit, then 2 digits and so on,
                 // so first it will be certainly "newRowFieldValueInt < minYear". This is however checked in onBlur method
-                newRowFieldValueInt > maxYear ? maxYear : newRowFieldValueInt
-            )
-            newRowFieldValueInt = parseInt(newRowFieldValue)
+                newRowFieldValue > maxYear ? maxYear : newRowFieldValue
 
             if (setYearFrom) {
-                if (newRowFieldValueInt <= parseInt(row.yearTo))
+                if (newRowFieldValue <= row.yearTo)
                     row.yearFrom = newRowFieldValue
                 else
                     row.yearFrom = row.yearTo
@@ -94,15 +92,13 @@ export default function SpubTasksInput(props: Props){
         setYearFrom: boolean,
         field: ControllerRenderProps<FieldValues, string>
     ) => {
-        let newRowFieldValueInt = parseInt(e.currentTarget.value)
-        let newRowFieldValue = String(newRowFieldValueInt)
+        let newRowFieldValue = parseInt(e.currentTarget.value)
         let yearIsChanged = false
 
         // We know that newRowFieldValueInt <= maxYear since it was checked in onChange method.
         // And now we can check if newRowFieldValueInt >= minYear
-        if (newRowFieldValueInt < minYear) {
-            newRowFieldValueInt = minYear
-            newRowFieldValue = String(newRowFieldValueInt)
+        if (newRowFieldValue < minYear) {
+            newRowFieldValue = minYear
             yearIsChanged = true
         }
 
@@ -112,7 +108,7 @@ export default function SpubTasksInput(props: Props){
         }
         else { // set yearTo
             // Now we can check it. We could not do so in onChange method
-            if (newRowFieldValueInt < parseInt(row.yearFrom)) {
+            if (newRowFieldValue < row.yearFrom) {
                 row.yearTo = row.yearFrom
                 yearIsChanged = true
             }
@@ -304,8 +300,8 @@ export default function SpubTasksInput(props: Props){
                                             type="button"
                                             onClick={() => {
                                                 const newSpubTask: SpubTask = {
-                                                    yearFrom: `${new Date().getFullYear()}`,
-                                                    yearTo: `${new Date().getFullYear()}`,
+                                                    yearFrom: new Date().getFullYear(),
+                                                    yearTo: new Date().getFullYear(),
                                                     name: ""
                                                 }
                                                 props.form!.setValue(
@@ -371,7 +367,7 @@ export default function SpubTasksInput(props: Props){
                                         }}
                                     />
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name].message} />
+                                        <ErrorCode code={props.form!.formState.errors[props.name]?.message} />
                                     }
                                 </div>
                             </>

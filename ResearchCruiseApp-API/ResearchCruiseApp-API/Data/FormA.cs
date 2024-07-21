@@ -48,7 +48,6 @@ public class FormA
     public string? Permissions { get; set; }
     /* TODO Zdobyć wymagania co do obszaru */
     
-    
     public int ResearchArea { get; set; } 
     
     public int CruiseGoal { get; set; }

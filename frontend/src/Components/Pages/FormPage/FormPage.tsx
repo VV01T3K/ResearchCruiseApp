@@ -1,27 +1,6 @@
-import React, {Dispatch, useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import FormTemplate, {FormValues} from "./Wrappers/FormTemplate";
-import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
-import FormUserSelect from "./Inputs/FormUserSelect";
-import FormSection from "./Wrappers/FormSection";
-import MonthSlider from "./Inputs/MonthSlider";
-import NumberInput from "./Inputs/NumberInput";
-import TextArea from "./Inputs/TextArea";
-import FormRadio from "./Inputs/FormRadio";
-import ClickableMap from "./Inputs/ClickableMap";
-import TaskInput, {Task} from "./Inputs/TaskInput/TaskInput";
-import GuestTeamsInput, {GuestsTeam} from "./Inputs/GuestTeamsInput/GuestTeamsInput";
-import SpubTasksInput, {SpubTask} from "./Inputs/SpubTasksInput";
-import {DummyTag} from "../../Tools/DummyTag";
-import FormWithSections from "./Wrappers/FormWithSections";
-import ContractsInput, {Contract} from "./Inputs/ContractsInput/ContractsInput";
-import UgTeamsInput, {UgTeam} from "./Inputs/UgTeamsInput/UgTeamsInput";
-import {administrationUnits} from "../../../resources/administrationUnits";
+import React, {useEffect, useState} from "react";
+import {FormValues} from "./Wrappers/FormTemplate";
 import useCustomEvent from "../../Tools/useCustomEvent";
-import api from "../../Tools/Api";
-import FormYearSelect from "./Inputs/FormYearSelect";
-import ThesisInput from "./Inputs/ThesisInput/ThesisInput"
-import PublicationsInput from "./Inputs/PublicationsInput/PublicationsInput";
 import {useLocation} from "react-router-dom";
 import FormA, {FormAValue, FormAValues} from "./Forms/FormA";
 import FormB from "./Forms/FormB";
@@ -44,13 +23,12 @@ function FormPage(){
     const [locationState, _]
         = useState<FormPageLocationState | null>(location.state);
 
-    const { dispatchEvent } = useCustomEvent('busy')
-
     // Set the values to be loaded to the form if applicable
     const [loadValues, setLoadValues]
         = useState<FormValues | undefined>()
     useEffect(() => {
         if (locationState?.formId) {
+            console.log(locationState.formId)
             Api
                 .get(
                     `/Forms/${locationState?.formId}`

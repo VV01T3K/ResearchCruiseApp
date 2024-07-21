@@ -17,7 +17,7 @@ import {administrationUnits} from "../../../../resources/administrationUnits";
 import useCustomEvent from "../../../Tools/useCustomEvent";
 import api from "../../../Tools/Api";
 import FormYearSelect from "../Inputs/FormYearSelect";
-import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
+import ThesesInput, {Thesis} from "../Inputs/ThesesInput/ThesesInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
 import ErrorCode from "../../CommonComponents/ErrorCode";
 import {Cruise} from "../../CruisesPage/CruisesPage";
@@ -488,12 +488,12 @@ function FormB(props: Props){
                             wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
                                 pokładu jednostki RV Oceanograf.</strong></p>
                     </div>
-                    <ThesisInput
+                    <ThesesInput
                         required={true}
                         className="col-12"
                         label="Prace"
                         name="theses"
-                        historicalThesis={[
+                        historicalTheses={[
                             {
                                 category: "doctor",
                                 author: "Marian Domogolski",

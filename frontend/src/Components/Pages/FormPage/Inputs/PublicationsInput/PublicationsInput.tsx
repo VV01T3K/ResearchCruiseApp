@@ -9,10 +9,10 @@ import {Contract} from "../ContractsInput/ContractsInput";
 type Props = {
     className: string,
     label: string,
-    name:string,
+    name: string,
     form?: UseFormReturn,
     historicalPublications: Publication[],
-    required? :boolean,
+    required?: boolean,
     readonly?: boolean
 }
 
@@ -22,8 +22,8 @@ export type Publication = {
     authors: string,
     title: string,
     magazine: string,
-    year: string,
-    points: string
+    year: number,
+    points: number
 }
 
 
@@ -55,17 +55,12 @@ function PublicationsInput(props: Props){
                                     if (value.some((row: Publication) => {
                                         return Object
                                             .values(row)
-                                            .some((rowField: object | string) => {
-                                                if (typeof rowField == 'object') {
-                                                    return Object
-                                                        .values(rowField)
-                                                        .some((rowSubField: string) => !rowSubField)
-                                                }
-                                                return !rowField
+                                            .some((rowField) => {
+                                                return (typeof rowField == 'string' && rowField === "")
                                             })
-                                    })
-                                    )
+                                    })) {
                                         return "Wypełnij wszystkie pola"
+                                    }
                                 }
                             }
                         }}
@@ -369,8 +364,8 @@ function PublicationsInput(props: Props){
                                                     authors: "",
                                                     title: "",
                                                     magazine: "",
-                                                    year: "",
-                                                    points: ""
+                                                    year: new Date().getFullYear(),
+                                                    points: 0
                                                 }
                                                 props.form!.setValue(
                                                     props.name,

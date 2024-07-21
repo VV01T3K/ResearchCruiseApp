@@ -1,23 +1,21 @@
 import React from "react";
 import Slider from 'rc-slider';
 import "./MonthSlider.css"
-import {Control, Controller, FieldValues} from "react-hook-form";
+import {Control, Controller, FieldValues, UseFormReturn} from "react-hook-form";
 import InputWrapper from "./InputWrapper";
 import {prop} from "react-data-table-component/dist/DataTable/util";
+import {FormValues} from "../Wrappers/FormTemplate";
 
 
 type Props = {
     className?: string,
     label: string,
-    name: string,
+    name: keyof FormValues,
     watch?: number[],
-    connectedName?,
+    connectedName?: keyof FormValues,
     range?,
-    form?: {
-        setValue: (arg0: string, arg1: any, arg2: { shouldDirty?: boolean; shouldTouch?: boolean; }) => void;
-        control: Control<FieldValues, any> | undefined;
-    }
-    readonly?:boolean
+    form?: UseFormReturn<FormValues>
+    readonly?: boolean
 
 }
 
@@ -91,7 +89,7 @@ const MonthSlider = (props: Props) => {
                                     props.form!.setValue(props.name, e, { shouldDirty: true, shouldTouch: true, shouldValidate:true })
 
                                     if(props.connectedName)
-                                        props.form!.setValue(props.connectedName, props.form.getValues(props.name), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+                                        props.form!.setValue(props.connectedName, props.form!.getValues(props.name), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
 
                                 }}
                                 marks={

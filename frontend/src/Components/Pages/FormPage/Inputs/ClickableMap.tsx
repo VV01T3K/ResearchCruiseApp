@@ -12,16 +12,17 @@ import Map from '../../../../resources/GraniceSamorzadow.jpg'
 import InputWrapper from "./InputWrapper";
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import Select from "react-select";
-import {ResearchArea} from "../Forms/FormA";
+import {FormAValues, ResearchArea} from "../Forms/FormA";
+import {FormValues} from "../Wrappers/FormTemplate";
 
 
 type Props = {
     className?: string,
     label: string,
-    name: string,
+    name: keyof FormValues,
     required?: boolean,
     regions?: ResearchArea[],
-    form?: UseFormReturn,
+    form?: UseFormReturn<FormValues>,
     readonly?: boolean
 }
 
@@ -70,7 +71,7 @@ function ClickableMap(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
-                defaultValue={""}
+                //defaultValue={""}
                 render={({ field}) =>
                     <div className="d-flex flex-column">
                         <Select
@@ -86,7 +87,7 @@ function ClickableMap(props: Props) {
                             }}
                             placeholder={"Wybierz"}
                             value={{
-                                label: ((props.regions && field.value !== "") ? props.regions[field.value].name : ""),
+                                label: ((props.regions && typeof(field.value) === 'number') ? props.regions[field.value].name : ""),
                                 value: field.value
                             }}
                             options={props.regions?.map((value, index) => ({

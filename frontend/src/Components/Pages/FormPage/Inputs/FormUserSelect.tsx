@@ -11,6 +11,7 @@ import {
 import Select, {SingleValue} from "react-select";
 import React, {useEffect, useState} from "react";
 import InputWrapper from "./InputWrapper";
+import {FormValues} from "../Wrappers/FormTemplate";
 
 
 export type FormUser = {
@@ -22,10 +23,10 @@ export type FormUser = {
 
 type Props = {
     className?: string,
-    name: string,
+    name: keyof FormValues,
     label: string,
     values?: FormUser[]
-    form?: UseFormReturn<any>,
+    form?: UseFormReturn<FormValues>,
     readonly?: boolean
 }
 

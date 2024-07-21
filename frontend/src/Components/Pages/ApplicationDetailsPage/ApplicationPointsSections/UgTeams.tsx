@@ -70,7 +70,7 @@ export default function UgTeams(props: Props){
                     <div className="d-flex justify-content-center align-items-center p-2 border-end text-center"
                          style={{width: windowWidth >= 1200 ? "49%" : "100%"}}
                     >
-                        <span>{administrationUnits[item.value]}</span>
+                        <span>{administrationUnits[item.unit]}</span>
                     </div>
                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                          style={{width: windowWidth >= 1200 ? "21%" : "100%"}}

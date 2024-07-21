@@ -1,15 +1,17 @@
 import {
-    Controller,
+    Controller, UseFormReturn,
 } from "react-hook-form";
 import React from "react";
 import InputWrapper from "./InputWrapper";
+import {FormValues} from "../Wrappers/FormTemplate";
 
 
 type Props = {
     className?: string,
     label: string,
-    name: string,
-    values?: string[], form?: any,
+    name: keyof FormValues,
+    values?: string[],
+    form?: UseFormReturn<FormValues>,
     readonly? :boolean
 }
 
@@ -18,7 +20,6 @@ function FormRadio(props: Props) {
     return (
         <InputWrapper {...props}>
             <Controller
-                defaultValue={""}
                 name={props.name}
                 rules={{required: 'Wybierz jedną z opcji'}}
                 control={props.form!.control}

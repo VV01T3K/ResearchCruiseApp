@@ -2,13 +2,12 @@ import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select from "react-select";
-import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 export type UgTeam = {
-    value: string,
-    noOfEmployees: string,
-    noOfStudents: string
+    unit: number,
+    noOfEmployees: number,
+    noOfStudents: number
 }
 
 type Props = {
@@ -18,12 +17,12 @@ type Props = {
     form?: UseFormReturn
     required?: boolean,
     values: string[],
-    readonly?:boolean
+    readonly?: boolean
 }
 
 
 function UgTeamsInput(props: Props) {
-    const requiredMsg = "Dodaj przynajmniej jedno zadanie"
+    const requiredMsg = "Dodaj przynajmniej jedną jednostkę"
     const disabled = props.form!.formState.errors[props.name] && props.form!.formState.errors[props.name]!.message != requiredMsg
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -46,9 +45,12 @@ function UgTeamsInput(props: Props) {
                 name={props.name} control={props.form!.control}
                 defaultValue={[]}
                 rules={{
-                    required: props.required ?? requiredMsg, validate: {
-                        notEmpty: (value:{value: { value:string }}) => {
-                                if (Object.values(value).some((row: { value:string })=>Object.values(row).some((val)=>val===""))) {
+                    required: props.required ?? requiredMsg,
+                    validate: {
+                        notEmpty: (value: UgTeam[]) => {
+                                if (Object.values(value).some((row: UgTeam) =>
+                                        row.noOfEmployees <= 0 && row.noOfStudents <= 0)
+                                ) {
                                     return "Uzupełnij wszystkie pola";
                                 }
                             return true;
@@ -104,7 +106,7 @@ function UgTeamsInput(props: Props) {
                                     <div className="d-flex justify-content-center align-items-center p-2 border-end text-center"
                                          style={{width: windowWidth >= 1200 ? "36%" : "100%"}}
                                     >
-                                        <span>{props.values[item.value]}</span>
+                                        <span>{props.values[item.unit]}</span>
                                     </div>
                                     <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
                                          style={{width: windowWidth >= 1200 ? "22%" : "100%"}}
@@ -238,13 +240,13 @@ function UgTeamsInput(props: Props) {
                                     value={null}
                                     onChange={(selectedOption) => {
                                         const newUgTeam: UgTeam = {
-                                            value: selectedOption!.value,
-                                            noOfEmployees: "",
-                                            noOfStudents: ""
+                                            unit: selectedOption!.value,
+                                            noOfEmployees: 0,
+                                            noOfStudents: 0
                                         }
                                         props.form!.setValue(
                                             props.name,
-                                            [...field.value,newUgTeam],
+                                            [...field.value, newUgTeam],
                                             {
                                                 shouldValidate: true,
                                                 shouldDirty: true,

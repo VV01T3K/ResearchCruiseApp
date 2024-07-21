@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Controller, UseFormReturn} from "react-hook-form";
+import {Controller, ControllerRenderProps, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import FilePicker from "./FilePicker";
 import ContractCategoryPicker from "./ContractCategoryPicker";
 import FileDownloader from "../../../../CommonComponents/FileDownloader";
 import {prop} from "react-data-table-component/dist/DataTable/util";
+import {FormValues} from "../../Wrappers/FormTemplate";
 
 
 export type Contract = {
@@ -28,7 +29,7 @@ type Props = {
     form?: UseFormReturn,
     historicalContracts: Contract[],
     required: boolean,
-    readonly?:boolean
+    readonly?: boolean
 }
 
 
@@ -76,7 +77,7 @@ export default function ContractsInput(props: Props){
                         }
                     }
                 }}
-                render={({ field }) => (
+                render={({field}) => (
                     <>
                         <div className="table-striped w-100">
                             <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
@@ -104,12 +105,12 @@ export default function ContractsInput(props: Props){
                                 </div>
                             </div>
                             <div className="w-100 bg-light">
-                                {!field.value.length &&
+                                {!field.value?.length &&
                                     <div className="d-flex flex-row justify-content-center bg-light p-2 border">
                                         <div className="text-center">Nie dodano żadnej umowy</div>
                                     </div>
                                 }
-                                {field.value.map((row: Contract, index: number) => (
+                                {field.value?.map((row: Contract, index: number) => (
                                     <div key={index}
                                          className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                     >

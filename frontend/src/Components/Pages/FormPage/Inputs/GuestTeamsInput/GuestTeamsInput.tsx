@@ -16,7 +16,7 @@ type Props = {
 
 export type GuestsTeam = {
     institution: string,
-    count: string
+    noOfPersons: number
 }
 
 
@@ -40,16 +40,19 @@ function GuestTeamsInput(props: Props){
             <Controller name={props.name}
                         control={props.form!.control}
                         defaultValue={[]}
-                        rules = {{required:props.required ?? true,validate: {
-                            notEmpty: (value) => {
-                                for (const key in value) {
-                                    if (value.hasOwnProperty(key) && (value[key].value === "" || value[key].count === "" || value[key].institution === "")) {
-                                        return "Uzupełnij wszystkie pola";
+                        rules = {{
+                            required: props.required ?? true,
+                            validate: {
+                                notEmpty: (values: GuestsTeam[]) => {
+                                    for (const guestTeam of values) {
+                                        if (guestTeam.institution === "" || guestTeam.noOfPersons === 0) {
+                                            return "Uzupełnij wszystkie pola";
+                                        }
                                     }
+                                    return true;
                                 }
-                                return true;
                             }
-                        }}}
+                        }}
                         render={({field}) => (
                             <>
                                 <div className="table-striped w-100">
@@ -131,15 +134,15 @@ function GuestTeamsInput(props: Props){
                                                         disabled={props.readonly ?? false}
                                                         className="text-center placeholder-glow w-100 p-1 form-control bg-white"
                                                         style={{fontSize: "inherit"}}
-                                                        value={row.count}
+                                                        value={row.noOfPersons}
                                                         onChange={(e) => {
                                                             const sanitizedValue = parseInt(e.target.value);
-                                                            var val = field.value;
+                                                            const val: GuestsTeam[] = field.value;
                                                             if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
-                                                                val[index].count = sanitizedValue
+                                                                val[index].noOfPersons = sanitizedValue
                                                             }
                                                             else {
-                                                                val[index].count = '0'
+                                                                val[index].noOfPersons = 0
                                                             }
                                                             props.form!.setValue(props.name, val, {
                                                                 shouldDirty: true,
@@ -165,8 +168,7 @@ function GuestTeamsInput(props: Props){
                                                                     shouldDirty: true,
                                                                     shouldTouch: true
                                                                 })
-                                                            }
-                                                            }
+                                                            }}
                                                     >
                                                         -
                                                     </button>
@@ -185,19 +187,19 @@ function GuestTeamsInput(props: Props){
                                             }
                                             type="button"
                                             onClick={() => {
-                                                const newGuestsCount: GuestsTeam = {
+                                                const newGuestsTeam: GuestsTeam = {
                                                     institution: "",
-                                                    count: ""
+                                                    noOfPersons: 0
                                                 }
                                                 props.form!.setValue(
                                                     props.name,
-                                                    [...field.value, newGuestsCount],
+                                                    [...field.value, newGuestsTeam],
                                                     {
                                                         shouldValidate: true,
                                                         shouldDirty: true
                                                     }
                                                 )
-                                                field.onChange([...field.value, newGuestsCount])
+                                                field.onChange([...field.value, newGuestsTeam])
                                             }}
                                         >
                                             Dodaj nową
@@ -240,7 +242,7 @@ function GuestTeamsInput(props: Props){
                                             if (selectedOption) {
                                                 const newGuestsTeam: GuestsTeam = {
                                                     institution: selectedOption.value,
-                                                    count: ""
+                                                    noOfPersons: 0
                                                 }
                                                 props.form!.setValue(
                                                     props.name,

@@ -65,8 +65,8 @@ namespace ResearchCruiseApp_API.Tools
                     .ForMember(dest => dest.Author, act => act.MapFrom(src => src.Values.Author))
                     .ForMember(dest => dest.Institution, act => act.MapFrom(src => src.Values.Institution))
                     .ForMember(dest => dest.Date, act => act.MapFrom(src => src.Values.Date))
-                    .ForMember(dest => dest.StartDate, act => act.MapFrom(src => src.Values.Time.StartDate))
-                    .ForMember(dest => dest.EndDate, act => act.MapFrom(src => src.Values.Time.EndDate))
+                    .ForMember(dest => dest.StartDate, act => act.MapFrom(src => src.Values.Time.HasValue ? src.Values.Time.Value.Start : null))
+                    .ForMember(dest => dest.EndDate, act => act.MapFrom(src => src.Values.Time.HasValue ? src.Values.Time.Value.End : null))
                     .ForMember(dest => dest.FinancingAmount, act => act.MapFrom(src => src.Values.FinancingAmount))
                     .ForMember(dest => dest.Description, act => act.MapFrom(src => src.Values.Description))
                     .ReverseMap()
@@ -81,10 +81,10 @@ namespace ResearchCruiseApp_API.Tools
                 
                 //Configuring FormsModel and FormA
                 cfg.CreateMap<FormAModel, FormA>()
-                    .ForMember(dest => dest.AcceptablePeriodBeg, act => act.MapFrom(src => src.AcceptablePeriod!.Min()))
-                    .ForMember(dest => dest.AcceptablePeriodEnd, act => act.MapFrom(src => src.AcceptablePeriod!.Max()))
-                    .ForMember(dest => dest.OptimalPeriodBeg, act => act.MapFrom(src => src.OptimalPeriod!.Min()))
-                    .ForMember(dest => dest.OptimalPeriodEnd, act => act.MapFrom(src => src.OptimalPeriod!.Max()))
+                    .ForMember(dest => dest.AcceptablePeriodBeg, act => act.MapFrom(src => src.AcceptablePeriod.Min()))
+                    .ForMember(dest => dest.AcceptablePeriodEnd, act => act.MapFrom(src => src.AcceptablePeriod.Max()))
+                    .ForMember(dest => dest.OptimalPeriodBeg, act => act.MapFrom(src => src.OptimalPeriod.Min()))
+                    .ForMember(dest => dest.OptimalPeriodEnd, act => act.MapFrom(src => src.OptimalPeriod.Max()))
                     ;
 
                 cfg.CreateMap<FormA, FormAModel>()

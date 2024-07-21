@@ -1,7 +1,7 @@
 import React from "react";
 import {ControllerRenderProps, FieldValues, UseFormReturn} from "react-hook-form";
 import Select, {SingleValue} from "react-select";
-import {Attributes} from "./ThesisInput";
+import {Attributes} from "./ThesesInput";
 
 
 
