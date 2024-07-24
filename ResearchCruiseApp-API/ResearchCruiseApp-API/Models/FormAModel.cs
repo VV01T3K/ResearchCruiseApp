@@ -25,6 +25,9 @@ public class FormAModel
     
     [Range(0, int.MaxValue)]
     public int CruiseHours { get; set; }
+
+    [Range(0, double.MaxValue)]
+    public double? CruiseDays { get; set; }
     
     [StringLength(1024)]
     public string? PeriodNotes { get; set; }

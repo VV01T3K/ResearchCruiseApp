@@ -6,6 +6,6 @@ namespace ResearchCruiseApp_API.Models.DataTypes;
 public class ResearchTask
 {
     public int Type { get; set; }
-    
-    public ResearchTaskValues Values { get; set; } 
+
+    public ResearchTaskValues Values { get; set; } = null!;
 }

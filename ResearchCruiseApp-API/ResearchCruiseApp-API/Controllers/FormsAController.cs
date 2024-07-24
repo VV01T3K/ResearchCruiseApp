@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace ResearchCruiseApp_API.Controllers
     public class FormsAController(
         ResearchCruiseContext researchCruiseContext,
         UsersContext usersContext,
+        IMapper mapper,
         IYearBasedKeyGenerator yearBasedKeyGenerator,
         IApplicationEvaluator applicationEvaluator) : ControllerBase
     {
@@ -66,8 +68,7 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var mapper = MapperConfig.InitializeAutomapper();
+            
             var formEntity = mapper.Map<FormA>(form);
             
             researchCruiseContext.FormsA.Add(formEntity);
@@ -87,11 +88,7 @@ namespace ResearchCruiseApp_API.Controllers
         
         public async Task AddApplicationAsync(FormA formA)
         {
-            var mapper = MapperConfig.InitializeAutomapper();
-            var formAModel = mapper.Map<FormAModel>(formA);
-
-            
-            var evaluatedApplication= applicationEvaluator.EvaluateApplication(formA, []);
+            var evaluatedApplication = applicationEvaluator.EvaluateApplication(formA, []);
             
             //var evaluatedApplication = mapper.Map<EvaluatedApplication>(evaluatedApplicationModel);
             

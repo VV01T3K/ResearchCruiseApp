@@ -139,16 +139,16 @@ public class ApplicationEvaluator : IApplicationEvaluator
 
         }
 
-        if (researchTask.Type == DomesticProject)
-            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = (int)(DomesticProjectPoints
-                                                                 * Math.Floor(
-                                                                     float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
-                                                                     * DomesticProjectPointsRatio))};
-        if (researchTask.Type == ForeignProject)
-            return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = (int)(ForeignProjectPoints
-                                                                 * Math.Floor(
-                                                                     float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
-                                                                     * ForeignProjectPointsRatio))};
+        // if (researchTask.Type == DomesticProject)
+        //     return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = (int)(DomesticProjectPoints
+        //                                                          * Math.Floor(
+        //                                                              float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
+        //                                                              * DomesticProjectPointsRatio))};
+        // if (researchTask.Type == ForeignProject)
+        //     return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = (int)(ForeignProjectPoints
+        //                                                          * Math.Floor(
+        //                                                              float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
+        //                                                              * ForeignProjectPointsRatio))};
         if (researchTask.Type == InternalProject)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = InternalProjectPoints};
         if (researchTask.Type == CommercialProject)
@@ -177,12 +177,12 @@ public class ApplicationEvaluator : IApplicationEvaluator
     {
         if (publication.Category == DefaultPublication)
             return new EvaluatedPublication{Publication = publication,
-                CalculatedPoints = (int)(DefaultPublicationPointRatio * publication.Points)};
+                CalculatedPoints = (int)(DefaultPublicationPointRatio * publication.MinisterialPoints)};
         if (publication.Category == PublicationFromRV)
             return new EvaluatedPublication
             {
                 Publication = publication,
-                CalculatedPoints = (int)(PublicationFromRVPointRatio * publication.Points)
+                CalculatedPoints = (int)(PublicationFromRVPointRatio * publication.MinisterialPoints)
             };
 
         return new EvaluatedPublication{Publication = publication,

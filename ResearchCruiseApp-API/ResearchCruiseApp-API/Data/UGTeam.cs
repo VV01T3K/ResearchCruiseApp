@@ -7,7 +7,7 @@ public class UGTeam
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public int Value { get; set; }
+    public int Unit { get; set; }
     
     public int NoOfEmployees { get; set; }
     

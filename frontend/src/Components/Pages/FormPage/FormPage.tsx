@@ -34,9 +34,9 @@ function FormPage(){
                     `/Forms/${locationState?.formId}`
                 )
                 .then(response => {
-                        setLoadValues(response.data)
-                    }
-                )
+                    console.log(response)
+                    setLoadValues(response.data)
+                })
         }
         else {
             setLoadValues(locationState?.localStorageValues)

@@ -2,6 +2,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -30,6 +31,7 @@ namespace ResearchCruiseApp_API.Controllers
     public class FormsController(
         ResearchCruiseContext researchCruiseContext,
         UsersContext usersContext,
+        IMapper mapper,
         IYearBasedKeyGenerator yearBasedKeyGenerator) : ControllerBase
     {
         [HttpGet("{id:guid}")]
@@ -46,9 +48,10 @@ namespace ResearchCruiseApp_API.Controllers
                 .FirstOrDefaultAsync(form => form.Id == id);
             if (form == null)
                 return NotFound();
+
+            var formAModel = mapper.Map<FormAModel>(form);
             
-            var mapper = MapperConfig.InitializeAutomapper();
-            return Ok(mapper.Map<FormAModel>(form));
+            return Ok(formAModel);
         }
         
         [HttpGet]

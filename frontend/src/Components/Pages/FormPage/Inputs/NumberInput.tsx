@@ -14,7 +14,8 @@ type Props = {
     connectedName?: keyof FormValues,
     form?: UseFormReturn<FormValues>,
     notZero?: boolean,
-    readonly?: boolean
+    readonly?: boolean,
+    fractionDigits?: number
 }
 
 
@@ -42,7 +43,7 @@ function NumberInput(props: Props){
                 render={({ field}) =>
                     <input className="text-center placeholder-glow"
                            disabled={props.readonly ?? false}
-                           value={field.value?.toString() ?? "0"}
+                           value={(field.value as number)?.toFixed(props.fractionDigits ?? 0) ?? ""}
                            onBlur={
                         (e) => {
                                if (re.test(e.target.value)) {
@@ -73,7 +74,7 @@ function NumberInput(props: Props){
                            onChange={(e) => { onChange(e) }}
                     />
                 }
-                defaultValue={""}
+                //defaultValue={undefined}
                 name={props.name}
                 control={props.form!.control}
                 rules={{

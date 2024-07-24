@@ -21,7 +21,11 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.MaxDepth = 64;
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -50,6 +54,7 @@ builder.Services.AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
 builder.Services.AddScoped<IApplicationEvaluator, ApplicationEvaluator>();
+builder.Services.AddScoped<ICompressor, Compressor>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
@@ -57,6 +62,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = false;
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxResponseBufferSize = 2_147_483_648; // 2 GiB
 });
 
 var app = builder.Build();

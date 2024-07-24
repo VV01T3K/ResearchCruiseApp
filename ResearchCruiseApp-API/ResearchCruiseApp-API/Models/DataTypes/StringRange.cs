@@ -1,4 +1,4 @@
-namespace ResearchCruiseApp_API.Models;
+namespace ResearchCruiseApp_API.Models.DataTypes;
 
 public struct StringRange
 {

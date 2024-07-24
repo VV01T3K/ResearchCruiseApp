@@ -1,4 +1,5 @@
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Models.DataTypes;
 
 namespace ResearchCruiseApp_API.Models;
 

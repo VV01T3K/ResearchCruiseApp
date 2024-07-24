@@ -1,3 +1,5 @@
+using ResearchCruiseApp_API.Models.DataTypes;
+
 namespace ResearchCruiseApp_API.Models;
 
 public class CruiseFormModel
