@@ -13,7 +13,7 @@ public class ApplicationsService(
     IMapper mapper)
     : IApplicationsService
 {
-    public async Task<Result<ApplicationModel, Error>> GetApplicationById(Guid id)
+    public async Task<Result<ApplicationModel>> GetApplicationById(Guid id)
     {
         var application = await researchCruiseContext.Applications
             .Include(application => application.FormA)
@@ -26,7 +26,7 @@ public class ApplicationsService(
         return applicationModel;
     }
 
-    public async Task<Result<List<ApplicationModel>, Error>> GetAllApplications()
+    public async Task<Result<List<ApplicationModel>>> GetAllApplications()
     {
         var applications = await GetApplicationsQuery()
             .ToListAsync();

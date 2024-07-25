@@ -8,9 +8,9 @@ namespace ResearchCruiseApp_API.Tools;
 
 public class UserPermissionVerifier(UserManager<User> userManager) : IUserPermissionVerifier
 {
-    public async Task<bool> CanUserAssignRoleAsync(IEnumerable<Claim> userClaims, string roleName)
+    public async Task<bool> CanUserAssignRoleAsync(ClaimsPrincipal user, string roleName)
     {
-        var currentUserRoles = await GetCurrentUserRoles(userClaims);
+        var currentUserRoles = await GetCurrentUserRoles(user);
 
         if (currentUserRoles.Contains(RoleName.Administrator))
             return true;
@@ -23,9 +23,9 @@ public class UserPermissionVerifier(UserManager<User> userManager) : IUserPermis
         return false;
     }
 
-    public async Task<bool> CanUserAccessAsync(IEnumerable<Claim> userClaims, User otherUser)
+    public async Task<bool> CanUserAccessAsync(ClaimsPrincipal user, User otherUser)
     {
-        var currentUserRoles = await GetCurrentUserRoles(userClaims);
+        var currentUserRoles = await GetCurrentUserRoles(user);
 
         if (currentUserRoles.Contains(RoleName.Administrator))
             return true;
@@ -42,9 +42,9 @@ public class UserPermissionVerifier(UserManager<User> userManager) : IUserPermis
     }
 
 
-    private async Task<IList<string>> GetCurrentUserRoles(IEnumerable<Claim> userClaims)
+    private async Task<IList<string>> GetCurrentUserRoles(ClaimsPrincipal user)
     {
-        var currentUserId = userClaims
+        var currentUserId = user.Claims
             .FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)
             ?.Value;
         if (currentUserId is null)

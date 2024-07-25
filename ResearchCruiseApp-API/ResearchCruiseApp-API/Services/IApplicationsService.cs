@@ -5,9 +5,9 @@ namespace ResearchCruiseApp_API.Services;
 
 public interface IApplicationsService
 {
-    Task<Result<ApplicationModel, Error>> GetApplicationById(Guid id);
+    Task<Result<ApplicationModel>> GetApplicationById(Guid id);
     
-    Task<Result<List<ApplicationModel>, Error>> GetAllApplications();
+    Task<Result<List<ApplicationModel>>> GetAllApplications();
 
     // Task<Result<EvaluatedApplicationModel, Error>> CalculatePoints(Guid applicationId);
 }

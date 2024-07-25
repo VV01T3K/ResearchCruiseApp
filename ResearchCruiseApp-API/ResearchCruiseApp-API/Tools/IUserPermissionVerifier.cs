@@ -5,7 +5,7 @@ namespace ResearchCruiseApp_API.Tools;
 
 public interface IUserPermissionVerifier
 {
-    public Task<bool> CanUserAssignRoleAsync(IEnumerable<Claim> userClaims, string roleName);
+    public Task<bool> CanUserAssignRoleAsync(ClaimsPrincipal user, string roleName);
 
-    public Task<bool> CanUserAccessAsync(IEnumerable<Claim> userClaims, User otherUser);
+    public Task<bool> CanUserAccessAsync(ClaimsPrincipal user, User otherUser);
 }

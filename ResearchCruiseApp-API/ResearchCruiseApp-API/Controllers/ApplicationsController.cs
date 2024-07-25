@@ -22,12 +22,7 @@ namespace ResearchCruiseApp_API.Controllers
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ApplicationsController(
-        ResearchCruiseContext researchCruiseContext,
-        IMapper mapper,
-        IApplicationsService applicationsService,
-        IApplicationEvaluator applicationEvaluator)
-        : ControllerBase
+    public class ApplicationsController(IApplicationsService applicationsService) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAllApplications()
