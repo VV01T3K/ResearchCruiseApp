@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Data;
+using ResearchCruiseApp_API.Services;
 using ResearchCruiseApp_API.Tools;
 using ResearchCruiseApp_API.Tools.Extensions;
 using ResearchCruiseApp_API.Types;
@@ -68,6 +69,8 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxResponseBufferSize = 2_147_483_648; // 2 GiB
 });
+
+builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
 
 var app = builder.Build();
 
