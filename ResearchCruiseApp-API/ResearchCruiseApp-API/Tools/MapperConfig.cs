@@ -1,6 +1,7 @@
 using AutoMapper;
 using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
+
 /*
 using Contract = ResearchCruiseApp_API.Data.Contract;
 using EvaluatedSPUBTask = ResearchCruiseApp_API.Models.EvaluatedSPUBTask;
@@ -36,57 +37,6 @@ namespace ResearchCruiseApp_API.Tools
             //Provide all the Mapping Configuration
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Models.DataTypes.SPUBTask, Data.SPUBTask>()
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.GuestTeam, Data.GuestTeam>()
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.UGTeam, Data.UGTeam>()
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.GuestTeam, Data.GuestTeam>()
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.Publication, Data.Publication>()
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.Thesis, Data.Thesis>()
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.ResearchTask, Data.ResearchTask>()
-                    .ForMember(dest => dest.Title, act => act.MapFrom(src => src.Values.Title))
-                    .ForMember(dest => dest.Author, act => act.MapFrom(src => src.Values.Author))
-                    .ForMember(dest => dest.Institution, act => act.MapFrom(src => src.Values.Institution))
-                    .ForMember(dest => dest.Date, act => act.MapFrom(src => src.Values.Date))
-                    .ForMember(dest => dest.StartDate, act => act.MapFrom(src => src.Values.Time.StartDate))
-                    .ForMember(dest => dest.EndDate, act => act.MapFrom(src => src.Values.Time.EndDate))
-                    .ForMember(dest => dest.FinancingAmount, act => act.MapFrom(src => src.Values.FinancingAmount))
-                    .ForMember(dest => dest.Description, act => act.MapFrom(src => src.Values.Description))
-                    .ReverseMap()
-                    ;
-                
-                cfg.CreateMap<Models.DataTypes.Contract, Data.Contract>()
-                    .ForMember(dest => dest.InstitutionName, act => act.MapFrom(src => src.Institution.Name))
-                    .ForMember(dest => dest.InstitutionUnit, act => act.MapFrom(src => src.Institution.Unit))
-                    .ForMember(dest => dest.InstitutionLocation, act => act.MapFrom(src => src.Institution.Localization))
-                    .ReverseMap()
-                    ;
-                
-                //Configuring FormsModel and FormA
-                cfg.CreateMap<FormAModel, FormA>()
-                    .ForMember(dest => dest.AcceptablePeriodBeg, act => act.MapFrom(src => src.AcceptablePeriod!.Min()))
-                    .ForMember(dest => dest.AcceptablePeriodEnd, act => act.MapFrom(src => src.AcceptablePeriod!.Max()))
-                    .ForMember(dest => dest.OptimalPeriodBeg, act => act.MapFrom(src => src.OptimalPeriod!.Min()))
-                    .ForMember(dest => dest.OptimalPeriodEnd, act => act.MapFrom(src => src.OptimalPeriod!.Max()))
-                    ;
-
                 cfg.CreateMap<FormA, FormAModel>()
                     .ForMember(
                         dest => dest.AcceptablePeriod,
@@ -101,17 +51,17 @@ namespace ResearchCruiseApp_API.Tools
                                 new HashSet<int> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }));
                 
                 
-                /*cfg.CreateMap<Models.EvaluatedResearchTask, Data.EvaluatedResearchTask>()
+                cfg.CreateMap<Models.EvaluatedResearchTask, Data.EvaluatedResearchTask>()
                     .ForPath(dest => dest.ResearchTask.Title, act => act.MapFrom(src => src.Values.Title))
                     .ForPath(dest => dest.ResearchTask.Author, act => act.MapFrom(src => src.Values.Author))
                     .ForPath(dest => dest.ResearchTask.Institution, act => act.MapFrom(src => src.Values.Institution))
                     .ForPath(dest => dest.ResearchTask.Date, act => act.MapFrom(src => src.Values.Date))
-                    .ForPath(dest => dest.ResearchTask.StartDate, act => act.MapFrom(src => src.Values.Time.StartDate))
-                    .ForPath(dest => dest.ResearchTask.EndDate, act => act.MapFrom(src => src.Values.Time.EndDate))
+                    .ForPath(dest => dest.ResearchTask.StartDate, act => act.MapFrom(src => src.Values.Time.HasValue ? src.Values.Time.Value.Start : null))
+                    .ForPath(dest => dest.ResearchTask.EndDate, act => act.MapFrom(src => src.Values.Time.HasValue ? src.Values.Time.Value.End : null))
                     .ForPath(dest => dest.ResearchTask.FinancingAmount, act => act.MapFrom(src => src.Values.FinancingAmount))
                     .ForPath(dest => dest.ResearchTask.Description, act => act.MapFrom(src => src.Values.Description))
                     .ReverseMap()
-                    ;*/
+                    ;
                 
                 cfg.CreateMap<EvaluatedApplicationModel, EvaluatedApplication>()
                     .ReverseMap()
@@ -132,7 +82,7 @@ namespace ResearchCruiseApp_API.Tools
             //Create an Instance of Mapper and return that Instance
             var mapper = new Mapper(config);
             return mapper;
-        }   
+        }
     }
 }
     

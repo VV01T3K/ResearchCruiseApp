@@ -1,23 +1,21 @@
 import {
     Control,
-    Controller,
+    Controller, UseFormReturn,
 } from "react-hook-form";
 import React from "react";
 import InputWrapper from "./InputWrapper";
+import {FormValues} from "../Wrappers/FormTemplate";
 
 
 type Props = {
     className?: string,
     label: string,
-    name: string,
+    name: keyof FormValues,
     required?: any,
-    maxLenth?: number,
-    resize?:string,
-    form?: {
-        setValue: (arg0: string, arg1: string) => void;
-        control: Control<Record<string, any>, any> | undefined;
-    },
-    readonly?:boolean
+    maxLength?: number,
+    resize?: string,
+    form?: UseFormReturn<FormValues>,
+    readonly?: boolean
 }
 
 
@@ -38,7 +36,7 @@ function TextArea(props: Props) {
                     <textarea className={"h-100"}
                               {...field}
                                 disabled={props.readonly ?? false}
-                              value={field.value ?? ''}
+                              value={field.value?.toString() ?? ''}
                         // @ts-ignore
                               style={{resize: props.resize ?? "true"}}
 
@@ -51,8 +49,8 @@ function TextArea(props: Props) {
                 rules={{
                     required: props.required ?? "Pole wymagane",
                     maxLength: {
-                        value: props.maxLenth ?? 200, // Maksymalna długość
-                        message: `Za długi tekst, maksymalna długość to ${props.maxLenth ?? 200} znaków.`,
+                        value: props.maxLength ?? 200, // Maksymalna długość
+                        message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`,
                     },
                 }}
             />

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchCruiseApp_API.Data;
 
@@ -7,11 +8,12 @@ public class SPUBTask
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public string Name { get; set; }
+    [StringLength(1024)]
+    public string YearFrom { get; set; } = null!;
     
-    public string YearFrom { get; set; }
+    [StringLength(1024)]
+    public string YearTo { get; set; } = null!;
     
-    public string YearTo { get; set; }
-    
-    //public List<FormA> Forms { get; set; } = null!;
+    [StringLength(1024)]
+    public string Name { get; set; } = null!;
 }

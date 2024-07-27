@@ -7,21 +7,24 @@ public class Contract
 {
       [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
       public Guid Id { get; set; }
-      
-      //[Range(0, 1)]
-      public string Category { get; set; }
-      
-      [MaxLength(50)]
-      public string InstitutionName { get; set; }
-      
-      [MaxLength(200)]
-      public string Description { get; set; }
-  
-      [MaxLength(50)]
-      public string InstitutionLocation { get; set; }
 
-      [MaxLength(50)] 
-      public string InstitutionUnit { get; set; }
+      [StringLength(1024)]
+      public string Category { get; set; } = null!;
+      
+      [MaxLength(1024)]
+      public string InstitutionName { get; set; } = null!;
+      
+      [MaxLength(1024)] 
+      public string InstitutionUnit { get; set; } = null!;
+      
+      [MaxLength(1024)]
+      public string InstitutionLocalization { get; set; } = null!;
+      
+      [MaxLength(1024)]
+      public string Description { get; set; } = null!;
 
-      //public string File { get; set; }
+      [MaxLength(1024)]
+      public string ScanName { get; set; } = null!;
+      
+      public byte[] ScanContentCompressed { get; set; } = [];
 }

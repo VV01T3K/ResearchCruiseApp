@@ -23,6 +23,7 @@ function FormPage(){
     const location = useLocation()
     const [locationState, _]
         = useState<FormPageLocationState | null>(location.state);
+
     // Set the values to be loaded to the form if applicable
     const [loadValues, setLoadValues]
         = useState<FormValues | undefined>()
@@ -36,7 +37,7 @@ function FormPage(){
             setLoadValues(locationState?.localStorageValues)
         }
     },[locationState]);
-    console.log(locationState)
+
     return (
         <>
             {locationState?.formType == "A" &&

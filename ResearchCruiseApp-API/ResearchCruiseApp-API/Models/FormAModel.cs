@@ -5,82 +5,66 @@ namespace ResearchCruiseApp_API.Models;
 
 public class FormAModel
 {
-    //Ogólne informacje
-    //public CruiseInfo CruiseInfoData { get; set; }
+    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
+    public Guid? Id { get; set; }
+
+    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
+    public Guid CruiseManagerId { get; set; }
     
     [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
-    public Guid? Id { get; set; } = null!;
-    //\p{L}\p{M}
-    public Guid? CruiseManagerId { get; set; } = null!;
-    public Guid? DeputyManagerId { get; set; } = null!;
+    public Guid DeputyManagerId { get; set; }
     
-    //(?) jaki format na rok
     [Range(2024, 2050)]
-    public int? Year { get; set; } = 0;
+    public int Year { get; set; }
     
-    //Dopuszczlny termin rejsu (typ?)
-    //[Length(2,2)]
-    //[Range(0,24)]
-    public HashSet<int>? AcceptablePeriod { get; set; } = null!;
+    [Length(2,2)]
+    public HashSet<int> AcceptablePeriod { get; set; } = [];
     
-    //Optymalny termin rejsu (typ?)
-    //[Length(2,2)]
-    //[Range(0,24)]
-    public HashSet<int>? OptimalPeriod { get; set; } = null!;
+    [Length(2,2)]
+    public HashSet<int> OptimalPeriod { get; set; } = [];
     
-    [Range(1,99)]
-    public int? CruiseHours { get; set; } = 0;
+    [Range(0, int.MaxValue)]
+    public int CruiseHours { get; set; }
+
+    [Range(0, double.MaxValue)]
+    public double? CruiseDays { get; set; }
     
-    //Uwaga dotycząca terminu:
-    [StringLength(200)]
-    public string? PeriodNotes { get; set; } = null!;
-    //Czy statek na potrzeby badań będzie wykorzystywany
+    [StringLength(1024)]
+    public string? PeriodNotes { get; set; }
+    
     [Range(0,4)]
-    public int? ShipUsage { get; set; } = 0;
+    public int ShipUsage { get; set; }
     
-    //koniec CruiseInfo
-
-
-    //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
-    public int? PermissionsRequired { get; set; }
+    [MaxLength(1024)]
+    public string? DifferentUsage { get; set; }
     
-    [MaxLength(200)]
+    public int PermissionsRequired { get; set; }
+    
+    [MaxLength(1024)]
     public string? Permissions { get; set; }
     
-    
-    //(?) opcjonalnie opis. 
     [Range(0,20)]
-    public int? ResearchArea { get; set; }
+    public int ResearchArea { get; set; }
     
+    [MaxLength(1024)]
+    public string? ResearchAreaInfo { get; set; }
     
-    //Cel rejsu (opis max. 100 słów):
-    public int? CruiseGoal { get; set; }
+    public int CruiseGoal { get; set; }
     
-    [MaxLength(200)]
+    [MaxLength(1024)]
     public string? CruiseGoalDescription { get; set; }
 
-    
-    //Zadania
-    public List<ResearchTask>? ResearchTasks { get; set; }
+    public List<ResearchTask> ResearchTasks { get; set; } = [];
 
-    
-    //Lista umów
-    public List<Contract>? Contracts { get; set; }
-    
-    
-    // Zespoły z UG
-    public List<UGTeam>? UgTeams { get; set; }
-    
-    
-    //Zespoły goscinne
-    public List<GuestTeam>? GuestTeams { get; set; }
-    
-    
-    //Publikacje i Prace
-    public List<Publication>? Publications { get; set; }
-    public List<Thesis>? Theses { get; set; }
-    
-    
-    //Zadania SPUB
-    public List<SPUBTask> SpubTasks { get; set; }
+    public List<Contract> Contracts { get; set; } = [];
+
+    public List<UGTeam> UgTeams { get; set; } = [];
+
+    public List<GuestTeam> GuestTeams { get; set; } = [];
+
+    public List<Publication> Publications { get; set; } = [];
+
+    public List<Thesis> Theses { get; set; } = [];
+
+    public List<SPUBTask> SpubTasks { get; set; } = [];
 }

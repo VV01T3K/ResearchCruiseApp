@@ -20,7 +20,7 @@ import {administrationUnits} from "../../../../resources/administrationUnits";
 import useCustomEvent from "../../../Tools/useCustomEvent";
 import api from "../../../Tools/Api";
 import FormYearSelect from "../Inputs/FormYearSelect";
-import ThesisInput, {Thesis} from "../Inputs/ThesisInput/ThesisInput"
+import ThesesInput, {Thesis} from "../Inputs/ThesesInput/ThesesInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
 
 
@@ -41,20 +41,23 @@ type FormAInitValues = {
 }
 
 export type FormAValues = {
+    id?: string
     cruiseManagerId: string
     deputyManagerId: string
-    year: string
-    acceptedPeriod: number[]
+    year: number
+    acceptablePeriod: number[]
     optimalPeriod: number[]
-    cruiseDays: string
-    cruiseHours: any
-    periodNotes: string
-    shipUsage: string
-    permissions: string
-    researchArea: string
-    researchAreaInfo: string
-    cruiseGoal: string
-    cruiseGoalDescription: string
+    cruiseHours: number
+    cruiseDays?: number
+    periodNotes?: string
+    shipUsage: number
+    differentUsage?: string
+    permissionsRequired: number
+    permissions?: string
+    researchArea: number
+    researchAreaInfo?: string
+    cruiseGoal: number
+    cruiseGoalDescription?: string
     researchTasks: Task[]
     contracts: Contract[]
     ugTeams: UgTeam[]
@@ -66,6 +69,7 @@ export type FormAValues = {
 
 export type FormAValue =
     string |
+    number |
     number[] |
     any |
     Task[] |
@@ -83,7 +87,7 @@ type Props = {
 
 
 function FormA(props: Props){
-    const form = useForm({
+    const form = useForm<FormAValues>({
         mode: 'onBlur',
         // defaultValues: defaultValues,
         shouldUnregister: false
@@ -164,8 +168,9 @@ function FormA(props: Props){
                                  label="Liczba planowanych dób rejsowych"
                                  connectedName="cruiseHours"
                                  notZero
-                                 newVal={(e) => 24*e}
+                                 newVal={(e) => 24 * e}
                                  maxVal={99}
+                                 fractionDigits={2}
                     />
                     <NumberInput className="col-12 col-md-12 col-xl-6"
                                  notZero
@@ -233,7 +238,8 @@ function FormA(props: Props){
 
                 <FormSection title={sections.Rejon}>
                     <ClickableMap
-                        label="Obszar prowadzonych badań" name="researchArea"
+                        label="Obszar prowadzonych badań"
+                        name="researchArea"
                         // image={formInitValues?.researchAreasMap}
                         regions={formInitValues?.researchAreas}
                     />
@@ -268,8 +274,8 @@ function FormA(props: Props){
                                 "values": {
                                     "title": "3re",
                                     "time": {
-                                        "startDate": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
-                                        "endDate": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                                        "start": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
+                                        "end": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
                                     },
                                     "financingAmount": "0.00"
                                 }
@@ -279,8 +285,8 @@ function FormA(props: Props){
                                 "values": {
                                     "title": "3re",
                                     "time": {
-                                        "startDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
-                                        "endDate": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
+                                        "start": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)",
+                                        "end": "Wed May 01 2024 00:00:00 GMT+0200 (czas środkowoeuropejski letni)"
                                     },
                                     "financingAmount": "0.00"
                                 }
@@ -414,61 +420,61 @@ function FormA(props: Props){
                         historicalPublications={[
                             {
                                 category: "subject",
-                                DOI: "10.1016/j.marenvres.2023.106132",
+                                doi: "10.1016/j.marenvres.2023.106132",
                                 authors: "Urszula Kwasigroch, Katarzyna Łukawska-Matuszewska, Agnieszka Jędruch, Olga Brocławik, Magdalena Bełdowska",
                                 title: "Mobility and bioavailability of mercury in sediments of the southern Baltic sea in relation to the chemical fractions of iron: Spatial and temporal patterns",
                                 magazine: "Marine Environmental Research",
-                                year: "2023",
-                                points: "0"
+                                year: 2023,
+                                ministerialPoints: 0
 
                             },
                             {
                                 category: "subject",
-                                DOI: "10.1016/j.csr.2018.08.008",
+                                doi: "10.1016/j.csr.2018.08.008",
                                 authors: "Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska",
                                 title: "Porewater dissolved organic and inorganic carbon in relation to methane occurrence in sediments of the Gdańsk Basin (southern Baltic Sea)",
                                 magazine: "Continental Shelf Research",
-                                year: "2018",
-                                points: "30"
+                                year: 2018,
+                                ministerialPoints: 30
                             },
                             {
                                 category: "postscript",
-                                DOI: "10.3390/biology12020147",
+                                doi: "10.3390/biology12020147",
                                 authors: "Natalia Miernik, Urszula Janas, Halina Kendzierska",
                                 title: "Role of macrofaunal communities in the Vistula River plume, the Baltic Sea - bioturbation and bioirrigation potential",
                                 magazine: "Biology",
-                                year: "2023",
-                                points: "100"
+                                year: 2023,
+                                ministerialPoints: 100
                             },
                             {
                                 category: "postscript",
-                                DOI: "10.1016/j.scitotenv.2020.140306",
+                                doi: "10.1016/j.scitotenv.2020.140306",
                                 authors: "Jakub Idczak, Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska, Bożena Graca, Natalia Gorska, Zygmunt Klusek, Patryk Pezacki, Jerzy Bolałek",
                                 title: "A geophysical, geochemical and microbiological study of a newly discovered pockmark with active gas seepage and submarine groundwater discharge (MET1-BH, central Gulf of Gdańsk, southern Baltic Sea)",
                                 magazine: "Science of the Total Environment",
-                                year: "2020",
-                                points: "200"
+                                year: 2020,
+                                ministerialPoints: 200
                             }
                         ]}
                     />
-                    {/*<div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>*/}
-                    {/*    <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>*/}
-                    {/*    <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy*/}
-                    {/*        wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z*/}
-                    {/*            pokładu jednostki RV Oceanograf.</strong></p>*/}
-                    {/*</div>*/}
-                        <ThesisInput
+                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
+                        <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
+                        <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
+                            wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
+                                pokładu jednostki RV Oceanograf.</strong></p>
+                    </div>
+                        <ThesesInput
                             required={true}
                             className="col-12"
                             label="Prace"
                             name="theses"
-                            historicalThesis={[
+                            historicalTheses={[
                                 {
                                     category: "doctor",
                                     author: "Marian Domogolski",
                                     title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
                                     promoter: "Elżbieta Widłogrodzka",
-                                    year: "2020"
+                                    year: 2020
 
                                 },
                                 {
@@ -476,14 +482,14 @@ function FormA(props: Props){
                                     author: "Marian Domogolski",
                                     title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
                                     promoter: "Elżbieta Widłogrodzka",
-                                    year: "2020"
+                                    year: 2020
                                 },
                                 {
                                     category: "bachelor",
                                     author: "Marian Domogolski",
                                     title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
                                     promoter: "Elżbieta Widłogrodzka",
-                                    year: "2020"
+                                    year: 2020
                                 }
                             ]}
                         />
@@ -495,18 +501,18 @@ function FormA(props: Props){
                         name="spubTasks"
                         historicalSpubTasks={[
                             {
-                                yearFrom: "2020",
-                                yearTo: "2030",
+                                yearFrom: 2020,
+                                yearTo: 2030,
                                 name: "Badanie nowych właściwości wodno-tlenowych Morza Bałtyckiego w obszarze Zatoki Gdańskiej"
                             },
                             {
-                                yearFrom: "2021",
-                                yearTo: "2026",
+                                yearFrom: 2021,
+                                yearTo: 2026,
                                 name: "Badanie właściwości azotowych Morza Bałtyckiego w obszarze Zatoki Puckiej"
                             },
                             {
-                                yearFrom: "2022",
-                                yearTo: "2024",
+                                yearFrom: 2022,
+                                yearTo: 2024,
                                 name: "Bałtycki pobór zasobów mineralnych na obszarze Polskiej WSE"
                             },
                         ]}

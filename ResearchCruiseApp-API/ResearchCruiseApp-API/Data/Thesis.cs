@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchCruiseApp_API.Data;
 
@@ -7,14 +8,17 @@ public class Thesis
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public string Category { get; set; }
+    [StringLength(1024)]
+    public string Category { get; set; } = null!;
+    
+    [StringLength(1024)]
+    public string Author { get; set; } = null!;
+    
+    [StringLength(1024)]
+    public string Title { get; set; } = null!;
+    
+    [StringLength(1024)]
+    public string Promoter { get; set; } = null!;
     
     public int Year { get; set; }
-    
-    //File_type
-    public string Author { get; set; }
-    
-    public string Title { get; set; }
-    
-    public string Promoter { get; set; }
 }

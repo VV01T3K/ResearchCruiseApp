@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Data;
@@ -25,7 +26,6 @@ namespace ResearchCruiseApp_API.Controllers
     public class AccountController(UserManager<User> userManager) : ControllerBase
     {
         private readonly EmailAddressAttribute _emailAddressAttribute = new();
-        
         
         [HttpPost("register")]
         public async Task<Results<Ok, ValidationProblem>> Register(

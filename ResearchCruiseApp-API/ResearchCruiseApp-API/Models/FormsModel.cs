@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Text.Json.Serialization;
-using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Data.Interfaces;
+using ResearchCruiseApp_API.Models.DataTypes;
 
 namespace ResearchCruiseApp_API.Models;
 

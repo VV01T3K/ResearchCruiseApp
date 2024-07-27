@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace  ResearchCruiseApp_API.Data;
@@ -8,17 +9,26 @@ public class ResearchTask
     
     public int Type { get; set; }
 
+    [StringLength(1024)]
     public string? Title { get; set; }
+    
+    [StringLength(1024)]
     public string? Author { get; set; }
+    
+    [StringLength(1024)]
     public string? Institution { get; set; }
-    //zmienić w frontendzie na DATETIME
+
+    [StringLength(1024)]
     public string? Date { get; set; }
     
-    //Time_type
+    [StringLength(1024)]
     public string? StartDate { get; set; }
+    
+    [StringLength(1024)]
     public string? EndDate { get; set; }
     
-    //zmienić w frontendzie na int
-    public string? FinancingAmount { get; set; }
+    public double? FinancingAmount { get; set; }
+    
+    [StringLength(1024)]
     public string? Description { get; set; }
 }

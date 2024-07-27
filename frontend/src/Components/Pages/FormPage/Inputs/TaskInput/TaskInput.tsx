@@ -24,6 +24,11 @@ export type TaskValues =
     { title: string, time: Time, financingAmount: number } |
     { description: string }
 
+type TaskValuesValue =
+    string |
+    number |
+    Time
+
 export type Task = {
     type: number,
     values: TaskValues
@@ -61,13 +66,13 @@ function TaskInput(props: Props) {
         { author: "", title: ""},
         { author: "", title: ""},
         { title: "", institution: "", date: ""},
-        { title: "", time: { start: "", end: ""}, financingAmount: "" },
-        { title: "", time: { start: "", end: ""}, financingAmount: "" },
-        { title: "", time: { start: "", end: "" }, financingAmount: "" },
-        { title: "", time: { start: "", end: "" }, financingAmount: "" },
-        { title: "", time: { start: "", end: "" }, financingAmount: "" },
+        { title: "", time: { start: "", end: ""}, financingAmount: 0 },
+        { title: "", time: { start: "", end: ""}, financingAmount: 0 },
+        { title: "", time: { start: "", end: "" }, financingAmount: 0 },
+        { title: "", time: { start: "", end: "" }, financingAmount: 0 },
+        { title: "", time: { start: "", end: "" }, financingAmount: 0 },
         { description: "" },
-        { title: "", time: { start: "", end: "" }, financingAmount: "" },
+        { title: "", time: { start: "", end: "" }, financingAmount: 0 },
         { description: "" },
     ]
 
@@ -208,12 +213,13 @@ function TaskInput(props: Props) {
                                              style={{width: windowWidth >= 1200 ? "70%" : "100%"}}
                                         >
                                             <div className="d-flex flex-wrap justify-content-center justify-content-xl-start pb-3 w-100">
-                                                {getFields(row).map((val: string | Time, valIdx: number) => {
+                                                {getFields(row).map((val: TaskValuesValue, valIdx: number) => {
                                                     return (
                                                         <div key={valIdx}
                                                              className={`${getFields(row).length == 2 && "col-xl-6"} ${getFields(row).length == 3 && "col-xl-4"} col-12 p-1`}
                                                         >
                                                             <label className={"d-flex justify-content-center align-items-center"}>
+                                                                {console.log(valIdx)}
                                                                 {Object.values(taskFieldsOptions)[row.type][valIdx]}
                                                             </label>
                                                             {(()=> {
@@ -278,7 +284,6 @@ function TaskInput(props: Props) {
                                                                                     showMonthYearPicker
                                                                                     showMonthYearDropdown
                                                                                     className={"text-center w-100 border border-opacity-75 rounded-2 p-1 bg-light"}
-                                                                                    selectsStart
                                                                                     startDate={(val as Time).start ? new Date((val as Time).start) : null}
                                                                                     maxDate={(val as Time).end ? new Date((val as Time).end) : null}
                                                                                     endDate={(val as Time).end ? new Date((val as Time).end) : null}

@@ -63,7 +63,7 @@ export default function GuestTeams(props: Props){
                         <input
                             className="text-center placeholder-glow w-100 p-1 form-control bg-light"
                             disabled
-                            value={item.count}
+                            value={item.noOfPersons}
                         />
                     </div>
                 </div>))}

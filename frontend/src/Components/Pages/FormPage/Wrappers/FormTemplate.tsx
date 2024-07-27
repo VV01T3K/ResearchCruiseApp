@@ -11,7 +11,7 @@ import BusyEvent from "../../../CommonComponents/BusyEvent";
 export type FormValues =
     FormAValues // | FormBValues | FormCValues
 
-type FormValue =
+export type FormValue =
     FormAValue // | FormBValue | FormCValue
 
 export type SavedFormData = {
@@ -24,7 +24,7 @@ export type SavedFormData = {
 
 type Props = {
     children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>[]
-    form: UseFormReturn,
+    form: UseFormReturn<FormValues>,
     loadValues?: FormValues,
     type: string,
     readonly?:boolean
@@ -116,13 +116,13 @@ function FormTemplate(props: Props) {
 
 
     const handleSubmit = (data) => {
-        SetBusyWithMessage("Trwa wysyłanie")
+        //SetBusyWithMessage("Trwa wysyłanie")
         Api
-            .post('/formsA/'+props.type, data)
-            .then(()=> {setTimeout(()=>
-            {
-                    navigate("/ViewForms")},1000)
-            })
+            .post('/formsA/' + props.type, data)
+            // .then(()=> {setTimeout(()=>
+            // {
+            //         navigate("/ViewForms")},1000)
+            // })
     }
 
     return (
@@ -139,7 +139,14 @@ function FormTemplate(props: Props) {
                                     <button onClick={()=>setSavingStartd(true)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Zapisz</button>
                                 </div>
                                 <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                                    <button onClick={props.form.handleSubmit(handleSubmit)} className="btn btn-primary w-100" style={{fontSize:"inherit"}}>Wyślij</button>
+                                    <button
+                                        onClick={props.form.handleSubmit(handleSubmit)}
+                                        // onClick={() => console.log(props.form.getValues())}
+                                        className="btn btn-primary w-100"
+                                        style={{ fontSize:"inherit" }}
+                                    >
+                                        Wyślij
+                                    </button>
                                 </div>
                             </>
                         }
