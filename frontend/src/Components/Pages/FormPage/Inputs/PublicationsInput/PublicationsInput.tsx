@@ -4,6 +4,7 @@ import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import PublicationsCategoryPicker from "./PublicationsCategoryPicker"
 import {Contract} from "../ContractsInput/ContractsInput";
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
 type Props = {
@@ -28,21 +29,7 @@ export type Publication = {
 
 
 function PublicationsInput(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
-
-
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>

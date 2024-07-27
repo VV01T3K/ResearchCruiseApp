@@ -1,19 +1,7 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
-import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
-import LinkWithState from "../../CommonComponents/LinkWithState";
+
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {Application, ApplicationStatus} from "./ApplicationsPage";
 import {useNavigate} from "react-router-dom";
-import useCustomEvent from "../../Tools/useCustomEvent";
-import {addPlugins} from "workbox-precaching";
-import Api from "../../Tools/Api";
-import app from "../../App";
-import PageMenuBar from "../CommonComponents/PageMenuBar";
-import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
-import {sort} from "react-data-table-component/dist/DataTable/util";
-import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
-import useWindowWidth from "../../CommonComponents/useWindowWidth";
+import useWindowWidth from "../CommonComponents/useWindowWidth";
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.
@@ -31,8 +19,7 @@ type Props = {
     deletionMode?: boolean
 }
 
-
-export default function ApplicationsList(props: Props) {
+export default function MyApplicationsList(props: Props) {
     const navigate = useNavigate()
 
     const [applications, setApplications]: [Application[], Dispatch<any>]
@@ -41,14 +28,12 @@ export default function ApplicationsList(props: Props) {
         if (!props.deletionMode) {
             Api
                 .get(
-                    '/api/Applications',)
+                    '/api/MyApplications',)
                 .then(response => response ? setApplications(response?.data): ()=>{}
                 )
         }
     },[]);
-
-    const windowWidth = useWindowWidth()
-
+    const windowWidth = useWindowWidth();
 
     const sortApplicationsByPoints = (directionAscending: boolean) => {
         setApplications([

@@ -13,38 +13,24 @@ type Props = {
 function PageHeader(props: Props) {
     const [toggledButton, setToggle] = useState(false)
     const {pageHeaderText} = PageHeaderText()
-    return(
-        <div className="fixed-top">
-            <div className={props.className+ " bg-primary fixed-top text-light w-100 z-1 appHeader"}
-            >
-                <div className="navbar navbar-light h-100 w-100 ">
-                    <div className="d-flex container-xxl flex-row justify-content-start flex-nowrap  h-100
-                                    w-100"
-                    >
-                        <UgPageLink/>
-                        <div className="h-100 text-light text-nowrap align-self-center text-center navbar me-3">
-                            {pageHeaderText}
-                        </div>
-                        <button className="d-md-flex d-md-none navbar-toggler navbar-dark ms-auto me-0 pe-3"
-                                onClick={() => setToggle(!toggledButton)}
-                        >
-                            <span className="navbar-toggler-icon" />
-                        </button>
-                        <div className="d-none d-md-flex ms-auto me-0 pe-3">
-                            <DesktopMenu />
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div className="m-0 p-0 appHeader" />
-            <div className="m-0 p-0 fixed-top z-0 bg-primary">
-                <div className="m-0 p-0 appHeader"/>
-                <div className={`${toggledButton ? "flex-row d-md-flex" : "d-none" } d-md-none`}
-                     style={{"height":"42.25px"}}
-                >
-                    <MobileMenu />
-                </div>
+    const AppTopBar = () => {
+        return (
+            <div className={props.className + " app-top-bar"}>
+                <UgPageLink/>
+                {pageHeaderText}
+                <button className="display-on-mobile mobile-menu-button" onClick={() => setToggle(!toggledButton)}/>
+                <div className="display-on-desktop desktop-menu"><DesktopMenu/></div>
+            </div>
+        )
+    }
+
+    return (
+        <div className="fixed-top">
+            <AppTopBar/>
+            <div className="app-top-bar-spacing"/>
+            <div className={`${toggledButton ? "display-on-mobile mobile-submenu" : "d-none"}`}>
+                <MobileMenu />
             </div>
         </div>
     );

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Page from "../../Page";
 import {useNavigate} from "react-router-dom";
-import useCustomEvent from "../../../Tools/useCustomEvent";
 import Api from "../../../Tools/Api";
 import {FormAValue, FormAValues} from "../Forms/FormA";
 import {UseFormReturn} from "react-hook-form";

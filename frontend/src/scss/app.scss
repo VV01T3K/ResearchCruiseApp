@@ -44,7 +44,96 @@ $theme-colors: (
   .align-self-center,
   .m-5
 }
+.desktop-menu-button {
+  @extend
+  .desktop-menu-last-button,
+  .border-end,
+  .border-light
+}
 
+.desktop-menu-last-button {
+  @extend
+  .col,
+  .text-center,
+}
 
+.mobile-menu-logged-in-button {
+  @extend
+  .col-3,
+  .text-center,
+}
+.mobile-menu-not-logged-in-button{
+  @extend
+  .col-4,
+  .text-center,
+}
+.display-on-desktop{
+  @extend
+  .d-none,
+  .d-md-flex
+}
+.stick-end{
+  @extend
+  .ms-auto,
+  .me-0
+}
+.desktop-menu{
+  @extend
+  .stick-end,
+  .row,
+  .align-items-center
+}
+.display-on-mobile{
+  @extend
+  .d-flex,
+  .d-md-none
+}
+
+.mobile-menu-button{
+  @extend
+  .navbar-toggler,
+  .navbar-dark,
+  .stick-end,
+  .navbar-toggler-icon,
+  .p-3
+}
+$top-bar-height: 60.3px;
+.app-top-bar{
+  height: $top-bar-height;
+  @extend
+  .d-flex,
+  .flex-row,
+  .flex-nowrap,
+  .justify-content-start,
+  .container-xxl,
+  .bg-primary,
+  .fixed-top,
+  .text-light,
+  .w-100,
+  .ps-4,
+  .pe-4,
+  .z-1,
+  .navbar,
+  .navbar-light,
+  .rounded-bottom
+}
+.app-top-bar-spacing{
+  height: $top-bar-height;
+  @extend
+  .m-0,
+  .p-0,
+  .w-100
+}
+.mobile-submenu{
+  margin-top: $top-bar-height;
+  height: 42.25px;
+  @extend
+  .flex-row,
+  .align-items-center,
+  .p-0,
+  .fixed-top,
+  .z-0,
+  .bg-primary
+}
 
 @import "node_modules/bootstrap/scss/bootstrap";

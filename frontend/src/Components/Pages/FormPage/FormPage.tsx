@@ -6,13 +6,14 @@ import FormA, {FormAValue, FormAValues} from "./Forms/FormA";
 import FormB from "./Forms/FormB";
 import FormC from "./Forms/FormC";
 import Api from "../../Tools/Api";
+import NotFoundPage from "../NotFoundPage";
 
 
 export type FormPageLocationState = {
     formType: string,
     formId?: string,  // The id of the form to be loaded from the database if applicable
     localStorageValues?: FormValues, // To be deleted soon
-    readonly: boolean
+    readonly?: boolean
 }
 
 
@@ -28,15 +29,9 @@ function FormPage(){
         = useState<FormValues | undefined>()
     useEffect(() => {
         if (locationState?.formId) {
-            console.log(locationState.formId)
-            Api
-                .get(
-                    `/Forms/${locationState?.formId}`
+            Api.get(`/Forms/${locationState?.formId}`).then(response => {
+                        setLoadValues(response.data)}
                 )
-                .then(response => {
-                    console.log(response)
-                    setLoadValues(response.data)
-                })
         }
         else {
             setLoadValues(locationState?.localStorageValues)
@@ -46,22 +41,12 @@ function FormPage(){
     return (
         <>
             {locationState?.formType == "A" &&
-                <FormA
-                    loadValues={loadValues}
-                    readonly={locationState?.readonly}
-                />
-            }
+                <FormA loadValues={loadValues} readonly={locationState?.readonly}/>}
             {locationState?.formType == "B" &&
-                <FormB
-                    loadValues={loadValues}
-                    readonly={locationState?.readonly}
-                />
-            }
+                <FormB loadValues={loadValues} readonly={locationState?.readonly}/>}
             {locationState?.formType == "C" &&
-                <FormC
-                    loadValues={loadValues}
-                />
-            }
+                <FormC loadValues={loadValues} readonly={locationState?.readonly}/>}
+            {!locationState && <NotFoundPage/>}
         </>
     )
 }

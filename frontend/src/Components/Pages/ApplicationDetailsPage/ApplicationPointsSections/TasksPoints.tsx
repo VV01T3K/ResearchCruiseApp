@@ -6,6 +6,7 @@ registerLocale("pl", pl);
 import 'react-dropdown/style.css';
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import {Time, TaskValues, taskFieldsOptions} from "../../FormPage/Inputs/TaskInput/TaskInput";
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 
 
@@ -29,19 +30,8 @@ function TasksPoints(props: Props) {
         return Object.values(evaluatedTask.values)
     }
 
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
+
 
     return (
         <div className="col-12 p-3">

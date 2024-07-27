@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Page from "../Page";
+import Page from "../../Pages/Page";
 import Api from "../../Tools/Api";
 import DataTable from 'react-data-table-component';
 type Props = {

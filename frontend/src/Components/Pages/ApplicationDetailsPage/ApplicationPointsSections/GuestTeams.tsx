@@ -1,30 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {GuestsTeam} from "../../FormPage/Inputs/GuestTeamsInput/GuestTeamsInput";
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 type Props = {
     guestTeams: GuestsTeam[],
 }
-
-
-function useWindowWidth(){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () =>
-            {
-                setWindowWidth(window.innerWidth)
-            };
-            window.addEventListener('resize', handleResize)
-            return () =>
-            {
-                window.removeEventListener('resize', handleResize)
-            }
-        },
-        []
-    );
-    return windowWidth
-}
-
 
 
 export default function GuestTeams(props: Props){

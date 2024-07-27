@@ -3,7 +3,7 @@ import userDataManager from "./CommonComponents/UserDataManager";
 const UserBasedAccess = () => {
     const {UserLoggedIn, userData} = userDataManager()
     const UserRoleIncludes = (role: string) => {
-        return UserLoggedIn() && userData!["roles"].includes(role)
+        return UserLoggedIn() && userData && userData!["roles"].includes(role)
     }
     const UserHasShipownerAccess = () => {
         if (UserRoleIncludes("Shipowner"))
@@ -31,7 +31,11 @@ const UserBasedAccess = () => {
         return !UserLoggedIn();
     }
 
+    const WaitingForUserData = () => {
+        return UserLoggedIn() && !userData
+    }
+
     return {UserHasAdminAccess, UserHasShipownerAccess,
-        UserHasCruiseManagerAccess, CommonAccess, NotLoggedInAccess}
+        UserHasCruiseManagerAccess, CommonAccess, NotLoggedInAccess, WaitingForUserData}
 }
 export default UserBasedAccess

@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../CommonComponents/ErrorCode";
 import Select from "react-select";
+import {prop} from "react-data-table-component/dist/DataTable/util";
+import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
 export type UgTeam = {
@@ -25,19 +27,7 @@ function UgTeamsInput(props: Props) {
     const requiredMsg = "Dodaj przynajmniej jedną jednostkę"
     const disabled = props.form!.formState.errors[props.name] && props.form!.formState.errors[props.name]!.message != requiredMsg
 
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className={props.className + " p-3 d-flex flex-column justify-content-center align-self-start"}>

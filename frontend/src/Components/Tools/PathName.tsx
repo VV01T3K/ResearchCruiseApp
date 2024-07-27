@@ -6,6 +6,7 @@ export enum PathName {
     Default = "/*",
     Messages = "/Messages",
     Applications = "/Applications",
+    MyApplications = "/MyApplications",
     ApplicationDetails = "/ApplicationDetails",
     Cruises = "/Cruises",
     CruiseForm = "/CruiseForm",

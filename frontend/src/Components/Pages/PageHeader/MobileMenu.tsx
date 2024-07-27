@@ -5,22 +5,15 @@ import UserDataManager from "../../CommonComponents/UserDataManager";
 function MobileMenu() {
     const {UserLoggedIn} = UserDataManager()
     return (
-        <div className="flex-row d-flex align-items-center">
-            <div className={`${UserLoggedIn() ? "col-3": "col-4"} text-center`}>
-                <RadioMorsLink/>
-            </div>
-            <div className={`${UserLoggedIn() ? "col-3": "col-4"} text-center`}>
-              <OutlookLink/>
-            </div>
-            <div className={`${UserLoggedIn() ? "col-3": "col-4"} text-center`}>
-                <HomeLink/>
-            </div>
-            {UserLoggedIn() &&
-            <div className="col-3 text-center">
-               <LogoutLink/>
-            </div>
-            }
-        </div>
+        <>
+            <RadioMorsLink
+                className={UserLoggedIn() ? "mobile-menu-logged-in-button": "mobile-menu-not-logged-in-button"}/>
+            <OutlookLink
+                className={UserLoggedIn() ? "mobile-menu-logged-in-button": "mobile-menu-not-logged-in-button"}/>
+            <HomeLink
+                className={UserLoggedIn() ? "mobile-menu-logged-in-button": "mobile-menu-not-logged-in-button"}/>
+                {UserLoggedIn() && <LogoutLink className="mobile-menu-logged-in-button"/>}
+        </>
     )
 }
 

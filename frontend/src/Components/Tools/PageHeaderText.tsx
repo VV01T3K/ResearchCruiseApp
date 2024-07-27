@@ -14,7 +14,7 @@ const PageHeaderText = () => {
             case Path.NewForm:
                 break
             default:
-                if (UserLoggedIn())
+                if (UserLoggedIn() && userData)
                     text = `Witaj ${userData!.firstName}`
                 break
         }

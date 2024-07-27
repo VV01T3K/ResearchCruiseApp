@@ -2,30 +2,33 @@ import {Link} from "react-router-dom";
 import React from "react";
 import UserDataManager from "../../CommonComponents/UserDataManager";
 import Logo from "../../../resources/logo.svg";
-
-export const RadioMorsLink = () => {
+import {prop} from "react-data-table-component/dist/DataTable/util";
+type Props = {
+    className?: string
+}
+export const RadioMorsLink = (props:Props) => {
     const OpenRadio = () => window.open(
         'http://player.mors.ug.edu.pl/sites/all/modules/jplayer/mors_popup.html',
         'newWin',
         'width=280,height=220'
     )
     return(
-        <Link id="radiomors" to="" onClick={OpenRadio} title="Słucha Radia MORS">
+        <Link className={props.className} id="radiomors" to="" onClick={OpenRadio} title="Słucha Radia MORS">
             <img alt="Radio MORS" src="https://ug.edu.pl/themes/ug_faculty/images/radio.svg" />
         </Link>
     )
 }
-export const OutlookLink = () => {
+export const OutlookLink = (props:Props) => {
     return (
-        <Link to="https://outlook.com/ug.edu.pl" id="webmail" title="Poczta uniwersytecka">
+        <Link className={props.className} to="https://outlook.com/ug.edu.pl" id="webmail" title="Poczta uniwersytecka">
             <img alt="Poczta UG" src="https://ug.edu.pl/themes/ug_faculty/images/mail.svg" />
         </Link>
     )
 }
 
-export const HomeLink = () => {
+export const HomeLink = (props:Props) => {
     return (
-        <Link to="/" id="home" title="Strona domowa"
+        <Link className={props.className} to="/" id="home" title="Strona domowa"
               style={{"textDecoration": "none", "fontSize": "20px", "fontWeight": "500", "color": "white"}}>
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-house"
                  viewBox="0 0 16 16">
@@ -36,23 +39,22 @@ export const HomeLink = () => {
     )
 }
 
-export const LogoutLink = () => {
+export const LogoutLink = (props:Props) => {
     const {Logout} = UserDataManager()
 
     return (
-        <Link onClick={Logout} to="/" style={{"textDecoration": "none", "fontSize": "20px", "color": "white"}}>
+        <Link className={props.className} onClick={Logout} to="/" style={{"textDecoration": "none", "fontSize": "20px", "color": "white"}}>
             Wyloguj
         </Link>
     )
 }
 
-export const UgPageLink = () => {
+export const UgPageLink = (props:Props) => {
     return (
-        <a className="navbar-brand pe-3 h-100 border-end"
+        <a className={props.className + " navbar-brand pe-3 h-100 border-end"}
            href="https://ug.edu.pl/"
            title="Strona główna"
-           rel="home"
-        >
+           rel="home">
             <img src={Logo} alt="Strona główna" className="d-inline align-top h-100"/>
         </a>
     )

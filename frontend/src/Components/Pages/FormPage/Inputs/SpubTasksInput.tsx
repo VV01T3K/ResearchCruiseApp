@@ -3,6 +3,7 @@ import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseF
 import ErrorCode from "../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import {prop} from "react-data-table-component/dist/DataTable/util";
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 
 export type SpubTask = {
@@ -22,19 +23,7 @@ type Props = {
 
 
 export default function SpubTasksInput(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     const disabled = props.form!.formState.errors[props.name] != undefined
     const minYear = 1900

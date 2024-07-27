@@ -1,12 +1,12 @@
 import {Route, Routes} from "react-router-dom";
-import NewFormPage from "./Pages/NewFormPage/NewFormPage";
+import NewFormPage from "./Legacy/NewFormPage/NewFormPage";
 import ManageUsersPage from "./Pages/ManageUsersPage/ManageUsersPage";
 import ShipOwnerPanel from "./Pages/HomePage/ShipOwnerPanel";
 import {PathName as Path} from "./Tools/PathName";
 import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import AdminPanel from "./Pages/HomePage/AdminPanel";
-import MessagesPage from "./Pages/MessagesPage/MessagesPage";
+import MessagesPage from "./Legacy/MessagesPage/MessagesPage";
 import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
 import ApplicationDetailsPage from "./Pages/ApplicationDetailsPage/ApplicationDetailsPage";
 import CruisesPage from "./Pages/CruisesPage/CruisesPage";
@@ -19,13 +19,15 @@ import LoginPage from "./Pages/LoginPage/LoginPage";
 import React from "react";
 import ServerErrorPage from "./Pages/ServerErrorPage";
 import UserBasedAccess from "./UserBasedAccess";
+import MyApplicationsPage from "./Pages/MyApplicationsPage";
+import WaitingPage from "./Pages/WaitingPage";
 
 
 
 const RoleBasedRouting = () => {
 
     const {UserHasAdminAccess, UserHasShipownerAccess,
-        UserHasCruiseManagerAccess, CommonAccess, NotLoggedInAccess
+        UserHasCruiseManagerAccess, CommonAccess, NotLoggedInAccess, WaitingForUserData
     } = UserBasedAccess()
 
     const ShipownerRoute = () => {
@@ -51,6 +53,7 @@ const RoleBasedRouting = () => {
                 <Route path={Path.ApplicationDetails} element={<ApplicationDetailsPage />} />
                 <Route path={Path.Cruises} element={<CruisesPage />} />
                 <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
+                <Route path={Path.MyApplications} element={<MyApplicationsPage />} />
             </>
         )
     }
@@ -91,6 +94,15 @@ const RoleBasedRouting = () => {
             </>
         )
     }
+
+    const WaitingForUserDataRoute = () => {
+        return (
+            <>
+                <Route path={Path.Default} element={<WaitingPage label={"Wczytywanie danych"}/>} />
+            </>
+        )
+    }
+
     return (
         <Routes>
             {UserHasShipownerAccess() &&  <Route> {ShipownerRoute()} </Route>}
@@ -98,6 +110,7 @@ const RoleBasedRouting = () => {
             {UserHasCruiseManagerAccess() && <Route> {CruiseManagerRoute()}</Route>}
             {CommonAccess() && <Route> {CommonAccessRoute()} </Route>}
             {NotLoggedInAccess() && <Route> {NotLoggedRoute()} </Route>}
+            {WaitingForUserData() && <Route> {WaitingForUserDataRoute()} </Route>}
             <Route> {CommonRoute()} </Route>
         </Routes>
     )

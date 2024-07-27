@@ -34,7 +34,7 @@ const UserDataManager = () => {
     }, [logoutListener])
 
     const GetUserData = async () => {
-        if (sessionStorage.getItem("accessToken")) {
+        if (UserLoggedIn()) {
             if(userData == null)
             await Api.get('/account')
                 .then(response => setUserData(response?.data))
@@ -48,7 +48,7 @@ const UserDataManager = () => {
         navigate(Path.ForcedLogout)
     }
     const UserLoggedIn = () => {
-        return userData != null
+        return sessionStorage.getItem("accessToken") != null
     }
     return {userData, Logout, ForceLogout, UserLoggedIn, GetUserData}
 }

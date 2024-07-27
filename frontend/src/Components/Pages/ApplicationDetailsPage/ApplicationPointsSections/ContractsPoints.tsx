@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import ReadOnlyTextArea from "../../../CommonComponents/ReadOnlyTextArea";
 import FileDownloader from "../../../CommonComponents/FileDownloader";
+import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 
 type EvaluatedContract = {
@@ -25,19 +26,7 @@ type Props = {
 
 
 export default function ContractsPoints(props: Props){
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-    useEffect(
-        () => {
-            const handleResize = () => {
-                setWindowWidth(window.innerWidth);
-            };
-            window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        },
-        []
-    );
+    const windowWidth = useWindowWidth()
 
     return (
         <div className="col-12 p-3">
