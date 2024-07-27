@@ -7,7 +7,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.DbContexts;
 public class ResearchCruiseContext(DbContextOptions<ResearchCruiseContext> options) : DbContext(options)
 {
     public DbSet<Cruise> Cruises { get; init; } = null!;
-    public DbSet<Domain.Entities.Application> Applications { get; init; } = null!;
+    public DbSet<Domain.Entities.CruiseApplication> Applications { get; init; } = null!;
     
     public DbSet<FormA> FormsA { get; init; } = null!;
     public DbSet<FormB> FormsB { get; init; } = null!;

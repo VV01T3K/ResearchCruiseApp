@@ -5,7 +5,7 @@ using ResearchCruiseApp_API.Domain.Common.Interfaces;
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class Application : IYearBasedNumberedEntity
+public class CruiseApplication : IYearBasedNumberedEntity
 {
     [DatabaseGenerated((DatabaseGeneratedOption.Identity))]
     public Guid Id { get; set; }
@@ -14,13 +14,13 @@ public class Application : IYearBasedNumberedEntity
 
     public DateOnly Date { get; set; }
     
-    public FormA? FormA { get; set; } = null!;
+    public FormA? FormA { get; set; }
     
-    public FormB? FormB { get; set; } = null!;
+    public FormB? FormB { get; set; }
     
-    public FormC? FormC { get; set; } = null!;
+    public FormC? FormC { get; set; }
 
-    public EvaluatedApplication? EvaluatedApplication { get; set; } = null!;
+    public EvaluatedApplication? EvaluatedApplication { get; set; }
     
     public int Points { get; set; }
     

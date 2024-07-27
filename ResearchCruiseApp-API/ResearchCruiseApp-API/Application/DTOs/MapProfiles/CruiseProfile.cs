@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp_API.Application.DTOs.DataTypes;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.DbContexts;
-using ResearchCruiseApp_API.Models.DataTypes;
 
 namespace ResearchCruiseApp_API.Application.DTOs.MapProfiles;
 
@@ -135,12 +134,12 @@ public class CruiseProfile : Profile
         ResearchCruiseContext researchCruiseContext,
         UserManager<User> userManager,
         IMapper mapper)
-        : IValueResolver<CruiseFormModel, Cruise, List<Domain.Entities.Application>>
+        : IValueResolver<CruiseFormModel, Cruise, List<Domain.Entities.CruiseApplication>>
     {
-        public List<Domain.Entities.Application> Resolve(
+        public List<Domain.Entities.CruiseApplication> Resolve(
             CruiseFormModel src,
             Cruise dest,
-            List<Domain.Entities.Application> applications,
+            List<Domain.Entities.CruiseApplication> applications,
             ResolutionContext context)
         {
             var result = researchCruiseContext.Applications

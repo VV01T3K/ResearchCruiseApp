@@ -58,7 +58,7 @@ public class ApplicationsService(
 
         var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplication);
 
-        var newApplication = new Domain.Entities.Application
+        var newApplication = new Domain.Entities.CruiseApplication
         {
             Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Applications),
             Date = DateOnly.FromDateTime(DateTime.Now),
@@ -141,7 +141,7 @@ public class ApplicationsService(
     //     return evaluatedApplicationModel;
     // }
     
-    private IIncludableQueryable<Domain.Entities.Application, FormC?> GetApplicationsQuery()
+    private IIncludableQueryable<Domain.Entities.CruiseApplication, FormC?> GetApplicationsQuery()
     {
         return researchCruiseContext.Applications
             .Include(application => application.FormA)

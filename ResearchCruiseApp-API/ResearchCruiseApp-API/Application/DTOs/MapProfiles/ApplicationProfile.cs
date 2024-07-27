@@ -11,7 +11,7 @@ public class ApplicationProfile : Profile
 {
     public ApplicationProfile()
     {
-        CreateMap<Domain.Entities.Application, ApplicationModel>()
+        CreateMap<Domain.Entities.CruiseApplication, ApplicationModel>()
             .ForMember(
                 dest => dest.Year,
                 options =>
@@ -71,16 +71,16 @@ public class ApplicationProfile : Profile
                         src.Status.GetStringValue()
                     ));
 
-        CreateMap<Domain.Entities.Application, ApplicationShortInfoModel>();
+        CreateMap<Domain.Entities.CruiseApplication, ApplicationShortInfoModel>();
     }
 
 
     private class CruiseManagerEmailResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
-        : IValueResolver<Domain.Entities.Application, ApplicationModel, string?>
+        : IValueResolver<Domain.Entities.CruiseApplication, ApplicationModel, string?>
     {
         public string? Resolve(
-            Domain.Entities.Application src, ApplicationModel dest, string? cruiseManagerEmail, ResolutionContext context)
+            Domain.Entities.CruiseApplication src, ApplicationModel dest, string? cruiseManagerEmail, ResolutionContext context)
         {
             if (src.FormA == null)
                 return string.Empty;
@@ -92,10 +92,10 @@ public class ApplicationProfile : Profile
     
     private class CruiseManagerFirstNameResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
-        : IValueResolver<Domain.Entities.Application, ApplicationModel, string>
+        : IValueResolver<Domain.Entities.CruiseApplication, ApplicationModel, string>
     {
         public string Resolve(
-            Domain.Entities.Application src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
+            Domain.Entities.CruiseApplication src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
         {
             if (src.FormA == null)
                 return "";
@@ -107,10 +107,10 @@ public class ApplicationProfile : Profile
     
     private class CruiseManagerLastNameResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
-        : IValueResolver<Domain.Entities.Application, ApplicationModel, string>
+        : IValueResolver<Domain.Entities.CruiseApplication, ApplicationModel, string>
     {
         public string Resolve(
-            Domain.Entities.Application src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
+            Domain.Entities.CruiseApplication src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
         {
             if (src.FormA == null)
                 return "";
@@ -122,10 +122,10 @@ public class ApplicationProfile : Profile
     
     private class DeputyManagerEmailResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
-        : IValueResolver<Domain.Entities.Application, ApplicationModel, string?>
+        : IValueResolver<Domain.Entities.CruiseApplication, ApplicationModel, string?>
     {
         public string? Resolve(
-            Domain.Entities.Application src, ApplicationModel dest, string? deputyManagerEmail, ResolutionContext context)
+            Domain.Entities.CruiseApplication src, ApplicationModel dest, string? deputyManagerEmail, ResolutionContext context)
         {
             if (src.FormA == null)
                 return string.Empty;
@@ -137,10 +137,10 @@ public class ApplicationProfile : Profile
     
     private class DeputyManagerFirstNameResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
-        : IValueResolver<Domain.Entities.Application, ApplicationModel, string>
+        : IValueResolver<Domain.Entities.CruiseApplication, ApplicationModel, string>
     {
         public string Resolve(
-            Domain.Entities.Application src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
+            Domain.Entities.CruiseApplication src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
         {
             if (src.FormA == null)
                 return "";
@@ -152,10 +152,10 @@ public class ApplicationProfile : Profile
     
     private class DeputyManagerLastNameResolver(
         ResearchCruiseContext researchCruiseContext, UserManager<User> userManager)
-        : IValueResolver<Domain.Entities.Application, ApplicationModel, string>
+        : IValueResolver<Domain.Entities.CruiseApplication, ApplicationModel, string>
     {
         public string Resolve(
-            Domain.Entities.Application src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
+            Domain.Entities.CruiseApplication src, ApplicationModel dest, string cruiseManagerFirstName, ResolutionContext context)
         {
             if (src.FormA == null)
                 return "";
