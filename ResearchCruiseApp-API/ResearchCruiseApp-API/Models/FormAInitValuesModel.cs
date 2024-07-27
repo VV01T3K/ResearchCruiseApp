@@ -6,6 +6,7 @@ using ResearchTask = ResearchCruiseApp_API.Models.DataTypes.ResearchTask;
 
 namespace ResearchCruiseApp_API.Models;
 
+
 [JsonObject(NamingStrategyType = typeof (CamelCaseNamingStrategy))]
 public class FormAInitValuesModel
 {
