@@ -1,7 +1,7 @@
 namespace ResearchCruiseApp_API.Application.DTOs;
 
 
-public class ApplicationModel
+public class CruiseApplicationModel
 {
     public Guid Id { get; set; }
     

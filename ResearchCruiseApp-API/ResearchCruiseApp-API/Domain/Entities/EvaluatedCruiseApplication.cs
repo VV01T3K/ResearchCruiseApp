@@ -3,7 +3,7 @@
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class EvaluatedApplication
+public class EvaluatedCruiseApplication
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }

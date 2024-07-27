@@ -4,7 +4,6 @@ using NuGet.Protocol;
 using ResearchCruiseApp_API.Application.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Infrastructure.Persistence.DbContexts;
-using ResearchCruiseApp_API.Models;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 

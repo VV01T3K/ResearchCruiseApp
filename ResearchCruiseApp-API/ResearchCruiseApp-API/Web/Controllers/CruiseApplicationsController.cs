@@ -10,39 +10,39 @@ namespace ResearchCruiseApp_API.Web.Controllers;
 [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
 [Route("api/[controller]")]
 [ApiController]
-public class ApplicationsController(IApplicationsService applicationsService) : ControllerBase
+public class CruiseApplicationsController(ICruiseApplicationsService cruiseApplicationsService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllApplications()
+    public async Task<IActionResult> GetAllCruiseApplications()
     {
-        var result = await applicationsService.GetAllApplications();
+        var result = await cruiseApplicationsService.GetAllCruiseApplications();
         return result.Error is null
             ? Ok(result.Data)
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
     }
         
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetApplicationById(Guid id)
+    public async Task<IActionResult> GetCruiseApplicationById(Guid id)
     {
-        var result = await applicationsService.GetApplicationById(id);
+        var result = await cruiseApplicationsService.GetCruiseApplicationById(id);
         return result.Error is null
             ? Ok(result.Data)
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddApplication(FormAModel formAModel)
+    public async Task<IActionResult> AddCruiseApplication(FormAModel formAModel)
     {
-        var result = await applicationsService.AddApplication(formAModel);
+        var result = await cruiseApplicationsService.AddCruiseApplication(formAModel);
         return result.Error is null
             ? Created()
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
     }
 
-    [HttpGet("{applicationId:guid}/formA")]
-    public async Task<IActionResult> GetFormA(Guid applicationId)
+    [HttpGet("{cruiseApplicationId:guid}/formA")]
+    public async Task<IActionResult> GetFormA(Guid cruiseApplicationId)
     {
-        var result = await applicationsService.GetFormA(applicationId);
+        var result = await cruiseApplicationsService.GetFormA(cruiseApplicationId);
         return result.Error is null
             ? Ok(result.Data)
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);

@@ -42,7 +42,7 @@ public class MapperConfig
                 .ReverseMap()
                 ;
                 
-            cfg.CreateMap<EvaluatedApplicationModel, EvaluatedApplication>()
+            cfg.CreateMap<EvaluatedCruiseApplicationModel, EvaluatedCruiseApplication>()
                 .ReverseMap()
                 ;
             cfg.CreateMap<EvaluatedSpubTask, Domain.Entities.EvaluatedSpubTask>()

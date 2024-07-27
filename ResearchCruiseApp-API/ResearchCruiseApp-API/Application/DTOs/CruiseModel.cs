@@ -1,6 +1,4 @@
 using ResearchCruiseApp_API.Application.DTOs.DataTypes;
-using ResearchCruiseApp_API.Models;
-using ResearchCruiseApp_API.Models.DataTypes;
 
 namespace ResearchCruiseApp_API.Application.DTOs;
 

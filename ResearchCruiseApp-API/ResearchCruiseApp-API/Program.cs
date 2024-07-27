@@ -51,7 +51,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
-builder.Services.AddScoped<IApplicationEvaluator, ApplicationEvaluator>();
+builder.Services.AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>();
 builder.Services.AddScoped<ICompressor, Compressor>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -67,7 +67,7 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxResponseBufferSize = 2_147_483_648; // 2 GiB
 });
 
-builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
+builder.Services.AddScoped<ICruiseApplicationsService, CruiseApplicationsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ICruisesService, CruisesService>();
 

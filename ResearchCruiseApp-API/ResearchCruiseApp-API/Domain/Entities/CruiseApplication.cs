@@ -7,7 +7,7 @@ namespace ResearchCruiseApp_API.Domain.Entities;
 
 public class CruiseApplication : IYearBasedNumberedEntity
 {
-    [DatabaseGenerated((DatabaseGeneratedOption.Identity))]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
     public string Number { get; set; } = null!;
@@ -20,9 +20,9 @@ public class CruiseApplication : IYearBasedNumberedEntity
     
     public FormC? FormC { get; set; }
 
-    public EvaluatedApplication? EvaluatedApplication { get; set; }
+    public EvaluatedCruiseApplication? EvaluatedApplication { get; set; }
     
     public int Points { get; set; }
     
-    public ApplicationStatus Status { get; set; }
+    public CruiseApplicationStatus Status { get; set; }
 }

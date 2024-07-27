@@ -12,65 +12,65 @@ using ResearchCruiseApp_API.Infrastructure.Tools;
 namespace ResearchCruiseApp_API.Application.Services;
 
 
-public class ApplicationsService(
-    IApplicationEvaluator applicationEvaluator,
+public class CruiseApplicationsService(
+    ICruiseApplicationEvaluator cruiseApplicationEvaluator,
     IYearBasedKeyGenerator yearBasedKeyGenerator,
     ResearchCruiseContext researchCruiseContext,
     IMapper mapper)
-    : IApplicationsService
+    : ICruiseApplicationsService
 {
-    public async Task<Result<ApplicationModel>> GetApplicationById(Guid id)
+    public async Task<Result<CruiseApplicationModel>> GetCruiseApplicationById(Guid id)
     {
-        var application = await researchCruiseContext.Applications
-            .Include(application => application.FormA)
-            .FirstOrDefaultAsync(application => application.Id == id);
+        var cruiseApplication = await researchCruiseContext.CruiseApplications
+            .Include(cruiseApplication => cruiseApplication.FormA)
+            .FirstOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id);
 
-        if (application is null)
+        if (cruiseApplication is null)
             return Error.NotFound();
 
-        var applicationModel = mapper.Map<ApplicationModel>(application);
-        return applicationModel;
+        var cruiseApplicationModel = mapper.Map<CruiseApplicationModel>(cruiseApplication);
+        return cruiseApplicationModel;
     }
 
-    public async Task<Result<List<ApplicationModel>>> GetAllApplications()
+    public async Task<Result<List<CruiseApplicationModel>>> GetAllCruiseApplications()
     {
-        var applications = await GetApplicationsQuery()
+        var cruiseApplications = await GetCruiseApplicationsQuery()
             .ToListAsync();
             
-        var applicationModels = applications
-            .Select(mapper.Map<ApplicationModel>)
+        var cruiseApplicationModels = cruiseApplications
+            .Select(mapper.Map<CruiseApplicationModel>)
             .ToList();
 
-        return applicationModels;
+        return cruiseApplicationModels;
     }
 
-    public async Task<Result> AddApplication(FormAModel formAModel)
+    public async Task<Result> AddCruiseApplication(FormAModel formAModel)
     {
         var formA = mapper.Map<FormA>(formAModel);
             
         researchCruiseContext.FormsA.Add(formA);
         await researchCruiseContext.SaveChangesAsync();
         
-        var evaluatedApplication = applicationEvaluator.EvaluateApplication(formA, []);
+        var evaluatedCruiseApplication = cruiseApplicationEvaluator.EvaluateCruiseApplication(formA, []);
             
-        await researchCruiseContext.EvaluatedApplications.AddAsync(evaluatedApplication);
+        await researchCruiseContext.EvaluatedCruiseApplications.AddAsync(evaluatedCruiseApplication);
         await researchCruiseContext.SaveChangesAsync();
 
-        var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplication);
+        var calculatedPoints = cruiseApplicationEvaluator.CalculateSumOfPoints(evaluatedCruiseApplication);
 
-        var newApplication = new Domain.Entities.CruiseApplication
+        var newCruiseApplication = new CruiseApplication
         {
-            Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Applications),
+            Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.CruiseApplications),
             Date = DateOnly.FromDateTime(DateTime.Now),
             FormA = formA,
             FormB = null,
             FormC = null,
-            EvaluatedApplication = evaluatedApplication,
+            EvaluatedApplication = evaluatedCruiseApplication,
             Points = calculatedPoints,
-            Status = ApplicationStatus.New
+            Status = CruiseApplicationStatus.New
         };
 
-        await researchCruiseContext.Applications.AddAsync(newApplication);
+        await researchCruiseContext.CruiseApplications.AddAsync(newCruiseApplication);
         await researchCruiseContext.SaveChangesAsync();
 
         return Result.Empty;
@@ -78,17 +78,17 @@ public class ApplicationsService(
 
     public async Task<Result<FormAModel>> GetFormA(Guid applicationId)
     {
-        var formA = await researchCruiseContext.Applications
-            .Where(application => application.Id == applicationId)
-            .Include(application => application.FormA)
-            .Include(application => application.FormA!.Contracts)
-            .Include(application => application.FormA!.Publications)
-            .Include(application => application.FormA!.Theses)
-            .Include(application => application.FormA!.GuestTeams)
-            .Include(application => application.FormA!.ResearchTasks)
-            .Include(application => application.FormA!.UgTeams)
-            .Include(application => application.FormA!.SpubTasks)
-            .Select(application => application.FormA)
+        var formA = await researchCruiseContext.CruiseApplications
+            .Where(cruiseApplication => cruiseApplication.Id == applicationId)
+            .Include(cruiseApplication => cruiseApplication.FormA)
+            .Include(cruiseApplication => cruiseApplication.FormA!.Contracts)
+            .Include(cruiseApplication => cruiseApplication.FormA!.Publications)
+            .Include(cruiseApplication => cruiseApplication.FormA!.Theses)
+            .Include(cruiseApplication => cruiseApplication.FormA!.GuestTeams)
+            .Include(cruiseApplication => cruiseApplication.FormA!.ResearchTasks)
+            .Include(cruiseApplication => cruiseApplication.FormA!.UgTeams)
+            .Include(cruiseApplication => cruiseApplication.FormA!.SpubTasks)
+            .Select(cruiseApplication => cruiseApplication.FormA)
             .SingleOrDefaultAsync();
 
         if (formA is null)
@@ -141,12 +141,12 @@ public class ApplicationsService(
     //     return evaluatedApplicationModel;
     // }
     
-    private IIncludableQueryable<Domain.Entities.CruiseApplication, FormC?> GetApplicationsQuery()
+    private IIncludableQueryable<CruiseApplication, FormC?> GetCruiseApplicationsQuery()
     {
-        return researchCruiseContext.Applications
-            .Include(application => application.FormA)
-            .Include(application => application.FormB)
-            .Include(application => application.FormC);
+        return researchCruiseContext.CruiseApplications
+            .Include(cruiseApplication => cruiseApplication.FormA)
+            .Include(cruiseApplication => cruiseApplication.FormB)
+            .Include(cruiseApplication => cruiseApplication.FormC);
     }
     
     private IIncludableQueryable<FormA, List<SpubTask>>GetFormsQuery()

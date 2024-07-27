@@ -20,7 +20,7 @@ public class CruisesService(
     public async Task<Result<List<CruiseModel>>> GetAllCruises()
     {
         var cruises = await researchCruiseContext.Cruises
-            .Include(cruise => cruise.Applications)
+            .Include(cruise => cruise.CruiseApplications)
             .ToListAsync();
 
         var cruisesModels = cruises
@@ -37,9 +37,9 @@ public class CruisesService(
         // Cruises that already contain any of newCruise applications. The application will be deleted from them
         // since an application cannot be assigned to more than one cruise
         var affectedCruises = researchCruiseContext.Cruises
-            .Include(affectedCruise => affectedCruise.Applications)
+            .Include(affectedCruise => affectedCruise.CruiseApplications)
             .Where(affectedCruise => cruiseFormModel.ApplicationsIds.Any(id =>
-                affectedCruise.Applications
+                affectedCruise.CruiseApplications
                     .Select(application => application.Id)
                     .Contains(id)))
             .ToList();
@@ -55,7 +55,7 @@ public class CruisesService(
     public async Task<Result> EditCruise(Guid id, CruiseFormModel cruiseFormModel)
     {
         var cruise = await researchCruiseContext.Cruises
-            .Include(cruise => cruise.Applications)
+            .Include(cruise => cruise.CruiseApplications)
             .Where(cruise => cruise.Id == id)
             .FirstOrDefaultAsync();
 
@@ -87,15 +87,15 @@ public class CruisesService(
         cruise.MainCruiseManagerId = Guid.Parse(newMainCruiseManager.Id);
         cruise.MainDeputyManagerId = Guid.Parse(newMainDeputyManager.Id);
 
-        var newCruiseApplicationsQuery = researchCruiseContext.Applications
+        var newCruiseApplicationsQuery = researchCruiseContext.CruiseApplications
             .Where(application => cruiseFormModel.ApplicationsIds.Contains(application.Id));
 
         // Cruises that already contain any of newCruiseApplications. The application will be deleted from them
         // since an application cannot be assigned to more than one cruise
         var affectedCruises = researchCruiseContext.Cruises
-            .Include(affectedCruise => affectedCruise.Applications)
+            .Include(affectedCruise => affectedCruise.CruiseApplications)
             .Where(affectedCruise => newCruiseApplicationsQuery.Any(newApp =>
-                affectedCruise.Applications.Contains(newApp)))
+                affectedCruise.CruiseApplications.Contains(newApp)))
             .ToList();
         if (!affectedCruises.Contains(cruise))
         {
@@ -104,7 +104,7 @@ public class CruisesService(
                 .ToList();
         }
 
-        cruise.Applications = await newCruiseApplicationsQuery.ToListAsync();
+        cruise.CruiseApplications = await newCruiseApplicationsQuery.ToListAsync();
 
         await CheckEditedCruisesManagersTeams(affectedCruises);
 
@@ -115,7 +115,7 @@ public class CruisesService(
     public async Task<Result> DeleteCruise(Guid id)
     {
         var cruise = await researchCruiseContext.Cruises
-            .Include(cruise => cruise.Applications)
+            .Include(cruise => cruise.CruiseApplications)
             .Where(cruise => cruise.Id == id)
             .SingleOrDefaultAsync();
 
@@ -130,7 +130,7 @@ public class CruisesService(
     
     public async Task<Result> AutoAddCruises()
     {
-        var applications = await researchCruiseContext.Applications
+        var applications = await researchCruiseContext.CruiseApplications
             .Include(application => application.FormA)
             .ToListAsync();
         
@@ -146,7 +146,7 @@ public class CruisesService(
                 MainDeputyManagerId = application.FormA.DeputyManagerId,
                 StartDate = newCruiseStartDate,
                 EndDate = newCruiseEndDate,
-                Applications = [application]
+                CruiseApplications = [application]
             };
             
             await PersistCruiseWithNewNumber(newCruise);
@@ -200,19 +200,19 @@ public class CruisesService(
     {
         foreach (var cruise in cruises)
         {
-            foreach (var application in cruise.Applications)
+            foreach (var application in cruise.CruiseApplications)
             {
                 await researchCruiseContext.Entry(application)
                     .Reference(applicationEntry => applicationEntry.FormA)
                     .LoadAsync();
             }
 
-            if (cruise.Applications.Any(app => app.FormA == null))
+            if (cruise.CruiseApplications.Any(app => app.FormA == null))
                 continue;
 
-            var managersAvailable = cruise.Applications
+            var managersAvailable = cruise.CruiseApplications
                 .Select(app => app.FormA!.CruiseManagerId)
-                .Union(cruise.Applications
+                .Union(cruise.CruiseApplications
                     .Select(app => app.FormA!.DeputyManagerId))
                 .ToList();
 

@@ -3,7 +3,7 @@ using ResearchCruiseApp_API.Application.DTOs.DataTypes;
 namespace ResearchCruiseApp_API.Application.DTOs;
 
 
-public class EvaluatedApplicationModel
+public class EvaluatedCruiseApplicationModel
 {
     public List<EvaluatedResearchTask> ResearchTasks { get; set; } = [];
     

@@ -3,7 +3,7 @@ using ResearchCruiseApp_API.Infrastructure.Tools.Attributes;
 namespace ResearchCruiseApp_API.Domain.Common.Enums;
 
 
-public enum ApplicationStatus
+public enum CruiseApplicationStatus
 {
     [StringValue("Nowe")]
     New,

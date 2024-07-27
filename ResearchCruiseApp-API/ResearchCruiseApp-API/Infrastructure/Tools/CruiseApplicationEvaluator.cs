@@ -9,7 +9,7 @@ using ResearchTask = ResearchCruiseApp_API.Domain.Entities.ResearchTask;
 namespace ResearchCruiseApp_API.Infrastructure.Tools;
 
 
-public class ApplicationEvaluator : IApplicationEvaluator
+public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
 {
     private const int DefaultPoints = 0;
 
@@ -64,9 +64,9 @@ public class ApplicationEvaluator : IApplicationEvaluator
     private const int SpubTaskPoints = 100;
 
 
-    public EvaluatedApplication EvaluateApplication(FormA formA, List<ResearchTask> cruiseEffects)
+    public EvaluatedCruiseApplication EvaluateCruiseApplication(FormA formA, List<ResearchTask> cruiseEffects)
     {
-        var evaluatedApplication = new EvaluatedApplication();
+        var evaluatedApplication = new EvaluatedCruiseApplication();
 
         if (formA.ResearchTasks.Count != 0)
         {
@@ -191,33 +191,33 @@ public class ApplicationEvaluator : IApplicationEvaluator
         return new EvaluatedSpubTask{SpubTask = spubTask, CalculatedPoints = SpubTaskPoints};
     }
     
-    public int CalculateSumOfPoints(EvaluatedApplication evaluatedApplication)
+    public int CalculateSumOfPoints(EvaluatedCruiseApplication evaluatedCruiseApplication)
     {
         var sum = 0;
 
-        foreach (var researchTask in evaluatedApplication.ResearchTasks)
+        foreach (var researchTask in evaluatedCruiseApplication.ResearchTasks)
         {
             sum += researchTask.CalculatedPoints;
         }
             
-        foreach (var contract in evaluatedApplication.Contracts)
+        foreach (var contract in evaluatedCruiseApplication.Contracts)
         {
             sum += contract.CalculatedPoints;
         }
 
-        sum += evaluatedApplication.UgTeamsPoints;
+        sum += evaluatedCruiseApplication.UgTeamsPoints;
             
-        foreach (var publication in evaluatedApplication.Publications)
+        foreach (var publication in evaluatedCruiseApplication.Publications)
         {
             sum += publication.CalculatedPoints;
         }
             
-        foreach (var cruiseEffect in evaluatedApplication.CruiseEffects)
+        foreach (var cruiseEffect in evaluatedCruiseApplication.CruiseEffects)
         {
             sum += cruiseEffect.CalculatedPoints;
         }
             
-        foreach (var spubTask in evaluatedApplication.SpubTasks)
+        foreach (var spubTask in evaluatedCruiseApplication.SpubTasks)
         {
             sum += spubTask.CalculatedPoints;
         }

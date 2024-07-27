@@ -63,7 +63,7 @@ public class CruiseProfile : Profile
                 options =>
                     options.MapFrom(src =>
                         src.Date.End))
-            .ForMember(dest => dest.Applications,
+            .ForMember(dest => dest.CruiseApplications,
                 options =>
                     options.MapFrom<CruiseApplicationsResolver>());
     }
@@ -123,7 +123,7 @@ public class CruiseProfile : Profile
             List<ApplicationShortInfoModel> applicationsShortInfo,
             ResolutionContext context)
         {
-            var result = src.Applications
+            var result = src.CruiseApplications
                 .Select(mapper.Map<ApplicationShortInfoModel>)
                 .ToList();
             return result;
@@ -134,15 +134,15 @@ public class CruiseProfile : Profile
         ResearchCruiseContext researchCruiseContext,
         UserManager<User> userManager,
         IMapper mapper)
-        : IValueResolver<CruiseFormModel, Cruise, List<Domain.Entities.CruiseApplication>>
+        : IValueResolver<CruiseFormModel, Cruise, List<CruiseApplication>>
     {
-        public List<Domain.Entities.CruiseApplication> Resolve(
+        public List<CruiseApplication> Resolve(
             CruiseFormModel src,
             Cruise dest,
-            List<Domain.Entities.CruiseApplication> applications,
+            List<CruiseApplication> applications,
             ResolutionContext context)
         {
-            var result = researchCruiseContext.Applications
+            var result = researchCruiseContext.CruiseApplications
                 //.AsEnumerable()
                 .Where(application => src.ApplicationsIds.Contains(application.Id))
                 .ToList();
