@@ -48,6 +48,21 @@ public class ApplicationProfile : Profile
                 options =>
                     options.MapFrom<DeputyManagerLastNameResolver>())
             .ForMember(
+                dest => dest.HasFormA,
+                options =>
+                    options.MapFrom(src =>
+                        src.FormA != null))
+            .ForMember(
+                dest => dest.HasFormB,
+                options =>
+                    options.MapFrom(src =>
+                        src.FormB != null))
+            .ForMember(
+                dest => dest.HasFormC,
+                options =>
+                    options.MapFrom(src =>
+                        src.FormC != null))
+            .ForMember(
                 dest => dest.Status,
                 options =>
                     options.MapFrom(src => 

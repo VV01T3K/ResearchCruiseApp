@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ResearchCruiseApp_API.Data;
@@ -80,7 +78,7 @@ public class FormAInitValuesModel
 
         var historicalTasks = new List<ResearchTask>();
         
-        var model = new FormAInitValuesModel()
+        var model = new FormAInitValuesModel
         {
             CruiseManagers = cruiseManagers,
             DeputyManagers = deputyManagers,

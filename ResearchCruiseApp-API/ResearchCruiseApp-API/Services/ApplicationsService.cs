@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -5,10 +6,14 @@ using ResearchCruiseApp_API.Data;
 using ResearchCruiseApp_API.Models;
 using ResearchCruiseApp_API.Services.Common;
 using ResearchCruiseApp_API.Tools;
+using ResearchCruiseApp_API.Types;
 
 namespace ResearchCruiseApp_API.Services;
 
+
 public class ApplicationsService(
+    IApplicationEvaluator applicationEvaluator,
+    IYearBasedKeyGenerator yearBasedKeyGenerator,
     ResearchCruiseContext researchCruiseContext,
     IMapper mapper)
     : IApplicationsService
@@ -19,7 +24,7 @@ public class ApplicationsService(
             .Include(application => application.FormA)
             .FirstOrDefaultAsync(application => application.Id == id);
 
-        if (application == null)
+        if (application is null)
             return Error.NotFound();
 
         var applicationModel = mapper.Map<ApplicationModel>(application);
@@ -36,6 +41,60 @@ public class ApplicationsService(
             .ToList();
 
         return applicationModels;
+    }
+
+    public async Task<Result> AddApplication(FormAModel formAModel)
+    {
+        var formA = mapper.Map<FormA>(formAModel);
+            
+        researchCruiseContext.FormsA.Add(formA);
+        await researchCruiseContext.SaveChangesAsync();
+        
+        var evaluatedApplication = applicationEvaluator.EvaluateApplication(formA, []);
+            
+        await researchCruiseContext.EvaluatedApplications.AddAsync(evaluatedApplication);
+        await researchCruiseContext.SaveChangesAsync();
+
+        var calculatedPoints = applicationEvaluator.CalculateSumOfPoints(evaluatedApplication);
+
+        var newApplication = new Application
+        {
+            Number = yearBasedKeyGenerator.GenerateKey(researchCruiseContext.Applications),
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            FormA = formA,
+            FormB = null,
+            FormC = null,
+            EvaluatedApplication = evaluatedApplication,
+            Points = calculatedPoints,
+            Status = ApplicationStatus.New
+        };
+
+        await researchCruiseContext.Applications.AddAsync(newApplication);
+        await researchCruiseContext.SaveChangesAsync();
+
+        return Result.Empty;
+    }
+
+    public async Task<Result<FormAModel>> GetFormA(Guid applicationId)
+    {
+        var formA = await researchCruiseContext.Applications
+            .Where(application => application.Id == applicationId)
+            .Include(application => application.FormA)
+            .Include(application => application.FormA!.Contracts)
+            .Include(application => application.FormA!.Publications)
+            .Include(application => application.FormA!.Theses)
+            .Include(application => application.FormA!.GuestTeams)
+            .Include(application => application.FormA!.ResearchTasks)
+            .Include(application => application.FormA!.UGTeams)
+            .Include(application => application.FormA!.SPUBTasks)
+            .Select(application => application.FormA)
+            .SingleOrDefaultAsync();
+
+        if (formA is null)
+            return Error.NotFound();
+
+        var formAModel = mapper.Map<FormAModel>(formA);
+        return formAModel;
     }
 
     // public async Task<Result<EvaluatedApplicationModel, Error>> CalculatePoints(Guid applicationId)
@@ -80,13 +139,25 @@ public class ApplicationsService(
     //
     //     return evaluatedApplicationModel;
     // }
-
-
+    
     private IIncludableQueryable<Application, FormC?> GetApplicationsQuery()
     {
         return researchCruiseContext.Applications
             .Include(application => application.FormA)
             .Include(application => application.FormB)
             .Include(application => application.FormC);
+    }
+    
+    private IIncludableQueryable<FormA, List<SPUBTask>>GetFormsQuery()
+    {
+        // TODO include appropriate entities
+        return researchCruiseContext.FormsA
+            .Include(o => o.Contracts)
+            .Include(o => o.Publications)
+            .Include(o => o.Theses)
+            .Include(o => o.GuestTeams)
+            .Include(o => o.ResearchTasks)
+            .Include(o => o.UGTeams)
+            .Include(o => o.SPUBTasks);
     }
 }

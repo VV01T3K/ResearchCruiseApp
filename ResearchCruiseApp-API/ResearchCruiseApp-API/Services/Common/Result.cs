@@ -18,19 +18,19 @@ public class Result
 }
 
 
-public class Result<TValue> : Result
+public class Result<TData> : Result
 {
-    public TValue? Value { get; }
+    public TData? Data { get; }
     
-    private Result(TValue value)
+    private Result(TData data)
     {
-        Value = value;
+        Data = data;
     }
     private Result(Error error) : base(error)
     {
-        Value = default;
+        Data = default;
     }
     
-    public static implicit operator Result<TValue>(TValue value) => new(value);
-    public static implicit operator Result<TValue>(Error error) => new(error);
+    public static implicit operator Result<TData>(TData value) => new(value);
+    public static implicit operator Result<TData>(Error error) => new(error);
 }

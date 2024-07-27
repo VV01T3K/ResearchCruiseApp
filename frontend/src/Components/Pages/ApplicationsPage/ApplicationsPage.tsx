@@ -1,16 +1,7 @@
-import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import React from 'react';
 import Page from "../Page";
-import Api from "../../Tools/Api";
-import DataTable from 'react-data-table-component';
-import useCustomEvent from "../../Tools/useCustomEvent";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
-import {Link, useNavigate} from "react-router-dom";
-import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import PageTitle from "../CommonComponents/PageTitle";
-import LinkWithState from "../../CommonComponents/LinkWithState";
 import ApplicationsList from "./ApplicationsList";
-import PageMenuBar from "../CommonComponents/PageMenuBar";
 
 
 export enum ApplicationStatus {
@@ -39,9 +30,9 @@ export type Application = {
     deputyManagerEmail: string,
     deputyManagerFirstName: string,
     deputyManagerLastName: string,
-    formAId: string | null,
-    formBId: string | null,
-    formCId: string | null,
+    hasFormA: boolean,
+    hasFormB: boolean,
+    hasFormC: boolean,
     status: ApplicationStatus,
     points: string,
     pointsDetails: any

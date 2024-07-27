@@ -110,7 +110,7 @@ function FormA(props: Props){
         = useState<FormAInitValues>()
     useEffect(() => {
         api
-            .get('/Forms/A/InitData')
+            .get('/FormsA/InitData')
             .then(response => {
                     setFormInitValues(response.data)
             })
@@ -265,6 +265,7 @@ function FormA(props: Props){
                     />
                 </FormSection>
 
+                {!props.readonly ?
                 <FormSection title={sections.Zadania}>
                     <TaskInput
                         name={"researchTasks"}
@@ -316,7 +317,7 @@ function FormA(props: Props){
                         className="col-12"
                         label="ss"
                     />
-                </FormSection>
+                </FormSection> : <></>}
 
                 <FormSection title={sections.Umowy}>
                     <ContractsInput

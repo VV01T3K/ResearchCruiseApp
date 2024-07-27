@@ -142,7 +142,7 @@ function FormC(props: Props){
         = useState<FormCInitValues>()
     useEffect(() => {
         api
-            .get('/Forms/A/InitData')
+            .get('/FormsA/InitData')
             .then(response => {
                 setFormInitValues(response.data)
                 console.log(response.data as FormCInitValues)

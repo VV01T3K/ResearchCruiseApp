@@ -72,6 +72,7 @@ builder.WebHost.ConfigureKestrel(options =>
 
 builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<ICruisesService, CruisesService>();
 
 var app = builder.Build();
 

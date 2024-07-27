@@ -1,5 +1,6 @@
 namespace ResearchCruiseApp_API.Data.Classes;
 
+
 public class AdministrationUnits
 {
     public string[] array =

@@ -10,7 +10,7 @@ import Api from "../../Tools/Api";
 
 export type FormPageLocationState = {
     formType: string,
-    formId?: string,  // The id of the form to be loaded from the database if applicable
+    applicationId?: string,  // The id of the form to be loaded from the database if applicable
     localStorageValues?: FormValues, // To be deleted soon
     readonly: boolean
 }
@@ -27,15 +27,13 @@ function FormPage(){
     const [loadValues, setLoadValues]
         = useState<FormValues | undefined>()
     useEffect(() => {
-        if (locationState?.formId) {
-            console.log(locationState.formId)
+        if (locationState?.applicationId) {
+            console.log(locationState.applicationId)
             Api
-                .get(
-                    `/Forms/${locationState?.formId}`
-                )
+                .get(`/api/Applications/${locationState?.applicationId}/form${locationState.formType}`)
                 .then(response => {
                     console.log(response)
-                    setLoadValues(response.data)
+                    setLoadValues(response?.data)
                 })
         }
         else {

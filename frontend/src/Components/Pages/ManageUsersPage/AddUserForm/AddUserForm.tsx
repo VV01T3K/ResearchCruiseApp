@@ -56,11 +56,13 @@ export default function AddUserForm(props: Props) {
                 newUserForm.getValues()
             )
             .then(response => {
+                console.log("Hey")
                 setSending(false)
                 setSuccess(true)
                 props.fetchUsers()
             })
             .catch(error => {
+                console.log("Wheeeey")
                 setSendingError(error.response.data)
                 setSending(false)
             })

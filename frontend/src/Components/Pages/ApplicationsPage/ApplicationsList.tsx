@@ -1,18 +1,13 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Application, ApplicationStatus} from "./ApplicationsPage";
 import {useNavigate} from "react-router-dom";
-import useCustomEvent from "../../Tools/useCustomEvent";
-import {addPlugins} from "workbox-precaching";
 import Api from "../../Tools/Api";
-import app from "../../App";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
-import {sort} from "react-data-table-component/dist/DataTable/util";
 import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
+import {FormPageLocationState} from "../FormPage/FormPage";
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.
@@ -180,6 +175,13 @@ export default function ApplicationsList(props: Props) {
     }
 
 
+    const getFormPageLocationState = (formType: string, applicationId?: string): FormPageLocationState => {
+        return {
+            formType: formType,
+            applicationId: applicationId ?? undefined,
+            readonly: true
+        }
+    }
     const getRowBackground = (index: number) => {
         return index % 2 == 0 ? "bg-light" : "bg-white"
     }
@@ -292,37 +294,25 @@ export default function ApplicationsList(props: Props) {
                                      style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
                                 >
                                     <LinkWithState
-                                        to={row.formAId ? "/Form" : ""}
-                                        state={{
-                                            formType: "A",
-                                            formId: row.formAId ?? undefined,
-                                            readonly: true
-                                        }}
+                                        to={row.hasFormA ? "/Form" : ""}
+                                        state={getFormPageLocationState("A", row.id)}
                                         label="Formularz A"
-                                        className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}
-                                        style={!row.formAId ? {cursor: "default"} : undefined}
+                                        className={`col-12 d-flex justify-content-center ${!row.hasFormA ? "text-muted text-decoration-none" : ""}`}
+                                        style={!row.hasFormA ? {cursor: "default"} : undefined}
                                     />
                                     <LinkWithState
-                                        to={row.formBId ? "/Form" : ""}
-                                        state={{
-                                            formType: "B",
-                                            formId: row.formBId ?? undefined,
-                                            readonly: true
-                                        }}
+                                        to={row.hasFormB ? "/Form" : ""}
+                                        state={getFormPageLocationState("B", row.id)}
                                         label="Formularz B"
-                                        className={`col-12 d-flex justify-content-center ${!row.formBId ? "text-muted text-decoration-none" : ""}`}
-                                        style={!row.formBId ? {cursor: "default"} : undefined}
+                                        className={`col-12 d-flex justify-content-center ${!row.hasFormB ? "text-muted text-decoration-none" : ""}`}
+                                        style={!row.hasFormB ? {cursor: "default"} : undefined}
                                     />
                                     <LinkWithState
-                                        to={row.formCId ? "/Form" : ""}
-                                        state={{
-                                            formType: "C",
-                                            formId: row.formCId ?? undefined,
-                                            readonly: true
-                                        }}
+                                        to={row.hasFormC ? "/Form" : ""}
+                                        state={getFormPageLocationState("C", row.id)}
                                         label="Formularz C"
-                                        className={`col-12 d-flex justify-content-center ${!row.formCId ? "text-muted text-decoration-none" : ""}`}
-                                        style={!row.formCId ? {cursor: "default"} : undefined}
+                                        className={`col-12 d-flex justify-content-center ${!row.hasFormC ? "text-muted text-decoration-none" : ""}`}
+                                        style={!row.hasFormC ? {cursor: "default"} : undefined}
                                     />
                                 </div>
                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"

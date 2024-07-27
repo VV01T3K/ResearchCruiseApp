@@ -28,11 +28,11 @@ public class ApplicationModel
     
     public string DeputyManagerLastName { get; set; } = null!;
     
-    public Guid? FormAId { get; set; } = null!;
+    public bool HasFormA { get; set; }
     
-    public Guid? FormBId { get; set; } = null!; 
+    public bool HasFormB{ get; set; }
     
-    public Guid? FormCId { get; set; } = null!;
+    public bool HasFormC { get; set; }
     
     public int Points { get; set; }
     
