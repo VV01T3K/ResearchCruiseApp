@@ -1,14 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices.JavaScript;
-using NuGet.Protocol.Plugins;
-using ResearchCruiseApp_API.Data.ResearchTaskFolder;
-using ResearchCruiseApp_API.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchCruiseApp_API.Data;
 
 
-public class FormB
+public class FormC
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
@@ -46,10 +41,8 @@ public class FormB
     }
     
     public string? Permissions { get; set; }
-    /* TODO Zdobyć wymagania co do obszaru */
     
-    
-    public List<int>  ResearchArea { get; set; } 
+    public List<int> ResearchArea { get; set; } 
     
     public int CruiseGoal { get; set; }
     public string CruiseGoalDescription { get; set; }
@@ -67,10 +60,9 @@ public class FormB
     public List<Thesis> Theses { get; set; }
 
     public List<SPUBTask> SPUBTasks { get; set; } 
-    
     //Empty constructor is redundant - as Rider says
     /*
-    public FormB()
+    public FormC()
     {
     }
     */

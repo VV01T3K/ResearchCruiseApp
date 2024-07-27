@@ -64,4 +64,8 @@
       <None Include="wwwroot\Templates\EmailTemplates\accountConfirmationEmail.html" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Data\Common\" />
+    </ItemGroup>
+
 </Project>
