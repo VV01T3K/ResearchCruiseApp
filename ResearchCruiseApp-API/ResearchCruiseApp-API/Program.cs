@@ -1,13 +1,10 @@
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp_API.Data;
-using ResearchCruiseApp_API.Services;
-using ResearchCruiseApp_API.Tools;
-using ResearchCruiseApp_API.Tools.Extensions;
-using ResearchCruiseApp_API.Types;
+using ResearchCruiseApp_API.Application.Services;
+using ResearchCruiseApp_API.Domain.Common.Constants;
+using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Persistence.DbContexts;
+using ResearchCruiseApp_API.Infrastructure.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 

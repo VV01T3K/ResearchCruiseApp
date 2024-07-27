@@ -65,7 +65,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\Common\" />
+      <Folder Include="Application\Repositories\" />
+      <Folder Include="Infrastructure\Persistence\Migrations\" />
+      <Folder Include="Infrastructure\Persistence\Repositories\" />
     </ItemGroup>
 
 </Project>
