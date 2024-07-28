@@ -1,6 +1,10 @@
 ::placeholder {
     opacity: 0.2; /* Firefox */
 }
+* {
+    font-family: "Poppins", sans-serif;
+
+}
 
 .appHeader {
     height: 60.3px;

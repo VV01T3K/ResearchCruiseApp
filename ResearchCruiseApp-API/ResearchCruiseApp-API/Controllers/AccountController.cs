@@ -117,7 +117,7 @@ namespace ResearchCruiseApp_API.Controllers
         }
         
         [HttpGet("confirmEmail")]
-        public async Task<Results<ContentHttpResult, UnauthorizedHttpResult>> ConfirmEmail(
+        public async Task<Results<ContentHttpResult, UnauthorizedHttpResult, ForbidHttpResult>> ConfirmEmail(
                 [FromQuery] string userId,
                 [FromQuery] string code,
                 [FromQuery] string? changedEmail)
@@ -137,6 +137,9 @@ namespace ResearchCruiseApp_API.Controllers
             {
                 return TypedResults.Unauthorized();
             }
+
+            if (user.EmailConfirmed)
+                return TypedResults.Forbid();
 
             IdentityResult result;
 
@@ -215,7 +218,7 @@ namespace ResearchCruiseApp_API.Controllers
 
                 if (result.Succeeded)
                     return NoContent();
-                return BadRequest();
+                return Unauthorized();
             }
 
             await userManager.UpdateAsync(user);

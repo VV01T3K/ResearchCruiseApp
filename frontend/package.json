@@ -17,6 +17,7 @@
     "axios": "^1.6.7",
     "babel-plugin-react-css-modules": "^0.0.0",
     "bootstrap": "^5.3.2",
+    "bootstrap-icons": "^1.11.3",
     "css-loader": "^6.8.1",
     "framer-motion": "^10.0.0",
     "moment": "^2.30.1",
@@ -61,7 +62,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "install-bootstrap": "npm install",
+    "install-bootstrap": "npm install svg-url-loader --save-dev",
     "audit": "npm update",
     "fund": "npm fund",
     "cos": "npm install react-super-responsive-table --save"
@@ -83,6 +84,7 @@
     "@types/bootstrap": "^5.2.9",
     "@types/react-big-calendar": "^1.8.9",
     "@types/react-css-modules": "^4.6.8",
-    "@types/react-datepicker": "^6.2.0"
+    "@types/react-datepicker": "^6.2.0",
+    "svg-url-loader": "^8.0.0"
   }
 }

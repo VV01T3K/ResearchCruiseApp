@@ -1,35 +1,27 @@
 import Home from "./Home";
-import UserTile from "./Tiles/UserTile";
-import NewFormTile from "./Tiles/NewFormTile";
-import SavedFormsTile from "./Tiles/SavedFormsTile";
-import FormsRequestsTile from "./Tiles/FormsRequestsTile";
+import SavedApplicationsTile from "./Tiles/SavedApplicationsTile";
 import ManageUserTile from "./Tiles/ManageUserTile";
-import MessagesTile from "./Tiles/MessagesTile";
-import ViewFormsTile from "./Tiles/ViewFormsTile";
 import React from "react";
-import Tiles from "./Tiles/TilesMenu";
+import TilesMenu from "./Tiles/TilesMenu";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 import CruisesTile from "./Tiles/CruisesTile";
 import ApplicationsTile from "./Tiles/ApplicationsTile";
+import NewApplicationTile from "./Tiles/NewApplicationTile";
 
 
 export default function AdminPanel() {
-    const tilesMenu = [
-        { element: <UserTile />, cols: 1, rows: 1 },
-        { element: <NewFormTile />, cols: 1, rows: 1 },
-        { element: <SavedFormsTile />, cols: 2, rows: 2 },
-        { element: <FormsRequestsTile />, cols: 2, rows: 2 },
+    const tiles = [
+        { element: <NewApplicationTile />, cols: 2, rows: 2 },
+        { element: <SavedApplicationsTile />, cols: 2, rows: 1 },
         { element: <ManageUserTile />, cols: 1, rows: 1 },
-        { element: <MessagesTile />, cols: 1, rows: 1 },
-        { element: <ViewFormsTile />, cols: 1, rows: 1 },
-        { element: <AccountSettingsTile />, cols: 1, rows: 1 },
+        { element: <AccountSettingsTile />, cols: 1, rows: 2 },
         { element: <ApplicationsTile />, cols: 1, rows: 1},
-        { element: <CruisesTile />, cols: 1, rows: 1 }
+        { element: <CruisesTile />, cols: 2, rows: 1 }
     ];
 
     return(
         <Home>
-            <Tiles tilesMenu={tilesMenu} />
+            <TilesMenu tiles={tiles} />
         </Home>
     )
 }

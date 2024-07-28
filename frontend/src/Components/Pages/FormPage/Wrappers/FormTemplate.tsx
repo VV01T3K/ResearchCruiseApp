@@ -80,7 +80,7 @@ function FormTemplate(props: Props) {
             .post(`api/forms/${props.type}/Save`, data)
             .then(()=> {setTimeout(()=>
             {
-                navigate(Path.SavedForms)},1000)
+                navigate(Path.SavedApplications)},1000)
             })
     }
     const handleDownload = () => {
@@ -127,7 +127,7 @@ function FormTemplate(props: Props) {
 
     return (
         <>
-            <Page className="justify-content-center col-12 col-xl-9 bg-white" >
+            <Page className="h-100 justify-content-center col-12 col-xl-9 bg-white" >
                 <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}} id={"form"}>
                     <div className="d-flex flex-column align-items-center w-100 h-100 overflow-auto" >
                         {props.children}

@@ -124,6 +124,47 @@ $top-bar-height: 60.3px;
   .p-0,
   .w-100
 }
+.page-header-spacing{
+  @extend
+  .app-top-bar-spacing,
+  .d-flex,
+  .flex-row,
+  .flex-shrink-0
+}
+.page-content-container{
+  @extend
+  .container-xxl,
+  .d-flex,
+  .flex-column,
+  .p-2,
+  .overflow-auto,
+  .align-items-center,
+  .h-100
+}
+.page-content{
+  @extend
+  .d-flex,
+  .flex-row,
+}
+.page{
+  @extend
+  .h-100,
+  .w-100,
+  .d-flex,
+  .flex-column,
+}
+.page-title{
+  font-size: 1.3rem;
+  @extend
+  .align-items-center,
+  .w-100,
+  .text-white,
+  .bg-primary,
+  .text-center,
+  .p-2,
+  .text-nowrap
+}
+
 .mobile-submenu{
   margin-top: $top-bar-height;
   height: 42.25px;
@@ -136,4 +177,278 @@ $top-bar-height: 60.3px;
   .bg-primary
 }
 
+.default-bg-position {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-position: left center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+.default-bg-img{
+  background-image: url("../resources/Oceanograf.jpg");
+}
+.default-bg{
+  @extend
+  .default-bg-position,
+  .default-bg-img
+}
+
+
+.default-bg-stretch{
+  animation: zoomin 30s infinite alternate;
+  @extend
+  .default-bg
+}
+
+.login-common{
+  width: 350px;
+  @extend
+  .d-flex,
+  .flex-column,
+  .p-4,
+  .text-center,
+  .align-self-center,
+  .align-self-md-end,
+  .bg-white
+}
+.login-common-header{
+  font-size:2rem;
+  @extend
+  .text-primary
+}
+.login-common-text-field{
+  border-bottom: 2px solid map-get($theme-colors, "primary");
+  @extend
+  .position-relative,
+  .mt-4
+}
+.login-common-text-field input{
+  height: 40px;
+  border: none;
+  outline: none;
+  @extend
+  .w-100,
+}
+
+.login-common-text-field label{
+  color: map-get($theme-colors, "primary");
+  pointer-events: none;
+  @extend
+  .w-100,
+  .text-start,
+}
+
+.forget-password-link{
+    color: #666666;
+    cursor: pointer;
+    text-decoration: none;
+   @extend
+  .d-flex,
+  .mt-2
+}
+
+.forget-password-link:hover{
+    text-decoration: underline;
+}
+
+.signup-link{
+  text-align: center;
+  font-size: 16px;
+  color: #666666;
+  @extend
+  .m-0
+}
+.signup-link a{
+  color: map-get($theme-colors, "primary");
+  text-decoration: none;
+}
+
+.signup-link a:hover{
+  text-decoration: underline;
+}
+
+.login-common-submit{
+  height: 50px;
+  background: map-get($theme-colors, "primary");
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  @extend
+  .mt-2,
+  .mb-2,
+  .w-100,
+  .border,
+  .text-white
+}
+
+.login-common-button{
+
+  @extend
+  .mt-2,
+  .mb-2,
+  .w-100,
+  .border,
+  .text-white
+}
+
+
+.login-common-submit:hover{
+  opacity: 90%;
+  transition: .5s;
+}
+.login-common-submit-loading{
+  display: inline-block;
+  animation: slideInAndOut 5s linear infinite; /* Zmien czas trwania animacji według potrzeb */
+  @extend
+  .login-common-submit
+}
+@keyframes slideInAndOut {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(180deg);
+  }
+  100% {
+    transform: rotateX(360deg);
+  }
+}
+
+.text-submit {
+  font-size:1.3rem;
+}
+
+.common-tile-link {
+  @extend
+  .p-3,
+  .d-flex,
+  .flex-column,
+  .w-100,
+  .h-100,
+  .align-items-center,
+  .text-decoration-none,
+  .text-primary,
+  .justify-content-center,
+}
+
+@keyframes zoomin {
+  0% {
+    background-size: cover;
+    transform: scale(1);
+  }
+  98% {
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: scale(1.5);
+  }
+}
+
+.bi-menu-common {
+  height: 100%;
+  width: 100%;
+  @extend
+  .bi,
+  .p-2
+}
+
+.bi-header-common {
+  color: white;
+  height: 25px;
+  width: 100%;
+  @extend
+  .bi,
+}
+
+.tiles-common {
+  background: white 0.82%;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(17.7px);
+  @extend
+  .w-100,
+  .h-100,
+  .border,
+  .rounded,
+  .shadow-lg,
+  .text-center,
+  .justify-content-center,
+  .align-items-center
+}
+
+.tiles-container {
+  width: 150px;
+  @extend
+  .h-100
+}
+
+.user-profile-image {
+  width: 300px;
+  @extend
+  .align-self-center,
+  .border,
+  .border-5,
+  .rounded,
+  .m-2
+}
+
+.account-page-column-common{
+  @extend
+  .h4,
+  .col-12
+}
+
+.account-page-credentials-column {
+  @extend
+  .account-page-column-common,
+  .col-xl-7,
+  .d-flex,
+  .flex-column,
+  .text-center
+}
+.account-page-change-password-column{
+  @extend
+  .account-page-column-common,
+  .col-xl-5,
+  .p-3
+}
+.account-page-data-row{
+  @extend
+  .d-flex,
+  .flex-row,
+  .flex-wrap,
+  .p-2,
+  .p-xl-5
+}
+
+
+@media (min-width: 318px) {
+  .tiles-container {
+    width: 300px;
+  }
+}
+
+@media (min-width: 468px) {
+  .tiles-container {
+    width: 450px;
+  }
+}
+
+@media (min-width: 768px) {
+  .tiles-container {
+    width: 750px;
+  }
+}
+@media (min-width: 918px) {
+  .tiles-container {
+    width: 900px;
+  }
+}
+
 @import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap-icons/font/bootstrap-icons";

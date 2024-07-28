@@ -1,13 +1,13 @@
 import React from 'react';
-import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 import Page from "../Page";
 
 
-function LoginPage(){
+function RegisterPage(){
     return (
             <Page className={"login-common"}>
-                   <LoginForm/>
+                   <RegisterForm/>
             </Page>
     )
 }
-export default LoginPage
+export default RegisterPage

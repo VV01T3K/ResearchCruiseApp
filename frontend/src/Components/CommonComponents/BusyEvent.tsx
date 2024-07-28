@@ -1,6 +1,5 @@
 import useCustomEvent from "../Tools/useCustomEvent";
 import {useEffect, useState} from "react";
-import {faBuildingShield} from "@fortawesome/free-solid-svg-icons";
 import {useLocation} from "react-router-dom";
 
 const BusyEvent = () => {

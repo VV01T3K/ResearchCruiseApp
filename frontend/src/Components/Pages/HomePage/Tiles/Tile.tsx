@@ -1,6 +1,4 @@
 import React from 'react';
-import Style from './style.css'
-
 
 type Props = {
     children?: React.ReactElement
@@ -9,7 +7,7 @@ type Props = {
 
 function Tile(props: Props){
     return (
-        <div className={Style + " text-center w-100 h-100 justify-content-center align-items-center "}>
+        <div className={"tiles-common"}>
             {props.children}
         </div>
     )
