@@ -80,7 +80,7 @@ function FormTemplate(props: Props) {
             .post(`api/forms/${props.type}/Save`, data)
             .then(()=> {setTimeout(()=>
             {
-                navigate(Path.SavedForms)},1000)
+                navigate(Path.SavedApplications)},1000)
             })
     }
     const handleDownload = () => {

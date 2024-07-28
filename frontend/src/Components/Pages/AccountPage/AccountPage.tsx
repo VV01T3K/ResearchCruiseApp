@@ -6,6 +6,7 @@ import {FieldValues, useForm} from "react-hook-form";
 import Api from "../../Tools/Api";
 import {UserData} from "../../CommonComponents/DataTypes";
 import userDataManager from "../../CommonComponents/UserDataManager";
+import PageTitle from "../CommonComponents/PageTitle";
 
 
 
@@ -111,29 +112,18 @@ function AccountPage(props: Props) {
 
     return (
         <>
-            <Page className={props.className + " justify-content-center"}>
-                <div className="bg-white w-100 d-flex flex-column pb-1 m-2 center align-self-start
-                                justify-content-center p-2"
-                >
-                    <h1 style={{fontSize:"2rem"}}>Ustawienia konta</h1>
+            <Page className={props.className + " justify-content-center bg-white d-flex flex-column m-2 center align-self-center"}>
+                    <PageTitle title={"Ustawienia konta"}/>
 
                     <div className="d-flex flex-row flex-wrap justify-content-center p-2 p-xl-5 align-items-center">
                         <div className="h4 col-12 col-xl-7 p-2 pt-3 d-flex flex-column justify-content-center
-                                        justify-content-xl-start text-center"
-                        >
-                            <img style={{width: "300px"}}
-                                 className="align-self-center border border-5 rounded m-2"
-                                 src={UserImg}
-                                 alt="Zdjęcie użytkownika"
-                            />
-                            <div className="h6">
-                                {userData?.roles}
-                            </div>
+                                        justify-content-xl-start text-center">
+                            <img className="user-profile-image" src={UserImg} alt="Zdjęcie użytkownika"/>
+                            <div className="h6">{userData?.roles}</div>
                             <div className="p-1">
                                 {userData?.firstName + " " + userData?.lastName}
                                 {userData?.accepted && <ErrorCode code="użytkownik nie został zaakceptowany" />}
                             </div>
-
                             <div className={"p-1 h5"}>
                                 {userData?.email}
                                 {userData?.emailConfirmed && <ErrorCode code="email nie został potwierdzony" />}
@@ -230,7 +220,6 @@ function AccountPage(props: Props) {
                             {changePasswordSuccess && <div className="h6">Pomyślnie zmieniono hasło</div>}
                         </div>
                     </div>
-                </div>
             </Page>
         </>
     )

@@ -3,7 +3,6 @@ import Page from "../Page";
 
 
 type Props = {
-    className?: string,
     children:
         React.ReactElement<any, string | React.JSXElementConstructor<any>>
 }
@@ -12,7 +11,7 @@ type Props = {
 function HomePage(props: Props){
     return (
         <>
-            <Page className={props.className + " d-flex flex-row pb-1 m-2 center align-self-start justify-content-center w-100"}>
+            <Page className={"h-100"}>
                     {props.children}
             </Page>
         </>

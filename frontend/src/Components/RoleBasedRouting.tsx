@@ -48,7 +48,7 @@ const RoleBasedRouting = () => {
     const AdministratorRoute = () => {
         return (
             <>
-                <Route path={Path.SavedForms} element={<SavedFormPage />} />
+                <Route path={Path.SavedApplications} element={<SavedFormPage />} />
                 <Route path={Path.NewForm} element={<NewFormPage />} />
                 <Route path={Path.Form} element={<FormPage />} />
                 <Route path={Path.ManageUsers} element={<ManageUsersPage />} />

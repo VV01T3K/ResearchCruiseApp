@@ -1,19 +1,18 @@
 import React, {useState} from "react";
 import {FieldValues} from "react-hook-form";
 import ErrorCode from "../CommonComponents/ErrorCode";
-import {Link} from "react-router-dom";
-import RegisterSuccessful from "./RegisterSuccessful";
+import {Link, useNavigate} from "react-router-dom";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import axios from "axios";
 import userDataManager from "../../CommonComponents/UserDataManager";
-
+import {PathName as Path} from "../../Tools/PathName";
 
 function RegisterForm(){
     const {Register} = userDataManager()
     const {
         reset, handleSubmit,
         formState: { errors }, EmailTextInput, LastNameTextInput, FirstNameTextInput,
-        ConfirmPasswordTextInput, PasswordTextInput, ConfirmButton, setDisabled
+        ConfirmPasswordTextInput, PasswordTextInput, ConfirmButton, setDisabled, ReturnToLoginLink
     } = useFormWrapper();
     const [registerError, setRegisterError] = useState<null | string>(null)
     const [registerSuccessful, setRegisterSuccessful] = useState(false);
@@ -58,22 +57,49 @@ function RegisterForm(){
             </div>
         )
     }
+
+    const navigate = useNavigate()
+
+    const onSubmitWhenSuccess = () => {
+        navigate(Path.Default)
+    }
+
+    const RegisterSuccessful = () => {
+        return (
+            <form onSubmit={handleSubmit(onSubmitWhenSuccess)}>
+                <div className="signup-link">
+                    Rejestracja przebiegła pomyślnie, potwierdź rejestrację poprzez link wysłany na adres e-mail i
+                    oczekuj zatwierdzenia konta przez biuro armatora
+                </div>
+                <ReturnToLoginLink/>
+            </form>
+        )
+    }
+
+    const DefaultForm = () => {
+        return (
+            <form onSubmit={handleSubmit(onSubmit)}>
+                {registerSuccessful &&
+                    <>
+                        <EmailTextInput/>
+                        <FirstNameTextInput/>
+                        <LastNameTextInput/>
+                        <PasswordTextInput/>
+                        <ConfirmPasswordTextInput/>
+                        <ConfirmButton/>
+                        {registerError && <ErrorCode code={registerError}/>}
+                        <LoginLink/>
+                    </>
+                }
+            </form>
+        )
+    }
+
     return (
         <>
-            <h1 style={{fontSize: "2rem"}}>Rejestracja</h1>
-            {!registerSuccessful &&
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <EmailTextInput/>
-                    <FirstNameTextInput/>
-                    <LastNameTextInput/>
-                    <PasswordTextInput/>
-                    <ConfirmPasswordTextInput/>
-                    <ConfirmButton/>
-                    {registerError && <ErrorCode code={registerError} />}
-                    <LoginLink/>
-                </form>
-            }
-            {registerSuccessful &&<RegisterSuccessful />}
+            <h1 className={"login-common-header"}>Rejestracja</h1>
+            {registerSuccessful && <DefaultForm/>}
+            {!registerSuccessful && <RegisterSuccessful/>}
         </>
     )
 }

@@ -1,7 +1,7 @@
 export enum PathName {
     Default = "/",
     NewForm = "/NewForm",
-    SavedForms = "/SavedForms",
+    SavedApplications = "/SavedForms",
     Form = "/Form",
     ManageUsers = "/ManageUsers",
     Any = "/*",

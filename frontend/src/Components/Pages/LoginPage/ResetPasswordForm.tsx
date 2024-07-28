@@ -9,7 +9,8 @@ import useFormWrapper from "../../CommonComponents/useFormWrapper";
 
 function ResetPasswordForm(){
     const {ResetPassword} = userDataManager()
-    const { handleSubmit, EmailTextInput, ConfirmButton, RegisterLink, setDisabled
+    const { handleSubmit, EmailTextInput, ConfirmButton, RegisterLink, setDisabled,
+        ReturnToLoginLink
     } = useFormWrapper();
     const [resetError, setError] = useState<null | string>(null)
     const [resetSuccessful, setResetSuccessful] = useState(false);
@@ -37,12 +38,7 @@ function ResetPasswordForm(){
         )
     }
 
-    const ReturnToLoginLink = () => {
 
-        return (
-            <input type={"submit"} className="login-common-submit" value={"Powrót do logowania"}/>
-        )
-    }
 
     const DefaultForm = () => {
         return (
@@ -59,7 +55,7 @@ function ResetPasswordForm(){
     const FormAfterResetSuccess = () => {
         return (
             <form onSubmit={handleSubmit(onSubmitWhenSuccess)}>
-                <div style={{fontSize: "1.3rem"}}>
+                <div className={"signup-link"}>
                     Jeśli konto istnieje, został wysłany link do zmiany hasła na podany adres e-mail
                 </div>
                 <ReturnToLoginLink/>
@@ -70,8 +66,8 @@ function ResetPasswordForm(){
     return (
         <>
             <h1 className={"login-common-header"}>Resetowanie hasła</h1>
-            {!resetSuccessful && <DefaultForm/>}
-            {resetSuccessful && <FormAfterResetSuccess/>}
+            {resetSuccessful && <DefaultForm/>}
+            {!resetSuccessful && <FormAfterResetSuccess/>}
         </>
     )
 }
