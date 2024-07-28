@@ -1,8 +1,9 @@
 using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Temp.Entities;
 using Contract = ResearchCruiseApp_API.Domain.Entities.Contract;
-using EvaluatedContract = ResearchCruiseApp_API.Domain.Entities.EvaluatedContract;
-using EvaluatedPublication = ResearchCruiseApp_API.Domain.Entities.EvaluatedPublication;
-using EvaluatedResearchTask = ResearchCruiseApp_API.Domain.Entities.EvaluatedResearchTask;
+using EvaluatedContract = ResearchCruiseApp_API.Temp.Entities.EvaluatedContract;
+using EvaluatedPublication = ResearchCruiseApp_API.Temp.Entities.EvaluatedPublication;
+using EvaluatedResearchTask = ResearchCruiseApp_API.Temp.Entities.EvaluatedResearchTask;
 using Publication = ResearchCruiseApp_API.Domain.Entities.Publication;
 using ResearchTask = ResearchCruiseApp_API.Domain.Entities.ResearchTask;
 

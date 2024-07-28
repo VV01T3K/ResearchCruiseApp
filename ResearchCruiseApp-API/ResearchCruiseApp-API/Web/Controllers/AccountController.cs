@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using ResearchCruiseApp_API.Application.DTOs.Users;
+using ResearchCruiseApp_API.Application.UseCaseServices.Users.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Tools;
+using ResearchCruiseApp_API.Temp.DTOs.Users;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 
@@ -24,7 +25,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
         
     [HttpPost("register")]
     public async Task<Results<Ok, ValidationProblem>> Register(
-        [FromBody] RegisterModel registerModel,
+        [FromBody] RegisterFormDto registerForm,
         [FromServices] IServiceProvider serviceProvider)
     {
         if (!userManager.SupportsUserEmail)
@@ -35,19 +36,19 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
         var userStore = serviceProvider.GetRequiredService<IUserStore<User>>();
         var emailStore = (IUserEmailStore<User>)userStore;
 
-        if (string.IsNullOrEmpty(registerModel.Email) || !_emailAddressAttribute.IsValid(registerModel.Email))
+        if (string.IsNullOrEmpty(registerForm.Email) || !_emailAddressAttribute.IsValid(registerForm.Email))
         {
             return CreateValidationProblem(
-                IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(registerModel.Email)));
+                IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(registerForm.Email)));
         }
 
         var user = new User();
-        await userStore.SetUserNameAsync(user, registerModel.Email, CancellationToken.None);
-        await emailStore.SetEmailAsync(user, registerModel.Email, CancellationToken.None);
-        user.FirstName = registerModel.FirstName;
-        user.LastName = registerModel.LastName;
+        await userStore.SetUserNameAsync(user, registerForm.Email, CancellationToken.None);
+        await emailStore.SetEmailAsync(user, registerForm.Email, CancellationToken.None);
+        user.FirstName = registerForm.FirstName;
+        user.LastName = registerForm.LastName;
             
-        var result = await userManager.CreateAsync(user, registerModel.Password);
+        var result = await userManager.CreateAsync(user, registerForm.Password);
         await userManager.AddToRoleAsync(user, RoleName.CruiseManager);
             
         if (!result.Succeeded)
@@ -57,7 +58,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
            
         var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
         await emailSender.SendAccountConfirmationMessageAsync(
-            user, registerModel.Email, RoleName.CruiseManager, serviceProvider);
+            user, registerForm.Email, RoleName.CruiseManager, serviceProvider);
             
         return TypedResults.Ok();
     }
@@ -182,7 +183,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
         var user = await userManager.FindByNameAsync(userName);
             
         if (user != null)
-            return Ok(await UserModel.GetAsync(user, userManager));
+            return Ok(await UserDto.GetAsync(user, userManager));
         return NotFound();
     }
 

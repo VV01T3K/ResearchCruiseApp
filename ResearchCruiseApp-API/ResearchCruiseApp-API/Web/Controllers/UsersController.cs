@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.DTOs.Users;
-using ResearchCruiseApp_API.Application.Services;
+using ResearchCruiseApp_API.Application.UseCaseServices.Users;
+using ResearchCruiseApp_API.Application.UseCaseServices.Users.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
@@ -33,9 +33,9 @@ public class UsersController(IUsersService usersService) : ControllerBase
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPost]
-    public async Task<IActionResult> AddUser([FromBody] RegisterModel registerModel)
+    public async Task<IActionResult> AddUser([FromBody] AddUserFormDto registerForm)
     {
-        var result = await usersService.AddUser(registerModel, User);
+        var result = await usersService.AddUser(registerForm, User);
         return result.Error is null
             ? Created()
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
@@ -65,9 +65,9 @@ public class UsersController(IUsersService usersService) : ControllerBase
     [HttpPatch("{id}/roles")]
     public async Task<IActionResult> ToggleUserRole(
         [FromRoute] Guid id,
-        [FromBody] ToggleUserRoleModel toggleUserRoleModel)
+        [FromBody] UserRoleToggleDto userRoleToggle)
     {
-        var result = await usersService.ToggleUserRole(id, toggleUserRoleModel);
+        var result = await usersService.ToggleUserRole(id, userRoleToggle);
         return result.Error is null
             ? NoContent()
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);

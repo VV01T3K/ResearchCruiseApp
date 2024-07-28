@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.DTOs;
-using ResearchCruiseApp_API.Application.Services;
+using ResearchCruiseApp_API.Application.UseCaseServices.Cruises;
+using ResearchCruiseApp_API.Application.UseCaseServices.Cruises.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
@@ -22,7 +22,7 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddCruise([FromBody] CruiseFormModel cruiseFormModel)
+    public async Task<IActionResult> AddCruise([FromBody] CruiseFormDto cruiseFormModel)
     {
         var result = await cruisesService.AddCruise(cruiseFormModel);
         return result.Error is null
@@ -31,7 +31,7 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
     }
 
     [HttpPatch("{id:guid}")]
-    public async Task<IActionResult> EditCruise([FromRoute] Guid id, [FromBody] CruiseFormModel cruiseFormModel)
+    public async Task<IActionResult> EditCruise([FromRoute] Guid id, [FromBody] CruiseFormDto cruiseFormModel)
     {
         var result = await cruisesService.EditCruise(id, cruiseFormModel);
         return result.Error is null

@@ -35,7 +35,7 @@ export default function ApplicationsList(props: Props) {
         if (!props.deletionMode) {
             Api
                 .get(
-                    '/api/Applications',)
+                    '/api/CruiseApplications',)
                 .then(response => response ? setApplications(response?.data): ()=>{}
                 )
         }

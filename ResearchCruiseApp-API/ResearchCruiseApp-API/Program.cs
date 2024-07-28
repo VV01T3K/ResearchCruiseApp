@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp_API.Application.Services;
+using ResearchCruiseApp_API.Application.SharedServices.Compressor;
+using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications;
+using ResearchCruiseApp_API.Application.UseCaseServices.Cruises;
+using ResearchCruiseApp_API.Application.UseCaseServices.Users;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
-using ResearchCruiseApp_API.Infrastructure.Persistence.DbContexts;
+using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,12 +41,10 @@ builder.Services
     .AddIdentityCore<User>(options =>
         options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<UsersContext>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddDbContext<UsersContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
-builder.Services.AddDbContext<ResearchCruiseContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -87,13 +88,10 @@ app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
-    var usersContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
-    var researchCruiseContext = scope.ServiceProvider.GetRequiredService<ResearchCruiseContext>();
+    var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    if (usersContext.Database.GetPendingMigrations().Any())
-        usersContext.Database.Migrate();
-    if (researchCruiseContext.Database.GetPendingMigrations().Any())
-        researchCruiseContext.Database.Migrate();
+    if (applicationDbContext.Database.GetPendingMigrations().Any())
+        applicationDbContext.Database.Migrate();
 }
 
 using (var scope = app.Services.CreateScope())

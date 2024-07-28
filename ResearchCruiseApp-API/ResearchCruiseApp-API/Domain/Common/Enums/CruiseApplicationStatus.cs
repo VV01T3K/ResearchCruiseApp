@@ -1,4 +1,4 @@
-using ResearchCruiseApp_API.Infrastructure.Tools.Attributes;
+using ResearchCruiseApp_API.Domain.Common.Attributes;
 
 namespace ResearchCruiseApp_API.Domain.Common.Enums;
 

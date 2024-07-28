@@ -11,5 +11,5 @@ public class User : IdentityUser
     [ProtectedPersonalData]
     public string LastName { get; set; } = null!;
 
-    public bool Accepted { get; set; } = false;
+    public bool Accepted { get; set; }
 }

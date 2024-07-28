@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.DTOs;
-using ResearchCruiseApp_API.Application.Services;
+using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications;
+using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
@@ -31,9 +32,9 @@ public class CruiseApplicationsController(ICruiseApplicationsService cruiseAppli
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddCruiseApplication(FormAModel formAModel)
+    public async Task<IActionResult> AddCruiseApplication(FormADto formADto)
     {
-        var result = await cruiseApplicationsService.AddCruiseApplication(formAModel);
+        var result = await cruiseApplicationsService.AddCruiseApplication(formADto);
         return result.Error is null
             ? Created()
             : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);

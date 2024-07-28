@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
 
@@ -8,12 +9,13 @@ public class Cruise : IYearBasedNumberedEntity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
-
-    public string Number { get; set; } = null!;
     
-    public Guid MainCruiseManagerId { get; set; }
+    [StringLength(1024)]
+    public string Number { get; set; } = null!;
 
-    public Guid MainDeputyManagerId { get; set; }
+    public User? MainCruiseManager { get; set; } = null!;
+
+    public User? MainDeputyManager { get; set; } = null!;
     
     public DateTime StartDate { get; set; }
     
