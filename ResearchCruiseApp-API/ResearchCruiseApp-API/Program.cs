@@ -7,6 +7,7 @@ using ResearchCruiseApp_API.Application.UseCaseServices.Users;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
+using ResearchCruiseApp_API.Infrastructure.Services;
 using ResearchCruiseApp_API.Infrastructure.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
