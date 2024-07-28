@@ -1,4 +1,4 @@
-import {RegisterOptions, useForm} from "react-hook-form";
+import {FieldValues, RegisterOptions, useForm} from "react-hook-form";
 import ErrorCode from "../Pages/CommonComponents/ErrorCode";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
@@ -62,12 +62,30 @@ export default function useFormWrapper() {
         )
     }
 
+    const NewPasswordTextInput = () => {
+        return (
+            <CommonInput label={"Nowe hasło"} name={"newPassword"} type={"password"}
+                         registerOptions={passwordOptions}/>
+        )
+    }
+
+    const ComparePasswordWith = (field:string) => {
+        return (value:FieldValues) => value === form.getValues(field) || 'Hasła nie pasują do siebie'
+    }
+
+    const ConfirmNewPasswordTextInput = () => {
+        return (
+            <CommonInput label={"Potwierdź nowe hasło"} name={"newPasswordConfirm"} type={"password"}
+                         registerOptions={{...passwordOptions, validate: ComparePasswordWith("newPassword")}}
+            />
+        )
+    }
+
+
     const ConfirmPasswordTextInput = () => {
         return (
             <CommonInput label={"Potwierdź hasło"} name={"passwordConfirm"} type={"password"}
-                         registerOptions={{...passwordOptions,
-                             validate: (value) => value === form.getValues("password") || 'Hasła nie pasują do siebie',
-                         }}
+                         registerOptions={{...passwordOptions, validate: ComparePasswordWith("password")}}
             />
         )
     }
@@ -116,6 +134,6 @@ export default function useFormWrapper() {
     return {...form, ErrorMessageIfPresent, ClearField, disabled, setDisabled,
         CommonInput, CommonSubmitButton, EmailTextInput, PasswordTextInput,
         LastNameTextInput, FirstNameTextInput, ConfirmPasswordTextInput, RegisterLink,
-        ConfirmButton, ReturnToLoginLink}
+        ConfirmButton, ReturnToLoginLink, NewPasswordTextInput, ConfirmNewPasswordTextInput}
 
 }

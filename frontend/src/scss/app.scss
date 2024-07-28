@@ -358,6 +358,14 @@ $top-bar-height: 60.3px;
   .p-2
 }
 
+.bi-header-common {
+  color: white;
+  height: 25px;
+  width: 100%;
+  @extend
+  .bi,
+}
+
 .tiles-common {
   background: white 0.82%;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -387,7 +395,35 @@ $top-bar-height: 60.3px;
   .border-5,
   .rounded,
   .m-2
+}
 
+.account-page-column-common{
+  @extend
+  .h4,
+  .col-12
+}
+
+.account-page-credentials-column {
+  @extend
+  .account-page-column-common,
+  .col-xl-7,
+  .d-flex,
+  .flex-column,
+  .text-center
+}
+.account-page-change-password-column{
+  @extend
+  .account-page-column-common,
+  .col-xl-5,
+  .p-3
+}
+.account-page-data-row{
+  @extend
+  .d-flex,
+  .flex-row,
+  .flex-wrap,
+  .p-2,
+  .p-xl-5
 }
 
 

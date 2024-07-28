@@ -218,7 +218,7 @@ namespace ResearchCruiseApp_API.Controllers
 
                 if (result.Succeeded)
                     return NoContent();
-                return BadRequest();
+                return Unauthorized();
             }
 
             await userManager.UpdateAsync(user);

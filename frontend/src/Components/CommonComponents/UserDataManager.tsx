@@ -74,6 +74,9 @@ const UserDataManager = () => {
         return Api.get(`/account/confirmEmail?userId=${userIdParam}&code=${codeParam}`, {raw:true})
     }
 
+    const ChangePassword = async (changePasswordData:FieldValues) => {
+            return Api.patch('/account', changePasswordData, {raw:true})
+    }
 
     const ForceLogout = () => {
         Logout()
@@ -82,6 +85,7 @@ const UserDataManager = () => {
     const UserLoggedIn = () => {
         return sessionStorage.getItem("accessToken") != null
     }
-    return {userData, Login, Logout, ForceLogout, UserLoggedIn, GetUserData, Register, ResetPassword, ConfirmEmail}
+    return {userData, Login, Logout, ForceLogout, UserLoggedIn, GetUserData, Register, ResetPassword, ConfirmEmail,
+    ChangePassword}
 }
 export default UserDataManager

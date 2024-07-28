@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import UserDataManager from "../CommonComponents/UserDataManager";
 type Props = {
     className?: string,
-    children?: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>>
+    children?: React.ReactElement[] | React.ReactElement
 }
 
 function Page(props: Props) {
