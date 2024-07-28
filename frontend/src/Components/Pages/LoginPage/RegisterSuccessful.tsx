@@ -6,7 +6,7 @@ export default function RegisterSuccessful() {
     return (
         <>
             <div className="signup_link m-3 text-break">
-                <div style={{fontSize:"1.3rem"}}>
+                <div className={"text-submit"}>
                     Rejestracja przebiegła pomyślnie, potwierdź rejestrację poprzez link wysłany na adres e-mail i
                     oczekuj zatwierdzenia konta przez biuro armatora
                 </div>

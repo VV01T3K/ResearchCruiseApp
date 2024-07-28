@@ -9,7 +9,8 @@ import useFormWrapper from "../../CommonComponents/useFormWrapper";
 
 function ResetPasswordForm(){
     const {ResetPassword} = userDataManager()
-    const { handleSubmit, EmailTextInput, ConfirmButton, RegisterLink, setDisabled
+    const { handleSubmit, EmailTextInput, ConfirmButton, RegisterLink, setDisabled,
+        ReturnToLoginLink
     } = useFormWrapper();
     const [resetError, setError] = useState<null | string>(null)
     const [resetSuccessful, setResetSuccessful] = useState(false);
@@ -37,12 +38,7 @@ function ResetPasswordForm(){
         )
     }
 
-    const ReturnToLoginLink = () => {
 
-        return (
-            <input type={"submit"} className="login-common-submit" value={"Powrót do logowania"}/>
-        )
-    }
 
     const DefaultForm = () => {
         return (

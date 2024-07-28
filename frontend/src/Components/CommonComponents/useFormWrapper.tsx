@@ -107,9 +107,15 @@ export default function useFormWrapper() {
         )
     }
 
+    const ReturnToLoginLink = () => {
+        return (
+            <input type={"submit"} className="login-common-submit" value={"Powrót do logowania"}/>
+        )
+    }
+
     return {...form, ErrorMessageIfPresent, ClearField, disabled, setDisabled,
         CommonInput, CommonSubmitButton, EmailTextInput, PasswordTextInput,
         LastNameTextInput, FirstNameTextInput, ConfirmPasswordTextInput, RegisterLink,
-        ConfirmButton}
+        ConfirmButton, ReturnToLoginLink}
 
 }

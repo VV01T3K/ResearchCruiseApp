@@ -1,70 +1,71 @@
 import React, {useEffect, useState} from 'react';
-import Style from './LoginPage.module.css'
 import Page from "../Page";
-import "./style.css"
-import {Link, useLocation} from "react-router-dom";
-import {ErrorMessage} from "react-image-size/lib/lib/constants";
+import {useNavigate} from "react-router-dom";
 import ErrorCode from "../CommonComponents/ErrorCode";
-import Api from "../../Tools/Api";
+import useFormWrapper from "../../CommonComponents/useFormWrapper";
+import userDataManager from "../../CommonComponents/UserDataManager";
+import axios from "axios";
+import {PathName as Path} from "../../Tools/PathName";
+import WaitingPage from "../WaitingPage";
 
 
 function EmailConfirmPage(){
+    const {ConfirmEmail} = userDataManager()
     const [confirmed, setConfirmed] = useState(false)
     const [errorMsg, setErrorMsg] = useState<null | string>(null)
-    const { search} = useLocation();
-
+    const {ReturnToLoginLink} = useFormWrapper();
     useEffect(
         () => {
-            const searchParams = new URLSearchParams(search);
-            const userIdParam = searchParams.get('userId');
-            const codeParam = searchParams.get('code');
-
-            function confirmEmail(){
-                Api.
-                    get(`/account/confirmEmail?userId=${userIdParam}&code=${codeParam}`)
-                    .then(response =>
-                        setConfirmed(true)
-                    )
-                    .catch(error => {
-                        setErrorMsg(error.message)
-                    })
-            }
-
-            confirmEmail();
+            (async () => {
+                try {
+                    await ConfirmEmail()
+                    setConfirmed(true)
+                } catch (error) {
+                    if (axios.isAxiosError(error))
+                        if(error.response && error.response?.status === 403)
+                            setErrorMsg("email został już potwierdzony")
+                        else if(error.response && error.response?.status === 401)
+                            setErrorMsg("link jest uszkodzony ")
+                        else
+                            setErrorMsg("Nieznany problem")
+                }
+            })()
         },
         []
     )
 
+    const EmailConfirmedText = () => {
+        return (
+            <div className={"text-submit"}>Email został potwierdzony</div>
+        )
+    }
+
+    const EmailConfirmFailedText = () => {
+        return (
+            <>
+                <div className={"text-submit"}>Nie udało się potwiedzić adresu email</div>
+                {errorMsg && <ErrorCode code={errorMsg!}/>}
+            </>
+        )
+    }
+
+    const navigate = useNavigate()
+
+    const ConfirmForm = () => {
+        return (
+            <form onSubmit={() => navigate(Path.Default)}>
+                {confirmed && <EmailConfirmedText/>}
+                {errorMsg && <EmailConfirmFailedText/>}
+                <ReturnToLoginLink/>
+            </form>
+        )
+    }
+
     return (
         <>
-            <Page
-                  className={"justify-content-center justify-content-md-end " + Style}
-            >
-                        <div className="d-flex flex-column pb-1 m-2 center align-self-start"
-                             style={{minWidth: "300px", maxWidth: "400px", "background": "white"}}
-                        >
-                            {confirmed &&
-                                <div className="signup_link m-3 text-break">
-                                    <div style={{fontSize:"1.3rem"}}>Email został potwierdzony</div>
-                                    <div className="butt p-2 mt-2">
-                                        <Link className="text-white" to="/">
-                                            Powrót do logowania
-                                        </Link>
-                                    </div>
-                                </div>
-                            }
-                            {errorMsg &&
-                                <div className="signup_link m-3 text-break">
-                                    <div style={{fontSize:"1.3rem"}}>Nie udało się potwiedzić adresu email</div>
-                                    {ErrorMessage && <ErrorCode code={errorMsg}/>}
-                                    <div className="butt p-2 mt-2">
-                                        <Link className="text-white" to="/">
-                                            Powrót do logowania
-                                        </Link>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+            {!confirmed && !errorMsg && <WaitingPage label={"Trwa potwierdzanie adresu email"}/>}
+            <Page className={"login-common"}>
+                <ConfirmForm/>
             </Page>
         </>
     )
