@@ -1,9 +1,10 @@
 export enum PathName {
+    Default = "/",
     NewForm = "/NewForm",
     SavedForms = "/SavedForms",
     Form = "/Form",
     ManageUsers = "/ManageUsers",
-    Default = "/*",
+    Any = "/*",
     Messages = "/Messages",
     Applications = "/Applications",
     MyApplications = "/MyApplications",
@@ -13,5 +14,7 @@ export enum PathName {
     ForcedLogout = "forcedLogout",
     AccountSettings = "/AccountSettings",
     ServerError = "/serverError",
-    ConfirmEmail = "/ConfirmEmail"
+    ConfirmEmail = "/ConfirmEmail",
+    Register = "/Register",
+    ResetPassword = "ResetPassword"
 }

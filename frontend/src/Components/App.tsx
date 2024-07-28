@@ -6,6 +6,7 @@ import BusyEvent from "./CommonComponents/BusyEvent";
 import {Interceptors} from "./Tools/Api";
 import RoleBasedRouting from "./RoleBasedRouting";
 import WaitingPage from "./Pages/WaitingPage";
+import PageBackground from "./CommonComponents/PageBackground";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
 
     return (
         <div className="vh-100">
+            <PageBackground/>
             <PageHeader/>
             <div className={DisplayIfNotBuisy() + " h-100"}> <RoleBasedRouting/> </div>
             <div className={DisplayIfBuisy() + " w-100"}> <WaitingPage/> </div>

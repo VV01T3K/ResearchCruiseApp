@@ -124,6 +124,36 @@ $top-bar-height: 60.3px;
   .p-0,
   .w-100
 }
+.page-header-spacing{
+  @extend
+  .app-top-bar-spacing,
+  .d-flex,
+  .flex-row,
+  .flex-shrink-0
+}
+.page-content-container{
+  @extend
+  .container-xxl,
+  .d-flex,
+  .flex-column,
+  .p-2,
+  .overflow-auto,
+  .align-items-center,
+}
+.page-content{
+  @extend
+  .d-flex,
+  .flex-row,
+  .h-100,
+}
+.page{
+  @extend
+  .h-100,
+  .w-100,
+  .d-flex,
+  .flex-column,
+
+}
 .mobile-submenu{
   margin-top: $top-bar-height;
   height: 42.25px;
@@ -135,5 +165,162 @@ $top-bar-height: 60.3px;
   .z-0,
   .bg-primary
 }
+
+.default-bg-position {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-position: left center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+.default-bg-img{
+  background-image: url("../resources/Oceanograf.jpg");
+}
+.default-bg{
+  @extend
+  .default-bg-position,
+  .default-bg-img
+}
+
+
+.default-bg-stretch{
+  animation: zoomin 30s infinite alternate;
+  @extend
+  .default-bg
+}
+
+.login-common{
+  width: 350px;
+  @extend
+  .d-flex,
+  .flex-column,
+  .p-4,
+  .text-center,
+  .align-self-center,
+  .align-self-md-end,
+  .bg-white
+}
+.login-common-header{
+  font-size:2rem;
+  @extend
+  .text-primary
+}
+.login-common-text-field{
+  border-bottom: 2px solid map-get($theme-colors, "primary");
+  @extend
+  .position-relative,
+  .mt-4
+}
+.login-common-text-field input{
+  height: 40px;
+  border: none;
+  outline: none;
+  @extend
+  .w-100,
+}
+
+.login-common-text-field label{
+  color: map-get($theme-colors, "primary");
+  pointer-events: none;
+  @extend
+  .w-100,
+  .text-start,
+}
+
+.forget-password-link{
+    color: #666666;
+    cursor: pointer;
+    text-decoration: none;
+   @extend
+  .d-flex,
+  .mt-2
+}
+
+.forget-password-link:hover{
+    text-decoration: underline;
+}
+
+.signup-link{
+  text-align: center;
+  font-size: 16px;
+  color: #666666;
+  @extend
+  .m-0
+}
+.signup-link a{
+  color: map-get($theme-colors, "primary");
+  text-decoration: none;
+}
+
+.signup-link a:hover{
+  text-decoration: underline;
+}
+
+.login-common-submit{
+  height: 50px;
+  background: map-get($theme-colors, "primary");
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  @extend
+  .mt-2,
+  .mb-2,
+  .w-100,
+  .border,
+  .text-white
+}
+
+.login-common-button{
+
+  @extend
+  .mt-2,
+  .mb-2,
+  .w-100,
+  .border,
+  .text-white
+}
+
+
+.login-common-submit:hover{
+  opacity: 90%;
+  transition: .5s;
+}
+.login-common-submit-loading{
+  display: inline-block;
+  animation: slideInAndOut 5s linear infinite; /* Zmien czas trwania animacji według potrzeb */
+  @extend
+  .login-common-submit
+}
+@keyframes slideInAndOut {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(180deg);
+  }
+  100% {
+    transform: rotateX(360deg);
+  }
+}
+
+@keyframes zoomin {
+  0% {
+    background-size: cover;
+    transform: scale(1);
+  }
+  98% {
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: scale(1.5);
+  }
+}
+
 
 @import "node_modules/bootstrap/scss/bootstrap";

@@ -21,6 +21,11 @@ import ServerErrorPage from "./Pages/ServerErrorPage";
 import UserBasedAccess from "./UserBasedAccess";
 import MyApplicationsPage from "./Pages/MyApplicationsPage";
 import WaitingPage from "./Pages/WaitingPage";
+import LoginForm from "./Pages/LoginPage/LoginForm";
+import RegisterForm from "./Pages/LoginPage/RegisterForm";
+import ResetPasswordForm from "./Pages/LoginPage/ResetPasswordForm";
+import RegisterPage from "./Pages/LoginPage/RegisterPage";
+import ResetPasswordPage from "./Pages/LoginPage/ResetPasswordPage";
 
 
 
@@ -47,7 +52,7 @@ const RoleBasedRouting = () => {
                 <Route path={Path.NewForm} element={<NewFormPage />} />
                 <Route path={Path.Form} element={<FormPage />} />
                 <Route path={Path.ManageUsers} element={<ManageUsersPage />} />
-                <Route path={Path.Default} element={<AdminPanel />} />
+                <Route path={Path.Any} element={<AdminPanel />} />
                 <Route path={Path.Messages} element={<MessagesPage />} />
                 <Route path={Path.Applications} element={<ApplicationsPage />} />
                 <Route path={Path.ApplicationDetails} element={<ApplicationDetailsPage />} />
@@ -63,7 +68,7 @@ const RoleBasedRouting = () => {
             <>
                 <Route path={Path.NewForm} element={<NewFormPage />} />
                 <Route path={Path.Form} element={<FormPage />} />
-                <Route path={Path.Default} element={<ManagerPanel />} />
+                <Route path={Path.Any} element={<ManagerPanel />} />
             </>
         )
     }
@@ -89,7 +94,9 @@ const RoleBasedRouting = () => {
     const NotLoggedRoute = () => {
         return (
             <>
-                <Route path={Path.Default} element={<LoginPage />} />
+                <Route path={Path.Any} element={<LoginPage />} />
+                <Route path={Path.Register} element={<RegisterPage />} />
+                <Route path={Path.ResetPassword} element={<ResetPasswordPage/>} />
                 <Route path={Path.ForcedLogout} element={<LogoutPage />} />
             </>
         )
@@ -98,7 +105,7 @@ const RoleBasedRouting = () => {
     const WaitingForUserDataRoute = () => {
         return (
             <>
-                <Route path={Path.Default} element={<WaitingPage label={"Wczytywanie danych"}/>} />
+                <Route path={Path.Any} element={<WaitingPage label={"Wczytywanie danych"}/>} />
             </>
         )
     }
