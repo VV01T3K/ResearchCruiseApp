@@ -51,7 +51,12 @@ public class ContractDto
                     dest => dest.ScanName,
                     options =>
                         options.MapFrom(src =>
-                            src.Scan.Name));
+                            src.Scan.Name))
+                .ForMember(
+                dest => dest.ScanContent,
+                options =>
+                    options.MapFrom(src =>
+                        src.Scan.Content));
         }
     }
 }

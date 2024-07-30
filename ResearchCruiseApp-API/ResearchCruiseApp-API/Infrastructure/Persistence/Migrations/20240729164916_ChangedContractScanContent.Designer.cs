@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp_API.Infrastructure.Persistence;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240729164916_ChangedContractScanContent")]
+    partial class ChangedContractScanContent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -659,11 +662,15 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<int>("YearFrom")
-                        .HasColumnType("int");
+                    b.Property<string>("YearFrom")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
-                    b.Property<int>("YearTo")
-                        .HasColumnType("int");
+                    b.Property<string>("YearTo")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.HasKey("Id");
 

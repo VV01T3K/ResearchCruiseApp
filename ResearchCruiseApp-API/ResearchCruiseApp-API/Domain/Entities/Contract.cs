@@ -27,5 +27,5 @@ public class Contract
       [MaxLength(1024)]
       public string ScanName { get; set; } = null!;
       
-      public byte[] ScanContentCompressed { get; set; } = [];
+      public string ScanContent { get; set; } = null!;
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -78,6 +79,16 @@ public class FormADto
         {
             CreateMap<FormA, FormADto>()
                 .ForMember(
+                    dest => dest.CruiseManagerId,
+                    options =>
+                        options.MapFrom(src =>
+                            src.CruiseManager.Id))
+                .ForMember(
+                    dest => dest.DeputyManagerId,
+                    options =>
+                        options.MapFrom(src =>
+                            src.DeputyManager.Id))
+                .ForMember(
                     dest => dest.AcceptablePeriod,
                     options =>
                         options.MapFrom(src =>
@@ -93,7 +104,12 @@ public class FormADto
                         options.MapFrom(src =>
                             src.CruiseHours / TimeConstants.HoursPerDay));
             
+            // CruiseManager and DeputyManager mappings are complex and have to be performed in the business logic
             CreateMap<FormADto, FormA>()
+                .ForMember(
+                    dest => dest.Id,
+                    options =>
+                        options.Ignore())
                 .ForMember(
                     dest => dest.AcceptablePeriodBeg,
                     options =>
@@ -114,7 +130,7 @@ public class FormADto
                     options =>
                         options.MapFrom(src =>
                             src.OptimalPeriod.Max()));
-            
+
         }
     }
 }

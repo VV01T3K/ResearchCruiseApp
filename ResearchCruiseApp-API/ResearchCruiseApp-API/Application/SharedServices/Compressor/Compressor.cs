@@ -7,7 +7,7 @@ namespace ResearchCruiseApp_API.Application.SharedServices.Compressor;
 
 public class Compressor : ICompressor
 {
-    public async Task<byte[]> Compress(string input)
+    public async Task<byte[]> CompressAsync(string input)
     {
         var bytes = Encoding.UTF8.GetBytes(input);
         // return bytes;

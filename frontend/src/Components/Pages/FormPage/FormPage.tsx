@@ -30,7 +30,7 @@ function FormPage(){
         if (locationState?.applicationId) {
             console.log(locationState.applicationId)
             Api
-                .get(`/api/Applications/${locationState?.applicationId}/form${locationState.formType}`)
+                .get(`/api/CruiseApplications/${locationState?.applicationId}/form${locationState.formType}`)
                 .then(response => {
                     console.log(response)
                     setLoadValues(response?.data)

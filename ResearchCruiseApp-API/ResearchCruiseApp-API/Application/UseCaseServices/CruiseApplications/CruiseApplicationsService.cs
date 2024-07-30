@@ -1,7 +1,9 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using ResearchCruiseApp_API.Application.Common.Models;
+using ResearchCruiseApp_API.Application.SharedServices.Compressor;
 using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
@@ -14,6 +16,8 @@ namespace ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications;
 public class CruiseApplicationsService(
     ICruiseApplicationEvaluator cruiseApplicationEvaluator,
     IYearBasedKeyGenerator yearBasedKeyGenerator,
+    ICompressor compressor,
+    UserManager<User> userManager,
     ApplicationDbContext applicationDbContext,
     IMapper mapper)
     : ICruiseApplicationsService
@@ -45,8 +49,11 @@ public class CruiseApplicationsService(
 
     public async Task<Result> AddCruiseApplication(FormADto formADto)
     {
-        var formA = mapper.Map<FormA>(formADto);
-            
+        var formAResult = await CreateFormA(formADto);
+        if (formAResult.Error is not null)
+            return formAResult.Error;
+        
+        var formA = formAResult.Data!;
         applicationDbContext.FormsA.Add(formA);
         await applicationDbContext.SaveChangesAsync();
         
@@ -80,6 +87,8 @@ public class CruiseApplicationsService(
         var formA = await applicationDbContext.CruiseApplications
             .Where(cruiseApplication => cruiseApplication.Id == applicationId)
             .Include(cruiseApplication => cruiseApplication.FormA)
+            .Include(cruiseApplication => cruiseApplication.FormA!.CruiseManager)
+            .Include(cruiseApplication => cruiseApplication.FormA!.DeputyManager)
             .Include(cruiseApplication => cruiseApplication.FormA!.Contracts)
             .Include(cruiseApplication => cruiseApplication.FormA!.Publications)
             .Include(cruiseApplication => cruiseApplication.FormA!.Theses)
@@ -139,11 +148,30 @@ public class CruiseApplicationsService(
     //
     //     return evaluatedApplicationModel;
     // }
+
+
+    private async Task<Result<FormA>> CreateFormA(FormADto formADto)
+    {
+        var formA = mapper.Map<FormA>(formADto);
+        var cruiseManager = await userManager.FindByIdAsync(formADto.CruiseManagerId.ToString());
+        var deputyManager = await userManager.FindByIdAsync(formADto.DeputyManagerId.ToString());
+
+        if (cruiseManager is null || deputyManager is null)
+            return Error.BadRequest("Cruise manager and deputy manager have to be defined");
+
+        formA.CruiseManager = cruiseManager;
+        formA.DeputyManager = deputyManager;
+
+        return formA;
+    }
+        
     
     private IIncludableQueryable<CruiseApplication, FormC?> GetCruiseApplicationsQuery()
     {
         return applicationDbContext.CruiseApplications
             .Include(cruiseApplication => cruiseApplication.FormA)
+            .Include(cruiseApplication => cruiseApplication.FormA!.CruiseManager)
+            .Include(cruiseApplication => cruiseApplication.FormA!.DeputyManager)
             .Include(cruiseApplication => cruiseApplication.FormB)
             .Include(cruiseApplication => cruiseApplication.FormC);
     }

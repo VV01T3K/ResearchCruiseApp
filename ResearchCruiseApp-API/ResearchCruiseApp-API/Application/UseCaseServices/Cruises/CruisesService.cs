@@ -171,6 +171,8 @@ public class CruisesService(
 
         return newCruise;
     }
+    
+    
     private static Tuple<DateTime, DateTime> GetAutoCalculatedCruiseDate(FormA formA)
     {
         // Optimal period beg/end is a number from range 0...24 representing a point in a year

@@ -1,6 +1,7 @@
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
+using ResearchCruiseApp_API.Infrastructure.Tools;
 
-namespace ResearchCruiseApp_API.Infrastructure.Tools;
+namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 
 public class YearBasedKeyGenerator : IYearBasedKeyGenerator

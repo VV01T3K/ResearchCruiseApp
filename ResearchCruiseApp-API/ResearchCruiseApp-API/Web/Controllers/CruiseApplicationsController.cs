@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.DTOs;
 using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications;
 using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
+using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 
