@@ -1,6 +1,5 @@
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
-using ResearchCruiseApp_API.Infrastructure.Tools;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
 

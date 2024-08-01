@@ -1,9 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.DTOs;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
@@ -16,11 +15,7 @@ namespace ResearchCruiseApp_API.Web.Controllers;
 [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
 [Route("api/[controller]")]
 [ApiController]
-public class CruiseApplicationsController(
-    IMediator mediator,
-    GetCruiseApplicationByIdHandler getCruiseApplicationByIdHandler,
-    ICruiseApplicationsService cruiseApplicationsService)
-    : ControllerBase
+public class CruiseApplicationsController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllCruiseApplications()
@@ -34,7 +29,7 @@ public class CruiseApplicationsController(
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCruiseApplicationById(Guid id)
     {
-        var result = await getCruiseApplicationByIdHandler.Handle(new GetCruiseApplicationByIdQuery(id));
+        var result = await mediator.Send(new GetCruiseApplicationByIdQuery(id));
         return result.Error is null
             ? Ok(result.Data)
             : this.CreateError(result);

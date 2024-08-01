@@ -2,8 +2,8 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResponse;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.DTOs;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 
@@ -22,11 +22,11 @@ public class GetAllCruiseApplicationsHandler(
         var cruiseApplications = await GetCruiseApplicationsQuery()
             .ToListAsync(cancellationToken);
             
-        var cruiseApplicationModels = cruiseApplications
+        var cruiseApplicationDtos = cruiseApplications
             .Select(mapper.Map<CruiseApplicationDto>)
             .ToList();
 
-        return cruiseApplicationModels;
+        return cruiseApplicationDtos;
     }
     
     

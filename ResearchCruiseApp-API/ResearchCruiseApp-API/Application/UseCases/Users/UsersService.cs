@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResponse;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
-using ResearchCruiseApp_API.Application.UseCases.Users.DTOs;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 

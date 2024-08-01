@@ -1,21 +1,21 @@
 import Api from "./Api";
-import {Application, ApplicationShortInfo} from "../Pages/ApplicationsPage/ApplicationsPage";
+import {CruiseApplication, CruiseApplicationShortInfo} from "../Pages/CruiseApplicationsPage/CruiseApplicationsPage";
 import {Dispatch} from "react";
 
-export async function fetchApplications(
-    applicationsShortInfo: ApplicationShortInfo[],
-    setApplicationsDispatch: Dispatch<any>
+export async function fetchCruiseApplications(
+    cruiseApplicationsShortInfo: CruiseApplicationShortInfo[],
+    setCruiseApplicationsDispatch: Dispatch<any>
 ) {
-    const applicationsResponses = await Promise.all(
-        applicationsShortInfo.map(applicationShortInfo =>
+    const cruiseApplicationsResponses = await Promise.all(
+        cruiseApplicationsShortInfo.map(cruiseApplicationShortInfo =>
             Api
-                .get(`/api/Applications/${applicationShortInfo.id}`)
+                .get(`/api/CruiseApplications/${cruiseApplicationShortInfo.id}`)
                 .catch(error =>
                     console.log(error.message)
                 )
         )
     )
-    const applicationsResponsesData: Application[] = applicationsResponses
+    const cruiseApplicationsResponsesData: CruiseApplication[] = cruiseApplicationsResponses
         .map(response => response?.data)
-    setApplicationsDispatch(applicationsResponsesData)
+    setCruiseApplicationsDispatch(cruiseApplicationsResponsesData)
 }

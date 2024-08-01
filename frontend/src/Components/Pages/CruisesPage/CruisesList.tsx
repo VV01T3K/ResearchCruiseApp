@@ -4,7 +4,7 @@ import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import React, {Dispatch, useEffect, useState} from "react";
 import {Cruise} from "./CruisesPage";
-import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
+import {CruiseApplication, CruiseApplicationShortInfo} from "../ApplicationsPage/CruiseApplicationsPage";
 import CruiseApplicationsList from "./CruiseApplicationsList";
 import DatePicker from "react-datepicker";
 import Api from "../../Tools/Api";
@@ -219,7 +219,7 @@ export default function CruisesList(props: Props) {
                                      style={{width: windowWidth >= 1200 ? "19%" : "100%"}}
                                 >
                                     <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
-                                    <CruiseApplicationsList applicationsShortInfo={row.applicationsShortInfo} />
+                                    <CruiseApplicationsList cruiseApplicationsShortInfo={row.cruiseApplicationsShortInfo} />
                                 </div>
                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                      style={{width: windowWidth >= 1200 ? "16%" : "100%"}}

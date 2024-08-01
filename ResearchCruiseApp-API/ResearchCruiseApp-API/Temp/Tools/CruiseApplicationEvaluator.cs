@@ -7,7 +7,7 @@ using EvaluatedResearchTask = ResearchCruiseApp_API.Temp.Entities.EvaluatedResea
 using Publication = ResearchCruiseApp_API.Domain.Entities.Publication;
 using ResearchTask = ResearchCruiseApp_API.Domain.Entities.ResearchTask;
 
-namespace ResearchCruiseApp_API.Infrastructure.Tools;
+namespace ResearchCruiseApp_API.Temp.Tools;
 
 
 public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator

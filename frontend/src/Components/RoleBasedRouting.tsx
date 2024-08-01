@@ -7,8 +7,8 @@ import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import AdminPanel from "./Pages/HomePage/AdminPanel";
 import MessagesPage from "./Pages/MessagesPage/MessagesPage";
-import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
-import ApplicationDetailsPage from "./Pages/ApplicationDetailsPage/ApplicationDetailsPage";
+import CruiseApplicationsPage from "./Pages/CruiseApplicationsPage/CruiseApplicationsPage";
+import CruiseApplicationDetailsPage from "./Pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsPage";
 import CruisesPage from "./Pages/CruisesPage/CruisesPage";
 import CruiseFormPage from "./Pages/CruiseFormPage/CruiseFormPage";
 import ManagerPanel from "./Pages/HomePage/ManagerPanel";
@@ -47,8 +47,8 @@ const RoleBasedRouting = () => {
                 <Route path={Path.ManageUsers} element={<ManageUsersPage />} />
                 <Route path={Path.Default} element={<AdminPanel />} />
                 <Route path={Path.Messages} element={<MessagesPage />} />
-                <Route path={Path.Applications} element={<ApplicationsPage />} />
-                <Route path={Path.ApplicationDetails} element={<ApplicationDetailsPage />} />
+                <Route path={Path.CruiseApplications} element={<CruiseApplicationsPage />} />
+                <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
                 <Route path={Path.Cruises} element={<CruisesPage />} />
                 <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
             </>

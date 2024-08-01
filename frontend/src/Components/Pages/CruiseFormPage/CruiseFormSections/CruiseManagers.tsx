@@ -5,29 +5,29 @@ import ErrorCode from "../../CommonComponents/ErrorCode";
 import {EditCruiseFormValues} from "../CruiseFormPage";
 import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
 import FormUserSelect, {FormUser} from "../../FormPage/Inputs/FormUserSelect";
-import {Application} from "../../ApplicationsPage/ApplicationsPage";
+import {CruiseApplication} from "../../CruiseApplicationsPage/CruiseApplicationsPage";
 
 type Props = {
-    applications: Application[]
+    cruiseApplications: CruiseApplication[]
     editCruiseForm: UseFormReturn<EditCruiseFormValues>
 }
 
 
 export default function CruiseManagers(props: Props) {
-    const getUsersFromApplications = (): FormUser[] => {
-        const usersPairs = props.applications
-            .map(application => {
+    const getUsersFromCruiseApplications = (): FormUser[] => {
+        const usersPairs = props.cruiseApplications
+            .map(cruiseApplication => {
                 const cruiseManager: FormUser = {
-                    id: application.cruiseManagerId,
-                    email: application.cruiseManagerEmail,
-                    firstName: application.cruiseManagerFirstName,
-                    lastName: application.cruiseManagerLastName
+                    id: cruiseApplication.cruiseManagerId,
+                    email: cruiseApplication.cruiseManagerEmail,
+                    firstName: cruiseApplication.cruiseManagerFirstName,
+                    lastName: cruiseApplication.cruiseManagerLastName
                 }
                 const deputyManager: FormUser = {
-                    id: application.deputyManagerId,
-                    email: application.deputyManagerEmail,
-                    firstName: application.deputyManagerFirstName,
-                    lastName: application.deputyManagerLastName
+                    id: cruiseApplication.deputyManagerId,
+                    email: cruiseApplication.deputyManagerEmail,
+                    firstName: cruiseApplication.deputyManagerFirstName,
+                    lastName: cruiseApplication.deputyManagerLastName
                 }
                 return [cruiseManager, deputyManager]
             })
@@ -66,7 +66,7 @@ export default function CruiseManagers(props: Props) {
                                 className="col-12"
                                 name="managersTeam.mainCruiseManagerId"
                                 label="Kierownik główny"
-                                values={getUsersFromApplications()}
+                                values={getUsersFromCruiseApplications()}
                                 form={props.editCruiseForm}
                             />
                         </div>
@@ -75,7 +75,7 @@ export default function CruiseManagers(props: Props) {
                                 className="col-12"
                                 name="managersTeam.mainDeputyManagerId"
                                 label="Zastępca kierownika głównego"
-                                values={getUsersFromApplications()}
+                                values={getUsersFromCruiseApplications()}
                                 form={props.editCruiseForm}
                             />
                         </div>

@@ -10,7 +10,7 @@ import React from "react";
 import Tiles from "./Tiles/TilesMenu";
 import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 import CruisesTile from "./Tiles/CruisesTile";
-import ApplicationsTile from "./Tiles/ApplicationsTile";
+import CruiseApplicationsTile from "./Tiles/CruiseApplicationsTile";
 
 
 export default function AdminPanel() {
@@ -23,7 +23,7 @@ export default function AdminPanel() {
         { element: <MessagesTile />, cols: 1, rows: 1 },
         { element: <ViewFormsTile />, cols: 1, rows: 1 },
         { element: <AccountSettingsTile />, cols: 1, rows: 1 },
-        { element: <ApplicationsTile />, cols: 1, rows: 1},
+        { element: <CruiseApplicationsTile />, cols: 1, rows: 1},
         { element: <CruisesTile />, cols: 1, rows: 1 }
     ];
 

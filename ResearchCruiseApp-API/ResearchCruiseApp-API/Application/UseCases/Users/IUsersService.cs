@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResponse;
-using ResearchCruiseApp_API.Application.UseCases.Users.DTOs;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Users;
 

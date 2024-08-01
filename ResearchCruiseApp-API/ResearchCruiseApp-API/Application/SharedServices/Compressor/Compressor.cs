@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using System.Text;
-using ResearchCruiseApp_API.Infrastructure.Tools;
 
 namespace ResearchCruiseApp_API.Application.SharedServices.Compressor;
 

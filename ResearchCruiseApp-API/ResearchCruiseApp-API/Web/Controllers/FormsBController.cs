@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Domain.Common.Constants;
-using ResearchCruiseApp_API.Infrastructure.Tools;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 

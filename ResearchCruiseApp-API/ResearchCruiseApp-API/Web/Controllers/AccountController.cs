@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.Models.DTOs.Account;
+using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Application.UseCases.Account;
-using ResearchCruiseApp_API.Application.UseCases.Account.DTOs;
-using ResearchCruiseApp_API.Application.UseCases.Users.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
-using ResearchCruiseApp_API.Infrastructure.Tools;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;

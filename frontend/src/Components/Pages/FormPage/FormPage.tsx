@@ -10,7 +10,7 @@ import Api from "../../Tools/Api";
 
 export type FormPageLocationState = {
     formType: string,
-    applicationId?: string,  // The id of the form to be loaded from the database if applicable
+    cruiseApplicationId?: string,  // The id of the form to be loaded from the database if applicable
     localStorageValues?: FormValues, // To be deleted soon
     readonly: boolean
 }
@@ -27,10 +27,10 @@ function FormPage(){
     const [loadValues, setLoadValues]
         = useState<FormValues | undefined>()
     useEffect(() => {
-        if (locationState?.applicationId) {
-            console.log(locationState.applicationId)
+        if (locationState?.cruiseApplicationId) {
+            console.log(locationState.cruiseApplicationId)
             Api
-                .get(`/api/CruiseApplications/${locationState?.applicationId}/form${locationState.formType}`)
+                .get(`/api/CruiseApplications/${locationState?.cruiseApplicationId}/form${locationState.formType}`)
                 .then(response => {
                     console.log(response)
                     setLoadValues(response?.data)

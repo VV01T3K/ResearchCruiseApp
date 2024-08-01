@@ -5,17 +5,15 @@ using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.SharedServices.Compressor;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 using ResearchCruiseApp_API.Application.UseCases.Account;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
-using ResearchCruiseApp_API.Application.UseCases.Cruises;
 using ResearchCruiseApp_API.Application.UseCases.Users;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Services;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
-using ResearchCruiseApp_API.Infrastructure.Tools;
-using ResearchCruiseApp_API.Web.Controllers;
+using ResearchCruiseApp_API.Temp.Tools;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +60,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
 builder.Services.AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>();
 builder.Services.AddScoped<ICompressor, Compressor>();
+builder.Services.AddScoped<ResearchCruiseApp_API.Application.SharedServices.Cruises.ICruisesService, ResearchCruiseApp_API.Application.SharedServices.Cruises.CruisesService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
@@ -78,9 +77,7 @@ builder.WebHost.ConfigureKestrel(options =>
 
 builder.Services.AddScoped<GetCruiseApplicationByIdHandler>();
 
-builder.Services.AddScoped<ICruiseApplicationsService, CruiseApplicationsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
-builder.Services.AddScoped<ICruisesService, CruisesService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddMediatR(cfg =>

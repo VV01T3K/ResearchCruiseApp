@@ -1,4 +1,4 @@
-namespace ResearchCruiseApp_API.Application.Common.Models.ServiceResponse;
+namespace ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 
 
 public class Result

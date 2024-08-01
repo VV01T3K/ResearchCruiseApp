@@ -1,6 +1,6 @@
 using MediatR;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResponse;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.DTOs;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
 

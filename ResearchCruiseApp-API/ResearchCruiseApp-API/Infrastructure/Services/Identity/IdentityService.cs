@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Application.Common.Models;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResponse;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Application.UseCases.Account.DTOs;
+using ResearchCruiseApp_API.Application.Models.DTOs.Account;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services.Identity;
