@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.UseCaseServices.Users;
-using ResearchCruiseApp_API.Application.UseCaseServices.Users.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.Users;
+using ResearchCruiseApp_API.Application.UseCases.Users.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
+using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 
@@ -18,7 +19,7 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.GetAllUsers(User);
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [Authorize(Roles = RoleName.Administrator)]
@@ -28,7 +29,7 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.GetUserById(id, User);
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -38,7 +39,7 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.AddUser(registerForm, User);
         return result.Error is null
             ? Created()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -48,7 +49,7 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.GetAllUnacceptedUsers();
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -58,7 +59,7 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.AcceptUser(id);
         return result.Error is null
             ? NoContent()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [Authorize(Roles = RoleName.Administrator)]
@@ -70,6 +71,6 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.ToggleUserRole(id, userRoleToggle);
         return result.Error is null
             ? NoContent()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 }

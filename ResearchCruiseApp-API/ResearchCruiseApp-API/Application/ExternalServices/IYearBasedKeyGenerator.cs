@@ -1,6 +1,6 @@
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
 
-namespace ResearchCruiseApp_API.Infrastructure.Tools;
+namespace ResearchCruiseApp_API.Application.ExternalServices;
 
 
 public interface IYearBasedKeyGenerator

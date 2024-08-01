@@ -8,59 +8,35 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using ResearchCruiseApp_API.Application.UseCaseServices.Users.DTOs;
+using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.UseCases.Account;
+using ResearchCruiseApp_API.Application.UseCases.Account.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.Users.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Tools;
-using ResearchCruiseApp_API.Temp.DTOs.Users;
+using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 
 
 [Route("[controller]")]
 [ApiController]
-public class AccountController(UserManager<User> userManager) : ControllerBase
+public class AccountController(
+    IAccountService accountService,
+    SignInManager<User> signInManager,
+    UserManager<User> userManager)
+    : ControllerBase
 {
-    private readonly EmailAddressAttribute _emailAddressAttribute = new();
-        
     [HttpPost("register")]
-    public async Task<Results<Ok, ValidationProblem>> Register(
+    public async Task<IActionResult> Register(
         [FromBody] RegisterFormDto registerForm,
-        [FromServices] IServiceProvider serviceProvider)
+        CancellationToken cancellationToken)
     {
-        if (!userManager.SupportsUserEmail)
-        {
-            throw new NotSupportedException($"{nameof(Register)} requires a user store with email support.");
-        }
-
-        var userStore = serviceProvider.GetRequiredService<IUserStore<User>>();
-        var emailStore = (IUserEmailStore<User>)userStore;
-
-        if (string.IsNullOrEmpty(registerForm.Email) || !_emailAddressAttribute.IsValid(registerForm.Email))
-        {
-            return CreateValidationProblem(
-                IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(registerForm.Email)));
-        }
-
-        var user = new User();
-        await userStore.SetUserNameAsync(user, registerForm.Email, CancellationToken.None);
-        await emailStore.SetEmailAsync(user, registerForm.Email, CancellationToken.None);
-        user.FirstName = registerForm.FirstName;
-        user.LastName = registerForm.LastName;
-            
-        var result = await userManager.CreateAsync(user, registerForm.Password);
-        await userManager.AddToRoleAsync(user, RoleName.CruiseManager);
-            
-        if (!result.Succeeded)
-        {
-            return CreateValidationProblem(result);
-        }
-           
-        var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
-        await emailSender.SendAccountConfirmationMessageAsync(
-            user, registerForm.Email, RoleName.CruiseManager, serviceProvider);
-            
-        return TypedResults.Ok();
+        var result = await accountService.Register(registerForm, cancellationToken);
+        return result.Error is null
+            ? Created()
+            : this.CreateError(result);
     }
         
     [HttpPost("login")]
@@ -70,17 +46,18 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
     {
         var user = await userManager.FindByEmailAsync(loginModel.Email);
         if (user is { Accepted: false })
-        {
             return TypedResults.Problem(statusCode: StatusCodes.Status401Unauthorized);
-        }
             
-        var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
         const bool isPersistent = false;
-            
+        const bool lockoutOnFailure = true;
+
         signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
         var result = await signInManager.PasswordSignInAsync(
-            loginModel.Email, loginModel.Password, isPersistent, lockoutOnFailure: true);
-            
+            loginModel.Email,
+            loginModel.Password,
+            isPersistent,
+            lockoutOnFailure);
+
         if (!result.Succeeded)
             return TypedResults.Problem(statusCode: StatusCodes.Status401Unauthorized);
 
@@ -107,7 +84,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
         {
             return TypedResults.Challenge();
         }
-
+    
         var newPrincipal = await signInManager.CreateUserPrincipalAsync(user);
         return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
     }
@@ -124,7 +101,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
             // information.
             return TypedResults.Unauthorized();
         }
-
+    
         try
         {
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
@@ -133,9 +110,9 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
         {
             return TypedResults.Unauthorized();
         }
-
+    
         IdentityResult result;
-
+    
         if (string.IsNullOrEmpty(changedEmail))
         {
             result = await userManager.ConfirmEmailAsync(user, code);
@@ -145,7 +122,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
             // As with Identity UI, email and user name are one and the same. So when we update the email,
             // we need to update the user name.
             result = await userManager.ChangeEmailAsync(user, changedEmail, code);
-
+    
             if (result.Succeeded)
             {
                 result = await userManager.SetUserNameAsync(user, changedEmail);
@@ -154,27 +131,27 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
                 
         if (!result.Succeeded)
             return TypedResults.Unauthorized();
-
+    
         return TypedResults.Text("Email confirmed");
     }
         
-    [HttpPost("resendConfirmationEmail")]
-    public async Task<Ok> ResendConfirmationEmail(
-        [FromBody] ResendConfirmationEmailModel resendConfirmationEmailModel,
-        [FromServices] IServiceProvider serviceProvider)
-    {
-        if (await userManager.FindByEmailAsync(resendConfirmationEmailModel.Email) is not { } user)
-        {
-            // Responding with 404 or similar would provide with unnecessary information
-            return TypedResults.Ok();
-        }
-
-        var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
-        await emailSender.SendAccountConfirmationMessageAsync(
-            user, resendConfirmationEmailModel.Email, RoleName.CruiseManager, serviceProvider);
-        return TypedResults.Ok();
-    }
-
+    // [HttpPost("resendConfirmationEmail")]
+    // public async Task<Ok> ResendConfirmationEmail(
+    //     [FromBody] ResendConfirmationEmailModel resendConfirmationEmailModel,
+    //     [FromServices] IServiceProvider serviceProvider)
+    // {
+    //     if (await userManager.FindByEmailAsync(resendConfirmationEmailModel.Email) is not { } user)
+    //     {
+    //         // Responding with 404 or similar would provide with unnecessary information
+    //         return TypedResults.Ok();
+    //     }
+    //
+    //     var emailSender = serviceProvider.GetRequiredService<IEmailSender>();
+    //     await emailSender.SendAccountConfirmationMessageAsync(
+    //         user, resendConfirmationEmailModel.Email, RoleName.CruiseManager, serviceProvider);
+    //     return TypedResults.Ok();
+    // }
+    
     [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetCurrentUser()
@@ -186,7 +163,7 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
             return Ok(await UserDto.GetAsync(user, userManager));
         return NotFound();
     }
-
+    
     [Authorize]
     [HttpPatch]
     public async Task<IActionResult> ChangeAccountDetails(
@@ -194,10 +171,10 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
     {
         var userName = User.Identity!.Name!;
         var user = await userManager.FindByNameAsync(userName);
-
+    
         if (user == null)
             return NotFound();
-
+    
         if (changeAccountDetailsModel.NewFirstName != null)
             user.FirstName = changeAccountDetailsModel.NewFirstName;
         if (changeAccountDetailsModel.NewLastName != null)
@@ -208,42 +185,13 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
                 return BadRequest();
             var result = await userManager.ChangePasswordAsync(
                 user, changeAccountDetailsModel.Password, changeAccountDetailsModel.NewPassword);
-
+    
             if (result.Succeeded)
                 return NoContent();
             return BadRequest();
         }
-
+    
         await userManager.UpdateAsync(user);
         return NoContent();
-    }
-        
-        
-    private static ValidationProblem CreateValidationProblem(IdentityResult result)
-    {
-        // We expect a single error code and description in the normal case.
-        // This could be golfed with GroupBy and ToDictionary, but perf! :P
-        Debug.Assert(!result.Succeeded);
-        var errorDictionary = new Dictionary<string, string[]>(1);
-
-        foreach (var error in result.Errors)
-        {
-            string[] newDescriptions;
-
-            if (errorDictionary.TryGetValue(error.Code, out var descriptions))
-            {
-                newDescriptions = new string[descriptions.Length + 1];
-                Array.Copy(descriptions, newDescriptions, descriptions.Length);
-                newDescriptions[descriptions.Length] = error.Description;
-            }
-            else
-            {
-                newDescriptions = [error.Description];
-            }
-
-            errorDictionary[error.Code] = newDescriptions;
-        }
-
-        return TypedResults.ValidationProblem(errorDictionary);
     }
 }

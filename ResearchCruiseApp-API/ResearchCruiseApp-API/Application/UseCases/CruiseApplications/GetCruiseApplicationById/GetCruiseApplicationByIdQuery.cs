@@ -1,0 +1,3 @@
+namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
+
+public record GetCruiseApplicationByIdQuery(Guid Id);

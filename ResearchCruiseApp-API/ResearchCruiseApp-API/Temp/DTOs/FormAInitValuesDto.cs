@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.DTOs;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp_API.Temp.DTOs;

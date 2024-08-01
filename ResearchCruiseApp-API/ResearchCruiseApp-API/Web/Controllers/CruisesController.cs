@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.UseCaseServices.Cruises;
-using ResearchCruiseApp_API.Application.UseCaseServices.Cruises.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.Cruises;
+using ResearchCruiseApp_API.Application.UseCases.Cruises.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Constants;
+using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 
@@ -18,7 +19,7 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
         var result = await cruisesService.GetAllCruises();
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [HttpPost]
@@ -27,7 +28,7 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
         var result = await cruisesService.AddCruise(cruiseFormModel);
         return result.Error is null
             ? Created()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [HttpPatch("{id:guid}")]
@@ -36,7 +37,7 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
         var result = await cruisesService.EditCruise(id, cruiseFormModel);
         return result.Error is null
             ? NoContent()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [HttpDelete("{id:guid}")]
@@ -45,7 +46,7 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
         var result = await cruisesService.DeleteCruise(id);
         return result.Error is null
             ? NoContent()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
         
     [HttpPut("autoAdded")]
@@ -54,6 +55,6 @@ public class CruisesController(ICruisesService cruisesService) : ControllerBase
         var result = await cruisesService.AutoAddCruises();
         return result.Error is null
             ? NoContent()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 }

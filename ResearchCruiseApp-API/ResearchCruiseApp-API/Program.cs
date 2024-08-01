@@ -1,14 +1,21 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.SharedServices.Compressor;
-using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications;
-using ResearchCruiseApp_API.Application.UseCaseServices.Cruises;
-using ResearchCruiseApp_API.Application.UseCaseServices.Users;
+using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
+using ResearchCruiseApp_API.Application.UseCases.Account;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
+using ResearchCruiseApp_API.Application.UseCases.Cruises;
+using ResearchCruiseApp_API.Application.UseCases.Users;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Services;
+using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 using ResearchCruiseApp_API.Infrastructure.Tools;
+using ResearchCruiseApp_API.Web.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,9 +76,18 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxResponseBufferSize = 2_147_483_648; // 2 GiB
 });
 
+builder.Services.AddScoped<GetCruiseApplicationByIdHandler>();
+
 builder.Services.AddScoped<ICruiseApplicationsService, CruiseApplicationsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ICruisesService, CruisesService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<ITemplateFileReader, TemplateFileReader>();
 
 var app = builder.Build();
 

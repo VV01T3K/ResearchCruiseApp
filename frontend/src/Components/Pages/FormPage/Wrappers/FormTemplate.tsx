@@ -117,14 +117,14 @@ function FormTemplate(props: Props) {
 
 
     const handleSubmit = (data) => {
-        //SetBusyWithMessage("Trwa wysyłanie")
+        SetBusyWithMessage("Trwa wysyłanie")
         if (props.type == "A") {
             Api
                 .post('/api/CruiseApplications/', data)
-            // .then(()=> {setTimeout(()=>
-            // {
-            //         navigate("/ViewForms")},1000)
-            // })
+            .then(()=> {setTimeout(()=>
+            {
+                    navigate("/ViewForms")},1000)
+            })
         }
     }
 

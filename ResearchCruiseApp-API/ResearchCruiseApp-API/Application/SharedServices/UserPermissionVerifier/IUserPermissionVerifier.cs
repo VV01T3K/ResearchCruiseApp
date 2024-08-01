@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Infrastructure.Tools;
+namespace ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 
 
 public interface IUserPermissionVerifier

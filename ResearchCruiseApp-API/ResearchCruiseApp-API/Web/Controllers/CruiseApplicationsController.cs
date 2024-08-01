@@ -1,11 +1,14 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications;
-using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Domain.Common.Constants;
-using ResearchCruiseApp_API.Domain.Entities;
-using ResearchCruiseApp_API.Infrastructure.Persistence;
+using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;
 
@@ -13,41 +16,45 @@ namespace ResearchCruiseApp_API.Web.Controllers;
 [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
 [Route("api/[controller]")]
 [ApiController]
-public class CruiseApplicationsController(ICruiseApplicationsService cruiseApplicationsService) : ControllerBase
+public class CruiseApplicationsController(
+    IMediator mediator,
+    GetCruiseApplicationByIdHandler getCruiseApplicationByIdHandler,
+    ICruiseApplicationsService cruiseApplicationsService)
+    : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllCruiseApplications()
     {
-        var result = await cruiseApplicationsService.GetAllCruiseApplications();
+        var result = await mediator.Send(new GetAllCruiseApplicationsQuery());
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
         
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCruiseApplicationById(Guid id)
     {
-        var result = await cruiseApplicationsService.GetCruiseApplicationById(id);
+        var result = await getCruiseApplicationByIdHandler.Handle(new GetCruiseApplicationByIdQuery(id));
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> AddCruiseApplication(FormADto formADto)
     {
-        var result = await cruiseApplicationsService.AddCruiseApplication(formADto);
+        var result = await mediator.Send(new AddCruiseApplicationCommand(formADto));
         return result.Error is null
             ? Created()
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 
     [HttpGet("{cruiseApplicationId:guid}/formA")]
     public async Task<IActionResult> GetFormA(Guid cruiseApplicationId)
     {
-        var result = await cruiseApplicationsService.GetFormA(cruiseApplicationId);
+        var result = await mediator.Send(new GetFormAQuery(cruiseApplicationId));
         return result.Error is null
             ? Ok(result.Data)
-            : StatusCode(result.Error.StatusCode, result.Error.ErrorMessage);
+            : this.CreateError(result);
     }
 }

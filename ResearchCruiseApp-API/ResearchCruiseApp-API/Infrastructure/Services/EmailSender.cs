@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using MimeKit;
 using ResearchCruiseApp_API.App_GlobalResources;
+using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Tools;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
@@ -14,47 +15,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHostEnvironment) : IEmailSender
 {
-    public async Task SendAccountConfirmationMessageAsync(
-        User user, string email, string roleName, IServiceProvider serviceProvider, bool changeEmail = false)
-    {
-        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-        
-        var subject = "Potwierdzenie rejestracji konta w systemie rejsów badawczych Biura Armatora Uniwersytetu";
-        
-        var code = changeEmail
-            ? await userManager.GenerateChangeEmailTokenAsync(user, user.Email!)
-            : await userManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var userId = await userManager.GetUserIdAsync(user);
-        var protocol = configuration.GetSection("ProtocolUsed").Value;
-        var frontendUrl = configuration.GetSection("FrontendUrl").Value;
-
-        var link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userId}&code={code}";
-        if (changeEmail)
-        {
-            // This is validated by the /confirmEmail endpoint on change.
-            link += $"&changedEmail={user.Email}";
-        }
-
-        var emailTemplatePath = webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar +
-                                "Templates" + Path.DirectorySeparatorChar +
-                                "EmailTemplates" + Path.DirectorySeparatorChar +
-                                "accountConfirmationEmail.html"; ;
-
-        var cultureInfo = new CultureInfo("pl-pl");
-        var resourceManager = 
-            new ResourceManager("ResearchCruiseApp_API.App_GlobalResources.Roles", typeof(Roles).Assembly);
-        
-        var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
-            .Replace("{{firstName}}", user.FirstName)
-            .Replace("{{lastName}}", user.LastName)
-            .Replace("{{roleText}}", $" {resourceManager.GetString(roleName, cultureInfo)} ")
-            .Replace("{{link}}", link);
-
-
-        await SendEmail(email, subject, emailBody);
-    }
-
     public async Task SendAccountAcceptedMessageAsync(User user)
     {
         var subject = "Powiadomienie o akceptacji konta przez Biuro Armatora Uniwersytetu";
@@ -82,7 +42,7 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
     }
     
     
-    private async Task SendEmail(string email, string subject, string body)
+    public async Task SendEmail(string email, string subject, string body)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");
 
@@ -95,12 +55,12 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
             smtpSettings.GetSection("SmtpUsername").Value,
             smtpSettings.GetSection("SmtpPassword").Value);
 
-        var bodyBuilder = new BodyBuilder()
+        var bodyBuilder = new BodyBuilder
         {
             HtmlBody = body
         };
             
-        var message = new MimeMessage()
+        var message = new MimeMessage
         {
             Body = bodyBuilder.ToMessageBody()
         };

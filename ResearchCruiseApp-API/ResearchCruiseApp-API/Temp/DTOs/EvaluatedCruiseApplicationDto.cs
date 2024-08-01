@@ -1,5 +1,5 @@
 using AutoMapper;
-using ResearchCruiseApp_API.Application.UseCaseServices.CruiseApplications.DTOs;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.DTOs;
 using ResearchCruiseApp_API.Temp.Entities;
 
 namespace ResearchCruiseApp_API.Temp.DTOs;
