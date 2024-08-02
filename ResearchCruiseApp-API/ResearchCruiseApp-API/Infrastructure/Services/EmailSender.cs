@@ -21,7 +21,7 @@ public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHo
         var emailTemplatePath = webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar +
                                 "Templates" + Path.DirectorySeparatorChar +
                                 "EmailTemplates" + Path.DirectorySeparatorChar +
-                                "accountAcceptedEmail.html";
+                                "accountAcceptedMessage.html";
         
         var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
             .Replace("{{firstName}}", user.FirstName)

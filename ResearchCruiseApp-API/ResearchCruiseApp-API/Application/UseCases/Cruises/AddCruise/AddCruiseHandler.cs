@@ -32,7 +32,7 @@ public class AddCruiseHandler(
                     .Contains(id)))
             .ToList();
 
-        await PersistCruiseWithNewNumber(newCruise);
+        await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);
 
         await cruisesService.CheckEditedCruisesManagersTeams(affectedCruises, cancellationToken);
         await applicationDbContext.SaveChangesAsync(cancellationToken);
@@ -53,26 +53,5 @@ public class AddCruiseHandler(
         newCruise.CruiseApplications = newCruiseApplications;
 
         return newCruise;
-    }
-    
-    public async Task PersistCruiseWithNewNumber(Cruise cruise)
-    {
-        // Using transaction to prevent multiple users from generating a cruise with the same number
-        await using var transaction =
-            await applicationDbContext.Database.BeginTransactionAsync(
-                System.Data.IsolationLevel.Serializable);
-        try
-        {
-            cruise.Number = yearBasedKeyGenerator.GenerateKey(applicationDbContext.Cruises);
-
-            await applicationDbContext.Cruises.AddAsync(cruise);
-            await applicationDbContext.SaveChangesAsync();
-            await transaction.CommitAsync();
-        }
-        catch (Exception)
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
     }
 }

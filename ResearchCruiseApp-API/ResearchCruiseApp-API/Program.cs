@@ -1,19 +1,11 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Application.SharedServices.Compressor;
-using ResearchCruiseApp_API.Application.SharedServices.Cruises;
-using ResearchCruiseApp_API.Application.SharedServices.UserDto;
-using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
+using ResearchCruiseApp_API;
 using ResearchCruiseApp_API.Application.UseCases.Account;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
-using ResearchCruiseApp_API.Application.UseCases.Users;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
-using ResearchCruiseApp_API.Infrastructure.Services;
-using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 using ResearchCruiseApp_API.Temp.Tools;
 
 
@@ -40,54 +32,24 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services
-    .AddAuthentication()
-    .AddBearerToken(IdentityConstants.BearerScheme);
-builder.Services.AddAuthorizationBuilder();
-
-builder.Services
-    .AddIdentityCore<User>(options =>
-        options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddApiEndpoints();
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-builder.Services.AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
-builder.Services.AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>();
-builder.Services.AddScoped<ICompressor, Compressor>();
-builder.Services.AddScoped<ICruisesService, CruisesService>();
-builder.Services.AddScoped<IUserDtoService, UserDtoService>();
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-});
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxResponseBufferSize = 2_147_483_648; // 2 GiB
 });
 
-
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-
-builder.Services.AddScoped<IIdentityService, IdentityService>();
-builder.Services.AddScoped<ITemplateFileReader, TemplateFileReader>();
+// TODO: delete or move from here
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>();
 
 var app = builder.Build();
 
-//if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

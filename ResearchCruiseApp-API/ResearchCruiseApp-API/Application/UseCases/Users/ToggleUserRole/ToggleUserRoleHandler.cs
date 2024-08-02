@@ -6,10 +6,10 @@ using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Users.ToggleUserRole;
 
+
 public class ToggleUserRoleHandler(
     UserManager<User> userManager,
-    RoleManager<IdentityRole> roleManager,
-    ServiceProvider serviceProvider)
+    RoleManager<IdentityRole> roleManager)
     : IRequestHandler<ToggleUserRoleCommand, Result>
 {
     public async Task<Result> Handle(ToggleUserRoleCommand request, CancellationToken cancellationToken)
