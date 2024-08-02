@@ -61,6 +61,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Application\ExternalServices\Repositories\" />
       <Folder Include="Application\Models\DTOs\" />
       <Folder Include="Infrastructure\Persistence\Migrations\" />
     </ItemGroup>

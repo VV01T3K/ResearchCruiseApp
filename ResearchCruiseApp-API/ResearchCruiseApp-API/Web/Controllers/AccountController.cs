@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.Models.DTOs.Account;
 using ResearchCruiseApp_API.Application.Models.DTOs.Users;
+using ResearchCruiseApp_API.Application.SharedServices.UserDto;
 using ResearchCruiseApp_API.Application.UseCases.Account;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
@@ -24,7 +25,8 @@ namespace ResearchCruiseApp_API.Web.Controllers;
 public class AccountController(
     IAccountService accountService,
     SignInManager<User> signInManager,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    IUserDtoService userDtoService)
     : ControllerBase
 {
     [HttpPost("register")]
@@ -159,7 +161,7 @@ public class AccountController(
         var user = await userManager.FindByNameAsync(userName);
             
         if (user != null)
-            return Ok(await UserDto.GetAsync(user, userManager));
+            return Ok(await userDtoService.CreateUserDto(user));
         return NotFound();
     }
     

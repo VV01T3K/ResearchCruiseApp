@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.SharedServices.Compressor;
+using ResearchCruiseApp_API.Application.SharedServices.Cruises;
+using ResearchCruiseApp_API.Application.SharedServices.UserDto;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 using ResearchCruiseApp_API.Application.UseCases.Account;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
@@ -60,7 +62,8 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IYearBasedKeyGenerator, YearBasedKeyGenerator>();
 builder.Services.AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>();
 builder.Services.AddScoped<ICompressor, Compressor>();
-builder.Services.AddScoped<ResearchCruiseApp_API.Application.SharedServices.Cruises.ICruisesService, ResearchCruiseApp_API.Application.SharedServices.Cruises.CruisesService>();
+builder.Services.AddScoped<ICruisesService, CruisesService>();
+builder.Services.AddScoped<IUserDtoService, UserDtoService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
@@ -75,10 +78,6 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxResponseBufferSize = 2_147_483_648; // 2 GiB
 });
 
-builder.Services.AddScoped<GetCruiseApplicationByIdHandler>();
-
-builder.Services.AddScoped<IUsersService, UsersService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
