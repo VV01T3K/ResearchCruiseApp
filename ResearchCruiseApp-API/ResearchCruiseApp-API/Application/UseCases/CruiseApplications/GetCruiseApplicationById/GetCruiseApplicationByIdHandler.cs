@@ -17,6 +17,8 @@ public class GetCruiseApplicationByIdHandler(ApplicationDbContext applicationDbC
     {
         var cruiseApplication = await applicationDbContext.CruiseApplications
             .Include(cruiseApplication => cruiseApplication.FormA)
+            .Include(cruiseApplication => cruiseApplication.FormA!.CruiseManager)
+            .Include(cruiseApplication => cruiseApplication.FormA!.DeputyManager)
             .FirstOrDefaultAsync(cruiseApplication => cruiseApplication.Id == request.Id, cancellationToken);
 
         if (cruiseApplication is null)

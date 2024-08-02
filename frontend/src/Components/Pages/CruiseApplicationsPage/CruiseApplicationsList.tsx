@@ -338,7 +338,7 @@ export default function CruiseApplicationsList(props: Props) {
                                     <div className="btn-group-vertical">
                                         <LinkWithState
                                             className="btn btn-info"
-                                            to="/ApplicationDetails"
+                                            to="/CruiseApplicationDetails"
                                             label="Szczegóły"
                                             state={{cruiseApplication: row}}
                                         />

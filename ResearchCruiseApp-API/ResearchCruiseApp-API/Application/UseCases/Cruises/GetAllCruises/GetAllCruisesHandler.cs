@@ -14,6 +14,7 @@ public class GetAllCruisesHandler(ApplicationDbContext applicationDbContext, IMa
     public async Task<Result<List<CruiseDto>>> Handle(GetAllCruisesQuery request, CancellationToken cancellationToken)
     {
         var cruises = await applicationDbContext.Cruises
+            .Include(cruise => cruise.MainCruiseManager)
             .Include(cruise => cruise.CruiseApplications)
             .ToListAsync(cancellationToken);
 

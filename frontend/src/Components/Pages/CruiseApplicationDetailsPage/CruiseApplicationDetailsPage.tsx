@@ -48,6 +48,9 @@ function CruiseApplicationDetailsPage() {
                     setEvaluatedApplication(response.data)
                     }
                 )
+                .catch(error => {
+                    console.log(error.message)
+                })
         }
     },[locationState]);
 

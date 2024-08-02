@@ -9,7 +9,7 @@ import CruiseBasicInfo from "./CruiseFormSections/CruiseBasicInfo";
 import CruiseDate from "./CruiseFormSections/CruiseDate";
 import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
 import CruiseApplications from "./CruiseFormSections/CruiseApplications";
-import {CruiseApplication, CruiseApplicationShortInfo} from "../ApplicationsPage/CruiseApplicationsPage";
+import {CruiseApplication, CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import {fetchCruiseApplications} from "../../Tools/Fetchers";
@@ -44,6 +44,7 @@ export default function CruiseFormPage() {
     const location = useLocation()
     const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
         = useState(location.state || { })
+    console.log(locationState)
 
     const editCruiseFormDefaultValues: EditCruiseFormValues = {
         date:
