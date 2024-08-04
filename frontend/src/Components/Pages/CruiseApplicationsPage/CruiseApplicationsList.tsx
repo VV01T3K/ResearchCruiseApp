@@ -8,6 +8,7 @@ import PageMenuBar from "../CommonComponents/PageMenuBar";
 import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
 import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
 import useWindowWidth from "../../CommonComponents/useWindowWidth";
+import {FormPageLocationState} from "../FormPage/FormPage";
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.

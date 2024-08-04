@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {PathName as Path} from "../../../Tools/PathName";
 import {ReactComponent as Icon} from "/node_modules/bootstrap-icons/icons/plus-circle-fill.svg"
 
-function NewApplicationTile(){
+export default function NewCruiseApplicationTile(){
     return (
         <Tile>
             <Link state={{formType: "A"}} to={Path.Form} className={"common-tile-link"}>
@@ -14,6 +14,3 @@ function NewApplicationTile(){
         </Tile>
     )
 }
-
-
-export default NewApplicationTile

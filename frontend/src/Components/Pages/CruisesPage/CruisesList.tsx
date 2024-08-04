@@ -2,13 +2,13 @@ import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import React, {Dispatch, useState} from "react";
 import {Cruise} from "./CruisesPage";
-import CruiseApplicationsList from "./CruiseApplicationsList";
 import DatePicker from "react-datepicker";
 import Api from "../../Tools/Api";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
 import ListFilterMenu, {AnyStringFilterOption} from "../CommonComponents/ListFilterMenu";
 import useWindowWidth from "../../CommonComponents/useWindowWidth";
+import AssignedCruiseApplicationsList from "./AssignedCruiseApplicationsList";
 
 
 type Props = {

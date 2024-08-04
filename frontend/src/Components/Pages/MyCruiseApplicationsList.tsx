@@ -2,15 +2,24 @@
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import useWindowWidth from "../CommonComponents/useWindowWidth";
+import {CruiseApplication, CruiseApplicationStatus} from "./CruiseApplicationsPage/CruiseApplicationsPage";
+import Api from "../Tools/Api";
+import {Cruise} from "./CruisesPage/CruisesPage";
+import ListSortMenu, {ListSortOption} from "./CommonComponents/ListSortMenu";
+import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "./CommonComponents/ListFilterMenu";
+import PageMenuBar from "./CommonComponents/PageMenuBar";
+import ReadOnlyTextInput from "../CommonComponents/ReadOnlyTextInput";
+import LinkWithState from "../CommonComponents/LinkWithState";
+import {FormPageLocationState} from "./FormPage/FormPage";
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.
-    // It then contains the applications already assigned to a cruise
-    boundApplications?: Application[]
+    // It then contains the cruiseApplications already assigned to a cruise
+    boundCruiseApplications?: CruiseApplication[]
 
-    // Callback to the function in the parent component that updates the applications
+    // Callback to the function in the parent component that updates the cruiseApplications
     // assigned to a cruise
-    setBoundApplications?: Dispatch<SetStateAction<Application[]>> | ((applications: Application[]) => void)
+    setBoundCruiseApplications?: Dispatch<SetStateAction<CruiseApplication[]>> | ((cruiseApplications: CruiseApplication[]) => void)
 
     // Indicates if the list should allow adding an application to a cruise
     addingMode?: boolean,
@@ -19,39 +28,39 @@ type Props = {
     deletionMode?: boolean
 }
 
-export default function MyApplicationsList(props: Props) {
+export default function MyCruiseApplicationsList(props: Props) {
     const navigate = useNavigate()
 
-    const [applications, setApplications]: [Application[], Dispatch<any>]
+    const [cruiseApplications, setCruiseApplications]: [CruiseApplication[], Dispatch<any>]
         = useState([])
     useEffect(() => {
         if (!props.deletionMode) {
             Api
                 .get(
                     '/api/MyApplications',)
-                .then(response => response ? setApplications(response?.data): ()=>{}
+                .then(response => response ? setCruiseApplications(response?.data): ()=>{}
                 )
         }
     },[]);
     const windowWidth = useWindowWidth();
 
-    const sortApplicationsByPoints = (directionAscending: boolean) => {
-        setApplications([
-            ...applications?.sort((a: Application, b: Application): number =>
+    const sortCruiseApplicationsByPoints = (directionAscending: boolean) => {
+        setCruiseApplications([
+            ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
                 (parseInt(a.points) - parseInt(b.points)) * (directionAscending ? 1 : -1)
             )
         ])
     }
-    const sortApplicationsByDate = (directionAscending: boolean) => {
-        setApplications([
-            ...applications?.sort((a: Application, b: Application): number =>
+    const sortCruiseApplicationsByDate = (directionAscending: boolean) => {
+        setCruiseApplications([
+            ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
                 (Date.parse(a.date) - Date.parse(b.date)) * (directionAscending ? 1 : -1)
             )
         ])
     }
-    const sortApplicationsByYear = (directionAscending: boolean) => {
-        setApplications([
-            ...applications?.sort((a: Application, b: Application): number =>
+    const sortCruiseApplicationsByYear = (directionAscending: boolean) => {
+        setCruiseApplications([
+            ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
                 (a.year - b.year) * (directionAscending ? 1 : -1)
             )
         ])
@@ -68,37 +77,37 @@ export default function MyApplicationsList(props: Props) {
         {
             label: "Data utworzenia (rosnąco)",
             value: "Data utworzenia (rosnąco)",
-            sortMethod: sortApplicationsByDate,
+            sortMethod: sortCruiseApplicationsByDate,
             directionAscending: true
         },
         {
             label: "Data utworzenia (malejąco)",
             value: "Data utworzenia (malejąco)",
-            sortMethod: sortApplicationsByDate,
+            sortMethod: sortCruiseApplicationsByDate,
             directionAscending: false
         },
         {
             label: "Rok rejsu (rosnąco)",
             value: "Rok rejsu (rosnąco)",
-            sortMethod: sortApplicationsByYear,
+            sortMethod: sortCruiseApplicationsByYear,
             directionAscending: true
         },
         {
             label: "Rok rejsu (malejąco)",
             value: "Rok rejsu (malejąco)",
-            sortMethod: sortApplicationsByYear,
+            sortMethod: sortCruiseApplicationsByYear,
             directionAscending: false
         },
         {
             label: "Punkty (rosnąco)",
             value: "Punkty (rosnąco)",
-            sortMethod: sortApplicationsByPoints,
+            sortMethod: sortCruiseApplicationsByPoints,
             directionAscending: true
         },
         {
             label: "Punkty (malejąco)",
             value: "Punkty (malejąco)",
-            sortMethod: sortApplicationsByPoints,
+            sortMethod: sortCruiseApplicationsByPoints,
             directionAscending: false
         }
     ]
@@ -116,16 +125,16 @@ export default function MyApplicationsList(props: Props) {
         {
             label: "Status",
             selectValues: [
-                ApplicationStatus.New,
-                ApplicationStatus.Accepted,
-                ApplicationStatus.Undertaken,
-                ApplicationStatus.Reported
+                CruiseApplicationStatus.New,
+                CruiseApplicationStatus.Accepted,
+                CruiseApplicationStatus.Undertaken,
+                CruiseApplicationStatus.Reported
             ],
             setFilter: setStatusFilter
         }
     ]
 
-    const applyFilters = (row: Application): boolean => {
+    const applyFilters = (row: CruiseApplication): boolean => {
         return (
             (
                 yearFilter == "" ||
@@ -141,7 +150,7 @@ export default function MyApplicationsList(props: Props) {
             )
         )
     }
-    const rowShouldBeShown = (row: Application): boolean => {
+    const rowShouldBeShown = (row: CruiseApplication): boolean => {
         return (
             (
                 // this list does not enable assigning applications to a cruise
@@ -150,13 +159,21 @@ export default function MyApplicationsList(props: Props) {
             (
                 // the application is not already assigned to the cruise
                 props.addingMode &&
-                !props.boundApplications!
+                !props.boundCruiseApplications!
                     .filter(application => application.number == row.number)
                     .length
             )
         )
     }
 
+
+    const getFormPageLocationState = (formType: string, applicationId?: string): FormPageLocationState => {
+        return {
+            formType: formType,
+            cruiseApplicationId: applicationId ?? undefined,
+            readonly: true
+        }
+    }
 
     const getRowBackground = (index: number) => {
         return index % 2 == 0 ? "bg-light" : "bg-white"
@@ -217,16 +234,16 @@ export default function MyApplicationsList(props: Props) {
                     </div>
                 </div>
                 <div className="w-100 bg-light">
-                    {(props.deletionMode ? props.boundApplications : applications)!
+                    {(props.deletionMode ? props.boundCruiseApplications : cruiseApplications)!
                             .filter(row => applyFilters(row))
                             .length == 0 &&
                         <div className="d-flex flex-row bg-light p-2 justify-content-center border-bottom">
                             <div className={"text-center"}>Brak zgłoszeń</div>
                         </div>
                     }
-                    {(props.deletionMode ? props.boundApplications : applications)!
+                    {(props.deletionMode ? props.boundCruiseApplications : cruiseApplications)!
                         .filter(row => applyFilters(row))
-                        .map((row: Application, index: number) => rowShouldBeShown(row) &&
+                        .map((row: CruiseApplication, index: number) => rowShouldBeShown(row) &&
                             <div
                                 key={index}
                                 className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${getRowBackground(index)}`}
@@ -270,37 +287,25 @@ export default function MyApplicationsList(props: Props) {
                                      style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
                                 >
                                     <LinkWithState
-                                        to={row.formAId ? "/Form" : ""}
-                                        state={{
-                                            formType: "A",
-                                            formId: row.formAId ?? undefined,
-                                            readonly: true
-                                        }}
+                                        to={row.hasFormA ? "/Form" : ""}
+                                        state={getFormPageLocationState("A", row.id)}
                                         label="Formularz A"
-                                        className={`col-12 d-flex justify-content-center ${!row.formAId ? "text-muted text-decoration-none" : ""}`}
-                                        style={!row.formAId ? {cursor: "default"} : undefined}
+                                        className={`col-12 d-flex justify-content-center ${!row.hasFormA ? "text-muted text-decoration-none" : ""}`}
+                                        style={!row.hasFormA ? {cursor: "default"} : undefined}
                                     />
                                     <LinkWithState
-                                        to={row.formBId ? "/Form" : ""}
-                                        state={{
-                                            formType: "B",
-                                            formId: row.formBId ?? undefined,
-                                            readonly: true
-                                        }}
+                                        to={row.hasFormB ? "/Form" : ""}
+                                        state={getFormPageLocationState("B", row.id)}
                                         label="Formularz B"
-                                        className={`col-12 d-flex justify-content-center ${!row.formBId ? "text-muted text-decoration-none" : ""}`}
-                                        style={!row.formBId ? {cursor: "default"} : undefined}
+                                        className={`col-12 d-flex justify-content-center ${!row.hasFormB ? "text-muted text-decoration-none" : ""}`}
+                                        style={!row.hasFormB ? {cursor: "default"} : undefined}
                                     />
                                     <LinkWithState
-                                        to={row.formCId ? "/Form" : ""}
-                                        state={{
-                                            formType: "C",
-                                            formId: row.formCId ?? undefined,
-                                            readonly: true
-                                        }}
+                                        to={row.hasFormC ? "/Form" : ""}
+                                        state={getFormPageLocationState("C", row.id)}
                                         label="Formularz C"
-                                        className={`col-12 d-flex justify-content-center ${!row.formCId ? "text-muted text-decoration-none" : ""}`}
-                                        style={!row.formCId ? {cursor: "default"} : undefined}
+                                        className={`col-12 d-flex justify-content-center ${!row.hasFormC ? "text-muted text-decoration-none" : ""}`}
+                                        style={!row.hasFormC ? {cursor: "default"} : undefined}
                                     />
                                 </div>
                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
@@ -328,7 +333,7 @@ export default function MyApplicationsList(props: Props) {
                                             className="btn btn-info"
                                             to="/ApplicationDetails"
                                             label="Szczegóły"
-                                            state={{application: row}}
+                                            state={{cruiseApplication: row}}
                                         />
 
                                         {props.deletionMode &&
@@ -338,8 +343,8 @@ export default function MyApplicationsList(props: Props) {
                                                 style={{fontSize: "inherit"}}
                                                 onClick={() => {
                                                     // Remove the application from the list
-                                                    const updatedApplications = props.boundApplications!.filter((_, i) => i != index)
-                                                    props.setBoundApplications!(updatedApplications)
+                                                    const updatedApplications = props.boundCruiseApplications!.filter((_, i) => i != index)
+                                                    props.setBoundCruiseApplications!(updatedApplications)
                                                 }}
                                             >
                                                 Usuń
@@ -352,8 +357,8 @@ export default function MyApplicationsList(props: Props) {
                                                 style={{fontSize: "inherit"}}
                                                 onClick={() => {
                                                     // Add the application to the list
-                                                    const updatedApplications = [...props.boundApplications!, row]
-                                                    props.setBoundApplications!(updatedApplications)
+                                                    const updatedApplications = [...props.boundCruiseApplications!, row]
+                                                    props.setBoundCruiseApplications!(updatedApplications)
                                                 }}
                                             >
                                                 Dołącz

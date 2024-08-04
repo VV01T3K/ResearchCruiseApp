@@ -7,8 +7,6 @@ import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import AdminPanel from "./Pages/HomePage/AdminPanel";
 import MessagesPage from "./Legacy/MessagesPage/MessagesPage";
-import ApplicationsPage from "./Pages/ApplicationsPage/ApplicationsPage";
-import ApplicationDetailsPage from "./Pages/ApplicationDetailsPage/ApplicationDetailsPage";
 import CruisesPage from "./Pages/CruisesPage/CruisesPage";
 import CruiseFormPage from "./Pages/CruiseFormPage/CruiseFormPage";
 import ManagerPanel from "./Pages/HomePage/ManagerPanel";
@@ -19,13 +17,15 @@ import LoginPage from "./Pages/LoginPage/LoginPage";
 import React from "react";
 import ServerErrorPage from "./Pages/ServerErrorPage";
 import UserBasedAccess from "./UserBasedAccess";
-import MyApplicationsPage from "./Pages/MyApplicationsPage";
+import MyCruiseApplicationsPage from "./Pages/MyCruiseApplicationsPage";
 import WaitingPage from "./Pages/WaitingPage";
 import LoginForm from "./Pages/LoginPage/LoginForm";
 import RegisterForm from "./Pages/LoginPage/RegisterForm";
 import ResetPasswordForm from "./Pages/LoginPage/ResetPasswordForm";
 import RegisterPage from "./Pages/LoginPage/RegisterPage";
 import ResetPasswordPage from "./Pages/LoginPage/ResetPasswordPage";
+import CruiseApplicationsPage from "./Pages/CruiseApplicationsPage/CruiseApplicationsPage";
+import CruiseApplicationDetailsPage from "./Pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsPage";
 
 
 
@@ -58,7 +58,7 @@ const RoleBasedRouting = () => {
                 <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
                 <Route path={Path.Cruises} element={<CruisesPage />} />
                 <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
-                <Route path={Path.MyApplications} element={<MyApplicationsPage />} />
+                <Route path={Path.MyApplications} element={<MyCruiseApplicationsPage />} />
             </>
         )
     }

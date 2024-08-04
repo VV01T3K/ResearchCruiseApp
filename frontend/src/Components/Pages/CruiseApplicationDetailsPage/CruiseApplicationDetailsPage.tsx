@@ -42,7 +42,7 @@ function CruiseApplicationDetailsPage() {
         if (locationState?.cruiseApplication.id) {
             Api
                 .get(
-                    `/api/applications/${locationState?.cruiseApplication.id}/points`
+                    `/api/CruiseApplications/${locationState?.cruiseApplication.id}/points`
                 )
                 .then(response => {
                     console.log(response)

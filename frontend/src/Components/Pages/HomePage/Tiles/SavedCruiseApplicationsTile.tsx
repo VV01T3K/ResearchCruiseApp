@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {PathName as Path} from "../../../Tools/PathName";
 import {ReactComponent as Icon} from "/node_modules/bootstrap-icons/icons/floppy-fill.svg"
 
-function SavedApplicationsTile(){
+export default function SavedCruiseApplicationsTile(){
     return (
         <Tile>
             <Link to={Path.SavedApplications} className={"common-tile-link"}>
@@ -14,6 +14,3 @@ function SavedApplicationsTile(){
         </Tile>
     )
 }
-
-
-export default SavedApplicationsTile;
