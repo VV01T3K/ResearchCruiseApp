@@ -13,6 +13,7 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
         <PackageReference Include="MailKit" Version="4.5.0" />
+        <PackageReference Include="MediatR" Version="12.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
@@ -60,8 +61,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\Templates\EmailTemplates\accountAcceptedEmail.html" />
-      <None Include="wwwroot\Templates\EmailTemplates\accountConfirmationEmail.html" />
+      <Folder Include="Application\ExternalServices\Repositories\" />
+      <Folder Include="Application\Models\DTOs\" />
+      <Folder Include="Infrastructure\Persistence\Migrations\" />
     </ItemGroup>
 
 </Project>

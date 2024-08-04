@@ -5,7 +5,7 @@ import PageTitle from "../CommonComponents/PageTitle";
 import CruisesCalendar from "./CruisesCalendar";
 import ReactSwitch from 'react-switch';
 import CruisesList from "./CruisesList";
-import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
+import {CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 import Api from "../../Tools/Api";
 import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
@@ -20,7 +20,7 @@ export type Cruise = {
     mainCruiseManagerFirstName: string,
     mainCruiseManagerLastName: string,
     mainDeputyManagerId: string,
-    applicationsShortInfo: ApplicationShortInfo[]
+    cruiseApplicationsShortInfo: CruiseApplicationShortInfo[]
 }
 
 

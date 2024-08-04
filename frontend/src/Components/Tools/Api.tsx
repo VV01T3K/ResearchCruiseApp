@@ -3,7 +3,7 @@ import {PathName as Path} from "./PathName";
 import userDataManager from "../CommonComponents/UserDataManager";
 import {useNavigate} from "react-router-dom";
 
-const defaultServerAddress = 'http://localhost:8080';
+const defaultServerAddress = 'http://localhost:5000';
 
 declare module 'axios' {
     export interface AxiosRequestConfig {

@@ -54,8 +54,8 @@ const RoleBasedRouting = () => {
                 <Route path={Path.ManageUsers} element={<ManageUsersPage />} />
                 <Route path={Path.Any} element={<AdminPanel />} />
                 <Route path={Path.Messages} element={<MessagesPage />} />
-                <Route path={Path.Applications} element={<ApplicationsPage />} />
-                <Route path={Path.ApplicationDetails} element={<ApplicationDetailsPage />} />
+                <Route path={Path.CruiseApplications} element={<CruiseApplicationsPage />} />
+                <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
                 <Route path={Path.Cruises} element={<CruisesPage />} />
                 <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
                 <Route path={Path.MyApplications} element={<MyApplicationsPage />} />
