@@ -1,27 +1,24 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
-using ResearchCruiseApp_API.Infrastructure.Persistence;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Cruises.DeleteCruise;
 
 
 public class DeleteCruiseHandler(
-    ApplicationDbContext applicationDbContext)
+    ICruisesRepository cruisesRepository,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<DeleteCruiseCommand, Result>
 {
     public async Task<Result> Handle(DeleteCruiseCommand request, CancellationToken cancellationToken)
     {
-        var cruise = await applicationDbContext.Cruises
-            .Include(cruise => cruise.CruiseApplications)
-            .Where(cruise => cruise.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
-
+        var cruise = await cruisesRepository.GetCruiseById(request.Id, cancellationToken);
         if (cruise is null)
             return Error.NotFound();
 
-        applicationDbContext.Cruises.Remove(cruise);
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
+        cruisesRepository.DeleteCruise(cruise);
+        await unitOfWork.Complete(cancellationToken);
 
         return Result.Empty;
     }

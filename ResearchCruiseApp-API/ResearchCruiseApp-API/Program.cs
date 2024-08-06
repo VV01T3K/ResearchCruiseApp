@@ -6,6 +6,7 @@ using ResearchCruiseApp_API.Application.UseCases.Account;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
+using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 using ResearchCruiseApp_API.Temp.Tools;
 
 
@@ -35,8 +36,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
 
 builder.WebHost.ConfigureKestrel(options =>
 {

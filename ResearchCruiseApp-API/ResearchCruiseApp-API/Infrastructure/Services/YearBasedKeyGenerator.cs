@@ -1,4 +1,5 @@
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
@@ -6,11 +7,12 @@ namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 public class YearBasedKeyGenerator : IYearBasedKeyGenerator
 {
-    public string GenerateKey(IQueryable<IYearBasedNumberedEntity> dbSet)
+    public async Task<string> GenerateKey<T>(IRepository<T> repository, CancellationToken cancellationToken)
+        where T : IYearBasedNumberedEntity
     {
         var currentYear = DateTime.Now.Year.ToString();
         var ordinalNumberStartIdx = currentYear.Length + 1;
-        var entities = dbSet.ToList();
+        var entities = await repository.GetList(cancellationToken);
         var maxCurrentYearOrdinalNumber = entities
             .Where(e => e.Number.StartsWith(currentYear))
             .MaxBy(e => e.Number[ordinalNumberStartIdx..])?

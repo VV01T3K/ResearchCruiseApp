@@ -9,6 +9,6 @@ public class AccountService(IIdentityService identityService) : IAccountService
 {
     public Task<Result> Register(RegisterFormDto registerForm, CancellationToken cancellationToken)
     {
-        return identityService.RegisterUserAsync(registerForm, RoleName.CruiseManager, cancellationToken);
+        return identityService.RegisterUser(registerForm, RoleName.CruiseManager, cancellationToken);
     }
 }

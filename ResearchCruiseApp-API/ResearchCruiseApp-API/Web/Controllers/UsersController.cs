@@ -22,7 +22,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllUsers()
     {
-        var result = await mediator.Send(new GetAllUsersQuery(User));
+        var result = await mediator.Send(new GetAllUsersQuery());
         return result.Error is null
             ? Ok(result.Data)
             : this.CreateError(result);
@@ -32,7 +32,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById([FromRoute] Guid id)
     {
-        var result = await mediator.Send(new GetUserByIdQuery(id, User));
+        var result = await mediator.Send(new GetUserByIdQuery(id));
         return result.Error is null
             ? Ok(result.Data)
             : this.CreateError(result);
@@ -42,7 +42,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddUser([FromBody] AddUserFormDto registerForm)
     {
-        var result = await mediator.Send(new AddUserCommand(registerForm, User));
+        var result = await mediator.Send(new AddUserCommand(registerForm));
         return result.Error is null
             ? Created()
             : this.CreateError(result);

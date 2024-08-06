@@ -34,11 +34,11 @@ public class FormAInitValuesDto
         var users = await applicationDbContext.Users.ToListAsync();
             
         var cruiseManagers = users
-            .Select(FormUserDto.GetFormUserModel)
+            .Select(FormUserDto.GetFormUserDto)
             .ToList();
 
         var deputyManagers = users
-            .Select(FormUserDto.GetFormUserModel)
+            .Select(FormUserDto.GetFormUserDto)
             .ToList();
 
         var years = new List<int>

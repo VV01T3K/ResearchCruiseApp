@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
@@ -6,7 +5,7 @@ namespace ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifie
 
 public interface IUserPermissionVerifier
 {
-    public Task<bool> CanUserAssignRoleAsync(ClaimsPrincipal user, string roleName);
+    public Task<bool> CanCurrentUserAssignRole(string roleName);
 
-    public Task<bool> CanUserAccessAsync(ClaimsPrincipal user, User otherUser);
+    public Task<bool> CanCurrentUserAccess(User otherUser);
 }

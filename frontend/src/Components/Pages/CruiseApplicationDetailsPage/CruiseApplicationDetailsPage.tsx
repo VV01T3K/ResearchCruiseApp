@@ -39,20 +39,20 @@ function CruiseApplicationDetailsPage() {
     const [evaluatedApplication, setEvaluatedApplication]
         = useState<FormValues | undefined>()
     useEffect(() => {
-        if (locationState?.cruiseApplication.id) {
-            Api
-                .get(
-                    `/api/CruiseApplications/${locationState?.cruiseApplication.id}/points`
-                )
-                .then(response => {
-                    console.log(response)
-                    // setEvaluatedApplication(response.data)
-                    }
-                )
-                .catch(error => {
-                    console.log(error.message)
-                })
-        }
+        // if (locationState?.cruiseApplication.id) {
+        //     Api
+        //         .get(
+        //             `/api/CruiseApplications/${locationState?.cruiseApplication.id}/points`
+        //         )
+        //         .then(response => {
+        //             console.log(response)
+        //             // setEvaluatedApplication(response.data)
+        //             }
+        //         )
+        //         .catch(error => {
+        //             console.log(error.message)
+        //         })
+        // }
     },[locationState]);
 
     return (

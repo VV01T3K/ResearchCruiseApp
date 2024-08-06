@@ -1,36 +1,31 @@
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace ResearchCruiseApp_API.Application.SharedServices.Cruises;
 
 
 public class CruisesService(
     IYearBasedKeyGenerator yearBasedKeyGenerator,
+    ICruisesRepository cruisesRepository,
+    IUnitOfWork unitOfWork,
     ApplicationDbContext applicationDbContext)
     : ICruisesService
 {
-    public async Task PersistCruiseWithNewNumber(Cruise cruise, CancellationToken cancellationToken)
+    public Task PersistCruiseWithNewNumber(Cruise cruise, CancellationToken cancellationToken)
     {
-        // Using transaction to prevent multiple users from generating a cruise with the same number
-        await using var transaction =
-            await applicationDbContext.Database.BeginTransactionAsync(
-                System.Data.IsolationLevel.Serializable,
-                cancellationToken);
-        try
-        {
-            cruise.Number = yearBasedKeyGenerator.GenerateKey(applicationDbContext.Cruises);
+        return unitOfWork.ExecuteIsolated(async () =>
+            {
+                cruise.Number = await yearBasedKeyGenerator.GenerateKey(cruisesRepository, cancellationToken);
 
-            await applicationDbContext.Cruises.AddAsync(cruise, cancellationToken);
-            await applicationDbContext.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-        }
-        catch (Exception)
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
+                await cruisesRepository.AddCruise(cruise, cancellationToken);
+                await unitOfWork.Complete(cancellationToken);
+            },
+            System.Data.IsolationLevel.Serializable,
+            cancellationToken
+        );
     }
     
     public async Task CheckEditedCruisesManagersTeams(List<Cruise> editedCruises, CancellationToken cancellationToken)

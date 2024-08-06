@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp_API.Temp.DTOs;
 
@@ -14,7 +15,7 @@ public class FormUserDto
     public string LastName { get; set; } = null!;
     
     
-    public static FormUserDto GetFormUserModel(User user)
+    public static FormUserDto GetFormUserDto(User user)
     { 
         var userModel = new FormUserDto()
         {

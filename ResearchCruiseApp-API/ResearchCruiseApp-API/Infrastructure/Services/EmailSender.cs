@@ -1,8 +1,5 @@
 ﻿using System.Globalization;
 using System.Resources;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 using MimeKit;
 using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Application.ExternalServices;
@@ -12,36 +9,56 @@ using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 
-public class EmailSender(IConfiguration configuration, IWebHostEnvironment webHostEnvironment) : IEmailSender
+public class EmailSender(
+    IConfiguration configuration,
+    ITemplateFileReader templateFileReader) : IEmailSender
 {
-    public async Task SendAccountAcceptedMessageAsync(User user)
+    public async Task SendEmailConfirmationEmail(User user, string roleName, string emailConfirmationCode)
     {
-        var subject = "Powiadomienie o akceptacji konta przez Biuro Armatora Uniwersytetu";
+        var protocol = configuration.GetSection("ProtocolUsed").Value;
+        var frontendUrl = configuration.GetSection("FrontendUrl").Value;
+        var link = $"{protocol}://{frontendUrl}/confirmEmail?userId={user.Id}&code={emailConfirmationCode}";
         
-        var emailTemplatePath = webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar +
-                                "Templates" + Path.DirectorySeparatorChar +
-                                "EmailTemplates" + Path.DirectorySeparatorChar +
-                                "accountAcceptedMessage.html";
+        var messageTemplate = await templateFileReader.ReadEmailConfirmationMessageTemplate();
+        var emailSubject = await templateFileReader.ReadEmailConfirmationEmailSubject();
         
-        var emailBody = (await File.ReadAllTextAsync(emailTemplatePath))
+        var cultureInfo = new CultureInfo("pl-pl");
+        var resourceManager = new ResourceManager(
+            "ResearchCruiseApp_API.App_GlobalResources.Roles",
+            typeof(Roles).Assembly);
+        var emailMessage = messageTemplate
+            .Replace("{{firstName}}", user.FirstName)
+            .Replace("{{lastName}}", user.LastName)
+            .Replace("{{roleText}}", $" {resourceManager.GetString(roleName, cultureInfo)} ")
+            .Replace("{{link}}", link);
+
+        await SendEmail(user.Email!, emailSubject, emailMessage);
+    }
+    
+    public async Task SendAccountAcceptedMessage(User user)
+    {
+        var messageTemplate = await templateFileReader.ReadAccountAcceptedMessageTemplate();
+        var emailSubject = await templateFileReader.ReadAccountAcceptedEmailSubject();
+        
+        var emailMessage = messageTemplate
             .Replace("{{firstName}}", user.FirstName)
             .Replace("{{lastName}}", user.LastName);
         
-        await SendEmail(user.Email!, subject, emailBody);
+        await SendEmail(user.Email!, emailSubject, emailMessage);
     }
     
-    public Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
+    public Task SendPasswordResetLink(User user, string email, string resetLink)
     {
         throw new NotImplementedException();
     }
 
-    public Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
+    public Task SendPasswordResetCode(User user, string email, string resetCode)
     {
         throw new NotImplementedException();
     }
     
     
-    public async Task SendEmail(string email, string subject, string body)
+    private async Task SendEmail(string email, string subject, string body)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");
 

@@ -1,6 +1,8 @@
 using AutoMapper;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Services.Identity;
+using User = ResearchCruiseApp_API.Domain.Entities.User;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 

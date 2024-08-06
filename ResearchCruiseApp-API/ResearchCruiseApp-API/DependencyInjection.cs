@@ -1,12 +1,15 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.SharedServices.Compressor;
 using ResearchCruiseApp_API.Application.SharedServices.Cruises;
-using ResearchCruiseApp_API.Application.SharedServices.UserDto;
+using ResearchCruiseApp_API.Application.SharedServices.UserDtos;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
+using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 using ResearchCruiseApp_API.Infrastructure.Services;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
@@ -15,7 +18,7 @@ namespace ResearchCruiseApp_API;
 
 public static class DependencyInjection
 {
-    public static void AddApplicationServices(this IServiceCollection services)
+    public static void AddApplication(this IServiceCollection services)
     {
         services
             .AddMediatR(cfg => 
@@ -27,19 +30,21 @@ public static class DependencyInjection
         services
             .AddScoped<ICompressor, Compressor>()
             .AddScoped<ICruisesService, CruisesService>()
-            .AddScoped<IUserDtoService, UserDtoService>()
+            .AddScoped<IUserDtosService, UserDtosService>()
             .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
     }
 
-    public static void AddInfrastructureServices(this IServiceCollection services)
+    public static void AddInfrastructure(this IServiceCollection services)
     {
+        services.AddIdentity();
+        
         services
             .AddScoped<IEmailSender, EmailSender>()
             .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
-            .AddScoped<ITemplateFileReader, TemplateFileReader>();
+            .AddScoped<ITemplateFileReader, TemplateFileReader>()
+            .AddScoped<ICurrentUserService, CurrentUserService>();
         
-        services
-            .AddIdentity();
+        services.AddPersistence();
     }
 
     
@@ -67,5 +72,15 @@ public static class DependencyInjection
             options.Password.RequireUppercase = true;
             options.Password.RequireNonAlphanumeric = false;
         });
+    }
+
+    private static void AddPersistence(this IServiceCollection services)
+    {
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
+        services
+            .AddScoped<IFormsARepository, FormsARepository>()
+            .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()
+            .AddScoped<ICruisesRepository, CruisesRepository>();
     }
 }
