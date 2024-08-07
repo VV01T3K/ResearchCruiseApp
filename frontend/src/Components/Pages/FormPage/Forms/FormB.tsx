@@ -29,6 +29,8 @@ import DetailedPlanInput from "../Inputs/DetailedPlanInput";
 import EquipmentInput from "../Inputs/EquipmentInput";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
 import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
+import CrewInput from "../Inputs/CrewInput";
+import PermissionsInput from "../Inputs/PermissionsInput/PermissionsInput";
 
 
 export type ResearchArea = {
@@ -58,6 +60,10 @@ export type FormBValues = {
     periodNotes: string
     shipUsage: string
     permissions: string
+    permissionsScan: {
+        name: string,
+        content: string
+    }
     researchArea: string
     researchAreaInfo: string
     cruiseGoal: string
@@ -245,12 +251,14 @@ function FormB(props: Props){
                         // @ts-ignore
                         if (form.watch("permissionsRequired") === 0 ) {
                             return (
-                                <TextArea className="col-12 col-md-12 col-xl-6 p-3"
+                                <PermissionsInput className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Jakie?"
                                           name="permissions"
                                           required="Podaj jakie"
                                           resize="none"
                                 />
+
+
                             )
                         }
                         else{
@@ -421,24 +429,14 @@ function FormB(props: Props){
                             "Instytucja 1", "Instytucja 2", "Instytucja 3"
                         ]}
                     />
+                    <CrewInput className="col-12"
+                               label="Lista uczestników rejsu"
+                               name="theses"  historicalCrew={[]}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
-                        <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
-                        <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
-                            do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
-                                realizację rejsu, z afiliacją UG.</strong></p>
-                        <h5 className={"text-center"}>Publikacje zawierające dopisek</h5>
-                        <p>Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w
-                            treści publikacji (w wersji angielskiej lub w innym języku): <strong>„…the research/study
-                                was conducted onboard r/v Oceanograf (the research vessel owned by the University of
-                                Gdańsk)…” lub „… samples for the present study were collected during a research cruise
-                                onboard r/v Oceanograf…” </strong>lub podobny, ale wskazujący jednoznacznie że badania w
-                            ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
-                    </div>
+
                     <PublicationsInput
-                        required={true}
                         className="col-12"
                         label="Publikacje"
                         name="publications"
@@ -482,14 +480,8 @@ function FormB(props: Props){
                             }
                         ]}
                     />
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
-                        <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
-                        <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
-                            wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
-                                pokładu jednostki RV Oceanograf.</strong></p>
-                    </div>
+
                     <ThesesInput
-                        required={true}
                         className="col-12"
                         label="Prace"
                         name="theses"

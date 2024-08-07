@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../../LoginPage/ErrorCode";
+import ErrorCode from "../../CommonComponents/ErrorCode";
 import Select from "react-select";
-import ThesisCategoryPicker from "./ThesisCategoryPicker";
-import {Publication} from "../PublicationsInput/PublicationsInput";
-import {Contract} from "../ContractsInput/ContractsInput";
+import DatePicker from "react-datepicker";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
@@ -15,21 +13,25 @@ type Props = {
     label: string,
     name:string,
     form?: UseFormReturn,
-    historicalThesis: Thesis[],
+    historicalCrew: Crew[],
     required? :boolean,
     readonly?: boolean
 }
 
-export type Thesis = {
-    category: string,
-    author: string,
+export type Crew = {
     title: string,
-    promoter: string,
-    year: string
+    names: string,
+    surname: string,
+    birthPlace: string,
+    birthDate: string,
+    ID: string,
+    expiryDate: string,
+    institution: string
 }
 
 
 function CrewInput(props: Props){
+    const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
     const windowWidth = useWindowWidth()
 
 
@@ -38,10 +40,10 @@ function CrewInput(props: Props){
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
                         rules = {{
-                            required: false,
+                            required: true,
                             validate: {
-                                noEmptyInputs: (value: Thesis[]) => {
-                                    if (value.some((row: Thesis) => {
+                                noEmptyInputs: (value: Crew[]) => {
+                                    if (value.some((row: Crew) => {
                                         return Object
                                             .values(row)
                                             .some((rowField: object | string) => {
@@ -79,19 +81,20 @@ function CrewInput(props: Props){
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "20%"}}>
-                                                <b>Imię</b>
+                                                style={{width: "30%"}}>
+                                                <b>Dane osobowe</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "55%"}}>
-                                                <b>Nazwisko</b>
+                                                style={{width: "30%"}}>
+                                                <b>Dane numeryczne</b>
                                             </div>
 
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "15%"}}>
-                                                <b>Tytuł</b>
+                                                style={{width: "30%"}}>
+                                                <b>
+                                                    Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2"
@@ -104,10 +107,10 @@ function CrewInput(props: Props){
                                     </div>
                                     {!field.value.length &&
                                         <div className="d-flex flex-row bg-light p-2 justify-content-center border">
-                                            <div className={"text-center"}>Nie dodano żadnej pracy</div>
+                                            <div className={"text-center"}>Nie dodano żadnego członka załogi</div>
                                         </div>
                                     }
-                                    {field.value.map((row: Thesis, index: number) => (
+                                    {field.value.map((row: Crew, index: number) => (
                                         <div key={index}
                                              className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                         >
@@ -119,54 +122,21 @@ function CrewInput(props: Props){
                                             </div>
                                             <div
                                                 className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
-                                                <b>Praca {index + 1}.</b>
+                                                <b>Członek załogi {index + 1}.</b>
                                             </div>
 
                                             <div
                                                 className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                                style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
+                                                style={{width: windowWidth >= 1200 ? "30%" : "100%"}}
                                             >
                                                 <div
-                                                    className="col-12 d-flex d-xl-none justify-content-center">Kategoria
+                                                    className="col-12 d-flex d-xl-none justify-content-center">Dane
+                                                    osobowe
                                                 </div>
-                                                <ThesisCategoryPicker
-                                                    readonly={props.readonly ?? false}
-                                                    name={props.name}
-                                                    row={row}
-                                                    field={field}
-                                                    form={props.form!}
-                                                />
-                                            </div>
-                                            <div
-                                                className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                style={{width: windowWidth >= 1200 ? "55%" : "100%"}}
-                                            >
-                                                <div className="col-12">Autor</div>
-                                                <textarea
-                                                    {...field}
-                                                    disabled={props.readonly ?? false}
-                                                    value={row.author}
-                                                    className="col-12 p-1 form-control"
-                                                    style={{fontSize: "inherit"}}
-                                                    onChange={(e) => {
-                                                        if (e.target.value.length < 100) {
-                                                            row.author = e.target.value
-                                                            props.form!.setValue(
-                                                                props.name,
-                                                                field.value,
-                                                                {
-                                                                    shouldDirty: true,
-                                                                    shouldTouch: true,
-                                                                    shouldValidate: true
-                                                                }
-                                                            )
-                                                            field.onChange(field.value)
-                                                        }
-                                                    }}
-                                                    rows={1}
-                                                />
 
-                                                <div className="col-12">Tytuł</div>
+                                                <div className="col-12">
+                                                    Tytuł (nauk., zawod.)
+                                                </div>
                                                 <textarea
                                                     {...field}
                                                     disabled={props.readonly ?? false}
@@ -188,19 +158,66 @@ function CrewInput(props: Props){
                                                             field.onChange(field.value)
                                                         }
                                                     }}
-                                                    rows={2}
+                                                    rows={1}
                                                 />
-
-                                                <div className="col-12">Promotor</div>
+                                                <div className="col-12">Imiona</div>
                                                 <textarea
                                                     {...field}
                                                     disabled={props.readonly ?? false}
-                                                    value={row.promoter}
+                                                    value={row.names}
                                                     className="col-12 p-1 form-control"
                                                     style={{fontSize: "inherit"}}
                                                     onChange={(e) => {
                                                         if (e.target.value.length < 100) {
-                                                            row.promoter = e.target.value
+                                                            row.names = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={1}
+                                                />
+                                                <div className="col-12">Nazwisko</div>
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.surname}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.surname = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={1}
+                                                />
+                                                <div className="col-12">Miejsce urodzenia</div>
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.birthPlace}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.birthPlace = e.target.value
                                                             props.form!.setValue(
                                                                 props.name,
                                                                 field.value,
@@ -217,37 +234,128 @@ function CrewInput(props: Props){
                                                 />
 
                                             </div>
+                                            <div
+                                                className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                                style={{width: windowWidth >= 1200 ? "30%" : "100%"}}
+                                            >
+                                                <div className="col-12">Data urodzenia</div>
+                                                <DatePicker
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
+                                                    showYearDropdown
+                                                    className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
+                                                    selectsEnd
+                                                    locale={"pl"}
+                                                    selected={row.birthDate ? new Date(row.birthDate) : null}
+                                                    onChange={(e: Date)=> {
+                                                        if (e != null) {
+                                                            const tmp = row;
+                                                            tmp["birthDate"] = e.toISOString();
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true,
+                                                                    shouldDirty: true
+                                                                }
+                                                            )
+                                                        }
+                                                    }}
+                                                    // getPopupContainer={trigger => trigger.parentElement}
+                                                    dateFormat="dd/MM/yyyy"
+                                                />
+
+                                                <div className="col-12">Numer ID (dowód osobisty lub paszport)</div>
+                                                <textarea
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.ID}
+                                                    className="col-12 p-1 form-control"
+                                                    style={{fontSize: "inherit"}}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.length < 100) {
+                                                            row.ID = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
+                                                        }
+                                                    }}
+                                                    rows={1}
+                                                />
+
+                                                <div className="col-12">
+                                                    Data ważności dokumetu tożsamości (dowód osobisty lub paszport)</div>
+                                                <DatePicker
+                                                    {...field}
+                                                    disabled={props.readonly ?? false}
+                                                    // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
+                                                    showYearDropdown
+                                                    className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
+                                                    selectsEnd
+                                                    locale={"pl"}
+                                                    selected={row.expiryDate ? new Date(row.expiryDate) : null}
+                                                    onChange={(e: Date)=> {
+                                                        if (e != null) {
+                                                            const tmp = row;
+                                                            tmp["expiryDate"] = e.toISOString();
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true,
+                                                                    shouldDirty: true
+                                                                }
+                                                            )
+                                                        }
+                                                    }}
+                                                    // getPopupContainer={trigger => trigger.parentElement}
+                                                    dateFormat="dd/MM/yyyy"
+                                                />
+
+
+
+
+                                            </div>
 
                                             <div
                                                 className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end text-center"
-                                                style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                                                style={{width: windowWidth >= 1200 ? "30%" : "100%"}}
                                             >
-                                                <div className="col-12 d-flex d-xl-none justify-content-center">Rok
-                                                    obrony
+                                                <div className="col-12 d-flex d-xl-none justify-content-center">R
+                                                    Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej
                                                 </div>
-                                                <input
-                                                    disabled={props.readonly ?? false}
-                                                    type="text"
+                                                <textarea
                                                     {...field}
-                                                    className="text-center placeholder-glow w-100 p-1 form-control"
+                                                    disabled={props.readonly ?? false}
+                                                    value={row.institution}
+                                                    className="col-12 p-1 form-control"
                                                     style={{fontSize: "inherit"}}
-                                                    value={row.year}
                                                     onChange={(e) => {
-                                                        const sanitizedValue = parseInt(e.target.value);
-                                                        var val = field.value;
-                                                        console.log(sanitizedValue)
-                                                        if (!isNaN(sanitizedValue) && sanitizedValue < 9999) {
-                                                            val[index].year = sanitizedValue
-                                                        } else {
-                                                            val[index].year = '0'
+                                                        if (e.target.value.length < 100) {
+                                                            row.institution = e.target.value
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                field.value,
+                                                                {
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true,
+                                                                    shouldValidate: true
+                                                                }
+                                                            )
+                                                            field.onChange(field.value)
                                                         }
-                                                        props.form!.setValue(props.name, val, {
-                                                            shouldDirty: true,
-                                                            shouldTouch: true,
-                                                            shouldValidate: true
-                                                        })
-                                                        field.onChange(val)
                                                     }}
+                                                    rows={2}
                                                 />
 
                                             </div>
@@ -281,41 +389,44 @@ function CrewInput(props: Props){
                                 <div
                                     className={`${props.readonly ? "d-none" : "d-flex"} flex-row flex-wrap justify-content-center w-100`}>
                                     <div
-                                        className="d-flex col-12 col-xl-3 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
+                                        className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
-                                                        ${props.form!.formState.errors[props.name] != undefined ? "disabled" : ""}`
+                                                ${disabled ? "disabled" : ""}`
                                             }
                                             type="button"
                                             onClick={() => {
-                                                const newThesis: Thesis = {
-                                                    category: "",
-                                                    author: "",
+                                                const newCrew: Crew = {
                                                     title: "",
-                                                    promoter: "",
-                                                    year: ""
+                                                    names: "",
+                                                    surname: "",
+                                                    birthPlace: "",
+                                                    birthDate: "",
+                                                    ID: "",
+                                                    expiryDate: "",
+                                                    institution: ""
                                                 }
                                                 props.form!.setValue(
                                                     props.name,
-                                                    [...field.value, newThesis],
+                                                    [...field.value, newCrew],
                                                     {
                                                         shouldValidate: true,
                                                         shouldDirty: true
                                                     }
                                                 )
-                                                field.onChange([...field.value, newThesis])
+                                                field.onChange([...field.value, newCrew])
                                             }}
                                         >
-                                            Dodaj nową pracę
+                                            Dodaj nowego członka załogi
                                         </button>
                                     </div>
                                     <Select
                                         minMenuHeight={300}
-                                        className="d-flex col-12 col-xl-9 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
-                                        isDisabled={props.form!.formState.errors[props.name] != undefined}
+                                        className="d-flex col-12 col-xl-6 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
+                                        isDisabled={disabled}
                                         menuPlacement="auto"
-                                        placeholder="Dodaj z dostępnych"
+                                        placeholder="Dodaj z historii"
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
@@ -337,42 +448,9 @@ function CrewInput(props: Props){
                                             })
                                         }}
                                         options ={[
-                                            {
-                                                label: "Licencjackie",
-                                                options:
-                                                    props.historicalThesis
-                                                        .filter((thesis: Thesis) => thesis.category == "bachelor")
-                                                        .map((thesis: Thesis) => ({
-                                                            label: `Autor: ${thesis.author}\n
-                                                                    Tytuł: ${thesis.title}\n
-                                                                    Promotor: ${thesis.promoter}\n
-                                                                    Rok obrony: ${thesis.year}`,
-                                                            value: thesis
-                                                        }))
-                                            },
-                                            {
-                                                label: "Magisterskie",
-                                                options:
-                                                    props.historicalThesis
-                                                        .filter((thesis: Thesis) => thesis.category == "master")
-                                                        .map((thesis: Thesis) => ({
-                                                            label: `${thesis.author}, ${thesis.title}, ${thesis.promoter}, ${thesis.year}`,
-                                                            value: thesis
-                                                        }))
-                                            },
-                                            {
-                                                label: "Doktorskie",
-                                                options:
-                                                    props.historicalThesis
-                                                        .filter((thesis: Thesis) => thesis.category == "doctor")
-                                                        .map((thesis: Thesis) => ({
-                                                            label: `${thesis.author}, ${thesis.title}, ${thesis.promoter}, ${thesis.year}`,
-                                                            value: thesis
-                                                        }))
-                                            }
-                                        ]}
+                                            ]}
                                         value={""}
-                                        onChange={(selectedOption: { label: string, value: Publication })=> {
+                                        onChange={(selectedOption: { label: string, value: Crew })=> {
                                             if (selectedOption) {
                                                 props.form!.setValue(
                                                     props.name,

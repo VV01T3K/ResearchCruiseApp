@@ -414,7 +414,7 @@ function FormA(props: Props){
                     {/*        ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>*/}
                     {/*</div>*/}
                     <PublicationsInput
-                        required={true}
+
                         className="col-12"
                         label="Publikacje"
                         name="publications"
@@ -458,14 +458,14 @@ function FormA(props: Props){
                             }
                         ]}
                     />
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
+                    {/*<div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
                         <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
                         <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
                             wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
                                 pokładu jednostki RV Oceanograf.</strong></p>
-                    </div>
+                    </div>*/}
                         <ThesesInput
-                            required={true}
+
                             className="col-12"
                             label="Prace"
                             name="theses"

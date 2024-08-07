@@ -5,6 +5,8 @@ import Select from "react-select";
 import PublicationsCategoryPicker from "./PublicationsCategoryPicker"
 import {Contract} from "../ContractsInput/ContractsInput";
 import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
+import {SpubTask} from "../SpubTasksInput";
+import {Action} from "../EquipmentInput";
 
 
 type Props = {
@@ -29,6 +31,7 @@ export type Publication = {
 
 
 function PublicationsInput(props: Props){
+    const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
     const windowWidth = useWindowWidth()
 
     return (
@@ -36,24 +39,36 @@ function PublicationsInput(props: Props){
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
                         rules = {{
-                            required: false,
+                            required: true,
                             validate: {
-                                noEmptyInputs: (value: Publication[]) => {
+                                noEmptyRowFields: (value: Publication[]) => {
                                     if (value.some((row: Publication) => {
                                         return Object
                                             .values(row)
-                                            .some((rowField) => {
-                                                return (typeof rowField == 'string' && rowField === "")
-                                            })
-                                    })) {
+                                            .some(rowField => !rowField)
+                                    })
+                                    )
                                         return "Wypełnij wszystkie pola"
-                                    }
-                                }
+                                },
                             }
                         }}
 
                         render={({field}) => (
                             <>
+                            <div className={`pb-3 p-8 `}>
+                                    <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
+                                        <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
+                                           do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
+                                                realizację rejsu, z afiliacją UG.</strong></p>
+                                        <h5 className={"text-center"}>Publikacje zawierające dopisek</h5>
+                                        <p>Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w
+                                            treści publikacji (w wersji angielskiej lub w innym języku): <strong>„…the research/study
+                                               was conducted onboard r/v Oceanograf (the research vessel owned by the University of
+                                               Gdańsk)…” lub „… samples for the present study were collected during a research cruise
+                                                onboard r/v Oceanograf…” </strong>lub podobny, ale wskazujący jednoznacznie że badania w
+                                            ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
+                                </div>
+
                                 <div className="table-striped w-100">
                                     <div className="text-white text-center bg-primary">
                                         <div className="d-flex flex-row center">
@@ -313,19 +328,22 @@ function PublicationsInput(props: Props){
                                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                             >
                                                 <button type="button"
-                                                        className={`${props.readonly ? "d-none": ""} btn btn-info`}
                                                         style={{fontSize: "inherit"}}
+                                                        className={`btn btn-info ${props.readonly ? 'd-none' : ''}`}
                                                         onClick={() => {
-                                                            const val = field.value;
+                                                            const val: Publication[] = field.value;
+
                                                             val.splice(index, 1)
-                                                            props.form!.clearErrors(props.name)
-                                                            props.form!.setValue(props.name, val, {
-                                                                shouldValidate: true,
-                                                                shouldDirty: true,
-                                                                shouldTouch: true
-                                                            })
-                                                        }
-                                                        }
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                val,
+                                                                {
+                                                                    shouldValidate: true,
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true
+                                                                }
+                                                            )
+                                                        }}
                                                 >
                                                     -
                                                 </button>
@@ -336,13 +354,14 @@ function PublicationsInput(props: Props){
                                     ))}
                                 </div>
 
-                                <div className={`${props.readonly ? "d-none": "d-flex"} flex-row flex-wrap justify-content-center w-100`}>
+                                <div
+                                    className={`${props.readonly ? "d-none" : "d-flex"} flex-row flex-wrap justify-content-center w-100`}>
                                     <div
                                         className="d-flex col-12 col-xl-3 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
-                                                        ${props.form!.formState.errors[props.name] != undefined ? "disabled" : ""}`
+                                                ${disabled ? "disabled" : ""}`
                                             }
                                             type="button"
                                             onClick={() => {
@@ -372,9 +391,9 @@ function PublicationsInput(props: Props){
                                     <Select
                                         minMenuHeight={300}
                                         className="d-flex col-12 col-xl-9 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
-                                        isDisabled={props.form!.formState.errors[props.name] != undefined}
+                                        isDisabled={disabled}
                                         menuPlacement="auto"
-                                        placeholder="Dodaj z dostępnych"
+                                        placeholder="Dodaj z historii"
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,

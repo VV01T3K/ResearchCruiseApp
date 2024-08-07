@@ -223,11 +223,11 @@ export default function ContractsInput(props: Props){
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
                                             {props.readonly &&
-                                                <FileDownloader
-                                                    fileName={field.value[index].scan?.name}
-                                                    fileContent={field.value[index].scan?.content}
-                                                    bg="bg-light"
-                                                />
+                                                    <FileDownloader
+                                                        fileName={field.value[index].scan?.name}
+                                                        fileContent={field.value[index].scan?.content}
+                                                        bg="bg-light"
+                                                    />
                                             }
                                             {!props.readonly &&
                                             <FilePicker
