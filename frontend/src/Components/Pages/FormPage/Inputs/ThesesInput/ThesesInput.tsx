@@ -7,6 +7,7 @@ import {Publication} from "../PublicationsInput/PublicationsInput";
 import {Contract} from "../ContractsInput/ContractsInput";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
+import {SpubTask} from "../SpubTasksInput";
 
 
 
@@ -16,7 +17,7 @@ type Props = {
     name:string,
     form?: UseFormReturn,
     historicalTheses: Thesis[],
-    required? :boolean,
+    required :boolean,
     readonly?: boolean
 }
 
@@ -30,6 +31,7 @@ export type Thesis = {
 
 
 function ThesesInput(props: Props){
+    const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
     const windowWidth = useWindowWidth()
 
     return (
@@ -37,24 +39,30 @@ function ThesesInput(props: Props){
             <Controller name={props.name}  control={props.form!.control}
                         defaultValue={[]}
                         rules = {{
-                            required: false,
+                            required: true,
                             validate: {
-                                noEmptyInputs: (value: Thesis[]) => {
+                                noEmptyRowFields: (value: Thesis[]) => {
                                     if (value.some((row: Thesis) => {
                                         return Object
                                             .values(row)
-                                            .some((rowField) => {
-                                                return (typeof rowField == 'string' && rowField === "");
-                                            })
-                                    })) {
+                                            .some(rowField => !rowField)
+                                    })
+                                    )
                                         return "Wypełnij wszystkie pola"
-                                    }
-                                }
+                                },
                             }
                         }}
 
                         render={({field}) => (
                             <>
+                                  <div className={`pb-3 p-8`}>
+                                    <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
+                                    <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści
+                                        pracy
+                                        wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były
+                                            prowadzone z
+                                            pokładu jednostki RV Oceanograf.</strong></p>
+                                </div>
                                 <div className="table-striped w-100">
                                     <div className="text-white text-center bg-primary">
                                         <div className="d-flex flex-row center">
@@ -248,19 +256,22 @@ function ThesesInput(props: Props){
                                                  style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                             >
                                                 <button type="button"
-                                                        className={`${props.readonly ? "d-none" : ""} btn btn-info`}
                                                         style={{fontSize: "inherit"}}
+                                                        className={`btn btn-info ${props.readonly ? 'd-none' : ''}`}
                                                         onClick={() => {
-                                                            const val = field.value;
+                                                            const val: Thesis[] = field.value;
+
                                                             val.splice(index, 1)
-                                                            props.form!.clearErrors(props.name)
-                                                            props.form!.setValue(props.name, val, {
-                                                                shouldValidate: true,
-                                                                shouldDirty: true,
-                                                                shouldTouch: true
-                                                            })
-                                                        }
-                                                        }
+                                                            props.form!.setValue(
+                                                                props.name,
+                                                                val,
+                                                                {
+                                                                    shouldValidate: true,
+                                                                    shouldDirty: true,
+                                                                    shouldTouch: true
+                                                                }
+                                                            )
+                                                        }}
                                                 >
                                                     -
                                                 </button>
@@ -278,7 +289,7 @@ function ThesesInput(props: Props){
                                         <button
                                             style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
-                                                        ${props.form!.formState.errors[props.name] != undefined ? "disabled" : ""}`
+                                                ${disabled ? "disabled" : ""}`
                                             }
                                             type="button"
                                             onClick={() => {
@@ -306,9 +317,9 @@ function ThesesInput(props: Props){
                                     <Select
                                         minMenuHeight={300}
                                         className="d-flex col-12 col-xl-9 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
-                                        isDisabled={props.form!.formState.errors[props.name] != undefined}
+                                        isDisabled={disabled}
                                         menuPlacement="auto"
-                                        placeholder="Dodaj z dostępnych"
+                                        placeholder="Dodaj z historii"
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
@@ -329,7 +340,7 @@ function ThesesInput(props: Props){
                                                 zIndex: 9999
                                             })
                                         }}
-                                        options ={[
+                                        options={[
                                             {
                                                 label: "Licencjackie",
                                                 options:
@@ -365,7 +376,7 @@ function ThesesInput(props: Props){
                                             }
                                         ]}
                                         value={""}
-                                        onChange={(selectedOption: { label: string, value: Publication })=> {
+                                        onChange={(selectedOption: { label: string, value: Publication }) => {
                                             if (selectedOption) {
                                                 props.form!.setValue(
                                                     props.name,

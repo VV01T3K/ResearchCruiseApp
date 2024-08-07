@@ -32,6 +32,8 @@ import EquipmentInput from "../Inputs/EquipmentInput";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
 import SamplesInput from "../Inputs/SamplesInput";
 import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
+import PermissionsInput from "../Inputs/PermissionsInput/PermissionsInput";
+import CrewInput from "../Inputs/CrewInput";
 
 
 export type ResearchArea = {
@@ -125,7 +127,7 @@ function FormC(props: Props){
         "Pozwolenia": "Dodatkowe pozwolenia do badań podczas rejsu",
         "Rejon": "Rejon prowadzenia badań",
         "Cel": "Cel Rejsu",
-        "Zadania": "Zadania zaplanowane w trakcie rejsu",
+        "Efekty": "Efekty rejsu",
         "Umowy": "Umowy regulujące współpracę, w ramach której zrealizowano zadania badawcze",
         "Z. badawcze": "Zespoły badawcze, jakie uczestniczyły w rejsie",
         "Publikacje/prace": "Publikacje i prace",
@@ -214,7 +216,7 @@ function FormC(props: Props){
                 <FormSection title={sections.Czas}>
                     <CruiseDate editCruiseForm={cruiseForm} />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
-                               label="Statek na potrzeby badań będzie wykorzystywany:"
+                               label="Statek na potrzeby badań był wykorzystywany:"
                                name="shipUsage"
                                values={formInitValues?.shipUsages}
                     />
@@ -238,7 +240,7 @@ function FormC(props: Props){
 
                 <FormSection title={sections.Pozwolenia}>
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
-                               label="Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?"
+                               label="Czy do badań prowadzonych podczas rejsu były potrzebne dodatkowe pozwolenia?"
                                name="permissionsRequired"
                                values={["tak", "nie"]}
                     />
@@ -246,7 +248,7 @@ function FormC(props: Props){
                         // @ts-ignore
                         if (form.watch("permissionsRequired") === 0 ) {
                             return (
-                                <TextArea className="col-12 col-md-12 col-xl-6 p-3"
+                                <PermissionsInput className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Jakie?"
                                           name="permissions"
                                           required="Podaj jakie"
@@ -265,7 +267,7 @@ function FormC(props: Props){
 
                 <FormSection title={sections.Rejon}>
                     <ClickableMap
-                        label="Obszar prowadzonych badań" name="researchArea"
+                        label="Obszar przeprowadzonych badań" name="researchArea"
                         // image={formInitValues?.researchAreasMap}
                         regions={formInitValues?.researchAreas}
                     />
@@ -291,7 +293,7 @@ function FormC(props: Props){
                     />
                 </FormSection>
 
-                <FormSection title={sections.Zadania}>
+                <FormSection title={sections.Efekty}>
                     <TaskInput
                         name={"researchTasks"}
                         historicalTasks={[
@@ -422,22 +424,12 @@ function FormC(props: Props){
                             "Instytucja 1", "Instytucja 2", "Instytucja 3"
                         ]}
                     />
+                    <CrewInput className="col-12"
+                               label="Lista uczestników rejsu"
+                               name="theses"  historicalCrew={[]}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none':''}`}>
-                        <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
-                        <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami
-                            do realizacji na planowanym rejsie, <strong>opublikowane przez zespół zaangażowany w
-                                realizację rejsu, z afiliacją UG.</strong></p>
-                        <h5 className={"text-center"}>Publikacje zawierające dopisek</h5>
-                        <p>Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w
-                            treści publikacji (w wersji angielskiej lub w innym języku): <strong>„…the research/study
-                                was conducted onboard r/v Oceanograf (the research vessel owned by the University of
-                                Gdańsk)…” lub „… samples for the present study were collected during a research cruise
-                                onboard r/v Oceanograf…” </strong>lub podobny, ale wskazujący jednoznacznie że badania w
-                            ramach niniejszej publikacji były prowadzone z pokładu jednostki RV Oceanograf.</p>
-                    </div>
                     <PublicationsInput
                         required={true}
                         className="col-12"
@@ -483,12 +475,6 @@ function FormC(props: Props){
                             }
                         ]}
                     />
-                    <div required={false} className={`pb-0 p-4 ${props.readonly ? 'd-none' : ''}`}>
-                        <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
-                        <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
-                            wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
-                                pokładu jednostki RV Oceanograf.</strong></p>
-                    </div>
                     <ThesesInput
                         required={true}
                         className="col-12"
@@ -546,11 +532,10 @@ function FormC(props: Props){
                     />
                 </FormSection>
                 <FormSection title={sections["Szczegóły"]}>
-                    <h5 required={false} className={`pb-0 p-4 col-12 text-center ${props.readonly ? 'd-none' : ''}`}>Czy w ramach rejsu planuje
-                        się:</h5>
+                    <h5 required={false} className={`pb-0 p-4 col-12 text-center ${props.readonly ? 'd-none' : ''}`}>Czy w ramach rejsu:</h5>
                     <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentOutsideRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
-                               label="Wystawianie sprzętu
-                        badawczego (boje, c-pody, sieci itp.) poza statek w ramach czasu trwania rejsu"
+                               label="Wystawiono sprzęt
+                        badawczy (boje, c-pody, sieci itp.) poza statek w ramach czasu trwania rejsu"
                                name="equipmentOutsideRequired"
                                values={["tak", "nie"]}
                     />
@@ -572,8 +557,8 @@ function FormC(props: Props){
                     })()}
 
                     <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
-                               label="Pozostawianie sprzętu (boje,
-                        c-pody, sieci itp.) na dłuższy okres lub zbieranie pozostawionego podczas wcześniejszych rejsów
+                               label="Pozostawiono sprzęt (boje,
+                        c-pody, sieci itp.) na dłuższy okres lub zebrano pozostawiony podczas wcześniejszych rejsów
                         sprzętu"
                                name="equipmentLeaveRequired"
                                values={["tak", "nie"]}
@@ -595,7 +580,7 @@ function FormC(props: Props){
                         }
                     })()}
                     <FormRadio className={`col-12 col-md-12 ${form.watch("portLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
-                               label="Dodatkowe wchodzenie i wychodzenie z portu"
+                               label="Dodatkowo wchodzło i wychodziło się z portu"
                                name="portLeaveRequired"
                                values={["tak", "nie"]}
                     />
@@ -635,7 +620,7 @@ function FormC(props: Props){
 
                 <FormSection title={sections["Podsumowanie"]}>
                     <TextArea className="col-12 col-md-12 p-3"
-                              required={false}
+                              required={true}
                               label="Krótki opis podsumowujący dany rejs "
                               name="researchAreaInfo"
                               resize="none"
