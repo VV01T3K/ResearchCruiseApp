@@ -5,6 +5,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
+import {SpubTask} from "./SpubTasksInput";
 
 
 
@@ -447,8 +448,12 @@ function CrewInput(props: Props){
                                                 zIndex: 9999
                                             })
                                         }}
-                                        options ={[
-                                            ]}
+                                        options ={
+                                            props.historicalCrew.map((crew: Crew) => ({
+                                                label: `${crew.names} ${crew.surname} ${crew.ID} ${crew.title} ${crew.birthPlace} ${crew.birthPlace} ${crew.expiryDate} ${crew.institution}`,
+                                                value: crew
+                                            }))
+                                        }
                                         value={""}
                                         onChange={(selectedOption: { label: string, value: Crew })=> {
                                             if (selectedOption) {

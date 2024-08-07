@@ -431,7 +431,48 @@ function FormB(props: Props){
                     />
                     <CrewInput className="col-12"
                                label="Lista uczestników rejsu"
-                               name="theses"  historicalCrew={[]}/>
+                               name="theses"
+                               historicalCrew={[
+                                   {names: "Maksymilian",
+                                       surname: "Panicz" ,
+                                       ID: "184510",
+                                       title: "",
+                                       birthDate: "",
+                                       birthPlace: "",
+                                       expiryDate: "",
+                                       institution: ""
+                                   },
+                                   {names: "Mateusz",
+                                       surname: "Kowalczyk" ,
+                                       ID: "123456",
+                                       title: "",
+                                       birthDate: "",
+                                       birthPlace: "",
+                                       expiryDate: "",
+                                       institution: ""
+                                   },
+                                   {names: "Mateusz",
+                                       surname: "Nowak" ,
+                                       ID: "654321",
+                                       title: "",
+                                       birthDate: "",
+                                       birthPlace: "",
+                                       expiryDate: "",
+                                       institution: ""
+                                   },
+                                   {names: "Michał",
+                                       surname: "Tarnacki" ,
+                                       ID: "987654",
+                                       title: "",
+                                       birthDate: "",
+                                       birthPlace: "",
+                                       expiryDate: "",
+                                       institution: ""
+                                   }
+
+
+
+                               ]}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
