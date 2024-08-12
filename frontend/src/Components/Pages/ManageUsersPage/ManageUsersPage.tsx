@@ -208,7 +208,7 @@ function ManageUsersPage(props: Props) {
             if (window.confirm(`Czy na pewno chcesz wysłać email:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
                 // setToggleCleared(!toggleCleared);
                 dispatchEvent("Trwa wysyłanie maili")
-                selectedRows.forEach((user) => Api.post('/Account/resendConfirmationEmail', {email:user.userName}).catch(()=>{}))
+                selectedRows.forEach((user) => Api.post('/Account/emailConfirmationRequest', {email:user.userName}).catch(()=>{}))
                 dispatchEvent(null)
                 // setData(differenceBy(data, selectedRows, 'title'));
             }

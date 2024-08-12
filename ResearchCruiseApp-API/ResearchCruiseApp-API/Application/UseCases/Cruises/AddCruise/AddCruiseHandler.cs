@@ -29,7 +29,7 @@ public class AddCruiseHandler(
         // Cruises that already contain any of newCruise applications. The application will be deleted from them
         // since an application cannot be assigned to more than one cruise
         var affectedCruises = await cruisesRepository
-            .GetCruisesByCruiseApplicationsIds(request.CruiseFormDto.ApplicationsIds, cancellationToken);
+            .GetCruisesByCruiseApplicationsIds(request.CruiseFormDto.CruiseApplicationsIds, cancellationToken);
 
         await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);
 
@@ -42,17 +42,11 @@ public class AddCruiseHandler(
     
     private async Task<Cruise> CreateCruise(CruiseFormDto cruiseFormDto, CancellationToken cancellationToken)
     {
-        // New cruise cruiseApplications and managers team are not auto-mapped
+        // New cruise cruiseApplications team are not auto-mapped
         var newCruise = mapper.Map<Cruise>(cruiseFormDto);
-        var newCruiseMainManager = await identityService
-            .GetUserById(cruiseFormDto.ManagersTeam.MainCruiseManagerId);
-        var newCruiseMainDeputyManager = await identityService
-            .GetUserById(cruiseFormDto.ManagersTeam.MainDeputyManagerId);
         var newCruiseApplications = await cruiseApplicationsRepository
-            .GetCruiseApplicationsByIds(cruiseFormDto.ApplicationsIds, cancellationToken);
-
-        newCruise.MainCruiseManager = newCruiseMainManager;
-        newCruise.MainDeputyManager = newCruiseMainDeputyManager;
+            .GetCruiseApplicationsByIds(cruiseFormDto.CruiseApplicationsIds, cancellationToken);
+        
         newCruise.CruiseApplications = newCruiseApplications;
         
         return newCruise;

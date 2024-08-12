@@ -22,7 +22,7 @@ public class GetCruiseApplicationByIdHandler(
         if (cruiseApplication is null)
             return Error.NotFound();
 
-        var cruiseApplicationModel = mapper.Map<CruiseApplicationDto>(cruiseApplication);
-        return cruiseApplicationModel;
+        var cruiseApplicationDto = mapper.Map<CruiseApplicationDto>(cruiseApplication);
+        return cruiseApplicationDto;
     }
 }

@@ -39,8 +39,8 @@ public class AutoAddCruisesHandler(
         
         return new Cruise
         {
-            MainCruiseManager = cruiseApplication.FormA.CruiseManager,
-            MainDeputyManager = cruiseApplication.FormA.DeputyManager,
+            MainCruiseManagerId = cruiseApplication.FormA.CruiseManagerId,
+            MainDeputyManagerId = cruiseApplication.FormA.DeputyManagerId,
             StartDate = newCruiseStartDate,
             EndDate = newCruiseEndDate,
             CruiseApplications = [cruiseApplication]

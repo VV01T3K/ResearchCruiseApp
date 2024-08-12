@@ -7,24 +7,24 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class CruiseApplicationDto
 {
-    public Guid Id { get; set; }
-    public string Number { get; set; } = null!;
-    public DateOnly Date { get; set; }
-    public int Year { get; set; }
-    public Guid CruiseManagerId { get; set; }
-    public string? CruiseManagerEmail { get; set; }
+    public Guid Id { get; init; }
+    public string Number { get; init; } = null!;
+    public DateOnly Date { get; init; }
+    public int Year { get; init; }
+    public Guid CruiseManagerId { get; init; }
+    public string CruiseManagerEmail { get; set; } = null!;
     public string CruiseManagerFirstName { get; set; } = null!;
     public string CruiseManagerLastName { get; set; } = null!;
-    public Guid DeputyManagerId { get; set; }
-    public string? DeputyManagerEmail { get; set; }
+    public Guid DeputyManagerId { get; init; }
+    public string DeputyManagerEmail { get; set; } = null!;
     public string DeputyManagerFirstName { get; set; } = null!;
     public string DeputyManagerLastName { get; set; } = null!;
-    public bool HasFormA { get; set; }
-    public bool HasFormB{ get; set; }
-    public bool HasFormC { get; set; }
-    public int Points { get; set; }
-    public string Status { get; set; } = null!;
-    public string? PointsDetails { get; set; }
+    public bool HasFormA { get; init; }
+    public bool HasFormB{ get; init; }
+    public bool HasFormC { get; init; }
+    public int Points { get; init; }
+    public string Status { get; init; } = null!;
+    public string? PointsDetails { get; init; }
 
 
     private class MapProfile : Profile
@@ -41,42 +41,7 @@ public class CruiseApplicationDto
                 dest => dest.CruiseManagerId,
                 options =>
                     options.MapFrom(src =>
-                        src.FormA != null ? Guid.Parse(src.FormA.CruiseManager.Id) : Guid.Empty))
-            .ForMember(
-                dest => dest.CruiseManagerEmail,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? src.FormA.CruiseManager.Email : string.Empty))
-            .ForMember(
-                dest => dest.CruiseManagerFirstName,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? src.FormA.CruiseManager.FirstName : string.Empty))
-            .ForMember(
-                dest => dest.CruiseManagerLastName,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? src.FormA.CruiseManager.LastName : string.Empty))
-            .ForMember(
-                dest => dest.DeputyManagerId,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? Guid.Parse(src.FormA.DeputyManager.Id) : Guid.Empty))
-            .ForMember(
-                dest => dest.DeputyManagerEmail,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? src.FormA.DeputyManager.Email : string.Empty))
-            .ForMember(
-                dest => dest.DeputyManagerFirstName,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? src.FormA.DeputyManager.FirstName : string.Empty))
-            .ForMember(
-                dest => dest.DeputyManagerLastName,
-                options =>
-                    options.MapFrom(src =>
-                        src.FormA != null ? src.FormA.DeputyManager.LastName : string.Empty))
+                        src.FormA != null ? src.FormA.CruiseManagerId : Guid.Empty))
             .ForMember(
                 dest => dest.HasFormA,
                 options =>

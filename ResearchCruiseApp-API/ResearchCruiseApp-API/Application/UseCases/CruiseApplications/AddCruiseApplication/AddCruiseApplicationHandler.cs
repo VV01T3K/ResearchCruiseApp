@@ -55,17 +55,12 @@ public class AddCruiseApplicationHandler(
     
     private async Task<Result<FormA>> CreateFormA(FormADto formADto)
     {
-        var formA = mapper.Map<FormA>(formADto);
-        var cruiseManager = await identityService.GetUserById(formADto.CruiseManagerId);
-        var deputyManager = await identityService.GetUserById(formADto.DeputyManagerId);
-
-        if (cruiseManager is null || deputyManager is null)
-            return Error.BadRequest("Cruise manager and deputy manager have to be defined");
-
-        formA.CruiseManager = cruiseManager;
-        formA.DeputyManager = deputyManager;
-
-        return formA;
+        if (await identityService.GetUserDtoById(formADto.CruiseManagerId) is null)
+            return Error.BadRequest("Kierownik nie istnieje");
+        if (await identityService.GetUserDtoById(formADto.DeputyManagerId) is null)
+            return Error.BadRequest("Zastępca nie istnieje");
+        
+        return mapper.Map<FormA>(formADto);
     }
 
     private async Task<CruiseApplication> CreateCruiseApplication(FormA formA, CancellationToken cancellationToken)

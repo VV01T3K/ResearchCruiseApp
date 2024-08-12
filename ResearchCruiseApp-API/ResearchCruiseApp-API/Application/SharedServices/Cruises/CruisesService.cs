@@ -42,16 +42,16 @@ public class CruisesService(
             if (cruise.CruiseApplications.Any(app => app.FormA == null))
                 continue;
 
-            var managersAvailable = cruise.CruiseApplications
-                .Select(app => app.FormA!.CruiseManager)
+            var managersAvailableIds = cruise.CruiseApplications
+                .Select(app => app.FormA!.CruiseManagerId)
                 .Union(cruise.CruiseApplications
-                    .Select(app => app.FormA!.DeputyManager))
+                    .Select(app => app.FormA!.DeputyManagerId))
                 .ToList();
 
-            if (cruise.MainCruiseManager is not null && !managersAvailable.Contains(cruise.MainCruiseManager))
-                cruise.MainCruiseManager = null;
-            if (cruise.MainDeputyManager is not null && !managersAvailable.Contains(cruise.MainDeputyManager))
-                cruise.MainDeputyManager = null;
+            if (cruise.MainCruiseManagerId != Guid.Empty && !managersAvailableIds.Contains(cruise.MainCruiseManagerId))
+                cruise.MainCruiseManagerId = Guid.Empty;
+            if (cruise.MainDeputyManagerId != Guid.Empty && !managersAvailableIds.Contains(cruise.MainDeputyManagerId))
+                cruise.MainDeputyManagerId = Guid.Empty;
         }
     }
 }

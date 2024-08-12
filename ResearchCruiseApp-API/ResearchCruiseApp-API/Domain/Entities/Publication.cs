@@ -13,7 +13,7 @@ public class Publication
     public string Category { get; set; } = null!;
     
     [StringLength(1024)]
-    public string DOI { get; set; } = null!;
+    public string Doi { get; set; } = null!;
     
     [StringLength(1024)]
     public string Authors { get; set; } = null!;

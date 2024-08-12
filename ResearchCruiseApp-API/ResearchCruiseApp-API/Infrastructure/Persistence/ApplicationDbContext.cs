@@ -22,6 +22,4 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Publication> Publications { get; init; } = null!;
     public DbSet<Thesis> Theses { get; init; } = null!;
     public DbSet<SpubTask> SpubTasks { get; init; } = null!;
-    
-    //public DbSet<EvaluatedCruiseApplication> EvaluatedCruiseApplications { get; init; } = null!;
 }

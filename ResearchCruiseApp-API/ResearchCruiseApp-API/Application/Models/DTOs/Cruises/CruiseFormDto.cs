@@ -2,7 +2,7 @@ using AutoMapper;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
-using User = ResearchCruiseApp_API.Domain.Entities.User;
+using User = ResearchCruiseApp_API.Infrastructure.Services.Identity.User;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 
@@ -12,7 +12,7 @@ public class CruiseFormDto
     public StringRangeDto Date { get; set; }
 
     public CruiseManagersTeamDto ManagersTeam { get; set; }
-    public List<Guid> ApplicationsIds { get; set; } = [];
+    public List<Guid> CruiseApplicationsIds { get; set; } = [];
     
     
     private class MapProfile : Profile
@@ -21,15 +21,15 @@ public class CruiseFormDto
         {
             CreateMap<CruiseFormDto, Cruise>()
                 .ForMember(
-                    dest => dest.MainCruiseManager,
+                    dest => dest.MainCruiseManagerId,
                     options =>
                         options.MapFrom(src =>
-                            (User?)null))
+                            src.ManagersTeam.MainDeputyManagerId))
                 .ForMember(
-                    dest => dest.MainDeputyManager,
+                    dest => dest.MainDeputyManagerId,
                     options =>
                         options.MapFrom(src =>
-                            (User?)null))
+                            src.ManagersTeam.MainDeputyManagerId))
                 .ForMember(
                     dest => dest.Number,
                     options =>

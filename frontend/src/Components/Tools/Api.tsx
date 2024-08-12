@@ -3,7 +3,7 @@ import {PathName as Path} from "./PathName";
 import userDataManager from "../CommonComponents/UserDataManager";
 import {useNavigate} from "react-router-dom";
 
-const defaultServerAddress = 'http://localhost:5000';
+const defaultServerAddress = 'http://localhost:8080';
 
 declare module 'axios' {
     export interface AxiosRequestConfig {
@@ -26,6 +26,7 @@ const setAccessToken = (config: InternalAxiosRequestConfig) => {
 
 async function refreshToken () {
     const refreshResponse = await axios.post('/account/refresh', {
+        accessToken: sessionStorage.getItem('accessToken'),
         refreshToken:  sessionStorage.getItem('refreshToken')})
     const newAccessToken = refreshResponse.data.accessToken;
     sessionStorage.setItem('accessToken', newAccessToken);

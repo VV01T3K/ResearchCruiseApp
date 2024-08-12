@@ -2,8 +2,8 @@
 using System.Resources;
 using MimeKit;
 using ResearchCruiseApp_API.App_GlobalResources;
+using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Domain.Entities;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
@@ -13,11 +13,11 @@ public class EmailSender(
     IConfiguration configuration,
     ITemplateFileReader templateFileReader) : IEmailSender
 {
-    public async Task SendEmailConfirmationEmail(User user, string roleName, string emailConfirmationCode)
+    public async Task SendEmailConfirmationEmail(UserDto userDto, string roleName, string emailConfirmationCode)
     {
         var protocol = configuration.GetSection("ProtocolUsed").Value;
         var frontendUrl = configuration.GetSection("FrontendUrl").Value;
-        var link = $"{protocol}://{frontendUrl}/confirmEmail?userId={user.Id}&code={emailConfirmationCode}";
+        var link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userDto.Id}&code={emailConfirmationCode}";
         
         var messageTemplate = await templateFileReader.ReadEmailConfirmationMessageTemplate();
         var emailSubject = await templateFileReader.ReadEmailConfirmationEmailSubject();
@@ -27,32 +27,32 @@ public class EmailSender(
             "ResearchCruiseApp_API.App_GlobalResources.Roles",
             typeof(Roles).Assembly);
         var emailMessage = messageTemplate
-            .Replace("{{firstName}}", user.FirstName)
-            .Replace("{{lastName}}", user.LastName)
+            .Replace("{{firstName}}", userDto.FirstName)
+            .Replace("{{lastName}}", userDto.LastName)
             .Replace("{{roleText}}", $" {resourceManager.GetString(roleName, cultureInfo)} ")
             .Replace("{{link}}", link);
 
-        await SendEmail(user.Email!, emailSubject, emailMessage);
+        await SendEmail(userDto.Email, emailSubject, emailMessage);
     }
     
-    public async Task SendAccountAcceptedMessage(User user)
+    public async Task SendAccountAcceptedMessage(UserDto userDto)
     {
         var messageTemplate = await templateFileReader.ReadAccountAcceptedMessageTemplate();
         var emailSubject = await templateFileReader.ReadAccountAcceptedEmailSubject();
         
         var emailMessage = messageTemplate
-            .Replace("{{firstName}}", user.FirstName)
-            .Replace("{{lastName}}", user.LastName);
+            .Replace("{{firstName}}", userDto.FirstName)
+            .Replace("{{lastName}}", userDto.LastName);
         
-        await SendEmail(user.Email!, emailSubject, emailMessage);
+        await SendEmail(userDto.Email!, emailSubject, emailMessage);
     }
     
-    public Task SendPasswordResetLink(User user, string email, string resetLink)
+    public Task SendPasswordResetLink(UserDto userDto, string email, string resetLink)
     {
         throw new NotImplementedException();
     }
 
-    public Task SendPasswordResetCode(User user, string email, string resetCode)
+    public Task SendPasswordResetCode(UserDto userDto, string email, string resetCode)
     {
         throw new NotImplementedException();
     }

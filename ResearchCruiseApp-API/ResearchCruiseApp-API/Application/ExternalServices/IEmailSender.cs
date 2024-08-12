@@ -1,12 +1,12 @@
-﻿using ResearchCruiseApp_API.Domain.Entities;
+﻿using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 
 namespace ResearchCruiseApp_API.Application.ExternalServices;
 
 
 public interface IEmailSender
 {
-    Task SendEmailConfirmationEmail(User user, string roleName, string emailConfirmationCode);
-    public Task SendAccountAcceptedMessage(User userDto);
-    public Task SendPasswordResetLink(User user, string email, string resetLink);
-    public Task SendPasswordResetCode(User user, string email, string resetCode);
+    Task SendEmailConfirmationEmail(UserDto userDto, string roleName, string emailConfirmationCode);
+    public Task SendAccountAcceptedMessage(UserDto userDto);
+    public Task SendPasswordResetLink(UserDto userDto, string email, string resetLink);
+    public Task SendPasswordResetCode(UserDto userDto, string email, string resetCode);
 }

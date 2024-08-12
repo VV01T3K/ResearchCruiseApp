@@ -23,26 +23,6 @@ public class CruiseDto
         {
             CreateMap<Cruise, CruiseDto>()
                 .ForMember(
-                    dest => dest.MainCruiseManagerId,
-                    options =>
-                        options.MapFrom(src =>
-                            src.MainCruiseManager != null ? Guid.Parse(src.MainCruiseManager.Id) : Guid.Empty))
-                .ForMember(
-                    dest => dest.MainCruiseManagerFirstName,
-                    options =>
-                        options.MapFrom(src =>
-                            src.MainCruiseManager != null ? src.MainCruiseManager.FirstName : string.Empty))
-                .ForMember(
-                    dest => dest.MainCruiseManagerLastName,
-                    options =>
-                        options.MapFrom(src =>
-                            src.MainCruiseManager != null ? src.MainCruiseManager.LastName : string.Empty))
-                .ForMember(
-                    dest => dest.MainDeputyManagerId,
-                    options =>
-                        options.MapFrom(src =>
-                            src.MainDeputyManager != null ? Guid.Parse(src.MainDeputyManager.Id) : Guid.Empty))
-                .ForMember(
                     dest => dest.Date,
                     options =>
                         options.MapFrom(src =>

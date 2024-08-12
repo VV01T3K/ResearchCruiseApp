@@ -1,10 +1,7 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API;
-using ResearchCruiseApp_API.Application.UseCases.Account;
 using ResearchCruiseApp_API.Domain.Common.Constants;
-using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 using ResearchCruiseApp_API.Temp.Tools;
@@ -12,32 +9,9 @@ using ResearchCruiseApp_API.Temp.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAnyOrigin", policyBuilder =>
-    {
-        policyBuilder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
-
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.MaxDepth = 64;
-    });
-
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ResearchCruiseApp-DB")));
-
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddWeb();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -45,7 +19,6 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 // TODO: delete or move from here
-builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>();
 
 var app = builder.Build();
@@ -57,6 +30,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app
+    .UseAuthentication()
+    .UseAuthorization();
 
 app.UseCors("AllowAnyOrigin");
 

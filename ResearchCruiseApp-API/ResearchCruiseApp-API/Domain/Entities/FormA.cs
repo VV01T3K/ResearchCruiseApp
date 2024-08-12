@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
@@ -10,9 +9,9 @@ public class FormA
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
-    public User CruiseManager { get; set; } = null!;
+    public Guid CruiseManagerId { get; set; }
 
-    public User DeputyManager { get; set; } = null!;
+    public Guid DeputyManagerId { get; set; }
     
     public int Year { get; set; }
   

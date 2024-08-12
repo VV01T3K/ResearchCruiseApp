@@ -12,8 +12,8 @@ using ResearchCruiseApp_API.Infrastructure.Persistence;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240728140310_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240812190417_EditedRefreshTokenExpiry")]
+    partial class EditedRefreshTokenExpiry
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,9 +198,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<byte[]>("ScanContentCompressed")
+                    b.Property<string>("ScanContent")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ScanName")
                         .IsRequired()
@@ -235,7 +235,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -524,7 +525,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<string>("DOI")
+                    b.Property<string>("Doi")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
@@ -645,15 +646,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<string>("YearFrom")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                    b.Property<int>("YearFrom")
+                        .HasColumnType("int");
 
-                    b.Property<string>("YearTo")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                    b.Property<int>("YearTo")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -750,7 +747,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.ToTable("UgTeams");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.User", b =>
+            modelBuilder.Entity("ResearchCruiseApp_API.Infrastructure.Services.Identity.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -774,11 +771,13 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -802,6 +801,13 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiry")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -837,7 +843,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.User", null)
+                    b.HasOne("ResearchCruiseApp_API.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -846,7 +852,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.User", null)
+                    b.HasOne("ResearchCruiseApp_API.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -861,7 +867,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.User", null)
+                    b.HasOne("ResearchCruiseApp_API.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -870,7 +876,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.User", null)
+                    b.HasOne("ResearchCruiseApp_API.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

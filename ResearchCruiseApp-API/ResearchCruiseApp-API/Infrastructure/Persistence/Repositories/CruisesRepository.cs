@@ -22,8 +22,6 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
     public Task<List<Cruise>> GetAllCruises(CancellationToken cancellationToken)
     {
         return DbContext.Cruises
-            .Include(cruise => cruise.MainCruiseManager)
-            .Include(cruise => cruise.MainDeputyManager)
             .Include(cruise => cruise.CruiseApplications)
             .ToListAsync(cancellationToken);
     }

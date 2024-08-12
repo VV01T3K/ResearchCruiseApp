@@ -44,7 +44,6 @@ export default function CruiseFormPage() {
     const location = useLocation()
     const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
         = useState(location.state || { })
-    console.log(locationState)
 
     const editCruiseFormDefaultValues: EditCruiseFormValues = {
         date:

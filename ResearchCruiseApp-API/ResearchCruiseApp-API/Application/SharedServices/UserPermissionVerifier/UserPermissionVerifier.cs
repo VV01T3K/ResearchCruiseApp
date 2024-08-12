@@ -1,6 +1,5 @@
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Domain.Common.Constants;
-using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 
@@ -22,7 +21,7 @@ public class UserPermissionVerifier(IIdentityService identityService) : IUserPer
         return false;
     }
 
-    public async Task<bool> CanCurrentUserAccess(User otherUser)
+    public async Task<bool> CanCurrentUserAccess(Guid otherUserId)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
@@ -30,7 +29,7 @@ public class UserPermissionVerifier(IIdentityService identityService) : IUserPer
             return true;
         if (currentUserRoles.Contains(RoleName.Shipowner))
         {
-            var otherUserRoles = await identityService.GetUserRolesNames(otherUser);
+            var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
             if (otherUserRoles.Contains(RoleName.CruiseManager) ||
                 otherUserRoles.Contains(RoleName.Guest))
             {

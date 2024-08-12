@@ -9,67 +9,67 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 public class FormADto
 {
     [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
-    public Guid? Id { get; set; }
+    public Guid? Id { get; init; }
 
     [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
-    public Guid CruiseManagerId { get; set; }
+    public Guid CruiseManagerId { get; init; }
     
     [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
-    public Guid DeputyManagerId { get; set; }
+    public Guid DeputyManagerId { get; init; }
     
     [Range(2024, 2050)]
-    public int Year { get; set; }
+    public int Year { get; init; }
     
     [Length(2,2)]
-    public HashSet<int> AcceptablePeriod { get; set; } = [];
+    public HashSet<int> AcceptablePeriod { get; init; } = [];
     
     [Length(2,2)]
-    public HashSet<int> OptimalPeriod { get; set; } = [];
+    public HashSet<int> OptimalPeriod { get; init; } = [];
     
     [Range(0, int.MaxValue)]
-    public int CruiseHours { get; set; }
+    public int CruiseHours { get; init; }
 
     [Range(0, double.MaxValue)]
-    public double? CruiseDays { get; set; }
+    public double? CruiseDays { get; init; }
     
     [StringLength(1024)]
-    public string? PeriodNotes { get; set; }
+    public string? PeriodNotes { get; init; }
     
     [Range(0,4)]
-    public int ShipUsage { get; set; }
+    public int ShipUsage { get; init; }
     
     [MaxLength(1024)]
-    public string? DifferentUsage { get; set; }
+    public string? DifferentUsage { get; init; }
     
-    public int PermissionsRequired { get; set; }
+    public int PermissionsRequired { get; init; }
     
     [MaxLength(1024)]
-    public string? Permissions { get; set; }
+    public string? Permissions { get; init; }
     
     [Range(0,20)]
-    public int ResearchArea { get; set; }
+    public int ResearchArea { get; init; }
     
     [MaxLength(1024)]
-    public string? ResearchAreaInfo { get; set; }
+    public string? ResearchAreaInfo { get; init; }
     
-    public int CruiseGoal { get; set; }
+    public int CruiseGoal { get; init; }
     
     [MaxLength(1024)]
-    public string? CruiseGoalDescription { get; set; }
+    public string? CruiseGoalDescription { get; init; }
 
-    public List<ResearchTaskDto> ResearchTasks { get; set; } = [];
+    public List<ResearchTaskDto> ResearchTasks { get; init; } = [];
 
-    public List<ContractDto> Contracts { get; set; } = [];
+    public List<ContractDto> Contracts { get; init; } = [];
 
-    public List<UgTeamDto> UgTeams { get; set; } = [];
+    public List<UgTeamDto> UgTeams { get; init; } = [];
 
-    public List<GuestTeamDto> GuestTeams { get; set; } = [];
+    public List<GuestTeamDto> GuestTeams { get; init; } = [];
 
-    public List<PublicationDto> Publications { get; set; } = [];
+    public List<PublicationDto> Publications { get; init; } = [];
 
-    public List<ThesisDto> Theses { get; set; } = [];
+    public List<ThesisDto> Theses { get; init; } = [];
 
-    public List<SpubTaskDto> SpubTasks { get; set; } = [];
+    public List<SpubTaskDto> SpubTasks { get; init; } = [];
 
 
     private class MapProfile : Profile
@@ -77,16 +77,6 @@ public class FormADto
         public MapProfile()
         {
             CreateMap<FormA, FormADto>()
-                .ForMember(
-                    dest => dest.CruiseManagerId,
-                    options =>
-                        options.MapFrom(src =>
-                            src.CruiseManager.Id))
-                .ForMember(
-                    dest => dest.DeputyManagerId,
-                    options =>
-                        options.MapFrom(src =>
-                            src.DeputyManager.Id))
                 .ForMember(
                     dest => dest.AcceptablePeriod,
                     options =>
@@ -103,7 +93,6 @@ public class FormADto
                         options.MapFrom(src =>
                             src.CruiseHours / TimeConstants.HoursPerDay));
             
-            // CruiseManager and DeputyManager mappings are complex and have to be performed in the business logic
             CreateMap<FormADto, FormA>()
                 .ForMember(
                     dest => dest.Id,
@@ -129,7 +118,6 @@ public class FormADto
                     options =>
                         options.MapFrom(src =>
                             src.OptimalPeriod.Max()));
-
         }
     }
 }

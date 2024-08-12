@@ -1,13 +1,15 @@
 using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.SharedServices.Compressor;
 using ResearchCruiseApp_API.Application.SharedServices.Cruises;
-using ResearchCruiseApp_API.Application.SharedServices.UserDtos;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
-using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 using ResearchCruiseApp_API.Infrastructure.Services;
@@ -20,48 +22,85 @@ public static class DependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        services
-            .AddMediatR(cfg => 
-                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg => 
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         
-        services
-            .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         
         services
             .AddScoped<ICompressor, Compressor>()
             .AddScoped<ICruisesService, CruisesService>()
-            .AddScoped<IUserDtosService, UserDtosService>()
             .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
     }
 
-    public static void AddInfrastructure(this IServiceCollection services)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddIdentity();
+        services.AddPersistence(configuration);
+        services.AddIdentity(configuration);
         
+        services.AddHttpContextAccessor();
         services
             .AddScoped<IEmailSender, EmailSender>()
             .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
             .AddScoped<ITemplateFileReader, TemplateFileReader>()
             .AddScoped<ICurrentUserService, CurrentUserService>();
-        
-        services.AddPersistence();
     }
 
-    
-    private static void AddIdentity(this IServiceCollection services)
+    public static void AddWeb(this IServiceCollection services)
     {
         services
-            .AddAuthentication()
-            .AddBearerToken(IdentityConstants.BearerScheme);
+            .AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.MaxDepth = 64;
+            });
+        
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+        
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAnyOrigin", policyBuilder =>
+            {
+                policyBuilder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+    }
+    
+    
+    private static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
+    {
         services
-            .AddAuthorizationBuilder();
+            .AddIdentity<User, IdentityRole>(options =>
+                options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         services
-            .AddIdentityCore<User>(options =>
-                options.SignIn.RequireConfirmedAccount = true)
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddApiEndpoints();
+            .AddAuthentication(options => 
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidAudience = configuration["JWT:ValidAudience"],
+                    ValidIssuer = configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!))
+                };
+            });
         
         services.AddScoped<IIdentityService, IdentityService>();
         services.Configure<IdentityOptions>(options =>
@@ -74,10 +113,12 @@ public static class DependencyInjection
         });
     }
 
-    private static void AddPersistence(this IServiceCollection services)
+    private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("ResearchCruiseApp-DB")));
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        
         services
             .AddScoped<IFormsARepository, FormsARepository>()
             .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()

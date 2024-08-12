@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
@@ -9,16 +8,18 @@ public class FormB
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public User CruiseManager { get; set; } = null!;
+    public Guid CruiseManagerId { get; set; }
 
-    public User DeputyManager { get; set; } = null!;
+    public Guid DeputyManagerId { get; set; }
     
     public int Year { get; set; }
   
     public int AcceptablePeriodBeg { get; set; }
+    
     public int AcceptablePeriodEnd { get; set; }
     
     public int OptimalPeriodBeg { get; set; }
+    
     public int OptimalPeriodEnd { get; set; }
     
     public int CruiseHours { get; set; }
@@ -42,12 +43,11 @@ public class FormB
     }
     
     public string? Permissions { get; set; }
-    /* TODO Zdobyć wymagania co do obszaru */
-    
     
     public List<int>  ResearchArea { get; set; } 
     
     public int CruiseGoal { get; set; }
+    
     public string CruiseGoalDescription { get; set; }
     
     public List<ResearchTask> ResearchTasks { get; set; } 
@@ -63,11 +63,4 @@ public class FormB
     public List<Thesis> Theses { get; set; }
 
     public List<SpubTask> SPUBTasks { get; set; } 
-    
-    //Empty constructor is redundant - as Rider says
-    /*
-    public FormB()
-    {
-    }
-    */
 }

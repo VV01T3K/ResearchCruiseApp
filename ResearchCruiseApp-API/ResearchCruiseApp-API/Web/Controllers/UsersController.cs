@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Models.DTOs.Users;
-using ResearchCruiseApp_API.Application.UseCases.Users;
 using ResearchCruiseApp_API.Application.UseCases.Users.AcceptUser;
 using ResearchCruiseApp_API.Application.UseCases.Users.AddUser;
 using ResearchCruiseApp_API.Application.UseCases.Users.GetAllUsers;

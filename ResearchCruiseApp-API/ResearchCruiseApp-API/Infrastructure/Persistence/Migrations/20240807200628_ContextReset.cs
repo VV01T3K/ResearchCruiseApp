@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class ContextReset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Number = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     MainCruiseManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MainDeputyManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -266,7 +266,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     InstitutionLocalization = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     ScanName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    ScanContentCompressed = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ScanContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FormAId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FormBId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FormCId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -367,7 +367,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    DOI = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    Doi = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Authors = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Magazine = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
@@ -440,8 +440,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    YearFrom = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    YearTo = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    YearFrom = table.Column<int>(type: "int", nullable: false),
+                    YearTo = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     FormAId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FormBId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),

@@ -4,6 +4,7 @@ using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Users.AddUser;
 
@@ -31,26 +32,10 @@ public class AddUserHandler(
         var rolesNames = await identityService.GetAllRoleNames(cancellationToken);
         if (!rolesNames.Contains(request.AddUserForm.Role))
             return Error.BadRequest("Rola nie istnieje");
-
-        var newUser = CreateUser(request);
-        var result = await identityService
-            .AddUserWithRole(newUser, request.AddUserForm.Password, request.AddUserForm.Role);
+        
+        var result = await identityService.AddUserWithRole(
+            request.AddUserForm, request.AddUserForm.Password, request.AddUserForm.Role);
 
         return result;
-    }
-
-
-    private static User CreateUser(AddUserCommand request)
-    {
-        var newUser = new User()
-        {
-            UserName = request.AddUserForm.Email,
-            Email = request.AddUserForm.Email,
-            FirstName = request.AddUserForm.FirstName,
-            LastName = request.AddUserForm.LastName,
-            Accepted = true
-        };
-
-        return newUser;
     }
 }

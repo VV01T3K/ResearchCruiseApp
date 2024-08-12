@@ -40,8 +40,6 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
         return DbContext.CruiseApplications
             .Where(cruiseApplication => cruiseApplication.Id == id)
             .Include(cruiseApplication => cruiseApplication.FormA)
-            .Include(cruiseApplication => cruiseApplication.FormA!.CruiseManager)
-            .Include(cruiseApplication => cruiseApplication.FormA!.DeputyManager)
             .Include(cruiseApplication => cruiseApplication.FormA!.Contracts)
             .Include(cruiseApplication => cruiseApplication.FormA!.Publications)
             .Include(cruiseApplication => cruiseApplication.FormA!.Theses)
@@ -58,8 +56,6 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
     {
         return DbContext.CruiseApplications
             .Include(cruiseApplication => cruiseApplication.FormA)
-            .Include(cruiseApplication => cruiseApplication.FormA!.CruiseManager)
-            .Include(cruiseApplication => cruiseApplication.FormA!.DeputyManager)
             .Include(cruiseApplication => cruiseApplication.FormB)
             .Include(cruiseApplication => cruiseApplication.FormC);
     }
