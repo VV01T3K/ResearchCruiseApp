@@ -285,7 +285,7 @@ public class IdentityService(
             return accessToken.Error;
 
         var refreshToken = CreateRefreshToken();
-        var refreshTokenExpiry = DateTime.Now.AddSeconds(40);
+        var refreshTokenExpiry = DateTime.Now.AddSeconds(24_000);
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = refreshTokenExpiry;
@@ -344,7 +344,7 @@ public class IdentityService(
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
-            expires: DateTime.Now.AddSeconds(20),
+            expires: DateTime.Now.AddSeconds(24_000),
             claims: authenticationClaims,
             signingCredentials: new SigningCredentials(securityKeyResult.Data, SecurityAlgorithms.HmacSha256)
         );
