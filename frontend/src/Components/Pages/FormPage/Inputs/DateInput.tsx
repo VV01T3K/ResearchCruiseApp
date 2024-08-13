@@ -7,7 +7,7 @@ import {
     Controller,
 } from "react-hook-form";
 import React from "react";
-import InputWrapper from "./InputWrapper";
+import FieldWrapper from "./FieldWrapper";
 
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
 
 function DateInput(props: Props) {
     return (
-        <InputWrapper {...props}>
+        <FieldWrapper {...props}>
             <Controller
                 defaultValue={"" }
                 name={props.name}
@@ -43,7 +43,7 @@ function DateInput(props: Props) {
                     />
                 )}
             />
-        </InputWrapper>
+        </FieldWrapper>
     )
 }
 

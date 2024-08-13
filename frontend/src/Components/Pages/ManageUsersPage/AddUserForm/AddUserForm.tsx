@@ -4,8 +4,8 @@ import TextInput from "./TextInput";
 import RoleInput from "./RoleInput";
 import Api from "../../../Tools/Api";
 import {disable} from "workbox-navigation-preload";
-import ErrorCode from "../../CommonComponents/ErrorCode";
-import errorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
+import errorCode from "../../CommonComponents/ErrorMessageIfPresent";
 import SuccessMessage from "../../CommonComponents/SuccessMessage";
 
 
@@ -126,7 +126,7 @@ export default function AddUserForm(props: Props) {
                     </div>
                     {sendingError != "" &&
                         <div className="d-flex col-12 justify-content-end">
-                            <ErrorCode className="w-100" code={sendingError} />
+                            <ErrorMessageIfPresent className="w-100" message={sendingError} />
                         </div>
                     }
                     {success &&

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 import FilePicker from "./FilePicker";
 import ContractCategoryPicker from "./ContractCategoryPicker";
@@ -365,7 +365,7 @@ export default function ContractsInput(props: Props){
                                 }}
                             />
                             {props.form!.formState.errors[props.name] &&
-                                <ErrorCode code={props.form!.formState.errors[props.name]!.message} />
+                                <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]!.message} />
                             }
                         </div>
                     </>

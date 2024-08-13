@@ -1,82 +1,88 @@
-import React, {useEffect, useState} from "react";
-import useCustomEvent from "../../../Tools/useCustomEvent";
-import {UseFormReturn} from "react-hook-form";
+import React, {useState} from "react";
 
 
 type Props = {
-    form?: UseFormReturn,
-    id?: string | undefined,
+    id?: string,
+    index?:number
     children?:
-        React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>[] |
-        React.ReactElement<any, | string | React.JSXElementConstructor<HTMLElement>>,
+        React.ReactElement[] |
+        React.ReactElement,
     title: string,
-    sections?: { [x: string]: string; },
-    readonly?: boolean
 }
 
+export type SectionProps = {index?:number}
 
 
 function FormSection(props: Props) {
     // Check conditions for each child
-    const isChildInvalid =
-        (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined):boolean =>{
-            const required = child!.props.required ?? true
-            const childName = child!.props.name;
-            if (React.Children.count(child) === 0)
-                return false
-            return (
-                (required &&(
-                !(childName in props.form!.formState.dirtyFields)
-                ||
-                !(childName in props.form!.formState.touchedFields)
-                )) ||
-                (childName in props.form!.formState.errors)
-            )
-        };
-
-    const { dispatchEvent } = useCustomEvent('sectionStateChange');
+    // const isChildInvalid =
+    //     (child: React.ReactElement<any, string | React.JSXElementConstructor<HTMLElement>> | undefined):boolean =>{
+    //         const required = child!.props.required ?? true
+    //         const childName = child!.props.name;
+    //         if (React.Children.count(child) === 0)
+    //             return false
+    //         return (
+    //             (required &&(
+    //             !(childName in props.form!.formState.dirtyFields)
+    //             ||
+    //             !(childName in props.form!.formState.touchedFields)
+    //             )) ||
+    //             (childName in props.form!.formState.errors)
+    //         )
+    //     };
+    //
+    // const { dispatchEvent } = useCustomEvent('sectionStateChange');
 
     const [isActive, setIsActive] = useState(true);
     const [isCompleted, setIsCompleted] = useState(false)
-    const key = Object.keys(props.sections!).find((k) => props.sections![k] === props.title);
+    // const key = Object.keys(props.sections!).find((k) => props.sections![k] === props.title);
+    //
+    // useEffect(()=>{
+    //     const invalidChildren = React.Children.map(props.children, (child) => {
+    //         return isChildInvalid(child)}) as boolean[]
+    //     const validChildren =
+    //         !Object.values(invalidChildren).some((child)=>child)
+    //     dispatchEvent( {[key as string]:validChildren})
+    //     setIsCompleted(validChildren)
+    //
+    // },[props.form!.watch()])
 
-    useEffect(()=>{
-        const invalidChildren = React.Children.map(props.children, (child) => {
-            return isChildInvalid(child)}) as boolean[]
-        const validChildren =
-            !Object.values(invalidChildren).some((child)=>child)
-        dispatchEvent( {[key as string]:validChildren})
-        setIsCompleted(validChildren)
+    const SectionScrollReference = () => ( <div id={props.id}/> )
 
-    },[props.form!.watch()])
-
-
-
-    return  (
-        <div className="accordion-item border-2 border-dark-subtle border-bottom">
-            <div onClick={() => setIsActive(!isActive)}
-                 id={props.id}
-                 className={"accordion-title d-flex flex-row pt-2 pb-2 ps-3 pe-3 bg-light sticky-top z-2 border-bottom "}
-                 style={{cursor:"pointer"}}
-            >
-                <div
-                    className={"d-flex flex-column col-10"}
-                    style={{fontSize: "1rem"}}>
-                    {props.id + '. ' + props.title}
-                    {isActive ? "▲" : "▼"}
-                </div>
-                <div className={`d-flex flex-column col-2 text-end ${isCompleted ? "text-success" : "text-danger"}`}
-                    style={{fontSize: "1rem"}}
-                >
-                    {!props.readonly && (isCompleted ? "+" : "!")}
-                </div>
-            </div>
-            <div className={`d-flex flex-row flex-wrap justify-content-center align-items-center p-2 ${isActive ? ' ' : 'visually-hidden'}`}>
-                {React.Children.map(props.children, (child, index) => {
-                    return React.cloneElement(child as React.ReactElement, { form: props.form, readonly: props.readonly });
-                })}
-            </div>
+    const ExpansionMark = () => (
+        <div className={isCompleted ? "form-section-expansion-mark-default" : "form-section-expansion-mark-error"}>
+            {isActive ? "▲" : "▼"}
         </div>
+    )
+
+    const SectionLabel = () => (
+        <div onClick={() => setIsActive(!isActive)} className={"form-section-label"}>
+            <Title/>
+            <ExpansionMark/>
+        </div>
+    )
+
+    const SectionContent = () => (
+        <div className={isActive ? 'form-section-children' : 'visually-hidden'}>
+            {/*{React.Children.map(props.children, (child, index) => {*/}
+            {/*    return React.cloneElement(child as React.ReactElement, {*/}
+            {/*        form: props.form,*/}
+            {/*        readonly: props.readonly*/}
+            {/*    });*/}
+            {/*})}*/}
+            {props.children}
+        </div>
+    )
+    const Title = () => (<div className={"form-section-title"}> {props.index && props.index + ". "}{props.title} </div>)
+
+    return (
+        <>
+            <SectionScrollReference/>
+            <div className="form-section">
+                <SectionLabel/>
+                <SectionContent/>
+            </div>
+        </>
     )
 }
 

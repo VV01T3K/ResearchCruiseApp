@@ -16,5 +16,5 @@ export enum PathName {
     ServerError = "/serverError",
     ConfirmEmail = "/ConfirmEmail",
     Register = "/Register",
-    ResetPassword = "ResetPassword"
+    ResetPassword = "/ResetPassword"
 }

@@ -1,29 +1,30 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Slider from 'rc-slider';
 import "./MonthSlider.css"
-import {Control, Controller, FieldValues, UseFormReturn} from "react-hook-form";
-import InputWrapper from "./InputWrapper";
-import {prop} from "react-data-table-component/dist/DataTable/util";
-import {FormValues} from "../Wrappers/FormTemplate";
+import {FieldValues, useFormContext} from "react-hook-form";
+import FieldWrapper from "./FieldWrapper";
+import {FormContext} from "../Wrappers/FormTemplate";
+import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
+import {read} from "@popperjs/core";
+import {concatenate} from "workbox-streams";
 
 
 type Props = {
     className?: string,
-    label: string,
-    name: keyof FormValues,
-    watch?: number[],
-    connectedName?: keyof FormValues,
-    range?,
-    form?: UseFormReturn<FormValues>
-    readonly?: boolean
-
+    fieldLabel: string,
+    fieldName: string,
+    range?: [number,number],
+    fieldNameToAlsoSet?:string
 }
 
+type MonthRange = [number, number]
 
 const MonthSlider = (props: Props) => {
+    const formContext = useContext(FormContext)
+
     const months = [
         'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik',
-        'Listopad', 'Grudzień', null
+        'Listopad', 'Grudzień', null // begin of next's year
     ];
 
     const labels = [
@@ -55,7 +56,6 @@ const MonthSlider = (props: Props) => {
 
     const [minVal, maxVal] = props.range ?? [0, 24]
 
-
     const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
 
     months.forEach((element, index, arr) => {
@@ -64,51 +64,68 @@ const MonthSlider = (props: Props) => {
         }
     });
 
-    return (
-        <InputWrapper {...props}>
-            <Controller
-                name={props.name}
-                control={props.form!.control}
-                defaultValue={[0,24]}
-                rules={{required: 'Wybierz jedną z opcji',
-                    validate: {differenceCheck:(val)=>{if(val[0]==0&&val[1]==24) return "Ustaw krótszy okres"}}}}
+    const onChange = (selectedOption: MonthRange) => {
+        formContext!.setValue( props.fieldName, selectedOption, readyFieldOptions);
+        if(props.fieldNameToAlsoSet)
+            formContext!.setValue(props.fieldNameToAlsoSet, formContext!.getValues(props.fieldName), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+    }
+
+    type MonthsMarks = {
+        [key: number]: string | null;
+    };
+
+    // User can select every half of the month
+    const monthsMarks = months.reduce((acc:MonthsMarks, month, index) => {
+        acc[2 * index] = month;
+        return acc;
+    }, {})
 
 
-                render={({ field}) => (
-                    <>
-                        <Slider style={{height: "77px"}}
+    const render = ({field}: FieldValues) => {
+        const MonthLabel = () => (
+            <label className={` text-center ${formContext!.readOnly ? "d-none" : ""}`}>
+                Wybrano okres:
+                od początku {field.value && labels[field.value[0]] + " "}
+                do końca {field.value && labels[field.value[1] - 1]}.
+            </label>
+        )
 
-                                pushable={true}
-                                allowCross={false}
-                                {...field}
-                                range
-                                min={minVal}
-                                max={maxVal}
-                                onChange={props.readonly ? ()=>{} : (e
-                                )=>{
-                                    props.form!.setValue(props.name, e, { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+        const sliderOptions = {
+            pushable:true,
+            allowCross:false,
+            range:true,
+            min:minVal,
+            max:maxVal,
+            marks:monthsMarks
+        }
 
-                                    if(props.connectedName)
-                                        props.form!.setValue(props.connectedName, props.form!.getValues(props.name), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+        // workaround for context rendering
+        const [value, setValue] = useState(formContext?.getValues(props.fieldName))
+        useEffect(() => {
+            setValue(formContext?.getValues(props.fieldName))
+        }, [formContext]);
 
-                                }}
-                                marks={
-                                    months.reduce((acc, month, index) => {
-                                        // @ts-ignore
-                                        acc[2 * index] = month;
-                                        return acc;
-                                    }, {})}
-                        />
-                        <label className={` text-center ${props.readonly ? "d-none": ""}`}>
-                            Wybrano okres:
-                            od początku {field.value && labels[field.value[0]] + " "}
-                            do końca {field.value && labels[field.value[1] - 1]}.
-                        </label>
-                    </>
-                )}
-            />
-        </InputWrapper>
-    );
+        return(
+            <div className={"ps-3 pe-3"}>
+                <Slider
+                    {...field} onChange={(e)=>setValue(e)}
+                    {...sliderOptions} disabled={formContext?.readOnly}
+                    value={value} onChangeComplete={onChange}
+                />
+                <MonthLabel/>
+            </div>
+        )
+    }
+    const selectedWholeYear = (val:MonthRange) => (val[0]==0&&val[1]==24)
+    const fieldProps = {
+        ...props,
+        rules: {required: 'Wybierz jedną z opcji',
+            validate: {differenceCheck: (val:MonthRange)=>selectedWholeYear(val) && "Ustaw krótszy okres"}},
+        render: render,
+        defaultValue:[0,24]
+    }
+
+    return ( <FieldWrapper {...fieldProps}/> );
 };
 
 

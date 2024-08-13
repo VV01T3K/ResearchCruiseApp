@@ -7,8 +7,8 @@ import {
     Controller,
 } from "react-hook-form";
 import React, {useEffect} from "react";
-import InputWrapper from "./InputWrapper";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import FieldWrapper from "./FieldWrapper";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import {Error} from "react-image-size";
 
 
@@ -104,7 +104,7 @@ function DateRangeInput(props: Props) {
                 )}
 
             />
-            <ErrorCode code={
+            <ErrorMessageIfPresent message={
                 props.form.formState.errors &&
                 props.form.formState.errors[fieldNameParts[0]] &&
                 props.form.formState.errors[fieldNameParts[0]][fieldNameParts[1]] &&
@@ -148,7 +148,7 @@ function DateRangeInput(props: Props) {
 
 
             />
-            <ErrorCode code={
+            <ErrorMessageIfPresent message={
                 props.form.formState.errors &&
                 props.form.formState.errors[fieldNameParts[0]] &&
                 props.form.formState.errors[fieldNameParts[0]][fieldNameParts[1]] &&

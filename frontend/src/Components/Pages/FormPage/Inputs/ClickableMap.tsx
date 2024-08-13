@@ -1,20 +1,18 @@
 import {
-    Control,
     Controller,
-    FieldError,
-    FieldErrorsImpl,
-    FieldValues,
-    Merge, UseFormReturn,
+    UseFormReturn,
 } from "react-hook-form";
 import React, {useRef, useState} from "react";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import Map from '../../../../resources/GraniceSamorzadow.jpg'
-import InputWrapper from "./InputWrapper";
-import {administrationUnits} from "../../../../resources/administrationUnits";
-import Select from "react-select";
-import {FormAValues, ResearchArea} from "../Forms/FormA";
+import FieldWrapper from "./FieldWrapper";import Select from "react-select";
 import {FormValues} from "../Wrappers/FormTemplate";
 
+export type ResearchArea = {
+    name: string,
+    x: number[],
+    y: number[]
+}
 
 type Props = {
     className?: string,
@@ -69,7 +67,7 @@ function ClickableMap(props: Props) {
     // console.log()
 
     return (
-        <InputWrapper {...props}>
+        <FieldWrapper {...props}>
             <Controller
                 //defaultValue={""}
                 render={({ field}) =>
@@ -119,7 +117,7 @@ function ClickableMap(props: Props) {
                     required: "Wybierz obszar"
                 }}
             />
-        </InputWrapper>
+        </FieldWrapper>
     )
 }
 

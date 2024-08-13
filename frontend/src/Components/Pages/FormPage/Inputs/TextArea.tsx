@@ -1,60 +1,55 @@
-import {
-    Control,
-    Controller, UseFormReturn,
-} from "react-hook-form";
-import React from "react";
-import InputWrapper from "./InputWrapper";
-import {FormValues} from "../Wrappers/FormTemplate";
-
+import {FieldValues, useFormContext} from "react-hook-form";
+import React, {useContext, useEffect, useRef} from "react";
+import FieldWrapper from "./FieldWrapper";
+import {FormContext, FormValues} from "../Wrappers/FormTemplate";
+import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
+import TextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
     className?: string,
-    label: string,
-    name: keyof FormValues,
+    fieldLabel: string,
+    fieldName: string,
     required?: any,
     maxLength?: number,
     resize?: string,
-    form?: UseFormReturn<FormValues>,
-    readonly?: boolean
 }
 
-
 function TextArea(props: Props) {
-    const onChange = (e: { target: { value: string; }; }) => {
-        if (e.target.value.length < 20) {
-            props.form!.setValue(props.name, e.target.value)
+    const formContext = useContext(FormContext)
+
+    const onBlur = (e: { target: { value: string; }; }) => {
+        var value = e.target.value
+        if (props.maxLength && value.length > props.maxLength) {
+            value = value.slice(0,props.maxLength)
         }
-        // else if(e.target.value=='')
-        //     props.setValue(props.name, "0", {shouldValidate:true})
+        formContext!.setValue(props.fieldName, value, readyFieldOptions)
     }
 
+    const render = ({ field }:FieldValues) => (
+            <TextareaAutosize
+                className={"field-common h-100"}
+                {...field}
+                disabled={formContext!.readOnly ?? false}
+                value={field.value?.toString()}
+                onBlur={onBlur}
+                placeholder={"Wpisz uwagi"}
+            />)
+
+    const fieldProps = {
+        ...props,
+        render: render,
+        rules:{
+        required: props.required ? "Pole wymagane":false,
+            maxLength: {
+            value: props.maxLength, // Maksymalna długość
+                message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`,
+        },
+        },
+        defaultValue:""
+    }
 
     return (
-        <InputWrapper {...props}>
-            <Controller
-                render={({ field}) =>
-                    <textarea className={"h-100"}
-                              {...field}
-                                disabled={props.readonly ?? false}
-                              value={field.value?.toString() ?? ''}
-                        // @ts-ignore
-                              style={{resize: props.resize ?? "true"}}
-
-                    />
-                }
-                name={props.name}
-                control={props.form!.control}
-                defaultValue={""}
-
-                rules={{
-                    required: props.required ?? "Pole wymagane",
-                    maxLength: {
-                        value: props.maxLength ?? 200, // Maksymalna długość
-                        message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`,
-                    },
-                }}
-            />
-        </InputWrapper>
+        <FieldWrapper {...fieldProps}/>
     )
 }
 

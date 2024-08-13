@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 import ThesisCategoryPicker from "./ThesisCategoryPicker";
 import {Publication} from "../PublicationsInput/PublicationsInput";
@@ -309,6 +309,8 @@ function ThesesInput(props: Props){
                                         isDisabled={props.form!.formState.errors[props.name] != undefined}
                                         menuPlacement="auto"
                                         placeholder="Dodaj z dostępnych"
+                                        menuPortalTarget={document.body}
+
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
@@ -324,9 +326,9 @@ function ThesesInput(props: Props){
                                             input: (provided: any) => ({
                                                 ...provided
                                             }),
-                                            menu: provided => ({
+                                            menuPortal: provided => ({
                                                 ...provided,
-                                                zIndex: 9999
+                                                zIndex: 19999
                                             })
                                         }}
                                         options ={[
@@ -382,7 +384,7 @@ function ThesesInput(props: Props){
                                     />
 
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name]!.message}/>
+                                        <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]!.message}/>
                                     }
                                 </div>
                             </>

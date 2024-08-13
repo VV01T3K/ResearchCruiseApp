@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {FieldValues} from "react-hook-form";
-import ErrorCode from "../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../CommonComponents/ErrorMessageIfPresent";
 import {Link, useNavigate} from "react-router-dom";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import axios from "axios";
@@ -87,7 +87,7 @@ function RegisterForm(){
                         <PasswordTextInput/>
                         <ConfirmPasswordTextInput/>
                         <ConfirmButton/>
-                        {registerError && <ErrorCode code={registerError}/>}
+                        {registerError && <ErrorMessageIfPresent message={registerError}/>}
                         <LoginLink/>
                     </>
                 }

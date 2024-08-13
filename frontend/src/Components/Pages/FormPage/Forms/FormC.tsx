@@ -1,7 +1,7 @@
 import React, {Dispatch, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import FormTemplate, {FormValues} from "../Wrappers/FormTemplate";
-import FormUserSelect, {FormUser} from "../Inputs/FormUserSelect";
+import UserSelect, {FormUser} from "../Inputs/UserSelect";
 import FormSection from "../Wrappers/FormSection";
 import MonthSlider from "../Inputs/MonthSlider";
 import NumberInput from "../Inputs/NumberInput";
@@ -21,7 +21,7 @@ import api from "../../../Tools/Api";
 import FormYearSelect from "../Inputs/FormYearSelect";
 import ThesesInput, {Thesis} from "../Inputs/ThesesInput/ThesesInput"
 import PublicationsInput, {Publication} from "../Inputs/PublicationsInput/PublicationsInput";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import {Cruise} from "../../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
 import CruiseBasicInfo from "../../CruiseFormPage/CruiseFormSections/CruiseBasicInfo";
@@ -31,7 +31,7 @@ import DetailedPlanInput from "../Inputs/DetailedPlanInput";
 import EquipmentInput from "../Inputs/EquipmentInput";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
 import SamplesInput from "../Inputs/SamplesInput";
-import PageTitleWithNavigation from "../../CommonComponents/PageTitleWithNavigation";
+import FormTitleWithNavigation from "../../CommonComponents/FormTitleWithNavigation";
 
 
 export type ResearchArea = {
@@ -183,10 +183,10 @@ function FormC(props: Props){
         <FormTemplate
             form={form}
             loadValues={props.loadValues}
-            readonly={props.readonly}
+            readOnly={props.readonly}
             type='C'
         >
-            <PageTitleWithNavigation
+            <FormTitleWithNavigation
                 sections={sections}
                 title={"Formularz C"}
                 showRequiredSections={true}
@@ -197,17 +197,17 @@ function FormC(props: Props){
 
                 </FormSection>
                 <FormSection title={sections.Kierownik}>
-                    <FormUserSelect
+                    <UserSelect
                         className="col-12 col-md-6 col-xl-4"
-                        name="cruiseManagerId"
+                        fieldName="cruiseManagerId"
                         label="Kierownik rejsu"
-                        values={formInitValues?.cruiseManagers}
+                        initValues={formInitValues?.cruiseManagers}
                     />
-                    <FormUserSelect
+                    <UserSelect
                         className="col-12 col-md-6 col-xl-4"
-                        name="deputyManagerId"
+                        fieldName="deputyManagerId"
                         label="Zastępca"
-                        values={formInitValues?.deputyManagers}
+                        initValues={formInitValues?.deputyManagers}
                     />
                 </FormSection>
 
@@ -215,8 +215,8 @@ function FormC(props: Props){
                     <CruiseDate editCruiseForm={cruiseForm} />
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Statek na potrzeby badań będzie wykorzystywany:"
-                               name="shipUsage"
-                               values={formInitValues?.shipUsages}
+                               fieldName="shipUsage"
+                               initValues={formInitValues?.shipUsages}
                     />
                     {(() => {
                         if (formInitValues?.shipUsages?.length &&
@@ -225,7 +225,7 @@ function FormC(props: Props){
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Inny sposób użycia"
-                                          name="differentUsage"
+                                          fieldName="differentUsage"
                                           required="Podaj sposób użycia"
                                           resize="none"
                                 />
@@ -239,8 +239,8 @@ function FormC(props: Props){
                 <FormSection title={sections.Pozwolenia}>
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?"
-                               name="permissionsRequired"
-                               values={["tak", "nie"]}
+                               fieldName="permissionsRequired"
+                               initValues={["tak", "nie"]}
                     />
                     {(() => {
                         // @ts-ignore
@@ -248,7 +248,7 @@ function FormC(props: Props){
                             return (
                                 <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                                           label="Jakie?"
-                                          name="permissions"
+                                          fieldName="permissions"
                                           required="Podaj jakie"
                                           resize="none"
                                 />
@@ -272,7 +272,7 @@ function FormC(props: Props){
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               required={false}
                               label="Opis"
-                              name="researchAreaInfo"
+                              fieldName="researchAreaInfo"
                               resize="none"
                     />
                 </FormSection>
@@ -280,12 +280,12 @@ function FormC(props: Props){
                 <FormSection title={sections.Cel}>
                     <FormRadio className="col-12 col-md-12 col-xl-6 p-3"
                                label="Cel rejsu"
-                               name="cruiseGoal"
-                               values={formInitValues?.cruiseGoals}
+                               fieldName="cruiseGoal"
+                               initValues={formInitValues?.cruiseGoals}
                     />
                     <TextArea className="col-12 col-md-12 col-xl-6 p-3"
                               label="Opis"
-                              name="cruiseGoalDescription"
+                              fieldName="cruiseGoalDescription"
                               required="Opisz cel"
                               resize="none"
                     />
@@ -551,8 +551,8 @@ function FormC(props: Props){
                     <FormRadio className={`col-12 col-md-12 ${form.watch("equipmentOutsideRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
                                label="Wystawianie sprzętu
                         badawczego (boje, c-pody, sieci itp.) poza statek w ramach czasu trwania rejsu"
-                               name="equipmentOutsideRequired"
-                               values={["tak", "nie"]}
+                               fieldName="equipmentOutsideRequired"
+                               initValues={["tak", "nie"]}
                     />
                     {(() => {
                         // @ts-ignore
@@ -575,8 +575,8 @@ function FormC(props: Props){
                                label="Pozostawianie sprzętu (boje,
                         c-pody, sieci itp.) na dłuższy okres lub zbieranie pozostawionego podczas wcześniejszych rejsów
                         sprzętu"
-                               name="equipmentLeaveRequired"
-                               values={["tak", "nie"]}
+                               fieldName="equipmentLeaveRequired"
+                               initValues={["tak", "nie"]}
                     />
                     {(() => {
                         // @ts-ignore
@@ -596,8 +596,8 @@ function FormC(props: Props){
                     })()}
                     <FormRadio className={`col-12 col-md-12 ${form.watch("portLeaveRequired") === 0 ? "col-xl-3": "col-xl-12 ps-5 pe-5"} p-3 `}
                                label="Dodatkowe wchodzenie i wychodzenie z portu"
-                               name="portLeaveRequired"
-                               values={["tak", "nie"]}
+                               fieldName="portLeaveRequired"
+                               initValues={["tak", "nie"]}
                     />
                     {(() => {
                         // @ts-ignore
@@ -637,7 +637,7 @@ function FormC(props: Props){
                     <TextArea className="col-12 col-md-12 p-3"
                               required={false}
                               label="Krótki opis podsumowujący dany rejs "
-                              name="researchAreaInfo"
+                              fieldName="researchAreaInfo"
                               resize="none"
                     />
                 </FormSection>

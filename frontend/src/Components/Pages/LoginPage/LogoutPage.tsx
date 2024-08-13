@@ -17,11 +17,9 @@ function LogoutPage(){
         )
     }
     return (
-        <>
             <Page className={"login-common"}>
                 <LogoutForm/>
             </Page>
-        </>
     )
 }
 

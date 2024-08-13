@@ -2,7 +2,7 @@ import React, {Dispatch, useEffect, useState} from 'react';
 import Page from "../Page";
 import {useLocation} from "react-router-dom";
 import SpubTasksPoints from "./ApplicationPointsSections/SpubTasksPoints";
-import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
+import FormTitleWithNavigation from "../CommonComponents/FormTitleWithNavigation";
 import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
 import PageSection from "../CommonComponents/PageSection";
 import ApplicationInfo from "./ApplicationInfo";
@@ -55,7 +55,7 @@ function ApplicationDetailsPage() {
     return (
         <Page className="justify-content-center col-12 col-xl-9 bg-white">
             <div className="d-flex flex-column w-100 h-100" style={{fontSize:"0.8rem"}}>
-                <PageTitleWithNavigation
+                <FormTitleWithNavigation
                     title="Szczegóły zgłoszenia"
                     sections={sections}
                     showRequiredSections={false}

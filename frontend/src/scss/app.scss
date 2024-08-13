@@ -98,7 +98,9 @@ $theme-colors: (
   .p-3
 }
 $top-bar-height: 60.3px;
+$top-bar-min-width: 350px;
 .app-top-bar{
+  min-width: $top-bar-min-width;
   height: $top-bar-height;
   @extend
   .d-flex,
@@ -153,19 +155,47 @@ $top-bar-height: 60.3px;
   .d-flex,
   .flex-column,
 }
-.page-title{
+.page-title-common{
+@extend
+.align-items-center,
+.w-100,
+.text-white,
+.bg-primary,
+.p-2,
+.text-nowrap
+}
+.page-title-default{
   font-size: 1.3rem;
   @extend
-  .align-items-center,
-  .w-100,
-  .text-white,
-  .bg-primary,
   .text-center,
+  .page-title-common
+}
+.form-title-with-navigation{
+  @extend
+  .page-title-common,
+  .d-flex,
+  .d-lg-flex,
+  .border-bottom
+}
+
+.form-page-navigation{
+  @extend
+  .flex-row,
+  .flex-wrap,
+  .d-none,
+  .d-md-flex
+}
+.form-page-navigation-button{
+  font-size: 0.8rem;
+  cursor: pointer;
+  @extend
   .p-2,
-  .text-nowrap
+  .text-white,
+  .bg-primary
 }
 
 .mobile-submenu{
+  min-width: $top-bar-min-width;
   margin-top: $top-bar-height;
   height: 42.25px;
   @extend
@@ -424,6 +454,392 @@ $top-bar-height: 60.3px;
   .flex-wrap,
   .p-2,
   .p-xl-5
+}
+.form-page{
+  font-size: 0.8rem;
+  min-width: $top-bar-min-width;
+  @extend
+  .d-flex,
+  .flex-column,
+  .mh-100,
+  .justify-content-center,
+  .col-12,
+  .col-xl-9,
+  .bg-white
+}
+.form-page-option-element{
+  @extend
+  .text-center,
+  .m-2,
+  .ms-1,
+  .me-1,
+}
+.form-page-option-button{
+  @extend
+  .btn,
+  .btn-sm,
+  .btn-primary,
+  .form-page-option-element,
+}
+.form-page-option-button-default{
+  @extend
+  .form-page-option-button,
+  .w-100,
+}
+.form-page-option-note-button-large{
+  width: 30%;
+  @extend
+  .form-page-option-button,
+}
+.form-page-option-note-button-small{
+  width: 7%;
+  @extend
+  .form-page-option-button,
+}
+.form-page-option-note-input{
+  @extend
+  .form-page-option-element,
+  .w-100
+}
+.form-page-option-note-confirm-button{
+   @extend
+   .form-page-option-element,
+   .w-50
+ }
+
+
+.form-page-option-bar{
+  @extend
+  .d-flex,
+  .flex-row,
+  .border-top,
+  .border-black
+}
+.form-page-content{
+  @extend
+  .d-flex,
+  .flex-column,
+  .overflow-auto
+}
+.form-page-title{
+  font-size: 1.3rem;
+  @extend
+  .text-end,
+  .me-0,    // Align to end
+  .ms-auto, //
+  .text-nowrap,
+  .p-2
+}
+.form-section{
+  font-size: 1rem;
+}
+.form-section-label{
+  cursor:pointer;
+  @extend
+  .d-flex,
+  .flex-row,
+  .p-2,
+  .ps-3,
+  .pe-3,
+  .bg-light,
+  .sticky-top,
+  .border
+}
+.form-section-title{
+  @extend
+  .col-10
+}
+.form-section-expansion-mark{
+  @extend
+  .col-2,
+  .text-end
+}
+.form-section-expansion-mark-default{
+  @extend
+  .form-section-expansion-mark,
+  .text-success
+}
+.form-section-expansion-mark-error{
+  @extend
+  .form-section-expansion-mark,
+  .text-danger
+}
+
+.form-section-children{
+  font-size: 0.8rem;
+  @extend
+  .d-flex,
+  .flex-row,
+  .flex-wrap,
+  .justify-content-center,
+  .align-items-center,
+  .p-2
+}
+
+.three-fields-beside-md{
+  @extend
+  .col-12,
+  .col-md-4
+}
+.two-fields-beside-md{
+  @extend
+  .col-12,
+  .col-md-6
+}
+
+.field-wrapper{
+  @extend
+  .d-flex,
+  .flex-column,
+  .p-3
+}
+.single-field{
+  @extend
+  .col-12
+}
+.field-common{
+  resize: none;
+  cursor: pointer !important;
+  border: solid 1px black !important; ;
+  padding: 7px !important;
+  box-shadow:none;
+  outline: none !important;
+
+  @extend
+  .text-center,
+  .rounded,
+}
+
+.field-common:focus{
+  border: solid 2px map-get($theme-colors, "primary") !important;
+}
+
+.field-common:placeholder-shown{
+  caret-color: transparent !important;
+}
+
+.radio-button{
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.8rem !important;
+  @extend
+  .field-common,
+  .btn,
+  .m-1;
+  &-selected {
+    @extend
+    .radio-button,
+    .btn-primary
+  }
+  &-not-selected {
+    @extend
+    .radio-button,
+    .btn-outline-primary
+  }
+}
+.radio-button:disabled{
+  @extend
+  .text-black
+}
+
+// Bootstrap does not support !important
+.select {
+  &__input-container {
+    justify-content: center !important;
+  }
+
+  &__control {
+    @extend .field-common,
+  }
+
+  // workaround for border when focused
+  &__control--is-focused {
+    box-shadow: 0 0 0 1px map-get($theme-colors, "primary") !important;
+  }
+
+  &__option.select__option--is-selected {
+    background-color: map-get($theme-colors, "primary");
+    color: white;
+  }
+
+  &__option {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  &__single-value {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    display: flex;
+    align-items: center;
+    height: auto;
+    text-align: center;
+    justify-content: center;
+  }
+
+  &__menu {
+    border: solid 2px map-get($theme-colors, "primary") !important;
+    font-size: 0.8rem;
+    @extend .text-center
+  }
+}
+// workaround for select menu z position
+body > [class^="select"] {
+  white-space: pre-wrap;  // Ensure selected value text wraps
+  display: flex;
+  align-items: center;
+  height: auto;
+  text-align:center;
+  font-size: 1rem;
+  z-index: 9999;
+  @extend
+  .text-center
+}
+
+.rc-slider {
+  height: 85px;
+  margin: 10px;
+  position: relative;
+  padding: 5px 0;
+  border-radius: 6px;
+  touch-action: none;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  &-rail {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: #e9e9e9;
+    border-radius: 6px;
+  }
+
+  &-track,
+  &-tracks {
+    position: absolute;
+    height: 4px;
+    background-color: map-get($theme-colors, "primary");
+    border-radius: 6px;
+  }
+
+  &-track-draggable {
+    z-index: 1;
+    box-sizing: content-box;
+    border-top: 5px solid rgba(0, 0, 0, 0);
+    border-bottom: 5px solid rgba(0, 0, 0, 0);
+    transform: translateY(-5px);
+  }
+
+  &-handle {
+    position: absolute;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    margin-top: -5px;
+    background-color: map-get($theme-colors, "primary");
+    border: solid 2px map-get($theme-colors, "primary");
+    border-radius: 50%;
+    cursor: pointer;
+    cursor: -webkit-grab;
+    cursor: grab;
+    opacity: 1;
+    touch-action: pan-x;
+
+    &-dragging{
+      border-color: map-get($theme-colors, "primary");
+      box-shadow: none;
+    }
+  ;
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      border-color: map-get($theme-colors, "primary");
+    }
+
+    &-click-focused:focus {
+      border-color: map-get($theme-colors, "primary");
+      box-shadow: unset;
+    }
+
+    &:hover {
+      border-color: map-get($theme-colors, "primary");
+    }
+
+    &:active {
+      border-color: map-get($theme-colors, "primary");
+      cursor: -webkit-grabbing;
+      cursor: grabbing;
+    }
+  }
+
+  &-mark {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    width: 100%;
+    font-size: 12px;
+  }
+
+  &-mark-text {
+    margin-top: 6px;
+    transform-origin: 0 0;
+    transform: rotate(60deg) !important;
+    position: absolute;
+    display: inline-block;
+    color: #999;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  &-active {
+    color: #666;
+  }
+
+  &-step {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+  }
+
+  &-dot {
+    position: absolute;
+    bottom: -2px;
+    width: 8px;
+    height: 8px;
+    vertical-align: middle;
+    background-color: #fff;
+    border: 2px solid #e9e9e9;
+    border-radius: 50%;
+    cursor: pointer;
+
+
+    &-active {
+      border-color: map-get($theme-colors, "primary");
+    }
+
+    &-reverse {
+      margin-right: -4px;
+    }
+  }
+
+  &-disabled &-track {
+    background-color: #ccc;
+  }
+
+  &-disabled &-handle,
+  &-disabled &-dot {
+    background-color: #fff;
+    border-color: #ccc;
+    cursor: default;
+  }
 }
 
 

@@ -2,7 +2,7 @@ import {Cruise} from "../../CruisesPage/CruisesPage";
 import React, {useState} from "react";
 import DatePicker from "react-datepicker";
 import {Controller, set, UseFormReturn, useWatch} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import {EditCruiseFormValues} from "../CruiseFormPage";
 import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
 
@@ -93,7 +93,7 @@ export default function CruiseDate(props: Props) {
                 )}
             />
             {props.editCruiseForm?.formState.errors.date &&
-                <ErrorCode code={props.editCruiseForm?.formState.errors.date.message} />
+                <ErrorMessageIfPresent message={props.editCruiseForm?.formState.errors.date.message} />
             }
         </div>
     )

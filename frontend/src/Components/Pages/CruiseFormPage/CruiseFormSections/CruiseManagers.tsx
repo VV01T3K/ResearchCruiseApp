@@ -1,10 +1,10 @@
 import React from "react";
 import DatePicker from "react-datepicker";
 import {Controller, set, UseFormReturn, useWatch} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import {EditCruiseFormValues} from "../CruiseFormPage";
 import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
-import FormUserSelect, {FormUser} from "../../FormPage/Inputs/FormUserSelect";
+import UserSelect, {FormUser} from "../../FormPage/Inputs/UserSelect";
 import {Application} from "../../ApplicationsPage/ApplicationsPage";
 
 type Props = {
@@ -62,20 +62,20 @@ export default function CruiseManagers(props: Props) {
             {/*    render={(field) => (*/}
                     <>
                         <div className="d-flex flex-wrap col-12 col-xl-6 justify-content-center h-100 py-2">
-                            <FormUserSelect
+                            <UserSelect
                                 className="col-12"
-                                name="managersTeam.mainCruiseManagerId"
+                                fieldName="managersTeam.mainCruiseManagerId"
                                 label="Kierownik główny"
-                                values={getUsersFromApplications()}
+                                initValues={getUsersFromApplications()}
                                 form={props.editCruiseForm}
                             />
                         </div>
                         <div className="d-flex flex-wrap col-12 col-xl-6 justify-content-center h-100 py-2">
-                            <FormUserSelect
+                            <UserSelect
                                 className="col-12"
-                                name="managersTeam.mainDeputyManagerId"
+                                fieldName="managersTeam.mainDeputyManagerId"
                                 label="Zastępca kierownika głównego"
-                                values={getUsersFromApplications()}
+                                initValues={getUsersFromApplications()}
                                 form={props.editCruiseForm}
                             />
                         </div>

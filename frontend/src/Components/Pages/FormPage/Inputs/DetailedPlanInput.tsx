@@ -3,7 +3,7 @@ import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 
 import React, { useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 
 import DatePicker  from 'react-datepicker';
@@ -458,7 +458,7 @@ export default function DetailedPlanInput(props: Props){
                                         }}
                                     />
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode className={"col-12"} code={props.form!.formState.errors[props.name].message} />
+                                        <ErrorMessageIfPresent className={"col-12"} message={props.form!.formState.errors[props.name].message} />
                                     }
                                 *lub poligon zdefiniowany pozycjami
                                 <br/>

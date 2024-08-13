@@ -9,7 +9,7 @@ import 'react-dropdown/style.css';
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Style from "./TaskInput.module.css";
 import Select from "react-select";
-import ErrorCode from "../../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../../CommonComponents/ErrorMessageIfPresent";
 import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
 
 
@@ -467,7 +467,7 @@ function TaskInput(props: Props) {
                 )}
             />
             {props.form!.formState.errors[props.name] &&
-                <ErrorCode code={props.form!.formState.errors[props.name]!.message} />
+                <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]!.message} />
             }
         </div>
     )

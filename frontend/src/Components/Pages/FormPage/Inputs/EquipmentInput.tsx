@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 
 import DatePicker  from 'react-datepicker';
@@ -349,7 +349,7 @@ export default function EquipmentInput(props: Props){
                                         </button>
                                     </div>
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name]!.message} />
+                                        <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]!.message} />
                                     }
                                 </div>
                             </>

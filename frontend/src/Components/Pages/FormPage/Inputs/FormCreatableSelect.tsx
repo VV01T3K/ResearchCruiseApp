@@ -2,7 +2,7 @@ import {Control, Controller, FieldError, FieldErrorsImpl, FieldValues, Merge} fr
 import {GroupBase, OptionsOrGroups} from "react-select";
 import React from "react";
 import CreatableSelect from "react-select/creatable";
-import InputWrapper from "./InputWrapper";
+import FieldWrapper from "./FieldWrapper";
 
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
 
 function FormCreatableSelect(props: Props) {
     return (
-        <InputWrapper {...props}>
+        <FieldWrapper {...props}>
             <Controller
                 defaultValue={""}
                 name={props.name}
@@ -51,7 +51,7 @@ function FormCreatableSelect(props: Props) {
                     />
                 )}
             />
-        </InputWrapper>
+        </FieldWrapper>
     )
 }
 

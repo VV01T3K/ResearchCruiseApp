@@ -2,7 +2,7 @@ import Page from "../Page";
 import React, {Dispatch, useEffect, useState} from "react";
 import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
 import PageSection from "../CommonComponents/PageSection";
-import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
+import FormTitleWithNavigation from "../CommonComponents/FormTitleWithNavigation";
 import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation, useNavigate} from "react-router-dom";
 import CruiseBasicInfo from "./CruiseFormSections/CruiseBasicInfo";
@@ -114,7 +114,7 @@ export default function CruiseFormPage() {
         <Page className="justify-content-center col-12 col-xl-9 bg-white" >
             <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
                 <div className="d-flex flex-column align-items-center w-100 h-100 overflow-auto" >
-                    <PageTitleWithNavigation
+                    <FormTitleWithNavigation
                         title={locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs"}
                         sections={sections}
                         showRequiredSections={false}

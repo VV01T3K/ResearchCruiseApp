@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Page from "../Page";
 import {useNavigate} from "react-router-dom";
-import ErrorCode from "../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../CommonComponents/ErrorMessageIfPresent";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import userDataManager from "../../CommonComponents/UserDataManager";
 import axios from "axios";
@@ -51,7 +51,7 @@ function EmailConfirmPage(){
         return (
             <>
                 <div className={"text-submit"}>Nie udało się potwiedzić adresu email</div>
-                {errorMsg && <ErrorCode code={errorMsg!}/>}
+                {errorMsg && <ErrorMessageIfPresent message={errorMsg!}/>}
             </>
         )
     }

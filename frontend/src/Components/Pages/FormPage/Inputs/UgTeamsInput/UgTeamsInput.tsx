@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
@@ -246,7 +246,7 @@ function UgTeamsInput(props: Props) {
                                     }}
                             />
                             {props.form!.formState.errors[props.name] &&
-                                <ErrorCode code={props.form!.formState.errors[props.name]!.message} />
+                                <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]!.message} />
                             }
                         </div>
                     </>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 import PublicationsCategoryPicker from "./PublicationsCategoryPicker"
 import {Contract} from "../ContractsInput/ContractsInput";
@@ -445,7 +445,7 @@ function PublicationsInput(props: Props){
                                     />
 
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name]!.message}/>
+                                        <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]!.message}/>
                                     }
                                 </div>
                             </>

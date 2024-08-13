@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import {Controller, ControllerRenderProps, FieldValues, get, useFieldArray, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
@@ -313,6 +313,7 @@ export default function SpubTasksInput(props: Props){
                                         isDisabled={disabled}
                                         menuPlacement="auto"
                                         placeholder="Dodaj z historii"
+                                        menuPortalTarget={document.body}
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
@@ -328,9 +329,9 @@ export default function SpubTasksInput(props: Props){
                                             input: (provided: any) => ({
                                                 ...provided
                                             }),
-                                            menu: provided => ({
+                                            menuPortal: provided => ({
                                                 ...provided,
-                                                zIndex: 9999
+                                                zIndex: 19999
                                             })
                                         }}
                                         options ={
@@ -356,7 +357,7 @@ export default function SpubTasksInput(props: Props){
                                         }}
                                     />
                                     {props.form!.formState.errors[props.name] &&
-                                        <ErrorCode code={props.form!.formState.errors[props.name]?.message} />
+                                        <ErrorMessageIfPresent message={props.form!.formState.errors[props.name]?.message} />
                                     }
                                 </div>
                             </>

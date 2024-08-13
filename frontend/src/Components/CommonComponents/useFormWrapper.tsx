@@ -1,5 +1,5 @@
 import {FieldValues, RegisterOptions, useForm} from "react-hook-form";
-import ErrorCode from "../Pages/CommonComponents/ErrorCode";
+import ErrorMessageIfPresent from "../Pages/CommonComponents/ErrorMessageIfPresent";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {PathName as Path} from "../Tools/PathName";
@@ -12,7 +12,7 @@ export default function useFormWrapper() {
         const errors = form.formState.errors;
         return (
             <>
-                {errors[props.fieldName] && <ErrorCode code={errors[props.fieldName]!.message} />}
+                {errors[props.fieldName] && <ErrorMessageIfPresent message={errors[props.fieldName]!.message} />}
             </>
         )
     }
