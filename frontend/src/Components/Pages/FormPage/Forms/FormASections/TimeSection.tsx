@@ -67,7 +67,7 @@ const ShipUsageField = () => {
         <FormRadio className="two-fields-beside-md"
                    fieldLabel="Statek na potrzeby badań będzie wykorzystywany:"
                    fieldName="shipUsage"
-                   // initValues={formContext!.initValues?.shipUsages}
+                   initValues={formContext!.initValues?.shipUsages}
         />
     )
 }
@@ -75,8 +75,8 @@ const ShipUsageField = () => {
 const DifferentShipUsageField = () => {
     const formContext = useContext(FormContext)
     const lastFieldInShipUsageSelected = true
-        // formContext!.initValues && formContext!.initValues?.shipUsages.length > 0 &&
-        //formContext!.getValues("shipUsage") == formContext!.initValues?.shipUsages?.length - 1
+        formContext!.initValues && formContext!.initValues?.shipUsages.length > 0 &&
+        formContext!.getValues("shipUsage") == formContext!.initValues?.shipUsages?.length - 1
     return(
         <>
             {lastFieldInShipUsageSelected &&
