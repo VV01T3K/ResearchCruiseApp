@@ -110,7 +110,7 @@ function FormA(props: Props){
         = useState<FormAInitValues>()
     useEffect(() => {
         api
-            .get('/FormsA/InitData')
+            .get('/Forms/InitValues/A')
             .then(response => {
                     setFormInitValues(response.data)
             })

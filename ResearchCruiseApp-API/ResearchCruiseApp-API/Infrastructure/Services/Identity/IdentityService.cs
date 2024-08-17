@@ -46,6 +46,11 @@ public class IdentityService(
         
         return usersDtos;
     }
+
+    public async Task<bool> UserWithIdExists(Guid id)
+    {
+        return await userManager.FindByIdAsync(id.ToString()) is not null;
+    }
     
     public async Task<bool> UserWithEmailExists(string email)
     {

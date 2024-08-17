@@ -91,8 +91,12 @@ public class FormADto
                     dest => dest.CruiseDays,
                     options =>
                         options.MapFrom(src =>
-                            src.CruiseHours / TimeConstants.HoursPerDay));
-            
+                            src.CruiseHours / TimeConstants.HoursPerDay))
+                .ForMember(
+                    dest => dest.Contracts,
+                    options =>
+                        options.Ignore()); // Mapping requires additional async operations
+
             CreateMap<FormADto, FormA>()
                 .ForMember(
                     dest => dest.Id,
@@ -117,7 +121,11 @@ public class FormADto
                     dest => dest.OptimalPeriodEnd,
                     options =>
                         options.MapFrom(src =>
-                            src.OptimalPeriod.Max()));
+                            src.OptimalPeriod.Max()))
+                .ForMember(
+                    dest => dest.Contracts,
+                    options =>
+                        options.Ignore()); // Mapping requires additional async operations
         }
     }
 }

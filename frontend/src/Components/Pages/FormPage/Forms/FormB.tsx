@@ -147,7 +147,7 @@ function FormB(props: Props){
         = useState<FormBInitValues>()
     useEffect(() => {
         api
-            .get('/FormsA/InitData')
+            .get('/Forms/InitValues/B')
             .then(response => {
                 setFormInitValues(response.data)
                 console.log(response.data as FormBInitValues)

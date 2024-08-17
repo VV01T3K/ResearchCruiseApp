@@ -1,5 +1,4 @@
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,32 +6,16 @@ using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.SharedServices.Compressor;
-using ResearchCruiseApp_API.Application.SharedServices.Cruises;
-using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 using ResearchCruiseApp_API.Infrastructure.Services;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
-namespace ResearchCruiseApp_API;
+namespace ResearchCruiseApp_API.Infrastructure;
 
 
 public static class DependencyInjection
 {
-    public static void AddApplication(this IServiceCollection services)
-    {
-        services.AddMediatR(cfg => 
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        
-        services
-            .AddScoped<ICompressor, Compressor>()
-            .AddScoped<ICruisesService, CruisesService>()
-            .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
-    }
-
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddPersistence(configuration);
@@ -44,30 +27,6 @@ public static class DependencyInjection
             .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
             .AddScoped<ITemplateFileReader, TemplateFileReader>()
             .AddScoped<ICurrentUserService, CurrentUserService>();
-    }
-
-    public static void AddWeb(this IServiceCollection services)
-    {
-        services
-            .AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.MaxDepth = 64;
-            });
-        
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-        
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAnyOrigin", policyBuilder =>
-            {
-                policyBuilder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
-        });
     }
     
     

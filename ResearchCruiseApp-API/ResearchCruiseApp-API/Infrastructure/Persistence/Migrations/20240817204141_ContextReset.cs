@@ -30,9 +30,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Accepted = table.Column<bool>(type: "bit", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
+                    RefreshTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -266,7 +268,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     InstitutionLocalization = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     ScanName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    ScanContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScanContent = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     FormAId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FormBId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FormCId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)

@@ -7,7 +7,7 @@ import {ReactComponent as Icon} from "/node_modules/bootstrap-icons/icons/plus-c
 export default function NewCruiseApplicationTile(){
     return (
         <Tile>
-            <Link state={{formType: "C"}} to={Path.Form} className={"common-tile-link"}>
+            <Link state={{formType: "A"}} to={Path.Form} className={"common-tile-link"}>
                 <Icon className={"bi-menu-common"}/>
                 Nowe zgłoszenie
             </Link>

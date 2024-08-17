@@ -10,6 +10,7 @@ public interface IIdentityService
 {
     Task<UserDto?> GetUserDtoById(Guid id);
     Task<List<UserDto>> GetAllUsersDtos(CancellationToken cancellationToken);
+    Task<bool> UserWithIdExists(Guid id);
     Task<bool> UserWithEmailExists(string email);
     Task<Result> AcceptUser(Guid id);
     Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail);

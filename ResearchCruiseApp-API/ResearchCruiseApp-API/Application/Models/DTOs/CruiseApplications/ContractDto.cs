@@ -24,13 +24,8 @@ public class ContractDto
                     dest => dest.Institution,
                     options =>
                         options.MapFrom(src =>
-                            src))
-                .ForMember(
-                    dest => dest.Scan,
-                    options =>
-                        options.MapFrom(src =>
                             src));
-            
+
             CreateMap<ContractDto, Contract>()
                 .ForMember(
                     dest => dest.InstitutionName,
@@ -48,15 +43,13 @@ public class ContractDto
                         options.MapFrom(src =>
                             src.Institution.Localization))
                 .ForMember(
+                    dest => dest.ScanContent,
+                    options =>
+                        options.Ignore())
+                .ForMember(
                     dest => dest.ScanName,
                     options =>
-                        options.MapFrom(src =>
-                            src.Scan.Name))
-                .ForMember(
-                dest => dest.ScanContent,
-                options =>
-                    options.MapFrom(src =>
-                        src.Scan.Content));
+                        options.Ignore());
         }
     }
 }

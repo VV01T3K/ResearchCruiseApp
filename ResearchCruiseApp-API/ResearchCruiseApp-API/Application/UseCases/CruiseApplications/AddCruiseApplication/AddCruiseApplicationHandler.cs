@@ -6,6 +6,7 @@ using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.SharedServices.Compressor;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -14,6 +15,7 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruis
 
 public class AddCruiseApplicationHandler(
     IYearBasedKeyGenerator yearBasedKeyGenerator,
+    ICompressor compressor,
     IMapper mapper,
     IUnitOfWork unitOfWork,
     IFormsARepository formsARepository,
@@ -55,12 +57,29 @@ public class AddCruiseApplicationHandler(
     
     private async Task<Result<FormA>> CreateFormA(FormADto formADto)
     {
-        if (await identityService.GetUserDtoById(formADto.CruiseManagerId) is null)
-            return Error.BadRequest("Kierownik nie istnieje");
-        if (await identityService.GetUserDtoById(formADto.DeputyManagerId) is null)
-            return Error.BadRequest("Zastępca nie istnieje");
+        if (!await identityService.UserWithIdExists(formADto.CruiseManagerId))
+            return Error.BadRequest("Wybrany kierownik nie istnieje");
+        if (!await identityService.UserWithIdExists(formADto.DeputyManagerId))
+            return Error.BadRequest("Wybrany zastępca nie istnieje");
         
-        return mapper.Map<FormA>(formADto);
+        var formA = mapper.Map<FormA>(formADto);
+        
+        foreach (var contractDto in formADto.Contracts)
+        {
+            formA.Contracts.Add(await CreateContract(contractDto));
+        }
+
+        return formA;
+    }
+    
+    private async Task<Contract> CreateContract(ContractDto contractDto)
+    {
+        var contract = mapper.Map<Contract>(contractDto);
+        
+        contract.ScanName = contractDto.Scan.Name;
+        contract.ScanContent = await compressor.Compress(contractDto.Scan.Content);
+
+        return contract;
     }
 
     private async Task<CruiseApplication> CreateCruiseApplication(FormA formA, CancellationToken cancellationToken)
