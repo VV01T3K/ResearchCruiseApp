@@ -9,6 +9,12 @@ import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
 import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
 import useWindowWidth from "../../CommonComponents/useWindowWidth";
 import {FormPageLocationState} from "../FormPage/FormPage";
+import {prop} from "react-data-table-component/dist/DataTable/util";
+
+
+type CruiseApplicationsSetter =
+    Dispatch<any> |
+    ((applications: CruiseApplication[], disableAddingMode?: boolean) => void)
 
 type Props = {
     // Only defined if the component is called from the cruise's details page.
@@ -17,7 +23,7 @@ type Props = {
 
     // Callback to the function in the parent component that updates the cruiseApplications
     // assigned to a cruise
-    setBoundCruiseApplications?: Dispatch<SetStateAction<CruiseApplication[]>> | ((applications: CruiseApplication[]) => void)
+    setBoundCruiseApplications?: CruiseApplicationsSetter
 
     // Indicates if the list should allow adding a cruiseApplication to a cruise
     addingMode?: boolean,
@@ -30,38 +36,55 @@ type Props = {
 export default function CruiseApplicationsList(props: Props) {
     const navigate = useNavigate()
 
-    const [cruiseApplications, setCruiseApplications]: [CruiseApplication[], Dispatch<any>]
+    const [fetchedCruiseApplications, setFetchedCruiseApplications]: [CruiseApplication[], CruiseApplicationsSetter]
         = useState([])
     useEffect(() => {
         if (!props.deletionMode) {
             Api
                 .get(
-                    '/api/CruiseApplications',)
-                .then(response => response ? setCruiseApplications(response?.data): ()=>{}
+                    '/api/CruiseApplications'
+                )
+                .then(response =>
+                    response ? setFetchedCruiseApplications(response?.data) : ()=> { }
                 )
         }
     },[]);
 
     const windowWidth = useWindowWidth()
 
+    const getDisplayedCruiseApplications = (): CruiseApplication[] => {
+        return props.deletionMode
+            ? props.boundCruiseApplications // In deletion mode bound cruise applications are displayed
+            : fetchedCruiseApplications // Outside deletion mode fetched cruise applications are displayed
+    }
+    const getDisplayedCruiseApplicationsSetter = (): CruiseApplicationsSetter => {
+        return props.deletionMode
+            ? props.setBoundCruiseApplications // In deletion mode bound cruise applications are displayed
+            : setFetchedCruiseApplications // Outside deletion mode fetched cruise applications are displayed
+    }
+
+    const setDisplayedCruiseApplications = (newValues: CruiseApplication[]): void => {
+        const setter: CruiseApplicationsSetter = getDisplayedCruiseApplicationsSetter()
+        setter(newValues, false)
+    }
 
     const sortApplicationsByPoints = (directionAscending: boolean) => {
-        setCruiseApplications([
-            ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
+        setDisplayedCruiseApplications([
+            ...getDisplayedCruiseApplications()?.sort((a: CruiseApplication, b: CruiseApplication): number =>
                 (parseInt(a.points) - parseInt(b.points)) * (directionAscending ? 1 : -1)
             )
         ])
     }
     const sortApplicationsByDate = (directionAscending: boolean) => {
-        setCruiseApplications([
-            ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
+        setDisplayedCruiseApplications([
+            ...getDisplayedCruiseApplications().sort((a: CruiseApplication, b: CruiseApplication): number =>
                 (Date.parse(a.date) - Date.parse(b.date)) * (directionAscending ? 1 : -1)
             )
         ])
     }
     const sortApplicationsByYear = (directionAscending: boolean) => {
-        setCruiseApplications([
-            ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
+        setDisplayedCruiseApplications([
+            ...getDisplayedCruiseApplications().sort((a: CruiseApplication, b: CruiseApplication): number =>
                 (a.year - b.year) * (directionAscending ? 1 : -1)
             )
         ])
@@ -234,16 +257,18 @@ export default function CruiseApplicationsList(props: Props) {
                     </div>
                 </div>
                 <div className="w-100 bg-light">
-                    {(props.deletionMode ? props.boundCruiseApplications : cruiseApplications)!
-                            .filter(row => applyFilters(row))
+                    {getDisplayedCruiseApplications()
+                            .filter(applyFilters)
+                            .filter(rowShouldBeShown)
                             .length == 0 &&
                         <div className="d-flex flex-row bg-light p-2 justify-content-center border-bottom">
                             <div className={"text-center"}>Brak zgłoszeń</div>
                         </div>
                     }
-                    {(props.deletionMode ? props.boundCruiseApplications : cruiseApplications)!
-                        .filter(row => applyFilters(row))
-                        .map((row: CruiseApplication, index: number) => rowShouldBeShown(row) &&
+                    {getDisplayedCruiseApplications()
+                        .filter(applyFilters)
+                        .filter(rowShouldBeShown)
+                        .map((row: CruiseApplication, index: number) =>
                             <div
                                 key={index}
                                 className={`d-flex flex-wrap flex-row justify-content-center border-bottom ${getRowBackground(index)}`}

@@ -14,14 +14,14 @@ type Props = {
 
 
 export default function CruiseApplications(props: Props) {
-    const updateApplications = (applications: CruiseApplication[]) => {
+    const updateApplications = (applications: CruiseApplication[], disableAddingMode?: boolean = true) => {
         props.setCruiseApplications(applications)
         props.editCruiseForm.setValue(
-            "applicationsIds",
+            "cruiseApplicationsIds",
             applications.map(app => app.id)
         )
 
-        if (props.addingMode)
+        if (props.addingMode && disableAddingMode)
             props.setAddingMode(false)
     }
 

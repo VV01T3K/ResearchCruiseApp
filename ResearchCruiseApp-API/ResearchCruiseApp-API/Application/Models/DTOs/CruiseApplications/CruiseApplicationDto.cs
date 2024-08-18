@@ -43,6 +43,11 @@ public class CruiseApplicationDto
                     options.MapFrom(src =>
                         src.FormA != null ? src.FormA.CruiseManagerId : Guid.Empty))
             .ForMember(
+                dest => dest.DeputyManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.FormA != null ? src.FormA.DeputyManagerId : Guid.Empty))
+            .ForMember(
                 dest => dest.HasFormA,
                 options =>
                     options.MapFrom(src =>

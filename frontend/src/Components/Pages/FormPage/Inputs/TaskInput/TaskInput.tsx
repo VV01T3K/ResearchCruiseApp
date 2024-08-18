@@ -219,7 +219,6 @@ function TaskInput(props: Props) {
                                                              className={`${getFields(row).length == 2 && "col-xl-6"} ${getFields(row).length == 3 && "col-xl-4"} col-12 p-1`}
                                                         >
                                                             <label className={"d-flex justify-content-center align-items-center"}>
-                                                                {console.log(valIdx)}
                                                                 {Object.values(taskFieldsOptions)[row.type][valIdx]}
                                                             </label>
                                                             {(()=> {

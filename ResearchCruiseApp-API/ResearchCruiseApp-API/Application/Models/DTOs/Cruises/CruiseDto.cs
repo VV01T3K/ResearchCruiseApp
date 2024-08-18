@@ -8,12 +8,19 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 public class CruiseDto
 {
     public Guid Id { get; set; }
+    
     public string Number { get; set; } = null!;
+    
     public StringRangeDto Date { get; set; }
+    
     public Guid MainCruiseManagerId { get; set; }
+    
     public string MainCruiseManagerFirstName { get; set; } = null!;
+    
     public string MainCruiseManagerLastName { get; set; } = null!;
+    
     public Guid MainDeputyManagerId { get; set; }
+    
     public List<CruiseApplicationShortInfoDto> CruiseApplicationsShortInfo { get; set; } = null!;
 
 
