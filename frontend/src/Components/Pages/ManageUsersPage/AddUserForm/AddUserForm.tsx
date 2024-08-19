@@ -17,7 +17,7 @@ export enum Role {
 }
 
 export type NewUserFormValues = {
-    role: Role,
+    role: Role | null,
     email: string,
     password: string,
     firstName: string,
@@ -31,7 +31,7 @@ type Props = {
 
 export default function AddUserForm(props: Props) {
     const newUserFormDefaultValues: NewUserFormValues = {
-        role: Role.Guest,
+        role: null,
         email: "",
         password: "",
         firstName: "",
@@ -56,13 +56,11 @@ export default function AddUserForm(props: Props) {
                 newUserForm.getValues()
             )
             .then(response => {
-                console.log("Hey")
                 setSending(false)
                 setSuccess(true)
                 props.fetchUsers()
             })
             .catch(error => {
-                console.log("Wheeeey")
                 setSendingError(error.response.data)
                 setSending(false)
             })
@@ -118,7 +116,7 @@ export default function AddUserForm(props: Props) {
 
                     <div className="d-flex w-100 align-items-center mt-1 justify-content-start">
                         <a
-                            className="btn btn-info"
+                            className={`btn btn-info ${sending ? "disabled" : ""}`}
                             type="submit"
                             style={{fontSize: "inherit"}}
                             onClick={newUserForm.handleSubmit(handleSubmit)}
