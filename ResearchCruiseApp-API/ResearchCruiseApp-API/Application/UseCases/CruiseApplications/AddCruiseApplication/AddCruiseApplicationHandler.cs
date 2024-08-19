@@ -1,6 +1,8 @@
 using System.Data;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
+using ResearchCruiseApp_API.Application.Common.Extensions;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
@@ -14,6 +16,7 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruis
 
 
 public class AddCruiseApplicationHandler(
+    IValidator<AddCruiseApplicationCommand> validator,
     IYearBasedKeyGenerator yearBasedKeyGenerator,
     ICompressor compressor,
     IMapper mapper,
@@ -25,6 +28,10 @@ public class AddCruiseApplicationHandler(
 {
     public async Task<Result> Handle(AddCruiseApplicationCommand request, CancellationToken cancellationToken)
     {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+            return validationResult.ToApplicationResult();
+        
         var formAResult = await CreateFormA(request.FormADto);
         if (formAResult.Error is not null)
             return formAResult.Error;

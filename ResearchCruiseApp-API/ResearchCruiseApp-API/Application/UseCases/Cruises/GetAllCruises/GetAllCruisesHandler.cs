@@ -1,6 +1,5 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
@@ -35,7 +34,7 @@ public class GetAllCruisesHandler(
     {
         var cruiseDto = mapper.Map<CruiseDto>(cruise);
         var mainCruiseManager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);
-        
+
         cruiseDto.MainCruiseManagerFirstName = mainCruiseManager?.FirstName ?? string.Empty;
         cruiseDto.MainCruiseManagerLastName = mainCruiseManager?.LastName ?? string.Empty;
 

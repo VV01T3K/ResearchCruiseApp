@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp_API.Application.Common.Models;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 
 namespace ResearchCruiseApp_API.Web.Common.Extensions;

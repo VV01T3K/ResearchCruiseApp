@@ -1,9 +1,10 @@
 import file_icon from "../../../../../resources/file_icon.png";
-import React from "react";
+import React, {useState} from "react";
 import {UseFormReturn} from "react-hook-form";
 import {Contract} from "./ContractsInput";
 import Style from "../../../../CommonComponents/FileIcon.module.css";
 import ReadOnlyTextInput from "../../../../CommonComponents/ReadOnlyTextInput";
+import ErrorCode from "../../../CommonComponents/ErrorCode";
 
 
 type Props = {
@@ -17,6 +18,9 @@ type Props = {
 
 
 export default function FilePicker(props: Props) {
+    const maxFileSizeBytes: number = 2_097_152
+    const [sizeErrorMessage, setSizeErrorMessage] = useState("")
+
     const handleRemoveScan = () => {
         props.row.scan.name = ""
         props.row.scan.content = ""
@@ -41,8 +45,12 @@ export default function FilePicker(props: Props) {
                 hidden
                 onChange={e => {
                     if (e.target.files && e.target.files.length) {
+                        handleRemoveScan()
+                        setSizeErrorMessage("")
+
                         const reader = new FileReader()
                         const fileName = e.target.files[0].name
+
                         reader.onloadend = () => {
                             if (e.target.files) {
                                 const fileContent = reader.result!.toString();
@@ -61,7 +69,11 @@ export default function FilePicker(props: Props) {
                                 )
                             }
                         }
-                        reader.readAsDataURL(e.target.files[0])
+
+                        if (e.target.files[0].size > maxFileSizeBytes)
+                            setSizeErrorMessage("Rozmiar pliku nie może przekraczać 2 MiB")
+                        else
+                            reader.readAsDataURL(e.target.files[0])
                     }
                 }}
             />
@@ -79,7 +91,7 @@ export default function FilePicker(props: Props) {
             </label>
             <ReadOnlyTextInput
                 className="text-secondary col-12"
-                value={props.row.scan.name || "Brak"}
+                value={props.row.scan.name || "--- Nie wybrano pliku ---"}
             />
             {props.row.scan.content != "" &&
                 <a
@@ -90,6 +102,7 @@ export default function FilePicker(props: Props) {
                     Usuń skan
                 </a>
             }
+            {sizeErrorMessage && <ErrorCode code={sizeErrorMessage} />}
         </div>
     )
 }

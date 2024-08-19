@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
-using ResearchCruiseApp_API.Application.UseCases.Cruises;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.AddCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.AutoAddCruises;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.DeleteCruise;

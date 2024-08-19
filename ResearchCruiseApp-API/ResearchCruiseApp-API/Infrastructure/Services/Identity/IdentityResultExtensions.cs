@@ -1,6 +1,4 @@
-using System.Text;
 using Microsoft.AspNetCore.Identity;
-using ResearchCruiseApp_API.Application.Common.Models;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services.Identity;
