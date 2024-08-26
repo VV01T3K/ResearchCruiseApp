@@ -1,41 +1,37 @@
 import userDataManager from "./CommonComponents/UserDataManager";
+import {useEffect} from "react";
 
 const UserBasedAccess = () => {
-    const {UserLoggedIn, userData} = userDataManager()
-    const UserRoleIncludes = (role: string) => {
-        return UserLoggedIn() && userData && userData!["roles"].includes(role)
-    }
-    const UserHasShipownerAccess = () => {
-        if (UserRoleIncludes("Shipowner"))
-            return true
-        return false
-    }
+    const {UserLoggedIn, userData, GetUserData} = userDataManager()
 
-    const UserHasAdminAccess = () => {
-        if (UserRoleIncludes("Administrator"))
-            return true
-        return false
-    }
+    useEffect(() => {
+        (GetUserData)()
+    }, []);
 
-    const UserHasCruiseManagerAccess = () => {
-        if (UserRoleIncludes("CruiseManager"))
-            return true
-        return false
-    }
+    const UserRoleIncludes = (role: string) =>
+        UserLoggedIn() && !!userData && userData["roles"].includes(role)
 
-    const CommonAccess = () => {
-        return UserLoggedIn();
-    }
+    const UserHasShipownerAccess = () =>
+        UserRoleIncludes("Shipowner")
 
-    const NotLoggedInAccess = () => {
-        return !UserLoggedIn();
-    }
+    const UserHasAdminAccess = () =>
+        UserRoleIncludes("Administrator")
 
-    const WaitingForUserData = () => {
-        return UserLoggedIn() && !userData
-    }
+    const UserHasCruiseManagerAccess = () =>
+        UserRoleIncludes("CruiseManager")
 
-    return {UserHasAdminAccess, UserHasShipownerAccess,
-        UserHasCruiseManagerAccess, CommonAccess, NotLoggedInAccess, WaitingForUserData}
+    const CommonAccess = () =>
+        UserLoggedIn()
+
+    const NotLoggedInAccess = () =>
+        !UserLoggedIn()
+
+    const WaitingForUserData = () =>
+        UserLoggedIn() && !userData
+
+    return {
+        UserHasAdminAccess, UserHasShipownerAccess, UserHasCruiseManagerAccess,
+        CommonAccess, NotLoggedInAccess, WaitingForUserData
+    }
 }
 export default UserBasedAccess

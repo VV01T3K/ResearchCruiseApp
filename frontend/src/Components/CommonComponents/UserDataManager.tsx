@@ -74,11 +74,11 @@ const UserDataManager = () => {
         const searchParams = new URLSearchParams(search);
         const userIdParam = searchParams.get('userId');
         const codeParam = searchParams.get('code');
-        return Api.get(`/account/confirmEmail?userId=${userIdParam}&code=${codeParam}`, {raw:true})
+        return Api.get(`/account/emailConfirmation?userId=${userIdParam}&code=${codeParam}`, {raw:true})
     }
 
     const ChangePassword = async (changePasswordData:FieldValues) => {
-            return Api.patch('/account', changePasswordData, {raw:true})
+            return Api.patch('/account/password', changePasswordData, {raw:true})
     }
 
     const ForceLogout = () => {

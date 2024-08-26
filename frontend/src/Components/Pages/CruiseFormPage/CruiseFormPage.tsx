@@ -9,8 +9,11 @@ import CruiseBasicInfo from "./CruiseFormSections/CruiseBasicInfo";
 import CruiseDate from "./CruiseFormSections/CruiseDate";
 import {useForm} from "react-hook-form";
 import CruiseApplications from "./CruiseFormSections/CruiseApplications";
+import {CruiseApplication, CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 import {Application} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
+import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
+import {fetchCruiseApplications} from "../../Tools/Fetchers";
 import {Time} from "../FormPage/Inputs/TaskTable/TaskTable";
 import {fetchApplications} from "../../Tools/Fetchers";
 import CruiseManagers from "./CruiseFormSections/CruiseManagers";
@@ -26,7 +29,7 @@ type CruiseManagersTeam = {
 export type EditCruiseFormValues = {
     date: Time,
     managersTeam: CruiseManagersTeam,
-    applicationsIds: string[]
+    cruiseApplicationsIds: string[]
 }
 
 type CruiseFormPageLocationState = {
@@ -56,8 +59,8 @@ export default function CruiseFormPage() {
                 locationState.cruise?.mainDeputyManagerId ??
                 EMPTY_GUID
         },
-        applicationsIds:
-            locationState.cruise?.applicationsShortInfo.map(app => app.id) ??
+        cruiseApplicationsIds:
+            locationState.cruise?.cruiseApplicationsShortInfo.map(app => app.id) ??
             []
     }
     const cruiseForm = useForm<EditCruiseFormValues>({
@@ -89,7 +92,7 @@ export default function CruiseFormPage() {
         cruiseForm.reset(editCruiseFormDefaultValues)
 
         if (locationState.cruise)
-            fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
+            fetchCruiseApplications(locationState.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
     }
 
     const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
@@ -102,11 +105,11 @@ export default function CruiseFormPage() {
     const [applicationsAddingMode, setApplicationsAddingMode] =
         useState(false)
 
-    const [applications, setApplications] =
-        useState<Application[]>([])
+    const [cruiseApplications, setCruiseApplications] =
+        useState<CruiseApplication[]>([])
     useEffect(() => {
         if (locationState.cruise)
-            fetchApplications(locationState.cruise.applicationsShortInfo, setApplications)
+            fetchCruiseApplications(locationState.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
     }, []);
 
     return (
@@ -130,7 +133,7 @@ export default function CruiseFormPage() {
 
                         <PageSection title={sections["Kierownicy"]}>
                             <CruiseManagers
-                                applications={applications}
+                                cruiseApplications={cruiseApplications}
                                 editCruiseForm={cruiseForm}
                             />
                         </PageSection>
@@ -138,8 +141,8 @@ export default function CruiseFormPage() {
                         <PageSection title={sections["Zgłoszenia"]}>
                             <CruiseApplications
                                 editCruiseForm={cruiseForm}
-                                applications={applications}
-                                setApplications={setApplications}
+                                cruiseApplications={cruiseApplications}
+                                setCruiseApplications={setCruiseApplications}
                                 addingMode={applicationsAddingMode}
                                 setAddingMode={setApplicationsAddingMode}
                             />

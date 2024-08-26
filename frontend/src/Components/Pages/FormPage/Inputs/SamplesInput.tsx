@@ -76,12 +76,12 @@ export default function SamplesInput(props: Props){
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "10%"}}>
+                                                style={{width: "12%"}}>
                                                 <b>Czy dane upubliczniono</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "23%"}}>
+                                                style={{width: "21%"}}>
                                                 <b>W jaki sposób</b>
                                             </div>
                                             <div
@@ -210,7 +210,7 @@ export default function SamplesInput(props: Props){
                                                 </div>
                                                 <div
                                                     className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                    style={{width: windowWidth >= 1200 ? "10%" : "100%"}}
+                                                    style={{width: windowWidth >= 1200 ? "12%" : "100%"}}
                                                 >
 
                                                     <div
@@ -238,7 +238,7 @@ export default function SamplesInput(props: Props){
                                                 </div>
                                                 <div
                                                     className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                    style={{width: windowWidth >= 1200 ? "23%" : "100%"}}
+                                                    style={{width: windowWidth >= 1200 ? "21%" : "100%"}}
                                                 >
                                                     { row.check && <>
                                                     <div

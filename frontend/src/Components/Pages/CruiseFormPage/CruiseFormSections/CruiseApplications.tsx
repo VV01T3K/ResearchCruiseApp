@@ -1,35 +1,35 @@
-import ApplicationsList from "../../ApplicationsPage/ApplicationsList";
-import {Application} from "../../ApplicationsPage/ApplicationsPage";
+import CruiseApplicationsList from "../../CruiseApplicationsPage/CruiseApplicationsList";
+import {CruiseApplication} from "../../CruiseApplicationsPage/CruiseApplicationsPage";
 import {Dispatch, SetStateAction, useState} from "react";
 import {UseFormReturn} from "react-hook-form";
 import {EditCruiseFormValues} from "../CruiseFormPage";
 
 type Props = {
     editCruiseForm: UseFormReturn<EditCruiseFormValues>,
-    applications: Application[],
-    setApplications: (applications: Application[]) => void,
+    cruiseApplications: CruiseApplication[],
+    setCruiseApplications: (applications: CruiseApplication[]) => void,
     addingMode: boolean,
     setAddingMode: Dispatch<SetStateAction<boolean>>
 }
 
 
 export default function CruiseApplications(props: Props) {
-    const updateApplications = (applications: Application[]) => {
-        props.setApplications(applications)
+    const updateApplications = (applications: CruiseApplication[], disableAddingMode?: boolean = true) => {
+        props.setCruiseApplications(applications)
         props.editCruiseForm.setValue(
-            "applicationsIds",
+            "cruiseApplicationsIds",
             applications.map(app => app.id)
         )
 
-        if (props.addingMode)
+        if (props.addingMode && disableAddingMode)
             props.setAddingMode(false)
     }
 
     return (
         <div className="p-2 w-100">
-            <ApplicationsList
-                boundApplications={props.applications}
-                setBoundApplications={updateApplications}
+            <CruiseApplicationsList
+                boundCruiseApplications={props.cruiseApplications}
+                setBoundCruiseApplications={updateApplications}
                 deletionMode={true}
             />
             <div className="d-flex w-100 justify-content-center mt-3">
@@ -56,10 +56,10 @@ export default function CruiseApplications(props: Props) {
             </div>
             {props.addingMode &&
                 <div className="mt-3">
-                    <ApplicationsList
+                    <CruiseApplicationsList
                         addingMode={true}
-                        boundApplications={props.applications}
-                        setBoundApplications={updateApplications}
+                        boundCruiseApplications={props.cruiseApplications}
+                        setBoundCruiseApplications={updateApplications}
                     />
                 </div>
             }

@@ -2,13 +2,13 @@ import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import React, {Dispatch, useState} from "react";
 import {Cruise} from "./CruisesPage";
-import CruiseApplicationsList from "./CruiseApplicationsList";
 import DatePicker from "react-datepicker";
 import Api from "../../Tools/Api";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 import ListSortMenu, {ListSortOption} from "../CommonComponents/ListSortMenu";
 import ListFilterMenu, {AnyStringFilterOption} from "../CommonComponents/ListFilterMenu";
 import useWindowWidth from "../../CommonComponents/useWindowWidth";
+import AssignedCruiseApplicationsList from "./AssignedCruiseApplicationsList";
 
 
 type Props = {
@@ -206,7 +206,7 @@ export default function CruisesList(props: Props) {
                                      style={{width: windowWidth >= 1200 ? "19%" : "100%"}}
                                 >
                                     <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenia:</div>
-                                    <CruiseApplicationsList applicationsShortInfo={row.applicationsShortInfo} />
+                                    <AssignedCruiseApplicationsList cruiseApplicationsShortInfo={row.cruiseApplicationsShortInfo} />
                                 </div>
                                 <div className="d-flex flex-wrap justify-content-center align-items-center p-2 text-center"
                                      style={{width: windowWidth >= 1200 ? "16%" : "100%"}}

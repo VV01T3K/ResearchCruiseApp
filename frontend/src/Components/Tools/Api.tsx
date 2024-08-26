@@ -26,6 +26,7 @@ const setAccessToken = (config: InternalAxiosRequestConfig) => {
 
 async function refreshToken () {
     const refreshResponse = await axios.post('/account/refresh', {
+        accessToken: sessionStorage.getItem('accessToken'),
         refreshToken:  sessionStorage.getItem('refreshToken')})
     const newAccessToken = refreshResponse.data.accessToken;
     sessionStorage.setItem('accessToken', newAccessToken);

@@ -6,28 +6,31 @@ import {EditCruiseFormValues} from "../CruiseFormPage";
 import {Time} from "../../FormPage/Inputs/TaskTable/TaskTable";
 import UserSelect, {FormUser} from "../../FormPage/Inputs/UserSelect";
 import {Application} from "../../ApplicationsPage/ApplicationsPage";
+import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
+import FormUserSelect, {FormUser} from "../../FormPage/Inputs/FormUserSelect";
+import {CruiseApplication} from "../../CruiseApplicationsPage/CruiseApplicationsPage";
 
 type Props = {
-    applications: Application[]
+    cruiseApplications: CruiseApplication[]
     editCruiseForm: UseFormReturn<EditCruiseFormValues>
 }
 
 
 export default function CruiseManagers(props: Props) {
-    const getUsersFromApplications = (): FormUser[] => {
-        const usersPairs = props.applications
-            .map(application => {
+    const getUsersFromCruiseApplications = (): FormUser[] => {
+        const usersPairs = props.cruiseApplications
+            .map(cruiseApplication => {
                 const cruiseManager: FormUser = {
-                    id: application.cruiseManagerId,
-                    email: application.cruiseManagerEmail,
-                    firstName: application.cruiseManagerFirstName,
-                    lastName: application.cruiseManagerLastName
+                    id: cruiseApplication.cruiseManagerId,
+                    email: cruiseApplication.cruiseManagerEmail,
+                    firstName: cruiseApplication.cruiseManagerFirstName,
+                    lastName: cruiseApplication.cruiseManagerLastName
                 }
                 const deputyManager: FormUser = {
-                    id: application.deputyManagerId,
-                    email: application.deputyManagerEmail,
-                    firstName: application.deputyManagerFirstName,
-                    lastName: application.deputyManagerLastName
+                    id: cruiseApplication.deputyManagerId,
+                    email: cruiseApplication.deputyManagerEmail,
+                    firstName: cruiseApplication.deputyManagerFirstName,
+                    lastName: cruiseApplication.deputyManagerLastName
                 }
                 return [cruiseManager, deputyManager]
             })
@@ -64,18 +67,18 @@ export default function CruiseManagers(props: Props) {
                         <div className="d-flex flex-wrap col-12 col-xl-6 justify-content-center h-100 py-2">
                             <UserSelect
                                 className="col-12"
-                                fieldName="managersTeam.mainCruiseManagerId"
+                                name="managersTeam.mainCruiseManagerId"
                                 label="Kierownik główny"
-                                initValues={getUsersFromApplications()}
+                                values={getUsersFromCruiseApplications()}
                                 form={props.editCruiseForm}
                             />
                         </div>
                         <div className="d-flex flex-wrap col-12 col-xl-6 justify-content-center h-100 py-2">
                             <UserSelect
                                 className="col-12"
-                                fieldName="managersTeam.mainDeputyManagerId"
+                                name="managersTeam.mainDeputyManagerId"
                                 label="Zastępca kierownika głównego"
-                                initValues={getUsersFromApplications()}
+                                values={getUsersFromCruiseApplications()}
                                 form={props.editCruiseForm}
                             />
                         </div>

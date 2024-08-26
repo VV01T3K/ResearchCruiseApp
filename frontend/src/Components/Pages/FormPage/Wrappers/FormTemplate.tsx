@@ -65,7 +65,7 @@ function FormTemplate(props: Props) {
         control:form.control,
         setValue:form.setValue,
         type:props.type, readOnly:props.readOnly, sections:props.sections, initValues:props.initValues };
-
+///api/CruiseApplications/
     return (
         <Page className="form-page">
             <FormContext.Provider value={formContext}>

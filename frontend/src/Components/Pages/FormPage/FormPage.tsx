@@ -10,7 +10,8 @@ import NotFoundPage from "../NotFoundPage";
 
 export type FormPageLocationState = {
     formType: string,
-    formId?: string,
+    cruiseApplicationId?: string,  // The id of the form to be loaded from the database if applicable
+    localStorageValues?: FormValues, // To be deleted soon
     readonly?: boolean
 }
 
@@ -22,10 +23,14 @@ function FormPage(){
     const [loadValues, setLoadValues]
         = useState<FormValues | undefined>()
     useEffect(() => {
-        if (locationState?.formId) {
-            Api.get(`/Forms/${locationState?.formId}`).then(response => {
-                        setLoadValues(response.data)}
-                )
+        if (locationState?.cruiseApplicationId) {
+            console.log(locationState.cruiseApplicationId)
+            Api
+                .get(`/api/CruiseApplications/${locationState?.cruiseApplicationId}/form${locationState.formType}`)
+                .then(response => {
+                    console.log(response)
+                    setLoadValues(response?.data)
+                })
         }
     },[locationState]);
 
