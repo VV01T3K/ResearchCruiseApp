@@ -62,7 +62,7 @@ function LoginForm(){
                 <PasswordTextInput/>
                 <ForgetPasswordLink/>
                 <LoginButton/>
-                {loginError && <ErrorMessageIfPresent message={loginError} />}
+                {/*{loginError && <ErrorMessageIfPresent message={loginError} />}*/}
                 <RegisterLink/>
             </form>
         </>

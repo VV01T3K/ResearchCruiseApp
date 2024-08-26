@@ -3,8 +3,8 @@ import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../../LoginPage/ErrorCode";
 import Select from "react-select";
 import ThesisCategoryPicker from "./ThesisCategoryPicker";
-import {Publication} from "../PublicationsInput/PublicationsInput";
-import {Contract} from "../ContractsInput/ContractsInput";
+import {Publication} from "../PublicationsTable/PublicationsTable";
+import {Contract} from "../ContractsTable/ContractsTable";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 

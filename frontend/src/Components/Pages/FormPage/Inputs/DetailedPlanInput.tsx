@@ -1,16 +1,10 @@
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 
-import React, { useEffect, useState} from "react";
+import React from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import Select from "react-select";
 
-import DatePicker  from 'react-datepicker';
-import {Simulate} from "react-dom/test-utils";
-import resize = Simulate.resize;
-import {SpubTask} from "./SpubTasksInput";
-import TextArea from "./TextArea";
 import {Action} from "./EquipmentInput";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 

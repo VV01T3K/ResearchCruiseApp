@@ -1,58 +1,56 @@
 import React, {useContext} from "react";
 import FieldWrapper from "./FieldWrapper";
-import {FormContext, FormValue, FormValues} from "../Wrappers/FormTemplate";
-import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
+import {FormContext, FormValue} from "../Wrappers/FormTemplate";
 import {FieldValues} from "react-hook-form";
+import {textIsIntNumber} from "./Misc";
 
 
 type Props = {
     className?: string,
     fieldLabel: string,
     fieldName: string,
+    onChange?: (arg: number) => number,
     maxVal: number,
     setterFunction?: (arg: number) => number,
-    fieldNameToAlsoSet?: string,
     notZero?: boolean,
 }
-
-const re = /^[0-9\b]+$/;
-const textIsIntNumber = (text:string) => re.test(text)
+export const ConvertNumberToString = (value:number) => {
+    if(value%1)
+        return value.toFixed(2)
+    return value.toFixed(0)
+}
 
 function NumberInput(props: Props){
     const formContext = useContext(FormContext)
 
-    const ConvertNumberToString = (value:number) => {
-        if(value%1)
-            return value.toFixed(2)
-        return value.toFixed(0)
+
+    const ParseInput = (value:string) => {
+        let returnVal;
+        if (textIsIntNumber(value)) {
+            returnVal = parseInt(value)
+            return returnVal > props.maxVal ? props.maxVal : returnVal
+        } else {
+            return 0
+        }
     }
-    const render = ({ field }: FieldValues) => (
-            <input className="field-common"
+    const FieldValue = ()=>{
+            const fieldValue = formContext?.getValues(props.fieldName)
+            if(!fieldValue)
+                return ""
+            if(props.setterFunction)
+                return (props.setterFunction(fieldValue))
+            return ConvertNumberToString(parseFloat(fieldValue))
+        }
+    const render = ( {field} : FieldValues) => (
+            <input className="field-common" inputMode="numeric"
                    {...field}
                    disabled={formContext!.readOnly ?? false}
-                   onBlur={
+                   value={FieldValue()}
+                   onChange={
                        (e) => {
-                           if (textIsIntNumber(e.target.value)) {
-                               const value = parseInt(e.target.value)
-                               formContext!.setValue(
-                                   props.fieldName, value > props.maxVal ?
-                                       props.maxVal : ConvertNumberToString(value), readyFieldOptions
-                               )
-
-                               if (props.fieldNameToAlsoSet && props.setterFunction) {
-                                   formContext!.setValue(
-                                       props.fieldNameToAlsoSet,
-                                       props.setterFunction(parseInt(e.target.value)),
-                                       readyFieldOptions
-                                   )
-                               }
-                           }
-                           else {
-                               formContext!.setValue(props.fieldName, "", readyFieldOptions)
-                               if (props.fieldNameToAlsoSet)
-                                   formContext!.setValue(props.fieldNameToAlsoSet, "", readyFieldOptions)
-
-                           }
+                           var value = ParseInput(e.target.value)
+                           value = props.onChange? props.onChange(value) : value
+                           field.onChange(String(value))
                        }
                    }
                    placeholder="0"
@@ -65,13 +63,14 @@ function NumberInput(props: Props){
             required: "Pole nie może być puste",
             validate: (value: FormValue) => {
                 if (props.notZero)
-                    return Number(value) !== 0 || 'Pole nie może mieć wartości 0.';
-            }},
+                    return parseFloat(value) !== 0 || 'Pole nie może mieć wartości 0.';
+            }
+        },
         render: render,
-        defaultValue:""
+        defaultValue: ""
     }
 
-    return ( <FieldWrapper {...fieldProps}/> );
+    return (<FieldWrapper {...fieldProps}/>);
 }
 
 

@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import {Controller, set, UseFormReturn, useWatch} from "react-hook-form";
 import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import {EditCruiseFormValues} from "../CruiseFormPage";
-import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
+import {Time} from "../../FormPage/Inputs/TaskTable/TaskTable";
 import UserSelect, {FormUser} from "../../FormPage/Inputs/UserSelect";
 import {Application} from "../../ApplicationsPage/ApplicationsPage";
 

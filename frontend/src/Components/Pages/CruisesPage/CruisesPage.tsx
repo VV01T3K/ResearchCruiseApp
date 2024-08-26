@@ -7,7 +7,7 @@ import ReactSwitch from 'react-switch';
 import CruisesList from "./CruisesList";
 import {ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
-import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
+import {Time} from "../FormPage/Inputs/TaskTable/TaskTable";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
 

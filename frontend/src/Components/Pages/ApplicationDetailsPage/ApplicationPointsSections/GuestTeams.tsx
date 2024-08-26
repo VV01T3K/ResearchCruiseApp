@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {GuestsTeam} from "../../FormPage/Inputs/GuestTeamsInput/GuestTeamsInput";
+import React from "react";
+import {GuestsTeam} from "../../FormPage/Inputs/GuestTeamsTable/GuestTeamsTable";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 type Props = {

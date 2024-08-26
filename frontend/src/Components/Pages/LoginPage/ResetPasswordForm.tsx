@@ -46,7 +46,7 @@ function ResetPasswordForm(){
                 <EmailTextInput/>
                 <RememberPasswordLink/>
                 <ConfirmButton/>
-                {resetError && <ErrorMessageIfPresent message={resetError}/>}
+                {/*{resetError && <ErrorMessageIfPresent message={resetError}/>}*/}
                 <RegisterLink/>
             </form>
         )

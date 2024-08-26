@@ -1,14 +1,22 @@
-import React, {CSSProperties, useContext, useState} from "react";
+import React, {useContext, useState} from "react";
 import {FormContext} from "./FormTemplate";
 import Select, {CSSObjectWithLabel, GroupBase, OptionsOrGroups, SingleValue} from "react-select";
-import {useFormContext} from "react-hook-form";
+import {FieldValues} from "react-hook-form";
 
-export const readyFieldOptions = { shouldDirty: true, shouldValidate: true, shouldTouch: true }
+export const readyFieldOptions = { shouldDirty: true, shouldValidate: true }
 
-export type SelectSingleValue = SingleValue<{ label: string, value: string }>
+export type SelectSingleValue = SingleValue<{ label: string, value: string }> | SingleValue<{ label: string, value: FieldValues }>
 export type SelectOptions = OptionsOrGroups<SelectSingleValue, GroupBase<SelectSingleValue>> | undefined
 
-export const SelectWrapper = (props:{fieldName:string, value:SelectSingleValue, options:SelectOptions}) => {
+type SelectWrapperProps = {
+    fieldName?:string,
+    options:SelectOptions,
+    placeHolder?:string,
+    className?:string,
+    classNamePrefix?:string,
+    onChange?: (value:SelectSingleValue) => void
+}
+export const SelectWrapper = (props:SelectWrapperProps) => {
     const [inputValue, setInputValue] = useState("")
 
     const commonSelectProps = {
@@ -19,13 +27,14 @@ export const SelectWrapper = (props:{fieldName:string, value:SelectSingleValue, 
 
     const formContext = useContext(FormContext)
     const setSelectedValue = (selectedOption: SelectSingleValue) => {
-        formContext!.setValue( props.fieldName, selectedOption?.value, readyFieldOptions);
+        formContext!.setValue( props.fieldName!, selectedOption?.value, readyFieldOptions);
     }
     return(
-        <Select {...commonSelectProps} placeholder={"Wyszukaj"}  noOptionsMessage={() => "Brak wyników"}
+        <Select {...commonSelectProps} placeholder={props.placeHolder ?? "Wyszukaj"}  noOptionsMessage={() => "Brak wyników"}
                 inputValue={inputValue} onInputChange={(e) => setInputValue(e)}
-                {...props} className={"select"} classNamePrefix={"select"}
-                isDisabled={formContext?.readOnly ?? false} onChange={setSelectedValue}
+                {...props} className={"select " +props.className } classNamePrefix={props.classNamePrefix ?? "select"}
+                isDisabled={formContext?.readOnly ?? false} onChange={props.onChange ?? setSelectedValue}
+                menuPlacement="auto"
         />
     )
 }

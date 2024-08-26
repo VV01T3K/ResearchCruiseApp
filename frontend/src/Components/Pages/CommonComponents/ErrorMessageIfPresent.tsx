@@ -14,7 +14,7 @@ export default function ErrorMessageIfPresent (props: Props) {
 
     return(
             <p className={`m-1 text-center text-danger ${props.className ?? ""}`}>
-                {fieldError?.message as string}
+                {formContext?.readOnly ? "" : fieldError?.message as string}
             </p>
         )
 }

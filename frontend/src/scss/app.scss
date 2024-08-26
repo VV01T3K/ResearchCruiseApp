@@ -171,6 +171,7 @@ $top-bar-min-width: 350px;
   .page-title-common
 }
 .form-title-with-navigation{
+  z-index: 9999;
   @extend
   .page-title-common,
   .d-flex,
@@ -579,12 +580,18 @@ $top-bar-min-width: 350px;
 .three-fields-beside-md{
   @extend
   .col-12,
-  .col-md-4
+  .col-md-4;
+  @media print {
+    width: 33.33% !important;
+  }
 }
 .two-fields-beside-md{
   @extend
   .col-12,
-  .col-md-6
+  .col-md-6;
+  @media print {
+    width: 50% !important;
+  }
 }
 
 .field-wrapper{
@@ -608,6 +615,7 @@ $top-bar-min-width: 350px;
   @extend
   .text-center,
   .rounded,
+  .h-100,
 }
 
 .field-common:focus{
@@ -615,6 +623,7 @@ $top-bar-min-width: 350px;
 }
 
 .field-common:placeholder-shown{
+
   caret-color: transparent !important;
 }
 
@@ -646,12 +655,17 @@ $top-bar-min-width: 350px;
 .select {
   &__input-container {
     justify-content: center !important;
+
   }
 
   &__control {
+    padding: 0 !important;
     @extend .field-common,
+    .w-100,
   }
-
+  &__value-container{
+    padding: 0 !important;
+  }
   // workaround for border when focused
   &__control--is-focused {
     box-shadow: 0 0 0 1px map-get($theme-colors, "primary") !important;
@@ -670,6 +684,7 @@ $top-bar-min-width: 350px;
   &__single-value {
     white-space: pre-wrap !important;
     word-wrap: break-word !important;
+    word-break: break-all !important;
     display: flex;
     align-items: center;
     height: auto;
@@ -683,6 +698,68 @@ $top-bar-min-width: 350px;
     @extend .text-center
   }
 }
+
+// Bootstrap does not support !important
+.select-primary {
+  &__input-container {
+    justify-content: center !important;
+  }
+
+  &__control {
+    padding: 0 !important;
+    @extend .field-common,
+    .w-100,
+    .bg-primary,
+    .text-white
+  }
+  &__placeholder{
+    @extend
+    .text-white
+  }
+  &__value-container{
+    padding: 0 !important;
+  }
+  // workaround for border when focused
+  &__control--is-focused {
+    box-shadow: 0 0 0 1px map-get($theme-colors, "primary") !important;
+  }
+
+  &__option.select__option--is-selected {
+    background-color: map-get($theme-colors, "primary");
+    color: white;
+  }
+
+  &__option {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  &__input-container{
+    @extend
+    .text-white
+  }
+
+  &__single-value {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    display: flex;
+    align-items: center;
+    height: auto;
+    text-align: center;
+    justify-content: center;
+    @extend
+    .text-white
+  }
+
+  &__menu {
+    border: solid 2px map-get($theme-colors, "primary") !important;
+    font-size: 0.8rem;
+    @extend .text-center
+  }
+}
+
+
+
 // workaround for select menu z position
 body > [class^="select"] {
   white-space: pre-wrap;  // Ensure selected value text wraps
@@ -691,7 +768,7 @@ body > [class^="select"] {
   height: auto;
   text-align:center;
   font-size: 1rem;
-  z-index: 9999;
+  z-index: 9998;
   @extend
   .text-center
 }
@@ -744,7 +821,6 @@ body > [class^="select"] {
     border: solid 2px map-get($theme-colors, "primary");
     border-radius: 50%;
     cursor: pointer;
-    cursor: -webkit-grab;
     cursor: grab;
     opacity: 1;
     touch-action: pan-x;
@@ -775,7 +851,6 @@ body > [class^="select"] {
 
     &:active {
       border-color: map-get($theme-colors, "primary");
-      cursor: -webkit-grabbing;
       cursor: grabbing;
     }
   }
@@ -842,7 +917,142 @@ body > [class^="select"] {
   }
 }
 
+.table-field{
+  &-header{
+    @extend
+    .d-flex,
+    .flex-row,
+    .align-items-center,
+    .text-white,
+    .text-center,
+    .bg-primary
+  }
+  &-column{
+    &-title{
+      @extend
+      .text-center,
+      .d-block,
+      .d-md-none,
+      .p-2,
+      .col-12
+    }
+    &-title-md{
+      @extend
+      .text-center,
+      .d-none,
+      .d-md-block,
+      .p-2,
+      .border-end,
+      .border-white
+    }
+  }
+  &-no-content{
+    @extend
+    .bg-light,
+    .p-2,
+    .border,
+    .text-center
+  }
+  &-bottom-menu{
+    @extend
+    .d-flex,
+    .flex-row,
+    .flex-wrap,
+    .justify-content-center,
+    .w-100;
+    &-readonly{
+      @extend
+      .d-none
+    }
+  }
+  &-bottom-menu-button{
+    @extend
+    .d-flex,
+    .p-1
+  }
+  &-row-column{
+    @extend
+    .justify-content-center,
+    .align-items-center,
+    .d-flex,
+    .p-2,
+    .text-center,
+    .border-end
+  }
+  &-row{
+    @extend
+    .d-flex,
+    .flex-wrap,
+    .border
+  }
+  &-even-row{
+    @extend
+    .table-field-row,
+    .bg-white
+  }
+  &-odd-row{
+    @extend
+    .table-field-row,
+    .bg-light
+  }
+  &-input-label{
+    @extend
+    .d-flex,
+    .d-md-none,
+    .justify-content-center
+  }
+}
 
+.task-field-multiple-fields{
+  @extend
+  .d-flex,
+  .flex-column,
+  .p-1,
+}
+
+.task-field-input{
+  @extend
+ .task-field-multiple-fields,
+  .col-12
+}
+
+.react-datepicker-popper {
+  z-index: 9998 !important;
+}
+
+.remove-file-button{
+  cursor: pointer;
+  @extend
+  .col-12,
+  .mt-1,
+  .text-decoration-none,
+  .text-danger
+}
+.file-icon{
+  width: 70px;
+  height: 70px;
+  color:black;
+ @extend
+ .w-100,
+ .p-1,
+ .d-flex
+}
+.file-picker-field{
+  @extend
+  .d-flex,
+  .flex-wrap,
+  .justify-content-center,
+  .text-break
+}
+.file-icon-label{
+  cursor: pointer;
+  text-decoration:none;
+  @extend
+  .w-100,
+  .d-flex,
+  .justify-content-center,
+  .align-items-center,
+}
 @media (min-width: 318px) {
   .tiles-container {
     width: 300px;

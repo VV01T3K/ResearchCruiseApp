@@ -13,6 +13,9 @@ const UserDataManager = () => {
     const { dispatchEvent:logoutDispatcher, addEventListener:logoutListener } = useCustomEvent('logoutSuccessful');
     const { addEventListener:loginListener, dispatchEvent:loginDispatcher } = useCustomEvent('loginSuccessful');
 
+    useEffect(() => {
+        (GetUserData)()
+    }, []);
     useEffect(
         () => {
             const unsubscribeLogin = loginListener(GetUserData);

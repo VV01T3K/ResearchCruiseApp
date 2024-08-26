@@ -5,9 +5,33 @@ import pl from "date-fns/locale/pl";
 registerLocale("pl", pl);
 import 'react-dropdown/style.css';
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
-import {Time, TaskValues, taskFieldsOptions} from "../../FormPage/Inputs/TaskInput/TaskInput";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
+export type TaskValues =
+    { author: string, title: string } |
+    { title: string, institution: string, date: string} |
+    { title: string, time: Time, financingAmount: number } |
+    { description: string }
+
+export type Time = {
+    start: string,
+    end: string
+}
+
+export const taskFieldsOptions= {
+    'Praca licencjacka': ["Autor", "Tytuł" ],
+    'Praca magisterska': ["Autor", "Tytuł" ],
+    'Praca doktorska': ["Autor", "Tytuł" ],
+    "Przygotowanie projektu naukowego": ["Tytuł", "Instytucja, do której składany", "Przewidywany termin składania"],
+    "Realizacja projektu krajowego (NCN, NCBiR, itp.)": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+    "Realizacja projektu zagranicznego (ERC, Programy ramowe UE, fundusze norweskie, itp)": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+    "Realizacja projektu wewnętrznego UG": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+    "Realizacja innego projektu naukowego":["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+    "Realizacja projektu komercyjnego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+    "Dydaktyka": ["Opis zajęcia dydaktycznego"],
+    "Realizacja własnego zadania badawczego": ["Tytuł", "Ramy czasowe", "Kwota finansowania"],
+    "Inne zadanie": ["Opis zadania"]
+}
 
 
 type EvaluatedTask = {

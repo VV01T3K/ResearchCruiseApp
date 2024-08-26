@@ -1,125 +1,56 @@
-import {
-    Controller,
-    UseFormReturn,
-} from "react-hook-form";
-import React, {useRef, useState} from "react";
-import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
-import Map from '../../../../resources/GraniceSamorzadow.jpg'
-import FieldWrapper from "./FieldWrapper";import Select from "react-select";
-import {FormValues} from "../Wrappers/FormTemplate";
+import {FieldValues} from "react-hook-form";
+import React from "react";
+import FieldWrapper from "./FieldWrapper";
+import {SelectWrapper} from "../Wrappers/ReactSelectWrapper";
+import {FormField} from "./FormYearSelect";
+import {ResearchArea} from "../Forms/FormB";
 
-export type ResearchArea = {
-    name: string,
-    x: number[],
-    y: number[]
+export type FormUser = {
+    id: string,
+    email: string,
+    firstName: string,
+    lastName: string
 }
 
-type Props = {
-    className?: string,
-    label: string,
-    name: keyof FormValues,
-    required?: boolean,
-    regions?: ResearchArea[],
-    form?: UseFormReturn<FormValues>,
-    readonly?: boolean
+type Props = FormField & {
+    initValues?: ResearchArea[]
 }
 
 
-function ClickableMap(props: Props) {
-    const [clickPosition, setClickPosition] =
-        useState({ x: 0, y: 0 });
-    const imageRef = useRef(null);
-
-
-    const handleClick = (e) => {
-        const boundingRect = imageRef.current.getBoundingClientRect();
-        const offsetX = e.clientX - boundingRect.left;
-        const offsetY = e.clientY - boundingRect.top;
-
-        regions?.forEach((region, index)=> {
-            if (isInside({ x: offsetX, y: offsetY }, region.X, region.Y))
-                props.form.setValue(props.name, index, { shouldDirty: true, shouldTouch:true });
-            // setClickPosition({ x: offsetX, y: offsetY });
-        })
+function ResearchAreaSelect(props: Props) {
+    function findLabel(field: FieldValues){
+        const item = props.initValues?.find(item => item.id === field.value)
+        if(item)
+            return item.name
+        return ""
     }
 
-    const isInside = (point: { x: any; y: any; }, xArr, yArr) => {
-        const x = point.x;
-        const y = point.y;
+    const optionsMapper = props.initValues?.map(
+        (value,_) => (
+            {
+                label: value.name,
+                value: value.id
+            }
+        ))
 
-        let inside = false;
-        for (let i = 0, j = xArr.length - 1; i < xArr.length; j = i++) {
-            const xi = xArr[i];
-            const yi = yArr[i];
-            const xj = xArr[j];
-            const yj = yArr[j];
+    const render = ({field}:FieldValues) => {
+        const currentValue = field.value ? { label: findLabel(field), value: field.value}: null
 
-            const intersect =
-                yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+        return(
+            <SelectWrapper fieldName={props.fieldName} value={currentValue} options={optionsMapper}/>
+        )
+    }
 
-            if (intersect)
-                inside = !inside;
-        }
-
-        return inside;
-    };
-
-    // console.log()
+    const fieldProps = {
+        ...props,
+        rules: {required: 'Wybierz obszar'},
+        render: render
+    }
 
     return (
-        <FieldWrapper {...props}>
-            <Controller
-                //defaultValue={""}
-                render={({ field}) =>
-                    <div className="d-flex flex-column">
-                        <Select
-                            minMenuHeight={300}
-                            // className={"text-white"}
-                            isDisabled={props.readonly ?? false}
-                            menuPlacement="auto"
-                            styles={{
-                                menu: provided => ({
-                                    ...provided,
-                                    zIndex: 9999
-                                })
-                            }}
-                            placeholder={"Wybierz"}
-                            value={{
-                                label: ((props.regions && typeof(field.value) === 'number') ? props.regions[field.value].name : ""),
-                                value: field.value
-                            }}
-                            options={props.regions?.map((value, index) => ({
-                                label: value.name,
-                                value: index
-                            }))}
-                            // closeMenuOnScroll={() => true}
-                            onChange={(selectedOption) => {
-                                props.form?.setValue(
-                                    props.name,
-                                    selectedOption?.value,
-                                    { shouldDirty: true, shouldTouch:true }
-                                );
-                            }}
-                        />
-                        <img ref={imageRef}
-                             className="shadow m-2 bg-white rounded w-100"
-                             draggable={false}
-                             style={{cursor: "pointer"}}
-                             src={Map}
-                             alt="Obszary"
-                             onClick={props.readonly ? ()=>null : handleClick}
-                        />
-                    </div>
-                }
-                name={props.name}
-                control={props.form?.control}
-                rules={{
-                    required: "Wybierz obszar"
-                }}
-            />
-        </FieldWrapper>
+        <FieldWrapper {...fieldProps}/>
     )
 }
 
 
-export default ClickableMap
+export default ResearchAreaSelect

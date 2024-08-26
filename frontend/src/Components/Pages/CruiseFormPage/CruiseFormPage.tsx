@@ -7,15 +7,14 @@ import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation, useNavigate} from "react-router-dom";
 import CruiseBasicInfo from "./CruiseFormSections/CruiseBasicInfo";
 import CruiseDate from "./CruiseFormSections/CruiseDate";
-import {FieldValues, useForm, UseFormReturn} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import CruiseApplications from "./CruiseFormSections/CruiseApplications";
-import {Application, ApplicationShortInfo} from "../ApplicationsPage/ApplicationsPage";
+import {Application} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
-import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
+import {Time} from "../FormPage/Inputs/TaskTable/TaskTable";
 import {fetchApplications} from "../../Tools/Fetchers";
 import CruiseManagers from "./CruiseFormSections/CruiseManagers";
 import {Simulate} from "react-dom/test-utils";
-import reset = Simulate.reset;
 import useCustomEvent from "../../Tools/useCustomEvent";
 
 

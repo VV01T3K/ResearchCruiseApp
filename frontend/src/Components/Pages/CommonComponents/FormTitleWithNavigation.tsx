@@ -14,9 +14,13 @@ function FormTitleWithNavigation(){
     const FormTitle = () => ( <div className={"form-page-title"}>Formularz {formContext?.type}</div> )
 
     const showRequiredSections = !formContext?.readOnly
+
+    const isValidSection = (section:FormSectionType) => Object.values(section.sectionFieldNames)
+        .some((fieldName)=>formContext?.formState.errors[fieldName])
+
     const SectionLink = (props:{section:FormSectionType, index:number} ) => (
         <div className={"form-page-navigation-button"} onClick={() => scrollSmoothTo(props.section.id)}>
-            {props.index + 1 + ". "}{props.section.shortTitle}{showRequiredSections && (props.section ? "" : "*")}
+            {props.index + 1 + ". "}{props.section.shortTitle}{showRequiredSections && (!isValidSection(props.section) ? "" : "*")}
         </div>
     )
 

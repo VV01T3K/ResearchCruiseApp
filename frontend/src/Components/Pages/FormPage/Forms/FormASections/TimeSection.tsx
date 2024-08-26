@@ -3,18 +3,27 @@ import NumberInput from "../../Inputs/NumberInput";
 import TextArea from "../../Inputs/TextArea";
 import FormRadio from "../../Inputs/FormRadio";
 import FormSection, {SectionProps} from "../../Wrappers/FormSection";
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
     FormSectionType,
     SectionIdFromTitle
 } from "../../Wrappers/FormASections";
 import {FormContext} from "../../Wrappers/FormTemplate";
-import {useFormContext} from "react-hook-form";
+
+const timeSectionFieldNames = {
+    acceptablePeriod:"acceptablePeriod",
+    optimalPeriod:"optimalPeriod",
+    cruiseHours:"cruiseHours",
+    periodNotes:"periodNotes",
+    shipUsage:"shipUsage",
+    differentUsage:"differentUsage"
+
+}
 
 const AcceptablePeriodField = () => {
     return(
         <MonthSlider className="two-fields-beside-md"  // p-4 pb-0 pt-2"
-                     fieldName="acceptablePeriod"
+                     fieldName={timeSectionFieldNames.acceptablePeriod}
                      fieldNameToAlsoSet="optimalPeriod"
                      fieldLabel="Rok rejsu"
         />
@@ -25,38 +34,37 @@ const OptimalPeriodField = () => {
     const formContext = useContext(FormContext)
     return(
         <MonthSlider className="two-fields-beside-md"
-                     fieldName="optimalPeriod"
-                     range={formContext!.getValues("acceptablePeriod")}
+                     fieldName={timeSectionFieldNames.optimalPeriod}
+                     range={formContext!.getValues(timeSectionFieldNames.acceptablePeriod)}
                      fieldLabel="Optymalny okres, w którym miałby się odbywać rejs"
         />
     )
 }
 
-const CruiseDaysField = () => (
-    <NumberInput className="two-fields-beside-md"
-                 fieldName="cruiseDays"
+const CruiseDaysField = () => {
+    return (<NumberInput className="two-fields-beside-md"
+                 fieldName={timeSectionFieldNames.cruiseHours}
                  fieldLabel="Liczba planowanych dób rejsowych"
-                 fieldNameToAlsoSet="cruiseHours"
                  notZero
-                 setterFunction={(e) => 24 * e}
-                 maxVal={24}/>
-)
+                 maxVal={24}/>)
+}
 
-const CruiseHoursField = () => (
-    <NumberInput className="two-fields-beside-md"
+const CruiseHoursField = () => {
+    return(<NumberInput className="two-fields-beside-md"
                  notZero
-                 fieldName="cruiseHours"
+                 fieldName={timeSectionFieldNames.cruiseHours}
                  fieldLabel="Liczba planowanych godzin rejsowych"
-                 fieldNameToAlsoSet="cruiseDays"
-                 setterFunction={(e) => Number((e/24).toFixed(2))}
+                 setterFunction={(e) => e*24}
+                 onChange={(e)=>e/24}
                  maxVal={99}
     />
 )
+}
 
 const PeriodNotesField = () => (
     <TextArea className="single-field"
               fieldLabel="Uwagi dotyczące teminu"
-              fieldName="periodNotes"
+              fieldName={timeSectionFieldNames.periodNotes}
               maxLength={200}
     />
 )
@@ -66,7 +74,7 @@ const ShipUsageField = () => {
     return (
         <FormRadio className="two-fields-beside-md"
                    fieldLabel="Statek na potrzeby badań będzie wykorzystywany:"
-                   fieldName="shipUsage"
+                   fieldName={timeSectionFieldNames.shipUsage}
                    initValues={formContext!.initValues?.shipUsages}
         />
     )
@@ -74,19 +82,28 @@ const ShipUsageField = () => {
 
 const DifferentShipUsageField = () => {
     const formContext = useContext(FormContext)
-    const lastFieldInShipUsageSelected = true
-        formContext!.initValues && formContext!.initValues?.shipUsages.length > 0 &&
-        formContext!.getValues("shipUsage") == formContext!.initValues?.shipUsages?.length - 1
+
+    const [disabled, setDisabled] = useState(false)
+
+    useEffect(() => {
+        const lastFieldInShipUsageSelected = formContext!.initValues && formContext!.initValues?.shipUsages.length > 0 &&
+            formContext!.getValues("shipUsage") == formContext!.initValues?.shipUsages?.length - 1
+        if(!disabled && !lastFieldInShipUsageSelected) {
+            setDisabled(true)
+            if(formContext?.getValues(timeSectionFieldNames.differentUsage))formContext?.resetField(timeSectionFieldNames.differentUsage)
+            if(formContext?.formState?.errors[timeSectionFieldNames.differentUsage])formContext!.clearErrors(timeSectionFieldNames.differentUsage)
+        }
+        else if(disabled && lastFieldInShipUsageSelected)
+            setDisabled(false)
+    }, []);
+
     return(
-        <>
-            {lastFieldInShipUsageSelected &&
-                <TextArea className="two-fields-beside-md"
-                          fieldLabel="Inny sposób użycia"
-                          fieldName="differentUsage"
-                          required="Podaj sposób użycia"
-                />
-            }
-        </>
+            <TextArea className="two-fields-beside-md"
+                      fieldLabel="Inny sposób użycia"
+                      fieldName={timeSectionFieldNames.differentUsage}
+                      disabled = {disabled}
+                      required={!disabled && "Podaj sposób użycia"}
+            />
     )
 }
 
@@ -107,5 +124,5 @@ export const TimeSection = ():FormSectionType => {
             <DifferentShipUsageField/>
         </FormSection>
     )
-    return {Content, id, shortTitle, longTitle}
+    return {Content, id, shortTitle, longTitle, sectionFieldNames:timeSectionFieldNames}
 }

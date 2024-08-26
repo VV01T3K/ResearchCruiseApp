@@ -1,8 +1,7 @@
-import {FieldValues, useFormContext} from "react-hook-form";
-import React, {useContext, useEffect, useRef} from "react";
+import {FieldValues} from "react-hook-form";
+import React, {useContext} from "react";
 import FieldWrapper from "./FieldWrapper";
-import {FormContext, FormValues} from "../Wrappers/FormTemplate";
-import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
+import {FormContext} from "../Wrappers/FormTemplate";
 import TextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
@@ -12,26 +11,28 @@ type Props = {
     required?: any,
     maxLength?: number,
     resize?: string,
+    disabled?:boolean
 }
 
 function TextArea(props: Props) {
     const formContext = useContext(FormContext)
 
-    const onBlur = (e: { target: { value: string; }; }) => {
-        var value = e.target.value
-        if (props.maxLength && value.length > props.maxLength) {
-            value = value.slice(0,props.maxLength)
-        }
-        formContext!.setValue(props.fieldName, value, readyFieldOptions)
-    }
+    // const onChange = (e: { target: { value: string; }; }) => {
+    //     var value = e.target.value
+    //     if (props.maxLength && value.length > props.maxLength) {
+    //         value = value.slice(0,props.maxLength)
+    //     }
+    //
+    //     // formContext!.setValue(props.fieldName, value, readyFieldOptions)
+    // }
 
     const render = ({ field }:FieldValues) => (
             <TextareaAutosize
                 className={"field-common h-100"}
                 {...field}
-                disabled={formContext!.readOnly ?? false}
+                disabled={formContext!.readOnly ?? props.disabled}
                 value={field.value?.toString()}
-                onBlur={onBlur}
+                // onBlur={onChange}
                 placeholder={"Wpisz uwagi"}
             />)
 
@@ -45,7 +46,8 @@ function TextArea(props: Props) {
                 message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`,
         },
         },
-        defaultValue:""
+        defaultValue:"",
+
     }
 
     return (

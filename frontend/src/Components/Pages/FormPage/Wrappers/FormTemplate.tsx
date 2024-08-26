@@ -1,12 +1,11 @@
-import React, {createContext, ReactElement, useEffect} from 'react';
+import React, {createContext, ReactElement} from 'react';
 import Page from "../../Page";
 import {FormAValue, FormAFields} from "../Forms/FormA";
-import {FormProvider, useForm, UseFormReturn} from "react-hook-form";
+import {useForm, UseFormReturn} from "react-hook-form";
 import FormTitleWithNavigation from "../../CommonComponents/FormTitleWithNavigation";
 import {FormSectionType} from "./FormASections";
 import {BottomOptionBar} from "../../../Tools/FormBottomOptionBar";
 import {FormAInitValues} from "../FormTypes";
-import FormSection from "./FormSection";
 
 
 export type FormValues =
@@ -41,50 +40,42 @@ export type ExtendedUseFormReturn = UseFormReturn & {
 
 
 export const FormContext = createContext<ExtendedUseFormReturn | null>(null)
+export const ReadOnlyContext = createContext<boolean>(false)
+const FormSections = (props:{sections:FormSectionType[]}) => (
+    <div className="form-page-content" id={"form"}>
+        {props.sections.map((section:FormSectionType, index) =>
+            <section.Content key={index} index={index + 1}/>)}
+    </div>
+)
 
 function FormTemplate(props: Props) {
-    const form = {...useForm({
+    const form = useForm({
         mode: 'onBlur',
         // defaultValues: defaultValues,
-        shouldUnregister: false
-    }), type:props.type, readOnly:props.readOnly, sections:props.sections, initValues:props.initValues };
-
-
-
-    // useEffect(() => {
-    //     if (props.loadValues) {
-    //         Object
-    //             .entries(props.loadValues)
-    //             .forEach(([key, value]: [string, FormValue]) => {
-    //                 props.form.setValue(
-    //                     key,
-    //                     value,
-    //                     {
-    //                         shouldDirty: true,
-    //                         shouldValidate: true,
-    //                         shouldTouch: true
-    //                     }
-    //                 )
-    //             })
-    //     }
-    // },[props.loadValues])
-
-
-    const FormSections = () => (
-        <div className="form-page-content">
-            {props.sections.map((section:FormSectionType, index) =>
-                <section.Content key={index} index={index + 1}/>)}
-        </div>
-    )
-
+        shouldUnregister: false,
+        reValidateMode:"onBlur"
+    })
+    const formContext = {
+        resetField:form.resetField,
+        clearErrors:form.clearErrors,
+        trigger:form.trigger,
+        formState:form.formState,
+        handleSubmit:form.handleSubmit,
+        getValues:form.getValues,
+        control:form.control,
+        setValue:form.setValue,
+        type:props.type, readOnly:props.readOnly, sections:props.sections, initValues:props.initValues };
 
     return (
         <Page className="form-page">
-            <FormContext.Provider value={form}>
-                <FormTitleWithNavigation/>
-               <FormSections/>
-                <BottomOptionBar/>
+            <FormContext.Provider value={formContext}>
+                <ReadOnlyContext.Provider value={formContext.readOnly}>
+                    <FormTitleWithNavigation/>
+                   <FormSections sections={props.sections}/>
+                    <BottomOptionBar/>
+                </ReadOnlyContext.Provider>
             </FormContext.Provider>
+
         </Page>
     )
 }

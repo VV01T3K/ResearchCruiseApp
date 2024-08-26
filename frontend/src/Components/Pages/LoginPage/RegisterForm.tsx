@@ -87,7 +87,7 @@ function RegisterForm(){
                         <PasswordTextInput/>
                         <ConfirmPasswordTextInput/>
                         <ConfirmButton/>
-                        {registerError && <ErrorMessageIfPresent message={registerError}/>}
+                        {/*{registerError && <ErrorMessageIfPresent message={registerError}/>}*/}
                         <LoginLink/>
                     </>
                 }

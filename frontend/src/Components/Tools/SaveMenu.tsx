@@ -6,12 +6,16 @@ import {ExtendedUseFormReturn, FormContext} from "../Pages/FormPage/Wrappers/For
 
 
 const formDownloadProps = (formContext:ExtendedUseFormReturn) => {
+    console.log(formContext)
     return {download: fileName(formContext?.type!), href: handleDownload(formContext?.getValues()!)}
 }
 
-export const DownloadButtonDefault = () => (
-    <a {...formDownloadProps} className="form-page-option-button-default"> Pobierz </a>
-)
+export const DownloadButtonDefault = () => {
+    const formContext = useContext(FormContext)
+    return(
+    <a {...formDownloadProps(formContext!)} className="form-page-option-button-default"> Pobierz </a>
+    )
+}
 
 export function SaveMenu(){
     const [savingStated, setSavingStarted] = useState(false)

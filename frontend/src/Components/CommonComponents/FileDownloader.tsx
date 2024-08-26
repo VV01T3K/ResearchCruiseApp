@@ -1,41 +1,28 @@
-import file_icon from "../../resources/file_icon.png";
 import React from "react";
-import ReadOnlyTextInput from "./ReadOnlyTextInput";
-import Style from "./FileIcon.module.css";
+import {CellTools} from "../Pages/FormPage/Inputs/TableParts";
+import {FileNameField} from "../Pages/FormPage/Inputs/ContractsTable/FilePicker";
+import {ReactComponent as FileIcon}  from "/node_modules/bootstrap-icons/icons/file-earmark-text.svg";
 
 
-type Props = {
-    fileName: string,
-    fileContent: string,
-    bg: string
-}
-
-
-export default function FileDownloader(props: Props) {
-    return (
+export default function FileDownloader() {
+    const {cellValue, cellId} = CellTools()
+    const FileField = () => (
         <>
-        <div className="d-flex flex-wrap justify-content-center text-break">
-            <a
-                className={`w-100 ${props.bg} d-flex justify-content-center pb-1`}
-                style={{
-                    cursor: "pointer"
-                }}
-                href={props.fileContent}
-                download={props.fileName}
-            >
-                <img
-                    src={file_icon}
-                    height="45px"
-                    width="45px"
-                    className={"rounded-2 p-1 d-flex" + props.bg == 'bg-light' ? Style.img: Style.imgDark}
-                    alt="File picker icon"
-                />
+            { cellValue.content &&
+            <a className={"file-icon-label"} href={cellValue.content} type={"file"} download={cellValue.name} id={cellId} hidden>
+                <FileIcon className={"file-icon"}/>
             </a>
-            <ReadOnlyTextInput
-                value={props.fileName}
-                className="bg-light"
-            />
-        </div>
+            }
+            {!cellValue.content &&
+                <FileIcon className={"file-icon"}/>
+            }
         </>
+    )
+
+    return (
+        <div className="file-picker-field">
+            <FileField/>
+            <FileNameField/>
+        </div>
     )
 }

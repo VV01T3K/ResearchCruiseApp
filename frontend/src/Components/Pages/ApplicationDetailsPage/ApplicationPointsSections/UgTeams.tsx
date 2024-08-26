@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import  {UgTeam} from "../../FormPage/Inputs/UgTeamsInput/UgTeamsInput";
+import React from "react";
+import  {UgTeam} from "../../FormPage/Inputs/UgTeamsTable/UgTeamsTable";
 
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
