@@ -3,15 +3,15 @@ using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.SharedServices.CruiseApplicationDtos;
+namespace ResearchCruiseApp_API.Application.SharedServices.Factories.CruiseApplicationDtos;
 
 
-internal class CruiseApplicationDtosService(
+internal class CruiseApplicationDtosFactory(
     IMapper mapper,
     IIdentityService identityService)
-    : ICruiseApplicationDtosService
+    : ICruiseApplicationDtosFactory
 {
-    public async Task<CruiseApplicationDto> CreateCruiseApplicationDto(CruiseApplication cruiseApplication)
+    public async Task<CruiseApplicationDto> Create(CruiseApplication cruiseApplication)
     {
         // Managers data is not auto-mapped
         var cruiseApplicationDto = mapper.Map<CruiseApplicationDto>(cruiseApplication);

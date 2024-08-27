@@ -1,10 +1,15 @@
 ﻿using System.Reflection;
 using FluentValidation;
-using ResearchCruiseApp_API.Application.SharedServices.CruiseApplicationDtos;
 using ResearchCruiseApp_API.Application.SharedServices.CruiseApplications;
 using ResearchCruiseApp_API.Application.SharedServices.Cruises;
 using ResearchCruiseApp_API.Application.SharedServices.Factories.ContractDtos;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.Contracts;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.CruiseApplicationDtos;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.CruiseApplications;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.CruiseDtos;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.Cruises;
 using ResearchCruiseApp_API.Application.SharedServices.Factories.FormADtos;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.FormsA;
 using ResearchCruiseApp_API.Application.SharedServices.UserPermissionVerifier;
 
 namespace ResearchCruiseApp_API.Application;
@@ -25,7 +30,6 @@ public static class DependencyInjection
         services
             .AddScoped<ICruisesService, CruisesService>()
             .AddScoped<ICruiseApplicationsService, CruiseApplicationsService>()
-            .AddScoped<ICruiseApplicationDtosService, CruiseApplicationDtosService>()
             .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
     }
 
@@ -33,7 +37,13 @@ public static class DependencyInjection
     private static void AddFactories(this IServiceCollection services)
     {
         services
+            .AddScoped<IFormsAFactory, FormsAFactory>()
             .AddScoped<IFormADtosFactory, FormADtosFactory>()
-            .AddScoped<IContractDtosFactory, ContractDtosFactory>();
+            .AddScoped<IContractsFactory, ContractsFactory>()
+            .AddScoped<IContractDtosFactory, ContractDtosFactory>()
+            .AddScoped<ICruiseApplicationsFactory, CruiseApplicationsFactory>()
+            .AddScoped<ICruiseApplicationDtosFactory, CruiseApplicationDtosFactory>()
+            .AddScoped<ICruisesFactory, CruisesFactory>()
+            .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>();
     }
 }
