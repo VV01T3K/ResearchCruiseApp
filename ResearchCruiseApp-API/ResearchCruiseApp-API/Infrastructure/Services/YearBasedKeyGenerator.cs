@@ -5,7 +5,7 @@ using ResearchCruiseApp_API.Domain.Common.Interfaces;
 namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 
-public class YearBasedKeyGenerator : IYearBasedKeyGenerator
+internal class YearBasedKeyGenerator : IYearBasedKeyGenerator
 {
     public async Task<string> GenerateKey<T>(IRepository<T> repository, CancellationToken cancellationToken)
         where T : IYearBasedNumberedEntity

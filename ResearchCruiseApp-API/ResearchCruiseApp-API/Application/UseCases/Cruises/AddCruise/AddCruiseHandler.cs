@@ -43,7 +43,7 @@ public class AddCruiseHandler(
         // New cruise cruiseApplications team are not auto-mapped
         var newCruise = mapper.Map<Cruise>(cruiseFormDto);
         var newCruiseApplications = await cruiseApplicationsRepository
-            .GetCruiseApplicationsByIds(cruiseFormDto.CruiseApplicationsIds, cancellationToken);
+            .GetManyByIds(cruiseFormDto.CruiseApplicationsIds, cancellationToken);
         
         newCruise.CruiseApplications = newCruiseApplications;
         

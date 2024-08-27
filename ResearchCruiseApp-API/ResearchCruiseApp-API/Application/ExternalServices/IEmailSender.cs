@@ -9,4 +9,6 @@ public interface IEmailSender
     public Task SendAccountAcceptedMessage(UserDto userDto);
     public Task SendPasswordResetLink(UserDto userDto, string email, string resetLink);
     public Task SendPasswordResetCode(UserDto userDto, string email, string resetCode);
+    Task SendRequestToSupervisorMessage(
+        Guid cruiseApplicationId, string supervisorCode, UserDto cruiseManager, string supervisorEmail);
 }

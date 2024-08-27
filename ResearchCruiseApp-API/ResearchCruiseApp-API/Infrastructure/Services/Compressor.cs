@@ -1,10 +1,11 @@
 using System.IO.Compression;
 using System.Text;
+using ResearchCruiseApp_API.Application.ExternalServices;
 
-namespace ResearchCruiseApp_API.Application.SharedServices.Compressor;
+namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 
-public class Compressor : ICompressor
+internal class Compressor : ICompressor
 {
     public async Task<byte[]> Compress(string input)
     {

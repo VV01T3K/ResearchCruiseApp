@@ -21,6 +21,7 @@ public class IdentityService(
     UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager,
     IEmailSender emailSender,
+    IRandomGenerator randomGenerator,
     ICurrentUserService currentUserService,
     IMapper mapper,
     IConfiguration configuration)
@@ -300,7 +301,7 @@ public class IdentityService(
             error.Code == nameof(IdentityErrorDescriber.ConcurrencyFailure));
 
         if (concurrencyError is not null)
-            return Error.Conflict("Wykonano wiele żądań w zbyt krótkim odstępie czasowym");
+            return Error.Conflict("Wykonano wiele żądań w zbyt krótkim odstępie czasowym.");
         if (!identityResult.Succeeded)
             return Error.InternalServerError();
 
@@ -357,16 +358,10 @@ public class IdentityService(
         return token;
     }
     
-    private static string CreateRefreshToken()
+    private string CreateRefreshToken()
     {
-        var randomNumber = new byte[512];
-
-        using (var numberGenerator = RandomNumberGenerator.Create())
-        {
-            numberGenerator.GetBytes(randomNumber);
-        }
-
-        return Convert.ToBase64String(randomNumber);
+        return Convert.ToBase64String(
+            randomGenerator.CreateSecureCodeBytes());
     }
 
     private Result<string> GetUserIdFromAccessToken(string accessToken)

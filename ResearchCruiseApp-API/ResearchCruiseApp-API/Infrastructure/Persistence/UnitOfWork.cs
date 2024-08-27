@@ -13,9 +13,7 @@ internal class UnitOfWork(ApplicationDbContext applicationDbContext) : IUnitOfWo
     }
 
     public async Task ExecuteIsolated(
-        Func<Task> action,
-        IsolationLevel isolationLevel,
-        CancellationToken cancellationToken)
+        Func<Task> action, IsolationLevel isolationLevel, CancellationToken cancellationToken)
     {
         await using var transaction =
             await applicationDbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
@@ -23,6 +21,24 @@ internal class UnitOfWork(ApplicationDbContext applicationDbContext) : IUnitOfWo
         {
             await action();
             await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+
+    public async Task<TResult> ExecuteIsolated<TResult>(
+        Func<Task<TResult>> action, IsolationLevel isolationLevel, CancellationToken cancellationToken)
+    {
+        await using var transaction =
+            await applicationDbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+        try
+        {
+            var result = await action();
+            await transaction.CommitAsync(cancellationToken);
+            return result;
         }
         catch (Exception)
         {

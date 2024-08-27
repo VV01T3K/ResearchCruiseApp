@@ -5,6 +5,9 @@ namespace ResearchCruiseApp_API.Domain.Common.Enums;
 
 public enum CruiseApplicationStatus
 {
+    [StringValue("Oczekujące na przełożonego")]
+    WaitingForSupervisor,
+    
     [StringValue("Nowe")]
     New,
         

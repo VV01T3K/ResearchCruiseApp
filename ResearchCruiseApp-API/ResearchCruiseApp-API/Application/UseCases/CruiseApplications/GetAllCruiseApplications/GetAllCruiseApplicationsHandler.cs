@@ -21,7 +21,7 @@ public class GetAllCruiseApplicationsHandler(
         CancellationToken cancellationToken)
     {
         var cruiseApplications =
-            await cruiseApplicationsRepository.GetAllCruiseApplications(cancellationToken);
+            await cruiseApplicationsRepository.GetAll(cancellationToken);
             
         var cruiseApplicationDtos = new List<CruiseApplicationDto>();
         foreach (var cruiseApplication in cruiseApplications)
