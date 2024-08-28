@@ -9,15 +9,13 @@ using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 
-public class EmailSender(
+internal class EmailSender(
     IConfiguration configuration,
     ITemplateFileReader templateFileReader) : IEmailSender
 {
     public async Task SendEmailConfirmationEmail(UserDto userDto, string roleName, string emailConfirmationCode)
     {
-        var protocol = configuration.GetSection("ProtocolUsed").Value;
-        var frontendUrl = configuration.GetSection("FrontendUrl").Value;
-        var link = $"{protocol}://{frontendUrl}/confirmEmail?userId={userDto.Id}&code={emailConfirmationCode}";
+        var link = GetFrontEndUrl() + $"/confirmEmail?userId={userDto.Id}&code={emailConfirmationCode}";
         
         var messageTemplate = await templateFileReader.ReadEmailConfirmationMessageTemplate();
         var emailSubject = await templateFileReader.ReadEmailConfirmationEmailSubject();
@@ -44,7 +42,7 @@ public class EmailSender(
             .Replace("{{firstName}}", userDto.FirstName)
             .Replace("{{lastName}}", userDto.LastName);
         
-        await SendEmail(userDto.Email!, emailSubject, emailMessage);
+        await SendEmail(userDto.Email, emailSubject, emailMessage);
     }
     
     public Task SendPasswordResetLink(UserDto userDto, string email, string resetLink)
@@ -55,6 +53,25 @@ public class EmailSender(
     public Task SendPasswordResetCode(UserDto userDto, string email, string resetCode)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task SendRequestToSupervisorMessage(
+        Guid cruiseApplicationId, string supervisorCode, UserDto cruiseManager, string supervisorEmail)
+    {
+        var link =
+            GetFrontEndUrl() +
+            $"/FormAForSupervisor?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCode}";
+        
+        var messageTemplate = await templateFileReader.ReadRequestToSupervisorMessageTemplate();
+        var emailSubject = await templateFileReader.ReadRequestToSupervisorEmailSubject();
+
+        var emailMessage = messageTemplate
+            .Replace("{{cruiseManagerFirstName}}", cruiseManager.FirstName)
+            .Replace("{{cruiseManagerLastName}}", cruiseManager.LastName)
+            .Replace("{{cruiseManagerEmail}}", cruiseManager.Email)
+            .Replace("{{link}}", link);
+
+        await SendEmail(supervisorEmail, emailSubject, emailMessage);
     }
     
     
@@ -89,5 +106,12 @@ public class EmailSender(
             
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
+    }
+
+    private string GetFrontEndUrl()
+    {
+        var protocol = configuration.GetSection("ProtocolUsed").Value;
+        var frontendUrl = configuration.GetSection("FrontendUrl").Value;
+        return $"{protocol}://{frontendUrl}";
     }
 }

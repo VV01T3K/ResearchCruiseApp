@@ -23,7 +23,7 @@ public class AccountController(IMediator mediator) : ControllerBase
         [FromBody] RegisterFormDto registerForm)
     {
         var result = await mediator.Send(new RegisterCommand(registerForm));
-        return result.Error is null
+        return result.IsSuccess
             ? Created()
             : this.CreateError(result);
     }
@@ -32,7 +32,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginFormDto loginFormDto)
     {
         var result = await mediator.Send(new LoginCommand(loginFormDto));
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }
@@ -41,7 +41,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Refresh([FromBody] RefreshDto refreshDto)
     {
         var result = await mediator.Send(new RefreshCommand(refreshDto));
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }
@@ -53,7 +53,7 @@ public class AccountController(IMediator mediator) : ControllerBase
         [FromQuery] string? changedEmail)
     {
         var result = await mediator.Send(new ConfirmEmailCommand(userId, code, changedEmail));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }
@@ -62,7 +62,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ResendEmailConfirmationEmail([FromBody] EmailDto emailDto)
     {
         var result = await mediator.Send(new ResendConfirmationEmailCommand(emailDto));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }
@@ -72,7 +72,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetCurrentUser()
     {
         var result = await mediator.Send(new GetCurrentUserQuery());
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }
@@ -82,7 +82,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordFormDto changePasswordFormDto)
     {
         var result = await mediator.Send(new ChangePasswordCommand(changePasswordFormDto));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }

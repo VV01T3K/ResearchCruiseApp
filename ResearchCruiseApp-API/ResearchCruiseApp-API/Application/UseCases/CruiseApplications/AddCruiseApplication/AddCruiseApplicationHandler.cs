@@ -1,15 +1,14 @@
 using System.Data;
-using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp_API.Application.Common.Extensions;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp_API.Application.SharedServices.Compressor;
-using ResearchCruiseApp_API.Domain.Common.Enums;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.CruiseApplications;
+using ResearchCruiseApp_API.Application.SharedServices.Factories.FormsA;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
@@ -17,9 +16,9 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruis
 
 public class AddCruiseApplicationHandler(
     IValidator<AddCruiseApplicationCommand> validator,
-    IYearBasedKeyGenerator yearBasedKeyGenerator,
-    ICompressor compressor,
-    IMapper mapper,
+    IEmailSender emailSender,
+    IFormsAFactory formsAFactory,
+    ICruiseApplicationsFactory cruiseApplicationsFactory,
     IUnitOfWork unitOfWork,
     IFormsARepository formsARepository,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
@@ -32,77 +31,39 @@ public class AddCruiseApplicationHandler(
         if (!validationResult.IsValid)
             return validationResult.ToApplicationResult();
         
-        var formAResult = await CreateFormA(request.FormADto);
-        if (formAResult.Error is not null)
-            return formAResult.Error;
-        
-        var formA = formAResult.Data!;
+        var formA = await formsAFactory.Create(request.FormADto);
         await formsARepository.AddFormA(formA, cancellationToken);
-        
-        //var evaluatedCruiseApplication = cruiseApplicationEvaluator.EvaluateCruiseApplication(formA, []);
-            
-        //await researchCruiseContext.EvaluatedCruiseApplications.AddAsync(evaluatedCruiseApplication);
-        //await researchCruiseContext.SaveChangesAsync();
 
         //var calculatedPoints = cruiseApplicationEvaluator.CalculateSumOfPoints(evaluatedCruiseApplication);
 
-        await unitOfWork.ExecuteIsolated(async () =>
-            {
-                var newCruiseApplication = await CreateCruiseApplication(formA, cancellationToken);
-
-                await cruiseApplicationsRepository.AddCruiseApplication(newCruiseApplication, cancellationToken);
-                await unitOfWork.Complete(cancellationToken);
-            },
+        var newCruiseApplication = await unitOfWork.ExecuteIsolated(
+            () => GetNewPersistedCruiseApplication(formA, cancellationToken),
             IsolationLevel.Serializable,
-            cancellationToken
-        );
+            cancellationToken);
         
+        await SendRequestToSupervisor(newCruiseApplication, request.FormADto.SupervisorEmail);
 
         return Result.Empty;
     }
-    
-    
-    private async Task<Result<FormA>> CreateFormA(FormADto formADto)
-    {
-        if (!await identityService.UserWithIdExists(formADto.CruiseManagerId))
-            return Error.BadRequest("Wybrany kierownik nie istnieje");
-        if (!await identityService.UserWithIdExists(formADto.DeputyManagerId))
-            return Error.BadRequest("Wybrany zastępca nie istnieje");
-        
-        var formA = mapper.Map<FormA>(formADto);
-        
-        foreach (var contractDto in formADto.Contracts)
-        {
-            formA.Contracts.Add(await CreateContract(contractDto));
-        }
 
-        return formA;
-    }
-    
-    private async Task<Contract> CreateContract(ContractDto contractDto)
+    private async Task<CruiseApplication> GetNewPersistedCruiseApplication(
+        FormA formA, CancellationToken cancellationToken)
     {
-        var contract = mapper.Map<Contract>(contractDto);
-        
-        contract.ScanName = contractDto.Scan.Name;
-        contract.ScanContent = await compressor.Compress(contractDto.Scan.Content);
+        var newCruiseApplication = await cruiseApplicationsFactory.Create(formA, cancellationToken);
 
-        return contract;
-    }
-
-    private async Task<CruiseApplication> CreateCruiseApplication(FormA formA, CancellationToken cancellationToken)
-    {
-        var newCruiseApplication = new CruiseApplication
-        {
-            Number = await yearBasedKeyGenerator.GenerateKey(cruiseApplicationsRepository, cancellationToken),
-            Date = DateOnly.FromDateTime(DateTime.Now),
-            FormA = formA,
-            FormB = null,
-            FormC = null,
-            //EvaluatedApplication = evaluatedCruiseApplication,
-            Points = 0,
-            Status = CruiseApplicationStatus.New
-        };
+        await cruiseApplicationsRepository.Add(newCruiseApplication, cancellationToken);
+        await unitOfWork.Complete(cancellationToken);
 
         return newCruiseApplication;
+    }
+
+    private async Task SendRequestToSupervisor(CruiseApplication cruiseApplication, string supervisorEmail)
+    {
+        var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId ?? Guid.Empty;
+        var supervisorCode = Base64UrlEncoder.Encode(cruiseApplication.SupervisorCode);
+        var cruiseManager = (await identityService.GetUserDtoById(cruiseManagerId))!;
+        
+        await emailSender.SendRequestToSupervisorMessage(
+            cruiseApplication.Id, supervisorCode, cruiseManager, supervisorEmail);
     }
 }

@@ -274,6 +274,10 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("SupervisorCode")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CruiseId");

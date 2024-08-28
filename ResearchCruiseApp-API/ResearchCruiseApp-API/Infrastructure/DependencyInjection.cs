@@ -19,10 +19,14 @@ public static class DependencyInjection
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddPersistence(configuration);
-        services.AddIdentity(configuration);
+        
+        services.AddCustomIdentity(configuration);
         
         services.AddHttpContextAccessor();
+        
         services
+            .AddScoped<ICompressor, Compressor>()
+            .AddScoped<IRandomGenerator, RandomGenerator>()
             .AddScoped<IEmailSender, EmailSender>()
             .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
             .AddScoped<ITemplateFileReader, TemplateFileReader>()
@@ -30,7 +34,7 @@ public static class DependencyInjection
     }
     
     
-    private static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
+    private static void AddCustomIdentity(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddIdentity<User, IdentityRole>(options =>
@@ -61,7 +65,6 @@ public static class DependencyInjection
                 };
             });
         
-        services.AddScoped<IIdentityService, IdentityService>();
         services.Configure<IdentityOptions>(options =>
         {
             options.Password.RequireDigit = true;
@@ -70,6 +73,8 @@ public static class DependencyInjection
             options.Password.RequireUppercase = true;
             options.Password.RequireNonAlphanumeric = false;
         });
+        
+        services.AddScoped<IIdentityService, IdentityService>();
     }
 
     private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)

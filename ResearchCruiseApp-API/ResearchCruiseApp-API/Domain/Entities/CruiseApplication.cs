@@ -25,4 +25,6 @@ public class CruiseApplication : IYearBasedNumberedEntity
     public int Points { get; set; }
     
     public CruiseApplicationStatus Status { get; set; }
+
+    public byte[] SupervisorCode { get; set; } = [];
 }

@@ -4,7 +4,8 @@ namespace ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 public class Result
 {
     public Error? Error { get; }
-    
+    public bool IsSuccess => Error is null;
+
     protected Result()
     {
         Error = null;

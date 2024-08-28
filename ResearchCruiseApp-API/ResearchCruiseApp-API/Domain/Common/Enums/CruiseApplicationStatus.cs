@@ -5,8 +5,14 @@ namespace ResearchCruiseApp_API.Domain.Common.Enums;
 
 public enum CruiseApplicationStatus
 {
-    [StringValue("Nowe")]
-    New,
+    [StringValue("Oczekujące na przełożonego")]
+    WaitingForSupervisor,
+    
+    [StringValue("Zaakceptowane przez przełożonego")]
+    AcceptedBySupervisor,
+    
+    [StringValue("Odrzucone przez przełożonego")]
+    DeniedBySupervisor,
         
     [StringValue("Zaakceptowane")]
     Accepted,
