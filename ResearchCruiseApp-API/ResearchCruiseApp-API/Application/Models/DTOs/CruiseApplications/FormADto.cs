@@ -72,7 +72,7 @@ public class FormADto
     public List<SpubTaskDto> SpubTasks { get; init; } = [];
 
     [MaxLength(1024)]
-    public string SupervisorEmail { get; init; } = null!;
+    public string? SupervisorEmail { get; init; }
 
 
     private class MapProfile : Profile

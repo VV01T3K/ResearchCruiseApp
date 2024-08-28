@@ -17,7 +17,7 @@ public class FormsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetFormAInitValues()
     {
         var result = await mediator.Send(new GetFormAInitValuesQuery());
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }

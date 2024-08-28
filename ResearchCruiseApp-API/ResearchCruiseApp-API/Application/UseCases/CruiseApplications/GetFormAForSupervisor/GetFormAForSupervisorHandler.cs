@@ -4,7 +4,6 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositorie
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.SharedServices.CruiseApplications;
 using ResearchCruiseApp_API.Application.SharedServices.Factories.FormADtos;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForAcceptance;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 

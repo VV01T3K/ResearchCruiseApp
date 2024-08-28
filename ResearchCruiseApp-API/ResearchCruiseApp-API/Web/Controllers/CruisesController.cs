@@ -22,7 +22,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllCruises()
     {
         var result = await mediator.Send(new GetAllCruisesQuery());
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }
@@ -31,7 +31,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AddCruise([FromBody] CruiseFormDto cruiseFormModel)
     {
         var result = await mediator.Send(new AddCruiseCommand(cruiseFormModel));
-        return result.Error is null
+        return result.IsSuccess
             ? Created()
             : this.CreateError(result);
     }
@@ -40,7 +40,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> EditCruise([FromRoute] Guid id, [FromBody] CruiseFormDto cruiseFormModel)
     {
         var result = await mediator.Send(new EditCruiseCommand(id, cruiseFormModel));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }
@@ -49,7 +49,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteCruise([FromRoute] Guid id)
     {
         var result = await mediator.Send(new DeleteCruiseCommand(id));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }
@@ -58,7 +58,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AutoAddCruises()
     {
         var result = await mediator.Send(new AutoAddCruisesCommand());
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }

@@ -22,7 +22,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await mediator.Send(new GetAllUsersQuery());
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }
@@ -32,7 +32,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetUserById([FromRoute] Guid id)
     {
         var result = await mediator.Send(new GetUserByIdQuery(id));
-        return result.Error is null
+        return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
     }
@@ -42,7 +42,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AddUser([FromBody] AddUserFormDto registerForm)
     {
         var result = await mediator.Send(new AddUserCommand(registerForm));
-        return result.Error is null
+        return result.IsSuccess
             ? Created()
             : this.CreateError(result);
     }
@@ -52,7 +52,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AcceptUser([FromRoute] Guid id)
     {
         var result = await mediator.Send(new AcceptUserCommand(id));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }
@@ -64,7 +64,7 @@ public class UsersController(IMediator mediator) : ControllerBase
         [FromBody] UserRoleToggleDto userRoleToggle)
     {
         var result = await mediator.Send(new ToggleUserRoleCommand(id, userRoleToggle));
-        return result.Error is null
+        return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
     }

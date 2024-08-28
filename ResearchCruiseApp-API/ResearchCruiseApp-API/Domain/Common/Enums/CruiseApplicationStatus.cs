@@ -8,8 +8,11 @@ public enum CruiseApplicationStatus
     [StringValue("Oczekujące na przełożonego")]
     WaitingForSupervisor,
     
-    [StringValue("Nowe")]
-    New,
+    [StringValue("Zaakceptowane przez przełożonego")]
+    AcceptedBySupervisor,
+    
+    [StringValue("Odrzucone przez przełożonego")]
+    DeniedBySupervisor,
         
     [StringValue("Zaakceptowane")]
     Accepted,
