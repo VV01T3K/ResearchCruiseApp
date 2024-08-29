@@ -25,6 +25,7 @@ export type Contract = {
 
 type Props = {
     className: string,
+    label: string,
     name: string,
     form?: UseFormReturn,
     historicalContracts: Contract[],
@@ -35,6 +36,7 @@ type Props = {
 
 export default function ContractsInput(props: Props){
     const windowWidth = useWindowWidth()
+    const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyInputs"
 
     return (
         <div className={props.className + " p-3"}>
@@ -43,7 +45,7 @@ export default function ContractsInput(props: Props){
                 control={props.form!.control}
                 defaultValue={[]}
                 rules = {{
-                    required: false,
+                    required: true,
                     validate: {
                         noEmptyInputs: (value: Contract[]) => {
                             if (props.readonly)
@@ -68,28 +70,36 @@ export default function ContractsInput(props: Props){
                 render={({field}) => (
                     <>
                         <div className="table-striped w-100">
-                            <div className="text-white text-center" style={{"backgroundColor": "#052d73"}}>
+                            <div className="text-white text-center bg-primary">
+                                <div className="d-flex flex-row center">
+                                    <div className="w-100 p-2">
+                                        <b>{props.label}</b>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-white text-center bg-secondary">
                                 <div className="d-flex flex-row center align-items-center">
                                     <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "5%"}}>
                                         <b>Lp.</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "15%"}}>
+                                    <div className="text-center d-none d-xl-block p-2 border-end"
+                                         style={{width: "15%"}}>
                                         <b>Kategoria</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "25%"}}>
+                                    <div className="text-center d-none d-xl-block p-2 border-end"
+                                         style={{width: "25%"}}>
                                         <b>Instytucja</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "30%"}}>
+                                    <div className="text-center d-none d-xl-block p-2 border-end"
+                                         style={{width: "30%"}}>
                                         <b>Opis</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2 border-end" style={{width: "20%"}}>
+                                    <div className="text-center d-none d-xl-block p-2 border-end"
+                                         style={{width: "20%"}}>
                                         <b>Skan</b>
                                     </div>
-                                    <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}} />
+                                    <div className="text-center d-none d-xl-block p-2" style={{width: "5%"}}/>
 
-                                    <div className="text-center d-block d-xl-none p-2 col-12">
-                                        <b>Umowy</b>
-                                    </div>
                                 </div>
                             </div>
                             <div className="w-100 bg-light">
@@ -108,12 +118,14 @@ export default function ContractsInput(props: Props){
                                         >
                                             {index + 1}.
                                         </div>
-                                        <div className="text-center d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
+                                        <div
+                                            className="text-center d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
                                             <b>Umowa {index + 1}.</b>
                                         </div>
 
-                                        <div className="text-center d-inline-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                             style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                                        <div
+                                            className="text-center d-inline-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                            style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Kategoria</div>
                                             <ContractCategoryPicker
@@ -124,8 +136,9 @@ export default function ContractsInput(props: Props){
                                                 form={props.form!}
                                             />
                                         </div>
-                                        <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                             style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                        <div
+                                            className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                            style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
                                         >
                                             <div className="col-12">Nazwa instytucji</div>
                                             <input {...field}
@@ -134,7 +147,7 @@ export default function ContractsInput(props: Props){
                                                    className="col-12 p-1 form-control bg-white"
                                                    style={{fontSize: "inherit"}}
                                                    value={row.institution.name}
-                                                   onChange = {(e)=> {
+                                                   onChange={(e) => {
                                                        row.institution.name = e.target.value
                                                        props.form!.setValue(
                                                            props.name,
@@ -156,7 +169,7 @@ export default function ContractsInput(props: Props){
                                                    className="col-12 p-1 form-control bg-white"
                                                    style={{fontSize: "inherit"}}
                                                    value={row.institution.unit}
-                                                   onChange = {(e)=> {
+                                                   onChange={(e) => {
                                                        row.institution.unit = e.target.value
                                                        props.form!.setValue(
                                                            props.name,
@@ -178,7 +191,7 @@ export default function ContractsInput(props: Props){
                                                    className="col-12 p-1 form-control bg-white"
                                                    style={{fontSize: "inherit"}}
                                                    value={row.institution.localization}
-                                                   onChange = {(e)=> {
+                                                   onChange={(e) => {
                                                        row.institution.localization = e.target.value
                                                        props.form!.setValue(
                                                            props.name,
@@ -193,8 +206,9 @@ export default function ContractsInput(props: Props){
                                                    }}
                                             />
                                         </div>
-                                        <div className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                             style={{width: windowWidth >= 1200 ? "30%" : "100%"}}
+                                        <div
+                                            className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                            style={{width: windowWidth >= 1200 ? "30%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Opis</div>
                                             <textarea
@@ -203,7 +217,7 @@ export default function ContractsInput(props: Props){
                                                 className="col-12 p-1 form-control bg-white"
                                                 style={{fontSize: "inherit"}}
                                                 value={row.description}
-                                                onChange = {(e)=> {
+                                                onChange={(e) => {
                                                     row.description = e.target.value
                                                     props.form!.setValue(
                                                         props.name,
@@ -218,34 +232,36 @@ export default function ContractsInput(props: Props){
                                                 }}
                                             />
                                         </div>
-                                        <div className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
-                                             style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
+                                        <div
+                                            className="text-center d-flex flex-wrap align-items-center justify-content-center p-2 border-end"
+                                            style={{width: windowWidth >= 1200 ? "20%" : "100%"}}
                                         >
                                             <div className="col-12 d-xl-none">Skan</div>
                                             {props.readonly &&
-                                                    <FileDownloader
-                                                        fileName={field.value[index].scan?.name}
-                                                        fileContent={field.value[index].scan?.content}
-                                                        bg="bg-light"
-                                                    />
+                                                <FileDownloader
+                                                    fileName={field.value[index].scan?.name}a
+                                                    fileContent={field.value[index].scan?.content}
+                                                    bg="bg-light"
+                                                />
                                             }
                                             {!props.readonly &&
-                                            <FilePicker
-                                                field={field}
-                                                name={props.name}
-                                                fileFieldName="scan"
-                                                row={row}
-                                                rowIdx={index}
-                                                form={props.form!}
-                                            />
+                                                <FilePicker
+                                                    field={field}
+                                                    name={props.name}
+                                                    fileFieldName="scan"
+                                                    row={row}
+                                                    rowIdx={index}
+                                                    form={props.form!}
+                                                />
                                             }
                                         </div>
-                                        <div className={`text-center d-flex justify-content-center align-items-center p-2`}
-                                             style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                        <div
+                                            className={`text-center d-flex justify-content-center align-items-center p-2`}
+                                            style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                         >
                                             <button type="button"
-                                                    className={`btn btn-info ${props.readonly ? "d-none": ""}`}
-                                                    style={{fontSize:"inherit"}}
+                                                    className={`btn btn-info ${props.readonly ? "d-none" : ""}`}
+                                                    style={{fontSize: "inherit"}}
                                                     onClick={() => {
                                                         const val: Contract[] = field.value;
                                                         val.splice(index, 1)
@@ -268,11 +284,13 @@ export default function ContractsInput(props: Props){
                             </div>
                         </div>
 
-                        <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? "d-none": ""}`}>
-                            <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
+                        <div
+                            className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? "d-none" : ""}`}>
+                            <div
+                                className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                 <button
-                                    style={{fontSize:"inherit"}}
-                                    className={`btn btn-info w-100 ${props.form!.formState.errors[props.name] ? "disabled" : ""}`}
+                                    style={{fontSize: "inherit"}}
+                                    className={`btn btn-info w-100 ${disabled ? "disabled" : ""}`}
                                     type="button"
                                     onClick={() => {
                                         const newContract: Contract = {
@@ -304,7 +322,7 @@ export default function ContractsInput(props: Props){
                             <Select
                                 minMenuHeight={300}
                                 className="d-flex col-12 col-xl-6 text-start pt-1 pb-2 pt-xl-2 ps-xl-2 pb-xl-2"
-                                isDisabled={!!props.form!.formState.errors[props.name]}
+                                isDisabled={disabled}
                                 menuPlacement="auto"
                                 placeholder="Dodaj z historii"
                                 styles={{

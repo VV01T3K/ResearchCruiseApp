@@ -9,6 +9,7 @@ import {FormValues} from "../Wrappers/FormTemplate";
 type Props = {
     className?: string,
     label: string,
+    isVertical: boolean,
     name: keyof FormValues,
     values?: string[],
     form?: UseFormReturn<FormValues>,
@@ -24,13 +25,13 @@ function FormRadio(props: Props) {
                 rules={{required: 'Wybierz jedną z opcji'}}
                 control={props.form!.control}
                 render={({field}) => (
-                    <div className="d-flex flex-column justify-content-center align-content-center">
+                    <div className={`d-flex ${props.isVertical ? 'flex-column' : 'flex-row'} justify-content-center align-content-center`}>
                         {props.values?.map((option, index) => (
                             // <label key={index}>
                             <input
                                 key={index}
                                 disabled={props.readonly ?? false}
-                                className={`btn ${field.value === index ? "btn-info" : "btn-outline-info"} ${(field.value !== index) && (props.readonly ?? false) ? "d-none": "" } text-wrap m-1`}
+                                className={`${props.isVertical ? '' : 'w-100'} btn ${field.value === index ? "btn-info" : "btn-outline-info"} ${(field.value !== index) && (props.readonly ?? false) ? "d-none": "" } text-wrap m-1`}
                                 style={{fontSize:"inherit"}}
                                 type={"button"}
                                 value={option}

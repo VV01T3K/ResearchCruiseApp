@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 import {SpubTask} from "./SpubTasksInput";
+import {Thesis} from "./ThesesInput/ThesesInput";
 
 
 
@@ -43,22 +44,15 @@ function CrewInput(props: Props){
                         rules = {{
                             required: true,
                             validate: {
-                                noEmptyInputs: (value: Crew[]) => {
-                                    if (value.some((row: Crew) => {
+                                noEmptyRowFields: (value: Thesis[]) => {
+                                    if (value.some((row: Thesis) => {
                                         return Object
                                             .values(row)
-                                            .some((rowField: object | string) => {
-                                                if (typeof rowField == 'object') {
-                                                    return Object
-                                                        .values(rowField)
-                                                        .some((rowSubField: string) => !rowSubField)
-                                                }
-                                                return !rowField
-                                            })
+                                            .some(rowField => !rowField)
                                     })
                                     )
                                         return "Wypełnij wszystkie pola"
-                                }
+                                },
                             }
                         }}
 
@@ -82,15 +76,9 @@ function CrewInput(props: Props){
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "30%"}}>
+                                                style={{width: "60%"}}>
                                                 <b>Dane osobowe</b>
                                             </div>
-                                            <div
-                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "30%"}}>
-                                                <b>Dane numeryczne</b>
-                                            </div>
-
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
                                                 style={{width: "30%"}}>
