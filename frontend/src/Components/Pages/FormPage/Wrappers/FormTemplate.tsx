@@ -6,13 +6,14 @@ import {FormAValue, FormAValues} from "../Forms/FormA";
 import {UseFormReturn} from "react-hook-form";
 import {PathName as Path} from "../../../Tools/PathName";
 import BusyEvent from "../../../CommonComponents/BusyEvent";
+import {FormBValue, FormBValues} from "../Forms/FormB";
 
 
 export type FormValues =
-    FormAValues // | FormBValues | FormCValues
+    FormAValues // | FormBValues // | FormCValues
 
 export type FormValue =
-    FormAValue // | FormBValue | FormCValue
+    FormAValue // | FormBValue // | FormCValue
 
 export type SavedFormData = {
     type: string,
@@ -143,7 +144,7 @@ function FormTemplate(props: Props) {
                                 <div className="d-flex col-6 text-center p-2 justify-content-center" >
                                     <button
                                         onClick={props.form.handleSubmit(handleSubmit)}
-                                        // onClick={() => console.log(props.form.getValues())}
+                                         //onClick={() => console.log(props.form.getValues())}
                                         className="btn btn-primary w-100"
                                         style={{ fontSize:"inherit" }}
                                     >

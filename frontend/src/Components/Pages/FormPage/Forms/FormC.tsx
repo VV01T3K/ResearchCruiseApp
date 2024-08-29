@@ -144,7 +144,7 @@ function FormC(props: Props){
         = useState<FormCInitValues>()
     useEffect(() => {
         api
-            .get('/Forms/InitValues/C')
+            .get('/Forms/InitValues/A')
             .then(response => {
                 setFormInitValues(response.data)
                 console.log(response.data as FormCInitValues)
@@ -249,10 +249,10 @@ function FormC(props: Props){
                         if (form.watch("permissionsRequired") === 0 ) {
                             return (
                                 <PermissionsInput className="col-12 col-md-12 col-xl-6 p-3"
-                                          label="Jakie?"
-                                          name="permissions"
-                                          required="Podaj jakie"
-                                          resize="none"
+                                                  label="Jakie?"
+                                                  name="permissions"
+                                                  required="Podaj jakie"
+                                                  resize="none"
                                 />
                             )
                         }
@@ -426,7 +426,7 @@ function FormC(props: Props){
                     />
                     <CrewInput className="col-12"
                                label="Lista uczestników rejsu"
-                               name="theses"
+                               name="crew"
                                historicalCrew={[
                                    {names: "Maksymilian",
                                        surname: "Panicz" ,
@@ -467,7 +467,7 @@ function FormC(props: Props){
 
 
 
-                    ]}/>
+                               ]}/>
                 </FormSection>
 
                 <FormSection title={sections["Publikacje/prace"]}>
@@ -483,8 +483,8 @@ function FormC(props: Props){
                                 authors: "Urszula Kwasigroch, Katarzyna Łukawska-Matuszewska, Agnieszka Jędruch, Olga Brocławik, Magdalena Bełdowska",
                                 title: "Mobility and bioavailability of mercury in sediments of the southern Baltic sea in relation to the chemical fractions of iron: Spatial and temporal patterns",
                                 magazine: "Marine Environmental Research",
-                                year: "2023",
-                                ministerialPoints: "0"
+                                year: 2023,
+                                ministerialPoints: 0
 
                             },
                             {
@@ -493,8 +493,8 @@ function FormC(props: Props){
                                 authors: "Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska",
                                 title: "Porewater dissolved organic and inorganic carbon in relation to methane occurrence in sediments of the Gdańsk Basin (southern Baltic Sea)",
                                 magazine: "Continental Shelf Research",
-                                year: "2018",
-                                ministerialPoints: "30"
+                                year: 2018,
+                                ministerialPoints: 30
                             },
                             {
                                 category: "postscript",
@@ -502,8 +502,8 @@ function FormC(props: Props){
                                 authors: "Natalia Miernik, Urszula Janas, Halina Kendzierska",
                                 title: "Role of macrofaunal communities in the Vistula River plume, the Baltic Sea - bioturbation and bioirrigation potential",
                                 magazine: "Biology",
-                                year: "2023",
-                                ministerialPoints: "100"
+                                year: 2023,
+                                ministerialPoints: 100
                             },
                             {
                                 category: "postscript",
@@ -511,13 +511,12 @@ function FormC(props: Props){
                                 authors: "Jakub Idczak, Aleksandra Brodecka-Goluch, Katarzyna Łukawska-Matuszewska, Bożena Graca, Natalia Gorska, Zygmunt Klusek, Patryk Pezacki, Jerzy Bolałek",
                                 title: "A geophysical, geochemical and microbiological study of a newly discovered pockmark with active gas seepage and submarine groundwater discharge (MET1-BH, central Gulf of Gdańsk, southern Baltic Sea)",
                                 magazine: "Science of the Total Environment",
-                                year: "2020",
-                                ministerialPoints: "200"
+                                year: 2020,
+                                ministerialPoints: 200
                             }
                         ]}
                     />
                     <ThesesInput
-                        required={true}
                         className="col-12"
                         label="Prace"
                         name="theses"
@@ -527,7 +526,7 @@ function FormC(props: Props){
                                 author: "Marian Domogolski",
                                 title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
                                 promoter: "Elżbieta Widłogrodzka",
-                                year: "2020"
+                                year: 2020
 
                             },
                             {
@@ -535,14 +534,14 @@ function FormC(props: Props){
                                 author: "Marian Domogolski",
                                 title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
                                 promoter: "Elżbieta Widłogrodzka",
-                                year: "2020"
+                                year: 2020
                             },
                             {
                                 category: "bachelor",
                                 author: "Marian Domogolski",
                                 title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
                                 promoter: "Elżbieta Widłogrodzka",
-                                year: "2020"
+                                year: 2020
                             }
                         ]}
                     />
@@ -554,18 +553,18 @@ function FormC(props: Props){
                         name="spubTasks"
                         historicalSpubTasks={[
                             {
-                                yearFrom: "2020",
-                                yearTo: "2030",
+                                yearFrom: 2020,
+                                yearTo: 2030,
                                 name: "Badanie nowych właściwości wodno-tlenowych Morza Bałtyckiego w obszarze Zatoki Gdańskiej"
                             },
                             {
-                                yearFrom: "2021",
-                                yearTo: "2026",
+                                yearFrom: 2021,
+                                yearTo: 2026,
                                 name: "Badanie właściwości azotowych Morza Bałtyckiego w obszarze Zatoki Puckiej"
                             },
                             {
-                                yearFrom: "2022",
-                                yearTo: "2024",
+                                yearFrom: 2022,
+                                yearTo: 2024,
                                 name: "Bałtycki pobór zasobów mineralnych na obszarze Polskiej WSE"
                             },
                         ]}

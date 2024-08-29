@@ -5,11 +5,16 @@ import Select from "react-select";
 
 import DatePicker  from 'react-datepicker';
 import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
+import ContractCategoryPicker from "../ContractsInput/ContractCategoryPicker";
+import ActionCategoryPicker from "./ActionCategoryPicker";
+import {UgTeam} from "../UgTeamsInput/UgTeamsInput";
 
 export type Action = {
-    startDate: string,
-    endDate: string,
-    name: string
+    startDate?: string,
+    endDate?: string,
+    name: string,
+    time?: string,
+    category?: string
 }
 
 type Props = {
@@ -26,7 +31,7 @@ type Props = {
 export default function ActionInput(props: Props){
     const windowWidth = useWindowWidth()
 
-    const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
+    const disabled = props.form!.formState.errors[props.name]?.type =="notEmpty"
 
     return (
         <div className={props.className + " p-3"}>
@@ -36,15 +41,14 @@ export default function ActionInput(props: Props){
                         rules = {{
                             required: true,
                             validate: {
-                                noEmptyRowFields: (value: Action[]) => {
-                                    if (value.some((row: Action) => {
-                                        return Object
-                                            .values(row)
-                                            .some(rowField => !rowField)
-                                    })
-                                    )
-                                        return "Wypełnij wszystkie pola"
-                                },
+                                notEmpty: (values: Action[]) => {
+                                    for (const row of values) {
+                                        if (((props.name === "equipmentLeave") && (row.time === "" || row.category === "" || row.name === "")) || ((props.name != "equipmentLeave") && (row.endDate === "" || row.startDate === "" || row.name === ""))) {
+                                            return "Uzupełnij wszystkie pola";
+                                        }
+                                    }
+                                    return true;
+                                }
                             }
                         }}
                         render={({ field}) => (
@@ -55,16 +59,39 @@ export default function ActionInput(props: Props){
                                             <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
                                                 <b>Lp.</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "25%"}}>
-                                                <b>Od</b>
-                                            </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "25%"}}>
-                                                <b>Do</b>
-                                            </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "40%"}}>
+                                            {props.name === "equipmentLeave" && <>
+                                                <div
+                                                    className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: "25%"}}>
+                                                    <b>Czynność</b>
+                                                </div>
+                                                <div
+                                                    className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: "25%"}}>
+                                                    <b>Czas</b>
+                                                </div>
+                                            </>}
+                                            {(props.name === "equipment" || props.name === "portLeave") && <>
+                                                <div
+                                                    className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: "25%"}}>
+                                                    <b>Od</b>
+                                                </div>
+                                                <div
+                                                    className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: "25%"}}>
+                                                    <b>Do</b>
+                                                </div>
+                                            </>}
+
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                style={{width: "40%"}}>
                                                 <b>Nazwa {props.actionName.toLowerCase()}u</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}} />
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2"
+                                                style={{width: "5%"}}/>
 
                                             <div className="d-flex justify-content-center d-xl-none p-2 col-12">
                                                 <b>{props.actionName}y</b>
@@ -90,30 +117,119 @@ export default function ActionInput(props: Props){
                                                     <b>{props.actionName} {index + 1}.</b>
                                                 </div>
 
-                                                <div className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
-                                                     style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
-                                                >
-                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Od</div>
-                                                    <DatePicker
-                                                        {...field}
-                                                        disabled={props.readonly ?? false}
+                                                {(props.name === "equipment" || props.name === "portLeave") && <>
+                                                    <div
+                                                        className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
+                                                        style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                    >
+                                                        <div
+                                                            className="col-12 d-flex d-xl-none justify-content-center">Od
+                                                        </div>
+                                                        <DatePicker
+                                                            {...field}
+                                                            disabled={props.readonly ?? false}
 
-                                                        //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
-                                                        showMonthYearPicker
-                                                        showMonthYearDropdown
-                                                        className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
-                                                        selectsStart
-                                                        startDate={row.startDate ? new Date(row.startDate) : null}
-                                                        maxDate={row.endDate ? new Date(row.endDate) : null}
-                                                        endDate={row.endDate ? new Date(row.endDate) : null}
-                                                        locale={"pl"}
-                                                        showTimeSelect
-                                                        selected={row.startDate ? new Date(row.startDate) : null}
-                                                        onChange={(e: Date)=> {
-                                                            if (e != null) {
-                                                                const tmp = row;
-                                                                tmp["startDate"] = e.toISOString();
-                                                                props.form!.setValue(
+                                                            //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
+                                                            showMonthYearPicker
+                                                            showMonthYearDropdown
+                                                            className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
+                                                            selectsStart
+                                                            startDate={row.startDate ? new Date(row.startDate) : null}
+                                                            maxDate={row.endDate ? new Date(row.endDate) : null}
+                                                            endDate={row.endDate ? new Date(row.endDate) : null}
+                                                            locale={"pl"}
+                                                            showTimeSelect
+                                                            selected={row.startDate ? new Date(row.startDate) : null}
+                                                            onChange={(e: Date) => {
+                                                                if (e != null) {
+                                                                    const tmp = row;
+                                                                    tmp["startDate"] = e.toISOString();
+                                                                    props.form!.setValue(
+                                                                        props.name,
+                                                                        field.value,
+                                                                        {
+                                                                            shouldTouch: true,
+                                                                            shouldValidate: true,
+                                                                            shouldDirty: true
+                                                                        }
+                                                                    )
+                                                                    // handleChange(field, row, rowIndex, valIdx, tmp)
+                                                                }
+                                                            }}
+                                                            // getPopupContainer={trigger => trigger.parentElement}
+                                                            dateFormat="dd/MM/yyyy HH:mm"
+                                                        />
+                                                    </div>
+                                                    <div
+                                                        className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
+                                                        style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                    >
+                                                        <div
+                                                            className="col-12 d-flex d-xl-none justify-content-center">Do
+                                                        </div>
+                                                        <DatePicker
+                                                            {...field}
+                                                            disabled={props.readonly ?? false}
+                                                            // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
+                                                            showYearDropdown
+                                                            showTimeSelect
+                                                            className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
+                                                            startDate={row.startDate ? new Date(row.startDate) : null}
+                                                            endDate={row.endDate ? new Date(row.endDate) : null}
+                                                            minDate={row.startDate ? new Date(row.startDate) : null}
+                                                            selectsEnd
+                                                            locale={"pl"}
+                                                            selected={row.endDate ? new Date(row.endDate) : null}
+                                                            onChange={(e: Date) => {
+                                                                if (e != null) {
+                                                                    const tmp = row;
+                                                                    tmp["endDate"] = e.toISOString();
+                                                                    props.form!.setValue(
+                                                                        props.name,
+                                                                        field.value,
+                                                                        {
+                                                                            shouldTouch: true,
+                                                                            shouldValidate: true,
+                                                                            shouldDirty: true
+                                                                        }
+                                                                    )
+                                                                }
+                                                            }}
+                                                            // getPopupContainer={trigger => trigger.parentElement}
+                                                            dateFormat="dd/MM/yyyy HH:mm"
+                                                        />
+                                                    </div>
+                                                </>}
+                                                {props.name === "equipmentLeave" && <>
+                                                    <div
+                                                        className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
+                                                        style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                    >
+                                                        <div
+                                                            className="col-12 d-flex d-xl-none justify-content-center">Czynność
+                                                        </div>
+                                                        <ActionCategoryPicker
+                                                            readonly={props.readonly}
+                                                            name={props.name}
+                                                            row={row}
+                                                            field={field}
+                                                            form={props.form!}
+                                                        />
+                                                    </div>
+                                                    <div
+                                                        className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
+                                                        style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                    >
+                                                        <div
+                                                            className="col-12 d-flex d-xl-none justify-content-center">Do
+                                                        </div>
+                                                        <textarea
+                                                            {...field}
+                                                            disabled={props.readonly ?? false}
+                                                            value={row.time}
+                                                            onChange={(e) => {
+                                                                row.time = e.target.value
+                                                                props.form?.setValue(
                                                                     props.name,
                                                                     field.value,
                                                                     {
@@ -122,58 +238,28 @@ export default function ActionInput(props: Props){
                                                                         shouldDirty: true
                                                                     }
                                                                 )
-                                                                // handleChange(field, row, rowIndex, valIdx, tmp)
-                                                            }
-                                                        }}
-                                                        // getPopupContainer={trigger => trigger.parentElement}
-                                                        dateFormat="dd/MM/yyyy HH:mm"
-                                                    />
-                                                </div>
-                                                <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
-                                                     style={{width: windowWidth >= 1200 ? "25%" : "100%"}}
+                                                                field.onChange(field.value)
+                                                            }}
+                                                            className="col-12 p-1 form-control"
+                                                            style={{fontSize: "inherit", resize: "none"}}
+                                                            rows={2}
+
+                                                        />
+                                                    </div>
+                                                </>}
+
+                                                <div
+                                                    className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
                                                 >
-                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Do</div>
-                                                    <DatePicker
-                                                        {...field}
-                                                        disabled={props.readonly ?? false}
-                                                        // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
-                                                        showYearDropdown
-                                                        showTimeSelect
-                                                        className={"text-center w-100 border border-opacity-75 rounded-2 p-1"}
-                                                        startDate={row.startDate ? new Date(row.startDate) : null}
-                                                        endDate={row.endDate ? new Date(row.endDate) : null}
-                                                        minDate={row.startDate ? new Date(row.startDate) : null}
-                                                        selectsEnd
-                                                        locale={"pl"}
-                                                        selected={row.endDate ? new Date(row.endDate) : null}
-                                                        onChange={(e: Date)=> {
-                                                            if (e != null) {
-                                                                const tmp = row;
-                                                                tmp["endDate"] = e.toISOString();
-                                                                props.form!.setValue(
-                                                                    props.name,
-                                                                    field.value,
-                                                                    {
-                                                                        shouldTouch: true,
-                                                                        shouldValidate: true,
-                                                                        shouldDirty: true
-                                                                    }
-                                                                )
-                                                            }
-                                                        }}
-                                                        // getPopupContainer={trigger => trigger.parentElement}
-                                                        dateFormat="dd/MM/yyyy HH:mm"
-                                                    />
-                                                </div>
-                                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                     style={{width: windowWidth >= 1200 ? "40%" : "100%"}}
-                                                >
-                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa {props.actionName.toLowerCase()}u</div>
+                                                    <div
+                                                        className="col-12 d-flex d-xl-none justify-content-center">Nazwa {props.actionName.toLowerCase()}u
+                                                    </div>
                                                     <textarea
                                                         {...field}
                                                         disabled={props.readonly ?? false}
                                                         value={row.name}
-                                                        onChange = {(e)=> {
+                                                        onChange={(e) => {
                                                             row.name = e.target.value
                                                             props.form?.setValue(
                                                                 props.name,
@@ -187,7 +273,7 @@ export default function ActionInput(props: Props){
                                                             field.onChange(field.value)
                                                         }}
                                                         className="col-12 p-1 form-control"
-                                                        style={{fontSize: "inherit", resize:"none"}}
+                                                        style={{fontSize: "inherit", resize: "none"}}
                                                         rows={2}
 
                                                     />
@@ -196,8 +282,8 @@ export default function ActionInput(props: Props){
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
                                                     <button type="button"
-                                                            style={{fontSize:"inherit"}}
-                                                            className={`btn btn-info ${props.readonly ? 'd-none':''}`}
+                                                            style={{fontSize: "inherit"}}
+                                                            className={`btn btn-info ${props.readonly ? 'd-none' : ''}`}
                                                             onClick={() => {
                                                                 const val: Action[] = field.value;
 
@@ -221,19 +307,23 @@ export default function ActionInput(props: Props){
                                     </div>
                                 </div>
 
-                                <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? 'd-none':''}`}>
-                                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
+                                <div
+                                    className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? 'd-none' : ''}`}>
+                                    <div
+                                        className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
-                                                ${ disabled ? "disabled" : ""}`
+                                                ${disabled ? "disabled" : ""}`
                                             }
                                             type="button"
                                             onClick={() => {
                                                 const newAction: Action = {
                                                     startDate: "",
                                                     endDate: "",
-                                                    name: ""
+                                                    name: "",
+                                                    category: "",
+                                                    time: ""
                                                 }
                                                 props.form!.setValue(
                                                     props.name,

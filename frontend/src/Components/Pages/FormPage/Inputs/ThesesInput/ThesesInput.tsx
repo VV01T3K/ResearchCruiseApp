@@ -17,7 +17,7 @@ type Props = {
     name:string,
     form?: UseFormReturn,
     historicalTheses: Thesis[],
-    required :boolean,
+    required?: boolean,
     readonly?: boolean
 }
 
@@ -55,14 +55,6 @@ function ThesesInput(props: Props){
 
                         render={({field}) => (
                             <>
-                                  <div className={`pb-3 p-8`}>
-                                    <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
-                                    <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści
-                                        pracy
-                                        wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były
-                                            prowadzone z
-                                            pokładu jednostki RV Oceanograf.</strong></p>
-                                </div>
                                 <div className="table-striped w-100">
                                     <div className="text-white text-center bg-primary">
                                         <div className="d-flex flex-row center">

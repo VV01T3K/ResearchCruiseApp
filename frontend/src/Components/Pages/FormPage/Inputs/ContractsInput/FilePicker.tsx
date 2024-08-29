@@ -5,14 +5,15 @@ import {Contract} from "./ContractsInput";
 import Style from "../../../../CommonComponents/FileIcon.module.css";
 import ReadOnlyTextInput from "../../../../CommonComponents/ReadOnlyTextInput";
 import ErrorCode from "../../../CommonComponents/ErrorCode";
+import {Permission} from "../PermissionsInput/PermissionsInput";
 
 
 type Props = {
     field: { value: string },
     name: string,
     fileFieldName: string,
-    row: Contract,
-    rowIdx: number,
+    row?: Contract | Permission,
+    rowIdx?: number,
     form: UseFormReturn
 }
 
@@ -39,7 +40,7 @@ export default function FilePicker(props: Props) {
     return (
         <div className="d-flex flex-wrap justify-content-center text-break">
             <input
-                id={`contracts[${props.rowIdx}].fileInput`}
+                id={`${props.name}[${props.rowIdx}].fileInput`}
                 type="file"
                 accept=".pdf"
                 hidden

@@ -4,6 +4,7 @@ import ErrorCode from "../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
+import {Thesis} from "./ThesesInput/ThesesInput";
 
 
 export type SpubTask = {
@@ -14,10 +15,11 @@ export type SpubTask = {
 
 type Props = {
     className: string,
+    label: string,
     name: string,
     form?: UseFormReturn,
     historicalSpubTasks: SpubTask[],
-    required: boolean,
+    required?: boolean,
     readonly?:boolean
 }
 
@@ -25,7 +27,7 @@ type Props = {
 export default function SpubTasksInput(props: Props){
     const windowWidth = useWindowWidth()
 
-    const disabled = props.form!.formState.errors[props.name] != undefined
+    const disabled = props.form!.formState.errors[props.name]?.type =="noEmptyRowFields"
     const minYear = 1900
     const maxYear = 2100
 
@@ -123,17 +125,17 @@ export default function SpubTasksInput(props: Props){
                         control={props.form!.control}
                         defaultValue={[]}
                         rules = {{
-                            required: false,
+                            required: true,
                             validate: {
                                 noEmptyRowFields: (value: SpubTask[]) => {
                                     if (value.some((row: SpubTask) => {
                                         return Object
                                             .values(row)
                                             .some(rowField => !rowField)
-                                        })
+                                    })
                                     )
                                         return "Wypełnij wszystkie pola"
-                                }
+                                },
                             }
                         }}
                         render={({ field}) => (
@@ -141,19 +143,36 @@ export default function SpubTasksInput(props: Props){
                                 <div className="table-striped w-100">
                                     <div className="text-white text-center bg-primary">
                                         <div className="d-flex flex-row center">
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "5%"}}>
+                                            <div className="w-100 p-2">
+                                                <b>{props.label}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-white text-center bg-secondary">
+                                        <div className="d-flex flex-row center">
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                style={{width: "5%"}}>
                                                 <b>Lp.</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                style={{width: "15%"}}>
                                                 <b>Rok rozpoczęcia</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "15%"}}>
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                style={{width: "15%"}}>
                                                 <b>Rok zakończenia</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end" style={{width: "60%"}}>
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                style={{width: "60%"}}>
                                                 <b>Nazwa zadania</b>
                                             </div>
-                                            <div className="d-none d-xl-flex justify-content-center align-items-center p-2" style={{width: "5%"}} />
+                                            <div
+                                                className="d-none d-xl-flex justify-content-center align-items-center p-2"
+                                                style={{width: "5%"}}/>
 
                                             <div className="d-flex justify-content-center d-xl-none p-2 col-12">
                                                 <b>Zadania</b>
@@ -170,25 +189,30 @@ export default function SpubTasksInput(props: Props){
                                             <div key={index}
                                                  className="d-flex flex-wrap flex-row justify-content-center border bg-light"
                                             >
-                                                <div className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                     style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
+                                                <div
+                                                    className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
                                                     {index + 1}.
                                                 </div>
-                                                <div className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
+                                                <div
+                                                    className="d-flex d-xl-none justify-content-center align-items-center p-2 col-12">
                                                     <b>Zadanie {index + 1}.</b>
                                                 </div>
 
-                                                <div className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
-                                                     style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                                                <div
+                                                    className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
+                                                    style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                                 >
-                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Rok rozpoczęcia</div>
+                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Rok
+                                                        rozpoczęcia
+                                                    </div>
                                                     <input
                                                         {...field}
                                                         disabled={props.readonly ?? false}
                                                         value={row.yearFrom}
                                                         onChange={(e) => {
-                                                            onYearChange(e, row, true,  field)
+                                                            onYearChange(e, row, true, field)
                                                         }}
                                                         onBlur={(e) => {
                                                             onYearBlur(e, row, true, field)
@@ -200,16 +224,19 @@ export default function SpubTasksInput(props: Props){
                                                         style={{fontSize: "inherit"}}
                                                     />
                                                 </div>
-                                                <div className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
-                                                     style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
+                                                <div
+                                                    className="d-flex flex-wrap ustify-content-center align-items-center p-2 border-end"
+                                                    style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
                                                 >
-                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Rok zakończenia</div>
+                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Rok
+                                                        zakończenia
+                                                    </div>
                                                     <input
                                                         {...field}
                                                         disabled={props.readonly ?? false}
                                                         value={row.yearTo}
                                                         onChange={(e) => {
-                                                            onYearChange(e, row, false,  field)
+                                                            onYearChange(e, row, false, field)
                                                         }}
                                                         onBlur={(e) => {
                                                             onYearBlur(e, row, false, field)
@@ -224,15 +251,18 @@ export default function SpubTasksInput(props: Props){
                                                         style={{fontSize: "inherit"}}
                                                     />
                                                 </div>
-                                                <div className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                     style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
+                                                <div
+                                                    className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: windowWidth >= 1200 ? "60%" : "100%"}}
                                                 >
-                                                    <div className="col-12 d-flex d-xl-none justify-content-center">Nazwa</div>
+                                                    <div
+                                                        className="col-12 d-flex d-xl-none justify-content-center">Nazwa
+                                                    </div>
                                                     <textarea
                                                         {...field}
                                                         disabled={props.readonly ?? false}
                                                         value={row.name}
-                                                        onChange = {(e)=> {
+                                                        onChange={(e) => {
                                                             row.name = e.target.value
                                                             props.form?.setValue(
                                                                 props.name,
@@ -254,8 +284,8 @@ export default function SpubTasksInput(props: Props){
                                                      style={{width: windowWidth >= 1200 ? "5%" : "100%"}}
                                                 >
                                                     <button type="button"
-                                                            style={{fontSize:"inherit"}}
-                                                            className={`btn btn-info ${props.readonly ? 'd-none':''}`}
+                                                            style={{fontSize: "inherit"}}
+                                                            className={`btn btn-info ${props.readonly ? 'd-none' : ''}`}
                                                             onClick={() => {
                                                                 const val: SpubTask[] = field.value;
 
@@ -279,12 +309,14 @@ export default function SpubTasksInput(props: Props){
                                     </div>
                                 </div>
 
-                                <div className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? 'd-none':''}`}>
-                                    <div className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
+                                <div
+                                    className={`d-flex flex-row flex-wrap justify-content-center w-100 ${props.readonly ? 'd-none' : ''}`}>
+                                    <div
+                                        className="d-flex col-12 col-xl-6 text-center pt-2 pb-1 pt-xl-2 pe-xl-2 pb-xl-2 justify-content-center">
                                         <button
                                             style={{fontSize: "inherit"}}
                                             className={`btn btn-info w-100
-                                                ${ disabled ? "disabled" : ""}`
+                                                ${disabled ? "disabled" : ""}`
                                             }
                                             type="button"
                                             onClick={() => {
