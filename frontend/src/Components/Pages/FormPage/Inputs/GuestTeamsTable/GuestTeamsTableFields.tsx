@@ -1,5 +1,5 @@
 import {KeyContext} from "../../Wrappers/FieldTableWrapper";
-import {IntField, TextField} from "../CellFields";
+import {FIntField, FTextField} from "../CellFormFields";
 import React from "react";
 
 export const InstitutionField = () =>
@@ -9,7 +9,7 @@ export const InstitutionField = () =>
                 <label className={"table-field-input-label"}>
                     Instytucja
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )
@@ -21,7 +21,7 @@ export const NoOfPersonsField = () =>
                 <label className={"table-field-input-label"}>
                     Liczba osób
                 </label>
-                <IntField/>
+                <FIntField/>
             </div>
         </KeyContext.Provider>
     )

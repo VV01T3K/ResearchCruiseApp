@@ -11,9 +11,9 @@ import {notEmptyArray} from "../PublicationsTable/PublicationsTable";
 
 export type Contract = {
     category: string,
-    name: string,
-    unit: string,
-    localization: string
+    institutionName: string,
+    institutionUnit: string,
+    institutionLocalization: string
     description: string,
     scan: {
         name: string,
@@ -28,9 +28,9 @@ const contractDefaultValues = [
     {
     category: "domestic",
     description: "",
-    localization: "",
-    name: "",
-    unit: "",
+    institutionLocalization: "",
+    institutionName: "",
+    institutionUnit: "",
     scan: {
         name: "",
         content: ""
@@ -39,9 +39,9 @@ const contractDefaultValues = [
     {
         category: "international",
         description: "",
-        localization: "",
-        name: "",
-        unit: "",
+        institutionLocalization: "",
+        institutionName: "",
+        institutionUnit: "",
         scan: {
             name: "",
             content: ""
@@ -70,7 +70,7 @@ type ContractTableProps = FieldProps &
     {historicalContracts?: Contract[]}
 
 const ContractRowLabel = (row:Contract) =>
-    `${row.name}, ${row.unit}, ${row.localization}: ${row.description}`
+    `${row.institutionName}, ${row.institutionUnit}, ${row.institutionLocalization}: ${row.description}`
 
 export const ContractTable = (props: ContractTableProps) => {
 
@@ -102,12 +102,14 @@ export const ContractTable = (props: ContractTableProps) => {
         rules: {
             required: false,
             validate: { notEmptyArray: notEmptyArray<Contract>,
-                fileExists: (value:FieldValues) => value.some((row:Contract)=>
-                    !(row.scan.name && row.scan.content)) && "Załącz plik"
+                fileExists: (value:FieldValues) => value.length <= 0 || value.some((row:Contract)=> {
+                    console.log(row)
+                    return !(row.scan.name && row.scan.content)
+                }) && "Załącz plik"
             }
         },
         render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
+            <FieldContext.Provider value={field}>
                 <Render/>
             </FieldContext.Provider>
         )

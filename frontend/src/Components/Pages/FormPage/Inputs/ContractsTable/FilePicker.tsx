@@ -1,19 +1,22 @@
-import React from "react";
-import {CellTools} from "../TableParts";
+import React, {useContext} from "react";
+import {CellFormTools, CellTools} from "../TableParts";
 import {ReactComponent as FileIcon}  from "/node_modules/bootstrap-icons/icons/file-earmark-text.svg";
+import {DisplayContext} from "../TaskTable/EvaluatedTaskTable";
 
 const defaultFileValue = {name:"", content:""}
 
 export const FileNameField = () => {
-    const {cellValue} = CellTools()
+    const displayContext = useContext(DisplayContext)
+    const {cellValue} = displayContext ? CellTools() : CellFormTools()
 
     return(
-        <label className={" w-100"}> {cellValue.name || "Brak"} </label>
+        <label className={" w-100"}> {cellValue?.name || "Brak"} </label>
     )
 }
 
 export const FileIconLabel = () => {
-    const {cellId} = CellTools()
+    const displayContext = useContext(DisplayContext)
+    const {cellId} = displayContext ? CellTools() : CellFormTools()
 
     return(
         <label htmlFor={cellId} className="file-icon-label">
@@ -23,7 +26,7 @@ export const FileIconLabel = () => {
 }
 
 const SetFile = () => {
-    const {setCellValue, field} = CellTools()
+    const {setCellValue, field} = CellFormTools()
     return (e: React.ChangeEvent<HTMLInputElement>) => {
         var scan = defaultFileValue
         if (e.target.files && e.target.files.length) {
@@ -43,7 +46,8 @@ const SetFile = () => {
 }
 
 const FileField = () => {
-    const {cellId} = CellTools()
+    const displayContext = useContext(DisplayContext)
+    const {cellId} = displayContext ? CellTools() : CellFormTools()
 
     const setFile = SetFile()
     return(
@@ -54,7 +58,7 @@ const FileField = () => {
 
 
 export default function FilePicker() {
-    const {cellValue, setCellValue, field} = CellTools()
+    const {cellValue, setCellValue, field} = CellFormTools()
     const handleRemoveScan = () => {
         setCellValue(defaultFileValue)
         field.onBlur()
@@ -64,7 +68,7 @@ export default function FilePicker() {
 
     const RemoveFileButton = () => (
         <>
-            {cellValue.content != "" &&
+            {cellValue?.content != "" &&
                 <a className="remove-file-button" onClick={handleRemoveScan}>
                     Usuń skan
                 </a>

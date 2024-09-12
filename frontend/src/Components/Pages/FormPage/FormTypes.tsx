@@ -11,7 +11,7 @@ import {SpubTask} from "./Inputs/SpubTasksTable";
 export type FormAInitValues = {
     cruiseManagers: FormUser[],
     deputyManagers: FormUser[],
-    years: number[],
+    years: string[],
     shipUsages: string[],
     researchAreas: ResearchArea[],
     cruiseGoals: string[],
@@ -22,19 +22,18 @@ export type FormAFields = {
     id?: string
     cruiseManagerId: string
     deputyManagerId: string
-    year: number
-    acceptablePeriod: number[]
-    optimalPeriod: number[]
-    cruiseHours: number
-    cruiseDays?: number
+    year: string
+    acceptablePeriod: string[]
+    optimalPeriod: string[]
+    cruiseHours: string
     periodNotes?: string
-    shipUsage: number
+    shipUsage: string
     differentUsage?: string
-    permissionsRequired: number
+    permissionsRequired: string
     permissions?: string
-    researchArea: number
+    researchArea: string
     researchAreaInfo?: string
-    cruiseGoal: number
+    cruiseGoal: string
     cruiseGoalDescription?: string
     researchTasks: Task[]
     contracts: Contract[]

@@ -24,14 +24,6 @@ public class EvaluatedResearchTaskDto : ResearchTaskDto , IEvaluatedField
         public MapProfile()
         {
             CreateMap<EvaluatedResearchTaskDto, EvaluatedResearchTask>()
-                .ForPath(dest => dest.ResearchTask.Title, act => act.MapFrom(src => src.Values.Title))
-                .ForPath(dest => dest.ResearchTask.Author, act => act.MapFrom(src => src.Values.Author))
-                .ForPath(dest => dest.ResearchTask.Institution, act => act.MapFrom(src => src.Values.Institution))
-                .ForPath(dest => dest.ResearchTask.Date, act => act.MapFrom(src => src.Values.Date))
-                .ForPath(dest => dest.ResearchTask.StartDate, act => act.MapFrom(src => src.Values.Time.HasValue ? src.Values.Time.Value.Start : null))
-                .ForPath(dest => dest.ResearchTask.EndDate, act => act.MapFrom(src => src.Values.Time.HasValue ? src.Values.Time.Value.End : null))
-                .ForPath(dest => dest.ResearchTask.FinancingAmount, act => act.MapFrom(src => src.Values.FinancingAmount))
-                .ForPath(dest => dest.ResearchTask.Description, act => act.MapFrom(src => src.Values.Description))
                 .ReverseMap();
         }
     }

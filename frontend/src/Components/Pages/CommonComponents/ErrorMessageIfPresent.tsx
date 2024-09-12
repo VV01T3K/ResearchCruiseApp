@@ -18,3 +18,11 @@ export default function ErrorMessageIfPresent (props: Props) {
             </p>
         )
 }
+
+export function ErrorMessageIfPresentNoContext (props: {message:string, className?:string}) {
+    return(
+        <p className={`m-1 text-center text-danger ${props.className ?? ""}`}>
+            {!props.message ? "" : props.message}
+        </p>
+    )
+}

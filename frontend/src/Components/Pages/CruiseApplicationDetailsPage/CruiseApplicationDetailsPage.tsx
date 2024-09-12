@@ -1,44 +1,43 @@
-import React, {Dispatch, useEffect, useState} from 'react';
-import Page from "../Page";
+import React, {createContext, Dispatch, useEffect, useState} from 'react';
 import {useLocation} from "react-router-dom";
-import SpubTasksPoints from "./CruiseApplicationPointsSections/SpubTasksPoints";
-import PageTitleWithNavigation from "../CommonComponents/PageTitleWithNavigation";
-import PageSectionsGroup from "../CommonComponents/PageSectionsGroup";
-import PageSection from "../CommonComponents/PageSection";
-import CruiseApplicationInfo from "./CruiseApplicationInfo";
-import ContractsPoints from "./CruiseApplicationPointsSections/ContractsPoints";
-import TasksPoints from "./CruiseApplicationPointsSections/TasksPoints";
-import PublicationsPoints from "./CruiseApplicationPointsSections/PublicationsPoints";
 import {CruiseApplication} from "../CruiseApplicationsPage/CruiseApplicationsPage";
-import {FormValues} from "../FormPage/Wrappers/FormTemplate";
-import Api from "../../Tools/Api";
-import UgTeams from "./CruiseApplicationPointsSections/UgTeams";
-import GuestTeams from "./CruiseApplicationPointsSections/GuestTeams";
+import FormTemplate from "../FormPage/Wrappers/FormTemplate";
+import {ApplicationDetailsSection} from "./CruiseApplicationsDetailsSections/ApplicationDetailsSection";
+import {TaskSection} from "./CruiseApplicationsDetailsSections/TaskSection";
+import {ContractSection} from "./CruiseApplicationsDetailsSections/ContractSection";
+import {ResearchTeamsSection} from "./CruiseApplicationsDetailsSections/ResearchTeamsSection";
+import {PublicationsSection} from "./CruiseApplicationsDetailsSections/PublicationsSection";
+import {SpubTaskSection} from "./CruiseApplicationsDetailsSections/SpubTaskSection";
+import {BottomOptionBar} from "../../Tools/CruiseApplicationBottomOptionBar";
 
 
 type CruiseApplicationDetailsPageLocationState = {
     cruiseApplication: CruiseApplication
 }
 
+export const CruiseApplicationContext = createContext<CruiseApplication|null>(null)
+
+const ApplicationDetailsSections = () => {
+    return[
+        ApplicationDetailsSection(),
+        TaskSection(),
+        ContractSection(),
+        ResearchTeamsSection(),
+        PublicationsSection(),
+        SpubTaskSection()
+    ]
+
+}
 
 function CruiseApplicationDetailsPage() {
     const location = useLocation()
     const [locationState, _]: [CruiseApplicationDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
 
-    const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
-        "Informacje": "Informacje o zgłoszeniu",
-        "Zadania": "Zadania do zrealizowania w trakcie rejsu",
-        "Umowy": "Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze",
-        "Z. badawcze": "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
-        "Publikacje": "Publikacje",
-        "SPUB": "Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
-    })
-
     // Set the values to be loaded to the form if applicable
-    const [evaluatedApplication, setEvaluatedApplication]
-        = useState<FormValues | undefined>()
-    useEffect(() => {
+    // const [evaluatedApplication, setEvaluatedApplication]
+    //     = useState<FormValues | undefined>()
+    // useEffect(() => {
         // if (locationState?.cruiseApplication.id) {
         //     Api
         //         .get(
@@ -53,65 +52,17 @@ function CruiseApplicationDetailsPage() {
         //             console.log(error.message)
         //         })
         // }
-    },[locationState]);
+    // },[locationState]);
+
+    const sections = ApplicationDetailsSections()
+
 
     return (
-        <Page className="justify-content-center col-12 col-xl-9 bg-white">
-            <div className="d-flex flex-column w-100 h-100" style={{fontSize:"0.8rem"}}>
-                <FormTitleWithNavigation
-                    title="Szczegóły zgłoszenia"
-                    sections={sections}
-                    showRequiredSections={false}
-                />
-                <PageSectionsGroup sections={sections}>
-                    <PageSection title={sections.Informacje}>
-                        <CruiseApplicationInfo
-                            cruiseApplication={locationState.cruiseApplication}
-                        />
-                    </PageSection>
+        <CruiseApplicationContext.Provider value={locationState.cruiseApplication}>
+            <FormTemplate type={"0"} sections={sections} BottomOptionBar={BottomOptionBar}/>
+        </CruiseApplicationContext.Provider>
 
-                    <PageSection title={sections.Zadania}>
-                        <TasksPoints
-                            evaluatedTasks={evaluatedApplication?.researchTasks ?? []}
-                        />
-                    </PageSection>
-
-                    <PageSection title={sections.Umowy}>
-                        <ContractsPoints
-                            evaluatedContracts={
-                             evaluatedApplication?.contracts ?? []
-                           }
-                        />
-                    </PageSection>
-
-                    <PageSection title={sections["Z. badawcze"]}>
-                        <div className={"d-flex w-100"}>
-                        <UgTeams ugTeams={evaluatedApplication?.ugTeams ?? []}/>
-                        <GuestTeams guestTeams={evaluatedApplication?.guestTeams ?? []}/>
-                        </div>
-                        <div className={" w-100 d-flex flex-column justify-content-center align-items-center"}>
-                            Przyznane punkty
-                            <input disabled className="text-center placeholder-glow p-1 w-25 form-control bg-light"
-                                   value={evaluatedApplication?.ugTeamsPoints}
-                            ></input>
-                        </div>
-                    </PageSection>
-
-                    <PageSection title={sections["Publikacje"]}>
-                        <PublicationsPoints
-                            evaluatedPublications={evaluatedApplication?.publications ?? []}
-                        />
-                    </PageSection>
-
-                    <PageSection title={sections.SPUB}>
-                        <SpubTasksPoints
-                            evaluatedSpubTasks={evaluatedApplication?.spubTasks ?? []}
-                        />
-                    </PageSection>
-                </PageSectionsGroup>
-            </div>
-        </Page>
-    )
+)
 }
 
 

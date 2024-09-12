@@ -12,18 +12,18 @@ public class FormA
     public Guid CruiseManagerId { get; set; }
 
     public Guid DeputyManagerId { get; set; }
-    
-    public int Year { get; set; }
+
+    public string Year { get; set; } = null!;
   
-    public int AcceptablePeriodBeg { get; set; }
+    public string AcceptablePeriodBeg { get; set; }
     
-    public int AcceptablePeriodEnd { get; set; }
+    public string AcceptablePeriodEnd { get; set; }
     
-    public int OptimalPeriodBeg { get; set; }
+    public string OptimalPeriodBeg { get; set; }
     
-    public int OptimalPeriodEnd { get; set; }
+    public string OptimalPeriodEnd { get; set; }
     
-    public int CruiseHours { get; set; }
+    public string CruiseHours { get; set; }
 
     [StringLength(1024)]
     public string? PeriodNotes { get; set; }
@@ -38,7 +38,7 @@ public class FormA
     [StringLength(1024)]
     public string? Permissions { get; set; }
     
-    public int ResearchArea { get; set; } 
+    public Guid ResearchAreaId { get; set; } 
     
     [MaxLength(1024)]
     public string? ResearchAreaInfo { get; set; }

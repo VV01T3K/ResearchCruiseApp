@@ -5,7 +5,7 @@ import ErrorMessageIfPresent from "../CommonComponents/ErrorMessageIfPresent";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import userDataManager from "../../CommonComponents/UserDataManager";
 import axios from "axios";
-import {PathName as Path} from "../../Tools/PathName";
+import {Path as Path} from "../../Tools/Path";
 import WaitingPage from "../WaitingPage";
 
 

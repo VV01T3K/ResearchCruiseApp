@@ -1,9 +1,11 @@
-import {SelectField, TextField} from "../CellFields";
+import {FSelectField, FTextField} from "../CellFormFields";
 import React from "react";
 import {KeyContext} from "../../Wrappers/FieldTableWrapper";
 import {contractCategories, contractCategoriesPL} from "./ContractsTable";
 import FilePicker from "./FilePicker";
-import FileDownloader from "../../../../CommonComponents/FileDownloader";
+import FFileDownloader from "../../../../CommonComponents/FFileDownloader";
+
+
 export const ContractDescriptionField = () =>
     (
         <KeyContext.Provider value={"description"}>
@@ -11,43 +13,43 @@ export const ContractDescriptionField = () =>
                 <label className={"table-field-input-label"}>
                     Opis
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )
 
 export const InstitutionField = () =>
     (
-        <KeyContext.Provider value={"name"}>
+        <KeyContext.Provider value={"institutionName"}>
             <div className={"task-field-input"}>
                 <label>
                     Nazwa instytucji
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )
 
 export const UnitField = () =>
     (
-        <KeyContext.Provider value={"unit"}>
+        <KeyContext.Provider value={"institutionUnit"}>
             <div className={"task-field-input"}>
                 <label>
                     Jednostka
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )
 
 export const LocationField = () =>
     (
-        <KeyContext.Provider value={"localization"}>
+        <KeyContext.Provider value={"institutionLocalization"}>
             <div className={"task-field-input"}>
                 <label>
                     Lokalizacja instytucji
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )
@@ -59,10 +61,10 @@ export const CategoryPicker = () => {
     return(
     <KeyContext.Provider value={"category"}>
         <div className={"task-field-input"}>
-            <label>
+            <label className={"table-field-input-label"}>
                 Kategoria
             </label>
-            <SelectField options={contractCategoryOptions}/>
+            <FSelectField options={contractCategoryOptions}/>
         </div>
     </KeyContext.Provider>
 )}
@@ -84,7 +86,7 @@ export const DownloadField = () => (
             <label className={"table-field-input-label"}>
                 Skan umowy
             </label>
-            <FileDownloader/>
+            <FFileDownloader/>
         </div>
     </KeyContext.Provider>
 )

@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {UserData} from "./DataTypes";
 import useCustomEvent from "../Tools/useCustomEvent";
 import {useLocation, useNavigate} from "react-router-dom";
-import {PathName as Path} from "../Tools/PathName";
+import {Path as Path} from "../Tools/Path";
 import {CopyResponseToSessionStorage} from "../Misc";
 import {FieldValues} from "react-hook-form";
 

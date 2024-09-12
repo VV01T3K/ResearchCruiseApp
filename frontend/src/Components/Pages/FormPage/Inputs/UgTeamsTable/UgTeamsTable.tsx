@@ -1,22 +1,28 @@
 import React, {createContext, useContext} from "react";
 import {FieldValues} from "react-hook-form";
 import {FormContext} from "../../Wrappers/FormTemplate";
-import {BottomMenuSingleSelect, CellTools, OrdinalNumber, RemoveRowButton} from "../TableParts";
+import {BottomMenuSingleSelect, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton} from "../TableParts";
 import {FieldContext, FieldTableWrapper, KeyContext} from "../../Wrappers/FieldTableWrapper";
 import FieldWrapper from "../FieldWrapper";
 import {FormField} from "../FormYearSelect";
-import {IntField} from "../CellFields";
+import {FIntField} from "../CellFormFields";
+import {DisplayContext} from "../TaskTable/EvaluatedTaskTable";
 
 
 export type UgTeam = {
-    unit: number,
+    unitId: string,
     noOfEmployees: string,
     noOfStudents: string
 }
 
+export type UgUnit = {
+    name:string,
+    id:string
+}
+
 
 type Props = FormField & {
-    initValues?: string[]
+    initValues?: UgUnit[]
 }
 
 export const NoOfStudentsField = () =>
@@ -26,7 +32,7 @@ export const NoOfStudentsField = () =>
                 <label className={"table-field-input-label"}>
                     Liczba studentów
                 </label>
-                <IntField/>
+                <FIntField/>
             </div>
         </KeyContext.Provider>
     )
@@ -38,7 +44,7 @@ export const NoOfEmployeesField = () =>
                 <label className={"table-field-input-label"}>
                     Liczba pracowników
                 </label>
-                <IntField/>
+                <FIntField/>
             </div>
         </KeyContext.Provider>
     )
@@ -54,36 +60,46 @@ const ugTeamsTableContent = () =>
 
 export const UnitField = () => {
     return  (
-        <KeyContext.Provider value={"unit"}>
+        <KeyContext.Provider value={"unitId"}>
             <div className={"task-field-input"}>
                 <label className={"table-field-input-label"}>
                     Jednostka
                 </label>
-                <StringValueField/>
+                <FStringValueField/>
             </div>
         </KeyContext.Provider>)
 }
 
-export const StringValueField = () => {
+export const FStringValueField = () => {
     const initContext = useContext(InitContext)
-    const {cellValue} = CellTools()
+    const displayContext = useContext(DisplayContext)
+    const {cellValue} = displayContext ? CellTools() : CellFormTools()
 
     return(
         <>
-            {initContext && initContext[cellValue]}
+            {initContext && initContext.find((unit:UgUnit)=>unit.id == cellValue)?.name}
         </>
     )
 }
 
-const InitContext = createContext<any>(null)
+export const button = () => {
+    const {cellValue} =  CellTools()
+    return <>
+        {cellValue}
+    </>
+}
+
+export const InitContext = createContext<any>(null)
 
 function UgTeamsTable(props: Props) {
 
 
     const formContext = useContext(FormContext)
+    const unitIds = formContext?.getValues(props.fieldName)?.map((row:UgTeam)=>row.unitId)
+    const filteredInitValues = unitIds && props.initValues?.filter((unit)=> !unitIds?.includes(unit.id))
 
-    const selectOptions =  props.initValues?.map((ugTeam, index)=>
-            ({label:ugTeam, value: {unit:index, noOfEmployees: 0, noOfStudents: 0}})) ?? []
+    const selectOptions =  filteredInitValues?.map((ugUnit:UgUnit)=>
+            ({label:ugUnit.name, value: {unitId:ugUnit.id, noOfEmployees: 0, noOfStudents: 0}})) ?? []
 
 
     const mdColWidths = [10,32, 24, 24, 10]
@@ -111,7 +127,7 @@ function UgTeamsTable(props: Props) {
             }
         },
         render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
+            <FieldContext.Provider value={field}>
                 <InitContext.Provider value={props.initValues}>
                     <Render/>
                 </InitContext.Provider>

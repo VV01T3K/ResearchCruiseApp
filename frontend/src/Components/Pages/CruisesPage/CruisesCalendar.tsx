@@ -1,10 +1,10 @@
 import {Calendar, momentLocalizer} from "react-big-calendar";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import moment from "moment/moment";
 import 'moment/locale/pl';
-import {Cruise} from "./CruisesPage";
+import {Cruise, CruiseStateContext} from "./CruisesPage";
 import {useNavigate} from "react-router-dom";
-
+import {CruisesContext} from "./CruisesList";
 
 type CalendarCruiseEvent = {
     start: Date,
@@ -21,13 +21,15 @@ type Props = {
 export default function CruisesCalendar(props: Props) {
     const localizer = momentLocalizer(moment)
     const navigate = useNavigate()
+    const cruisesStateContext = useContext(CruiseStateContext)
+
 
     const [cruiseEvents, setCruiseEvents]
         = useState<CalendarCruiseEvent[] | undefined>()
     useEffect(() => {
-        const newCruiseEvents: CalendarCruiseEvent[] | undefined = props.cruises?.map(cruise => ({
-            start: new Date(cruise.date.start),
-            end: new Date(cruise.date.end),
+        const newCruiseEvents: CalendarCruiseEvent[] | undefined = cruisesStateContext!.cruises?.map(cruise => ({
+            start: new Date(cruise.startDate),
+            end: new Date(cruise.endDate),
             title: `Kierownik: ${cruise.mainCruiseManagerFirstName} ${cruise.mainCruiseManagerLastName}`,
             fullCruise: cruise
         }))
@@ -35,18 +37,15 @@ export default function CruisesCalendar(props: Props) {
     }, []);
 
     return (
+        <div className={"calendar-container"}>
         <Calendar
             localizer={localizer}
             culture={"pl"}
             events={cruiseEvents}
             startAccessor="start"
+            className="calendar"
             endAccessor="end"
-            className="p-2"
-            views={["month", "week", "day"]}
-            style={{
-                height: "100vw",
-                width: "70vw"
-            }}
+            views={["month", "week"]}
             messages={{
                 month: "miesiąc",
                 week: "tydzień",
@@ -61,5 +60,6 @@ export default function CruisesCalendar(props: Props) {
                 })
             }}
         />
+        </div>
     )
 }

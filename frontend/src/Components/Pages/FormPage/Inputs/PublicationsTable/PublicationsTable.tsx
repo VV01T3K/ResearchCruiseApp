@@ -23,8 +23,8 @@ export type Publication = {
     authors: string,
     title: string,
     magazine: string,
-    year: number,
-    ministerialPoints: number
+    year: string,
+    ministerialPoints: string
 }
 
 const publicationDefaultValues = [
@@ -118,7 +118,7 @@ export const PublicationsTable = (props: PublicationsTableProps) => {
             validate: { notEmptyArray: notEmptyArray<Publication> }
         },
         render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
+            <FieldContext.Provider value={field}>
                 <Render/>
             </FieldContext.Provider>
         )

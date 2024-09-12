@@ -1,15 +1,15 @@
 import React from "react";
-import {CruiseManagerSection} from "../Forms/FormASections/CruiseManagerSection";
-import {TimeSection} from "../Forms/FormASections/TimeSection";
+import {CruiseManagerSection} from "../Forms/FormA/FormASections/CruiseManagerSection";
+import {TimeSection} from "../Forms/FormA/FormASections/TimeSection";
 import {SectionProps} from "./FormSection";
-import {PermissionsSection} from "../Forms/FormASections/PermissionsSection";
-import {ResearchAreaSection} from "../Forms/FormASections/ResearchAreaSection";
-import {GoalSection} from "../Forms/FormASections/GoalSection";
-import {TaskSection} from "../Forms/FormASections/TaskSection";
-import {ContractSection} from "../Forms/FormASections/ContractSection";
-import {ResearchTeamsSection} from "../Forms/FormASections/ResearchTeamsSection";
-import {PublicationAndThesesSection} from "../Forms/FormASections/PublicationAndThesesSection";
-import {SpubTaskSection} from "../Forms/FormASections/SpubTaskSection";
+import {PermissionsSection} from "../Forms/FormA/FormASections/PermissionsSection";
+import {ResearchAreaSection} from "../Forms/FormA/FormASections/ResearchAreaSection";
+import {GoalSection} from "../Forms/FormA/FormASections/GoalSection";
+import {TasksSection} from "../Forms/FormA/FormASections/TasksSection";
+import {ContractSection} from "../Forms/FormA/FormASections/ContractSection";
+import {ResearchTeamsSection} from "../Forms/FormA/FormASections/ResearchTeamsSection";
+import {PublicationAndThesesSection} from "../Forms/FormA/FormASections/PublicationsSection";
+import {SpubTasksSection} from "../Forms/FormA/FormASections/SpubTasksSection";
 
 export type FormSectionType = {
     Content:(props: SectionProps) => React.JSX.Element, id:string, shortTitle:string, longTitle:string, sectionFieldNames:{[key:string]:string}}
@@ -18,20 +18,3 @@ export function SectionIdFromTitle(title:String){
 }
 
 
-export default function FormASections(){
-
-    const cruiseManagerSection = CruiseManagerSection()
-    const timeSection = TimeSection()
-    const permissionsSection = PermissionsSection()
-    const researchAreaSection = ResearchAreaSection()
-    const cruiseGoalSection = GoalSection()
-    const taskSection = TaskSection()
-    const contractSection = ContractSection()
-    const researchTeamsSection = ResearchTeamsSection()
-    const publicationAndThesesSection = PublicationAndThesesSection()
-    const spubTaskSection = SpubTaskSection()
-
-    return [cruiseManagerSection, timeSection, permissionsSection,
-        researchAreaSection, cruiseGoalSection, taskSection,
-        contractSection, researchTeamsSection, publicationAndThesesSection, spubTaskSection]
-}

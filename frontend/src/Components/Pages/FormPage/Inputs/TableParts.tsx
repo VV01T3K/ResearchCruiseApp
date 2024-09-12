@@ -1,29 +1,32 @@
 import React, {useContext} from "react";
 import {SelectOptions, SelectSingleValue, SelectWrapper} from "../Wrappers/ReactSelectWrapper";
-import {FormContext} from "../Wrappers/FormTemplate";
+import {FormContext, ReadOnlyContext} from "../Wrappers/FormTemplate";
 import {CellContext, FieldContext, KeyContext} from "../Wrappers/FieldTableWrapper";
 import {ReactComponent as RemoveIcon} from "/node_modules/bootstrap-icons/icons/x-lg.svg";
 
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
+import {DisplayContext} from "./TaskTable/EvaluatedTaskTable";
 
 export const RemoveRow = () => {
     const fieldContext = useContext(FieldContext)
     const cellContext = useContext(CellContext)
     const formContext = useContext(FormContext)
+
     return () => {
-        var newValue = fieldContext!.field.value
-        newValue.splice(cellContext!.rowIndex, 1)
-        formContext!.trigger(fieldContext!.fieldName)
+        fieldContext!.value.splice(cellContext!.rowIndex, 1)
+        fieldContext!.onBlur()
+        formContext!.trigger(fieldContext!.name)
     }
 }
 
 export const CreateRow = ()=> {
     const formContext = useContext(FormContext)
     const fieldContext = useContext(FieldContext)
+
     return (selectedOption: SelectSingleValue) => {
-        var newValue = [...fieldContext!.field.value, {...selectedOption!.value}]
-        fieldContext!.field.onChange(newValue)
-        formContext!.trigger(fieldContext!.fieldName)
+        fieldContext!.value.push(selectedOption!.value)
+        fieldContext!.onBlur()
+        formContext!.trigger(fieldContext!.name)
     }
 }
 
@@ -31,9 +34,9 @@ export const CreateRowWithButton = ()=> {
     const formContext = useContext(FormContext)
     const fieldContext = useContext(FieldContext)
     return (newRow:any) => {
-        var newValue = [...fieldContext!.field.value, {...newRow}]
-        fieldContext!.field.onChange(newValue)
-        formContext!.trigger(fieldContext!.fieldName)
+        var newValue = [...fieldContext!.value, {...newRow}]
+        fieldContext!.onChange(newValue)
+        formContext!.trigger(fieldContext!.name)
     }
 }
 
@@ -109,38 +112,56 @@ export const BottomMenuWithAddButtonAndHistory = (props: { newOption: SelectOpti
     )
 
 
-export const CellTools = () => {
+export const CellFormTools = () => {
     const cellContext = useContext(CellContext)
     const fieldContext = useContext(FieldContext)
     const keyContext = useContext(KeyContext)
-    const rowValue = fieldContext!.field.value[cellContext!.rowIndex]
+    const rowValue = fieldContext!.value[cellContext!.rowIndex]
     // console.log(rowValue)
-    const cellValue = rowValue[keyContext!]
+    const cellValue = rowValue ? rowValue[keyContext!]: null
     function setCellValue (e: any){
-        fieldContext!.field.value[cellContext!.rowIndex][keyContext!] = e;
-        fieldContext!.field.onChange(fieldContext!.field.value)
+        fieldContext!.value[cellContext!.rowIndex][keyContext!] = e;
+        fieldContext!.onChange(fieldContext!.value)
     }
 
     function setCellValueOnBlur (e: any){
         setCellValue(e)
-        fieldContext!.field.onBlur(fieldContext!.field.value)
+        fieldContext!.onBlur(fieldContext!.value)
 
     }
 
-    const cellId = `${fieldContext?.fieldName}.${cellContext?.rowIndex}.${cellContext?.colIndex}.`
+    const cellId = `${fieldContext?.name}.${cellContext?.rowIndex}.${cellContext?.colIndex}.`
 
-    const field = fieldContext!.field
+    const field = fieldContext
     return {cellValue, rowValue, setCellValue, setCellValueOnBlur, field, cellId}
 }
 
+export const CellTools = () => {
+    const cellContext = useContext(CellContext)
+    const keyContext = useContext(KeyContext)
+    const displayContext = useContext(DisplayContext)
+    const fieldContext = useContext(FieldContext) //used only for id
+
+    const rowValue = displayContext[cellContext!.rowIndex]
+    const cellValue = rowValue[keyContext!]
+
+    const cellId = `${fieldContext?.name}.${cellContext?.rowIndex}.${cellContext?.colIndex}.`
+
+    return {cellValue, rowValue, cellId}
+}
+
+
+
+
 export const RemoveRowButton = () => {
-    const formContext = useContext(FormContext)
+    const readOnly = useContext(ReadOnlyContext)
     const removeRow = RemoveRow()
     return (
         <>
-            {!formContext!.readOnly &&
-                <div className={"border rounded p-1"}>
-                    <RemoveIcon type="button" onClick={removeRow}/>
+            {!readOnly &&
+                <div className={"btn-danger btn rounded align-items-center justify-content-center d-flex p-2"}
+                     onClick={removeRow}>
+                    <RemoveIcon type="button"/>
                 </div>
             }
         </>

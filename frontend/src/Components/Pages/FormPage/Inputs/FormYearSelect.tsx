@@ -1,9 +1,8 @@
 import React, {useContext, useEffect} from "react";
 import FieldWrapper from "./FieldWrapper";
 import {FormContext} from "../Wrappers/FormTemplate";
-import {readyFieldOptions, SelectOptions, SelectSingleValue, SelectWrapper} from "../Wrappers/ReactSelectWrapper";
-import {FieldValues, useFormContext} from "react-hook-form";
-import Select from "react-select";
+import {readyFieldOptions, SelectSingleValue, SelectWrapper} from "../Wrappers/ReactSelectWrapper";
+import {FieldValues} from "react-hook-form";
 
 export type FormField = {
     className?: string,
@@ -12,7 +11,7 @@ export type FormField = {
 }
 
 type Props = FormField & {
-    initValues?: number[]
+    initValues?: string[]
 }
 
 function FormYearSelect(props: Props) {
@@ -34,7 +33,7 @@ function FormYearSelect(props: Props) {
     const optionsMapper:SelectSingleValue[] | undefined= props.initValues?.map(value => ({value:value, label:value}))
 
     const render = ({field}:FieldValues) => {
-        const currentValue = field.value ? { label: field.value, value: field.value}: null
+        const currentValue = field.value ? { label: field.value, value: field.value}: undefined
 
         return(
             <SelectWrapper fieldName={props.fieldName} value={currentValue} options={optionsMapper}/>

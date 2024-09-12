@@ -10,7 +10,7 @@ public class ThesisDto
     public string Author { get; set; } = null!;
     public string Title { get; set; } = null!;
     public string Promoter { get; set; } = null!;
-    public int Year { get; set; }
+    public string Year { get; set; }  = null!;
 
 
     private class MapProfile : Profile

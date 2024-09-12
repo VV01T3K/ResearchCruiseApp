@@ -1,4 +1,5 @@
 using AutoMapper;
+using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
@@ -6,9 +7,23 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class ResearchTaskDto
 {
-    public int Type { get; set; }
+    public string Type { get; set; }
 
-    public ResearchTaskValuesDto Values { get; set; } = null!;
+    public string? Title { get; set; }
+        
+    public string? Author { get; set; }
+        
+    public string? Institution { get; set; }
+        
+    public string? Date { get; set; }
+        
+    public string? StartDate { get; set; }
+    
+    public string? EndDate { get; set; }
+        
+    public string? FinancingAmount { get; set; }
+        
+    public string? Description { get; set; }
     
     
     private class MapProfile : Profile
@@ -16,58 +31,7 @@ public class ResearchTaskDto
         public MapProfile()
         {
             CreateMap<ResearchTask, ResearchTaskDto>()
-                .ForMember(
-                    dest => dest.Values,
-                    options =>
-                        options.MapFrom(src =>
-                            src));
-
-            CreateMap<ResearchTaskDto, ResearchTask>()
-                .ForMember(
-                    dest => dest.Title,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Title))
-                .ForMember(
-                    dest => dest.Author,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Author))
-                .ForMember(
-                    dest => dest.Institution,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Institution))
-                .ForMember(
-                    dest => dest.Date,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Date))
-                .ForMember(
-                    dest => dest.StartDate,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Time.HasValue ? src.Values.Time.Value.Start : null))
-                .ForMember(
-                    dest => dest.EndDate,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Time.HasValue ? src.Values.Time.Value.End : null))
-                .ForMember(
-                    dest => dest.EndDate,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Time.HasValue ? src.Values.Time.Value.End : null))
-                .ForMember(
-                    dest => dest.FinancingAmount,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.FinancingAmount))
-                .ForMember(
-                    dest => dest.Description,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Values.Description));
+                .ReverseMap();
         }
     }
 }

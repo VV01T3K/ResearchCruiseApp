@@ -10,15 +10,26 @@ import CruiseDate from "./CruiseFormSections/CruiseDate";
 import {useForm} from "react-hook-form";
 import CruiseApplications from "./CruiseFormSections/CruiseApplications";
 import {CruiseApplication, CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
-import {Application} from "../ApplicationsPage/ApplicationsPage";
 import Api from "../../Tools/Api";
-import {Time} from "../FormPage/Inputs/TaskInput/TaskInput";
 import {fetchCruiseApplications} from "../../Tools/Fetchers";
-import {Time} from "../FormPage/Inputs/TaskTable/TaskTable";
-import {fetchApplications} from "../../Tools/Fetchers";
 import CruiseManagers from "./CruiseFormSections/CruiseManagers";
 import {Simulate} from "react-dom/test-utils";
 import useCustomEvent from "../../Tools/useCustomEvent";
+import FormTemplate from "../FormPage/Wrappers/FormTemplate";
+import {CruiseManagerSection} from "../FormPage/Forms/FormA/FormASections/CruiseManagerSection";
+import {TimeSection} from "../FormPage/Forms/FormA/FormASections/TimeSection";
+import {PermissionsSection} from "../FormPage/Forms/FormA/FormASections/PermissionsSection";
+import {ResearchAreaSection} from "../FormPage/Forms/FormA/FormASections/ResearchAreaSection";
+import {GoalSection} from "../FormPage/Forms/FormA/FormASections/GoalSection";
+import {TasksSection} from "../FormPage/Forms/FormA/FormASections/TasksSection";
+import {ContractSection} from "../FormPage/Forms/FormA/FormASections/ContractSection";
+import {ResearchTeamsSection} from "../FormPage/Forms/FormA/FormASections/ResearchTeamsSection";
+import {PublicationAndThesesSection} from "../FormPage/Forms/FormA/FormASections/PublicationsSection";
+import {SpubTasksSection} from "../FormPage/Forms/FormA/FormASections/SpubTasksSection";
+import {ApplicationsSection} from "./CruiseFormSections/Sections/AppicationsSection";
+import {DateSection} from "./CruiseFormSections/Sections/InfoSection";
+import {InfoSection} from "./CruiseFormSections/Sections/DateSection";
+import {CruiseManagersSection} from "./CruiseFormSections/Sections/CruiseManagersSection";
 
 
 type CruiseManagersTeam = {
@@ -36,9 +47,18 @@ type CruiseFormPageLocationState = {
     cruise?: Cruise
 }
 
+export const EMPTY_GUID: string = "00000000-0000-0000-0000-000000000000"
+
+
+const CruiseFormSections = () => [
+    ApplicationsSection(),
+    CruiseManagersSection(),
+    DateSection(),
+    InfoSection()
+]
+
 
 export default function CruiseFormPage() {
-    const EMPTY_GUID: string = "00000000-0000-0000-0000-000000000000"
 
     const { dispatchEvent } = useCustomEvent('busy');
     const navigate = useNavigate()
@@ -69,17 +89,14 @@ export default function CruiseFormPage() {
 
     const handleEditCruise = () => {
         dispatchEvent("Trwa zapisywanie")
-        Api
-            .patch(
+        Api.patch(
                 `/api/Cruises/${locationState.cruise!.id}`,
-                cruiseForm.getValues()
-            )
+                cruiseForm.getValues())
             .then(_ =>
                 navigate("/Cruises")
             )
     }
-    const handleAddCruise = () => {
-        Api
+    const handleAddCruise = () => Api
             .post(
                 `/api/Cruises`,
                 cruiseForm.getValues()
@@ -87,7 +104,7 @@ export default function CruiseFormPage() {
             .then(_ =>
                 navigate("/Cruises")
             )
-    }
+
     const resetEditCruiseForm = () => {
         cruiseForm.reset(editCruiseFormDefaultValues)
 
@@ -95,12 +112,7 @@ export default function CruiseFormPage() {
             fetchCruiseApplications(locationState.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
     }
 
-    const [sections, __] : [Record<string, string>, Dispatch<any>] = useState({
-        "Podstawowe": "Podstawowe informacje o rejsie",
-        "Termin": "Termin rejsu",
-        "Kierownicy": "Kierownik główny i zastępca kierownika głównego",
-        "Zgłoszenia": "Zgłoszenia przypisane do rejsu"
-    })
+    const sections = CruiseFormSections()
 
     const [applicationsAddingMode, setApplicationsAddingMode] =
         useState(false)
@@ -109,70 +121,68 @@ export default function CruiseFormPage() {
         useState<CruiseApplication[]>([])
     useEffect(() => {
         if (locationState.cruise)
-            fetchCruiseApplications(locationState.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
+            (fetchCruiseApplications)(locationState.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
     }, []);
 
+
+
+
     return (
-        <Page className="justify-content-center col-12 col-xl-9 bg-white" >
-            <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
-                <div className="d-flex flex-column align-items-center w-100 h-100 overflow-auto" >
-                    <FormTitleWithNavigation
-                        title={locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs"}
-                        sections={sections}
-                        showRequiredSections={false}
-                    />
+        <FormTemplate sections={sections} type="2" /> )
+            {/*<div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>*/}
+            {/*    <div className="d-flex flex-column align-items-center w-100 h-100 overflow-auto" >*/}
+            {/*        <FormTitleWithNavigation*/}
+            {/*            title={locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs"}*/}
+            {/*            sections={sections}*/}
+            {/*            showRequiredSections={false}*/}
+            {/*        />*/}
 
-                    <PageSectionsGroup sections={sections}>
-                        <PageSection title={sections["Podstawowe"]}>
-                            <CruiseBasicInfo cruise={locationState.cruise} />
-                        </PageSection>
 
-                        <PageSection title={sections["Termin"]}>
-                            <CruiseDate editCruiseForm={cruiseForm} />
-                        </PageSection>
+            {/*            <PageSection title={sections["Termin"]}>*/}
+            {/*            </PageSection>*/}
 
-                        <PageSection title={sections["Kierownicy"]}>
-                            <CruiseManagers
-                                cruiseApplications={cruiseApplications}
-                                editCruiseForm={cruiseForm}
-                            />
-                        </PageSection>
+            {/*            <PageSection title={sections["Kierownicy"]}>*/}
+            {/*                <CruiseManagers*/}
+            {/*                    cruiseApplications={cruiseApplications}*/}
+            {/*                    editCruiseForm={cruiseForm}*/}
+            {/*                />*/}
+            {/*            </PageSection>*/}
 
-                        <PageSection title={sections["Zgłoszenia"]}>
-                            <CruiseApplications
-                                editCruiseForm={cruiseForm}
-                                cruiseApplications={cruiseApplications}
-                                setCruiseApplications={setCruiseApplications}
-                                addingMode={applicationsAddingMode}
-                                setAddingMode={setApplicationsAddingMode}
-                            />
-                        </PageSection>
-                    </PageSectionsGroup>
-                </div>
-                <div className={`d-flex flex-row justify-content-center border-top border-black w-100 bg-white`} style={{zIndex:9999}}>
-                    <div className="d-flex col-6 text-center p-2 justify-content-center">
-                        <button
-                            className="btn btn-primary w-100"
-                            style={{fontSize:"inherit"}}
-                            onClick={locationState.cruise ?
-                                cruiseForm.handleSubmit(handleEditCruise) :
-                                cruiseForm.handleSubmit(handleAddCruise)
-                            }
-                        >
-                            Zapisz rejs
-                        </button>
-                    </div>
-                    <div className="d-flex col-6 text-center p-2 justify-content-center" >
-                        <button
-                            className="btn btn-primary w-100"
-                            style={{fontSize:"inherit"}}
-                            onClick={resetEditCruiseForm}
-                        >
-                            {locationState.cruise ? "Cofnij zmiany" : "Wyczyść formularz"}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Page>
-    )
+            {/*            <PageSection title={sections["Zgłoszenia"]}>*/}
+            {/*                <CruiseApplications*/}
+            {/*                    editCruiseForm={cruiseForm}*/}
+            {/*                    cruiseApplications={cruiseApplications}*/}
+            {/*                    setCruiseApplications={setCruiseApplications}*/}
+            {/*                    addingMode={applicationsAddingMode}*/}
+            {/*                    setAddingMode={setApplicationsAddingMode}*/}
+            {/*                />*/}
+            {/*            </PageSection>*/}
+            {/*        </PageSectionsGroup>*/}
+            {/*    </div>*/}
+            {/*    <div className={`d-flex flex-row justify-content-center border-top border-black w-100 bg-white`} style={{zIndex:9999}}>*/}
+            {/*        <div className="d-flex col-6 text-center p-2 justify-content-center">*/}
+            {/*            <button*/}
+            {/*                className="btn btn-primary w-100"*/}
+            {/*                style={{fontSize:"inherit"}}*/}
+            {/*                onClick={locationState.cruise ?*/}
+            {/*                    cruiseForm.handleSubmit(handleEditCruise) :*/}
+            {/*                    cruiseForm.handleSubmit(handleAddCruise)*/}
+            {/*                }*/}
+            {/*            >*/}
+            {/*                Zapisz rejs*/}
+            {/*            </button>*/}
+            {/*        </div>*/}
+            {/*        <div className="d-flex col-6 text-center p-2 justify-content-center" >*/}
+            {/*            <button*/}
+            {/*                className="btn btn-primary w-100"*/}
+            {/*                style={{fontSize:"inherit"}}*/}
+            {/*                onClick={resetEditCruiseForm}*/}
+            {/*            >*/}
+            {/*                {locationState.cruise ? "Cofnij zmiany" : "Wyczyść formularz"}*/}
+            {/*            </button>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+        // </Page>
+    // )
 }

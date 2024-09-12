@@ -8,6 +8,7 @@ type Props = {
     label: string,
     className?: string,
     style?: any // TODO: change type
+    disabled?:boolean
 }
 
 
@@ -16,12 +17,13 @@ export default function LinkWithState(props: Props) {
 
     return (
         <a
-            className={props.className ?? ""}
-            style={props.style ?? { cursor: "pointer", fontSize: "inherit" }}
-            onClick={() =>
-                navigate(props.to, {
-                        state: props.state
-                })
+            className={!props.disabled ? "link-with-state" : "link-with-state-disabled"}
+            onClick={() =>{
+                if(!props.disabled)
+                    navigate(props.to, {
+                            state: props.state
+                    })
+            }
             }
         >
             {props.label}

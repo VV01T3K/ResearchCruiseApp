@@ -8,7 +8,9 @@ public class ContractDto
 {
     public string Category { get; set; } = null!;
 
-    public InstitutionDto Institution { get; set; } = null!;
+    public string InstitutionName { get; set; } = null!;
+    public string InstitutionUnit { get; set; } = null!;
+    public string InstitutionLocalization { get; set; } = null!;
 
     public string Description { get; set; } = null!;
 
@@ -20,28 +22,9 @@ public class ContractDto
         public MapProfile()
         {
             CreateMap<Contract, ContractDto>()
-                .ForMember(
-                    dest => dest.Institution,
-                    options =>
-                        options.MapFrom(src =>
-                            src));
+                .ReverseMap();
 
             CreateMap<ContractDto, Contract>()
-                .ForMember(
-                    dest => dest.InstitutionName,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Institution.Name))
-                .ForMember(
-                    dest => dest.InstitutionUnit,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Institution.Unit))
-                .ForMember(
-                    dest => dest.InstitutionLocalization,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Institution.Localization))
                 .ForMember(
                     dest => dest.ScanContent,
                     options =>

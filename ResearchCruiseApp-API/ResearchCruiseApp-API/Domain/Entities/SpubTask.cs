@@ -9,9 +9,9 @@ public class SpubTask
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public int YearFrom { get; set; }
+    public string YearFrom { get; set; }
     
-    public int YearTo { get; set; }
+    public string YearTo { get; set; }
     
     [StringLength(1024)]
     public string Name { get; set; } = null!;

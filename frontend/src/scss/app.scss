@@ -98,7 +98,7 @@ $theme-colors: (
   .p-3
 }
 $top-bar-height: 60.3px;
-$top-bar-min-width: 350px;
+$top-bar-min-width: 380px;
 .app-top-bar{
   min-width: $top-bar-min-width;
   height: $top-bar-height;
@@ -171,7 +171,7 @@ $top-bar-min-width: 350px;
   .page-title-common
 }
 .form-title-with-navigation{
-  z-index: 9999;
+  z-index: 1027;
   @extend
   .page-title-common,
   .d-flex,
@@ -196,6 +196,7 @@ $top-bar-min-width: 350px;
 }
 
 .mobile-submenu{
+  z-index: 1028 !important;
   min-width: $top-bar-min-width;
   margin-top: $top-bar-height;
   height: 42.25px;
@@ -204,7 +205,7 @@ $top-bar-min-width: 350px;
   .align-items-center,
   .p-0,
   .fixed-top,
-  .z-0,
+  //.z-0,
   .bg-primary
 }
 
@@ -768,7 +769,7 @@ body > [class^="select"] {
   height: auto;
   text-align:center;
   font-size: 1rem;
-  z-index: 9998;
+  z-index: 1026;
   @extend
   .text-center
 }
@@ -1017,7 +1018,7 @@ body > [class^="select"] {
 }
 
 .react-datepicker-popper {
-  z-index: 9998 !important;
+  z-index: 1026 !important;
 }
 
 .remove-file-button{
@@ -1053,6 +1054,97 @@ body > [class^="select"] {
   .justify-content-center,
   .align-items-center,
 }
+
+.link-with-state{
+  cursor: pointer;
+  @extend
+  .w-100,
+  .m-1,
+  .text-black
+}
+.link-with-state-disabled{
+  cursor: default;
+  @extend
+  .text-muted,
+  .text-decoration-none,
+  .m-1,
+  .w-100
+}
+.cruise-application-info{
+  @extend
+  .d-flex,
+  .flex-wrap,
+  .flex-row,
+  .justify-content-center,
+  .col-12
+}
+
+.custom-switch {
+  .react-switch-bg {
+    background-color: map-get($theme-colors, "primary") !important; // Kolor tła
+    border-radius: 20px; // Zaokrąglone rogi
+
+    &.react-switch-on {
+      background-color: map-get($theme-colors, "secondary") !important; // Kolor tła, gdy przełącznik jest włączony
+    }
+  }
+
+  // Rączka przełącznika (slider)
+  .react-switch-handle {
+    background-color: #fff !important; // Kolor rączki
+    border: 2px solid #000; // Możesz dodać obramowanie
+
+    &:hover {
+      background-color: #f1f1f1; // Zmiana koloru po najechaniu
+    }
+  }
+}
+
+.cruises-button {
+  font-size: 0.8rem !important;
+  @extend
+  .btn,
+  .btn-primary,
+  .m-1,
+}
+
+.vwrapper {
+  display: flex;
+  flex-direction: column;
+
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+
+  height: 100%;
+}
+
+.table-with-filters {
+  @extend
+  .flex-grow-1,
+  .overflow-y-hidden,
+  .d-flex,
+  .flex-column
+}
+
+.calendar-container {
+  width: 70%; /* Szerokość zajmuje 100% szerokości kontenera */
+  position: relative;
+  padding-bottom: 60%; /* Wysokość będzie równa szerokości (100% wysokości w stosunku do szerokości) */
+  height: 0; /* Wysokość kontenera ustawiona na 0, a właściwa wysokość pochodzi z padding-bottom */
+  @extend
+  .m-2
+}
+
+.calendar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 @media (min-width: 318px) {
   .tiles-container {
     width: 300px;
@@ -1074,6 +1166,80 @@ body > [class^="select"] {
   .tiles-container {
     width: 900px;
   }
+}
+
+/* Zmieniamy kolor tła dla dzisiejszego dnia */
+.rbc-today {
+  background-color: map-get($theme-colors, "secondary"); /* Jasnożółte tło */
+}
+
+/* Zmieniamy kolor tekstu i tło dla wydarzeń */
+.rbc-event {
+  background-color: map-get($theme-colors, "primary"); /* Niebieskie tło wydarzeń */
+  color: white; /* Biały tekst */
+  border: none; /* Usunięcie obramowania */
+  padding: 5px;
+  border-radius: 4px; /* Zaokrąglenie narożników */
+}
+
+/* Zmieniamy kolor paska narzędzi (górnego) */
+.rbc-toolbar {
+  background-color: map-get($theme-colors, "primary"); /* Zielony pasek narzędzi */
+  color: white; /* Biały tekst */
+}
+
+/* Zmieniamy kolor tła dni spoza wybranego miesiąca */
+.rbc-off-range-bg {
+  background-color: map-get($theme-colors, "primary"); /* Szare tło */
+}
+
+.rbc-btn-group button {
+  @extend
+  .m-1,
+  .bg-light,
+}
+.rbc-month-header {
+  font-size: 1rem;
+  @extend
+  .bg-primary,
+  .text-white
+}
+.rbc-header{
+  @extend
+  .rbc-month-header
+}
+.rbc-time-slot{
+  border: 1px solid map-get($theme-colors, "primary"); /* Szare obramowanie */
+
+}
+.rbc-month-view .rbc-time-view{
+  @extend
+  .border,
+  .border-primary
+}
+.rbc-event-content{
+  @extend
+  .bg-primary
+}
+.rbc-event-allday{
+  @extend
+  .bg-primary
+}
+
+/* Zmieniamy kolor tła i obramowania dni w widoku miesiąca */
+.rbc-day-bg {
+  background-color: white; /* Białe tło */
+  border: 1px solid map-get($theme-colors, "primary"); /* Szare obramowanie */
+}
+
+.rbc-active {
+  @extend
+  .bg-white,
+  .text-primary
+}
+.rbc-btn-group {
+  @extend
+  .m-2
 }
 
 @import "node_modules/bootstrap/scss/bootstrap";

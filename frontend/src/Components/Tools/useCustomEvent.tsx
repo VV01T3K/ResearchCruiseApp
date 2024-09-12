@@ -1,8 +1,8 @@
-import {MutableRefObject, useEffect, useRef} from 'react';
+import {MutableRefObject, Ref, useEffect, useRef} from 'react';
 
 
-const useCustomEvent = (eventName)=> {
-    const ref = useRef<MutableRefObject<any>>(null);
+const useCustomEvent = (eventName:string)=> {
+    const ref = useRef<CustomEvent|null>(null);
 
     useEffect(
         () => {
@@ -20,8 +20,8 @@ const useCustomEvent = (eventName)=> {
         }
     };
 
-    const addEventListener = (callback) => {
-        const eventHandler = (event)=> {
+    const addEventListener = (callback: (arg0: any) => void) => {
+        const eventHandler = (event:any)=> {
             callback(event.detail);
         };
 

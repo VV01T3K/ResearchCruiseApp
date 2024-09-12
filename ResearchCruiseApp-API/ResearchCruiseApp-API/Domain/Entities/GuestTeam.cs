@@ -12,5 +12,5 @@ public class GuestTeam
     [StringLength(1024)]
     public string Institution { get; set; } = null!;
     
-    public int NoOfPersons { get; set; }
+    public string NoOfPersons { get; set; }
 }

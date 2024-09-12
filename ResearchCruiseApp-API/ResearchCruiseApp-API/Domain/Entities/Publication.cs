@@ -24,7 +24,7 @@ public class Publication
     [StringLength(1024)]
     public string Magazine { get; set; } = null!;
     
-    public int Year { get; set; }
+    public string Year { get; set; }
 
-    public int MinisterialPoints { get; set; }
+    public string MinisterialPoints { get; set; }
 }

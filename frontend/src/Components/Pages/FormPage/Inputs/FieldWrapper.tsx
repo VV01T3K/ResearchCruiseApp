@@ -14,6 +14,8 @@ type Props = {
     defaultValue?:FieldValues | string
 }
 
+export const FieldLabel = (props:{fieldLabel:string}) => (<div className="mb-2">{props.fieldLabel}</div>)
+
 
 function FieldWrapper(props: Props) {
     const formContext = useContext(FormContext)
@@ -26,10 +28,9 @@ function FieldWrapper(props: Props) {
             defaultValue={props.defaultValue}
         />
     )
-    const FieldLabel = () => (<div className="mb-2">{props.fieldLabel}</div>)
     return (
         <div className={props.className + " field-wrapper"}>
-            <FieldLabel/>
+            <FieldLabel fieldLabel={props.fieldLabel}/>
             <Field/>
             <ErrorMessageIfPresent fieldName={props.fieldName}/>
         </div>

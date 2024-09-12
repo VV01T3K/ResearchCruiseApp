@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {FieldValues } from "react-hook-form";
-import ErrorMessageIfPresent from "../CommonComponents/ErrorMessageIfPresent";
+import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../CommonComponents/ErrorMessageIfPresent";
 import {Link} from "react-router-dom";
-import {PathName as Path} from "../../Tools/PathName";
+import {Path as Path} from "../../Tools/Path";
 import axios from "axios";
 import userDataManager from "../../CommonComponents/UserDataManager";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
@@ -62,7 +62,7 @@ function LoginForm(){
                 <PasswordTextInput/>
                 <ForgetPasswordLink/>
                 <LoginButton/>
-                {/*{loginError && <ErrorMessageIfPresent message={loginError} />}*/}
+                {loginError && <ErrorMessageIfPresentNoContext message={loginError} />}
                 <RegisterLink/>
             </form>
         </>

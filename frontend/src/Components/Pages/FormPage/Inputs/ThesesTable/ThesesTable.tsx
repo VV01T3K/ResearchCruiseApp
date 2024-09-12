@@ -5,7 +5,7 @@ import {FieldProps} from "../FormRadio";
 import {FormContext} from "../../Wrappers/FormTemplate";
 import {FieldContext, FieldTableWrapper, KeyContext} from "../../Wrappers/FieldTableWrapper";
 import FieldWrapper from "../FieldWrapper";
-import {DateFieldOnlyYear, SelectField, TextField} from "../CellFields";
+import {FDateFieldOnlyYear, FSelectField, FTextField} from "../CellFormFields";
 
 export type Publication = {
     category: string,
@@ -73,10 +73,10 @@ export const CategoryPicker = () => {
     return(
         <KeyContext.Provider value={"category"}>
             <div className={"task-field-input"}>
-                <label>
+                <label className={"table-field-input-label"}>
                     Kategoria
                 </label>
-                <SelectField options={thesisCategoryOptions}/>
+                <FSelectField options={thesisCategoryOptions}/>
             </div>
         </KeyContext.Provider>
     )}
@@ -88,7 +88,7 @@ export const AuthorField = () => {
                 <label>
                     Autorzy
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -100,7 +100,7 @@ export const TitleField = () => {
                 <label>
                     Tytuł
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -112,7 +112,7 @@ export const PromoterField = () => {
                 <label>
                     Promotor
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -121,10 +121,10 @@ export const YearField = () => {
     return(
         <KeyContext.Provider value={"year"}>
             <div className={"task-field-input"}>
-                <label>
+                <label className={"table-field-input-label"}>
                     Rok obrony
                 </label>
-                <DateFieldOnlyYear/>
+                <FDateFieldOnlyYear/>
             </div>
         </KeyContext.Provider>
     )}
@@ -199,7 +199,7 @@ export const ThesesTable = (props: ThesesTableProps) => {
             }
         },
         render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
+            <FieldContext.Provider value={field}>
                 <Render/>
             </FieldContext.Provider>
         )

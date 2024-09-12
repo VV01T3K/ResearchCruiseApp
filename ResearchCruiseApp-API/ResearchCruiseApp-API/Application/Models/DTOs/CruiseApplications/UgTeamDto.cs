@@ -6,9 +6,9 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class UgTeamDto
 {
-    public int Unit { get; set; }
-    public int NoOfEmployees { get; set; }
-    public int NoOfStudents { get; set; }
+    public Guid UnitId { get; set; }
+    public string NoOfEmployees { get; set; } = null!;
+    public string NoOfStudents { get; set; } = null!;
 
 
     private class MapProfile : Profile

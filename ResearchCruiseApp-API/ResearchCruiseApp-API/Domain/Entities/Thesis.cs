@@ -21,5 +21,5 @@ public class Thesis
     [StringLength(1024)]
     public string Promoter { get; set; } = null!;
     
-    public int Year { get; set; }
+    public string Year { get; set; }
 }

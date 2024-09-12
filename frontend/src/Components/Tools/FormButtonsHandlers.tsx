@@ -1,6 +1,6 @@
 import {FieldValues} from "react-hook-form";
 import Api from "./Api";
-import {PathName as Path} from "./PathName";
+import {Path as Path} from "./Path";
 import {useContext} from "react";
 import {ExtendedUseFormReturn, FormContext} from "../Pages/FormPage/Wrappers/FormTemplate";
 import {useNavigate} from "react-router-dom";
@@ -37,7 +37,6 @@ export const handlePrint = () => {
     document.body.innerHTML = header_str + new_str + footer_str;
     window.print();
     document.body.innerHTML = old_str;
-
 }
 
 export const handleSubmit = () => {

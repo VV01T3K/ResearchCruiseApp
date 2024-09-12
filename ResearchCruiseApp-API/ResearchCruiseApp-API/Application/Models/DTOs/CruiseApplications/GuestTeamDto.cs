@@ -7,7 +7,7 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 public class GuestTeamDto
 {
     public string Institution { get; set; } = null!;
-    public int NoOfPersons { get; set; }
+    public string NoOfPersons { get; set; } = null!;
 
 
     private class MapProfile : Profile

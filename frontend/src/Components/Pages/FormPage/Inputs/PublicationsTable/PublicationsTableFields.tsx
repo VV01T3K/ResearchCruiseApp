@@ -1,5 +1,5 @@
 import {KeyContext} from "../../Wrappers/FieldTableWrapper";
-import {DateFieldOnlyYear, IntField, SelectField, TextField} from "../CellFields";
+import {FDateFieldOnlyYear, FIntField, FSelectField, FTextField} from "../CellFormFields";
 import React from "react";
 import {publicationCategories, publicationCategoriesPL} from "./PublicationsTable";
 
@@ -10,10 +10,10 @@ export const CategoryPicker = () => {
     return(
         <KeyContext.Provider value={"category"}>
             <div className={"task-field-input"}>
-                <label>
+                <label className={"table-field-input-label"}>
                     Kategoria
                 </label>
-                <SelectField options={publicationCategoryOptions}/>
+                <FSelectField options={publicationCategoryOptions}/>
             </div>
         </KeyContext.Provider>
     )}
@@ -25,7 +25,7 @@ export const DoiField = () => {
                 <label>
                     DOI
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -37,7 +37,7 @@ export const AuthorsField = () => {
                 <label>
                     Autorzy
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -49,7 +49,7 @@ export const TitleField = () => {
                 <label>
                     Tytuł
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -61,7 +61,7 @@ export const MagazineField = () => {
                 <label>
                     Czasopismo
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -70,10 +70,10 @@ export const YearField = () => {
     return(
         <KeyContext.Provider value={"year"}>
             <div className={"task-field-input"}>
-                <label>
+                <label className={"table-field-input-label"}>
                     Rok wydania
                 </label>
-                <DateFieldOnlyYear/>
+                <FDateFieldOnlyYear/>
             </div>
         </KeyContext.Provider>
     )}
@@ -82,10 +82,10 @@ export const MinisterialPointsField = () => {
     return(
         <KeyContext.Provider value={"ministerialPoints"}>
             <div className={"task-field-input"}>
-                <label>
+                <label className={"table-field-input-label"}>
                     Punkty ministerialne
                 </label>
-                <IntField/>
+                <FIntField/>
             </div>
         </KeyContext.Provider>
     )}

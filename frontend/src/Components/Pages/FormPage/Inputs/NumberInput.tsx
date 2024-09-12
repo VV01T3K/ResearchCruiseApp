@@ -10,7 +10,7 @@ type Props = {
     fieldLabel: string,
     fieldName: string,
     onChange?: (arg: number) => number,
-    maxVal: number,
+    maxVal?: number,
     setterFunction?: (arg: number) => number,
     notZero?: boolean,
 }
@@ -28,7 +28,9 @@ function NumberInput(props: Props){
         let returnVal;
         if (textIsIntNumber(value)) {
             returnVal = parseInt(value)
-            return returnVal > props.maxVal ? props.maxVal : returnVal
+            if(props.maxVal)
+                return returnVal > props.maxVal ? props.maxVal : returnVal
+            return returnVal
         } else {
             return 0
         }
@@ -38,7 +40,7 @@ function NumberInput(props: Props){
             if(!fieldValue)
                 return ""
             if(props.setterFunction)
-                return (props.setterFunction(fieldValue))
+                return ConvertNumberToString((props.setterFunction(fieldValue)))
             return ConvertNumberToString(parseFloat(fieldValue))
         }
     const render = ( {field} : FieldValues) => (
@@ -67,7 +69,7 @@ function NumberInput(props: Props){
             }
         },
         render: render,
-        defaultValue: ""
+        defaultValue: "0"
     }
 
     return (<FieldWrapper {...fieldProps}/>);

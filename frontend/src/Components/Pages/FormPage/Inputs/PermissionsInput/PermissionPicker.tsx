@@ -1,4 +1,3 @@
-import file_icon from "../../../../../resources/file_icon.png";
 import React from "react";
 import {UseFormReturn} from "react-hook-form";
 import {Permission} from "./PermissionsInput";
@@ -69,7 +68,7 @@ export default function PermissionPicker(props: Props) {
                 className="w-100 bg-light d-flex justify-content-center clickable pb-1"
             >
                 <img
-                    src={file_icon}
+                    //src={file_icon} file_icon.png
                     height="45px"
                     width="45px"
                     className={"rounded-2 p-1 d-flex " + Style.img}

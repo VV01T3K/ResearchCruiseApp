@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import {FieldValues} from "react-hook-form";
-import {DateFieldOnlyYear, TextField} from "./CellFields";
+import {FDateFieldOnlyYear, FTextField} from "./CellFormFields";
 import {FieldContext, FieldTableWrapper, KeyContext} from "../Wrappers/FieldTableWrapper";
 import {BottomMenuWithAddButtonAndHistory, OrdinalNumber, RemoveRowButton} from "./TableParts";
 import {FieldProps} from "./FormRadio";
@@ -9,8 +9,8 @@ import {FormContext} from "../Wrappers/FormTemplate";
 
 
 export type SpubTask = {
-    yearFrom: number,
-    yearTo: number,
+    yearFrom: string,
+    yearTo: string,
     name: string
 }
 
@@ -28,7 +28,7 @@ export const NameField = () => {
                 <label className={"table-field-input-label"}>
                     Nazwa zadania
                 </label>
-                <TextField/>
+                <FTextField/>
             </div>
         </KeyContext.Provider>
     )}
@@ -40,7 +40,7 @@ export const StartYearField = () => {
                 <label className={"table-field-input-label"}>
                     Rok rozpoczęcia
                 </label>
-                <DateFieldOnlyYear/>
+                <FDateFieldOnlyYear/>
             </div>
         </KeyContext.Provider>
     )}
@@ -52,7 +52,7 @@ export const EndYearField = () => {
                 <label className={"table-field-input-label"}>
                     Rok zakończenia
                 </label>
-                <DateFieldOnlyYear/>
+                <FDateFieldOnlyYear/>
             </div>
         </KeyContext.Provider>
     )}
@@ -73,22 +73,35 @@ const SpubTaskRowLabel = (row:SpubTask) =>
     `${row.name} (${row.yearFrom}–${row.yearTo})`
 
 
+
+
 export const SpubTaskTable = (props: ThesesTableProps) => {
 
-    const formContext = useContext(FormContext)
 
-    const selectOptions = props.historicalSpubTasks?.map((row: SpubTask) =>
+    const SpubTaskRender = ({field}:FieldValues)=> {
+
+        const formContext = useContext(FormContext)
+
+        const selectOptions = props.historicalSpubTasks?.map((row: SpubTask) =>
             ({label: SpubTaskRowLabel(row), value: row})) ?? []
 
 
-    const mdColWidths = [5,15,15,60, 5]
-    const mdColTitles = ["Lp.", "Rok rozpoczęcia", "Rok zakończenia", "Nazwa zadania", ""]
-    const colTitle = "Zadania"
-    const bottomMenu =
-        <BottomMenuWithAddButtonAndHistory newOption={spubTaskDefaultValue} historicalOptions={selectOptions}/>
-    const emptyText = "Nie dodano żadnego zadania"
-    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,ThesesTableContent,
-        bottomMenu, emptyText, formContext!.getValues(props.fieldName))
+        const mdColWidths = [5,15,15,60, 5]
+        const mdColTitles = ["Lp.", "Rok rozpoczęcia", "Rok zakończenia", "Nazwa zadania", ""]
+        const colTitle = "Zadania"
+        const bottomMenu =
+            <BottomMenuWithAddButtonAndHistory newOption={spubTaskDefaultValue} historicalOptions={selectOptions}/>
+        const emptyText = "Nie dodano żadnego zadania"
+        const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,ThesesTableContent,
+            bottomMenu, emptyText, formContext!.getValues(props.fieldName))
+
+
+        return(
+            <FieldContext.Provider value={field}>
+                <Render/>
+            </FieldContext.Provider>
+        )
+    }
 
 
     const fieldProps = {
@@ -112,11 +125,7 @@ export const SpubTaskTable = (props: ThesesTableProps) => {
                 }
             }
         },
-        render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
-                <Render/>
-            </FieldContext.Provider>
-        )
+        render: SpubTaskRender
     }
 
     return (

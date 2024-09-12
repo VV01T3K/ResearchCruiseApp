@@ -41,7 +41,7 @@ public class AddCruiseApplicationHandler(
             IsolationLevel.Serializable,
             cancellationToken);
         
-        await SendRequestToSupervisor(newCruiseApplication, request.FormADto.SupervisorEmail);
+        // await SendRequestToSupervisor(newCruiseApplication, request.FormADto.SupervisorEmail);
 
         return Result.Empty;
     }

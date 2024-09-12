@@ -3,13 +3,10 @@ import React from "react";
 import FieldWrapper from "./FieldWrapper";
 import {SelectWrapper} from "../Wrappers/ReactSelectWrapper";
 import {FormField} from "./FormYearSelect";
-import {ResearchArea} from "../Forms/FormB";
 
-export type FormUser = {
-    id: string,
-    email: string,
-    firstName: string,
-    lastName: string
+export type ResearchArea = {
+    name: string,
+    id:string
 }
 
 type Props = FormField & {

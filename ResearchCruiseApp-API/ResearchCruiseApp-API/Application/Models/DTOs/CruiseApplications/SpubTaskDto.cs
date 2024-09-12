@@ -6,8 +6,8 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class SpubTaskDto
 {
-    public int YearFrom { get; set; }
-    public int YearTo { get; set; }
+    public string YearFrom { get; set; } = null!;
+    public string YearTo { get; set; } = null!;
     public string Name { get; set; } = null!;
     
     

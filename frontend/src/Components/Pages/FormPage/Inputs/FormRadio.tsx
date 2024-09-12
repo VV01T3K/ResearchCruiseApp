@@ -1,9 +1,7 @@
-import {
-    Controller, FieldValues, useFormContext, UseFormReturn,
-} from "react-hook-form";
+import {FieldValues} from "react-hook-form";
 import React, {useContext} from "react";
 import FieldWrapper from "./FieldWrapper";
-import {FormContext, FormValues} from "../Wrappers/FormTemplate";
+import {FormContext} from "../Wrappers/FormTemplate";
 import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
 
 export type FieldProps = {
@@ -23,9 +21,9 @@ function FormRadio(props: Props) {
         const fieldName = props.fieldName
         const RadioOption = (props:{option:string,index:number}) => (
             <input key={props.index} disabled={formContext!.readOnly}
-                   className={`${field.value === props.index ? "radio-button-selected" : "radio-button-not-selected"}`}
+                   className={`${field.value === String(props.index) ? "radio-button-selected" : "radio-button-not-selected"}`}
                    type={"button"} value={props.option}
-                   onClick={() => formContext!.setValue(fieldName, props.index, readyFieldOptions)}
+                   onClick={() => formContext!.setValue(fieldName, String(props.index), readyFieldOptions)}
             />
         )
         return (

@@ -5,7 +5,7 @@ import {
 import React from "react";
 import {FormValues} from "../Wrappers/FormTemplate";
 import InputWrapper from "../InputWrapper";
-import FileDownloader from "../../../../CommonComponents/FileDownloader";
+import FFileDownloader from "../../../../CommonComponents/FFileDownloader";
 import FilePicker from "../ContractsInput/FilePicker";
 import PermissionPicker from "./PermissionPicker";
 
@@ -61,7 +61,7 @@ function PermissionsInput(props: Props) {
                         />
                         <div>Skan</div>
                         {props.readonly &&
-                            <FileDownloader
+                            <FFileDownloader
                                 fileName={props.scan?.name}
                                 fileContent={props.scan?.content}
                                 bg="bg-light"

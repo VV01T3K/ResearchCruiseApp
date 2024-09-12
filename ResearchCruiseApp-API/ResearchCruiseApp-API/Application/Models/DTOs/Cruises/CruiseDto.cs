@@ -10,8 +10,10 @@ public class CruiseDto
     public Guid Id { get; set; }
     
     public string Number { get; set; } = null!;
-    
-    public StringRangeDto Date { get; set; }
+
+    public string StartDate { get; set; } = null!;
+
+    public string EndDate { get; set; } = null!;
     
     public Guid MainCruiseManagerId { get; set; }
     
@@ -29,15 +31,6 @@ public class CruiseDto
         public MapProfile()
         {
             CreateMap<Cruise, CruiseDto>()
-                .ForMember(
-                    dest => dest.Date,
-                    options =>
-                        options.MapFrom(src =>
-                            new StringRangeDto
-                            {
-                                Start = src.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK"),
-                                End = src.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK")
-                            }))
                 .ForMember(
                     dest => dest.CruiseApplicationsShortInfo,
                     options=>

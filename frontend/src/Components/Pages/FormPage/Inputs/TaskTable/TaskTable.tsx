@@ -1,38 +1,51 @@
-import React, {useContext} from "react";
-import { FieldValues,} from "react-hook-form";
+import React, {useContext, useState} from "react";
+import {FieldValues,} from "react-hook-form";
 import {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import '../DateInput.css'
-import pl from "date-fns/locale/pl";
+import {pl} from "date-fns/locale/pl";
+
 registerLocale("pl", pl);
 import 'react-dropdown/style.css';
 import FieldWrapper from "../FieldWrapper";
 import {FormContext} from "../../Wrappers/FormTemplate";
-import {FieldContext,
+import {
+    FieldContext,
     FieldTableWrapper,
     KeyContext,
 } from "../../Wrappers/FieldTableWrapper";
 import {FieldProps} from "../FormRadio";
 import {
-    AuthorField, DidacticsDescriptionField, DateField,
+    AuthorField,
+    DidacticsDescriptionField,
+    DateField,
     EndDateField,
     FinancingAmountField,
     InstitutionField,
-    StartDateField, TaskDescriptionField,
-    TitleField
+    StartDateField,
+    TaskDescriptionField,
+    TitleField,
+    PublicationDraftTitleField,
+    MinisterialPointsField,
+    ProjectDraftTitleField,
+    FinancingApprovedField,
+    SecuredAmountField, MagazineField
 } from "./TaskInputFields";
-import {BottomMenuWithHistory, CellTools, OrdinalNumber, RemoveRowButton} from "../TableParts";
-
-type ReseachTask = {
-    type: number,
+import {BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton} from "../TableParts";
+import {DisplayContext} from "./EvaluatedTaskTable";
+export type ReseachTask = {
+    type: string,
     title?: string,
+    magazine?: string,
     author?: string,
     institution?: string,
     date?: string,
-    startDate?:string,
-    endDate?:string,
-    financingAmount?:string,
-    description?:string
+    startDate?: string,
+    endDate?: string,
+    financingApproved?: string
+    financingAmount?: string,
+    description?: string
+    securedAmount?: string,
+    ministerialPoints?: string
 }
 
 export const taskTypes = [
@@ -50,63 +63,76 @@ export const taskTypes = [
     "Inne zadanie",
 ]
 
-const taskTypesDefaultValues: ReseachTask[] = [
-    { type:0, author: "", title: "" },
-    { type:1,  author: "", title: ""},
-    { type:2,  author: "", title: ""},
-    { type:3,  title: "", date: "", institution: "" },
-    { type:4,  title: "", financingAmount: "0.00", startDate: "", endDate: "", },
-    { type:5,  title: "", financingAmount: "0.00", startDate: "", endDate: "" },
-    { type:6,  title: "", financingAmount: "0.00", startDate: "", endDate: "" },
-    { type:7,  title: "", financingAmount: "0.00", startDate: "", endDate: "" },
-    { type:8,  title: "", financingAmount: "0.00", startDate: "", endDate: "" },
-    { type:9,  description: "" },
-    { type:10,  title: "", financingAmount: "0.00",startDate: "", endDate: "",  },
-    { type:11,  description: "" },
+export const taskTypesDefaultValues: ReseachTask[] = [
+    {type: "0", author: "", title: ""},
+    {type: "1", author: "", title: ""},
+    {type: "2", author: "", title: ""},
+    {type: "3", title: "", date: "", institution: "", financingApproved: "false"},
+    {type: "4", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
+    {type: "5", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
+    {type: "6", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
+    {type: "7", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
+    {type: "8", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
+    {type: "9", description: ""},
+    {type: "10", title: "", date: "", magazine: "",  ministerialPoints: "0"},
+    {type: "11", description: ""},
 ]
 const taskTypeOptions = () => {
     return taskTypes.map((taskLabel, index) =>
-        ({label:taskLabel, value:taskTypesDefaultValues[index]}))
+        ({label: taskLabel, value: taskTypesDefaultValues[index]}))
 }
 
-const FieldForKey = () => {
-    const {rowValue} = CellTools()
+export const FieldForKey = () => {
+    const displayContext = useContext(DisplayContext)
+    const {rowValue} = displayContext ? CellTools() : CellFormTools()
     const keyContext = useContext(KeyContext)
     switch (keyContext) {
         case "author":
             return <AuthorField/>
         case "title":
+            if (rowValue.type == 10)
+                return <PublicationDraftTitleField/>
+            if (rowValue.type == 3)
+                return <ProjectDraftTitleField/>
             return <TitleField/>
+        case "magazine":
+            return <MagazineField/>
         case "institution":
-            return  <InstitutionField/>
+            return <InstitutionField/>
         case "date":
-            return  <DateField/>
+            return <DateField/>
         case "startDate":
             return <StartDateField/>
         case "endDate":
-            return  <EndDateField/>
+            return <EndDateField/>
         case "financingAmount":
             return <FinancingAmountField/>
+        case "securedAmount":
+            return <SecuredAmountField/>
+        case "financingApproved":
+            return <FinancingApprovedField/>
         case "description":
-            if(rowValue.type == 9)
+            if (rowValue.type == 9)
                 return <DidacticsDescriptionField/>
-            else if(rowValue.type == 11)
+            else if (rowValue.type == 11)
                 return <TaskDescriptionField/>
             else
                 return <></>
+        case "ministerialPoints":
+            return <MinisterialPointsField/>
         default:
             return (<></>)
-        }
-
     }
 
+}
+
 const FieldsCell = () => {
-    const {rowValue} = CellTools()
-    return(
-        <div className="d-flex flex-wrap flex-row justify-content-center w-100">
-            {Object.keys(taskTypesDefaultValues[rowValue.type]).map((key, index)=>
+    const {rowValue} = CellFormTools()
+    return (
+        <div className="d-flex flex-wrap flex-row justify-content-center align-items-center w-100">
+            {rowValue && Object.keys(taskTypesDefaultValues[rowValue.type]).map((key, index) =>
                 (<KeyContext.Provider value={key} key={index}>
-                        {key!="type" && <FieldForKey/> }
+                    {key != "type" && <FieldForKey/>}
                 </KeyContext.Provider>)
             )}
         </div>
@@ -115,29 +141,27 @@ const FieldsCell = () => {
 
 
 const TaskTypeLabel = () => {
-    const {rowValue} = CellTools()
-    return(
-        <>{taskTypes[rowValue.type]}</>
+    const {rowValue} = CellFormTools()
+    return (
+        <>{rowValue && taskTypes[Number(rowValue.type)]}</>
     )
 }
 
 
-
-
 const taskTableContent = () =>
     [
-        ()=>(<OrdinalNumber label={"Zadanie"}/>),
+        () => (<OrdinalNumber label={"Zadanie"}/>),
         TaskTypeLabel,
         FieldsCell,
         RemoveRowButton,
     ]
 
 type TaskTableProps = FieldProps &
-    {historicalTasks?: ReseachTask[]}
+    { historicalTasks?: ReseachTask[] }
 
-const dateOptions = {month: '2-digit', year: 'numeric'}
+const dateOptions: Intl.DateTimeFormatOptions = {month: '2-digit', year: 'numeric'}
 
-const TaskRowLabel = (row:ReseachTask) => (row.author ? ("Autor: " + row.author + ", ") : "")
+const TaskRowLabel = (row: ReseachTask) => (row.author ? ("Autor: " + row.author + ", ") : "")
     + (row.title ? ("Tytuł: " + row.title + ", ") : "")
     + (row.institution ? ("Instytucja: " + row.institution + ", ") : "")
     + (row.date ? ("Data: " + new Date(row.date).toLocaleDateString('pl-PL') + ", ") : "")
@@ -147,29 +171,28 @@ const TaskRowLabel = (row:ReseachTask) => (row.author ? ("Autor: " + row.author 
     + (row.description ? ("Opis: " + row.description + ", ") : "")
 
 
-
 export const TasksTable = (props: TaskTableProps) => {
 
     const formContext = useContext(FormContext)
 
-    const FilteredHistoricalTasks = (index:number) =>
-        props.historicalTasks?.filter((row) => row.type == index)
-        .map((row: ReseachTask) =>
-            ({label: TaskRowLabel(row), value: row})) ?? []
+    const FilteredHistoricalTasks = (index: number) =>
+        props.historicalTasks?.filter((row) => Number(row.type) == index)
+            .map((row: ReseachTask) =>
+                ({label: TaskRowLabel(row), value: row})) ?? []
 
     const selectOptions = () => {
-        return taskTypes.map((taskType, index)=>
-            ({label:taskType, options: FilteredHistoricalTasks(index)})) ?? []
+        return taskTypes.map((taskType, index) =>
+            ({label: taskType, options: FilteredHistoricalTasks(index)})) ?? []
     }
 
 
-    const mdColWidths = [5,20,70,5]
+    const mdColWidths = [5, 20, 70, 5]
     const mdColTitles = ["Lp.", "Zadanie", "Szczegóły", ""]
     const colTitle = "Zadania"
     const bottomMenu =
         <BottomMenuWithHistory newOptions={taskTypeOptions()} historicalOptions={selectOptions()}/>
     const emptyText = "Nie dodano żadnego zadania"
-    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,taskTableContent,
+    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, taskTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName))
 
 
@@ -179,18 +202,18 @@ export const TasksTable = (props: TaskTableProps) => {
         rules: {
             required: "Pole wymagane",
             validate: {
-                notEmptyArray: (value:FieldValues) => {
-                    if (value.some((row:ReseachTask) => {
-                        return Object.keys(taskTypesDefaultValues[row.type]).some(key => {
-                            return key=="type" ? false : row[key]=="" || row[key]==undefined
+                notEmptyArray: (value: FieldValues) => {
+                    if (value.some((row: ReseachTask) => {
+                        return Object.keys(taskTypesDefaultValues[Number(row.type)]).some((key) => {
+                            return key == "type" ? false : row[key as keyof ReseachTask] == "" || row[key as keyof ReseachTask] == undefined
                         });
                     }))
-                        return"Wypełnij wszystkie pola"
+                        return "Wypełnij wszystkie pola"
                 }
             }
         },
-        render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
+        render: ({field}: FieldValues) => (
+            <FieldContext.Provider value={field}>
                 <Render/>
             </FieldContext.Provider>
         )

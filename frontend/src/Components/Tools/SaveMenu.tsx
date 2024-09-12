@@ -6,7 +6,6 @@ import {ExtendedUseFormReturn, FormContext} from "../Pages/FormPage/Wrappers/For
 
 
 const formDownloadProps = (formContext:ExtendedUseFormReturn) => {
-    console.log(formContext)
     return {download: fileName(formContext?.type!), href: handleDownload(formContext?.getValues()!)}
 }
 
@@ -21,7 +20,6 @@ export function SaveMenu(){
     const [savingStated, setSavingStarted] = useState(false)
 
     const CancelButton = () => (
-
         <div className={"form-page-option-note-button-small"} onClick={() => setSavingStarted(false)}>
             <CancelIcon/>
         </div>

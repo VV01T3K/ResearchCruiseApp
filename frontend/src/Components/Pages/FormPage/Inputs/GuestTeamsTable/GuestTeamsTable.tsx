@@ -13,7 +13,7 @@ import {InstitutionField, NoOfPersonsField} from "./GuestTeamsTableFields";
 
 export type GuestsTeam = {
     institution: string,
-    noOfPersons: number
+    noOfPersons: string
 }
 
 const guestTeamDefault = {institution:"", noOfPersons: 0}
@@ -25,7 +25,7 @@ type Props = FormField & {
 
 const guestTeamsTableContent = () =>
     [
-        ()=>(<OrdinalNumber label={"Instytucja"}/>),
+        () => (<OrdinalNumber label={"Instytucja"}/>),
         InstitutionField,
         NoOfPersonsField,
         RemoveRowButton,
@@ -54,11 +54,14 @@ function GuestTeamsTable(props: Props) {
         ...props,
         defaultValue: [],
         rules: {
-            required: "Pole wymagane",
-            validate: { notEmptyArray: notEmptyArray<GuestsTeam> }
+            required: false,
+            validate: {
+                notEmptyArray: notEmptyArray<GuestsTeam>,
+                atLeastOnePerson: (value: GuestsTeam[]) => value.length <= 0 || value.some((row:GuestsTeam)=>Number(row.noOfPersons) <=0) && "Dodaj przynajmniej jedną osobę z instytucji"
+            }
         },
         render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={{field:field, fieldName:props.fieldName}}>
+            <FieldContext.Provider value={field}>
                     <Render/>
             </FieldContext.Provider>
         )

@@ -1,4 +1,5 @@
 import React from "react";
+import TextareaAutosize from "react-textarea-autosize";
 
 
 type Props = {
@@ -9,14 +10,10 @@ type Props = {
 
 export default function ReadOnlyTextInput (props: Props) {
     return (
-        <div className={`d-flex ${props.className}`}>
-            <input
-                type="text"
-                className="d-flex form-control text-center w-100 p-1"
-                style={{fontSize: "inherit", cursor: "default"}}
+            <TextareaAutosize
+                className={"field-common m-1 " + props.className}
                 value={props.value}
                 readOnly
             />
-        </div>
     )
 }

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Page from "../Page";
-import FormA from "../FormPage/Forms/FormA";
+import FormA from "../FormPage/Forms/FormA/FormA";
 import useCustomEvent from "../../Tools/useCustomEvent";
 import {FormValues} from "../FormPage/Wrappers/FormTemplate";
 import DisabledByDefaultTextArea from "../FormPage/Inputs/DisabledByDefaultTextArea";

@@ -5,15 +5,14 @@ export const CellContext =
     createContext<null | {rowIndex:number, colIndex:number}>(null)
 
 export const FieldContext =
-    createContext<null | {field:FieldValues, fieldName:string}>(null)
+    createContext<null | FieldValues>(null)
 export const KeyContext =
     createContext<null | string >(null)
 
 
-type TableRow = any
 export const FieldTableWrapper = (title: string, colWidths: number[],
                                   colTitles: string[], cellMapper: () => (() => React.JSX.Element)[],
-                                  BottomMenu: React.JSX.Element, emptyText: string, content: TableRow[]) => {
+                                  BottomMenu: React.JSX.Element | null, emptyText: string, content: any) => {
     const windowWidth = useWindowWidth()
 
 
@@ -28,7 +27,7 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
         </div>
     )
     const TableHeader = () => (
-        <div className="table-field-header">
+        <div className="table-field-header d-flex">
             {colTitles.map((title, colIndex) => (
                 <MdColTitle key={colIndex} title={title} colIndex={colIndex}/>
             ))}
@@ -51,11 +50,11 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
     )
 
     const TableContent = () =>  (
-            <>
+            <div className={"flex-grow-1 overflow-scroll d-flex flex-column"}>
                 {content.map((_,rowIndex: number) => (
                     <NonEmptyRow key={rowIndex} rowIndex={rowIndex}/>
                 ))}
-            </>
+            </div>
         )
 
     const CellContent = () => {
@@ -79,20 +78,13 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
         return {width: windowWidth >= 720 ? `${colWidths[colIndex]}%` : "100%"}
     }
 
-    const _RenderIfContent = () => (
-        <>
-            {content &&
-                <div className="table-striped">
-                    <TableHeader/>
-                    {content.length <= 0 && <EmptyRow/>}
-                    {content.length > 0 && <TableContent/>}
-                    {BottomMenu}
-                </div>
-            }
-        </>
-    )
-    const Render = () => (
-        <_RenderIfContent/>
+    const Render = (props:{className?:string}) => (
+        <div className={"table-striped d-flex flex-column " + props.className}>
+            <TableHeader/>
+            {!(content?.length > 0) && <EmptyRow/>}
+            {content && content.length > 0 && <TableContent/>}
+            {BottomMenu}
+        </div>
     )
     return {Render}
 }

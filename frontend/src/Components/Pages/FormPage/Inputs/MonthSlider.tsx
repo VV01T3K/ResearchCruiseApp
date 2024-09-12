@@ -17,7 +17,7 @@ type Props = {
     fieldNameToAlsoSet?:string
 }
 
-type MonthRange = [number, number]
+type MonthRange = [string, string]
 
 const MonthSlider = (props: Props) => {
     const formContext = useContext(FormContext)
@@ -54,20 +54,18 @@ const MonthSlider = (props: Props) => {
         '2. połowy grudnia',
     ]
 
-    const [minVal, maxVal] = props.range ?? [0, 24]
+    const [minVal, maxVal] = props.range ? props.range.map((value)=>Number(value)) : [0, 24]
 
-    const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
-
-    months.forEach((element, index, arr) => {
-        if (!slicedMonths.includes(element)) {
-            arr[index] = null;
-        }
-    });
+    // const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
 
     const onChange = (selectedOption: MonthRange) => {
-        formContext!.setValue( props.fieldName, selectedOption, readyFieldOptions);
-        if(props.fieldNameToAlsoSet)
-            formContext!.setValue(props.fieldNameToAlsoSet, formContext!.getValues(props.fieldName), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+        console.log(selectedOption)
+        console.log(minVal, maxVal)
+        if(Number(selectedOption[0])>=minVal && Number(selectedOption[1])<=maxVal){
+            formContext!.setValue( props.fieldName, selectedOption?.map((value)=>String(value)), readyFieldOptions);
+            if(props.fieldNameToAlsoSet)
+                formContext!.setValue(props.fieldNameToAlsoSet, formContext!.getValues(props.fieldName), { shouldDirty: true, shouldTouch: true, shouldValidate:true })
+        }
     }
 
     type MonthsMarks = {
@@ -76,7 +74,7 @@ const MonthSlider = (props: Props) => {
 
     // User can select every half of the month
     const monthsMarks = months.reduce((acc:MonthsMarks, month, index) => {
-        acc[2 * index] = month;
+        acc[2*months.indexOf(month)] = month;
         return acc;
     }, {})
 
@@ -94,8 +92,8 @@ const MonthSlider = (props: Props) => {
             pushable:true,
             allowCross:false,
             range:true,
-            min:minVal,
-            max:maxVal,
+            min:0,
+            max:24,
             marks:monthsMarks
         }
 
@@ -108,21 +106,25 @@ const MonthSlider = (props: Props) => {
         return(
             <div className={"ps-3 pe-3"}>
                 <Slider
-                    {...field} onChange={(e)=>setValue(e)}
+                    {...field} onChange={(e:number[])=> {
+                        if(e[0]>=minVal && e[1]<=maxVal)
+                            setValue(e?.map((value) => String(value)))
+                }
+                }
                     {...sliderOptions} disabled={formContext?.readOnly}
-                    value={value} onChangeComplete={onChange}
+                    value={value?.map((value:String)=>Number(value))} onChangeComplete={onChange}
                 />
                 <MonthLabel/>
             </div>
         )
     }
-    const selectedWholeYear = (val:MonthRange) => (val[0]==0&&val[1]==24)
+    const selectedWholeYear = (val:MonthRange) => (val[0]=="0"&&val[1]=="24")
     const fieldProps = {
         ...props,
         rules: {required: 'Wybierz jedną z opcji',
-            validate: {differenceCheck: (val:MonthRange)=>selectedWholeYear(val) && "Ustaw krótszy okres"}},
+            validate: {}},//differenceCheck: (val:MonthRange)=>selectedWholeYear(val) && "Ustaw krótszy okres"}},
         render: render,
-        defaultValue:[0,24]
+        defaultValue:["0","24"]
     }
 
     return ( <FieldWrapper {...fieldProps}/> );

@@ -1,6 +1,5 @@
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './DateInput.css'
 import pl from "date-fns/locale/pl"; // the locale you want
 registerLocale("pl", pl); // register it with the name you want
 import {

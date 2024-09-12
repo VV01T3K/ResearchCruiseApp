@@ -12,9 +12,12 @@ type SelectWrapperProps = {
     fieldName?:string,
     options:SelectOptions,
     placeHolder?:string,
+    disabled?:boolean
     className?:string,
     classNamePrefix?:string,
-    onChange?: (value:SelectSingleValue) => void
+    onChange?: (value:SelectSingleValue) => void,
+    defaultValue?:SelectSingleValue,
+    value?:FieldValues | SelectSingleValue | GroupBase<SelectSingleValue>
 }
 export const SelectWrapper = (props:SelectWrapperProps) => {
     const [inputValue, setInputValue] = useState("")
@@ -31,10 +34,10 @@ export const SelectWrapper = (props:SelectWrapperProps) => {
     }
     return(
         <Select {...commonSelectProps} placeholder={props.placeHolder ?? "Wyszukaj"}  noOptionsMessage={() => "Brak wyników"}
-                inputValue={inputValue} onInputChange={(e) => setInputValue(e)}
+                inputValue={inputValue} onInputChange={(e) => setInputValue(e)} value={props.value}
                 {...props} className={"select " +props.className } classNamePrefix={props.classNamePrefix ?? "select"}
-                isDisabled={formContext?.readOnly ?? false} onChange={props.onChange ?? setSelectedValue}
-                menuPlacement="auto"
+                isDisabled={props.disabled ?? formContext?.readOnly } onChange={props.onChange ?? setSelectedValue}
+                menuPlacement="auto" defaultValue={props.defaultValue}
         />
     )
 }

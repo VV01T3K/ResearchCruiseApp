@@ -1,9 +1,9 @@
 import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-import {PathName as Path} from "./PathName";
+import {Path as Path} from "./Path";
 import userDataManager from "../CommonComponents/UserDataManager";
 import {useNavigate} from "react-router-dom";
 
-const defaultServerAddress = 'http://localhost:5000';
+const defaultServerAddress = 'http://localhost:8080';
 
 declare module 'axios' {
     export interface AxiosRequestConfig {
@@ -53,15 +53,15 @@ export const Interceptors = () => {
     function HandleErrWithResponse(response: AxiosResponse<any>){
         const {ForceLogout} = userDataManager()
         const statusCode = response?.status
-        if(statusCode == 400 || statusCode == 401)
-            ForceLogout()
+        // if(statusCode == 400 || statusCode == 401)
+        //     ForceLogout()
         if (statusCode === 404)
             console.log('The requested resource does not exist or has been deleted')
         else if (statusCode === 500)
             navigate(Path.ServerError)
     }
     function HandleErrWithoutResponse(){
-        ForceLogout()
+        //ForceLogout()
     }
     async function httpErrorHandler(error: AxiosError) {
         const response = error?.response
@@ -76,7 +76,7 @@ export const Interceptors = () => {
             HandleErrWithResponse(response)
         else if (request)
             HandleErrWithoutResponse()
-        ForceLogout()
+        //ForceLogout()
     }
 
     function responseHandler(response: AxiosResponse<any>) {

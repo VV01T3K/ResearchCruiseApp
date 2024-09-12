@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {FormSectionType} from "../FormPage/Wrappers/FormASections";
 import {FormContext} from "../FormPage/Wrappers/FormTemplate";
 
-function FormTitleWithNavigation(){
+function FormTitleWithNavigation(props:{title?:string}){
     const formContext = useContext(FormContext)
 
 
@@ -11,7 +11,12 @@ function FormTitleWithNavigation(){
         element?.scrollIntoView({block: 'start', behavior: 'smooth'});
     }
 
-    const FormTitle = () => ( <div className={"form-page-title"}>Formularz {formContext?.type}</div> )
+    const FormTitle = () => (
+        <div className={"form-page-title"}>
+            {["A","B","C"].includes(formContext!.type) && `Formularz ${formContext!.type}` }
+            {formContext!.type == "0" && `Szczegóły zgłoszenia` }
+            {formContext!.type == "1" && ''}
+        </div> )
 
     const showRequiredSections = !formContext?.readOnly
 

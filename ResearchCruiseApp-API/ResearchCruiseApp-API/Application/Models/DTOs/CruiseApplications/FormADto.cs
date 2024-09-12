@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
@@ -8,51 +7,42 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class FormADto
 {
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid? Id { get; init; }
 
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid CruiseManagerId { get; init; }
     
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid DeputyManagerId { get; init; }
-    
-    [Range(2024, 2050)]
-    public int Year { get; init; }
-    
-    [Length(2,2)]
-    public HashSet<int> AcceptablePeriod { get; init; } = [];
-    
-    [Length(2,2)]
-    public HashSet<int> OptimalPeriod { get; init; } = [];
-    
-    [Range(0, int.MaxValue)]
-    public int CruiseHours { get; init; }
 
-    [Range(0, double.MaxValue)]
-    public double? CruiseDays { get; init; }
+    public string Year { get; init; } = null!;
+    
+    [Length(2,2)]
+    public HashSet<string> AcceptablePeriod { get; init; } = [];
+    
+    [Length(2,2)]
+    public HashSet<string> OptimalPeriod { get; init; } = [];
+    
+    public string CruiseHours { get; init; } = null!;
+
     
     [StringLength(1024)]
     public string? PeriodNotes { get; init; }
     
     [Range(0,4)]
-    public int ShipUsage { get; init; }
+    public string ShipUsage { get; init; } = null!;
     
     [MaxLength(1024)]
     public string? DifferentUsage { get; init; }
     
-    public int PermissionsRequired { get; init; }
+    public string PermissionsRequired { get; init; } = null!;
     
-    [MaxLength(1024)]
     public string? Permissions { get; init; }
     
-    [Range(0,20)]
-    public int ResearchArea { get; init; }
+    public Guid ResearchAreaId { get; init; }
     
     [MaxLength(1024)]
     public string? ResearchAreaInfo { get; init; }
     
-    public int CruiseGoal { get; init; }
+    public string CruiseGoal { get; init; }
     
     [MaxLength(1024)]
     public string? CruiseGoalDescription { get; init; }
@@ -84,17 +74,12 @@ public class FormADto
                     dest => dest.AcceptablePeriod,
                     options =>
                         options.MapFrom(src =>
-                            new HashSet<int> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }))
+                            new HashSet<string> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }))
                 .ForMember(
                     dest => dest.OptimalPeriod,
                     options =>
                         options.MapFrom(src =>
-                            new HashSet<int> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
-                .ForMember(
-                    dest => dest.CruiseDays,
-                    options =>
-                        options.MapFrom(src =>
-                            src.CruiseHours / TimeConstants.HoursPerDay))
+                            new HashSet<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
                 .ForMember(
                     dest => dest.Contracts,
                     options =>

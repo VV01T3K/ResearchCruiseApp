@@ -1,18 +1,18 @@
 import {FieldValues, RegisterOptions, useForm} from "react-hook-form";
-import ErrorMessageIfPresent from "../Pages/CommonComponents/ErrorMessageIfPresent";
+import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../Pages/CommonComponents/ErrorMessageIfPresent";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
-import {PathName as Path} from "../Tools/PathName";
+import {Path as Path} from "../Tools/Path";
 
 export default function useFormWrapper() {
-    const form = useForm({    mode: "onBlur"});
+    const form = useForm({    mode: "onBlur", reValidateMode:"onBlur"});
     const [disabled, setDisabled] = useState(false)
 
     const ErrorMessageIfPresent = (props:{fieldName:string}) => {
         const errors = form.formState.errors;
         return (
             <>
-                {errors[props.fieldName] && <ErrorMessageIfPresent message={errors[props.fieldName]!.message} />}
+                {errors[props.fieldName] && <ErrorMessageIfPresentNoContext message={errors[props.fieldName]!.message as string} />}
             </>
         )
     }

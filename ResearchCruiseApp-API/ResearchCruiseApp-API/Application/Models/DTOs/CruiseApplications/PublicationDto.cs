@@ -16,9 +16,9 @@ public class PublicationDto
 
     public string Magazine { get; set; } = null!;
     
-    public int Year { get; set; }
+    public string Year { get; set; } = null!;
     
-    public int MinisterialPoints { get; set; }
+    public string MinisterialPoints { get; set; } = null!;
 
 
     private class MapProfile : Profile

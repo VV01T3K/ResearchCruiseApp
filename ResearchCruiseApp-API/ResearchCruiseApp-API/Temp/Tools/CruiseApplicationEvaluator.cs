@@ -88,7 +88,7 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         var emptyTeams = 0;
         foreach (var ugTeam in formA.UgTeams)
         {
-            if (ugTeam.NoOfEmployees <= 0 && ugTeam.NoOfStudents <= 0)
+            if (Int32.Parse(ugTeam.NoOfEmployees) <= 0 && Int32.Parse(ugTeam.NoOfStudents) <= 0)
                 emptyTeams++;
         }
 
@@ -120,13 +120,13 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
     
     public EvaluatedResearchTask EvaluateResearchTask(ResearchTask researchTask)
     {
-        if (researchTask.Type == BaThesis)
+        if (Int32.Parse(researchTask.Type) == BaThesis)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = BaThesisPoints};
-        if (researchTask.Type == MScThesis)
+        if (Int32.Parse(researchTask.Type) == MScThesis)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = MScThesisPoints};
-        if (researchTask.Type == PhDThesis)
+        if (Int32.Parse(researchTask.Type) == PhDThesis)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = PhDThesisPoints};
-        if (researchTask.Type == ScOrRdProject)
+        if (Int32.Parse(researchTask.Type) == ScOrRdProject)
         {
             //  if(researchTask.isFinancingApproved)
             //     return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = 
@@ -147,15 +147,15 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         //                                                          * Math.Floor(
         //                                                              float.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
         //                                                              * ForeignProjectPointsRatio))};
-        if (researchTask.Type == InternalProject)
+        if (Int32.Parse(researchTask.Type) == InternalProject)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = InternalProjectPoints};
-        if (researchTask.Type == CommercialProject)
+        if (Int32.Parse(researchTask.Type)== CommercialProject)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
-        if (researchTask.Type == DidacticsProject)
+        if (Int32.Parse(researchTask.Type) == DidacticsProject)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
-        if (researchTask.Type == OwnProjectRealizationProject)
+        if (Int32.Parse(researchTask.Type) == OwnProjectRealizationProject)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = OwnProjectRealizationPoints};
-        if (researchTask.Type == OtherProject)
+        if (Int32.Parse(researchTask.Type) == OtherProject)
             return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
 
         return new EvaluatedResearchTask{ResearchTask = researchTask, CalculatedPoints = DefaultPoints};
@@ -175,12 +175,12 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
     {
         if (publication.Category == DefaultPublication)
             return new EvaluatedPublication{Publication = publication,
-                CalculatedPoints = (int)(DefaultPublicationPointRatio * publication.MinisterialPoints)};
+                CalculatedPoints = (int)(DefaultPublicationPointRatio * Int32.Parse(publication.MinisterialPoints))};
         if (publication.Category == PublicationFromRV)
             return new EvaluatedPublication
             {
                 Publication = publication,
-                CalculatedPoints = (int)(PublicationFromRVPointRatio * publication.MinisterialPoints)
+                CalculatedPoints = (int)(PublicationFromRVPointRatio * Int32.Parse(publication.MinisterialPoints))
             };
 
         return new EvaluatedPublication{Publication = publication,
