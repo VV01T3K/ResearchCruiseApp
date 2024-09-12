@@ -5,7 +5,7 @@ using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.SharedServices.Cruises;
+using ResearchCruiseApp_API.Application.Services.Cruises;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Cruises.EditCruise;
@@ -21,7 +21,7 @@ public class EditCruiseHandler(
 {
     public async Task<Result> Handle(EditCruiseCommand request, CancellationToken cancellationToken)
     {
-        var cruise = await cruisesRepository.GetCruiseById(request.Id, cancellationToken);
+        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
         if (cruise is null)
             return Error.NotFound();
 
@@ -66,12 +66,12 @@ public class EditCruiseHandler(
         Cruise cruise, EditCruiseCommand request, CancellationToken cancellationToken)
     {
         var newCruiseApplications = await cruiseApplicationsRepository
-            .GetManyByIds(request.CruiseFormModel.CruiseApplicationsIds, cancellationToken);
+            .GetAllByIds(request.CruiseFormModel.CruiseApplicationsIds, cancellationToken);
 
         // Cruises that already contain any of newCruiseApplications. The application will be deleted from them
         // since an application cannot be assigned to more than one cruise
         var affectedCruises = await cruisesRepository
-            .GetCruisesByCruiseApplicationsIds(request.CruiseFormModel.CruiseApplicationsIds, cancellationToken);
+            .GetByCruiseApplicationsIds(request.CruiseFormModel.CruiseApplicationsIds, cancellationToken);
         
         if (!affectedCruises.Contains(cruise))
             affectedCruises.Add(cruise); // The explicitly edited cruise is of course also affected

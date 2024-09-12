@@ -1,36 +1,71 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 
 namespace  ResearchCruiseApp_API.Domain.Entities;
 
 
-public class ResearchTask
+public class ResearchTask : Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
-    
-    public int Type { get; set; }
+    public ResearchTaskType Type { get; init; }
 
     [StringLength(1024)]
-    public string? Title { get; set; }
+    public string? Title { get; init; }
     
     [StringLength(1024)]
-    public string? Author { get; set; }
+    public string? Author { get; init; }
     
     [StringLength(1024)]
-    public string? Institution { get; set; }
+    public string? Institution { get; init; }
 
     [StringLength(1024)]
-    public string? Date { get; set; }
+    public string? Date { get; init; }
     
     [StringLength(1024)]
-    public string? StartDate { get; set; }
+    public string? StartDate { get; init; }
     
     [StringLength(1024)]
-    public string? EndDate { get; set; }
+    public string? EndDate { get; init; }
     
-    public double? FinancingAmount { get; set; }
+    public double? FinancingAmount { get; init; }
     
     [StringLength(1024)]
-    public string? Description { get; set; }
+    public string? Description { get; init; }
+
+    public bool? FinancingApproved { get; init; }
+    
+    public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];
+
+
+    public override bool Equals(object? other)
+    {
+        if (other is null)
+            return false;
+
+        var otherResearchTask = (ResearchTask)other;
+
+        return otherResearchTask.Type == Type &&
+               otherResearchTask.Title == Title &&
+               otherResearchTask.Author == Author &&
+               otherResearchTask.Institution == Institution &&
+               otherResearchTask.Date == Date &&
+               otherResearchTask.StartDate == StartDate &&
+               otherResearchTask.EndDate == EndDate &&
+               Equals(otherResearchTask.FinancingAmount, FinancingAmount) &&
+               otherResearchTask.Description == Description &&
+               otherResearchTask.FinancingApproved == FinancingApproved;
+    }
+
+    public override int GetHashCode()
+    {
+        return Type.GetHashCode() +
+            Title?.GetHashCode() ?? 0 +
+            Author?.GetHashCode() ?? 0 +
+            Institution?.GetHashCode() ?? 0 +
+            Date?.GetHashCode() ?? 0 +
+            StartDate?.GetHashCode() ?? 0 +
+            EndDate?.GetHashCode() ?? 0 +
+            FinancingAmount?.GetHashCode() ?? 0 +
+            Description?.GetHashCode() ?? 0 +
+            FinancingApproved.GetHashCode();
+    }
 }

@@ -2,8 +2,8 @@
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp_API.Application.SharedServices.CruiseApplications;
-using ResearchCruiseApp_API.Application.SharedServices.Factories.FormADtos;
+using ResearchCruiseApp_API.Application.Services.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.Factories.FormADtos;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 

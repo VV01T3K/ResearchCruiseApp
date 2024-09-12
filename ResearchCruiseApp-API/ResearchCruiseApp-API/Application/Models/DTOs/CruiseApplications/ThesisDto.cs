@@ -11,14 +11,4 @@ public class ThesisDto
     public string Title { get; set; } = null!;
     public string Promoter { get; set; } = null!;
     public int Year { get; set; }
-
-
-    private class MapProfile : Profile
-    {
-        public MapProfile()
-        {
-            CreateMap<Thesis, ThesisDto>()
-                .ReverseMap();
-        }
-    }
 }

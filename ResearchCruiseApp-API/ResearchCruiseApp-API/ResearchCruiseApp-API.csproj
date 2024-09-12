@@ -59,10 +59,8 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>Roles.resx</DependentUpon>
       </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Infrastructure\Persistence\Migrations\" />
+      <Compile Remove="Infrastructure\Persistence\Migrations\20240817204141_ContextReset.cs" />
+      <Compile Remove="Infrastructure\Persistence\Migrations\20240817204141_ContextReset.Designer.cs" />
     </ItemGroup>
 
 </Project>

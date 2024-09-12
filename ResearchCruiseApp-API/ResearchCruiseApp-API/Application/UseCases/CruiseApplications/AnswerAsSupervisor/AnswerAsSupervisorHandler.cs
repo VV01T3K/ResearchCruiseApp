@@ -2,7 +2,7 @@
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.SharedServices.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.CruiseApplications;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -18,7 +18,7 @@ public class AnswerAsSupervisorHandler(
     public async Task<Result> Handle(AnswerAsSupervisorCommand request, CancellationToken cancellationToken)
     {
         var cruiseApplication = await cruiseApplicationsRepository
-            .GetById(request.CruiseApplicationId, cancellationToken);
+            .GetByIdWithFormsAndFormAContent(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication is null)
             return Error.NotFound();
         

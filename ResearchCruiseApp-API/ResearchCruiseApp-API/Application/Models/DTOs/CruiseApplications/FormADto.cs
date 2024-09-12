@@ -8,13 +8,10 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class FormADto
 {
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid? Id { get; init; }
 
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid CruiseManagerId { get; init; }
     
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
     public Guid DeputyManagerId { get; init; }
     
     [Range(2024, 2050)]
@@ -28,9 +25,6 @@ public class FormADto
     
     [Range(0, int.MaxValue)]
     public int CruiseHours { get; init; }
-
-    [Range(0, double.MaxValue)]
-    public double? CruiseDays { get; init; }
     
     [StringLength(1024)]
     public string? PeriodNotes { get; init; }
@@ -40,11 +34,8 @@ public class FormADto
     
     [MaxLength(1024)]
     public string? DifferentUsage { get; init; }
-    
-    public int PermissionsRequired { get; init; }
-    
-    [MaxLength(1024)]
-    public string? Permissions { get; init; }
+
+    public List<PermissionDto> Permissions { get; init; } = [];
     
     [Range(0,20)]
     public int ResearchArea { get; init; }
@@ -61,14 +52,12 @@ public class FormADto
 
     public List<ContractDto> Contracts { get; init; } = [];
 
-    public List<UgTeamDto> UgTeams { get; init; } = [];
+    public List<UgUnitDto> UgUnits { get; init; } = [];
 
-    public List<GuestTeamDto> GuestTeams { get; init; } = [];
+    public List<GuestUnitDto> GuestUnits { get; init; } = [];
 
     public List<PublicationDto> Publications { get; init; } = [];
-
-    public List<ThesisDto> Theses { get; init; } = [];
-
+    
     public List<SpubTaskDto> SpubTasks { get; init; } = [];
 
     [MaxLength(1024)]
@@ -91,14 +80,29 @@ public class FormADto
                         options.MapFrom(src =>
                             new HashSet<int> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
                 .ForMember(
-                    dest => dest.CruiseDays,
+                    dest => dest.ResearchTasks,
                     options =>
-                        options.MapFrom(src =>
-                            src.CruiseHours / TimeConstants.HoursPerDay))
+                        options.MapFrom(src => src.FormAResearchTasks))
                 .ForMember(
                     dest => dest.Contracts,
                     options =>
-                        options.Ignore()); // Mapping requires additional async operations
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.UgUnits,
+                    options =>
+                        options.MapFrom(src => src.FormAUgUnits))
+                .ForMember(
+                    dest => dest.GuestUnits,
+                    options =>
+                        options.MapFrom(src => src.FormAGuestUnits))
+                .ForMember(
+                    dest => dest.Publications,
+                    options =>
+                        options.MapFrom(src => src.FormAPublications))
+                .ForMember(
+                    dest => dest.SpubTasks,
+                    options =>
+                        options.MapFrom(src => src.FormASpubTasks));
 
             CreateMap<FormADto, FormA>()
                 .ForMember(
@@ -126,9 +130,37 @@ public class FormADto
                         options.MapFrom(src =>
                             src.OptimalPeriod.Max()))
                 .ForMember(
-                    dest => dest.Contracts,
+                    dest => dest.Permissions,
                     options =>
-                        options.Ignore()); // Mapping requires additional async operations
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.FormAResearchTasks,
+                    options =>
+                        options.Ignore()) // /member requires complex logic
+                .ForMember(
+                    dest => dest.FormAContracts,
+                    options =>
+                        options.Ignore()) // /member requires complex logic
+                .ForMember(
+                    dest => dest.FormAUgUnits,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.UgUnitsPoints,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.FormAGuestUnits,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.FormAPublications,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.FormASpubTasks,
+                    options =>
+                        options.Ignore()); // Member requires complex logic
         }
     }
 }

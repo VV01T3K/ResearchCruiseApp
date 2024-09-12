@@ -5,9 +5,8 @@ namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Reposit
 
 public interface ICruisesRepository : IRepository<Cruise>
 {
-    Task<Cruise?> GetCruiseById(Guid id, CancellationToken cancellationToken);
-    Task<List<Cruise>> GetAllCruises(CancellationToken cancellationToken);
-    Task AddCruise(Cruise cruise, CancellationToken cancellationToken);
-    Task<List<Cruise>> GetCruisesByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken);
-    void DeleteCruise(Cruise cruise);
+    Task<Cruise?> GetByIdWithCruiseApplications(Guid id, CancellationToken cancellationToken);
+    Task<List<Cruise>> GetAllWithCruiseApplications(CancellationToken cancellationToken);
+    Task<List<Cruise>> GetByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken);
+    void Delete(Cruise cruise);
 }

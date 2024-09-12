@@ -11,7 +11,7 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
     { }
 
 
-    public Task<Cruise?> GetCruiseById(Guid id, CancellationToken cancellationToken)
+    public Task<Cruise?> GetByIdWithCruiseApplications(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.Cruises
             .Include(cruise => cruise.CruiseApplications)
@@ -19,19 +19,14 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public Task<List<Cruise>> GetAllCruises(CancellationToken cancellationToken)
+    public Task<List<Cruise>> GetAllWithCruiseApplications(CancellationToken cancellationToken)
     {
         return DbContext.Cruises
             .Include(cruise => cruise.CruiseApplications)
             .ToListAsync(cancellationToken);
     }
-    
-    public async Task AddCruise(Cruise cruise, CancellationToken cancellationToken)
-    {
-        await DbContext.Cruises.AddAsync(cruise, cancellationToken);
-    }
 
-    public Task<List<Cruise>> GetCruisesByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken)
+    public Task<List<Cruise>> GetByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken)
     {
         return DbContext.Cruises
             .Include(cruise => cruise.CruiseApplications)
@@ -42,7 +37,7 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
             .ToListAsync(cancellationToken);
     }
 
-    public void DeleteCruise(Cruise cruise)
+    public void Delete(Cruise cruise)
     {
         DbContext.Cruises.Remove(cruise);
     }

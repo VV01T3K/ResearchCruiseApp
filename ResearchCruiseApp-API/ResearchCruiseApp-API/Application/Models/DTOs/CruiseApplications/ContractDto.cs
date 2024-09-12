@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Options;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
@@ -23,8 +24,11 @@ public class ContractDto
                 .ForMember(
                     dest => dest.Institution,
                     options =>
-                        options.MapFrom(src =>
-                            src));
+                        options.MapFrom(src => src))
+                .ForMember(
+                    dest => dest.Scan,
+                    options =>
+                        options.Ignore());
 
             CreateMap<ContractDto, Contract>()
                 .ForMember(

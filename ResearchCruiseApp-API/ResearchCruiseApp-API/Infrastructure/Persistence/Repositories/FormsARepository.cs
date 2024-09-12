@@ -8,10 +8,4 @@ internal class FormsARepository : Repository<FormA>, IFormsARepository
 {
     public FormsARepository(ApplicationDbContext dbContext) : base(dbContext)
     { }
-    
-    
-    public async Task AddFormA(FormA formA, CancellationToken cancellationToken)
-    {
-        await DbContext.FormsA.AddAsync(formA, cancellationToken);
-    }
 }

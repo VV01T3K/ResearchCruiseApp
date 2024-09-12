@@ -2,8 +2,8 @@ using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.SharedServices.Cruises;
-using ResearchCruiseApp_API.Application.SharedServices.Factories.Cruises;
+using ResearchCruiseApp_API.Application.Services.Cruises;
+using ResearchCruiseApp_API.Application.Services.Factories.Cruises;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Cruises.AddCruise;
 
@@ -22,7 +22,7 @@ public class AddCruiseHandler(
         // Cruises that already contain any of newCruise applications. The application will be deleted from them
         // since an application cannot be assigned to more than one cruise
         var affectedCruises = await cruisesRepository
-            .GetCruisesByCruiseApplicationsIds(request.CruiseFormDto.CruiseApplicationsIds, cancellationToken);
+            .GetByCruiseApplicationsIds(request.CruiseFormDto.CruiseApplicationsIds, cancellationToken);
 
         await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);
 

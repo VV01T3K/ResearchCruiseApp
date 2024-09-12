@@ -6,7 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
+using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 using ResearchCruiseApp_API.Infrastructure.Services;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
@@ -82,9 +84,20 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("ResearchCruiseApp-DB")));
 
+        services.AddScoped<ApplicationDbContextInitializer>();
+        
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services
             .AddScoped<IFormsARepository, FormsARepository>()
+            .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()
+            .AddScoped<IPublicationsRepository, PublicationsRepository>()
+            .AddScoped<IUgUnitsRepository, UgUnitsRepository>()
+            .AddScoped<IGuestUnitsRepository, GuestUnitsRepository>()
+            .AddScoped<ISpubTasksRepository, SpubTasksRepository>()
+            .AddScoped<IFormAResearchTasksRepository, FormAResearchTasksRepository>()
+            .AddScoped<IFormAContractsRepository, FormAContractsRepository>()
+            .AddScoped<IFormAPublicationsRepository, FormAPublicationsRepository>()
+            .AddScoped<IFormASpubTasksRepository, FormASpubTasksRepository>()
             .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()
             .AddScoped<ICruisesRepository, CruisesRepository>();
     }
