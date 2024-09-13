@@ -3,7 +3,7 @@ import {Path as Path} from "./Path";
 import userDataManager from "../CommonComponents/UserDataManager";
 import {useNavigate} from "react-router-dom";
 import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+
 
 const defaultServerAddress = 'http://localhost:8080';
 

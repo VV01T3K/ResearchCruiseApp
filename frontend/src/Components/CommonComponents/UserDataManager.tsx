@@ -1,6 +1,5 @@
 import Api from "../Tools/Api";
 import {useContext, useEffect, useState} from "react";
-import {UserData} from "./DataTypes";
 import useCustomEvent from "../Tools/useCustomEvent";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Path as Path} from "../Tools/Path";

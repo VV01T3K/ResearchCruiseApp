@@ -8,7 +8,6 @@ import {
     FTextField
 } from "../CellFormFields";
 import React, {useContext} from "react";
-import {KeyContext} from "../../Wrappers/FieldTableWrapper";
 
 export const AuthorField = () => (
         <div className={"task-field-input col-md-4"}>

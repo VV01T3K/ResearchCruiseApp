@@ -5,9 +5,7 @@ import Select from "react-select";
 
 import DatePicker  from 'react-datepicker';
 import useWindowWidth from "../../../../CommonComponents/useWindowWidth";
-import ContractCategoryPicker from "../ContractsInput/ContractCategoryPicker";
 import ActionCategoryPicker from "./ActionCategoryPicker";
-import {UgTeam} from "../UgTeamsInput/UgTeamsInput";
 
 export type Action = {
     startDate?: string,

@@ -1,9 +1,7 @@
 import {FieldValues} from "react-hook-form";
 import Api from "./Api";
-import {Path as Path} from "./Path";
 import {useContext} from "react";
 import {ExtendedUseFormReturn, FormContext} from "../Pages/FormPage/Wrappers/FormTemplate";
-import {useNavigate} from "react-router-dom";
 
 export const handleSave = (formContext:ExtendedUseFormReturn) => {
     console.log(formContext.getValues())

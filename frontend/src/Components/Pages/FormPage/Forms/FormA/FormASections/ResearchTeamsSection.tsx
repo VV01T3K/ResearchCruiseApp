@@ -4,11 +4,6 @@ import {
     FormSectionType,
     SectionIdFromTitle
 } from "../../../Wrappers/FormASections";
-import UgTeamsTable from "../../../Inputs/UgTeamsTable/UgTeamsTable";
-import {administrationUnits} from "../../../../../../resources/administrationUnits";
-import GuestTeamsTable from "../../../Inputs/GuestTeamsTable/GuestTeamsTable";
-import {FormContext} from "../../../Wrappers/FormTemplate";
-import {EMPTY_GUID} from "../../../../CruiseFormPage/CruiseFormPage";
 import {GuestTeamsField, UgTeamsField} from "./ResearchTeamsSectionFields";
 
 export const researchTeamsSectionFieldNames = {

@@ -1,20 +1,17 @@
-import {
-    Control,
-    Controller, UseFormReturn,
-} from "react-hook-form";
+import {Controller, UseFormReturn,} from "react-hook-form";
 import React from "react";
 import {FormValues} from "../Wrappers/FormTemplate";
 import InputWrapper from "../InputWrapper";
 import FFileDownloader from "../../../../CommonComponents/FFileDownloader";
-import FilePicker from "../ContractsInput/FilePicker";
 import PermissionPicker from "./PermissionPicker";
 
-export type Permission = {
-    scan: {
-        name: string,
-        content: string
-    }
+export type ScanType = {
+    name: string,
+    content: string
+}
 
+export type Permission = {
+    scan: ScanType
 }
 
 type Props = {

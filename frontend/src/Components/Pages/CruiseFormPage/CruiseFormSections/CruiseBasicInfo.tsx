@@ -2,8 +2,6 @@ import SimpleInfoTile from "../../../CommonComponents/SimpleInfoTile";
 import ReadOnlyTextInput from "../../../CommonComponents/ReadOnlyTextInput";
 import React from "react";
 import {Cruise} from "../../CruisesPage/CruisesPage";
-import AssignedCruiseApplicationsList from "../../CruisesPage/AssignedCruiseApplicationsList";
-import {UseFormReturn} from "react-hook-form";
 
 
 type Props = {

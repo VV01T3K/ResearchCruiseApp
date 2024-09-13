@@ -1,8 +1,6 @@
 import React, {createContext, Dispatch, useEffect, useState} from "react";
-import PageSection from "../CommonComponents/PageSection";
 import {Cruise} from "../CruisesPage/CruisesPage";
 import {useLocation} from "react-router-dom";
-import CruiseApplications from "./CruiseFormSections/CruiseApplications";
 import {CruiseApplication} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 import {fetchCruiseApplications} from "../../Tools/Fetchers";
 import FormTemplate from "../FormPage/Wrappers/FormTemplate";

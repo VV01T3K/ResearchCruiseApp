@@ -1,6 +1,5 @@
 import React from "react";
 import {UseFormReturn} from "react-hook-form";
-import {Permission} from "./PermissionsInput";
 import Style from "../../../../CommonComponents/FileIcon.module.css";
 import ReadOnlyTextInput from "../../../../CommonComponents/ReadOnlyTextInput";
 

@@ -8,6 +8,7 @@ import {FormContext} from "../../Wrappers/FormTemplate";
 import FieldWrapper from "../FieldWrapper";
 import {notEmptyArray} from "../PublicationsTable/PublicationsTable";
 import {InstitutionField, NoOfPersonsField} from "./GuestTeamsTableFields";
+import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
 
 
 
@@ -64,11 +65,7 @@ function GuestTeamsTable(props: Props) {
                             ? "Liczba osób musi być większa niż 0"
                             : true            }
         },
-        render: ({field}:FieldValues)=>  (
-                <FieldContext.Provider value={field}>
-                    <Render/>
-                </FieldContext.Provider>
-            )
+        render: FieldContextWrapper(Render)
     }
 
     return (

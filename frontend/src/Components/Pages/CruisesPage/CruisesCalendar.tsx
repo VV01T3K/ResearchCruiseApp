@@ -4,7 +4,6 @@ import moment from "moment/moment";
 import 'moment/locale/pl';
 import {Cruise, CruiseStateContext} from "./CruisesPage";
 import {useNavigate} from "react-router-dom";
-import {CruisesContext} from "./CruisesList";
 
 type CalendarCruiseEvent = {
     start: Date,

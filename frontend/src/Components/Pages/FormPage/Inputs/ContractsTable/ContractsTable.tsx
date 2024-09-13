@@ -1,12 +1,20 @@
 import React, {useContext} from "react";
 import {FieldValues} from "react-hook-form";
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from "../TableParts";
+import {BottomMenuWithHistory, OrdinalNumber, RemoveRowButton} from "../TableParts";
 import {FieldProps} from "../FormRadio";
 import {FormContext} from "../../Wrappers/FormTemplate";
 import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
 import FieldWrapper from "../FieldWrapper";
-import { CategoryPicker, ContractDescriptionField, DownloadField, InstitutionCell, UploadField } from "./ContractTableFields";
+import {
+    CategoryPicker,
+    ContractDescriptionField,
+    DownloadField,
+    InstitutionCell,
+    UploadField
+} from "./ContractTableFields";
 import {notEmptyArray} from "../PublicationsTable/PublicationsTable";
+import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
+import {GuestsTeam} from "../GuestTeamsTable/GuestTeamsTable";
 
 
 export type Contract = {
@@ -49,21 +57,22 @@ const contractDefaultValues = [
     }
 
 ]
+export const fileExists = (value:FieldValues) => value.length === 0 ? true :
+    value.some((row:Contract)=>  !(row.scan.name && row.scan.content)) ? "Załącz plik": true
 
 export const contractOptions = contractCategoriesPL.map((taskLabel, index) =>
         ({label:taskLabel, value:contractDefaultValues[index]}))
 
 const ContractTableContent = () => {
     const formContext = useContext(FormContext)
-    const content = [
-        ()=>(<OrdinalNumber label={"Umowa"}/>),
+    return [
+        () => (<OrdinalNumber label={"Umowa"}/>),
         CategoryPicker,
         InstitutionCell,
         ContractDescriptionField,
-        formContext?.readOnly ? DownloadField: UploadField,
+        formContext?.readOnly ? DownloadField : UploadField,
         RemoveRowButton,
     ]
-    return content
 }
 
 type ContractTableProps = FieldProps &
@@ -102,17 +111,10 @@ export const ContractTable = (props: ContractTableProps) => {
         rules: {
             required: false,
             validate: { notEmptyArray: notEmptyArray<Contract>,
-                fileExists: (value:FieldValues) => value.length <= 0 || value.some((row:Contract)=> {
-                    console.log(row)
-                    return !(row.scan.name && row.scan.content)
-                }) && "Załącz plik"
+                fileExists: fileExists
             }
         },
-        render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={field}>
-                <Render/>
-            </FieldContext.Provider>
-        )
+        render: FieldContextWrapper(Render)
     }
 
     return (

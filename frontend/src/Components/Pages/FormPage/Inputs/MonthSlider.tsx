@@ -5,8 +5,6 @@ import {FieldValues, useFormContext} from "react-hook-form";
 import FieldWrapper from "./FieldWrapper";
 import {FormContext} from "../Wrappers/FormTemplate";
 import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
-import {read} from "@popperjs/core";
-import {concatenate} from "workbox-streams";
 
 
 type Props = {

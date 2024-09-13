@@ -1,9 +1,7 @@
 import React, { useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
-import Select from "react-select";
 
-import DatePicker  from 'react-datepicker';
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
 
 export type Action = {

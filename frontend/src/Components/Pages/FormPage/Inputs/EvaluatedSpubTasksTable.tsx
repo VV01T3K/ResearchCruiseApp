@@ -1,14 +1,11 @@
 import React, {useContext} from "react";
 import {FieldValues} from "react-hook-form";
-import {FDateFieldOnlyYear, FTextField} from "./CellFormFields";
 import {FieldContext, FieldTableWrapper, KeyContext} from "../Wrappers/FieldTableWrapper";
 import {BottomMenuWithAddButtonAndHistory, OrdinalNumber, RemoveRowButton} from "./TableParts";
 import {FieldProps} from "./FormRadio";
 import FieldWrapper from "./FieldWrapper";
-import {FormContext} from "../Wrappers/FormTemplate";
 import {DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField} from "./TaskTable/EvaluatedTaskTable";
 import {EndYearField, NameField, SpubTask, StartYearField} from "./SpubTasksTable";
-import {Contract} from "./ContractsTable/ContractsTable";
 
 
 type EvaluatedSpubTask = {

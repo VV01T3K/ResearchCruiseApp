@@ -1,4 +1,4 @@
-import {MutableRefObject, Ref, useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 
 
 const useCustomEvent = (eventName:string)=> {

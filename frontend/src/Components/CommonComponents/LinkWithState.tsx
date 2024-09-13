@@ -1,6 +1,5 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import {FormPageLocationState} from "../Pages/FormPage/FormPage";
 
 type Props = {
     to: string,

@@ -253,7 +253,7 @@ export const BoolField = (props: { className?: string }) => {
     )
 }
 
-export const FSelectField = (props: HTMLProps<any>) => {
+export const FSelectField = (props:any) => {
     const displayContext = useContext(DisplayContext)
     return displayContext ? <SelectField {...props}/> : <FormSelectField {...props}/>
 }

@@ -1,7 +1,6 @@
 import FormSection, {SectionProps} from "../../../Wrappers/FormSection";
 import React from "react";
 import { FormSectionType, SectionIdFromTitle } from "../../../Wrappers/FormASections";
-import {SpubTaskTable} from "../../../Inputs/SpubTasksTable";
 import {SpubTaskField} from "./SpubTasksSectionFields";
 
 export const spubTasksSectionFieldNames = {

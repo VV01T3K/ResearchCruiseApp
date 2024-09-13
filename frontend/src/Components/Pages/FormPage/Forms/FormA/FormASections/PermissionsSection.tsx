@@ -19,7 +19,7 @@ export const PermissionsSection = ():FormSectionType => {
 
     const Content = (props:SectionProps) => (
         <FormSection index={props.index} id={id} title={longTitle}>
-            <PermissionsRequredField/>
+            {/*<PermissionsRequredField/>*/}
             <PermissionsField/>
 
         </FormSection>

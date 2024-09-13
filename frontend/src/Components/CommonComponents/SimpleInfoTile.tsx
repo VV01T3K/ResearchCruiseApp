@@ -1,4 +1,3 @@
-import ReadOnlyTextInput from "./ReadOnlyTextInput";
 import React from "react";
 
 type Props = {

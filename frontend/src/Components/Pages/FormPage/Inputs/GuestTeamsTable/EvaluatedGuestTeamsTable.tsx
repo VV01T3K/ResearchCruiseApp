@@ -1,7 +1,6 @@
 import React from "react";
 import {OrdinalNumber} from "../TableParts";
 import {FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
-import {FormField} from "../FormYearSelect";
 import {FieldLabel} from "../FieldWrapper";
 import {InstitutionField, NoOfPersonsField} from "./GuestTeamsTableFields";
 import {DisplayValueContext, DisplayWrapper} from "../TaskTable/EvaluatedTaskTable";

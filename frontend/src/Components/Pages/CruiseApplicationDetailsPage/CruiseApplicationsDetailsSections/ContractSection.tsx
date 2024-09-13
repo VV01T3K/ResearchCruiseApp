@@ -1,5 +1,4 @@
 import React from "react";
-import {ContractTable} from "../../FormPage/Inputs/ContractsTable/ContractsTable";
 import {FormSectionType, SectionIdFromTitle} from "../../FormPage/Wrappers/FormASections";
 import FormSection, {SectionProps} from "../../FormPage/Wrappers/FormSection";
 import {EvaluatedContractTable} from "../../FormPage/Inputs/ContractsTable/EvaluatedContractsTable";

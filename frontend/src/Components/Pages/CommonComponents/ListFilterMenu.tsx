@@ -1,6 +1,4 @@
-import React, {Dispatch, useState} from "react";
-import Select from "react-select";
-import {SelectWrapper} from "../FormPage/Wrappers/ReactSelectWrapper";
+import {Dispatch} from "react";
 
 
 export type AnyStringFilterOption = {

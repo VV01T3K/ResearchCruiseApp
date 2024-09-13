@@ -3,8 +3,6 @@ import {FormValues} from "./Wrappers/FormTemplate";
 import {useLocation} from "react-router-dom";
 import FormA from "./Forms/FormA/FormA";
 import FormB from "./Forms/FormB";
-import FormC from "./Forms/FormC";
-import Api from "../../Tools/Api";
 import NotFoundPage from "../NotFoundPage";
 
 

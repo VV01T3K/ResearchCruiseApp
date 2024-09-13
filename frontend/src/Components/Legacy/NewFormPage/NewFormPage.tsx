@@ -1,9 +1,6 @@
 import React, {useState} from 'react';
 import Page from "../../Pages/Page";
 import {Link, useNavigate} from "react-router-dom";
-import FormA from "../../Pages/FormPage/Forms/FormA/FormA";
-import FormC from "../../Pages/FormPage/Forms/FormC";
-import FormB from "../../Pages/FormPage/Forms/FormB";
 import {FormPageLocationState} from "../../Pages/FormPage/FormPage";
 
 

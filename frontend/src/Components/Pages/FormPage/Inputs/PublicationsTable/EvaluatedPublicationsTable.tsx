@@ -2,12 +2,10 @@ import React, {useContext} from "react";
 import {FieldValues} from "react-hook-form";
 import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from "../TableParts";
 import {FieldProps} from "../FormRadio";
-import {FormContext} from "../../Wrappers/FormTemplate";
 import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
 import FieldWrapper from "../FieldWrapper";
 import {CategoryPicker, InformationsColumn, MinisterialPointsField, YearField} from "./PublicationsTableFields";
 import {DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField} from "../TaskTable/EvaluatedTaskTable";
-import {Contract} from "../ContractsTable/ContractsTable";
 import {Publication} from "./PublicationsTable";
 
 

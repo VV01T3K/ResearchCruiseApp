@@ -821,7 +821,6 @@ body > [class^="select"] {
     background-color: map-get($theme-colors, "primary");
     border: solid 2px map-get($theme-colors, "primary");
     border-radius: 50%;
-    cursor: pointer;
     cursor: grab;
     opacity: 1;
     touch-action: pan-x;
