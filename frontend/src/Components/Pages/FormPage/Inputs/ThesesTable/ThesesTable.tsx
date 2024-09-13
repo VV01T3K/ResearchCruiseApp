@@ -6,6 +6,7 @@ import {FormContext} from "../../Wrappers/FormTemplate";
 import {FieldContext, FieldTableWrapper, KeyContext} from "../../Wrappers/FieldTableWrapper";
 import FieldWrapper from "../FieldWrapper";
 import {FDateFieldOnlyYear, FSelectField, FTextField} from "../CellFormFields";
+import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
 
 export type Publication = {
     category: string,
@@ -198,11 +199,7 @@ export const ThesesTable = (props: ThesesTableProps) => {
                 }
             }
         },
-        render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={field}>
-                <Render/>
-            </FieldContext.Provider>
-        )
+        render: FieldContextWrapper(Render)
     }
 
     return (
