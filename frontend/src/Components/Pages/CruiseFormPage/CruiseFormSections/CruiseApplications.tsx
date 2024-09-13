@@ -1,11 +1,11 @@
 import CruiseApplicationsList from "../../CruiseApplicationsPage/CruiseApplicationsList";
 import {CruiseApplication} from "../../CruiseApplicationsPage/CruiseApplicationsPage";
-import {Dispatch, SetStateAction, useState} from "react";
+import {Dispatch, SetStateAction, useContext, useState} from "react";
 import {UseFormReturn} from "react-hook-form";
 import {EditCruiseFormValues} from "../CruiseFormPage";
+import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 type Props = {
-    editCruiseForm: UseFormReturn<EditCruiseFormValues>,
     cruiseApplications: CruiseApplication[],
     setCruiseApplications: (applications: CruiseApplication[]) => void,
     addingMode: boolean,
@@ -14,9 +14,10 @@ type Props = {
 
 
 export default function CruiseApplications(props: Props) {
+    const formContext = useContext(FormContext)
     const updateApplications = (applications: CruiseApplication[], disableAddingMode?: boolean = true) => {
         props.setCruiseApplications(applications)
-        props.editCruiseForm.setValue(
+        formContext!.setValue(
             "cruiseApplicationsIds",
             applications.map(app => app.id)
         )
@@ -34,11 +35,7 @@ export default function CruiseApplications(props: Props) {
             />
             <div className="d-flex w-100 justify-content-center mt-3">
                 {!props.addingMode &&
-                    <a
-                        className="btn btn-info col-12"
-                        style={{ font: "inherit" }}
-                        onClick={() => props.setAddingMode(true)}
-                    >
+                    <a className="btn btn-primary col-12" style={{ font: "inherit" }} onClick={() => props.setAddingMode(true)}>
                         Dołącz zgłoszenie
                     </a>
                 }

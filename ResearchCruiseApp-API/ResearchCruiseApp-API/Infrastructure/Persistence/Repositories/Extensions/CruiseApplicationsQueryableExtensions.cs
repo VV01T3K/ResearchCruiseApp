@@ -16,16 +16,22 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormC);
     }
 
-    public static IIncludableQueryable<CruiseApplication, List<SpubTask>> IncludeFormAContent(
+    public static IIncludableQueryable<CruiseApplication, SpubTask> IncludeFormAContent(
         this IQueryable<CruiseApplication> query)
     {
         return query
-            .Include(cruiseApplication => cruiseApplication.FormA!.Contracts)
-            .Include(cruiseApplication => cruiseApplication.FormA!.Publications)
-            .Include(cruiseApplication => cruiseApplication.FormA!.Theses)
-            .Include(cruiseApplication => cruiseApplication.FormA!.GuestTeams)
-            .Include(cruiseApplication => cruiseApplication.FormA!.ResearchTasks)
-            .Include(cruiseApplication => cruiseApplication.FormA!.UgTeams)
-            .Include(cruiseApplication => cruiseApplication.FormA!.SpubTasks);
+            .Include(cruiseApplication => cruiseApplication.FormA!.Permissions)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
+            .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
+            .ThenInclude(formAContract => formAContract.Contract)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAUgUnits)
+            .ThenInclude(formAUgUnit => formAUgUnit.UgUnit)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAGuestUnits)
+            .ThenInclude(formAGuestUnit => formAGuestUnit.GuestUnit)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
+            .ThenInclude(formAPublication => formAPublication.Publication)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormASpubTasks)
+            .ThenInclude(formASpubTask => formASpubTask.SpubTask);
     }
 }

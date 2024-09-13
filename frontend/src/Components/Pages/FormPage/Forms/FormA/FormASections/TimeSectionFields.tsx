@@ -47,6 +47,7 @@ export const CruiseHoursField = () => (
 export const PeriodNotesField = () => (
     <TextArea className="single-field"
               fieldLabel="Uwagi dotyczące teminu"
+              placeholder={"Dodaj uwagi"}
               fieldName={timeSectionFieldNames.periodNotes}
               maxLength={200}
     />
@@ -56,6 +57,7 @@ export const ShipUsageField = () => {
     const formContext = useContext(FormContext)
     return (
         <FormRadio className="two-fields-beside-md"
+                   isVertical={true}
                    fieldLabel="Statek na potrzeby badań będzie wykorzystywany:"
                    fieldName={timeSectionFieldNames.shipUsage}
                    initValues={formContext!.initValues?.shipUsages}
@@ -82,6 +84,7 @@ export const DifferentShipUsageField = () => {
 
     return(
         <TextArea className="two-fields-beside-md"
+                  placeholder={"Podaj sposób"}
                   fieldLabel="Inny sposób użycia"
                   fieldName={timeSectionFieldNames.differentUsage}
                   disabled = {disabled}

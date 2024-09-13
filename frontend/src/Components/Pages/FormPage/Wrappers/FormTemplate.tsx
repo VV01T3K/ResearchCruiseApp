@@ -14,7 +14,8 @@ type Props = {
     type: string,
     readOnly?:boolean,
     sections:FormSectionType[],
-    initValues?:FormAInitValues
+    initValues?:FormAInitValues,
+    defaultValues?:any,
     BottomOptionBar?:React.JSXElementConstructor<any>
 }
 
@@ -40,7 +41,7 @@ function FormTemplate(props: Props) {
 
     const location = useLocation()
 
-    const [defaultValues, setDefaultValues] = useState(undefined)
+    const [defaultValues, setDefaultValues] = useState(props.defaultValues ?? undefined)
 
     useEffect(() => {
         console.log(location.state)
@@ -48,8 +49,8 @@ function FormTemplate(props: Props) {
         if(location.state.cruiseApplicationId && !defaultValues && location.state?.formType == 'A') {
             Api.get(`/api/CruiseApplications/${location.state?.cruiseApplicationId}/form${location.state?.formType}`)
                 .then(response => {
-                    setDefaultValues(response.data)
-                    form.reset(response.data)
+                    setDefaultValues(response?.data)
+                    form.reset(response?.data)
                 })
                     }
     }, []);
@@ -61,7 +62,7 @@ function FormTemplate(props: Props) {
         api
             .get('/Forms/InitValues/A')
             .then(response => {
-                setFormInitValues(response.data)
+                setFormInitValues(response?.data)
             })
 
     },[]);
@@ -85,6 +86,7 @@ function FormTemplate(props: Props) {
         reset:form.reset,
         control:form.control,
         setValue:form.setValue,
+        setError:form.setError,
         defaultValues:defaultValues,
         setReadOnly:setReadOnly,
         type:props.type, readOnly:readOnly, sections:props.sections, initValues:formInitValues };

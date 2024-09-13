@@ -12,6 +12,8 @@ type Props = {
     maxLength?: number,
     resize?: string,
     disabled?:boolean
+    placeholder?:string
+    pattern?:RegExp
 }
 
 function TextArea(props: Props) {
@@ -33,18 +35,24 @@ function TextArea(props: Props) {
                 disabled={formContext!.readOnly ?? props.disabled}
                 value={field.value?.toString()}
                 // onBlur={onChange}
-                placeholder={"Wpisz uwagi"}
+                placeholder={props.placeholder}
             />)
 
     const fieldProps = {
         ...props,
         render: render,
         rules:{
-        required: props.required ? "Pole wymagane":false,
+            required: props.required ? "Pole wymagane":false,
             maxLength: {
-            value: props.maxLength, // Maksymalna długość
-                message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`,
-        },
+            value: props.maxLength ?? 200, // Maksymalna długość
+                message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`
+            },
+            pattern:props.pattern
+                ? {
+                    value: props.pattern, // Regex dla pattern
+                    message: "Format adresu email nieprawidlowy" // Komunikat błędu dla pattern
+                }
+                : undefined
         },
         defaultValue:"",
 

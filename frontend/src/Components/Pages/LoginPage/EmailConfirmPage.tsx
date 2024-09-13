@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Page from "../Page";
 import {useNavigate} from "react-router-dom";
-import ErrorMessageIfPresent from "../CommonComponents/ErrorMessageIfPresent";
+import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../CommonComponents/ErrorMessageIfPresent";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import userDataManager from "../../CommonComponents/UserDataManager";
 import axios from "axios";
@@ -27,9 +27,12 @@ function EmailConfirmPage(){
 
     const onLaunch = async () => {
         try {
+
             await ConfirmEmail()
             setConfirmed(true)
         } catch (error) {
+            console.log(error)
+
             handleConfirmError(error)
         }
     }
@@ -51,7 +54,7 @@ function EmailConfirmPage(){
         return (
             <>
                 <div className={"text-submit"}>Nie udało się potwiedzić adresu email</div>
-                {errorMsg && <ErrorMessageIfPresent message={errorMsg!}/>}
+                {errorMsg && <ErrorMessageIfPresentNoContext message={errorMsg!}/>}
             </>
         )
     }

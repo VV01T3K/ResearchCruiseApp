@@ -5,7 +5,6 @@ import CruiseDate from "../CruiseDate";
 import {StartDate} from "../../../CruisesPage/CruiseListFields";
 
 const CruiseStartDateField = () => {
-
     return(
         <StartDate/>
     )
@@ -18,7 +17,7 @@ export const InfoSection = ():FormSectionType => {
 
     const Content = (props:SectionProps) => (
         <FormSection index={props.index} id={id} title={longTitle}>
-            <CruiseStartDateField/>
+            {/*<CruiseStartDateField/>*/}
         </FormSection>
     )
     return {Content, id, shortTitle, longTitle, sectionFieldNames:{}}

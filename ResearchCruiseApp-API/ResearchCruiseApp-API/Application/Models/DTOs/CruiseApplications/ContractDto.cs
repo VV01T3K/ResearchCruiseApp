@@ -22,7 +22,10 @@ public class ContractDto
         public MapProfile()
         {
             CreateMap<Contract, ContractDto>()
-                .ReverseMap();
+                .ForMember(
+                    dest => dest.Scan,
+                    options =>
+                        options.Ignore());
 
             CreateMap<ContractDto, Contract>()
                 .ForMember(

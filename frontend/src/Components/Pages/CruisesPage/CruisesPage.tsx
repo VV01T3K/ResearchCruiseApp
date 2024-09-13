@@ -24,7 +24,7 @@ export default function CruisesPage() {
     const [cruises, setCruises] = useState<Cruise[]>([])
 
     useEffect(() => {
-        fetchCruises().then((response) =>setCruises(response.data))
+        fetchCruises().then((response) =>setCruises(response?.data))
     },[]);
 
 

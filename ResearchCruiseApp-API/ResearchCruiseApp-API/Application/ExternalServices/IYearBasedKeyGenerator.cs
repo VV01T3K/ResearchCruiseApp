@@ -7,5 +7,5 @@ namespace ResearchCruiseApp_API.Application.ExternalServices;
 public interface IYearBasedKeyGenerator
 {
     Task<string> GenerateKey<T>(IRepository<T> repository, CancellationToken cancellationToken)
-        where T : IYearBasedNumberedEntity;
+        where T : IYearBasedNumbered;
 }

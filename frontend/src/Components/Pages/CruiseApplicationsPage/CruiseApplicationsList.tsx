@@ -1,22 +1,17 @@
-import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
-import LinkWithState from "../../CommonComponents/LinkWithState";
-import React, {createContext, Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
+import React, {createContext, Dispatch, useEffect, useState} from "react";
 import {CruiseApplication, CruiseApplicationStatus} from "./CruiseApplicationsPage";
-import {useNavigate} from "react-router-dom";
 import Api from "../../Tools/Api";
-import PageMenuBar from "../CommonComponents/PageMenuBar";
-import ListFilterMenu, {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
-import useWindowWidth from "../../CommonComponents/useWindowWidth";
+import {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
 import {FormPageLocationState} from "../FormPage/FormPage";
-import {prop, sort} from "react-data-table-component/dist/DataTable/util";
-import {FormALink, FormBLink, FormCLink} from "../CruiseApplicationDetailsPage/CruiseApplicationInfo";
-import {CruiseApplicationContext} from "../CruiseApplicationDetailsPage/CruiseApplicationDetailsPage";
-import {BottomMenuWithAddButtonAndHistory, CellTools} from "../FormPage/Inputs/TableParts";
-import {CellContext, FieldTableWrapper} from "../FormPage/Wrappers/FieldTableWrapper";
+import {FieldTableWrapper} from "../FormPage/Wrappers/FieldTableWrapper";
 import {cruiseApplicationsSortOptions} from "./CruiseApplicationsListMisc";
 import {SelectWrapper} from "../FormPage/Wrappers/ReactSelectWrapper";
 import {CruiseApplicationsTableContent} from "./CruiseApplicationsTableContent";
 
+const selectStringFilterDefaultOption: Option = {
+    label: "--- Filtr wyłączony ---",
+    value: ""
+}
 
 type CruiseApplicationsSetter =
     Dispatch<any> |
@@ -38,6 +33,7 @@ type Props = {
     deletionMode?: boolean
 }
 
+export const ListModeContext = createContext<null|{addingMode?:boolean, deletionMode?:boolean}>(null)
 
 export const ApplicationsContext = createContext(null)
 
@@ -84,12 +80,7 @@ export default function CruiseApplicationsList(props: Props) {
     const selectStringFilterOptions: SelectStringFilterOption[] = [
         {
             label: "Status",
-            selectValues: [
-                CruiseApplicationStatus.New,
-                CruiseApplicationStatus.Accepted,
-                CruiseApplicationStatus.Undertaken,
-                CruiseApplicationStatus.Reported
-            ],
+            selectValues: Object.values(CruiseApplicationStatus),
             setFilter: setStatusFilter
         }
     ]
@@ -111,17 +102,13 @@ export default function CruiseApplicationsList(props: Props) {
             ) ||
             (
                 // the application is not already assigned to the cruise
-                props.addingMode &&
-                !props.boundCruiseApplications!
+                props.addingMode && !props.boundCruiseApplications!
                     .filter(application => application.number == row.number)
                     .length
             )
         )
     }
-    const selectStringFilterDefaultOption: Option = {
-        label: "--- Filtr wyłączony ---",
-        value: ""
-    }
+
 
 
     const getFormPageLocationState = (formType: string, cruiseApplicationId?: string): FormPageLocationState => {
@@ -147,18 +134,11 @@ export default function CruiseApplicationsList(props: Props) {
     const sortOptions = cruiseApplicationsSortOptions(getDisplayedCruiseApplications()!)
     return (
         <div className={"table-with-filters"}>
-            {/*//getFormPageLocationState()}>*/}
             <div className={"w-100 d-flex flex-row p-2"}>
                 <SelectWrapper className="d-flex col-3 p-1" options={sortOptions} placeHolder={"Sortuj"}
-                    onChange={selectedOption => setDisplayedCruiseApplications(selectedOption!.value)}/>
-                {/*<ListFilterMenu className="" anyStringFilters={anyStringFilterOptions}*/}
-                {/*                selectStringFilters={selectStringFilterOptions}/>*/}
-                {/*    <div className={`d-flex w-`}>*/}
+                    onChange={(selectedOption) => setDisplayedCruiseApplications(selectedOption!.value())}/>
                 {anyStringFilterOptions.map((anyStringFilter, index) =>
                     <div key={index} className={`d-flex flex-column col-3 p-1`}>
-                        {/*<div className="d-flex">*/}
-                        {/*    {anyStringFilter.label}:*/}
-                        {/*</div>*/}
                         <input
                             className="field-common" placeholder={anyStringFilter.label}
                             onChange={(e) => {
@@ -187,19 +167,12 @@ export default function CruiseApplicationsList(props: Props) {
                 )}
                 {/*</div>*/}
             </div>
-            <ApplicationsContext.Provider value={applicationsToDisplay}>
-                <Render className={"overflow-y-scroll"}/>
-            </ApplicationsContext.Provider>
-            <div className="table-striped w-100 overflow-auto">
-                {props.addingMode &&
-                    <div className="text-white text-center bg-primary w-100 d-flex justify-content-center align-items-center p-2">
-                            <b>Dołączanie zgłoszenia</b>
-                    </div>
-                }
-
-                <div className="w-100 bg-light">
-                </div>
-            </div>
+            <ListModeContext.Provider value={{addingMode:props.addingMode, deletionMode:props.deletionMode}}>
+                <ApplicationsContext.Provider value={applicationsToDisplay}>
+                    <Render className={"overflow-y-scroll"}/>
+                </ApplicationsContext.Provider>
+            </ListModeContext.Provider>
+            {props.addingMode && <b className="text-white bg-primary w-100 justify-content-center p-2 d-flex ">Dołączanie zgłoszenia</b> }
         </div>
     )
 }

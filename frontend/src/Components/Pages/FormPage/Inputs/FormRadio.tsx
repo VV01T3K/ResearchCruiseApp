@@ -11,6 +11,7 @@ export type FieldProps = {
 }
 type Props = FieldProps & {
     initValues?: string[],
+    isVertical?: boolean,
 }
 
 
@@ -21,13 +22,13 @@ function FormRadio(props: Props) {
         const fieldName = props.fieldName
         const RadioOption = (props:{option:string,index:number}) => (
             <input key={props.index} disabled={formContext!.readOnly}
-                   className={`${field.value === String(props.index) ? "radio-button-selected" : "radio-button-not-selected"}`}
+                   className={`${field.value === String(props.index) ? "radio-button-selected" : "radio-button-not-selected"} w-100`}
                    type={"button"} value={props.option}
                    onClick={() => formContext!.setValue(fieldName, String(props.index), readyFieldOptions)}
             />
         )
         return (
-            <div className="d-flex flex-column justify-content-center align-content-center">
+            <div className={`d-flex ${props.isVertical ? 'flex-column' : 'flex-row'} justify-content-center align-content-center`}>
                 {props.initValues?.map((option, index) => (
                     <RadioOption key={index} option={option} index={index} />
                 ))}

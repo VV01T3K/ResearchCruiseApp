@@ -14,7 +14,7 @@ type Props = {
 export default function CruiseBasicInfo(props: Props) {
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center col-12">
-            <SimpleInfoTile title="Numer rejsu" colsXl={4}>
+            <SimpleInfoTile title="Numer rejsu">
                 <ReadOnlyTextInput
                     value={props.cruise?.number ?? ""}
                     className={!props.cruise ? "bg-light" : ""}

@@ -25,20 +25,20 @@ export const sortCruiseApplicationsByYear = (cruiseApplications:CruiseApplicatio
 
 export const cruiseApplicationsSortOptions = (cruiseApplications:CruiseApplication[]) => [
     {
-        label: "Data utworzenia (rosnąco)", value: sortCruiseApplicationsByDate(cruiseApplications)
+        label: "Data utworzenia (rosnąco)", value: ()=>sortCruiseApplicationsByDate(cruiseApplications)
     },
     {
-        label: "Data utworzenia (malejąco)", value: sortCruiseApplicationsByDate(cruiseApplications).reverse()},
+        label: "Data utworzenia (malejąco)", value: ()=>sortCruiseApplicationsByDate(cruiseApplications).reverse()},
     {
-        label: "Rok rejsu (rosnąco)", value: sortCruiseApplicationsByYear(cruiseApplications)
+        label: "Rok rejsu (rosnąco)", value: ()=>sortCruiseApplicationsByYear(cruiseApplications)
     },
     {
-        label: "Rok rejsu (malejąco)", value: sortCruiseApplicationsByYear(cruiseApplications).reverse()
+        label: "Rok rejsu (malejąco)", value: ()=>sortCruiseApplicationsByYear(cruiseApplications).reverse()
     },
     {
-        label: "Punkty (rosnąco)", value: sortCruiseApplicationsByPoints(cruiseApplications)
+        label: "Punkty (rosnąco)", value: ()=>sortCruiseApplicationsByPoints(cruiseApplications)
     },
     {
-        label: "Punkty (malejąco)", value: sortCruiseApplicationsByPoints(cruiseApplications).reverse()
+        label: "Punkty (malejąco)", value: ()=>sortCruiseApplicationsByPoints(cruiseApplications).reverse()
     }
 ]

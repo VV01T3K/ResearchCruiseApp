@@ -10,6 +10,7 @@ import {ContractSection} from "./FormASections/ContractSection";
 import {ResearchTeamsSection} from "./FormASections/ResearchTeamsSection";
 import {PublicationAndThesesSection} from "./FormASections/PublicationsSection";
 import {SpubTasksSection} from "./FormASections/SpubTasksSection";
+import {SupervisorSection} from "./FormASections/SupervisorSection";
 
 const FormASections = () => [
     CruiseManagerSection(),
@@ -21,7 +22,8 @@ const FormASections = () => [
     ContractSection(),
     ResearchTeamsSection(),
     PublicationAndThesesSection(),
-    SpubTasksSection()
+    SpubTasksSection(),
+    SupervisorSection(),
 ]
 
 function FormA(){

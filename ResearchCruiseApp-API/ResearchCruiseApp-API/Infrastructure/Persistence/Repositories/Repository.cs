@@ -15,8 +15,20 @@ internal class Repository<T> : IRepository<T>
     }
     
     
-    public Task<List<T>> GetList(CancellationToken cancellationToken)
+    public Task<List<T>> GetAll(CancellationToken cancellationToken)
     {
         return DbContext.Set<T>().ToListAsync(cancellationToken);
+    }
+
+    public async Task<T?> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var keyValues = new object?[] { id };
+        
+        return await DbContext.Set<T>().FindAsync(keyValues, cancellationToken);
+    }
+
+    public async Task Add(T newEntity, CancellationToken cancellationToken)
+    {
+        await DbContext.Set<T>().AddAsync(newEntity, cancellationToken);
     }
 }

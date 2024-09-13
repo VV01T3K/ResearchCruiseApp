@@ -2,6 +2,8 @@ import axios, {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axio
 import {Path as Path} from "./Path";
 import userDataManager from "../CommonComponents/UserDataManager";
 import {useNavigate} from "react-router-dom";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 
 const defaultServerAddress = 'http://localhost:8080';
 
@@ -28,7 +30,8 @@ async function refreshToken () {
     const refreshResponse = await axios.post('/account/refresh', {
         accessToken: sessionStorage.getItem('accessToken'),
         refreshToken:  sessionStorage.getItem('refreshToken')})
-    const newAccessToken = refreshResponse.data.accessToken;
+    console.log(refreshResponse)
+    const newAccessToken = refreshResponse?.data.accessToken;
     sessionStorage.setItem('accessToken', newAccessToken);
 }
 
@@ -41,8 +44,10 @@ export const Interceptors = () => {
             config._retry = true;
             try {
                 await refreshToken()
-                return axios(config);
-            } catch (refreshError) {}
+                // return axios(config);
+            } catch (refreshError) {
+                ForceLogout()
+            }
         }
         ForceLogout()
     }
@@ -52,16 +57,19 @@ export const Interceptors = () => {
     }
     function HandleErrWithResponse(response: AxiosResponse<any>){
         const {ForceLogout} = userDataManager()
+
         const statusCode = response?.status
-        // if(statusCode == 400 || statusCode == 401)
-        //     ForceLogout()
-        if (statusCode === 404)
-            console.log('The requested resource does not exist or has been deleted')
+        if( statusCode == 400 || statusCode == 401){
+            // ForceLogout()
+        }
+        if (statusCode === 404){
+
+        }
         else if (statusCode === 500)
             navigate(Path.ServerError)
     }
     function HandleErrWithoutResponse(){
-        //ForceLogout()
+        // ForceLogout()
     }
     async function httpErrorHandler(error: AxiosError) {
         const response = error?.response
@@ -72,23 +80,21 @@ export const Interceptors = () => {
             return HandleErrNetwork(config)
         else if (error.code === 'ERR_CANCELED')
             HandleErrCanceled()
-        if (response)
+        else if (response)
             HandleErrWithResponse(response)
         else if (request)
             HandleErrWithoutResponse()
-        //ForceLogout()
+        else {
+
+        }
+
+        return Promise.resolve(null)
     }
 
-    function responseHandler(response: AxiosResponse<any>) {
-      return response
-    }
+    const responseHandler = (response: AxiosResponse<any>) => response
 
-
-    function responseErrorHandler(error: AxiosError) {
-        if (error.config?.raw)
-            return Promise.reject(error)
-        return httpErrorHandler(error)
-    }
+    const responseErrorHandler = (error: AxiosError) =>
+        error.config?.raw ? Promise.reject(error) : httpErrorHandler(error)
 
     function requestHandler(config: InternalAxiosRequestConfig) {
         if (config.url && !config.url.startsWith('http'))

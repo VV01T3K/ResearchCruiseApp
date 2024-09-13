@@ -1,30 +1,57 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class Publication
+public class Publication: Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
+    [StringLength(1024)]
+    public string Category { get; init; } = null!;
+    
+    [StringLength(1024)]
+    public string Doi { get; init; } = null!;
+    
+    [StringLength(1024)]
+    public string Authors { get; init; } = null!;
+    
+    [StringLength(1024)]
+    public string Title { get; init; } = null!;
+    
+    [StringLength(1024)]
+    public string Magazine { get; init; } = null!;
 
     [StringLength(1024)]
-    public string Category { get; set; } = null!;
-    
-    [StringLength(1024)]
-    public string Doi { get; set; } = null!;
-    
-    [StringLength(1024)]
-    public string Authors { get; set; } = null!;
-    
-    [StringLength(1024)]
-    public string Title { get; set; } = null!;
-    
-    [StringLength(1024)]
-    public string Magazine { get; set; } = null!;
-    
-    public string Year { get; set; }
+    public string Year { get; init; } = null!;
 
-    public string MinisterialPoints { get; set; }
+    [StringLength(1024)]
+    public string MinisterialPoints { get; init; } = null!;
+    
+    public List<FormAPublication> FormAPublications { get; init; } = [];
+    
+    public override bool Equals(object? other)
+    {
+        if (other is null)
+            return false;
+
+        var otherPublication = (Publication)other;
+
+        return otherPublication.Category == Category &&
+               otherPublication.Doi == Doi &&
+               otherPublication.Authors == Authors &&
+               otherPublication.Title == Title &&
+               otherPublication.Magazine == Magazine &&
+               otherPublication.Year == Year &&
+               otherPublication.MinisterialPoints == MinisterialPoints;
+    }
+
+    public override int GetHashCode()
+    {
+        return Category.GetHashCode() +
+               Doi.GetHashCode() +
+               Authors.GetHashCode() +
+               Title.GetHashCode() +
+               Magazine.GetHashCode() +
+               Year.GetHashCode() +
+               MinisterialPoints.GetHashCode();
+    }
 }

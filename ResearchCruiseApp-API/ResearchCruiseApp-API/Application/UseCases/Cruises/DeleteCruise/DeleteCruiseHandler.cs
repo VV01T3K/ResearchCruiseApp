@@ -13,11 +13,11 @@ public class DeleteCruiseHandler(
 {
     public async Task<Result> Handle(DeleteCruiseCommand request, CancellationToken cancellationToken)
     {
-        var cruise = await cruisesRepository.GetCruiseById(request.Id, cancellationToken);
+        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
         if (cruise is null)
             return Error.NotFound();
 
-        cruisesRepository.DeleteCruise(cruise);
+        cruisesRepository.Delete(cruise);
         await unitOfWork.Complete(cancellationToken);
 
         return Result.Empty;

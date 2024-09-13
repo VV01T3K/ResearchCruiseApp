@@ -40,6 +40,7 @@ export const PermissionsField = () => {
     return(
         <TextArea className="two-fields-beside-md"
                   fieldLabel="Jakie?"
+                  placeholder={"Wpisz jakie"}
                   fieldName={permissionsSectionFieldNames.permissions}
                   disabled = {disabled}
                   required={!disabled && "Podaj jakie"}

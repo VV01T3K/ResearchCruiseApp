@@ -5,7 +5,7 @@ import React from "react";
 import {useLocation} from "react-router-dom";
 
 
-const BasicInfo = () => {
+export const BasicInfo = () => {
     const locationState = useLocation()
     return(
         <CruiseBasicInfo cruise={locationState.state.cruise} />

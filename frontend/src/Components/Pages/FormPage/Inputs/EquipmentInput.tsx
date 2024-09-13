@@ -40,7 +40,7 @@ export default function EquipmentInput(props: Props){
                                     if (value.some((row: Action) => {
 
                                         return !row.name || (row.insurance && !(row.startDate && row.endDate))
-                                            // .some(rowField => !rowField)
+                                        // .some(rowField => !rowField)
                                     })
                                     )
                                         return "Wypełnij wszystkie pola"
@@ -59,23 +59,13 @@ export default function EquipmentInput(props: Props){
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "35%"}}>
+                                                style={{width: "41%"}}>
                                                 <b>Nazwa sprzętu/aparatury</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "11%"}}>
+                                                style={{width: "35%"}}>
                                                 <b>Zgłoszenie do ubezpieczenia</b>
-                                            </div>
-                                            <div
-                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "15%"}}>
-                                                <b>Od</b>
-                                            </div>
-                                            <div
-                                                className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
-                                                style={{width: "15%"}}>
-                                                <b>Do</b>
                                             </div>
                                             <div
                                                 className="d-none d-xl-flex justify-content-center align-items-center p-2 border-end"
@@ -87,14 +77,14 @@ export default function EquipmentInput(props: Props){
                                                 style={{width: "5%"}}/>
 
                                             <div className="d-flex justify-content-center d-xl-none p-2 col-12">
-                                                <b>y</b>
+                                                <b>Sprzęty / Aparatury</b>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="w-100 bg-light">
                                         {!field.value.length &&
                                             <div className="d-flex flex-row justify-content-center bg-light p-2 border">
-                                            <div className="text-center">Nie dodano żadnego sprzętu/aparatury</div>
+                                                <div className="text-center">Nie dodano żadnego sprzętu/aparatury</div>
                                             </div>
                                         }
                                         {field.value.map((row: Action, index: number) => (
@@ -114,7 +104,7 @@ export default function EquipmentInput(props: Props){
 
                                                 <div
                                                     className="d-flex flex-wrap justify-content-center align-items-center border-end p-2"
-                                                    style={{width: windowWidth >= 1200 ? "35%" : "100%"}}
+                                                    style={{width: windowWidth >= 1200 ? "41%" : "100%"}}
                                                 >
                                                     <div
                                                         className="col-12 d-flex d-xl-none justify-content-center">Nazwa
@@ -144,120 +134,104 @@ export default function EquipmentInput(props: Props){
                                                     />
                                                 </div>
                                                 <div
-                                                    className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                    style={{width: windowWidth >= 1200 ? "11%" : "100%"}}
+                                                    className="text-center d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
+                                                    style={{width: windowWidth >= 1200 ? "35%" : "100%"}}
                                                 >
                                                     <div className="col-12 d-flex d-xl-none justify-content-center">Zgłoszenie do ubezpieczenia
                                                     </div>
-                                                <input type={"checkbox"}
-                                                       {...field}
-                                                       disabled={props.readonly ?? false}
-                                                       checked={row.insurance}
-                                                       onChange={(e) => {
-                                                           row.insurance = e.target.checked
-                                                           props.form?.setValue(
-                                                               props.name,
-                                                               field.value,
-                                                               {
-                                                                   shouldTouch: true,
-                                                                   shouldValidate: true,
-                                                                   shouldDirty: true
-                                                               }
-                                                           )
-                                                           field.onChange(field.value)
-                                                       }}
-                                                       className="w-50 h-50"
-                                                       style={{fontSize: "inherit", resize: "none"}}/>
-                                                </div>
-                                                <div
-                                                    className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                    style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
-                                                >
-                                                    { row.insurance && <>
-                                                    <div
-                                                        className="col-12 d-flex d-xl-none justify-content-center">Od
-                                                    </div>
-                                                    <DatePicker
-                                                        {...field}
-                                                        disabled={props.readonly ?? false}
+                                                    <input type={"checkbox"}
+                                                           {...field}
+                                                           disabled={props.readonly ?? false}
+                                                           checked={row.insurance}
+                                                           onChange={(e) => {
+                                                               row.insurance = e.target.checked
+                                                               props.form?.setValue(
+                                                                   props.name,
+                                                                   field.value,
+                                                                   {
+                                                                       shouldTouch: true,
+                                                                       shouldValidate: true,
+                                                                       shouldDirty: true
+                                                                   }
+                                                               )
+                                                               field.onChange(field.value)
+                                                           }}
+                                                           style={{fontSize: "inherit", resize: "none"}}/>
+                                                    {row.insurance && <>
+                                                        <div
+                                                            className="col-12">Od
+                                                        </div>
+                                                        <DatePicker
+                                                            {...field}
+                                                            disabled={props.readonly ?? false}
 
-                                                        //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
-                                                        showYearDropdown
-                                                        showTimeSelect
-                                                        className={"text-center w-100 rounded-1 p-1"}
-                                                        style={{fontSize: "inherit"}}
-                                                        selectsStart
-                                                        startDate={row.startDate ? new Date(row.startDate) : null}
-                                                        maxDate={row.endDate ? new Date(row.endDate) : null}
-                                                        endDate={row.endDate ? new Date(row.endDate) : null}
-                                                        locale={"pl"}
+                                                            //  onBlur = {()=>{if(getFieldValue(field, index, item, t).startDate)field.onBlur()}}
+                                                            showYearDropdown
+                                                            showTimeSelect
+                                                            className={"text-center w-100 rounded-1 p-1"}
+                                                            style={{fontSize: "inherit"}}
+                                                            selectsStart
+                                                            startDate={row.startDate ? new Date(row.startDate) : null}
+                                                            maxDate={row.endDate ? new Date(row.endDate) : null}
+                                                            endDate={row.endDate ? new Date(row.endDate) : null}
+                                                            locale={"pl"}
 
-                                                        selected={row.startDate ? new Date(row.startDate) : null}
-                                                        onChange={(e: Date) => {
-                                                            if (e != null) {
-                                                                const tmp = row;
-                                                                tmp["startDate"] = e.toISOString();
-                                                                props.form!.setValue(
-                                                                    props.name,
-                                                                    field.value,
-                                                                    {
-                                                                        shouldTouch: true,
-                                                                        shouldValidate: true,
-                                                                        shouldDirty: true
-                                                                    }
-                                                                )
-                                                                // handleChange(field, row, rowIndex, valIdx, tmp)
-                                                            }
-                                                        }}
-                                                        // getPopupContainer={trigger => trigger.parentElement}
-                                                        dateFormat="dd/MM/yyyy HH:mm"
-                                                    />
-                                                    </>
-                                                }
-                                                    { !row.insurance && <>nd.</>}
-                                                </div>
-                                                <div
-                                                    className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
-                                                    style={{width: windowWidth >= 1200 ? "15%" : "100%"}}
-                                                >
-                                                    { row.insurance && <>
-                                                    <div
-                                                        className="col-12 d-flex d-xl-none justify-content-center">Do
-                                                    </div>
-                                                    <DatePicker
-                                                        {...field}
-                                                        disabled={props.readonly ?? false}
-                                                        // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
-                                                        showYearDropdown
-                                                        showTimeSelect
-                                                        className={"text-center w-100 rounded-1 p-1"}
-                                                        style={{fontSize: "inherit"}}
-                                                        startDate={row.startDate ? new Date(row.startDate) : null}
-                                                        endDate={row.endDate ? new Date(row.endDate) : null}
-                                                        minDate={row.startDate ? new Date(row.startDate) : null}
-                                                        selectsEnd
-                                                        locale={"pl"}
-                                                        selected={row.endDate ? new Date(row.endDate) : null}
-                                                        onChange={(e: Date) => {
-                                                            if (e != null) {
-                                                                const tmp = row;
-                                                                tmp["endDate"] = e.toISOString();
-                                                                props.form!.setValue(
-                                                                    props.name,
-                                                                    field.value,
-                                                                    {
-                                                                        shouldTouch: true,
-                                                                        shouldValidate: true,
-                                                                        shouldDirty: true
-                                                                    }
-                                                                )
-                                                            }
-                                                        }}
-                                                        // getPopupContainer={trigger => trigger.parentElement}
-                                                        dateFormat="dd/MM/yyyy HH:mm"
-                                                    />
+                                                            selected={row.startDate ? new Date(row.startDate) : null}
+                                                            onChange={(e: Date) => {
+                                                                if (e != null) {
+                                                                    const tmp = row;
+                                                                    tmp["startDate"] = e.toISOString();
+                                                                    props.form!.setValue(
+                                                                        props.name,
+                                                                        field.value,
+                                                                        {
+                                                                            shouldTouch: true,
+                                                                            shouldValidate: true,
+                                                                            shouldDirty: true
+                                                                        }
+                                                                    )
+                                                                    // handleChange(field, row, rowIndex, valIdx, tmp)
+                                                                }
+                                                            }}
+                                                            // getPopupContainer={trigger => trigger.parentElement}
+                                                            dateFormat="dd/MM/yyyy HH:mm"
+                                                        />
+                                                        <div
+                                                            className="col-12">Do
+                                                        </div>
+                                                        <DatePicker
+                                                            {...field}
+                                                            disabled={props.readonly ?? false}
+                                                            // onBlur = {()=>{if(getFieldValue(field, index, item, t).endDate)field.onBlur()}}
+                                                            showYearDropdown
+                                                            showTimeSelect
+                                                            className={"text-center w-100 rounded-1 p-1"}
+                                                            style={{fontSize: "inherit"}}
+                                                            startDate={row.startDate ? new Date(row.startDate) : null}
+                                                            endDate={row.endDate ? new Date(row.endDate) : null}
+                                                            minDate={row.startDate ? new Date(row.startDate) : null}
+                                                            selectsEnd
+                                                            locale={"pl"}
+                                                            selected={row.endDate ? new Date(row.endDate) : null}
+                                                            onChange={(e: Date) => {
+                                                                if (e != null) {
+                                                                    const tmp = row;
+                                                                    tmp["endDate"] = e.toISOString();
+                                                                    props.form!.setValue(
+                                                                        props.name,
+                                                                        field.value,
+                                                                        {
+                                                                            shouldTouch: true,
+                                                                            shouldValidate: true,
+                                                                            shouldDirty: true
+                                                                        }
+                                                                    )
+                                                                }
+                                                            }}
+                                                            // getPopupContainer={trigger => trigger.parentElement}
+                                                            dateFormat="dd/MM/yyyy HH:mm"
+                                                        />
                                                     </>}
-                                                    { !row.insurance && <>nd.</>}
                                                 </div>
                                                 <div
                                                     className="d-flex flex-wrap justify-content-center align-items-center p-2 border-end"
@@ -284,7 +258,6 @@ export default function EquipmentInput(props: Props){
                                                                )
                                                                field.onChange(field.value)
                                                            }}
-                                                           className="w-50 h-50"
                                                            style={{fontSize: "inherit", resize: "none"}}/>
                                                 </div>
                                                 <div className="d-flex justify-content-center align-items-center p-2"

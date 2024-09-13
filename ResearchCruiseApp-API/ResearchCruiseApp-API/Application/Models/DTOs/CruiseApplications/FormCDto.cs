@@ -71,16 +71,15 @@ public class FormCDto
     
     
     // Zespoły z UG
-    public List<UgTeam>? UgTeams { get; set; }
+    public List<FormAUgUnit>? UgTeams { get; set; }
     
     
     //Zespoły goscinne
-    public List<GuestTeam>? GuestTeams { get; set; }
+    public List<FormAGuestUnit>? GuestTeams { get; set; }
     
     
     //Publikacje i Prace
     public List<Publication>? Publications { get; set; }
-    public List<Thesis>? Theses { get; set; }
     
     
     //Zadania SPUB

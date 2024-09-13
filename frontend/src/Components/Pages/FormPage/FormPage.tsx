@@ -23,7 +23,7 @@ function FormPage(){
         <>
             {location.state?.formType == "A" && <FormA/>}
             {location.state?.formType == "B" && <FormB/>}
-            {location.state?.formType == "C" && <FormC/>}
+            {/*{location.state?.formType == "C" && <FormC/>}*/}
             {!location.state && <NotFoundPage/>}
         </>
     )

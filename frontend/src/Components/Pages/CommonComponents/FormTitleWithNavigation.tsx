@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import {FormSectionType} from "../FormPage/Wrappers/FormASections";
 import {FormContext} from "../FormPage/Wrappers/FormTemplate";
+import {useLocation} from "react-router-dom";
 
 function FormTitleWithNavigation(props:{title?:string}){
     const formContext = useContext(FormContext)
@@ -11,12 +12,16 @@ function FormTitleWithNavigation(props:{title?:string}){
         element?.scrollIntoView({block: 'start', behavior: 'smooth'});
     }
 
-    const FormTitle = () => (
-        <div className={"form-page-title"}>
-            {["A","B","C"].includes(formContext!.type) && `Formularz ${formContext!.type}` }
-            {formContext!.type == "0" && `Szczegóły zgłoszenia` }
-            {formContext!.type == "1" && ''}
-        </div> )
+    const FormTitle = () => {
+        const locationState = useLocation().state
+        return(
+            <div className={"form-page-title"}>
+                {["A","B","C"].includes(formContext!.type) && `Formularz ${formContext!.type}` }
+                {formContext!.type == "0" && `Szczegóły zgłoszenia` }
+                {formContext!.type == "1" && (locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs")}
+            </div>
+        )
+    }
 
     const showRequiredSections = !formContext?.readOnly
 

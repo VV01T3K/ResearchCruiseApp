@@ -5,11 +5,8 @@ using ResearchCruiseApp_API.Domain.Common.Interfaces;
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class Cruise : IYearBasedNumberedEntity
+public class Cruise : Entity, IYearBasedNumbered
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
-    
     [StringLength(1024)]
     public string Number { get; set; } = null!;
     

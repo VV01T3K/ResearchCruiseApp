@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AnswerAsSupervisor;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 using ResearchCruiseApp_API.Domain.Common.Constants;
@@ -62,6 +64,28 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new AddCruiseApplicationCommand(formADto));
         return result.IsSuccess
             ? Created()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpGet("{id:guid}/evaluation")]
+    public async Task<IActionResult> GetCruiseApplicationEvaluation(Guid id)
+    {
+        var result = await mediator.Send(new GetCruiseApplicationEvaluationQuery(id));
+        return result.IsSuccess
+            ? Ok(result.Data)
+            : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPatch("{id:guid}/evaluation")]
+    public async Task<IActionResult> EditCruiseApplicationEvaluation(
+        Guid id, CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationsEditsDto)
+    {
+        var result = await mediator
+            .Send(new EditCruiseApplicationEvaluationCommand(id, cruiseApplicationEvaluationsEditsDto));
+        return result.IsSuccess
+            ? NoContent()
             : this.CreateError(result);
     }
     

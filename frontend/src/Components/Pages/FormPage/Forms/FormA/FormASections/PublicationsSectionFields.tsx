@@ -4,6 +4,7 @@ import React from "react";
 import {PublicationsSectionFieldNames} from "./PublicationsSection";
 
 export const PublicationsDescription = () => (
+
     <div className={"p-4 pb-0 text-center"}>
         <h5 className={"text-center"}>Publikacje związane tematycznie</h5>
         <p>Publikacje z ubiegłych 5-lat, związane <strong>bezpośrednio </strong>tematycznie z zadaniami

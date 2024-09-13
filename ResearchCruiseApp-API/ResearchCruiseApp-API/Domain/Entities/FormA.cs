@@ -1,64 +1,66 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
-
-public class FormA
+public class FormA : Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
+    public Guid CruiseManagerId { get; init; }
 
-    public Guid CruiseManagerId { get; set; }
+    public Guid DeputyManagerId { get; init; }
 
-    public Guid DeputyManagerId { get; set; }
-
-    public string Year { get; set; } = null!;
-  
-    public string AcceptablePeriodBeg { get; set; }
-    
-    public string AcceptablePeriodEnd { get; set; }
-    
-    public string OptimalPeriodBeg { get; set; }
-    
-    public string OptimalPeriodEnd { get; set; }
-    
-    public string CruiseHours { get; set; }
+    [StringLength(1024)] 
+    public string Year { get; init; } = null!;
 
     [StringLength(1024)]
-    public string? PeriodNotes { get; set; }
-    
-    public int ShipUsage { get; set; }
+    public string AcceptablePeriodBeg { get; init; } = null!;
+
+    [StringLength(1024)] 
+    public string AcceptablePeriodEnd { get; init; } = null!;
 
     [StringLength(1024)]
-    public string? DifferentUsage { get; set; }
-    
-    public int PermissionsRequired { get; set; }
-    
+    public string OptimalPeriodBeg { get; init; } = null!;
+
     [StringLength(1024)]
-    public string? Permissions { get; set; }
+    public string OptimalPeriodEnd { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string CruiseHours { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string? PeriodNotes { get; init; }
+
+    [StringLength(1024)]
+    public string ShipUsage { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string? DifferentUsage { get; init; }
     
-    public Guid ResearchAreaId { get; set; } 
+    public List<Permission> Permissions { get; init; } = [];
+
+    [StringLength(1024)]
+    public ResearchArea ResearchArea { get; init; } = null!;
     
     [MaxLength(1024)]
-    public string? ResearchAreaInfo { get; set; }
-    
-    public int CruiseGoal { get; set; }
+    public string? ResearchAreaInfo { get; init; }
+
+    [StringLength(1024)]
+    public string CruiseGoal { get; init; } = null!;
     
     [MaxLength(1024)]
-    public string? CruiseGoalDescription { get; set; }
+    public string? CruiseGoalDescription { get; init; }
 
-    public List<ResearchTask> ResearchTasks { get; set; } = [];
+    public List<FormAResearchTask> FormAResearchTasks { get; init; } = [];
 
-    public List<Contract> Contracts { get; set; } = [];
+    public List<FormAContract> FormAContracts { get; init; } = [];
 
-    public List<UgTeam> UgTeams { get; set; } = [];
+    public List<FormAUgUnit> FormAUgUnits { get; init; } = [];
 
-    public List<GuestTeam> GuestTeams { get; set; } = [];
+    [StringLength(1024)]
+    public string UgUnitsPoints { get; set; } = null!;
+    
+    public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];
 
-    public List<Publication> Publications { get; set; } = [];
-
-    public List<Thesis> Theses { get; set; } = [];
-
-    public List<SpubTask> SpubTasks { get; set; } = [];
+    public List<FormAPublication> FormAPublications { get; init; } = [];
+    
+    public List<FormASpubTask> FormASpubTasks { get; init; } = [];
 }

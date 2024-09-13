@@ -57,14 +57,18 @@ function GuestTeamsTable(props: Props) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<GuestsTeam>,
-                atLeastOnePerson: (value: GuestsTeam[]) => value.length <= 0 || value.some((row:GuestsTeam)=>Number(row.noOfPersons) <=0) && "Dodaj przynajmniej jedną osobę z instytucji"
-            }
+                atLeastOnePerson: (value: GuestsTeam[]) =>
+                    value.length === 0
+                        ? true
+                        : value.some((row: GuestsTeam) => Number(row.noOfPersons) <= 0)
+                            ? "Liczba osób musi być większa niż 0"
+                            : true            }
         },
-        render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={field}>
+        render: ({field}:FieldValues)=>  (
+                <FieldContext.Provider value={field}>
                     <Render/>
-            </FieldContext.Provider>
-        )
+                </FieldContext.Provider>
+            )
     }
 
     return (

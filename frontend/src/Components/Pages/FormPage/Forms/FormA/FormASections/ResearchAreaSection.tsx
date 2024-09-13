@@ -26,6 +26,7 @@ const ResearchAreaField = () => {
 const ResearchAreaDescriptionField = () => (
     <TextArea className="two-fields-beside-md"
               fieldLabel="Opis"
+              placeholder={"Wpisz opis"}
               fieldName={researchAreaSectionFieldNames.researchAreaInfo}
               required={false}
     />

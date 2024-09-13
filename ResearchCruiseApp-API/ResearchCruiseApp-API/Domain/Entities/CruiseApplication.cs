@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
@@ -5,11 +6,9 @@ using ResearchCruiseApp_API.Domain.Common.Interfaces;
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class CruiseApplication : IYearBasedNumberedEntity
+public class CruiseApplication : Entity, IYearBasedNumbered
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
-    
+    [StringLength(1024)]
     public string Number { get; set; } = null!;
     
     public DateOnly Date { get; set; }
@@ -19,10 +18,6 @@ public class CruiseApplication : IYearBasedNumberedEntity
     public FormB? FormB { get; set; }
     
     public FormC? FormC { get; set; }
-    
-    //public EvaluatedCruiseApplication? EvaluatedApplication { get; set; }
-    
-    public int Points { get; set; }
     
     public CruiseApplicationStatus Status { get; set; }
 

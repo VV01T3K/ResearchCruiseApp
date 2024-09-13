@@ -4,6 +4,9 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {Path as Path} from "../Tools/Path";
 
+export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const ugEmailPattern = /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/
+
 export default function useFormWrapper() {
     const form = useForm({    mode: "onBlur", reValidateMode:"onBlur"});
     const [disabled, setDisabled] = useState(false)

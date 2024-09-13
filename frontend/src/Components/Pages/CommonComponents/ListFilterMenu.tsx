@@ -20,13 +20,3 @@ type Props = {
     selectStringFilters: SelectStringFilterOption[]
 }
 
-
-export default function ListFilterMenu(props: Props) {
-
-
-
-
-    return (
-<></>
-    )
-}

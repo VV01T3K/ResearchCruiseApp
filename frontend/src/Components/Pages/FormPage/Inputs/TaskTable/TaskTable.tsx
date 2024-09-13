@@ -68,11 +68,11 @@ export const taskTypesDefaultValues: ReseachTask[] = [
     {type: "1", author: "", title: ""},
     {type: "2", author: "", title: ""},
     {type: "3", title: "", date: "", institution: "", financingApproved: "false"},
-    {type: "4", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
-    {type: "5", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
-    {type: "6", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
-    {type: "7", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
-    {type: "8", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: ""},
+    {type: "4", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
+    {type: "5", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
+    {type: "6", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
+    {type: "7", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
+    {type: "8", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
     {type: "9", description: ""},
     {type: "10", title: "", date: "", magazine: "",  ministerialPoints: "0"},
     {type: "11", description: ""},
@@ -212,11 +212,14 @@ export const TasksTable = (props: TaskTableProps) => {
                 }
             }
         },
-        render: ({field}: FieldValues) => (
-            <FieldContext.Provider value={field}>
-                <Render/>
-            </FieldContext.Provider>
-        )
+        render: ({field}: FieldValues) => {
+            console.log(field.value)
+            return(
+                <FieldContext.Provider value={field}>
+                    <Render/>
+                </FieldContext.Provider>
+            )
+        }
     }
 
     return (

@@ -14,7 +14,8 @@ export const TasksField = () => {
                             "title": "3re",
                             "startDate": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
                             "endDate": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
-                            "financingAmount": "0.00"
+                            "financingAmount": "0.00",
+                            "securedAmount": "0.00"
                         },
                         {
                             "type": "11",
@@ -24,12 +25,14 @@ export const TasksField = () => {
                             "type": "3",
                             "title": "fsdfds",
                             "institution": "ffsdff",
-                            "date": "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)"
+                            "date": "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
+                            "financingApproved":"true"
                         },
                         {
                             "type": "0",
                             "author": "sdfdsf",
-                            "title": "dsfdfsd"
+                            "title": "dsfdfsd",
+
                         }
                     ]}
         />
