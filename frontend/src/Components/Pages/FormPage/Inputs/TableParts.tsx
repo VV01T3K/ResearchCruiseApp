@@ -111,6 +111,13 @@ export const BottomMenuWithAddButtonAndHistory = (props: { newOption: SelectOpti
         </BottomMenu>
     )
 
+export const BottomMenuWithAddButton = (props: { newOption: SelectOptions}) =>
+    (
+        <BottomMenu className={"align-items-center"}>
+            <NewRowButton className={"col-12"} option={props.newOption}/>
+        </BottomMenu>
+    )
+
 
 export const CellFormTools = () => {
     const cellContext = useContext(CellContext)

@@ -17,6 +17,7 @@ const SupervisorEmailField = () => (
         fieldLabel={"Adres email"}
         fieldName={supervisorSectionFieldNames.supervisor}
         placeholder={"Wpisz adres email"}
+        required={true}
         pattern={emailPattern}
     />
 )

@@ -1,7 +1,12 @@
 import React, {useContext} from "react";
 import { FieldValues} from "react-hook-form";
 import {SingleValue} from "react-select";
-import {BottomMenuWithAddButtonAndHistory,OrdinalNumber, RemoveRowButton} from "../TableParts";
+import {
+    BottomMenuWithAddButton,
+    BottomMenuWithAddButtonAndHistory,
+    OrdinalNumber,
+    RemoveRowButton
+} from "../TableParts";
 import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
 import {FormField} from "../FormYearSelect";
 import {FormContext} from "../../Wrappers/FormTemplate";
@@ -59,7 +64,7 @@ function PermissionsTable(props: Props) {
     const mdColTitles = ["Lp.", "Treść pozwolenia", "Organ wydający pozwolenie", "Skan",  ""]
     const colTitle = "Pozwolenia"
     const bottomMenu =
-        <BottomMenuWithAddButtonAndHistory newOption={permissionDefault as SingleValue<any>} historicalOptions={[]}/>
+        <BottomMenuWithAddButton newOption={permissionDefault as SingleValue<any>}/>
     const emptyText = "Nie dodano żadnego pozwolenia"
     const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, guestTeamsTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName))

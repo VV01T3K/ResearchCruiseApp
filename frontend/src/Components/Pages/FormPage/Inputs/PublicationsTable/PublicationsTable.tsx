@@ -6,6 +6,7 @@ import {FormContext} from "../../Wrappers/FormTemplate";
 import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
 import FieldWrapper from "../FieldWrapper";
 import {CategoryPicker, InformationsColumn, MinisterialPointsField, YearField} from "./PublicationsTableFields";
+import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
 
 export const notEmptyArray = <T extends object>(value:FieldValues) => {
     if (value.some((row:T) => {
@@ -117,11 +118,7 @@ export const PublicationsTable = (props: PublicationsTableProps) => {
             required: false,
             validate: { notEmptyArray: notEmptyArray<Publication> }
         },
-        render: ({field}:FieldValues)=>(
-            <FieldContext.Provider value={field}>
-                <Render/>
-            </FieldContext.Provider>
-        )
+        render:  FieldContextWrapper(Render)
     }
 
     return (
