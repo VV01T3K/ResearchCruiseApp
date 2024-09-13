@@ -1,10 +1,10 @@
-import {Cruise} from "../../CruisesPage/CruisesPage";
-import React, {useState} from "react";
+import React, {useContext} from "react";
 import DatePicker from "react-datepicker";
-import {Controller, set, UseFormReturn, useWatch} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import {Controller, UseFormReturn, useWatch} from "react-hook-form";
+import ErrorMessageIfPresent from "../../CommonComponents/ErrorMessageIfPresent";
 import {EditCruiseFormValues} from "../CruiseFormPage";
-import {Time} from "../../FormPage/Inputs/TaskInput/TaskInput";
+import {Time} from "../../FormPage/Inputs/TaskTable/TaskTable";
+import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 type Props = {
     editCruiseForm: UseFormReturn<EditCruiseFormValues>
@@ -12,6 +12,8 @@ type Props = {
 
 
 export default function CruiseDate(props: Props) {
+
+    const formContext = useContext(FormContext)
     const startWatch = useWatch({
         control: props.editCruiseForm.control,
         name: "date.start"
@@ -93,7 +95,7 @@ export default function CruiseDate(props: Props) {
                 )}
             />
             {props.editCruiseForm?.formState.errors.date &&
-                <ErrorCode code={props.editCruiseForm?.formState.errors.date.message} />
+                <ErrorMessageIfPresent message={props.editCruiseForm?.formState.errors.date.message} />
             }
         </div>
     )

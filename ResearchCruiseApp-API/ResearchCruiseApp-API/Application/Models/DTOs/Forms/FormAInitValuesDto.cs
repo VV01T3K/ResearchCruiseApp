@@ -10,7 +10,7 @@ public class FormAInitValuesDto
 {
     public List<FormUserDto> CruiseManagers { get; set; } = [];
     public List<FormUserDto> DeputyManagers { get; set; } = [];
-    public List<int> Years { get; set; } = [];
+    public List<string> Years { get; set; } = [];
     public List<string> ShipUsages { get; set; } = [];
     public List<ResearchAreaDto> ResearchAreas { get; set; } = [];
     public List<string> CruiseGoals { get; set; } = [];

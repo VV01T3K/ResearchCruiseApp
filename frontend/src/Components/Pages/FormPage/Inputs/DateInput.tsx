@@ -1,13 +1,12 @@
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './DateInput.css'
 import pl from "date-fns/locale/pl"; // the locale you want
 registerLocale("pl", pl); // register it with the name you want
 import {
     Controller,
 } from "react-hook-form";
 import React from "react";
-import InputWrapper from "./InputWrapper";
+import FieldWrapper from "./FieldWrapper";
 
 
 type Props = {
@@ -20,7 +19,7 @@ type Props = {
 
 function DateInput(props: Props) {
     return (
-        <InputWrapper {...props}>
+        <FieldWrapper {...props}>
             <Controller
                 defaultValue={"" }
                 name={props.name}
@@ -43,7 +42,7 @@ function DateInput(props: Props) {
                     />
                 )}
             />
-        </InputWrapper>
+        </FieldWrapper>
     )
 }
 

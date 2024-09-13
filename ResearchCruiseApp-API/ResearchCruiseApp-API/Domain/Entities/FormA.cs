@@ -2,41 +2,49 @@
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
-
 public class FormA : Entity
 {
     public Guid CruiseManagerId { get; init; }
 
     public Guid DeputyManagerId { get; init; }
-    
-    public int Year { get; init; }
-  
-    public int AcceptablePeriodBeg { get; init; }
-    
-    public int AcceptablePeriodEnd { get; init; }
-    
-    public int OptimalPeriodBeg { get; init; }
-    
-    public int OptimalPeriodEnd { get; init; }
-    
-    public int CruiseHours { get; init; }
+
+    [StringLength(1024)] 
+    public string Year { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string AcceptablePeriodBeg { get; init; } = null!;
+
+    [StringLength(1024)] 
+    public string AcceptablePeriodEnd { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string OptimalPeriodBeg { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string OptimalPeriodEnd { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string CruiseHours { get; init; } = null!;
 
     [StringLength(1024)]
     public string? PeriodNotes { get; init; }
-    
-    public int ShipUsage { get; init; }
+
+    [StringLength(1024)]
+    public string ShipUsage { get; init; } = null!;
 
     [StringLength(1024)]
     public string? DifferentUsage { get; init; }
-
-    public List<Permission> Permissions { get; init; } = [];
     
-    public int ResearchArea { get; init; } 
+    public List<Permission> Permissions { get; init; } = [];
+
+    [StringLength(1024)]
+    public ResearchArea ResearchArea { get; init; } = null!;
     
     [MaxLength(1024)]
     public string? ResearchAreaInfo { get; init; }
-    
-    public int CruiseGoal { get; init; }
+
+    [StringLength(1024)]
+    public string CruiseGoal { get; init; } = null!;
     
     [MaxLength(1024)]
     public string? CruiseGoalDescription { get; init; }
@@ -47,7 +55,8 @@ public class FormA : Entity
 
     public List<FormAUgUnit> FormAUgUnits { get; init; } = [];
 
-    public int UgUnitsPoints { get; set; }
+    [StringLength(1024)]
+    public string UgUnitsPoints { get; set; } = null!;
     
     public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];
 

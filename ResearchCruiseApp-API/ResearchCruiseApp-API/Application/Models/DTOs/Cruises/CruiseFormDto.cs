@@ -7,7 +7,9 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 
 public class CruiseFormDto
 {
-    public StringRangeDto Date { get; set; }
+    public string StartDate { get; set; } = null!;
+
+    public string EndDate { get; set; } = null!;
 
     public CruiseManagersTeamDto ManagersTeam { get; set; }
     public List<Guid> CruiseApplicationsIds { get; set; } = [];
@@ -32,17 +34,7 @@ public class CruiseFormDto
                     dest => dest.Number,
                     options =>
                         options.MapFrom(src =>
-                            string.Empty))
-                .ForMember(
-                    dest => dest.StartDate,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Date.Start))
-                .ForMember(
-                    dest => dest.EndDate,
-                    options =>
-                        options.MapFrom(src =>
-                            src.Date.End));
+                            string.Empty));
         }
     }
 }

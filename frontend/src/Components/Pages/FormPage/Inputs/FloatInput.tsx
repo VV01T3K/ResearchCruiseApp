@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import React from "react";
-import InputWrapper from "./InputWrapper";
+import FieldWrapper from "./FieldWrapper";
 
 type Props = {
     className?: string;
@@ -46,7 +46,7 @@ function FloatInput(props: Props) {
     };
 
     return (
-        <InputWrapper {...props}>
+        <FieldWrapper {...props}>
             <Controller
                 render={({ field }) => (
                     <input
@@ -70,7 +70,7 @@ function FloatInput(props: Props) {
                     },
                 }}
             />
-        </InputWrapper>
+        </FieldWrapper>
     );
 }
 

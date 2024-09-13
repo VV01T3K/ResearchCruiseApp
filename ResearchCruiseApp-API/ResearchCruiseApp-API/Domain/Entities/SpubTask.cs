@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
 public class SpubTask : Entity
 {
-    public int YearFrom { get; init; }
-    
-    public int YearTo { get; init; }
+    [StringLength(1024)] public string YearFrom { get; init; } = null!;
+
+    [StringLength(1024)] public string YearTo { get; init; } = null!;
     
     [StringLength(1024)]
     public string Name { get; init; } = null!;

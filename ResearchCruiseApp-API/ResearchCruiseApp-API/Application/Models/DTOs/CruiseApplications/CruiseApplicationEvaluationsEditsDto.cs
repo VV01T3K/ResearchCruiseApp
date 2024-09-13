@@ -7,7 +7,7 @@ public class CruiseApplicationEvaluationsEditsDto
     
     public List<EvaluationEditDto> ContractsEvaluationsEdits { get; init; } = [];
     
-    public int NewUgUnitsPoints { get; init; }
+    public string NewUgUnitsPoints { get; init; }
     
     public List<EvaluationEditDto> PublicationsEvaluationsEdits { get; init; } = [];
     

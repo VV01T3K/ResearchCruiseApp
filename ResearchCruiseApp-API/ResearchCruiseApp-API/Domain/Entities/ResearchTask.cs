@@ -26,7 +26,8 @@ public class ResearchTask : Entity
     [StringLength(1024)]
     public string? EndDate { get; init; }
     
-    public double? FinancingAmount { get; init; }
+    [StringLength(1024)]
+    public string? FinancingAmount { get; init; }
     
     [StringLength(1024)]
     public string? Description { get; init; }
@@ -34,8 +35,7 @@ public class ResearchTask : Entity
     public bool? FinancingApproved { get; init; }
     
     public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];
-
-
+    
     public override bool Equals(object? other)
     {
         if (other is null)

@@ -1,92 +1,78 @@
-import {Controller, UseFormReturn} from "react-hook-form";
-import React from "react";
-import InputWrapper from "./InputWrapper";
-import {FormValue, FormValues} from "../Wrappers/FormTemplate";
-import {FormAValue} from "../Forms/FormA";
+import React, {useContext} from "react";
+import FieldWrapper from "./FieldWrapper";
+import {FormContext, FormValue} from "../Wrappers/FormTemplate";
+import {FieldValues} from "react-hook-form";
+import {textIsIntNumber} from "./Misc";
 
 
 type Props = {
     className?: string,
-    label: string,
-    name: keyof FormValues,
-    maxVal: number,
-    newVal?: (arg0: number) => any,
-    connectedName?: keyof FormValues,
-    form?: UseFormReturn<FormValues>,
+    fieldLabel: string,
+    fieldName: string,
+    onChange?: (arg: number) => number,
+    maxVal?: number,
+    setterFunction?: (arg: number) => number,
     notZero?: boolean,
-    readonly?: boolean,
-    fractionDigits?: number
+}
+export const ConvertNumberToString = (value:number) => {
+    if(value%1)
+        return value.toFixed(2)
+    return value.toFixed(0)
 }
 
-
 function NumberInput(props: Props){
-    const re = /^[0-9\b]+$/;
-    const onChange = (e: { target: { value: string; }; }) => {
-        if (re.test(e.target.value)) {
-            props.form!.setValue(
-                props.name,
-                parseInt(e.target.value) > props.maxVal ? props.maxVal : parseInt(e.target.value),
-                { shouldDirty: true, shouldValidate: true, shouldTouch:true }
-            )
+    const formContext = useContext(FormContext)
+
+
+    const ParseInput = (value:string) => {
+        let returnVal;
+        if (textIsIntNumber(value)) {
+            returnVal = parseInt(value)
+            if(props.maxVal)
+                return returnVal > props.maxVal ? props.maxVal : returnVal
+            return returnVal
+        } else {
+            return 0
         }
-        else //if (e.target.value == '')
-            props.form!.setValue(
-                props.name,
-                0,
-                { shouldDirty: true, shouldValidate: true, shouldTouch:true }
-            )
+    }
+    const FieldValue = ()=>{
+            const fieldValue = formContext?.getValues(props.fieldName)
+            if(!fieldValue)
+                return ""
+            if(props.setterFunction)
+                return ConvertNumberToString((props.setterFunction(fieldValue)))
+            return ConvertNumberToString(parseFloat(fieldValue))
+        }
+    const render = ( {field} : FieldValues) => (
+            <input className="field-common" inputMode="numeric"
+                   {...field}
+                   disabled={formContext!.readOnly ?? false}
+                   value={FieldValue()}
+                   onChange={
+                       (e) => {
+                           var value = ParseInput(e.target.value)
+                           value = props.onChange? props.onChange(value) : value
+                           field.onChange(String(value))
+                       }
+                   }
+                   placeholder="0"
+            />
+    )
+
+    const fieldProps = {
+        ...props,
+        rules: {
+            required: "Pole nie może być puste",
+            validate: (value: FormValue) => {
+                if (props.notZero)
+                    return parseFloat(value) !== 0 || 'Pole nie może mieć wartości 0.';
+            }
+        },
+        render: render,
+        defaultValue: "0"
     }
 
-    return (
-        <InputWrapper {...props}>
-            <Controller
-                render={({ field}) =>
-                    <input className="text-center placeholder-glow"
-                           disabled={props.readonly ?? false}
-                           value={(field.value as number)?.toFixed(props.fractionDigits ?? 0) ?? ""}
-                           onBlur={
-                        (e) => {
-                               if (re.test(e.target.value)) {
-                                   props.form!.setValue(
-                                       props.name,
-                                       parseInt(e.target.value),
-                                       {shouldDirty: true, shouldValidate: true, shouldTouch: true}
-                                   )
-
-                                   if (props.connectedName && props.newVal) {
-                                       props.form!.setValue(
-                                           props.connectedName,
-                                           props.newVal(parseInt(e.target.value)),
-                                           {shouldDirty: true, shouldValidate: true, shouldTouch: true}
-                                       )
-                                   }
-                               }
-                               // else {
-                               //     if (props.connectedName && props.newVal)
-                               //         props.connectedName,
-                               //             "",
-                               //             {shouldDirty: true, shouldValidate: true, shouldTouch: true}
-                               // }
-                               field.onBlur()
-                           }
-                    }
-                           placeholder="0"
-                           onChange={(e) => { onChange(e) }}
-                    />
-                }
-                //defaultValue={undefined}
-                name={props.name}
-                control={props.form!.control}
-                rules={{
-                    required: "Pole nie może być puste",
-                    validate: (value: FormValue) => {
-                        if (props.notZero)
-                            return Number(value) !== 0 || 'Pole nie może mieć wartości 0.';
-                    }
-                }}
-            />
-        </InputWrapper>
-    )
+    return (<FieldWrapper {...fieldProps}/>);
 }
 
 

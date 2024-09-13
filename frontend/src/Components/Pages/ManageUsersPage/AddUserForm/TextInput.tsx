@@ -1,4 +1,4 @@
-import ErrorCode from "../../CommonComponents/ErrorCode";
+import {ErrorMessageIfPresentNoContext} from "../../CommonComponents/ErrorMessageIfPresent";
 import React from "react";
 import {UseFormReturn} from "react-hook-form";
 import {NewUserFormValues} from "./AddUserForm";
@@ -43,7 +43,7 @@ export default function TextInput(props: Props) {
                 />
                 {props.form.formState.errors[props.name] &&
                     <div className="d-flex col-12 justify-content-end">
-                        <ErrorCode className="w-75" code={props.form.formState.errors[props.name]?.message} />
+                        <ErrorMessageIfPresentNoContext className="w-75" message={props.form.formState.errors[props.name]?.message} />
                     </div>
                 }
             </div>

@@ -32,10 +32,10 @@ public class GetFormAInitValuesHandler(
             .Select(CreateFormUserDto)
             .ToList();
 
-        var years = new List<int>
+        var years = new List<string>
         {
-            DateTime.Now.Year,
-            DateTime.Now.Year + 1
+            DateTime.Now.Year.ToString(),
+            (DateTime.Now.Year + 1).ToString()
         };
 
         var shipUsages = new List<string>
@@ -51,14 +51,13 @@ public class GetFormAInitValuesHandler(
         var researchAreas = new List<ResearchAreaDto>
         {
             new(
-                "Gdynia",
-                [301, 263, 294, 370, 472, 565, 541, 407],
-                [316, 392, 435, 408, 407, 311, 290, 272]),
+                Guid.Empty,
+                "s"
+                ),
             new(
-                "Gdańsk",
-                [479, 392, 374, 300, 304, 356, 400, 464, 522, 582, 653, 566],
-                [409, 415, 456, 437, 549, 540, 598, 523, 538, 598, 384, 314]
-            )
+                Guid.Empty,
+                "s"
+                )
         };
         
         var cruiseGoals = new List<string>

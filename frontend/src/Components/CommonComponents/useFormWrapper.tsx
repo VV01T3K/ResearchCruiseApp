@@ -1,18 +1,21 @@
 import {FieldValues, RegisterOptions, useForm} from "react-hook-form";
-import ErrorCode from "../Pages/CommonComponents/ErrorCode";
+import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../Pages/CommonComponents/ErrorMessageIfPresent";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
-import {PathName as Path} from "../Tools/PathName";
+import {Path as Path} from "../Tools/Path";
+
+export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const ugEmailPattern = /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/
 
 export default function useFormWrapper() {
-    const form = useForm({    mode: "onBlur"});
+    const form = useForm({    mode: "onBlur", reValidateMode:"onBlur"});
     const [disabled, setDisabled] = useState(false)
 
     const ErrorMessageIfPresent = (props:{fieldName:string}) => {
         const errors = form.formState.errors;
         return (
             <>
-                {errors[props.fieldName] && <ErrorCode code={errors[props.fieldName]!.message} />}
+                {errors[props.fieldName] && <ErrorMessageIfPresentNoContext message={errors[props.fieldName]!.message as string} />}
             </>
         )
     }

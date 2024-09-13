@@ -1,7 +1,7 @@
 import React  from 'react';
 import Tile from "./Tile";
 import {Link} from "react-router-dom";
-import {PathName as Path} from "../../../Tools/PathName";
+import {Path as Path} from "../../../Tools/Path";
 import {ReactComponent as Icon} from "/node_modules/bootstrap-icons/icons/gear-wide.svg"
 
 

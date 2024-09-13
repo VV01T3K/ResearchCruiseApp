@@ -2,7 +2,7 @@ import {Route, Routes} from "react-router-dom";
 import NewFormPage from "./Legacy/NewFormPage/NewFormPage";
 import ManageUsersPage from "./Pages/ManageUsersPage/ManageUsersPage";
 import ShipOwnerPanel from "./Pages/HomePage/ShipOwnerPanel";
-import {PathName as Path} from "./Tools/PathName";
+import {Path as Path} from "./Tools/Path";
 import SavedFormPage from "./Pages/SavedFormsPage/SavedFormPage";
 import FormPage from "./Pages/FormPage/FormPage";
 import AdminPanel from "./Pages/HomePage/AdminPanel";
@@ -17,7 +17,6 @@ import LoginPage from "./Pages/LoginPage/LoginPage";
 import React from "react";
 import ServerErrorPage from "./Pages/ServerErrorPage";
 import UserBasedAccess from "./UserBasedAccess";
-import MyCruiseApplicationsPage from "./Pages/MyCruiseApplicationsPage";
 import WaitingPage from "./Pages/WaitingPage";
 import RegisterPage from "./Pages/LoginPage/RegisterPage";
 import ResetPasswordPage from "./Pages/LoginPage/ResetPasswordPage";
@@ -55,7 +54,6 @@ const RoleBasedRouting = () => {
                 <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
                 <Route path={Path.Cruises} element={<CruisesPage />} />
                 <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
-                <Route path={Path.MyApplications} element={<MyCruiseApplicationsPage />} />
             </>
         )
     }

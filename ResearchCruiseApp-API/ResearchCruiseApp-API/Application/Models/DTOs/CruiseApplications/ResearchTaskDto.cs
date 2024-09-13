@@ -7,29 +7,32 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class ResearchTaskDto
 {
-    public int Type { get; set; }
-    
-    public string? Title { get; init; }
-        
-    public string? Author { get; init; }
-        
-    public string? Institution { get; init; }
-        
-    public string? Date { get; init; }
-        
-    public StringRangeDto? Time { get; init; }
-        
-    public double? FinancingAmount { get; init; }
-        
-    public string? Description { get; init; }
+    public string Type { get; set; }
 
-    public bool? FinancingApproved { get; init; }
+    public string? Title { get; set; }
+        
+    public string? Author { get; set; }
+        
+    public string? Institution { get; set; }
+        
+    public string? Date { get; set; }
+        
+    public string? StartDate { get; set; }
     
+    public string? EndDate { get; set; }
+        
+    public string? FinancingAmount { get; set; }
+    
+    public string? FinancingApproved { get; init; }
+        
+    public string? Description { get; set; }
     
     private class MapProfile : Profile
     {
         public MapProfile()
         {
+            CreateMap<ResearchTask, ResearchTaskDto>();
+            
             CreateMap<FormAResearchTask, ResearchTaskDto>()
                 .ForMember(
                     dest => dest.Type,
@@ -52,12 +55,15 @@ public class ResearchTaskDto
                     options =>
                         options.MapFrom(src => src.ResearchTask.Date))
                 .ForMember(
-                    dest => dest.Time,
+                    dest => dest.StartDate,
                     options =>
                         options.MapFrom(src =>
-                            src.ResearchTask.StartDate != null && src.ResearchTask.EndDate != null
-                                ? new StringRangeDto { Start = src.ResearchTask.StartDate, End = src.ResearchTask.EndDate }
-                                : (StringRangeDto?)null))
+                            src.ResearchTask.StartDate))
+                .ForMember(
+                    dest => dest.EndDate,
+                    options =>
+                        options.MapFrom(src =>
+                            src.ResearchTask.EndDate))
                 .ForMember(
                     dest => dest.FinancingAmount,
                     options =>
@@ -70,28 +76,8 @@ public class ResearchTaskDto
                     dest => dest.FinancingApproved,
                     options =>
                         options.MapFrom(src => src.ResearchTask.FinancingApproved));
-
-            CreateMap<ResearchTask, ResearchTaskDto>();
             
-            CreateMap<ResearchTaskDto, ResearchTask>()
-                .ForMember(
-                    dest => dest.StartDate,
-                    options =>
-                        options.MapFrom(src => src.Time.HasValue
-                            ? src.Time.Value.Start
-                            : null))
-                .ForMember(
-                    dest => dest.EndDate,
-                    options =>
-                        options.MapFrom(src => src.Time.HasValue
-                            ? src.Time.Value.End
-                            : null))
-                .ForMember(
-                    dest => dest.EndDate,
-                    options =>
-                        options.MapFrom(src => src.Time.HasValue
-                            ? src.Time.Value.End
-                            : null));
+            CreateMap<ResearchTaskDto, ResearchTask>();
         }
     }
 }

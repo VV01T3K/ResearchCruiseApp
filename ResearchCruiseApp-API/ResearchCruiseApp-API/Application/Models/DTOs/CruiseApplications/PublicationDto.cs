@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -16,9 +17,9 @@ public class PublicationDto
 
     public string Magazine { get; init; } = null!;
     
-    public int Year { get; init; }
-    
-    public int MinisterialPoints { get; init; }
+    public string Year { get; init; } = null!;
+
+    public string MinisterialPoints { get; init; } = null!;
 
 
     private class MapProfile : Profile

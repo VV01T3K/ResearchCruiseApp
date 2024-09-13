@@ -1,66 +1,52 @@
-import {Control, Controller, FieldError, FieldErrorsImpl, FieldValues, Merge, UseFormReturn} from "react-hook-form";
-import Select from "react-select";
-import React, {useEffect} from "react";
-import InputWrapper from "./InputWrapper";
-import {FormValues} from "../Wrappers/FormTemplate";
+import React, {useContext, useEffect} from "react";
+import FieldWrapper from "./FieldWrapper";
+import {FormContext} from "../Wrappers/FormTemplate";
+import {readyFieldOptions, SelectSingleValue, SelectWrapper} from "../Wrappers/ReactSelectWrapper";
+import {FieldValues} from "react-hook-form";
 
-
-type Props = {
+export type FormField = {
     className?: string,
-    name: keyof FormValues,
-    label: string,
-    values?: number[]
-    form?: UseFormReturn<FormValues>,
-    readonly?:boolean
+    fieldName: string,
+    fieldLabel: string,
 }
 
-
+type Props = FormField & {
+    initValues?: string[]
+}
 
 function FormYearSelect(props: Props) {
 
+    const formContext = useContext(FormContext)
+
+    const setFirstAvailableYear = () => formContext!.setValue(
+        props.fieldName,
+        props.initValues![0],
+        readyFieldOptions
+    );
+
     useEffect(() => {
-        if (!props.form!.getValues(props.name) && props.values) {
-            props.form!.setValue(
-                props.name,
-                props.values[0],
-                { shouldDirty: true, shouldValidate: true, shouldTouch: true }
-            );
-        }
-    });
+        if (props.initValues && !formContext!.getValues(props.fieldName))
+            setFirstAvailableYear()
+    },[]);
 
-    return (
-        <InputWrapper {...props}>
-            <Controller
-                name={props.name}
-                control={props.form!.control}
-                rules={{required: 'Wybierz jedną z opcji'}}
-                render={({field}) => (
-                    <Select minMenuHeight={300}
-                            isDisabled={props.readonly ?? false}
-                             value={{label:field.value, value:field.value}}
-                            styles={{
-                                control: (provided: any) => ({
-                                    ...provided,
-                                    cursor: "pointer",
-                                    whiteSpace: "normal"
 
-                                }),
-                                menu: provided => ({
-                                    ...provided,
-                                    zIndex: 9999,
-                                    whiteSpace: "normal"
+    const optionsMapper:SelectSingleValue[] | undefined= props.initValues?.map(value => ({value:value, label:value}))
 
-                                }),
-                            }}
-                            options={props.values?.map(value => ({value:value, label:value}))}
-                            onChange={(selectedOption) => {
-                                props.form!.setValue(props.name, selectedOption?.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
-                            }}
-                    />
-                )}
-            />
-        </InputWrapper>
-    )
+    const render = ({field}:FieldValues) => {
+        const currentValue = field.value ? { label: field.value, value: field.value}: undefined
+
+        return(
+            <SelectWrapper fieldName={props.fieldName} value={currentValue} options={optionsMapper}/>
+        )
+    }
+
+    const fieldProps = {
+        ...props,
+        rules: {required: 'Wybierz jedną z opcji'},
+        render: render
+    }
+
+    return ( <FieldWrapper {...fieldProps}/> )
 }
 
 

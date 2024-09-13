@@ -7,7 +7,7 @@ type Props = {
 
 function PageTitle(props: Props){
     return (
-        <div className="page-title">
+        <div className="page-title-default">
                 {props.title}
         </div>
     )

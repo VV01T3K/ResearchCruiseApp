@@ -2,7 +2,7 @@ import axios from "axios";
 import {FieldValues} from "react-hook-form";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import React, {useState} from "react";
-import ErrorCode from "../CommonComponents/ErrorCode";
+import {ErrorMessageIfPresentNoContext} from "../CommonComponents/ErrorMessageIfPresent";
 import userDataManager from "../../CommonComponents/UserDataManager";
 
 
@@ -53,7 +53,7 @@ export default function ChangePasswordForm() {
         <>
             <form className="h6" onSubmit={handleSubmit(onPasswordChangeSubmit)}>
                 <FormFields/>
-                {changePasswordError && <ErrorCode code={changePasswordError}/>}
+                {changePasswordError && <ErrorMessageIfPresentNoContext message={changePasswordError}/>}
             </form>
             {changePasswordSuccess && <div className="h6 text-center">Pomyślnie zmieniono hasło</div>}
         </>

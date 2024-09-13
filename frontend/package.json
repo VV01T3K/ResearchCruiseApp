@@ -40,6 +40,7 @@
     "react-select": "^5.8.0",
     "react-super-responsive-table": "^5.2.2",
     "react-switch": "^7.0.0",
+    "react-textarea-autosize": "^8.5.3",
     "react-tiles-dnd": "^0.1.2",
     "sass": "^1.72.0",
     "typescript": "^4.9.5",
@@ -55,14 +56,15 @@
     "workbox-range-requests": "^6.6.0",
     "workbox-routing": "^6.6.0",
     "workbox-strategies": "^6.6.0",
-    "workbox-streams": "^6.6.0"
+    "workbox-streams": "^6.6.0",
+    "zustand": "^4.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "install-bootstrap": "npm install svg-url-loader --save-dev",
+    "install-bootstrap": "npm install zustand",
     "audit": "npm update",
     "fund": "npm fund",
     "cos": "npm install react-super-responsive-table --save"

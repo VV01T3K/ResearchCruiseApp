@@ -1,5 +1,4 @@
 import {ReactElement} from "react";
-import {ResponsiveAlignProp} from "react-bootstrap/types";
 
 type Props = {
     children?: ReactElement | ReactElement[],

@@ -1,11 +1,8 @@
 import React, { useEffect, useState} from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
-import ErrorCode from "../../CommonComponents/ErrorCode";
-import Select from "react-select";
 
-import DatePicker  from 'react-datepicker';
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
-import {Task, Time} from "./TaskInput/TaskInput";
+import {ErrorMessageIfPresentNoContext} from "../../CommonComponents/ErrorMessageIfPresent";
 
 export type TechnicalElements = {
     bowStarboard: boolean,
@@ -541,7 +538,7 @@ export default function TechnicalElementsUsedInput(props: Props){
                                             </button>
                                         </div>
                                         {props.form!.formState.errors[props.name] &&
-                                            <ErrorCode code={props.form!.formState.errors[props.name]!.message}/>
+                                            <ErrorMessageIfPresentNoContext code={props.form!.formState.errors[props.name]!.message}/>
                                         }
                                     </div>
                                 </>}

@@ -5,9 +5,9 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.Forms;
 
 
 [JsonObject(NamingStrategyType = typeof (CamelCaseNamingStrategy))]
-public class ResearchAreaDto(string name, List<int> x, List<int> y)
+public class ResearchAreaDto(Guid id, string name)
 {
+    public Guid Id { get; set; } = id;
     public string Name { get; set; } = name;
-    public List<int> X { get; set; } = x;
-    public List<int> Y { get; set; } = y;
+    
 }

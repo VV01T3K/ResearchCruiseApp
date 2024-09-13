@@ -1,13 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Controller, UseFormReturn} from "react-hook-form";
 import ErrorCode from "../../CommonComponents/ErrorCode";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import {prop} from "react-data-table-component/dist/DataTable/util";
 import useWindowWidth from "../../../CommonComponents/useWindowWidth";
-import {SpubTask} from "./SpubTasksInput";
 import {Thesis} from "./ThesesInput/ThesesInput";
-
 
 
 type Props = {

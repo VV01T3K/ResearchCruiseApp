@@ -1,83 +1,116 @@
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
-import React from "react";
-import {CruiseApplication} from "../ApplicationsPage/CruiseApplicationsPage";
+import React, {useContext} from "react";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import SimpleInfoTile from "../../CommonComponents/SimpleInfoTile";
+import {CruiseApplicationContext} from "./CruiseApplicationDetailsPage";
+import {Path} from "../../Tools/Path";
+import {CruiseApplication} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 
+const SimpleInfoWrapperSingleField = (props:{title:string, selector: keyof CruiseApplication}) => {
+    const cruiseApplicationContext = useContext(CruiseApplicationContext)
+    return(
+        <SimpleInfoTile title={props.title}>
+            <ReadOnlyTextInput value={cruiseApplicationContext![props.selector]} />
+        </SimpleInfoTile>
+    )
+}
 
-type Props = {
-    cruiseApplication: CruiseApplication
+const SimpleInfoWrapperTwoFields = (props:{
+    title:string, firstSelector: keyof CruiseApplication, secondSelector: keyof CruiseApplication }) => {
+    const cruiseApplicationContext = useContext(CruiseApplicationContext)
+    return(
+        <SimpleInfoTile title={props.title}>
+            <ReadOnlyTextInput value={cruiseApplicationContext![props.firstSelector]} />
+            <ReadOnlyTextInput value={cruiseApplicationContext![props.secondSelector]} className="mt-1"/>
+        </SimpleInfoTile>
+    )
 }
 
 
-function CruiseApplicationInfo(props: Props) {
+export const CruiseApplicationNumber = () => (
+    <SimpleInfoWrapperSingleField title={"Numer zgłoszenia"} selector={"number"}/>
+)
+
+export const CruiseApplicationDate = () => (
+    <SimpleInfoWrapperSingleField title={"Data"} selector={"date"}/>
+)
+
+
+export const CruiseApplicationYear = () => (
+    <SimpleInfoWrapperSingleField title={"Rok rejsu"} selector={"year"}/>
+)
+
+
+export const CruiseApplicationCruiseManagerName = () => (
+    <SimpleInfoWrapperTwoFields title={"Kierownik"}
+                                firstSelector={"cruiseManagerFirstName"}
+                                secondSelector={"cruiseManagerLastName"}/> )
+
+export const CruiseApplicationDeputyManagerName = () => (
+    <SimpleInfoWrapperTwoFields title={"Zastępca kierownika"}
+                                firstSelector={"deputyManagerFirstName"}
+                                secondSelector={"deputyManagerLastName"}/> )
+
+const CruiseApplicationStatus = () => (
+    <SimpleInfoWrapperSingleField title={"Status zgłoszenia"} selector={"status"}/>
+)
+
+const CruiseApplicationPoints = () => (
+    <SimpleInfoWrapperSingleField title={"Punkty"} selector={"points"}/>
+)
+
+const isLinkDisabled = (formType:string) => {
+    const cruiseApplicationContext = useContext(CruiseApplicationContext)
+    switch (formType){
+        case "A":
+            return !cruiseApplicationContext!.hasFormA
+        case "B":
+            return !cruiseApplicationContext!.hasFormB
+        case "C":
+            return !cruiseApplicationContext!.hasFormC
+    }
+}
+
+const FormLink = (props:{formType:string}) => {
+    const cruiseApplicationContext = useContext(CruiseApplicationContext)
+    const disabled = isLinkDisabled(props.formType)
+    return(
+        <LinkWithState to={Path.Form}
+                       state={{ formType: props.formType, cruiseApplicationId: cruiseApplicationContext!.id, readOnly: true }}
+                       label={"Formularz " + props.formType}
+                       disabled={disabled}
+
+        />
+    )
+}
+
+export const FormALink = () => (<FormLink formType={"A"}/>)
+
+export const FormCLink = () => (<FormLink formType={"B"}/>)
+
+export const FormBLink = () => (<FormLink formType={"C"}/>)
+
+
+const CruiseApplicationForms = () => (
+        <SimpleInfoTile title="Formularze">
+            <FormALink/>
+            <FormBLink/>
+            <FormCLink/>
+        </SimpleInfoTile>
+    )
+
+function CruiseApplicationInfo() {
+    const cruiseApplicationContext = useContext(CruiseApplicationContext)
     return (
-        <div className="d-flex flex-wrap flex-row justify-content-center col-12">
-            <SimpleInfoTile title="Numer zgłoszenia" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.number} />
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Data" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.date} />
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Rok rejsu" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.year} />
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Kierownik" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.cruiseManagerFirstName} />
-                <ReadOnlyTextInput value={props.cruiseApplication.cruiseManagerLastName} className="mt-1"/>
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Zastępca kierownika" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.deputyManagerFirstName} />
-                <ReadOnlyTextInput value={props.cruiseApplication.deputyManagerLastName} className="mt-1"/>
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Formularze" colsXl={4}>
-                <LinkWithState
-                    to="/Form"
-                    state={{
-                        formType: "A",
-                        formId: props.cruiseApplication.formAId ?? undefined,
-                        readonly: true
-                    }}
-                    label="Formularz A"
-                    className={`col-12 d-flex justify-content-center ${!props.cruiseApplication.formAId ? "text-muted text-decoration-none" : ""}`}
-                    style={!props.cruiseApplication.formAId ? {cursor: "default"} : undefined}
-                />
-                <LinkWithState
-                    to="/Form"
-                    state={{
-                        formType: "B",
-                        formId: props.cruiseApplication.formBId ?? undefined,
-                        readonly: true
-                    }}
-                    label="Formularz B"
-                    className={`col-12 d-flex justify-content-center ${!props.cruiseApplication.formBId ? "text-muted text-decoration-none" : ""}`}
-                    style={!props.cruiseApplication.formBId ? {cursor: "default"} : undefined}
-                />
-                <LinkWithState
-                    to="/Form"
-                    state={{
-                        formType: "C",
-                        formId: props.cruiseApplication.formCId ?? undefined,
-                        readonly: true
-                    }}
-                    label="Formularz C"
-                    className={`col-12 d-flex justify-content-center ${!props.cruiseApplication.formCId ? "text-muted text-decoration-none" : ""}`}
-                    style={!props.cruiseApplication.formCId ? {cursor: "default"} : undefined}
-                />
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Status zgłoszenia" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.status} className="align-self-start"/>
-            </SimpleInfoTile>
-
-            <SimpleInfoTile title="Punkty" colsXl={4}>
-                <ReadOnlyTextInput value={props.cruiseApplication.points} className="align-self-start"/>
-            </SimpleInfoTile>
+        <div className="cruise-application-info">
+            <CruiseApplicationNumber/>
+            <CruiseApplicationDate/>
+            <CruiseApplicationYear/>
+            <CruiseApplicationCruiseManagerName/>
+            <CruiseApplicationDeputyManagerName/>
+            <CruiseApplicationForms/>
+            <CruiseApplicationStatus/>
+            <CruiseApplicationPoints/>
         </div>
     )
 }

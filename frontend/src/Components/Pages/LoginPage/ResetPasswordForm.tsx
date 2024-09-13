@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {FieldValues} from "react-hook-form";
-import ErrorCode from "../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../CommonComponents/ErrorMessageIfPresent";
 import {Link, useNavigate} from "react-router-dom";
-import {PathName as Path} from "../../Tools/PathName";
+import {Path as Path} from "../../Tools/Path";
 import userDataManager from "../../CommonComponents/UserDataManager";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 
@@ -46,7 +46,7 @@ function ResetPasswordForm(){
                 <EmailTextInput/>
                 <RememberPasswordLink/>
                 <ConfirmButton/>
-                {resetError && <ErrorCode code={resetError}/>}
+                {resetError && <ErrorMessageIfPresentNoContext message={resetError}/>}
                 <RegisterLink/>
             </form>
         )
@@ -66,8 +66,8 @@ function ResetPasswordForm(){
     return (
         <>
             <h1 className={"login-common-header"}>Resetowanie hasła</h1>
-            {resetSuccessful && <DefaultForm/>}
-            {!resetSuccessful && <FormAfterResetSuccess/>}
+            {!resetSuccessful && <DefaultForm/>}
+            {resetSuccessful && <FormAfterResetSuccess/>}
         </>
     )
 }

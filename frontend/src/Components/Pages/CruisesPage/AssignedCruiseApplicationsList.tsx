@@ -2,7 +2,6 @@ import {CruiseApplication, CruiseApplicationShortInfo} from "../CruiseApplicatio
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import React, {useEffect, useState} from "react";
-import Api from "../../Tools/Api";
 import {fetchCruiseApplications} from "../../Tools/Fetchers";
 
 

@@ -1,56 +1,49 @@
-import {
-    Controller, UseFormReturn,
-} from "react-hook-form";
-import React from "react";
-import InputWrapper from "./InputWrapper";
-import {FormValues} from "../Wrappers/FormTemplate";
+import {FieldValues} from "react-hook-form";
+import React, {useContext} from "react";
+import FieldWrapper from "./FieldWrapper";
+import {FormContext} from "../Wrappers/FormTemplate";
+import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
 
-
-type Props = {
+export type FieldProps = {
     className?: string,
-    label: string,
-    isVertical: boolean,
-    name: keyof FormValues,
-    values?: string[],
-    form?: UseFormReturn<FormValues>,
-    readonly? :boolean
+    fieldName: string,
+    fieldLabel: string
+}
+type Props = FieldProps & {
+    initValues?: string[],
+    isVertical?: boolean,
 }
 
 
 function FormRadio(props: Props) {
-    return (
-        <InputWrapper {...props}>
-            <Controller
-                name={props.name}
-                rules={{required: 'Wybierz jedną z opcji'}}
-                control={props.form!.control}
-                render={({field}) => (
-                    <div className={`d-flex ${props.isVertical ? 'flex-column' : 'flex-row'} justify-content-center align-content-center`}>
-                        {props.values?.map((option, index) => (
-                            // <label key={index}>
-                            <input
-                                key={index}
-                                disabled={props.readonly ?? false}
-                                className={`${props.isVertical ? '' : 'w-100'} btn ${field.value === index ? "btn-info" : "btn-outline-info"} ${(field.value !== index) && (props.readonly ?? false) ? "d-none": "" } text-wrap m-1`}
-                                style={{fontSize:"inherit"}}
-                                type={"button"}
-                                value={option}
-                                onClick={(e) => {
-                                    props.form!.setValue(props.name, index, { shouldDirty: true, shouldValidate: true, shouldTouch:true });
-                                }}
-                                // onBlur={
-                                // props.form!.setValue(props.name, field.value, { shouldDirty: true, shouldValidate: true, shouldTouch:true })
-                                // }
-                                // checked={field.value === option}
-                            />
-                            // {/*{option}*/}
-                            // </label>
-                        ))}
-                    </div>
-                )}
+    const formContext = useContext(FormContext)
+
+    const render = ({field}:FieldValues) => {
+        const fieldName = props.fieldName
+        const RadioOption = (props:{option:string,index:number}) => (
+            <input key={props.index} disabled={formContext!.readOnly}
+                   className={`${field.value === String(props.index) ? "radio-button-selected" : "radio-button-not-selected"} w-100`}
+                   type={"button"} value={props.option}
+                   onClick={() => formContext!.setValue(fieldName, String(props.index), readyFieldOptions)}
             />
-        </InputWrapper>
-    )
+        )
+        return (
+            <div className={`d-flex ${props.isVertical ? 'flex-column' : 'flex-row'} justify-content-center align-content-center`}>
+                {props.initValues?.map((option, index) => (
+                    <RadioOption key={index} option={option} index={index} />
+                ))}
+            </div>
+        )
+    }
+
+
+    const fieldProps = {
+        ...props,
+        rules: {required: 'Wybierz jedną z opcji'},
+        render: render,
+    }
+
+    return ( <FieldWrapper {...fieldProps}/> );
 }
 
 

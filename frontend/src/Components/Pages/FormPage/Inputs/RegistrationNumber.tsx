@@ -3,7 +3,7 @@ import {
     Controller,
 } from "react-hook-form";
 import React from "react";
-import InputWrapper from "./InputWrapper";
+import FieldWrapper from "./FieldWrapper";
 
 
 type Props = {
@@ -32,7 +32,7 @@ function RegistrationNumber(props: Props) {
 
 
     return (
-        <InputWrapper {...props}>
+        <FieldWrapper {...props}>
             <Controller
                 render={({ field}) =>
                     <textarea className={"h-10 justify-content-center align-content-center text-center"}
@@ -56,7 +56,7 @@ function RegistrationNumber(props: Props) {
                     },
                 }}
             />
-        </InputWrapper>
+        </FieldWrapper>
     )
 }
 

@@ -36,7 +36,7 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         var spubTasksPoints = formA.FormASpubTasks
             .Sum(formASpubTask => formASpubTask.Points);
 
-        return researchTaskPoints + contractsPoints + formA.UgUnitsPoints + publicationsPoints + spubTasksPoints;
+        return researchTaskPoints + contractsPoints + int.Parse(formA.UgUnitsPoints) + publicationsPoints + spubTasksPoints;
     }
     
 
@@ -66,11 +66,11 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
 
                 ResearchTaskType.DomesticProject when researchTask.FinancingAmount is not null =>
                     EvaluationConstants.PointsPerDivisionForDomesticProject *
-                    (int)(researchTask.FinancingAmount / EvaluationConstants.DomesticProjectDivision),
+                    (int.Parse(researchTask.FinancingAmount) / EvaluationConstants.DomesticProjectDivision),
 
                 ResearchTaskType.ForeignProject when researchTask.FinancingAmount is not null =>
                     EvaluationConstants.PointsPerDivisionForForeignProject *
-                    (int)(researchTask.FinancingAmount / EvaluationConstants.ForeignProjectDivision),
+                    (int.Parse(researchTask.FinancingAmount) / EvaluationConstants.ForeignProjectDivision),
 
                 ResearchTaskType.InternalUgProject =>
                     EvaluationConstants.PointsForInternalUgProject,
@@ -103,13 +103,13 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         Debug.Assert(cruiseApplication.FormA is not null);
 
         var notEmptyTeamsCount = cruiseApplication.FormA.FormAUgUnits
-            .Count(formAUgUnit => formAUgUnit.NoOfEmployees > 0 || formAUgUnit.NoOfStudents > 0);
+            .Count(formAUgUnit => int.Parse(formAUgUnit.NoOfEmployees) > 0 || int.Parse(formAUgUnit.NoOfStudents) > 0);
 
         cruiseApplication.FormA.UgUnitsPoints = notEmptyTeamsCount switch
         {
-            >= 3 => EvaluationConstants.PointsFor3OrMoreUgUnits,
-            2 => EvaluationConstants.PointsFor2UgUnits,
-            _ => 0
+            >= 3 => EvaluationConstants.PointsFor3OrMoreUgUnits.ToString(),
+            2 => EvaluationConstants.PointsFor2UgUnits.ToString(),
+            _ => 0.ToString()
         };
     }
     
@@ -127,7 +127,7 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
             if (publication.Category == PublicationCategory.Postscript.GetStringValue())
                 ministerialPointsRatio = EvaluationConstants.MinisterialPointsRatioForPostscriptPublication;
             
-            formAPublication.Points = (int)(publication.MinisterialPoints * ministerialPointsRatio);
+            formAPublication.Points = (int)(int.Parse(publication.MinisterialPoints) * ministerialPointsRatio);
         }
     }
 

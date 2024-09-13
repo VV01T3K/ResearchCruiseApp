@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
@@ -14,36 +13,35 @@ public class FormADto
     
     public Guid DeputyManagerId { get; init; }
     
-    [Range(2024, 2050)]
-    public int Year { get; init; }
+    [StringLength(4)]
+    public string Year { get; init; } = null!;
     
     [Length(2,2)]
-    public HashSet<int> AcceptablePeriod { get; init; } = [];
+    public HashSet<string> AcceptablePeriod { get; init; } = [];
     
     [Length(2,2)]
-    public HashSet<int> OptimalPeriod { get; init; } = [];
+    public HashSet<string> OptimalPeriod { get; init; } = [];
     
-    [Range(0, int.MaxValue)]
-    public int CruiseHours { get; init; }
+    [StringLength(8)]
+    public string CruiseHours { get; init; } = null!;
     
     [StringLength(1024)]
     public string? PeriodNotes { get; init; }
     
-    [Range(0,4)]
-    public int ShipUsage { get; init; }
+    [StringLength(1)]
+    public string ShipUsage { get; init; } = null!;
     
     [MaxLength(1024)]
     public string? DifferentUsage { get; init; }
 
     public List<PermissionDto> Permissions { get; init; } = [];
     
-    [Range(0,20)]
-    public int ResearchArea { get; init; }
+    public Guid ResearchArea { get; init; }
     
     [MaxLength(1024)]
     public string? ResearchAreaInfo { get; init; }
-    
-    public int CruiseGoal { get; init; }
+
+    public string CruiseGoal { get; init; } = null!;
     
     [MaxLength(1024)]
     public string? CruiseGoalDescription { get; init; }
@@ -73,12 +71,12 @@ public class FormADto
                     dest => dest.AcceptablePeriod,
                     options =>
                         options.MapFrom(src =>
-                            new HashSet<int> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }))
+                            new HashSet<string> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }))
                 .ForMember(
                     dest => dest.OptimalPeriod,
                     options =>
                         options.MapFrom(src =>
-                            new HashSet<int> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
+                            new HashSet<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
                 .ForMember(
                     dest => dest.ResearchTasks,
                     options =>

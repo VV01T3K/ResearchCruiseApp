@@ -2,7 +2,7 @@ import React from 'react';
 import Page from "../Page";
 import { useNavigate} from "react-router-dom";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
-import {PathName as Path} from "../../Tools/PathName";
+import {Path as Path} from "../../Tools/Path";
 
 function LogoutPage(){
     const {ReturnToLoginLink} = useFormWrapper()
@@ -17,11 +17,9 @@ function LogoutPage(){
         )
     }
     return (
-        <>
             <Page className={"login-common"}>
                 <LogoutForm/>
             </Page>
-        </>
     )
 }
 

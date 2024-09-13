@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import Page from "../Page";
 import Api from "../../Tools/Api";
 import DataTable from 'react-data-table-component';
-import './ManageUsersPage.css'
 import useCustomEvent from "../../Tools/useCustomEvent";
 import AddUserForm from "./AddUserForm/AddUserForm";
 import PageMenuBar from "../CommonComponents/PageMenuBar";
@@ -178,21 +177,6 @@ function ManageUsersPage(props: Props) {
         setSelectedRows(state.selectedRows);
     }, []);
     const contextActions = React.useMemo(() => {
-        const handleDelete = () => {
-            // eslint-disable-next-line no-alert
-            if (window.confirm(`Czy na pewno chcesz usunąć:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
-
-                setToggleCleared(!toggleCleared);
-                selectedRows.forEach(()=>{
-
-                })
-                const neww = Api.get('/Users').then(response => {
-                        return [];
-                    })
-                setUserList(selectedRows)
-                // setData(differenceBy(data, selectedRows, 'title'));
-            }
-        };
         const handleAccept = () => {
             if (window.confirm(`Czy na pewno chcesz zaakcptować:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
                 // setToggleCleared(!toggleCleared);
@@ -221,10 +205,6 @@ function ManageUsersPage(props: Props) {
             <button className={"btn btn-primary m-1"} onClick={handleSendMail}>
                 Wyślij Mail
             </button>
-            <button className={"btn btn-danger m-1"} onClick={handleDelete}>
-                Usuń
-            </button>
-
         </>;
     }, [selectedRows, toggleCleared]);
 

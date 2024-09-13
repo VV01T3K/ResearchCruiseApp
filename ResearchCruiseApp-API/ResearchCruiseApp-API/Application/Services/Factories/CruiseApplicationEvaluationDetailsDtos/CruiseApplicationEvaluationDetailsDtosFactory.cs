@@ -28,7 +28,7 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
             FormAResearchTasks = formAResearchTaskDtos,
             FormAContracts = formAContractDtos,
             UgUnits = ugUnitDtos,
-            UgUnitsPoints = formA?.UgUnitsPoints ?? 0,
+            UgUnitsPoints = formA?.UgUnitsPoints ?? "0",
             FormAPublications = formAPublicationDtos,
             FormASpubTasks = formASpubTaskDtos
         };

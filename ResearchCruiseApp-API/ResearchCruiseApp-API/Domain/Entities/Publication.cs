@@ -19,14 +19,15 @@ public class Publication: Entity
     
     [StringLength(1024)]
     public string Magazine { get; init; } = null!;
-    
-    public int Year { get; init; }
 
-    public int MinisterialPoints { get; init; }
+    [StringLength(1024)]
+    public string Year { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string MinisterialPoints { get; init; } = null!;
     
     public List<FormAPublication> FormAPublications { get; init; } = [];
-
-
+    
     public override bool Equals(object? other)
     {
         if (other is null)

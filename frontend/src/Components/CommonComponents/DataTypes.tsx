@@ -4,5 +4,6 @@ export type UserData  = {
     lastName: string,
     accepted: boolean,
     email: string,
-    emailConfirmed: boolean
+    emailConfirmed: boolean,
+    id:string
 }

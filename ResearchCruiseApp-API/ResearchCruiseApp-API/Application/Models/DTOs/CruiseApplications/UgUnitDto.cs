@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -7,10 +8,10 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 public class UgUnitDto
 {
     public Guid UgUnitId { get; init; }
-    
-    public int NoOfEmployees { get; init; }
-    
-    public int NoOfStudents { get; init; }
+
+    [StringLength(1024)] public string NoOfEmployees { get; init; } = null!;
+
+    [StringLength(1024)] public string NoOfStudents { get; init; } = null!;
 
 
     private class MapProfile : Profile

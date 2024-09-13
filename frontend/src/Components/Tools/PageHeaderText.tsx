@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
-import {PathName as Path} from "./PathName";
+import {Path as Path} from "./Path";
 import UserDataManager from "../CommonComponents/UserDataManager";
 
 const PageHeaderText = () => {

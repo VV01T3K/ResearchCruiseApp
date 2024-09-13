@@ -13,7 +13,7 @@ public class CruiseApplicationEvaluationDetailsDto
     
     public List<UgUnitDto> UgUnits { get; init; } = [];
     
-    public int UgUnitsPoints { get; init; }
+    public string UgUnitsPoints { get; init; } = null!;
     
     public List<FormAPublicationDto> FormAPublications { get; init; } = [];
     

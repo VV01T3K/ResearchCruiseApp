@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import UserDataManager from "../CommonComponents/UserDataManager";
+import React from 'react';
 type Props = {
     className?: string,
     children?: React.ReactElement[] | React.ReactElement
@@ -7,16 +6,14 @@ type Props = {
 
 function Page(props: Props) {
     return (
-        <>
-            <div className="page">
-                <div className="page-header-spacing"/>
-                <div className="page-content-container">
-                    <div className={props.className + " page-content"}>
-                        {props.children}
-                    </div>
+        <div className="page">
+            <div className="page-header-spacing"/>
+            <div className="page-content-container">
+                <div className={props.className + " page-content"}>
+                    {props.children}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

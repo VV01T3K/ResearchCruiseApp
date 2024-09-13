@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {FieldValues} from "react-hook-form";
-import ErrorCode from "../CommonComponents/ErrorCode";
+import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../CommonComponents/ErrorMessageIfPresent";
 import {Link, useNavigate} from "react-router-dom";
 import useFormWrapper from "../../CommonComponents/useFormWrapper";
 import axios from "axios";
 import userDataManager from "../../CommonComponents/UserDataManager";
-import {PathName as Path} from "../../Tools/PathName";
+import {Path as Path} from "../../Tools/Path";
 
 function RegisterForm(){
     const {Register} = userDataManager()
@@ -79,7 +79,7 @@ function RegisterForm(){
     const DefaultForm = () => {
         return (
             <form onSubmit={handleSubmit(onSubmit)}>
-                {registerSuccessful &&
+                {!registerSuccessful &&
                     <>
                         <EmailTextInput/>
                         <FirstNameTextInput/>
@@ -87,7 +87,7 @@ function RegisterForm(){
                         <PasswordTextInput/>
                         <ConfirmPasswordTextInput/>
                         <ConfirmButton/>
-                        {registerError && <ErrorCode code={registerError}/>}
+                        {registerError && <ErrorMessageIfPresentNoContext message={registerError}/>}
                         <LoginLink/>
                     </>
                 }
@@ -98,8 +98,8 @@ function RegisterForm(){
     return (
         <>
             <h1 className={"login-common-header"}>Rejestracja</h1>
-            {registerSuccessful && <DefaultForm/>}
-            {!registerSuccessful && <RegisterSuccessful/>}
+            {!registerSuccessful && <DefaultForm/>}
+            {registerSuccessful && <RegisterSuccessful/>}
         </>
     )
 }

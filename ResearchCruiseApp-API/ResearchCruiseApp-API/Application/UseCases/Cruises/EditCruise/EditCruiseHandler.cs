@@ -40,7 +40,7 @@ public class EditCruiseHandler(
 
     private static void UpdateCruiseDates(Cruise cruise, EditCruiseCommand request)
     {
-        var (startDateUtc, endDateUtc) = ParseDates(request.CruiseFormModel.Date);
+        var (startDateUtc, endDateUtc) = ParseDates(request.CruiseFormModel.StartDate, request.CruiseFormModel.EndDate);
         
         cruise.StartDate = TimeZoneInfo.ConvertTimeFromUtc(startDateUtc, TimeZoneInfo.Local);
         cruise.EndDate = TimeZoneInfo.ConvertTimeFromUtc(endDateUtc, TimeZoneInfo.Local);
@@ -80,14 +80,14 @@ public class EditCruiseHandler(
         await cruisesService.CheckEditedCruisesManagersTeams(affectedCruises, cancellationToken);
     }
     
-    private static Tuple<DateTime, DateTime> ParseDates(StringRangeDto dates)
+    private static Tuple<DateTime, DateTime> ParseDates(string startDate, string endDate)
     {
         const string format = "yyyy-MM-ddTHH:mm:ss.fffK";
         const DateTimeStyles style = DateTimeStyles.RoundtripKind;
         
-        var startDate = DateTime.ParseExact(dates.Start, format, null, style);
-        var endDate = DateTime.ParseExact(dates.End, format, null, style);
+        var _startDate = DateTime.ParseExact(startDate, format, null, style);
+        var _endDate = DateTime.ParseExact(endDate, format, null, style);
 
-        return new Tuple<DateTime, DateTime>(startDate, endDate);
+        return new Tuple<DateTime, DateTime>(_startDate, _endDate);
     }
 }

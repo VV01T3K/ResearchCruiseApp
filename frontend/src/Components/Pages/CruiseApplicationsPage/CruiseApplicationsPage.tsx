@@ -7,6 +7,12 @@ import CruiseApplicationsList from "./CruiseApplicationsList";
 export enum CruiseApplicationStatus {
     New = "Nowe",
     Accepted = "Zaakceptowane",
+    WaitingForSupervisor = "Oczekujące na przełożonego",
+    AcceptedBySupervisor = "Zaakceptowane przez przełożonego",
+    DeniedBySupervisor = "Odrzucone przez przełożonego",
+    FormBRequired = "Wymagane uzupełnienie formularza B przez kierownika",
+    FormBFilled = "Formularz B wypełniony oczekiwanie na rejs",
+    CruiseBegan = "Rejs w trakcie",
     Undertaken = "Zrealizowane",
     Reported = "Rozliczone"
 }
@@ -21,7 +27,7 @@ export type CruiseApplication = {
     id: string,
     number: string,
     date: string,
-    year: number,
+    year: string,
     cruiseManagerId: string,
     cruiseManagerEmail: string,
     cruiseManagerFirstName: string,
@@ -42,13 +48,9 @@ export type CruiseApplication = {
 function CruiseApplicationsPage() {
 
     return (
-        <Page className="justify-content-center col-12 col-xl-9 bg-white">
-            <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
-                <div className="d-flex flex-column align-items-center w-100 h-100 overflow-auto">
-                    <PageTitle title="Zgłoszenia" />
-                    <CruiseApplicationsList />
-                </div>
-            </div>
+        <Page className="form-page">
+                <PageTitle title="Zgłoszenia" />
+                <CruiseApplicationsList/>
         </Page>
     )
 }
