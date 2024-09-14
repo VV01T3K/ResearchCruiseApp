@@ -1,4 +1,4 @@
-import {FormSectionType, SectionIdFromTitle} from "../../../FormPage/Wrappers/FormASections";
+import {FormSectionType, SectionIdFromTitle, SectionWrapper} from "../../../FormPage/Wrappers/FormASections";
 import FormSection, {SectionProps} from "../../../FormPage/Wrappers/FormSection";
 import UserSelect, {FormUser} from "../../../FormPage/Inputs/UserSelect";
 import React, {useContext, useEffect} from "react";
@@ -58,15 +58,12 @@ const CruiseManagersField = () => {
         </>
     )
 }
-export const CruiseManagersSection = ():FormSectionType => {
-    const shortTitle = "Kierownicy"
-    const longTitle = "Kierownik główny i zastępca kierownika głównego"
-    const id = SectionIdFromTitle(shortTitle)
 
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-           <CruiseManagersField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:{}}
-}
+
+export const CruiseManagersSection = () => SectionWrapper(
+    {
+        shortTitle: "Kierownicy",
+        longTitle: "Kierownik główny i zastępca kierownika głównego",
+        children: <CruiseManagersField/>
+    }
+)

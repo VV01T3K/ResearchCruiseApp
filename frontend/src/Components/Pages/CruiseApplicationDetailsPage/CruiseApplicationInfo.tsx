@@ -20,8 +20,14 @@ const SimpleInfoWrapperTwoFields = (props:{
     const cruiseApplicationContext = useContext(CruiseApplicationContext)
     return(
         <SimpleInfoTile title={props.title}>
-            <ReadOnlyTextInput value={cruiseApplicationContext![props.firstSelector]} />
-            <ReadOnlyTextInput value={cruiseApplicationContext![props.secondSelector]} className="mt-1"/>
+            <ReadOnlyTextInput
+                value={cruiseApplicationContext ? cruiseApplicationContext![props.firstSelector]: null}
+                className={!cruiseApplicationContext ? "bg-secondary":""}
+            />
+            <ReadOnlyTextInput
+                value={cruiseApplicationContext ? cruiseApplicationContext![props.secondSelector]: null}
+                className={"mt-1 " + !cruiseApplicationContext ? "bg-secondary":""}
+            />
         </SimpleInfoTile>
     )
 }

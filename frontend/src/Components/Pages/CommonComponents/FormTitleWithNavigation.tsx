@@ -3,7 +3,18 @@ import {FormSectionType} from "../FormPage/Wrappers/FormASections";
 import {FormContext} from "../FormPage/Wrappers/FormTemplate";
 import {useLocation} from "react-router-dom";
 
-function FormTitleWithNavigation(props:{title?:string}){
+export const formType = {
+    A: "A",
+    B: "B",
+    C: "C",
+    ApplicationDetails: "0",
+    CruiseDetails: "1"
+}
+
+export type FormTypeKeys = keyof typeof formType;
+export type FormTypeValues = (typeof formType)[FormTypeKeys];
+
+function FormTitleWithNavigation(){
     const formContext = useContext(FormContext)
 
 
@@ -16,21 +27,21 @@ function FormTitleWithNavigation(props:{title?:string}){
         const locationState = useLocation().state
         return(
             <div className={"form-page-title"}>
-                {["A","B","C"].includes(formContext!.type) && `Formularz ${formContext!.type}` }
-                {formContext!.type == "0" && `Szczegóły zgłoszenia` }
-                {formContext!.type == "1" && (locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs")}
+                {[formType.A, formType.B,formType.C].includes(formContext!.type) && `Formularz ${formContext!.type}` }
+                {formContext!.type == formType.ApplicationDetails && `Szczegóły zgłoszenia` }
+                {formContext!.type == formType.CruiseDetails && (locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs")}
             </div>
         )
     }
 
     const showRequiredSections = !formContext?.readOnly
 
-    const isValidSection = (section:FormSectionType) => Object.values(section.sectionFieldNames)
-        .some((fieldName)=>formContext?.formState.errors[fieldName])
+    const isSectionInvalid = (section:FormSectionType) => section.sectionFieldNames ? Object.values(section.sectionFieldNames)
+        .some((fieldName)=>formContext?.formState.errors[fieldName]):false
 
     const SectionLink = (props:{section:FormSectionType, index:number} ) => (
         <div className={"form-page-navigation-button"} onClick={() => scrollSmoothTo(props.section.id)}>
-            {props.index + 1 + ". "}{props.section.shortTitle}{showRequiredSections && (!isValidSection(props.section) ? "" : "*")}
+            {props.index + 1 + ". "}{props.section.shortTitle}{showRequiredSections && (isSectionInvalid(props.section) ? "*" : "")}
         </div>
     )
 

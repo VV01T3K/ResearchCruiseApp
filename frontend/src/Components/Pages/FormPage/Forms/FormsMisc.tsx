@@ -1,5 +1,7 @@
-import {useContext} from "react";
-import {FormContext} from "../Wrappers/FormTemplate";
+import React, {useContext} from "react";
+import FormTemplate, {FormContext} from "../Wrappers/FormTemplate";
+import {formType, FormTypeKeys, FormTypeValues} from "../../CommonComponents/FormTitleWithNavigation";
+import {FormSectionType} from "../Wrappers/FormASections";
 
 export const FormHelpers = () => {
     const formContext = useContext(FormContext)
@@ -13,4 +15,10 @@ export const FormHelpers = () => {
 
     }
     return {ResetFieldValueIfExist, ClearFieldErrorIfExist}
+}
+export const FormWrapper = (props:{sections:()=>FormSectionType[], type:FormTypeValues}) => {
+    const sections = props.sections()
+    return (
+        <FormTemplate sections={sections} type={props.type}/>
+    )
 }

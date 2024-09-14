@@ -15,7 +15,7 @@ export default function CruiseBasicInfo(props: Props) {
             <SimpleInfoTile title="Numer rejsu">
                 <ReadOnlyTextInput
                     value={props.cruise?.number ?? ""}
-                    className={!props.cruise ? "bg-light" : ""}
+                    className={!props.cruise ? "bg-secondary" : ""}
                 />
             </SimpleInfoTile>
         </div>

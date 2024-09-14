@@ -1,5 +1,4 @@
-import {FormSectionType, SectionIdFromTitle} from "../../../FormPage/Wrappers/FormASections";
-import FormSection, {SectionProps} from "../../../FormPage/Wrappers/FormSection";
+import {SectionWrapper} from "../../../FormPage/Wrappers/FormASections";
 import CruiseApplications from "../CruiseApplications";
 import React, {useContext, useState} from "react";
 import {CruiseApplicationsContext} from "../../CruiseFormPage";
@@ -20,15 +19,11 @@ const ApplicationsField = () => {
         />
     )
 }
-export const ApplicationsSection = ():FormSectionType => {
-    const shortTitle = "Zgłoszenia"
-    const longTitle = "Zgłoszenia przypisane do rejsu"
-    const id = SectionIdFromTitle(shortTitle)
 
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-            <ApplicationsField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:{}}
-}
+export const ApplicationsSection = () => SectionWrapper(
+    {
+        shortTitle: "Zgłoszenia",
+        longTitle: "Zgłoszenia przypisane do rejsu",
+        children: <ApplicationsField/>
+    }
+)

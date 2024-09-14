@@ -1,6 +1,5 @@
 import React from "react";
-import {FormSectionType, SectionIdFromTitle} from "../../FormPage/Wrappers/FormASections";
-import FormSection, {SectionProps} from "../../FormPage/Wrappers/FormSection";
+import {SectionWrapper} from "../../FormPage/Wrappers/FormASections";
 import {EvaluatedContractTable} from "../../FormPage/Inputs/ContractsTable/EvaluatedContractsTable";
 
 const contractSectionFieldNames = {
@@ -33,16 +32,12 @@ const ContractsField = () => {
     )
 }
 
-export const ContractSection = ():FormSectionType => {
-    const shortTitle = "Umowy"
-    const longTitle = "Umowy regulujące współpracę," +
-        " w ramach której miałyby być realizowane zadania badawcze"
-    const id = SectionIdFromTitle(shortTitle)
 
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-            <ContractsField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:contractSectionFieldNames}
-}
+export const ContractSection = () => SectionWrapper(
+    {
+        shortTitle: "Umowy",
+        longTitle: "Umowy regulujące współpracę w ramach której miałyby być realizowane zadania badawcze",
+        sectionFieldNames:contractSectionFieldNames,
+        children:  <ContractsField/>
+    }
+)

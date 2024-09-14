@@ -1,7 +1,6 @@
-import {ThesesTable} from "../../../Inputs/ThesesTable/ThesesTable";
 import PublicationsTable from "../../../Inputs/PublicationsTable/PublicationsTable";
 import React from "react";
-import {PublicationsSectionFieldNames} from "./PublicationsSection";
+import {publicationsSectionFieldNames} from "./PublicationsSection";
 
 export const PublicationsDescription = () => (
 
@@ -20,41 +19,12 @@ export const PublicationsDescription = () => (
     </div>
 )
 
-export const ThesesDesription = () => (
-    <div className={`pb-0 p-4 text-center`}>
-        <h5 className={"text-center"}>Prace dyplomowe/doktorskie zawierające dopisek</h5>
-        <p>Prace licencjackie, magisterskie oraz doktorskie zawierające informację w treści pracy
-            wskazujący jednoznacznie że <strong>badania w ramach niniejszej pracy były prowadzone z
-                pokładu jednostki RV Oceanograf.</strong></p>
-    </div>
-)
-
-export const ThesesField = () => {
-    return (
-        <ThesesTable
-            className={"single-field"}
-            fieldLabel="Prace"
-            fieldName={PublicationsSectionFieldNames.theses}
-            historicalTheses={[
-                {
-                    category: "doctor",
-                    author: "Marian Domogolski",
-                    title: "Analiza i badania wód głębinowych na terenie Morza Bałtyckiego ze szczególnym uwzględnieniem wód i wód głębinowych",
-                    promoter: "Elżbieta Widłogrodzka",
-                    year: 2020
-
-                },
-            ]}
-        />
-    )
-}
-
 export const PublicationsField = () =>
 {
     return(
         <PublicationsTable
             className={"single-field"}
-            fieldName={PublicationsSectionFieldNames.publications}
+            fieldName={publicationsSectionFieldNames.publications}
             fieldLabel={"Publikacje"}
             historicalPublications={    [
                 {
