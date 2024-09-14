@@ -2,10 +2,12 @@ import FormSection, {SectionProps} from "../../../Wrappers/FormSection";
 import React from "react";
 import {
     FormSectionType,
-    SectionIdFromTitle
+    SectionIdFromTitle, SectionWrapper
 } from "../../../Wrappers/FormASections";
 import TextArea from "../../../Inputs/TextArea";
 import {emailPattern} from "../../../../../CommonComponents/useFormWrapper";
+import {researchTeamsSectionFieldNames} from "./ResearchTeamsSection";
+import {SpubTaskField} from "./SpubTasksSectionFields";
 
 export const supervisorSectionFieldNames = {
     supervisor:"supervisor"
@@ -22,14 +24,11 @@ const SupervisorEmailField = () => (
     />
 )
 
-export const SupervisorSection = ():FormSectionType => {
-    const shortTitle = "Przełożony"
-    const longTitle = "Dane kontaktowe przełożonego"
-    const id = SectionIdFromTitle(shortTitle)
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-            <SupervisorEmailField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:supervisorSectionFieldNames}
-}
+export const SupervisorSection = () => SectionWrapper(
+    {
+        shortTitle: "Przełożony",
+        longTitle: "Dane kontaktowe przełożonego",
+        sectionFieldNames: supervisorSectionFieldNames,
+        children: <SupervisorEmailField/>
+    }
+)

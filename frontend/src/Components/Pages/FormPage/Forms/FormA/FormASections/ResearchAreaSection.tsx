@@ -1,48 +1,20 @@
-import TextArea from "../../../Inputs/TextArea";
-import FormSection, {SectionProps} from "../../../Wrappers/FormSection";
-import React, {useContext} from "react";
-import {
-    FormSectionType,
-    SectionIdFromTitle
-} from "../../../Wrappers/FormASections";
-import ResearchAreaSelect from "../../../Inputs/ClickableMap";
-import {FormContext} from "../../../Wrappers/FormTemplate";
+import React from "react";
+import {SectionWrapper} from "../../../Wrappers/FormASections";
+import {ResearchAreaDescriptionField, ResearchAreaField} from "./ResearchAreaSectionFields";
 
-const researchAreaSectionFieldNames = {
+export const researchAreaSectionFieldNames = {
     researchArea:"researchAreaId",
     researchAreaInfo:"researchAreaInfo",
 }
-
-const ResearchAreaField = () => {
-    const formContext = useContext(FormContext)
-    return(
-        <ResearchAreaSelect className="two-fields-beside-md"
-                            fieldLabel="Obszar prowadzonych badań"
-                            fieldName={researchAreaSectionFieldNames.researchArea}
-                            initValues={formContext!.initValues?.researchAreas}
-        />
-    )
-}
-const ResearchAreaDescriptionField = () => (
-    <TextArea className="two-fields-beside-md"
-              fieldLabel="Opis"
-              placeholder={"Wpisz opis"}
-              fieldName={researchAreaSectionFieldNames.researchAreaInfo}
-              required={false}
-    />
+export const ResearchAreaSection = () => SectionWrapper(
+    {
+        shortTitle: "Rejon",
+        longTitle: "Rejon prowadzenia badań",
+        sectionFieldNames: researchAreaSectionFieldNames,
+        children:
+            <>
+                <ResearchAreaField/>
+                <ResearchAreaDescriptionField/>
+            </>
+    }
 )
-
-
-export const ResearchAreaSection = ():FormSectionType => {
-    const shortTitle = "Rejon"
-    const longTitle = "Rejon prowadzenia badań"
-    const id = SectionIdFromTitle(shortTitle)
-
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-            <ResearchAreaField/>
-            <ResearchAreaDescriptionField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:researchAreaSectionFieldNames}
-}

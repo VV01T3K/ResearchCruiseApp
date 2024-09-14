@@ -1,6 +1,6 @@
 import {administrationUnits} from "../../../../resources/administrationUnits";
 import NumberInput from "../../FormPage/Inputs/NumberInput";
-import {FormSectionType, SectionIdFromTitle} from "../../FormPage/Wrappers/FormASections";
+import {FormSectionType, SectionIdFromTitle, SectionWrapper} from "../../FormPage/Wrappers/FormASections";
 import FormSection, {SectionProps} from "../../FormPage/Wrappers/FormSection";
 import React, {useContext} from "react";
 import EvaluatedUgTeamsTable from "../../FormPage/Inputs/UgTeamsTable/EvaluatedUgTeamsTable";
@@ -52,19 +52,16 @@ const UgTeamsField = () => {
       /> )
   }
 
-
-export const ResearchTeamsSection = ():FormSectionType => {
-    const shortTitle = "Z. badawcze"
-    const longTitle = "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie"
-    const id = SectionIdFromTitle(shortTitle)
-    const formContext = useContext(FormContext)
-    console.log(formContext)
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-            <UgTeamsField/>
-            <GuestTeamsField/>
-            <CalculatedPointsField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:researchTeamsSectionFieldNames}
-}
+export const ResearchTeamsSection = () => SectionWrapper(
+    {
+        shortTitle: "Z. badawcze",
+        longTitle: "Zespoły badawcze, jakie miałyby uczestniczyć w rejsie",
+        sectionFieldNames:researchTeamsSectionFieldNames,
+        children:
+            <>
+                <UgTeamsField/>
+                <GuestTeamsField/>
+                <CalculatedPointsField/>
+            </>
+    }
+)

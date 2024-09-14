@@ -1,5 +1,4 @@
 import React from "react";
-import FormTemplate from "../../Wrappers/FormTemplate";
 import {CruiseManagerSection} from "./FormASections/CruiseManagerSection";
 import {TimeSection} from "./FormASections/TimeSection";
 import {PermissionsSection} from "./FormASections/PermissionsSection";
@@ -8,9 +7,11 @@ import {GoalSection} from "./FormASections/GoalSection";
 import {TasksSection} from "./FormASections/TasksSection";
 import {ContractSection} from "./FormASections/ContractSection";
 import {ResearchTeamsSection} from "./FormASections/ResearchTeamsSection";
-import {PublicationAndThesesSection} from "./FormASections/PublicationsSection";
+import {PublicationsSection} from "./FormASections/PublicationsSection";
 import {SpubTasksSection} from "./FormASections/SpubTasksSection";
 import {SupervisorSection} from "./FormASections/SupervisorSection";
+import {formType} from "../../../CommonComponents/FormTitleWithNavigation";
+import {FormWrapper} from "../FormsMisc";
 
 const FormASections = () => [
     CruiseManagerSection(),
@@ -21,17 +22,12 @@ const FormASections = () => [
     TasksSection(),
     ContractSection(),
     ResearchTeamsSection(),
-    PublicationAndThesesSection(),
+    PublicationsSection(),
     SpubTasksSection(),
     SupervisorSection(),
 ]
 
-function FormA(){
-    const sections = FormASections()
-    return (
-        <FormTemplate sections={sections} type='A'/>
-    )
-}
+const FormA = () => ( <FormWrapper sections={FormASections} type={formType.A}/> )
 
 
 export default FormA

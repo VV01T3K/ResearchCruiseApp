@@ -1,7 +1,5 @@
-
 import React from "react";
-import {FormSectionType, SectionIdFromTitle} from "../../FormPage/Wrappers/FormASections";
-import FormSection, {SectionProps} from "../../FormPage/Wrappers/FormSection";
+import {SectionWrapper} from "../../FormPage/Wrappers/FormASections";
 import {EvaluatedTasksTable} from "../../FormPage/Inputs/TaskTable/EvaluatedTaskTable";
 
 const researchTasksSectionFieldNames = {
@@ -30,15 +28,12 @@ const TasksField = () => {
     )
 }
 
-export const TaskSection = ():FormSectionType => {
-    const shortTitle = "Zadania"
-    const longTitle = "Zadania do zrealizowania w trakcie rejsu"
-    const id = SectionIdFromTitle(shortTitle)
 
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
-            <TasksField/>
-        </FormSection>
-    )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:researchTasksSectionFieldNames}
-}
+export const TaskSection = () => SectionWrapper(
+    {
+        shortTitle: "Zadania",
+        longTitle: "Zadania do zrealizowania w trakcie rejsu",
+        sectionFieldNames:researchTasksSectionFieldNames,
+        children: <TasksField/>
+    }
+)

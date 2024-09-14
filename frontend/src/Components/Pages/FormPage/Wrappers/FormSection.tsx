@@ -4,9 +4,7 @@ import React, {useState} from "react";
 type Props = {
     id?: string,
     index?:number
-    children?:
-        React.ReactElement[] |
-        React.ReactElement,
+    children?: React.ReactNode
     title: string,
 }
 

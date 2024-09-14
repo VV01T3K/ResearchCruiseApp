@@ -1,15 +1,13 @@
-import FormSection, {SectionProps} from "../../../Wrappers/FormSection";
 import React from "react";
-import {
-    FormSectionType,
-    SectionIdFromTitle
-} from "../../../Wrappers/FormASections";
+import {FormSectionType, SectionWrapper} from "../../../Wrappers/FormASections";
 import {
     AcceptablePeriodField,
     CruiseDaysField,
-    CruiseHoursField, DifferentShipUsageField,
+    CruiseHoursField,
+    DifferentShipUsageField,
     OptimalPeriodField,
-    PeriodNotesField, ShipUsageField
+    PeriodNotesField,
+    ShipUsageField
 } from "./TimeSectionFields";
 
 export const timeSectionFieldNames = {
@@ -22,12 +20,9 @@ export const timeSectionFieldNames = {
 
 }
 
-export const TimeSection = ():FormSectionType => {
-    const shortTitle = "Czas"
-    const longTitle = "Czas trwania zgłaszanego rejsu"
-    const id = SectionIdFromTitle(shortTitle)
-    const Content = (props:SectionProps) => (
-        <FormSection index={props.index} id={id} title={longTitle}>
+const TimeSectionFields = () =>
+    (
+        <>
             <AcceptablePeriodField/>
             <OptimalPeriodField/>
             <CruiseDaysField/>
@@ -35,7 +30,14 @@ export const TimeSection = ():FormSectionType => {
             <PeriodNotesField/>
             <ShipUsageField/>
             <DifferentShipUsageField/>
-        </FormSection>
+        </>
     )
-    return {Content, id, shortTitle, longTitle, sectionFieldNames:timeSectionFieldNames}
-}
+
+export const TimeSection = () => SectionWrapper(
+    {
+        shortTitle: "Czas",
+        longTitle: "Czas trwania zgłaszanego rejsu",
+        sectionFieldNames: timeSectionFieldNames,
+        children: <TimeSectionFields/>
+    }
+)
