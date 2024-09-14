@@ -89,6 +89,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services
             .AddScoped<IFormsARepository, FormsARepository>()
+            .AddScoped<IResearchAreasRepository, ResearchAreasRepository>()
             .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()
             .AddScoped<IPublicationsRepository, PublicationsRepository>()
             .AddScoped<IUgUnitsRepository, UgUnitsRepository>()

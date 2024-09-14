@@ -11,7 +11,7 @@ public class CruiseApplicationEvaluationDetailsDto
     
     public List<FormAContractDto> FormAContracts { get; init; }  = [];
     
-    public List<UgUnitDto> UgUnits { get; init; } = [];
+    public List<UgTeamDto> UgTeams { get; init; } = [];
     
     public string UgUnitsPoints { get; init; } = null!;
     

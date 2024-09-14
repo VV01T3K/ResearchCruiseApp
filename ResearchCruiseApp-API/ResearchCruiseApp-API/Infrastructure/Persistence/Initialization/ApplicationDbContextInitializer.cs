@@ -18,6 +18,7 @@ internal class ApplicationDbContextInitializer(
         await Migrate();
         await SeedAdministrationData();
         await SeedUgUnits();
+        await SeedResearchAreas();
     }
 
 
@@ -69,6 +70,24 @@ internal class ApplicationDbContextInitializer(
                 IsActive = true
             };
             await applicationDbContext.UgUnits.AddAsync(newUgUnit);
+        }
+        
+        await applicationDbContext.SaveChangesAsync();
+    }
+    
+    private async Task SeedResearchAreas()
+    {
+        if (await applicationDbContext.ResearchAreas.AnyAsync())
+            return;
+        
+        foreach (var researchAreaName in InitialResearchAreaData.ResearchAreaNames)
+        {
+            var newResearchArea = new ResearchArea
+            {
+                Name = researchAreaName,
+                IsActive = true
+            };
+            await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
         }
         
         await applicationDbContext.SaveChangesAsync();

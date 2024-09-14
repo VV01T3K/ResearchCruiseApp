@@ -36,7 +36,7 @@ public class FormADto
 
     public List<PermissionDto> Permissions { get; init; } = [];
     
-    public Guid ResearchArea { get; init; }
+    public Guid ResearchAreaId { get; init; }
     
     [MaxLength(1024)]
     public string? ResearchAreaInfo { get; init; }
@@ -50,7 +50,7 @@ public class FormADto
 
     public List<ContractDto> Contracts { get; init; } = [];
 
-    public List<UgUnitDto> UgUnits { get; init; } = [];
+    public List<UgTeamDto> UgTeams { get; init; } = [];
 
     public List<GuestUnitDto> GuestUnits { get; init; } = [];
 
@@ -78,6 +78,10 @@ public class FormADto
                         options.MapFrom(src =>
                             new HashSet<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
                 .ForMember(
+                    dest => dest.ResearchAreaId,
+                    options =>
+                        options.MapFrom(src => src.ResearchArea.Id))
+                .ForMember(
                     dest => dest.ResearchTasks,
                     options =>
                         options.MapFrom(src => src.FormAResearchTasks))
@@ -86,7 +90,7 @@ public class FormADto
                     options =>
                         options.Ignore()) // Member requires complex logic
                 .ForMember(
-                    dest => dest.UgUnits,
+                    dest => dest.UgTeams,
                     options =>
                         options.MapFrom(src => src.FormAUgUnits))
                 .ForMember(
@@ -106,7 +110,7 @@ public class FormADto
                 .ForMember(
                     dest => dest.Id,
                     options =>
-                        options.Ignore())
+                        options.Ignore()) // Member requires complex logic
                 .ForMember(
                     dest => dest.AcceptablePeriodBeg,
                     options =>

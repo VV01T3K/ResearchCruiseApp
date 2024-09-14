@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
 
@@ -9,7 +11,10 @@ namespace ResearchCruiseApp_API.Application.UseCases.Forms.GetFormAInitValues;
 
 
 public class GetFormAInitValuesHandler(
-    IIdentityService identityService)
+    IResearchAreasRepository researchAreasRepository,
+    IUgUnitsRepository ugUnitsRepository,
+    IIdentityService identityService,
+    IMapper mapper)
     : IRequestHandler<GetFormAInitValuesQuery, Result<FormAInitValuesDto>>
 {
     public async Task<Result<FormAInitValuesDto>> Handle(GetFormAInitValuesQuery request, CancellationToken cancellationToken)
@@ -48,17 +53,10 @@ public class GetFormAInitValuesHandler(
             "w inny sposób"
         };
 
-        var researchAreas = new List<ResearchAreaDto>
-        {
-            new(
-                Guid.Empty,
-                "s"
-                ),
-            new(
-                Guid.Empty,
-                "s"
-                )
-        };
+        var researchAreas = (await researchAreasRepository
+                .GetAll(cancellationToken))
+            .Select(mapper.Map<ResearchAreaDto>)
+            .ToList();
         
         var cruiseGoals = new List<string>
         {
@@ -68,6 +66,11 @@ public class GetFormAInitValuesHandler(
         };
 
         var historicalTasks = new List<ResearchTaskDto>();
+
+        var ugUnits = (await ugUnitsRepository
+                .GetAll(cancellationToken))
+            .Select(mapper.Map<UgUnitDto>)
+            .ToList();
         
         var result = new FormAInitValuesDto
         {
@@ -78,6 +81,7 @@ public class GetFormAInitValuesHandler(
             ResearchAreas = researchAreas,
             CruiseGoals = cruiseGoals,
             HistoricalTasks = historicalTasks,
+            UgUnits = ugUnits
         };
 
         return result;

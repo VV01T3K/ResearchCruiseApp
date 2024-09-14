@@ -7,22 +7,16 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class UgUnitDto
 {
-    public Guid UgUnitId { get; init; }
+    public Guid Id { get; init; }
 
-    [StringLength(1024)] public string NoOfEmployees { get; init; } = null!;
-
-    [StringLength(1024)] public string NoOfStudents { get; init; } = null!;
+    public string Name { get; set; } = null!;
 
 
     private class MapProfile : Profile
     {
         public MapProfile()
         {
-            CreateMap<FormAUgUnit, UgUnitDto>()
-                .ForMember(
-                    dest => dest.UgUnitId,
-                    options =>
-                        options.MapFrom(src => src.UgUnit.Id));
+            CreateMap<UgUnit, UgUnitDto>();
         }
     }
 }

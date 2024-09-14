@@ -70,7 +70,7 @@ public class FormBDto
     
     
     // Zespoły z UG
-    public List<UgUnitDto>? UgTeams { get; set; }
+    public List<UgTeamDto>? UgTeams { get; set; }
     
     
     //Zespoły goscinne
