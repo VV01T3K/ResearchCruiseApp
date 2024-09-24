@@ -30,13 +30,15 @@ public class ResearchTaskDto
     {
         public MapProfile()
         {
-            CreateMap<ResearchTask, ResearchTaskDto>();
-            
+            CreateMap<ResearchTask, ResearchTaskDto>()                .ForMember(
+                dest => dest.Type,
+                options =>
+                    options.MapFrom(src => ((int)src.Type).ToString()));
             CreateMap<FormAResearchTask, ResearchTaskDto>()
                 .ForMember(
                     dest => dest.Type,
                     options =>
-                        options.MapFrom(src => src.ResearchTask.Type))
+                        options.MapFrom(src => ((int)src.ResearchTask.Type).ToString()))
                 .ForMember(
                     dest => dest.Title,
                     options =>
