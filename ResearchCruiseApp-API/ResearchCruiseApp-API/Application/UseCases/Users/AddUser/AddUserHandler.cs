@@ -8,6 +8,7 @@ namespace ResearchCruiseApp_API.Application.UseCases.Users.AddUser;
 
 
 public class AddUserHandler(
+    IRandomGenerator randomGenerator,
     IUserPermissionVerifier userPermissionVerifier,
     IIdentityService identityService)
     : IRequestHandler<AddUserCommand, Result> 
@@ -30,9 +31,11 @@ public class AddUserHandler(
         var rolesNames = await identityService.GetAllRoleNames(cancellationToken);
         if (!rolesNames.Contains(request.AddUserForm.Role))
             return Error.BadRequest("Rola nie istnieje");
+
+        var password = randomGenerator.CreateSecurePassword();
         
         var result = await identityService.AddUserWithRole(
-            request.AddUserForm, request.AddUserForm.Password, request.AddUserForm.Role);
+            request.AddUserForm, password, request.AddUserForm.Role);
 
         return result;
     }

@@ -6,14 +6,28 @@ namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 internal class RandomGenerator : IRandomGenerator
 {
+    private const int SecureCodeBytesSize = 512;
+    private const int SecurePasswordBytesSize = 16;
+    
     public byte[] CreateSecureCodeBytes()
     {
-        const int secureCodeBytesSize = 512;
-        var codeBytes = new byte[secureCodeBytesSize];
+        return GetRandomBytes(SecureCodeBytesSize);
+    }
+
+    public string CreateSecurePassword()
+    {
+        var passwordBytes = GetRandomBytes(SecurePasswordBytesSize);
+        return Convert.ToBase64String(passwordBytes);
+    }
+
+
+    private static byte[] GetRandomBytes(int size)
+    {
+        var bytes = new byte[size];
 
         using var numberGenerator = RandomNumberGenerator.Create();
-        numberGenerator.GetBytes(codeBytes);
+        numberGenerator.GetBytes(bytes);
 
-        return codeBytes;
+        return bytes;
     }
 }
