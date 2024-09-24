@@ -25,7 +25,6 @@ export const PublicationsField = () =>
         <PublicationsTable
             className={"single-field"}
             fieldName={publicationsSectionFieldNames.publications}
-            fieldLabel={"Publikacje"}
             historicalPublications={    [
                 {
                     category: "subject",

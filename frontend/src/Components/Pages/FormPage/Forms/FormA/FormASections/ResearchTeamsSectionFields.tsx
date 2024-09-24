@@ -2,18 +2,18 @@ import UgTeamsTable from "../../../Inputs/UgTeamsTable/UgTeamsTable";
 import {administrationUnits} from "../../../../../../resources/administrationUnits";
 import {EMPTY_GUID} from "../../../../CruiseFormPage/CruiseFormPage";
 import GuestTeamsTable from "../../../Inputs/GuestTeamsTable/GuestTeamsTable";
-import React from "react";
+import React, {useContext} from "react";
 import {researchTeamsSectionFieldNames} from "./ResearchTeamsSection";
+import {FormContext} from "../../../Wrappers/FormTemplate";
 
 export const UgTeamsField = () => {
-    //const formContext = useContext(FormContext)
-
+    const formContext = useContext(FormContext)
     return(
         <UgTeamsTable
             className="two-fields-beside-md"
             fieldLabel="Uczestnictwo osób z jednostek organizacyjnych UG"
             fieldName={researchTeamsSectionFieldNames.ugTeams}
-            initValues={administrationUnits.map((name, index)=>({name:name, id:EMPTY_GUID}))}
+            initValues={formContext!.initValues?.ugUnits}
         />
     )
 }

@@ -1,26 +1,24 @@
-import React, {createContext, ReactElement, useContext} from "react";
-import { FieldValues,} from "react-hook-form";
+import React, {createContext, useContext} from "react";
+import {FieldValues,} from "react-hook-form";
 import {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {pl} from "date-fns/locale/pl";
-registerLocale("pl", pl);
 import 'react-dropdown/style.css';
 import FieldWrapper from "../FieldWrapper";
 import {FormContext} from "../../Wrappers/FormTemplate";
-import {FieldContext,
-    FieldTableWrapper,
-    KeyContext,
-} from "../../Wrappers/FieldTableWrapper";
+import {FieldContext, FieldTableWrapper, KeyContext,} from "../../Wrappers/FieldTableWrapper";
 import {FieldProps} from "../FormRadio";
 import {CellTools, OrdinalNumber} from "../TableParts";
 import {FIntField} from "../CellFormFields";
 import {FieldForKey, ReseachTask, taskTypes, taskTypesDefaultValues} from "./TaskTable";
 import {InitContext} from "../UgTeamsTable/EvaluatedUgTeamsTable";
 
+registerLocale("pl", pl);
+
 type EvaluatedReseachTask = {
     id: string,
     researchTask: ReseachTask,
-    calculatedPoints: string
+    points: string
 }
 
 const FieldsCell = () => {
@@ -54,7 +52,7 @@ export const DisplayWrapper = (Element:React.JSXElementConstructor<any>) => () =
 }
 export const PointsField = () => {
     return(
-        <KeyContext.Provider value={"calculatedPoints"}>
+        <KeyContext.Provider value={"points"}>
             <div className={"task-field-input"}>
                 <label className={"table-field-input-label"}>
                     Przyznane punkty
@@ -82,10 +80,10 @@ export const DisplayContext = createContext<any>(null);
 export const DisplayValueContext = createContext<any>(null)
 
 type Evaluated = {
-    calculatedPoints:string
+    points:string
 }
 
-export const pointsNotEmpty = <T extends Evaluated>(value:FieldValues) => value.some((row:T) => row.calculatedPoints == "")
+export const pointsNotEmpty = <T extends Evaluated>(value:FieldValues) => value.some((row:T) => row.points == "")
 export const pointFieldRules = {
     required: "Pole wymagane",
     validate: { notEmptyArray: pointsNotEmpty }
@@ -100,9 +98,9 @@ export const EvaluatedTasksTable = (props: EvaluatedTableProps) => {
     const emptyText = "Nie dodano żadnego zadania"
     const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,taskTableContent,
         null, emptyText, props.evaluatedReseachTasks)
-
+    console.log(props.evaluatedReseachTasks)
     const idAndPoints = props.evaluatedReseachTasks?.map((value) =>
-        ({id:value.id, calculatedPoints:value.calculatedPoints}))
+        ({id:value.id, points:value.points}))
     const displayValue = props.evaluatedReseachTasks?.map((value) =>
         ({...value.researchTask}))
 

@@ -24,7 +24,7 @@ export const TasksField = () => {
                         {
                             "type": "3",
                             "title": "fsdfds",
-                            "institution": "ffsdff",
+                            "name": "ffsdff",
                             "date": "Fri Mar 15 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
                             "financingApproved":"true"
                         },

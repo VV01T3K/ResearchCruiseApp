@@ -10,7 +10,7 @@ import {DisplayContext} from "../TaskTable/EvaluatedTaskTable";
 
 
 export type UgTeam = {
-    unitId: string,
+    ugUnitId: string,
     noOfEmployees: string,
     noOfStudents: string
 }
@@ -60,7 +60,7 @@ const ugTeamsTableContent = () =>
 
 export const UnitField = () => {
     return  (
-        <KeyContext.Provider value={"unitId"}>
+        <KeyContext.Provider value={"ugUnitId"}>
             <div className={"task-field-input"}>
                 <label className={"table-field-input-label"}>
                     Jednostka
@@ -95,11 +95,11 @@ function UgTeamsTable(props: Props) {
 
 
     const formContext = useContext(FormContext)
-    const unitIds = formContext?.getValues(props.fieldName)?.map((row:UgTeam)=>row.unitId)
+    const unitIds = formContext?.getValues(props.fieldName)?.map((row:UgTeam)=>row.ugUnitId)
     const filteredInitValues = unitIds && props.initValues?.filter((unit)=> !unitIds?.includes(unit.id))
-
+    console.log(filteredInitValues)
     const selectOptions =  filteredInitValues?.map((ugUnit:UgUnit)=>
-            ({label:ugUnit.name, value: {unitId:ugUnit.id, noOfEmployees: 0, noOfStudents: 0}})) ?? []
+            ({label:ugUnit.name, value: {ugUnitId:ugUnit.id, noOfEmployees: "0", noOfStudents: "0"}})) ?? []
 
 
     const mdColWidths = [10,32, 24, 24, 10]

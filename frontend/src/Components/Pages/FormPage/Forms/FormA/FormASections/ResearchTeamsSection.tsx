@@ -4,7 +4,7 @@ import {GuestTeamsField, UgTeamsField} from "./ResearchTeamsSectionFields";
 
 export const researchTeamsSectionFieldNames = {
     ugTeams:"ugTeams",
-    guestTeams:"guestTeams",
+    guestTeams:"guestUnits",
 }
 
 export const ResearchTeamsSection = () => SectionWrapper(

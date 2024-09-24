@@ -95,7 +95,7 @@ export default function AddUserForm(props: Props) {
                         label="Hasło"
                         name="password"
                         inputType="password"
-                        validationPattern={/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/}
+                        // validationPattern={/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/}
                         validationPatternMessage="Hasło musi zawierać co najmniej 8 znaków, w tym małą i wielką literę, cyfrę i znak specjalny"
                         disabled={sending}
                     />

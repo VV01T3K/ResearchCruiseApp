@@ -1,13 +1,12 @@
 import React, {createContext, ReactElement, useEffect, useState} from 'react';
 import Page from "../../Page";
 import {useForm, UseFormReturn} from "react-hook-form";
-import FormTitleWithNavigation from "../../CommonComponents/FormTitleWithNavigation";
+import FormTitleWithNavigation, {formType, FormTypeValues} from "../../CommonComponents/FormTitleWithNavigation";
 import {FormSectionType} from "./FormASections";
 import {BottomOptionBar} from "../../../Tools/FormBottomOptionBar";
 import {FormAInitValues} from "../FormTypes";
 import Api from "../../../Tools/Api";
 import {useLocation} from "react-router-dom";
-import api from "../../../Tools/Api";
 
 
 type Props = {
@@ -56,13 +55,25 @@ function FormTemplate(props: Props) {
     }, []);
 
 
+    const initEndpoint = (_formType:FormTypeValues) => {
+        console.log(_formType)
+        switch (_formType){
+            case formType.A:
+                return '/Forms/InitValues/A'
+            case formType.ApplicationDetails:
+                return `/api/CruiseApplications/${location.state?.cruiseApplication.id}/evaluation`
+        }
+
+    }
 
     const [formInitValues, setFormInitValues] = useState<any>(undefined)
     useEffect(() => {
-        api
-            .get('/Forms/InitValues/A')
+        Api
+            .get(initEndpoint(props.type))
             .then(response => {
+                console.log(response.data)
                 setFormInitValues(response?.data)
+                form.reset()
             })
 
     },[]);

@@ -1,33 +1,19 @@
-import React from "react";
+import React, {useContext} from "react";
 import {SectionWrapper} from "../../FormPage/Wrappers/FormASections";
 import {EvaluatedContractTable} from "../../FormPage/Inputs/ContractsTable/EvaluatedContractsTable";
+import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 const contractSectionFieldNames = {
     contracts:"contracts"
 }
 
 const ContractsField = () => {
-    //const formContext = useContext(FormContext)
+    const formContext = useContext(FormContext)
     return(
         <EvaluatedContractTable className="single-field"
                             fieldLabel=""
                             fieldName={contractSectionFieldNames.contracts}
-                            evaluatedContracts={[
-                                {id:"dasdads",
-                                    contract:  {
-                                        category: "international",
-                                        institutionName: "Instytucja 1",
-                                        institutionUnit: "Jednostka 1",
-                                        institutionLocalization: "Lokalizacja 1",
-                                        description: "Opis 1",
-                                        scan: {
-                                            name: "Skan 1",
-                                            content: "1111111111"
-                                        }
-                                    },
-                                    calculatedPoints:"0"
-                                },
-                            ]}
+                            evaluatedContracts={formContext!.initValues?.formAContracts}
         />
     )
 }

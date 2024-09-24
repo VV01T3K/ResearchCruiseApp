@@ -104,7 +104,7 @@ export const Actions = () => {
         <div className="task-field-input">
             <LinkWithState
                 className="btn btn-info"
-                to="/CruiseApplicationDetails"
+                to={Path.CruiseApplicationDetails}
                 label="Szczegóły"
                 state={{cruiseApplication: application, readOnly:true}}
             />

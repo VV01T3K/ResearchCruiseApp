@@ -6,7 +6,7 @@ import {Controller, FieldValues, RegisterOptions, useFormContext} from "react-ho
 
 type Props = {
     className?: string,
-    fieldLabel: string,
+    fieldLabel?: string,
     fieldName: string,
     rules: RegisterOptions,
     render: (props: FieldValues) => React.ReactElement,
@@ -14,7 +14,7 @@ type Props = {
     defaultValue?:FieldValues | string
 }
 
-export const FieldLabel = (props:{fieldLabel:string}) => (<div className="mb-2">{props.fieldLabel}</div>)
+export const FieldLabel = (props:{fieldLabel?:string}) => (<div className="mb-2">{props.fieldLabel}</div>)
 
 
 function FieldWrapper(props: Props) {

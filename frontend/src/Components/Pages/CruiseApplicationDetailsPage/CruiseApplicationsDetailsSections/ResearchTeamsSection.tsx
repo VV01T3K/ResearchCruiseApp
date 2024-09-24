@@ -9,35 +9,30 @@ import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 
 const researchTeamsSectionFieldNames = {
-    calculatedPoints:"researchTeamsCalculatedPoints"
+    points:"researchTeamsPoints"
 }
 
 const UgTeamsField = () => {
-    //const formContext = useContext(FormContext)
+    const formContext = useContext(FormContext)
 
     return(
     <EvaluatedUgTeamsTable
         className="two-fields-beside-md"
         fieldLabel="Uczestnictwo osób z jednostek organizacyjnych UG"
-        ugTeams={[
-            {    unitId: "0",
-                noOfEmployees: "8",
-                noOfStudents: "7"}
-        ]}
+        ugTeams={formContext!.initValues?.ugTeams}
         initValues={administrationUnits.map((name, index)=>({name:name, id:String(index)}))}
     />
         )
 }
 
   const GuestTeamsField = () => {
-      //const formContext = useContext(FormContext)
+      // const formContext = useContext(FormContext)
       return(
         <EvaluatedGuestTeamsTable
             className="two-fields-beside-md"
             fieldLabel="Uczestnictwo gości spoza UG"
             guestTeams={[
-                {institution:"a", noOfPersons: "9"},
-                {institution:"n", noOfPersons: "0"},
+
             ]}
         />
     )
@@ -45,10 +40,12 @@ const UgTeamsField = () => {
 
 
   const CalculatedPointsField = () => {
-    return(
+      const formContext = useContext(FormContext)
+      return(
         <NumberInput className="two-fields-beside-md"
-                          fieldName={researchTeamsSectionFieldNames.calculatedPoints}
+                          fieldName={researchTeamsSectionFieldNames.points}
                           fieldLabel="Punkty"
+                     defaultValue={formContext!.initValues?.ugUnitsPoints}
       /> )
   }
 

@@ -391,7 +391,7 @@ function CrewInput(props: Props){
                                                     birthDate: "",
                                                     ID: "",
                                                     expiryDate: "",
-                                                    institution: ""
+                                                    name: ""
                                                 }
                                                 props.form!.setValue(
                                                     props.name,

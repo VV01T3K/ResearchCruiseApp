@@ -1,12 +1,7 @@
 import React, {useContext} from "react";
-import { FieldValues} from "react-hook-form";
+import {FieldValues} from "react-hook-form";
 import {SingleValue} from "react-select";
-import {
-    BottomMenuWithAddButton,
-    BottomMenuWithAddButtonAndHistory,
-    OrdinalNumber,
-    RemoveRowButton
-} from "../TableParts";
+import {BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton} from "../TableParts";
 import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
 import {FormField} from "../FormYearSelect";
 import {FormContext} from "../../Wrappers/FormTemplate";
@@ -15,7 +10,6 @@ import {notEmptyArray} from "../PublicationsTable/PublicationsTable";
 import {DescriptionField, DownloadField, ExecutiveField, UploadField} from "./PermissionsTableFields";
 import {ScanType} from "../PermissionsInput/PermissionsInput";
 import {fileExists} from "../ContractsTable/ContractsTable";
-
 
 
 export type Permission = {
@@ -27,26 +21,29 @@ export type Permission = {
 const permissionDefault = {
     description:"",
     executive: "",
+}
+
+export const permissionDefaultWithScan = {
+    ...permissionDefault,
     scan: {
         name:"",
         content:""
-    }
+    }}
+
+export type PermissionWithScan = Permission & {
+    scan:ScanType
 }
 
 
 type Props = FormField
 
-const guestTeamsTableContent = () => {
-    const formContext = useContext(FormContext)
-
-    return[
+const guestTeamsTableContent = () => [
         () => (<OrdinalNumber label={"Pozwolenie"}/>),
         DescriptionField,
         ExecutiveField,
-        formContext?.readOnly ? DownloadField : UploadField,
+        // formContext?.readOnly ? DownloadField : UploadField,
         RemoveRowButton,
     ]
-}
 
 export const FieldContextWrapper = (Render:React.JSXElementConstructor<any>) => ({field}:FieldValues)=>  (
     <FieldContext.Provider value={field}>
@@ -60,8 +57,8 @@ function PermissionsTable(props: Props) {
     const formContext = useContext(FormContext)
 
 
-    const mdColWidths = [10,30, 30, 20, 10]
-    const mdColTitles = ["Lp.", "Treść pozwolenia", "Organ wydający pozwolenie", "Skan",  ""]
+    const mdColWidths = [10,40, 40, 10]
+    const mdColTitles = ["Lp.", "Treść pozwolenia", "Organ wydający pozwolenie",  ""]
     const colTitle = "Pozwolenia"
     const bottomMenu =
         <BottomMenuWithAddButton newOption={permissionDefault as SingleValue<any>}/>
@@ -77,7 +74,7 @@ function PermissionsTable(props: Props) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<Permission>,
-                fileExists:fileExists,
+                // fileExists:fileExists,
             }
         },
         render: FieldContextWrapper(Render)

@@ -67,7 +67,7 @@ export const taskTypesDefaultValues: ReseachTask[] = [
     {type: "0", author: "", title: ""},
     {type: "1", author: "", title: ""},
     {type: "2", author: "", title: ""},
-    {type: "3", title: "", date: "", institution: "", financingApproved: "false"},
+    {type: "3", title: "", date: "", name: "", financingApproved: "false"},
     {type: "4", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
     {type: "5", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
     {type: "6", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
@@ -83,8 +83,7 @@ const taskTypeOptions = () => {
 }
 
 export const FieldForKey = () => {
-    const displayContext = useContext(DisplayContext)
-    const {rowValue} = displayContext ? CellTools() : CellFormTools()
+    const {rowValue} = CellFormTools()
     const keyContext = useContext(KeyContext)
     switch (keyContext) {
         case "author":
@@ -127,10 +126,12 @@ export const FieldForKey = () => {
 }
 
 const FieldsCell = () => {
+    const displayContext = useContext(DisplayContext)
     const {rowValue} = CellFormTools()
+    console.log(rowValue)
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center align-items-center w-100">
-            {rowValue && Object.keys(taskTypesDefaultValues[rowValue.type]).map((key, index) =>
+            {rowValue && rowValue.type && Object.keys(taskTypesDefaultValues[rowValue.type]).map((key, index) =>
                 (<KeyContext.Provider value={key} key={index}>
                     {key != "type" && <FieldForKey/>}
                 </KeyContext.Provider>)

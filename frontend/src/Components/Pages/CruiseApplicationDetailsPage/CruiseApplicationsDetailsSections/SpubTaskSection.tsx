@@ -1,6 +1,8 @@
 import {FormSectionType, SectionIdFromTitle} from "../../FormPage/Wrappers/FormASections";
 import FormSection, {SectionProps} from "../../FormPage/Wrappers/FormSection";
 import {EvaluatedSpubTaskTable} from "../../FormPage/Inputs/EvaluatedSpubTasksTable";
+import {useContext} from "react";
+import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 
 const spubTasksSectionFieldNames = {
@@ -8,23 +10,13 @@ const spubTasksSectionFieldNames = {
 }
 
 const SpubTaskField = () => {
+    const formContext = useContext(FormContext)
     return (
         <EvaluatedSpubTaskTable
             fieldLabel={""}
             className={"single-field"}
             fieldName={spubTasksSectionFieldNames.spubTasks}
-            evaluatedSpubTasks={
-            [
-                {
-                    id:"sad",
-                    spubTask: {
-                        yearFrom: "2020",
-                        yearTo: "2021",
-                        name: "Badanie nowych właściwości wodno-tlenowych Morza Bałtyckiego w obszarze Zatoki Gdańskiej"
-                    },
-                    calculatedPoints:"21"
-                },
-                ]}
+            evaluatedSpubTasks={formContext!.initValues?.formASpubTasks}
         />
     )
 }

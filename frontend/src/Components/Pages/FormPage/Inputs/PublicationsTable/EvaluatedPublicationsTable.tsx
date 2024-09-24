@@ -12,7 +12,7 @@ import {Publication} from "./PublicationsTable";
 type EvaluatedPublication = {
     id:string,
     publication:Publication,
-    calculatedPoints:string
+    points:string
 }
 
 
@@ -42,7 +42,7 @@ export const PublicationsTable = (props: PublicationsTableProps) => {
 
 
     const idAndPoints = props.evaluatedPublications?.map((value) =>
-        ({id:value.id, calculatedPoints:value.calculatedPoints}))
+        ({id:value.id, points:value.points}))
     const displayValue = props.evaluatedPublications?.map((value) =>
         ({...value.publication}))
 

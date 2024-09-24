@@ -1,29 +1,19 @@
-import React from "react";
+import React, {useContext} from "react";
 import {SectionWrapper} from "../../FormPage/Wrappers/FormASections";
 import {EvaluatedTasksTable} from "../../FormPage/Inputs/TaskTable/EvaluatedTaskTable";
+import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 const researchTasksSectionFieldNames = {
     researchTasks:"researchTasks",
 }
 
 const TasksField = () => {
-    //const formContext = useContext(FormContext)
+    const formContext = useContext(FormContext)
     return(
         <EvaluatedTasksTable className="single-field"
                             fieldLabel=""
                             fieldName={researchTasksSectionFieldNames.researchTasks}
-                            evaluatedReseachTasks={[
-                                {id:"dasdads",
-                                researchTask:{
-                                    "type": "1",
-                                    "author": "3re",
-                                    "title": "Mon Jan 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
-                                    "endDate": "Sun Dec 01 2024 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)",
-                                    "financingAmount": "0.00"
-                                },
-                                    calculatedPoints:"0"
-                                },
-                            ]}
+                            evaluatedReseachTasks={formContext!.initValues?.formAResearchTasks}
         />
     )
 }

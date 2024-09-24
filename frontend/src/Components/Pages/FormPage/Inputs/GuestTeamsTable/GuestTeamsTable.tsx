@@ -13,11 +13,11 @@ import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
 
 
 export type GuestsTeam = {
-    institution: string,
+    name: string,
     noOfPersons: string
 }
 
-const guestTeamDefault = {institution:"", noOfPersons: 0}
+const guestTeamDefault = {name:"", noOfPersons: 0}
 
 
 type Props = FormField & {
@@ -37,8 +37,8 @@ function GuestTeamsTable(props: Props) {
 
     const formContext = useContext(FormContext)
 
-    const selectOptions =  props.historicalGuestsInstitutions?.map((institution, _)=>
-        ({label:institution, value: {institution:institution, noOfPersons: 0}})) ?? []
+    const selectOptions =  props.historicalGuestsInstitutions?.map((name, _)=>
+        ({label:name, value: {name:name, noOfPersons: "0"}})) ?? []
 
 
     const mdColWidths = [10,60, 20, 10]
@@ -49,7 +49,7 @@ function GuestTeamsTable(props: Props) {
     const emptyText = "Nie dodano żadnej instytucji"
     const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, guestTeamsTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName))
-
+    console.log(formContext?.getValues())
 
     const fieldProps = {
         ...props,

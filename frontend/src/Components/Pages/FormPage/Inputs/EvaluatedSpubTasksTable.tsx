@@ -11,7 +11,7 @@ import {EndYearField, NameField, SpubTask, StartYearField} from "./SpubTasksTabl
 type EvaluatedSpubTask = {
     id:string,
     spubTask:SpubTask,
-    calculatedPoints:string
+    points:string
 }
 
 const ThesesTableContent = () =>
@@ -37,7 +37,7 @@ export const EvaluatedSpubTaskTable = (props: EvaluatedSpubTasksTable) => {
         null, emptyText, props.evaluatedSpubTasks)
 
     const idAndPoints = props.evaluatedSpubTasks?.map((value) =>
-        ({id:value.id, calculatedPoints:value.calculatedPoints}))
+        ({id:value.id, points:value.points}))
     const displayValue = props.evaluatedSpubTasks?.map((value) =>
         ({...value.spubTask}))
 

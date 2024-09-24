@@ -2,7 +2,7 @@ import {FormUser} from "./Inputs/UserSelect";
 import {ResearchArea} from "./Inputs/ClickableMap";
 import {Task} from "./Inputs/TaskTable/TaskTable";
 import {Contract} from "./Inputs/ContractsTable/ContractsTable";
-import {UgTeam} from "./Inputs/UgTeamsTable/UgTeamsTable";
+import {UgTeam, UgUnit} from "./Inputs/UgTeamsTable/UgTeamsTable";
 import {GuestsTeam} from "./Inputs/GuestTeamsTable/GuestTeamsTable";
 import {Publication} from "./Inputs/PublicationsTable/PublicationsTable";
 import {Thesis} from "./Inputs/ThesesTable/ThesesTable";
@@ -16,6 +16,7 @@ export type FormAInitValues = {
     researchAreas: ResearchArea[],
     cruiseGoals: string[],
     historicalTasks: Task[]
+    ugUnits:UgUnit[]
 }
 
 export type FormAFields = {

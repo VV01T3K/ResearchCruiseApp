@@ -7,7 +7,7 @@ import {readyFieldOptions} from "../Wrappers/ReactSelectWrapper";
 export type FieldProps = {
     className?: string,
     fieldName: string,
-    fieldLabel: string
+    fieldLabel?: string
 }
 type Props = FieldProps & {
     initValues?: string[],

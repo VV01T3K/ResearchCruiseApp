@@ -4,7 +4,7 @@ import React from "react";
 
 export const InstitutionField = () =>
     (
-        <KeyContext.Provider value={"institution"}>
+        <KeyContext.Provider value={"name"}>
             <div className={"task-field-input"}>
                 <label className={"table-field-input-label"}>
                     Instytucja

@@ -13,6 +13,7 @@ type Props = {
     maxVal?: number,
     setterFunction?: (arg: number) => number,
     notZero?: boolean,
+    defaultValue?: string
 }
 export const ConvertNumberToString = (value:number) => {
     if(value%1)
@@ -22,7 +23,7 @@ export const ConvertNumberToString = (value:number) => {
 
 function NumberInput(props: Props){
     const formContext = useContext(FormContext)
-
+    console.log(props.defaultValue)
 
     const ParseInput = (value:string) => {
         let returnVal;
@@ -69,7 +70,7 @@ function NumberInput(props: Props){
             }
         },
         render: render,
-        defaultValue: "0"
+        defaultValue: props.defaultValue ?? "0"
     }
 
     return (<FieldWrapper {...fieldProps}/>);

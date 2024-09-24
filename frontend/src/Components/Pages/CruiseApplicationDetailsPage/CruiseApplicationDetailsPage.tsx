@@ -9,6 +9,7 @@ import {ResearchTeamsSection} from "./CruiseApplicationsDetailsSections/Research
 import {PublicationsSection} from "./CruiseApplicationsDetailsSections/PublicationsSection";
 import {SpubTaskSection} from "./CruiseApplicationsDetailsSections/SpubTaskSection";
 import {BottomOptionBar} from "../../Tools/CruiseApplicationBottomOptionBar";
+import {formType} from "../CommonComponents/FormTitleWithNavigation";
 
 
 type CruiseApplicationDetailsPageLocationState = {
@@ -59,7 +60,7 @@ function CruiseApplicationDetailsPage() {
 
     return (
         <CruiseApplicationContext.Provider value={locationState.cruiseApplication}>
-            <FormTemplate type={"0"} sections={sections} BottomOptionBar={BottomOptionBar}/>
+            <FormTemplate type={formType.ApplicationDetails} sections={sections} BottomOptionBar={BottomOptionBar}/>
         </CruiseApplicationContext.Provider>
 
 )
