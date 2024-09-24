@@ -10,7 +10,7 @@ import {researchTeamsSectionFieldNames} from "./ResearchTeamsSection";
 import {SpubTaskField} from "./SpubTasksSectionFields";
 
 export const supervisorSectionFieldNames = {
-    supervisor:"supervisor"
+    supervisor:"supervisorEmail"
 }
 
 const SupervisorEmailField = () => (

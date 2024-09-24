@@ -56,7 +56,7 @@ public class FormA : Entity
     public List<FormAUgUnit> FormAUgUnits { get; init; } = [];
 
     [StringLength(1024)]
-    public string UgUnitsPoints { get; set; } = null!;
+    public string UgUnitsPoints { get; set; } = "0";
     
     public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];
 
