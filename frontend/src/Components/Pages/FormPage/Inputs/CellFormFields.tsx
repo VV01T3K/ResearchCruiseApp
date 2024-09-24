@@ -182,6 +182,7 @@ export const FormIntField = (props: { className?: string }) => {
                value={cellValue}
                onChange={(e)=>{setCellValue(e.target.value)}}
                onBlur={onBlur}
+               defaultValue="0"
                placeholder="0"
         />
     )

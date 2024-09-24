@@ -2,6 +2,7 @@ import React from "react";
 import {UseFormReturn} from "react-hook-form";
 import {NewUserFormValues, Role} from "./AddUserForm";
 import UserBasedAccess from "../../../UserBasedAccess";
+import Select from "react-select";
 
 
 type RoleOption = {
@@ -57,41 +58,41 @@ export default function RoleInput(props: Props) {
     return (
         <>
             <div className="d-flex flex-wrap w-100 align-items-center mb-1">
-                {/*<label*/}
-                {/*    className="d-flex col-12 w-25 align-items-center"*/}
-                {/*    style={{fontSize: "inherit"}}*/}
-                {/*>*/}
-                {/*    {props.label}:*/}
-                {/*</label>*/}
-                {/*<Select*/}
-                {/*    {...props.form.register(props.name, fieldOptions)}*/}
-                {/*    className="d-flex w-75"*/}
-                {/*    options={getRoleOptions()}*/}
-                {/*    placeholder={"Wybierz wartość"}*/}
-                {/*    isDisabled={props.disabled}*/}
-                {/*    // defaultValue={roleOptions*/}
-                {/*    //     .filter(roleOption => roleOption.value == Role.Guest)*/}
-                {/*    //     .at(0)*/}
-                {/*    // }*/}
-                {/*    onChange={selectedValue => {*/}
-                {/*        if (selectedValue) {*/}
-                {/*            props.form.setValue(*/}
-                {/*                props.name,*/}
-                {/*                selectedValue.value,*/}
-                {/*                {*/}
-                {/*                    shouldTouch: true,*/}
-                {/*                    shouldValidate: true,*/}
-                {/*                    shouldDirty: true*/}
-                {/*                }*/}
-                {/*            )*/}
-                {/*        }*/}
-                {/*    }}*/}
-                {/*/>*/}
-                {/*{props.form.formState.errors[props.name] &&*/}
-                {/*    <div className="d-flex col-12 justify-content-end">*/}
-                {/*        <ErrorCode className="w-75" code={props.form.formState.errors[props.name]?.message} />*/}
-                {/*    </div>*/}
-                {/*}*/}
+                <label
+                    className="d-flex col-12 w-25 align-items-center"
+                    style={{fontSize: "inherit"}}
+                >
+                    {props.label}:
+                </label>
+                <Select
+                    {...props.form.register(props.name, fieldOptions)}
+                    className="d-flex w-75"
+                    options={getRoleOptions()}
+                    placeholder={"Wybierz wartość"}
+                    isDisabled={props.disabled}
+                    // defaultValue={roleOptions
+                    //     .filter(roleOption => roleOption.value == Role.Guest)
+                    //     .at(0)
+                    // }
+                    onChange={selectedValue => {
+                        if (selectedValue) {
+                            props.form.setValue(
+                                props.name,
+                                selectedValue.value,
+                                {
+                                    shouldTouch: true,
+                                    shouldValidate: true,
+                                    shouldDirty: true
+                                }
+                            )
+                        }
+                    }}
+                />
+                {props.form.formState.errors[props.name] &&
+                    <div className="d-flex col-12 justify-content-end">
+                        <ErrorCode className="w-75" code={props.form.formState.errors[props.name]?.message} />
+                    </div>
+                }
             </div>
     </>
     )
