@@ -146,7 +146,9 @@ public class IdentityService(
             return; // According to Microsoft, responding with an error would give to much information
         
         var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
-        await emailSender.SendEmailConfirmationEmail(await CreateUserDto(user), roleName, emailConfirmationCode);
+        var userDto = await CreateUserDto(user);
+        
+        await emailSender.SendEmailConfirmationEmail(userDto, roleName, emailConfirmationCode);
     }
     
     public async Task<Result<LoginResponseDto>> LoginUser(string userEmail)
@@ -203,7 +205,9 @@ public class IdentityService(
             return identityResult.ToApplicationResult();
         
         var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
-        await emailSender.SendEmailConfirmationEmail(await CreateUserDto(user), roleName, emailConfirmationCode);
+        var userDto = await CreateUserDto(user);
+        
+        await emailSender.SendEmailConfirmationEmail(userDto, roleName, emailConfirmationCode, password);
         
         return Result.Empty;
     }

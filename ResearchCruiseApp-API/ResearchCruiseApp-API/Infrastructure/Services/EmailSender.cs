@@ -13,22 +13,27 @@ internal class EmailSender(
     IConfiguration configuration,
     ITemplateFileReader templateFileReader) : IEmailSender
 {
-    public async Task SendEmailConfirmationEmail(UserDto userDto, string roleName, string emailConfirmationCode)
+    public async Task SendEmailConfirmationEmail(
+        UserDto userDto, string roleName, string emailConfirmationCode, string? password = null)
     {
         var link = GetFrontEndUrl() + $"/confirmEmail?userId={userDto.Id}&code={emailConfirmationCode}";
-        
-        var messageTemplate = await templateFileReader.ReadEmailConfirmationMessageTemplate();
+
+        var messageTemplate = password is null
+            ? await templateFileReader.ReadEmailConfirmationMessageTemplate()
+            : await templateFileReader.ReadEmailConfirmationMessageWithPasswordTemplate();
         var emailSubject = await templateFileReader.ReadEmailConfirmationEmailSubject();
         
         var cultureInfo = new CultureInfo("pl-pl");
         var resourceManager = new ResourceManager(
             "ResearchCruiseApp_API.App_GlobalResources.Roles",
             typeof(Roles).Assembly);
+        
         var emailMessage = messageTemplate
             .Replace("{{firstName}}", userDto.FirstName)
             .Replace("{{lastName}}", userDto.LastName)
             .Replace("{{roleText}}", $" {resourceManager.GetString(roleName, cultureInfo)} ")
-            .Replace("{{link}}", link);
+            .Replace("{{link}}", link)
+            .Replace("{{password}}", password);
 
         await SendEmail(userDto.Email, emailSubject, emailMessage);
     }

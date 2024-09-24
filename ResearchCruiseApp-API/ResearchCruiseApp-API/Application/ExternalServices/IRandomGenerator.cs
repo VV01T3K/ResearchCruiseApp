@@ -4,4 +4,5 @@
 public interface IRandomGenerator
 {
     byte[] CreateSecureCodeBytes();
+    string CreateSecurePassword();
 }
