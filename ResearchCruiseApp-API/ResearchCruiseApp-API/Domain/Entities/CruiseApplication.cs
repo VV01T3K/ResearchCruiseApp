@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Common.Interfaces;
 
@@ -20,6 +19,6 @@ public class CruiseApplication : Entity, IYearBasedNumbered
     public FormC? FormC { get; set; }
     
     public CruiseApplicationStatus Status { get; set; }
-
+    
     public byte[] SupervisorCode { get; set; } = [];
 }
