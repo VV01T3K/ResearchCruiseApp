@@ -9,7 +9,8 @@ export const SaveButton = () => {
     const formContext = useContext(FormContext)
     const locationState = extendedUseLocation()?.state
     const navigate = useNavigate()
-    const handleAddCruise = () => Api
+    const handleAddCruise = () => //console.log(formContext?.getValues())
+        Api
         .post(
             `/api/Cruises`,
             formContext!.getValues()
@@ -19,7 +20,7 @@ export const SaveButton = () => {
         )
 
     const handleEditCruise = () => {
-        if(locationState.cruise)
+        if(locationState?.cruise)
             Api.patch(
                 `/api/Cruises/${locationState.cruise!.id}`,
                 formContext!.getValues())
@@ -29,8 +30,7 @@ export const SaveButton = () => {
     }
 
     return(
-        <div onClick={ locationState?.cruise ? formContext!.handleSubmit(handleEditCruise):
-            formContext!.handleSubmit(handleAddCruise)} className="form-page-option-button w-100"> Zapisz rejs </div>
+        <div onClick={formContext?.handleSubmit(locationState?.cruise ? handleEditCruise: handleAddCruise)} className="form-page-option-button w-100"> Zapisz rejs </div>
     )
 }
 export const ClearFormButton = () => {

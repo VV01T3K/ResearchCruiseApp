@@ -1,7 +1,7 @@
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import pl from "date-fns/locale/pl"; // the locale you want
-import {FieldValues,} from "react-hook-form";
+import {FieldValues, useWatch,} from "react-hook-form";
 import React, {useContext} from "react";
 import FieldWrapper from "./FieldWrapper";
 import {FormContext} from "../Wrappers/FormTemplate";
@@ -22,16 +22,22 @@ type EndDateFieldProps = FieldProps & {
 export function StartDateField(props: StartDateFieldProps) {
 
     const formContext = useContext(FormContext)
-    const endDateValue = formContext?.getValues(props.EndDateFieldName)
+    const endDateValue = useWatch({
+        control: formContext!.control,
+        name: props.EndDateFieldName
+    })
     const render = ({field}:FieldValues) => {
+
+
         return(
             <DatePicker
-                {...field}
+               // {...field}
                 className={"field-common w-100"}
                 disabled={formContext!.readOnly ?? false}
                 onChange={(e: Date)=> {
                     if (e != null) {
                         field.onChange(e.toISOString())
+                        field.onBlur()
                     }
                 }}
                 showTimeSelect
@@ -59,17 +65,22 @@ export function StartDateField(props: StartDateFieldProps) {
 export function EndDateField(props: EndDateFieldProps) {
 
     const formContext = useContext(FormContext)
-    const startDateValue = formContext?.getValues(props.StartDateFieldName)
+    const startDateValue = useWatch({
+        control: formContext!.control,
+        name: props.StartDateFieldName
+    })
 
     const render = ({field}:FieldValues) => {
+
         return(
             <DatePicker
-                {...field}
+              //  {...field}
                 className={"field-common w-100"}
                 disabled={formContext!.readOnly ?? false}
                 onChange={(e: Date)=> {
                     if (e != null) {
                         field.onChange(e.toISOString())
+                        field.onBlur()
                     }
                 }}
                 {...datePickerCommon}

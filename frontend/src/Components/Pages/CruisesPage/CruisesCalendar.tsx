@@ -4,6 +4,7 @@ import moment from "moment/moment";
 import 'moment/locale/pl';
 import {Cruise, CruiseStateContext} from "./CruisesPage";
 import {useNavigate} from "react-router-dom";
+import {EMPTY_GUID} from "../CruiseFormPage/CruiseFormPage";
 
 type CalendarCruiseEvent = {
     start: Date,
@@ -29,7 +30,7 @@ export default function CruisesCalendar(props: Props) {
         const newCruiseEvents: CalendarCruiseEvent[] | undefined = cruisesStateContext!.cruises?.map(cruise => ({
             start: new Date(cruise.startDate),
             end: new Date(cruise.endDate),
-            title: `Kierownik: ${cruise.mainCruiseManagerFirstName} ${cruise.mainCruiseManagerLastName}`,
+            title: cruise.mainCruiseManagerId != EMPTY_GUID ? `Kierownik: ${cruise.mainCruiseManagerFirstName} ${cruise.mainCruiseManagerLastName}`: "Rejs bez kierownika",
             fullCruise: cruise
         }))
         setCruiseEvents(newCruiseEvents)

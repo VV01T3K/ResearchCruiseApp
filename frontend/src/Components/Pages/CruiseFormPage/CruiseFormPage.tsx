@@ -11,6 +11,8 @@ import {BottomOptionBar} from "../../Tools/CruiseFormBottomOptionBar";
 import {InfoSection} from "./CruiseFormSections/Sections/DateSection";
 import {formType} from "../CommonComponents/FormTitleWithNavigation";
 import {extendedUseLocation} from "../FormPage/FormPage";
+import Api from "../../Tools/Api";
+import {ApplicationsContext} from "../CruiseApplicationsPage/CruiseApplicationsList";
 
 
 type CruiseManagersTeam = {
@@ -42,9 +44,9 @@ const EditCruiseFormDefaultValues = (location?:Location) => {
     if(location?.state)
         return{
             startDate:
-                new Date(location.state.cruise?.startDate).toISOString() ?? "" ,
+                new Date(location.state.cruise?.startDate).toISOString() ?? undefined ,
             endDate:
-                new Date(location.state.cruise?.endDate).toISOString() ?? "" ,
+                new Date(location.state.cruise?.endDate).toISOString() ?? undefined ,
             managersTeam: {
                 mainCruiseManagerId:
                     location.state.cruise?.mainCruiseManagerId ??
@@ -58,8 +60,8 @@ const EditCruiseFormDefaultValues = (location?:Location) => {
                 []
         }
     return{
-        startDate: "" ,
-        endDate: "" ,
+        startDate: undefined ,
+        endDate: undefined ,
         managersTeam: { mainCruiseManagerId:EMPTY_GUID, mainDeputyManagerId: EMPTY_GUID },
         cruiseApplicationsIds: []
     }
@@ -79,18 +81,17 @@ export default function CruiseFormPage() {
 
     const sections = CruiseFormSections()
 
-    const [cruiseApplications, setCruiseApplications] =
-        useState<CruiseApplication[]>([])
-
+    const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState<CruiseApplication[]>([])
     useEffect(() => {
-        if (location?.state?.cruise)
-            (fetchCruiseApplications)(location.state.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
+        if(!fetchedCruiseApplications.length)
+            Api.get('/api/CruiseApplications').then(response =>
+                setFetchedCruiseApplications(response?.data))
     }, []);
 
-
     return (
-        <CruiseApplicationsContext.Provider value={{cruiseApplications, setCruiseApplications}}>
+        <ApplicationsContext.Provider value={fetchedCruiseApplications}>
             <FormTemplate sections={sections} type={formType.CruiseDetails} BottomOptionBar={BottomOptionBar}
                           defaultValues={editCruiseFormDefaultValues} />
-        </CruiseApplicationsContext.Provider>)
+        </ApplicationsContext.Provider>
+    )
 }

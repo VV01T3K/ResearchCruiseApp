@@ -39,15 +39,19 @@ const RowShouldBeShown = (mode)=> {
 
 export const ListModeContext = createContext<null|{mode?:CruiseApplicationListMode}>(null)
 
-export const ApplicationsContext = createContext(null)
+export const ApplicationsContext = createContext<CruiseApplication[]>([])
 
 export default function CruiseApplicationsList(props: Props) {
     const [fetchedCruiseApplications, setFetchedCruiseApplications]: [CruiseApplication[], CruiseApplicationsSetter]
         = useState([])
+    const applicationsContext = useContext(CruiseApplicationsContext)
     useEffect(() => {
         if(fetchedCruiseApplications.length<=0)
-            Api.get('/api/CruiseApplications').then(response =>
-                setFetchedCruiseApplications(response?.data))
+            if(applicationsContext)
+                setFetchedCruiseApplications(applicationsContext)
+            else
+                Api.get('/api/CruiseApplications').then(response =>
+                    setFetchedCruiseApplications(response?.data))
     }, []);
 
     const [yearFilter, setYearFilter] = useState("")

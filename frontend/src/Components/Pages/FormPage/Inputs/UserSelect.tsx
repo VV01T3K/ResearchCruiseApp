@@ -13,6 +13,8 @@ export type FormUser = {
 
 type Props = FormField & {
     initValues?: FormUser[]
+    required?:boolean,
+    defaultValue?:string
 }
 
 
@@ -42,8 +44,9 @@ function UserSelect(props: Props) {
 
     const fieldProps = {
         ...props,
-        rules: {required: 'Wybierz jedną z opcji'},
-        render: render
+        rules: {required: props.required ?? 'Wybierz jedną z opcji'},
+        render: render,
+        defaultValue: props.defaultValue ?? ""
     }
 
     return (

@@ -33,7 +33,7 @@ export default function AssignedCruiseApplicationsList(props: Props) {
                                 className="text-center w-100"
                                 to="/CruiseApplicationDetails"
                                 label={cruiseApplication.number}
-                                state={{cruiseApplication: cruiseApplication}}
+                                state={{cruiseApplication: cruiseApplication, readOnly:true}}
                             />
                         </div>
                         <div className="d-flex flex-wrap align-content-center col-6 mb-2">

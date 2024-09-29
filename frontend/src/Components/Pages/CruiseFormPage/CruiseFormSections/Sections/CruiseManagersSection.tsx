@@ -9,6 +9,9 @@ import {CruiseApplication} from "../../../CruiseApplicationsPage/CruiseApplicati
 import Api from "../../../../Tools/Api";
 import app from "../../../../App";
 import {useWatch} from "react-hook-form";
+import {ApplicationsContext} from "../../../CruiseApplicationsPage/CruiseApplicationsList";
+import {extendedUseLocation} from "../../../FormPage/FormPage";
+import {EMPTY_GUID} from "../../CruiseFormPage";
 
 export const cruiseManagerSectionFieldNames = {
     mainCruiseManagerId:"managersTeam.mainCruiseManagerId",
@@ -17,17 +20,11 @@ export const cruiseManagerSectionFieldNames = {
 
 const getUsersFromCruiseApplications = (): FormUser[] => {
     const formContext = useContext(FormContext)
+    const applicationsContext = useContext(ApplicationsContext)
 
-    const [fetchedCruiseApplications, setFetchedCruiseApplications]: [CruiseApplication[], CruiseApplicationsSetter]
-        = useState([])
     const val = useWatch({control:formContext!.control,name:applicationsSectionFieldNames.applicationsIds, exact:true})
-    useEffect(() => {
-        if(!fetchedCruiseApplications.length)
-            Api.get('/api/CruiseApplications').then(response =>
-                setFetchedCruiseApplications(response?.data))
-    }, []);
 
-    const usersPairs =  fetchedCruiseApplications.filter(app=>val.includes(app.id))
+    const usersPairs =  applicationsContext.filter(app=>val.includes(app.id))
         .map(ApplicationToCruiseManagersMapper)
 
 
@@ -41,18 +38,36 @@ const getUsersFromCruiseApplications = (): FormUser[] => {
 
 const CruiseManagersField = () => {
     const formContext = useContext(FormContext)
+    const mainManagerField = formContext!.getValues(cruiseManagerSectionFieldNames.mainCruiseManagerId)
+    const location = extendedUseLocation()
+    const deputyManagerField = formContext!.getValues(cruiseManagerSectionFieldNames.mainDeputyManagerId)
+    const cruiseUsers = getUsersFromCruiseApplications()
+    const errorString = "mainCruiseManagerIsTheSameAsMainDeputyManager"
+    const error =  formContext?.formState.errors[errorString]
 
 
     useEffect(() => {
-        const areFieldsEqual = (!formContext!.getValues(cruiseManagerSectionFieldNames.mainCruiseManagerId)) &&
-            formContext!.getValues(cruiseManagerSectionFieldNames.mainCruiseManagerId)
-            == formContext!.getValues(cruiseManagerSectionFieldNames.mainDeputyManagerId)
-        if(areFieldsEqual && !formContext?.formState.errors["mainCruiseManagerIsTheSameAsMainDeputyManager"])
-            formContext!.setError("mainCruiseManagerIsTheSameAsMainDeputyManager",
-                {type:"custom",message:"Kierownik i jego zastępca muszą być innymi osobami"})
-        else if(!areFieldsEqual && formContext?.formState.errors["mainCruiseManagerIsTheSameAsMainDeputyManager"])
-            formContext!.clearErrors("mainCruiseManagerIsTheSameAsMainDeputyManager")
+        const areFieldsEqual = (mainManagerField) && (mainManagerField != EMPTY_GUID) && mainManagerField == deputyManagerField
+
+        if(areFieldsEqual && !error)
+            formContext!.setError(errorString, {type:"custom",message:"Kierownik i jego zastępca muszą być innymi osobami"})
+        else if(!areFieldsEqual && error)
+            formContext!.clearErrors(errorString)
+
     }, []);
+
+
+
+    if(cruiseUsers.map(user=>user.id).includes(location?.state.cruise.mainCruiseManagerId)  && (mainManagerField == EMPTY_GUID))
+        formContext?.setValue(cruiseManagerSectionFieldNames.mainCruiseManagerId, location?.state.cruise.mainCruiseManagerId)
+    else if(!cruiseUsers.map(user=>user.id).includes(mainManagerField) && mainManagerField)
+        formContext?.setValue(cruiseManagerSectionFieldNames.mainCruiseManagerId, EMPTY_GUID)
+    if(cruiseUsers.map(user=>user.id).includes(location?.state.cruise.mainDeputyManagerId) && (deputyManagerField == EMPTY_GUID))
+        formContext?.setValue(cruiseManagerSectionFieldNames.mainDeputyManagerId, location?.state.cruise.mainDeputyManagerId)
+    else if(!cruiseUsers.map(user=>user.id).includes(deputyManagerField) && deputyManagerField)
+        formContext?.setValue(cruiseManagerSectionFieldNames.mainDeputyManagerId, EMPTY_GUID)
+
+
 
     const users = getUsersFromCruiseApplications()
     return(
@@ -61,12 +76,14 @@ const CruiseManagersField = () => {
                 className="two-fields-beside-md"
                 fieldName={cruiseManagerSectionFieldNames.mainCruiseManagerId}
                 fieldLabel="Kierownik główny"
+                required={false}
                 initValues={users}
             />
             <UserSelect
                 className="two-fields-beside-md"
                 fieldName={cruiseManagerSectionFieldNames.mainDeputyManagerId}
                 fieldLabel="Zastępca kierownika głównego"
+                required={false}
                 initValues={users}
             />
             <ErrorMessageIfPresentNoContext message={formContext?.formState?.errors["mainCruiseManagerIsTheSameAsMainDeputyManager"]?.message as string}/>

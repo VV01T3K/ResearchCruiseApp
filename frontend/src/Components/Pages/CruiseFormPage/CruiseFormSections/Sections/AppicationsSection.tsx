@@ -3,14 +3,16 @@ import React, {useContext, useEffect, useState} from "react";
 import CruiseApplicationsList, {
     CruiseApplicationListMode
 } from "../../../CruiseApplicationsPage/CruiseApplicationsList";
-import {CruiseApplicationsContext} from "../../CruiseFormPage";
-import {FieldValues, useFormContext} from "react-hook-form";
+import {FieldValues} from "react-hook-form";
 import {FormContext} from "../../../FormPage/Wrappers/FormTemplate";
 import FieldWrapper from "../../../FormPage/Inputs/FieldWrapper";
 import {FieldContext} from "../../../FormPage/Wrappers/FieldTableWrapper";
+import {extendedUseLocation} from "../../../FormPage/FormPage";
+import {fetchCruiseApplications} from "../../../../Tools/Fetchers";
+import {CruiseApplication} from "../../../CruiseApplicationsPage/CruiseApplicationsPage";
 
 export const applicationsSectionFieldNames = {
-    applicationsIds:"CruiseApplicationsIds",
+    applicationsIds:"cruiseApplicationsIds",
 }
 
 const ToggleAddingModeButtons = () => {
@@ -23,15 +25,15 @@ const ToggleAddingModeButtons = () => {
         </a>
     )
     const DisableAddingModeButton = () => (
-        <a className="cruises-button-outline-dark col-12"
-           onClick={() => setApplicationsAddingMode(false)}>
+        <a className="cruises-button-outline-dark col-12" onClick={() => setApplicationsAddingMode(false)}>
             Anuluj dołączanie zgłoszenia
         </a>
     )
     return {applicationsAddingMode, EnableAddingModeButton, DisableAddingModeButton}
 }
-const render = ({field} : FieldValues) => {
 
+//temporary -> rerenders need fix
+const render = ({field} : FieldValues) => {
     return(
         <FieldContext.Provider value={field}>
             <X/>
@@ -57,20 +59,20 @@ const X = () => {
 }
 
 const AddedApplicationsField = () => {
-    const formContext = useContext(FormContext)
-    const ApplicationsContext = useContext(CruiseApplicationsContext)
-    useEffect(() => {
-        if(ApplicationsContext?.cruiseApplications.length && formContext!.getValues(applicationsSectionFieldNames.applicationsIds) &&
-            !formContext!.getValues(applicationsSectionFieldNames.applicationsIds).length )
-            formContext?.reset()
-    }, []);
 
+    const location = extendedUseLocation()
+
+    const [cruiseApplications, setCruiseApplications] = useState<CruiseApplication[]>([])
+    useEffect(() => {
+        if (location?.state?.cruise)
+            (fetchCruiseApplications)(location.state.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
+    }, []);
 
     const fieldProps = {
         fieldName:applicationsSectionFieldNames.applicationsIds,
         render: render,
         rules: null,
-        defaultValue: ApplicationsContext!.cruiseApplications.map(application=>application.id),
+       defaultValue: cruiseApplications.map(application=>application.id),
     }
 
     return  <FieldWrapper className={"w-100"} {...fieldProps}/>

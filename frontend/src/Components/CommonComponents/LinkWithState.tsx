@@ -26,7 +26,7 @@ export default function LinkWithState(props: Props) {
                         console.log(props.state)
                         // temporary
                         let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
-                            width=0,height=0,left=-1000,top=-1000`;
+                            width=900,height=1200,left=-1000,top=-1000`;
                         window.open(props.to + "?data="+param, "_blank", params)
                     }
                     else
