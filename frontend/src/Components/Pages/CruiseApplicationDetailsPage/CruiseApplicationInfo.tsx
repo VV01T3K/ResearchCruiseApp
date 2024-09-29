@@ -5,6 +5,7 @@ import SimpleInfoTile from "../../CommonComponents/SimpleInfoTile";
 import {CruiseApplicationContext} from "./CruiseApplicationDetailsPage";
 import {Path} from "../../Tools/Path";
 import {CruiseApplication} from "../CruiseApplicationsPage/CruiseApplicationsPage";
+import {ListModeContext} from "../CruiseApplicationsPage/CruiseApplicationsList";
 
 const SimpleInfoWrapperSingleField = (props:{title:string, selector: keyof CruiseApplication}) => {
     const cruiseApplicationContext = useContext(CruiseApplicationContext)
@@ -79,9 +80,11 @@ const isLinkDisabled = (formType:string) => {
 
 const FormLink = (props:{formType:string}) => {
     const cruiseApplicationContext = useContext(CruiseApplicationContext)
+    const listModeContext = useContext(ListModeContext)
     const disabled = isLinkDisabled(props.formType)
     return(
         <LinkWithState to={Path.Form}
+                       useWindow={listModeContext?.mode != undefined}
                        state={{ formType: props.formType, cruiseApplicationId: cruiseApplicationContext!.id, readOnly: true }}
                        label={"Formularz " + props.formType}
                        disabled={disabled}

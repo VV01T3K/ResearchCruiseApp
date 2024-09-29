@@ -2,12 +2,13 @@ import {SectionWrapper} from "../../../FormPage/Wrappers/FormASections";
 import CruiseBasicInfo from "../CruiseBasicInfo";
 import React from "react";
 import {useLocation} from "react-router-dom";
+import {extendedUseLocation} from "../../../FormPage/FormPage";
 
 
 export const BasicInfo = () => {
-    const locationState = useLocation()
+    const locationState = extendedUseLocation()
     return(
-        <CruiseBasicInfo cruise={locationState.state.cruise} />
+        <CruiseBasicInfo cruise={locationState?.state.cruise} />
     )
 }
 

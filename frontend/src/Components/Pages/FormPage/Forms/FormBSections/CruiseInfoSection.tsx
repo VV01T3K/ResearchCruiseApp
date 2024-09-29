@@ -4,10 +4,11 @@ import React from "react";
 import {useLocation} from "react-router-dom";
 import CruiseBasicInfo from "../../../CruiseFormPage/CruiseFormSections/CruiseBasicInfo";
 import {timeSectionFieldNames} from "./CruiseDetailsSection";
+import {extendedUseLocation} from "../../FormPage";
 
 
 export const BasicInfo = () => {
-    const locationState = useLocation()
+    const locationState = extendedUseLocation()
     return(
         <CruiseBasicInfo cruise={locationState.state.cruise} />
     )

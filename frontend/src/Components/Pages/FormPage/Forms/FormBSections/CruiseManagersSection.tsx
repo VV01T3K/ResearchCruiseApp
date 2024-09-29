@@ -6,10 +6,11 @@ import {
     CruiseApplicationCruiseManagerName,
     CruiseApplicationDeputyManagerName
 } from "../../../CruiseApplicationDetailsPage/CruiseApplicationInfo";
+import {extendedUseLocation} from "../../FormPage";
 
 
 export const BasicInfo = () => {
-    const locationState = useLocation()
+    const locationState = extendedUseLocation()
     return(
         <CruiseBasicInfo cruise={locationState.state.cruise} />
     )

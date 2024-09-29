@@ -2,6 +2,7 @@ import React, {useContext} from "react";
 import {FormSectionType} from "../FormPage/Wrappers/FormASections";
 import {FormContext} from "../FormPage/Wrappers/FormTemplate";
 import {useLocation} from "react-router-dom";
+import {extendedUseLocation} from "../FormPage/FormPage";
 
 export const formType = {
     A: "A",
@@ -24,12 +25,12 @@ function FormTitleWithNavigation(){
     }
 
     const FormTitle = () => {
-        const locationState = useLocation().state
+        const locationState = extendedUseLocation()?.state
         return(
             <div className={"form-page-title"}>
                 {[formType.A, formType.B,formType.C].includes(formContext!.type) && `Formularz ${formContext!.type}` }
                 {formContext!.type == formType.ApplicationDetails && `Szczegóły zgłoszenia` }
-                {formContext!.type == formType.CruiseDetails && (locationState.cruise ? "Szczegóły rejsu" : "Nowy rejs")}
+                {formContext!.type == formType.CruiseDetails && (locationState?.cruise ? "Szczegóły rejsu" : "Nowy rejs")}
             </div>
         )
     }

@@ -2,11 +2,12 @@ import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import {CruiseApplicationContext} from "../CruiseApplicationDetailsPage/CruiseApplicationDetailsPage";
 import {FormALink, FormBLink, FormCLink} from "../CruiseApplicationDetailsPage/CruiseApplicationInfo";
 import React, {useContext} from "react";
-import {CellContext} from "../FormPage/Wrappers/FieldTableWrapper";
+import {CellContext, FieldContext} from "../FormPage/Wrappers/FieldTableWrapper";
 import {CruiseApplication, CruiseApplicationStatus} from "./CruiseApplicationsPage";
-import {ApplicationsContext, ListModeContext} from "./CruiseApplicationsList";
+import {ApplicationsContext, CruiseApplicationListMode, ListModeContext} from "./CruiseApplicationsList";
 import LinkWithState from "../../CommonComponents/LinkWithState";
 import {Path} from "../../Tools/Path";
+import {CruiseApplicationsContext} from "../CruiseFormPage/CruiseFormPage";
 
 export const ApplicationTools = () => {
     const cellContext = useContext(CellContext)
@@ -83,16 +84,22 @@ export const Points = () => {
 
 export const Status = () => {
     const {application} = ApplicationTools()
+    const listModeContext = useContext(ListModeContext)
+
     return (
         <div className={"task-field-input"}>
             <label className={"table-field-input-label"}>
                 Status:
             </label>
             <i>{application!.status}</i>
-            {application!.status == CruiseApplicationStatus.WaitingForSupervisor &&
-                <LinkWithState to={Path.Form} state={{formType:"B", cruiseApplication:application}} label={"Wypełnij"}/>}
-            {application!.status == CruiseApplicationStatus.Undertaken &&
-                <LinkWithState to={Path.Form} state={{formType:"C"}} label={"Wypełnij raport"}/>}
+            {!listModeContext?.mode &&
+                <>
+                    {application!.status == CruiseApplicationStatus.WaitingForSupervisor &&
+                        <LinkWithState to={Path.Form} state={{formType:"B", cruiseApplication:application}} label={"Wypełnij"}/>}
+                    {application!.status == CruiseApplicationStatus.Undertaken &&
+                        <LinkWithState to={Path.Form} state={{formType:"C"}} label={"Wypełnij raport"}/>}
+                </>
+            }
         </div>
     )
 }
@@ -100,38 +107,39 @@ export const Status = () => {
 export const Actions = () => {
     const {application} = ApplicationTools()
     const listModeContext = useContext(ListModeContext)
+    const fieldContext = useContext(FieldContext)
+
     return (
         <div className="task-field-input">
             <LinkWithState
                 className="btn btn-info"
+                useWindow={listModeContext?.mode != undefined}
                 to={Path.CruiseApplicationDetails}
                 label="Szczegóły"
                 state={{cruiseApplication: application, readOnly:true}}
             />
 
-            {listModeContext!.deletionMode &&
-                // Show only if the component represents a cruise's applications
+            {listModeContext!.mode == CruiseApplicationListMode.Deletion &&
                 <a
                     className="btn btn-outline-danger"
                     style={{fontSize: "inherit"}}
                     onClick={() => {
-                        // Remove the application from the list
-                        const updatedApplications = props.boundCruiseApplications!.filter((_, i) => i != index)
-                        props.setBoundCruiseApplications!(updatedApplications)
+                        const updatedApplications = fieldContext!.value
+                            .filter((id) => id !== application.id)
+                        fieldContext!.onChange!(updatedApplications)
                     }}
                 >
                     Usuń
                 </a>
             }
-            {listModeContext!.addingMode &&
+            {listModeContext!.mode == CruiseApplicationListMode.Add &&
                 // Show only if the component enables adding applications to a cruise
                 <a
                     className="btn btn-outline-success"
                     style={{fontSize: "inherit"}}
                     onClick={() => {
-                        // Add the application to the list
-                        const updatedApplications = [...props.boundCruiseApplications!, row]
-                        props.setBoundCruiseApplications!(updatedApplications)
+                        const updatedApplications = [...fieldContext!.value, application.id]
+                        fieldContext!.onChange(updatedApplications)
                     }}
                 >
                     Dołącz

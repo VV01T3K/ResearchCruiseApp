@@ -20,11 +20,29 @@ export const TableReadOnlyField = (props:{fieldLabel:string, fieldKey: keyof Cru
     )
 }
 
+export const TableReadOnlyFieldDate = (props:{fieldLabel:string, fieldKey: keyof Cruise}) => {
+    const {cruise} = CruisesTools()
+    return (
+        <div className={"task-field-input"}>
+            <label className={"table-field-input-label"}>
+                {props.fieldLabel}
+            </label>
+            <ReadOnlyTextInput value={new Date(cruise![props.fieldKey]).toLocaleDateString(undefined,{
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+            hour12:false}) as string}/>
+        </div>
+    )
+}
+
 export const Number = () => ( <TableReadOnlyField fieldLabel={"Numer:"} fieldKey={"number"}/> )
 
-export const StartDate = () => ( <TableReadOnlyField fieldLabel={"Czas rozpoczęcia:"} fieldKey={"startDate"}/> )
+export const StartDate = () => ( <TableReadOnlyFieldDate fieldLabel={"Czas rozpoczęcia:"} fieldKey={"startDate"}/> )
 
-export const EndDate = () => ( <TableReadOnlyField fieldLabel={"Czas zakończenia:"} fieldKey={"endDate"}/> )
+export const EndDate = () => ( <TableReadOnlyFieldDate fieldLabel={"Czas zakończenia:"} fieldKey={"endDate"}/> )
 
 export const MainCruiseManagerId = () => {
     const {cruise} = CruisesTools()

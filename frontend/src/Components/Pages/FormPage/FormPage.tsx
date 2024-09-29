@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {FormValues} from "./Wrappers/FormTemplate";
 import {useLocation} from "react-router-dom";
 import FormA from "./Forms/FormA/FormA";
 import FormB from "./Forms/FormB";
 import NotFoundPage from "../NotFoundPage";
+import { Buffer } from 'buffer';
 
 
 export type FormPageLocationState = {
@@ -13,9 +14,31 @@ export type FormPageLocationState = {
     readonly?: boolean
 }
 
+export const extendedUseLocation = () => {
+    const location = useLocation()
+    if(location.state)
+        return location
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const dataParam = queryParams.get('data');
+    if(dataParam){
+        try{
+            const stateJSON = Buffer.from(dataParam, "base64").toString()
+            const state = JSON.parse(stateJSON)
+            return {state:state}
+        }
+        catch (e){
+            console.log(e)
+            return undefined
+        }
+    }
+    return undefined
+
+}
 
 function FormPage(){
-    const location = useLocation()
+    const location = extendedUseLocation()
+    console.log(location)
 
     return (
         <>

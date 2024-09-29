@@ -18,6 +18,7 @@ import {CruisePlanSection} from "./FormBSections/CruisePlanSection";
 import {EquipementSection} from "./FormBSections/EquipmentSection";
 import TechnicalElementsUsedInput from "../Inputs/TechnicalElementsUsedInput";
 import {TechnicalElementsSection} from "./FormBSections/TechnicalElementsSection";
+import {extendedUseLocation} from "../FormPage";
 
 const FormBSections = () => [
     CruiseInfoSection(),
@@ -43,7 +44,7 @@ const FormBSections = () => [
 
 function FormB(){
     const sections = FormBSections()
-    const location = useLocation()
+    const location = extendedUseLocation()
     return (
         <CruiseApplicationContext.Provider value={location.state.cruiseApplication}>
             <FormTemplate sections={sections} type='B'/>

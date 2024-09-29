@@ -1,24 +1,38 @@
-import {FormSectionType, SectionIdFromTitle, SectionWrapper} from "../../../FormPage/Wrappers/FormASections";
-import FormSection, {SectionProps} from "../../../FormPage/Wrappers/FormSection";
+import {SectionWrapper} from "../../../FormPage/Wrappers/FormASections";
 import UserSelect, {FormUser} from "../../../FormPage/Inputs/UserSelect";
-import React, {useContext, useEffect} from "react";
-import {CruiseApplicationsContext} from "../../CruiseFormPage";
-import {FormContext} from "../../../FormPage/Wrappers/FormTemplate";
+import React, {useContext, useEffect, useState} from "react";
+import {FormContext, WatchContext} from "../../../FormPage/Wrappers/FormTemplate";
 import {ErrorMessageIfPresentNoContext} from "../../../CommonComponents/ErrorMessageIfPresent";
 import {ApplicationToCruiseManagersMapper} from "../CruiseListMisc";
+import {applicationsSectionFieldNames} from "./AppicationsSection";
+import {CruiseApplication} from "../../../CruiseApplicationsPage/CruiseApplicationsPage";
+import Api from "../../../../Tools/Api";
+import app from "../../../../App";
+import {useWatch} from "react-hook-form";
 
 export const cruiseManagerSectionFieldNames = {
     mainCruiseManagerId:"managersTeam.mainCruiseManagerId",
     mainDeputyManagerId:"managersTeam.mainDeputyManagerId",
-    year:"year"
 }
 
 const getUsersFromCruiseApplications = (): FormUser[] => {
-    const cruiseApplicationsContext = useContext(CruiseApplicationsContext)
-    const usersPairs = cruiseApplicationsContext!.cruiseApplications.map(ApplicationToCruiseManagersMapper)
+    const formContext = useContext(FormContext)
+
+    const [fetchedCruiseApplications, setFetchedCruiseApplications]: [CruiseApplication[], CruiseApplicationsSetter]
+        = useState([])
+    const val = useWatch({control:formContext!.control,name:applicationsSectionFieldNames.applicationsIds, exact:true})
+    useEffect(() => {
+        if(!fetchedCruiseApplications.length)
+            Api.get('/api/CruiseApplications').then(response =>
+                setFetchedCruiseApplications(response?.data))
+    }, []);
+
+    const usersPairs =  fetchedCruiseApplications.filter(app=>val.includes(app.id))
+        .map(ApplicationToCruiseManagersMapper)
+
 
     // leave only unique values
-    return usersPairs.flat().filter((value, index, array) =>
+    return usersPairs?.flat().filter((value, index, array) =>
         // look at the id only to determine the uniqueness,
         array.map(user => user.id)
             // leave only the first occurrence of the given user
@@ -30,7 +44,8 @@ const CruiseManagersField = () => {
 
 
     useEffect(() => {
-        const areFieldsEqual = formContext!.getValues(cruiseManagerSectionFieldNames.mainCruiseManagerId)
+        const areFieldsEqual = (!formContext!.getValues(cruiseManagerSectionFieldNames.mainCruiseManagerId)) &&
+            formContext!.getValues(cruiseManagerSectionFieldNames.mainCruiseManagerId)
             == formContext!.getValues(cruiseManagerSectionFieldNames.mainDeputyManagerId)
         if(areFieldsEqual && !formContext?.formState.errors["mainCruiseManagerIsTheSameAsMainDeputyManager"])
             formContext!.setError("mainCruiseManagerIsTheSameAsMainDeputyManager",

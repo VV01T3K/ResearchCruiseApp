@@ -10,6 +10,7 @@ import {PublicationsSection} from "./CruiseApplicationsDetailsSections/Publicati
 import {SpubTaskSection} from "./CruiseApplicationsDetailsSections/SpubTaskSection";
 import {BottomOptionBar} from "../../Tools/CruiseApplicationBottomOptionBar";
 import {formType} from "../CommonComponents/FormTitleWithNavigation";
+import {extendedUseLocation} from "../FormPage/FormPage";
 
 
 type CruiseApplicationDetailsPageLocationState = {
@@ -31,7 +32,7 @@ const ApplicationDetailsSections = () => {
 }
 
 function CruiseApplicationDetailsPage() {
-    const location = useLocation()
+    const location = extendedUseLocation()
     const [locationState, _]: [CruiseApplicationDetailsPageLocationState, Dispatch<any>]
         = useState(location.state || { })
 

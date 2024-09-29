@@ -1105,6 +1105,7 @@ body > [class^="select"] {
   }
 }
 
+
 .cruises-button {
   font-size: 0.8rem !important;
   @extend
@@ -1113,6 +1114,17 @@ body > [class^="select"] {
   .m-1,
 }
 
+.cruises-button-outline-dark {
+  font-size: 0.8rem !important;
+  @extend
+  .btn,
+  .btn-outline-dark,
+  .m-1,
+}
+
+.react-datepicker__input-container{
+  width: 100%;
+}
 .vwrapper {
   display: flex;
   flex-direction: column;

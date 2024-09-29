@@ -6,7 +6,7 @@ import {FormSectionType} from "./FormASections";
 import {BottomOptionBar} from "../../../Tools/FormBottomOptionBar";
 import {FormAInitValues} from "../FormTypes";
 import Api from "../../../Tools/Api";
-import {useLocation} from "react-router-dom";
+import {extendedUseLocation} from "../FormPage";
 
 
 type Props = {
@@ -36,16 +36,16 @@ export const FormSections = (props:{sections:FormSectionType[]}) => (
     </div>
 )
 
+export const WatchContext = createContext(null)
 function FormTemplate(props: Props) {
 
-    const location = useLocation()
+    const location = extendedUseLocation()
 
     const [defaultValues, setDefaultValues] = useState(props.defaultValues ?? undefined)
 
     useEffect(() => {
-        console.log(location.state)
 
-        if(location.state.cruiseApplicationId && !defaultValues && location.state?.formType == 'A') {
+        if(location?.state.cruiseApplicationId && !defaultValues && location.state?.formType == 'A') {
             Api.get(`/api/CruiseApplications/${location.state?.cruiseApplicationId}/form${location.state?.formType}`)
                 .then(response => {
                     setDefaultValues(response?.data)
@@ -61,7 +61,7 @@ function FormTemplate(props: Props) {
             case formType.A:
                 return '/Forms/InitValues/A'
             case formType.ApplicationDetails:
-                return `/api/CruiseApplications/${location.state?.cruiseApplication.id}/evaluation`
+                return `/api/CruiseApplications/${location?.state?.cruiseApplication.id}/evaluation`
         }
 
     }
@@ -71,7 +71,7 @@ function FormTemplate(props: Props) {
         Api
             .get(initEndpoint(props.type))
             .then(response => {
-                console.log(response.data)
+                console.log(response?.data)
                 setFormInitValues(response?.data)
                 form.reset()
             })
@@ -85,7 +85,7 @@ function FormTemplate(props: Props) {
         reValidateMode:"onBlur"
     })
 
-    const [readOnly, setReadOnly] = useState(location.state.readOnly)
+    const [readOnly, setReadOnly] = useState(location?.state.readOnly)
 
     const formContext = {
         resetField:form.resetField,

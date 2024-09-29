@@ -153,9 +153,9 @@ export const BottomOptionBar = () => {
 
     return(
     <div className="form-page-option-bar">
-        {applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <WaitingForSupervisorMenu/>}
+        {/*{applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <WaitingForSupervisorMenu/>}*/}
         {applicationContext!.status == CruiseApplicationStatus.AcceptedBySupervisor && <AcceptedBySupervisorMenu/>}
-        {applicationContext!.status == CruiseApplicationStatus.Accepted && <EditPointsMenu/>}
+        {applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <EditPointsMenu/>}
         {applicationContext!.status == CruiseApplicationStatus.FormBRequired && <FormBRequired/>}
         {applicationContext!.status == CruiseApplicationStatus.FormBFilled && <FormBFilled/>}
         {applicationContext!.status == CruiseApplicationStatus.CruiseBegan && <CruiseBegan/>}

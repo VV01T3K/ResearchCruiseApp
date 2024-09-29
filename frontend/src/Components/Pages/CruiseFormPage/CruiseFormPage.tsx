@@ -1,6 +1,6 @@
 import React, {createContext, Dispatch, useEffect, useState} from "react";
 import {Cruise} from "../CruisesPage/CruisesPage";
-import {useLocation} from "react-router-dom";
+import {Location, useLocation} from "react-router-dom";
 import {CruiseApplication} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 import {fetchCruiseApplications} from "../../Tools/Fetchers";
 import FormTemplate from "../FormPage/Wrappers/FormTemplate";
@@ -9,6 +9,8 @@ import {DateSection} from "./CruiseFormSections/Sections/InfoSection";
 import {CruiseManagersSection} from "./CruiseFormSections/Sections/CruiseManagersSection";
 import {BottomOptionBar} from "../../Tools/CruiseFormBottomOptionBar";
 import {InfoSection} from "./CruiseFormSections/Sections/DateSection";
+import {formType} from "../CommonComponents/FormTitleWithNavigation";
+import {extendedUseLocation} from "../FormPage/FormPage";
 
 
 type CruiseManagersTeam = {
@@ -36,50 +38,59 @@ const CruiseFormSections = () => [
     InfoSection()
 ]
 
+const EditCruiseFormDefaultValues = (location?:Location) => {
+    if(location?.state)
+        return{
+            startDate:
+                new Date(location.state.cruise?.startDate).toISOString() ?? "" ,
+            endDate:
+                new Date(location.state.cruise?.endDate).toISOString() ?? "" ,
+            managersTeam: {
+                mainCruiseManagerId:
+                    location.state.cruise?.mainCruiseManagerId ??
+                    EMPTY_GUID,
+                mainDeputyManagerId:
+                    location.state.cruise?.mainDeputyManagerId ??
+                    EMPTY_GUID
+            },
+            cruiseApplicationsIds:
+                location.state.cruise?.cruiseApplicationsShortInfo.map(app => app.id) ??
+                []
+        }
+    return{
+        startDate: "" ,
+        endDate: "" ,
+        managersTeam: { mainCruiseManagerId:EMPTY_GUID, mainDeputyManagerId: EMPTY_GUID },
+        cruiseApplicationsIds: []
+    }
 
-export const CruiseApplicationsContext = createContext<CruiseApplication[]|null>(null)
+}
+
+export const CruiseApplicationsContext =
+    createContext<{cruiseApplications: CruiseApplication[],
+        setCruiseApplications: React.Dispatch<React.SetStateAction<CruiseApplication[]>>}|null>
+    (null)
 
 export default function CruiseFormPage() {
 
-    const location = useLocation()
-    const [locationState, _]: [CruiseFormPageLocationState, Dispatch<any>]
-        = useState(location.state || { })
+    const location = extendedUseLocation()
 
-    const editCruiseFormDefaultValues: EditCruiseFormValues = {
-        date:
-            locationState.cruise?.date ??
-            { start: "", end: "" },
-        managersTeam: {
-            mainCruiseManagerId:
-                locationState.cruise?.mainCruiseManagerId ??
-                EMPTY_GUID,
-            mainDeputyManagerId:
-                locationState.cruise?.mainDeputyManagerId ??
-                EMPTY_GUID
-        },
-        cruiseApplicationsIds:
-            locationState.cruise?.cruiseApplicationsShortInfo.map(app => app.id) ??
-            []
-    }
-
-
+    const editCruiseFormDefaultValues: EditCruiseFormValues = EditCruiseFormDefaultValues(location)
 
     const sections = CruiseFormSections()
 
-
-
     const [cruiseApplications, setCruiseApplications] =
         useState<CruiseApplication[]>([])
+
     useEffect(() => {
-        if (locationState.cruise)
-            (fetchCruiseApplications)(locationState.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
+        if (location?.state?.cruise)
+            (fetchCruiseApplications)(location.state.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
     }, []);
-
-
 
 
     return (
         <CruiseApplicationsContext.Provider value={{cruiseApplications, setCruiseApplications}}>
-            <FormTemplate sections={sections} type="1" BottomOptionBar={BottomOptionBar} defaultValues={editCruiseFormDefaultValues} />
+            <FormTemplate sections={sections} type={formType.CruiseDetails} BottomOptionBar={BottomOptionBar}
+                          defaultValues={editCruiseFormDefaultValues} />
         </CruiseApplicationsContext.Provider>)
 }

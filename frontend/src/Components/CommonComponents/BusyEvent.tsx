@@ -1,6 +1,7 @@
 import useCustomEvent from "../Tools/useCustomEvent";
 import {useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
+import {extendedUseLocation} from "../Pages/FormPage/FormPage";
 
 const BusyEvent = () => {
 
@@ -16,7 +17,7 @@ const BusyEvent = () => {
         };
     }, [busyListener])
 
-    const location = useLocation()
+    const location = extendedUseLocation()
     useEffect(() => {
         ResetBusyState()
     }, [location]);
