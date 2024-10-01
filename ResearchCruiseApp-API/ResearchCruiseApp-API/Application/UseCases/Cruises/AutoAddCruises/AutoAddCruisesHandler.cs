@@ -19,6 +19,7 @@ public class AutoAddCruisesHandler(
         
         foreach (var cruiseApplication in cruiseApplications)
         {
+            // TODO Change to only add cruise if application not exist in any other cruise
             var newCruise = CreateCruise(cruiseApplication);
             if (newCruise is null)
                 continue;

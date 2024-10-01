@@ -51,9 +51,9 @@ public class EditCruiseHandler(
         var newMainCruiseManagerId = request.CruiseFormModel.ManagersTeam.MainCruiseManagerId;
         var newMainDeputyManagerId = request.CruiseFormModel.ManagersTeam.MainDeputyManagerId;
         
-        if (await identityService.GetUserDtoById(newMainCruiseManagerId) is null)
+        if (newMainCruiseManagerId != Guid.Empty && await identityService.GetUserDtoById(newMainCruiseManagerId) is null)
             return Error.NotFound("Podany kierownik nie istnieje");
-        if ( await identityService.GetUserDtoById(newMainDeputyManagerId) is null)
+        if (newMainDeputyManagerId != Guid.Empty && await identityService.GetUserDtoById(newMainDeputyManagerId) is null)
             return Error.NotFound("Podany zastępca nie istnieje"); 
         
         cruise.MainCruiseManagerId = newMainCruiseManagerId;
