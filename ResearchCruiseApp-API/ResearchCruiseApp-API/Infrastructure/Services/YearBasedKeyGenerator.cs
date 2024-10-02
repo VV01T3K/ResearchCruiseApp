@@ -15,8 +15,8 @@ internal class YearBasedKeyGenerator : IYearBasedKeyGenerator
         var entities = await repository.GetAll(cancellationToken);
         var maxCurrentYearOrdinalNumber = entities
             .Where(e => e.Number.StartsWith(currentYear))
-            .MaxBy(e => e.Number[ordinalNumberStartIdx..])?
-            .Number[ordinalNumberStartIdx..] ?? "0";
+            .MaxBy(e => int.Parse(e.Number[ordinalNumberStartIdx..]))
+            ?.Number[ordinalNumberStartIdx..] ?? "0";
 
         return $"{currentYear}/{int.Parse(maxCurrentYearOrdinalNumber) + 1}";
     }
