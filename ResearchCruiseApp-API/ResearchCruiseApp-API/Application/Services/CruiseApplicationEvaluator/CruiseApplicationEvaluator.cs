@@ -60,7 +60,7 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
                     EvaluationConstants.PointsForDoctoralThesisResearchTask,
 
                 ResearchTaskType.ProjectPreparation =>
-                    researchTask.FinancingApproved ?? false
+                    researchTask.FinancingApproved.ToBool()
                         ? EvaluationConstants.PointsForProjectPreparationWithFinancing
                         : EvaluationConstants.PointsForProjectPreparationWithoutFinancing,
 

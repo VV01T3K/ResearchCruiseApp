@@ -3,12 +3,14 @@ import React, {useState} from "react";
 
 type Props = {
     id?: string,
-    index?:number
+    index?: number
     children?: React.ReactNode
     title: string,
 }
 
-export type SectionProps = {index?:number}
+export type SectionProps = {
+    index?: number
+}
 
 
 function FormSection(props: Props) {
@@ -71,7 +73,8 @@ function FormSection(props: Props) {
             {props.children}
         </div>
     )
-    const Title = () => (<div className={"form-section-title"}> {props.index && props.index + ". "}{props.title} </div>)
+    const Title = () =>
+        (<div className={"form-section-title"}> {props.index && props.index + ". "}{props.title} </div>)
 
     return (
         <>

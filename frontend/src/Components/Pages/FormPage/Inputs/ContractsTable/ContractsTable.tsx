@@ -14,7 +14,6 @@ import {
 } from "./ContractTableFields";
 import {notEmptyArray} from "../PublicationsTable/PublicationsTable";
 import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
-import {GuestsTeam} from "../GuestTeamsTable/GuestTeamsTable";
 
 
 export type Contract = {
@@ -34,14 +33,14 @@ export const contractCategoriesPL = ["Krajowa","Międzynarodowa"]
 
 const contractDefaultValues = [
     {
-    category: "domestic",
-    description: "",
-    institutionLocalization: "",
-    institutionName: "",
-    institutionUnit: "",
-    scan: {
-        name: "",
-        content: ""
+        category: "domestic",
+        description: "",
+        institutionLocalization: "",
+        institutionName: "",
+        institutionUnit: "",
+        scan: {
+            name: "",
+            content: ""
     }
 },
     {
@@ -57,8 +56,11 @@ const contractDefaultValues = [
     }
 
 ]
-export const fileExists = (value:FieldValues) => value.length === 0 ? true :
-    value.some((row:Contract)=>  !(row.scan.name && row.scan.content)) ? "Załącz plik": true
+export const fileExists = (value:FieldValues) => value.length === 0
+    ? true
+    : value.some((row:Contract) => !(row.scan.name && row.scan.content))
+        ? "Załącz plik"
+        : true
 
 export const contractOptions = contractCategoriesPL.map((taskLabel, index) =>
         ({label:taskLabel, value:contractDefaultValues[index]}))
@@ -76,7 +78,7 @@ const ContractTableContent = () => {
 }
 
 type ContractTableProps = FieldProps &
-    {historicalContracts?: Contract[]}
+    { historicalContracts?: Contract[] }
 
 const ContractRowLabel = (row:Contract) =>
     `${row.institutionName}, ${row.institutionUnit}, ${row.institutionLocalization}: ${row.description}`
@@ -85,14 +87,16 @@ export const ContractTable = (props: ContractTableProps) => {
 
     const formContext = useContext(FormContext)
 
-    const FilteredHistoricalContracts = (category:string) =>
-        props.historicalContracts?.filter((row) => row.category == category)
+    const FilteredHistoricalContracts = (category: string) =>
+        props.historicalContracts
+            ?.filter((row) => row.category == category)
             .map((row: Contract) =>
-                ({label: ContractRowLabel(row), value: row})) ?? []
+                ({ label: ContractRowLabel(row), value: row })
+            )
+        ?? []
 
     const selectOptions =  contractCategories.map((contractCategory, index)=>
             ({label:contractCategoriesPL[index], options: FilteredHistoricalContracts(contractCategory)})) ?? []
-
 
 
     const mdColWidths = [5,20,24,26, 20,5]

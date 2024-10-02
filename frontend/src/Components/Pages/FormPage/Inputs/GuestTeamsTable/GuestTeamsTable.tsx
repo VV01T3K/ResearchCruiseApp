@@ -21,7 +21,7 @@ const guestTeamDefault = {name:"", noOfPersons: 0}
 
 
 type Props = FormField & {
-    historicalGuestsInstitutions: string[]
+    historicalGuestsInstitutions?: string[]
 }
 
 const guestTeamsTableContent = () =>

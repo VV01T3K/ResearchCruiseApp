@@ -10,14 +10,14 @@ import {FieldContext, FieldTableWrapper, KeyContext,} from "../../Wrappers/Field
 import {FieldProps} from "../FormRadio";
 import {CellTools, OrdinalNumber} from "../TableParts";
 import {FIntField} from "../CellFormFields";
-import {FieldForKey, ReseachTask, taskTypes, taskTypesDefaultValues} from "./TaskTable";
+import {FieldForKey, ResearchTask, taskTypes, taskTypesDefaultValues} from "./TaskTable";
 import {InitContext} from "../UgTeamsTable/EvaluatedUgTeamsTable";
 
 registerLocale("pl", pl);
 
 type EvaluatedReseachTask = {
     id: string,
-    researchTask: ReseachTask,
+    researchTask: ResearchTask,
     points: string
 }
 

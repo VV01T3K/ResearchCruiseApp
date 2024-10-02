@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.Forms;
 
@@ -14,6 +15,9 @@ public class FormAInitValuesDto
     public List<string> ShipUsages { get; set; } = [];
     public List<ResearchAreaDto> ResearchAreas { get; set; } = [];
     public List<string> CruiseGoals { get; set; } = [];
-    public List<ResearchTaskDto> HistoricalTasks { get; set; } = [];
+    public List<ResearchTaskDto> HistoricalResearchTasks { get; set; } = [];
+    public List<ContractDto> HistoricalContracts { get; set; } = [];
     public List<UgUnitDto> UgUnits { get; set; } = [];
+    public List<string> HistoricalGuestInstitutions { get; set; } = [];
+    public List<SpubTaskDto> HistoricalSpubTasks { get; set; } = [];
 }

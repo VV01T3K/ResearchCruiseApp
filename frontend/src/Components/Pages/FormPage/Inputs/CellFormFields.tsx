@@ -7,6 +7,7 @@ import {CellFormTools, CellTools} from "./TableParts";
 import {SelectOptions, SelectSingleValue, SelectWrapper} from "../Wrappers/ReactSelectWrapper";
 import {FormContext, ReadOnlyContext} from "../Wrappers/FormTemplate";
 import {DisplayContext} from "./TaskTable/EvaluatedTaskTable";
+import CustomConverter from "../../../Tools/CustomConverter";
 
 export const FStandardDateField = (props:HTMLProps<any>) => {
     const displayContext = useContext(DisplayContext)
@@ -223,7 +224,7 @@ export const TextField = (props: { className?: string }) => {
 export const FormBoolField = (props: { className?: string }) => {
     const {cellValue, setCellValue, field} = CellFormTools()
     const readOnlyContext = useContext(ReadOnlyContext)
-    const isTrue = cellValue == "true"
+    const isTrue= CustomConverter.stringToBoolean(cellValue)
     return (
         <div className={"d-flex flex-row w-100"}>
             <div className={" field-common col-6 " + (isTrue ? " bg-primary text-white" : "")}

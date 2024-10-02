@@ -84,6 +84,7 @@ const UserDataManager = () => {
         navigate(Path.ForcedLogout)
     }
     const confirmMail = ConfirmEmail()
+
     return {userData:userContext!.userData, Login, Logout, ForceLogout, UserLoggedIn: IsUserLoggedIn, GetUserData, Register, ResetPassword, ConfirmEmail:confirmMail,
     ChangePassword}
 }

@@ -42,7 +42,7 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
     public Task<CruiseApplication?> GetByIdWithFormAContent(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.CruiseApplications
-            .Include(cruiseApplication => cruiseApplication.FormA)
+            .IncludeFormA()
             .IncludeFormAContent()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
@@ -57,10 +57,21 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
     public Task<FormA?> GetFormAByCruiseApplicationId(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.CruiseApplications
-            .Include(cruiseApplication => cruiseApplication.FormA)
+            .IncludeFormA()
             .IncludeFormAContent()
             .Where(cruiseApplication => cruiseApplication.Id == id)
             .Select(cruiseApplication => cruiseApplication.FormA)
             .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public Task<List<CruiseApplication>> GetAllByUserIdWithFormA(Guid userId, CancellationToken cancellationToken)
+    {
+        return CruiseApplicationsQuery
+            .IncludeFormA()
+            .IncludeFormAContent()
+            .Where(cruiseApplication =>
+                cruiseApplication.FormA!.CruiseManagerId == userId ||
+                cruiseApplication.FormA.DeputyManagerId == userId)
+            .ToListAsync(cancellationToken);
     }
 }

@@ -19,15 +19,13 @@ export const UgTeamsField = () => {
 }
 
 export const GuestTeamsField = () => {
-    //const formContext = useContext(FormContext)
+    const formContext = useContext(FormContext)
     return(
         <GuestTeamsTable
             className="two-fields-beside-md"
             fieldLabel="Uczestnictwo gości spoza UG"
             fieldName={researchTeamsSectionFieldNames.guestTeams}
-            historicalGuestsInstitutions={[
-                "Instytucja 1", "Instytucja 2", "Instytucja 3"
-            ]}
+            historicalGuestsInstitutions={formContext!.initValues?.historicalGuestInstitutions}
         />
     )
 }

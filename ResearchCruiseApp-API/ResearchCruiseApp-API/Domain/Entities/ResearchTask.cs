@@ -32,7 +32,8 @@ public class ResearchTask : Entity
     [StringLength(1024)]
     public string? Description { get; init; }
 
-    public bool? FinancingApproved { get; init; }
+    [StringLength(1024)]
+    public string? FinancingApproved { get; init; } = "false";
     
     public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];
     
@@ -66,6 +67,6 @@ public class ResearchTask : Entity
             EndDate?.GetHashCode() ?? 0 +
             FinancingAmount?.GetHashCode() ?? 0 +
             Description?.GetHashCode() ?? 0 +
-            FinancingApproved.GetHashCode();
+            FinancingApproved?.GetHashCode() ?? 0;
     }
 }

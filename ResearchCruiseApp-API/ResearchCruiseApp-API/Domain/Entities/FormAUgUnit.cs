@@ -12,6 +12,7 @@ public class FormAUgUnit : Entity
 
     [StringLength(1024)]
     public string NoOfEmployees { get; init; } = null!;
+    
     [StringLength(1024)]
     public string NoOfStudents { get; init; } = null!;
 }

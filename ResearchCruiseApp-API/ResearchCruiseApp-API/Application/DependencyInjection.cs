@@ -12,7 +12,9 @@ using ResearchCruiseApp_API.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Cruises;
 using ResearchCruiseApp_API.Application.Services.Factories.FormAContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormADtos;
+using ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtosFactory;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsA;
+using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp_API.Application;
@@ -51,6 +53,8 @@ public static class DependencyInjection
             .AddScoped<ICruiseApplicationDtosFactory, CruiseApplicationDtosFactory>()
             .AddScoped<ICruiseApplicationEvaluationDetailsDtosFactory, CruiseApplicationEvaluationDetailsDtosFactory>()
             .AddScoped<ICruisesFactory, CruisesFactory>()
-            .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>();
+            .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>()
+            .AddScoped<IFormAInitValuesDtosFactory, FormAInitValuesDtosFactory>()
+            .AddScoped<IFormUserDtosFactory, FormUserDtosFactory>();
     }
 }

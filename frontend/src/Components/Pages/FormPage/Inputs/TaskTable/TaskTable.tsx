@@ -32,13 +32,14 @@ import {
 } from "./TaskInputFields";
 import {BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton} from "../TableParts";
 import {DisplayContext} from "./EvaluatedTaskTable";
-export type ReseachTask = {
+export type ResearchTask = {
     type: string,
     title?: string,
     magazine?: string,
     author?: string,
     institution?: string,
     date?: string,
+    name?: string,
     startDate?: string,
     endDate?: string,
     financingApproved?: string
@@ -63,11 +64,11 @@ export const taskTypes = [
     "Inne zadanie",
 ]
 
-export const taskTypesDefaultValues: ReseachTask[] = [
+export const taskTypesDefaultValues: ResearchTask[] = [
     {type: "0", author: "", title: ""},
     {type: "1", author: "", title: ""},
     {type: "2", author: "", title: ""},
-    {type: "3", title: "", date: "", name: "", financingApproved: "false"},
+    {type: "3", title: "", date: "", financingApproved: "false"},
     {type: "4", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
     {type: "5", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
     {type: "6", title: "", financingAmount: "0.00", startDate: "", endDate: "", securedAmount: "0.00"},
@@ -120,7 +121,7 @@ export const FieldForKey = () => {
         case "ministerialPoints":
             return <MinisterialPointsField/>
         default:
-            return (<></>)
+            return <></>
     }
 
 }
@@ -128,7 +129,6 @@ export const FieldForKey = () => {
 const FieldsCell = () => {
     const displayContext = useContext(DisplayContext)
     const {rowValue} = CellFormTools()
-    console.log(rowValue)
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center align-items-center w-100">
             {rowValue && rowValue.type && Object.keys(taskTypesDefaultValues[rowValue.type]).map((key, index) =>
@@ -158,11 +158,11 @@ const taskTableContent = () =>
     ]
 
 type TaskTableProps = FieldProps &
-    { historicalTasks?: ReseachTask[] }
+    { historicalTasks?: ResearchTask[] }
 
 const dateOptions: Intl.DateTimeFormatOptions = {month: '2-digit', year: 'numeric'}
 
-const TaskRowLabel = (row: ReseachTask) => (row.author ? ("Autor: " + row.author + ", ") : "")
+const TaskRowLabel = (row: ResearchTask) => (row.author ? ("Autor: " + row.author + ", ") : "")
     + (row.title ? ("Tytuł: " + row.title + ", ") : "")
     + (row.institution ? ("Instytucja: " + row.institution + ", ") : "")
     + (row.date ? ("Data: " + new Date(row.date).toLocaleDateString('pl-PL') + ", ") : "")
@@ -177,13 +177,20 @@ export const TasksTable = (props: TaskTableProps) => {
     const formContext = useContext(FormContext)
 
     const FilteredHistoricalTasks = (index: number) =>
-        props.historicalTasks?.filter((row) => Number(row.type) == index)
-            .map((row: ReseachTask) =>
-                ({label: TaskRowLabel(row), value: row})) ?? []
+        props.historicalTasks
+            ?.filter((row) =>
+                Number(row.type) == index
+            )
+            .map((row: ResearchTask) => ({
+                label: TaskRowLabel(row),
+                value: row
+            })) ?? []
 
     const selectOptions = () => {
-        return taskTypes.map((taskType, index) =>
-            ({label: taskType, options: FilteredHistoricalTasks(index)})) ?? []
+        return taskTypes.map((taskType, index) => ({
+            label: taskType,
+            options: FilteredHistoricalTasks(index)
+        })) ?? []
     }
 
 
@@ -204,17 +211,23 @@ export const TasksTable = (props: TaskTableProps) => {
             required: "Pole wymagane",
             validate: {
                 notEmptyArray: (value: FieldValues) => {
-                    if (value.some((row: ReseachTask) => {
-                        return Object.keys(taskTypesDefaultValues[Number(row.type)]).some((key) => {
-                            return key == "type" ? false : row[key as keyof ReseachTask] == "" || row[key as keyof ReseachTask] == undefined
-                        });
+                    if (value.some((row: ResearchTask) => {
+                        console.log(row)
+                        console.log(Object
+                            .keys(taskTypesDefaultValues[Number(row.type)]))
+                        return Object
+                            .keys(taskTypesDefaultValues[Number(row.type)])
+                            .some((key) => {
+                                return key == "type"
+                                    ? false
+                                    : row[key as keyof ResearchTask] == "" || row[key as keyof ResearchTask] == undefined
+                            })
                     }))
                         return "Wypełnij wszystkie pola"
                 }
             }
         },
         render: ({field}: FieldValues) => {
-            console.log(field.value)
             return(
                 <FieldContext.Provider value={field}>
                     <Render/>
