@@ -51,7 +51,7 @@ public class ResearchTask : Entity
                otherResearchTask.Date == Date &&
                otherResearchTask.StartDate == StartDate &&
                otherResearchTask.EndDate == EndDate &&
-               Equals(otherResearchTask.FinancingAmount, FinancingAmount) &&
+               otherResearchTask.FinancingAmount == FinancingAmount &&
                otherResearchTask.Description == Description &&
                otherResearchTask.FinancingApproved == FinancingApproved;
     }

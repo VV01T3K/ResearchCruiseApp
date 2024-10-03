@@ -79,9 +79,8 @@ public class FormBDto
     
     //Publikacje i Prace
     public List<PublicationDto>? Publications { get; set; }
-    public List<ThesisDto>? Theses { get; set; }
     
     
     //Zadania SPUB
-    public List<SpubTaskDto> SpubTasks { get; set; }
+    public List<SpubTaskDto> SpubTasks { get; set; } = [];
 }

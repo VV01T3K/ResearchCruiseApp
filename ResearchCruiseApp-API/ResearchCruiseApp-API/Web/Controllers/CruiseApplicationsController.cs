@@ -44,23 +44,6 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddCruiseApplication(FormADto formADto)
     {
-
-        if (!ModelState.IsValid)
-        {
-            // Pobranie informacji o błędach walidacji
-            var errors = ModelState
-                .Where(ms => ms.Value.Errors.Count > 0)
-                .Select(ms => new 
-                {
-                    Field = ms.Key, // Nazwa pola, które nie przeszło walidacji
-                    Errors = ms.Value.Errors.Select(e => e.ErrorMessage) // Lista komunikatów o błędach
-                })
-                .ToList();
-
-            // Zwrócenie błędów jako odpowiedź
-            return BadRequest(new { Errors = errors });
-        }
-
         var result = await mediator.Send(new AddCruiseApplicationCommand(formADto));
         return result.IsSuccess
             ? Created()

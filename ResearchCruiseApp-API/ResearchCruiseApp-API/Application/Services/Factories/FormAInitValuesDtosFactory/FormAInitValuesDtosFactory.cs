@@ -91,7 +91,6 @@ public class FormAInitValuesDtosFactory(
             "jedynie w nocy (maks. 8–12 h)",
             "8–12 h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia" +
             "o różnych porach",
-
             "w inny sposób"
         ];
     }

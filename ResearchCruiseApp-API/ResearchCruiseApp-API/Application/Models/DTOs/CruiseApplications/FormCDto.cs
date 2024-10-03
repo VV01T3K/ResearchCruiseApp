@@ -83,5 +83,5 @@ public class FormCDto
     
     
     //Zadania SPUB
-    public List<SpubTask> SpubTasks { get; set; }
+    public List<SpubTask> SpubTasks { get; set; } = [];
 }

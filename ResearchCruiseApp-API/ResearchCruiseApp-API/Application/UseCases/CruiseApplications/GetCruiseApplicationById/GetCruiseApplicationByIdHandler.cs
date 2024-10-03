@@ -1,4 +1,3 @@
-using AutoMapper;
 using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
@@ -10,8 +9,7 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruis
 
 public class GetCruiseApplicationByIdHandler(
     ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
-    ICruiseApplicationsRepository cruiseApplicationsRepository,
-    IMapper mapper)
+    ICruiseApplicationsRepository cruiseApplicationsRepository)
     : IRequestHandler<GetCruiseApplicationByIdQuery, Result<CruiseApplicationDto>>
 {
     public async Task<Result<CruiseApplicationDto>> Handle(

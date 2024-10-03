@@ -6,7 +6,7 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class ResearchTaskDto
 {
-    public string Type { get; set; }
+    public string Type { get; set; } = null!;
 
     public string? Title { get; set; }
         

@@ -6,24 +6,74 @@ namespace ResearchCruiseApp_API.Domain.Entities;
 public class Contract : Entity
 {
       [StringLength(1024)]
-      public string Category { get; set; } = null!;
+      public string Category { get; init; } = null!;
       
       [MaxLength(1024)]
-      public string InstitutionName { get; set; } = null!;
+      public string InstitutionName { get; init; } = null!;
       
       [MaxLength(1024)] 
-      public string InstitutionUnit { get; set; } = null!;
+      public string InstitutionUnit { get; init; } = null!;
       
       [MaxLength(1024)]
-      public string InstitutionLocalization { get; set; } = null!;
+      public string InstitutionLocalization { get; init; } = null!;
       
       [MaxLength(1024)]
-      public string Description { get; set; } = null!;
+      public string Description { get; init; } = null!;
 
-      [MaxLength(1024)]
-      public string ScanName { get; set; } = null!;
+      private string? _scanName;
+      
+      [MaxLength(1024)]  
+      public string ScanName
+      {
+            get => _scanName ?? throw new InvalidOperationException("ScanName has not been set.");
+            set
+            {
+                  if (_scanName is null)
+                        throw new InvalidOperationException("ScanName can only be set once.");
+                  _scanName = value;
+            }
+      }
 
-      public byte[] ScanContent { get; set; } = [];
+      private byte[]? _scanContent;
 
-      public List<FormAContract> FormAContracts { get; set; } = [];
+      public byte[] ScanContent
+      {
+            get => _scanContent ?? throw new InvalidOperationException("ScanContent has not been set.");
+            set
+            {
+                  if (_scanContent is null)
+                        throw new InvalidOperationException("ScanName can only be set once.");
+                  _scanContent = value;
+            }
+      }
+
+      public List<FormAContract> FormAContracts { get; init; } = [];
+      
+      
+      public override bool Equals(object? other)
+      {
+            if (other is null)
+                  return false;
+
+            var otherResearchTask = (Contract)other;
+
+            return otherResearchTask.Category == Category &&
+                   otherResearchTask.InstitutionName == InstitutionName &&
+                   otherResearchTask.InstitutionUnit == InstitutionUnit &&
+                   otherResearchTask.InstitutionLocalization == InstitutionLocalization &&
+                   otherResearchTask.Description == Description &&
+                   otherResearchTask.ScanName == ScanName &&
+                   otherResearchTask.ScanContent.SequenceEqual(ScanContent);
+      }
+
+      public override int GetHashCode()
+      {
+            return Category.GetHashCode() +
+                   InstitutionName.GetHashCode() +
+                   InstitutionUnit.GetHashCode() +
+                   InstitutionLocalization.GetHashCode() +
+                   Description.GetHashCode() +
+                   ScanName.GetHashCode() +
+                   ScanContent.GetHashCode();
+      }
 }
