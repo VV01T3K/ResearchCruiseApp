@@ -77,6 +77,7 @@ public class EditCruiseHandler(
             affectedCruises.Add(cruise); // The explicitly edited cruise is of course also affected
 
         cruise.CruiseApplications = newCruiseApplications;
+        await unitOfWork.Complete(cancellationToken); // EF will remove new cruise applications from their old cruises
         await cruisesService.CheckEditedCruisesManagersTeams(affectedCruises, cancellationToken);
     }
     
