@@ -6,31 +6,36 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class ResearchTaskDto
 {
-    public string Type { get; set; } = null!;
+    public string Type { get; init; } = null!;
 
-    public string? Title { get; set; }
+    public string? Title { get; init; }
         
-    public string? Author { get; set; }
+    public string? Author { get; init; }
         
-    public string? Institution { get; set; }
+    public string? Institution { get; init; }
         
-    public string? Date { get; set; }
+    public string? Date { get; init; }
         
-    public string? StartDate { get; set; }
+    public string? StartDate { get; init; }
     
-    public string? EndDate { get; set; }
+    public string? EndDate { get; init; }
         
-    public string? FinancingAmount { get; set; }
+    public string? FinancingAmount { get; init; }
     
     public string? FinancingApproved { get; init; }
         
-    public string? Description { get; set; }
+    public string? Description { get; init; }
+
+    public string? SecuredAmount { get; init; }
+
+    public string? MinisterialPoints { get; init; }
     
     private class MapProfile : Profile
     {
         public MapProfile()
         {
-            CreateMap<ResearchTask, ResearchTaskDto>()                .ForMember(
+            CreateMap<ResearchTask, ResearchTaskDto>()
+                .ForMember(
                 dest => dest.Type,
                 options =>
                     options.MapFrom(src => ((int)src.Type).ToString()));

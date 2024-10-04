@@ -23,7 +23,6 @@ export default function LinkWithState(props: Props) {
                 if(!props.disabled) {
                     if(props.useWindow){
                         const param = Buffer.from(JSON.stringify(props.state)).toString("base64")
-                        console.log(props.state)
                         // temporary
                         let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
                             width=900,height=1200,left=-1000,top=-1000`;

@@ -34,6 +34,12 @@ public class ResearchTask : Entity
 
     [StringLength(1024)]
     public string? FinancingApproved { get; init; } = "false";
+
+    [StringLength(1024)]
+    public string? SecuredAmount { get; set; }
+
+    [StringLength(1024)]
+    public string? MinisterialPoints { get; set; }
     
     public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];
     

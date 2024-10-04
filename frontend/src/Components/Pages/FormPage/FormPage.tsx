@@ -1,11 +1,11 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {FormValues} from "./Wrappers/FormTemplate";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import FormA from "./Forms/FormA/FormA";
 import FormB from "./Forms/FormB";
 import NotFoundPage from "../NotFoundPage";
-import { Buffer } from 'buffer';
-
+import {Buffer} from 'buffer';
+import {Path} from "../../Tools/Path";
 
 export type FormPageLocationState = {
     formType: string,
@@ -28,7 +28,6 @@ export const extendedUseLocation = () => {
             return {state:state}
         }
         catch (e){
-            console.log(e)
             return undefined
         }
     }
@@ -38,14 +37,18 @@ export const extendedUseLocation = () => {
 
 function FormPage(){
     const location = extendedUseLocation()
-    console.log(location)
+    const navigate = useNavigate()
+    useEffect(() => {
+        if(!location?.state)
+            navigate(Path.Default)
+    }, []);
 
     return (
         <>
-            {location.state?.formType == "A" && <FormA/>}
-            {location.state?.formType == "B" && <FormB/>}
+            {location?.state?.formType == "A" && <FormA/>}
+            {location?.state?.formType == "B" && <FormB/>}
             {/*{location.state?.formType == "C" && <FormC/>}*/}
-            {!location.state && <NotFoundPage/>}
+            {!location?.state && <NotFoundPage/>}
         </>
     )
 }

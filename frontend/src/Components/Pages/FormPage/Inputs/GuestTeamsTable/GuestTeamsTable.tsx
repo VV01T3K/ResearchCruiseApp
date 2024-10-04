@@ -49,7 +49,6 @@ function GuestTeamsTable(props: Props) {
     const emptyText = "Nie dodano żadnej instytucji"
     const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, guestTeamsTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName))
-    console.log(formContext?.getValues())
 
     const fieldProps = {
         ...props,

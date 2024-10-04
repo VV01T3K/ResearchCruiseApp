@@ -1,10 +1,50 @@
-import {DownloadButtonDefault, SaveMenu} from "./SaveMenu";
+import {DownloadButtonDefault, ResendButton, SaveMenu} from "./SaveMenu";
 import React, {useContext, useState} from "react";
 import {FormContext} from "../Pages/FormPage/Wrappers/FormTemplate";
 import {handlePrint, handleSave, handleSubmit} from "./FormButtonsHandlers";
-import Api from "./Api";
 import {ReactComponent as CancelIcon}  from "/node_modules/bootstrap-icons/icons/x-lg.svg";
+import {extendedUseLocation} from "../Pages/FormPage/FormPage";
+import Api from "./Api";
+import api from "./Api";
+import {_} from "react-hook-form/dist/__typetest__/__fixtures__";
+import {useNavigate} from "react-router-dom";
+import {Path} from "./Path";
 
+const SupervisorMenu = () => {
+    const location = extendedUseLocation()
+    const [response, setResponse] = useState<undefined|string>(undefined)
+    const acceptPatch = (accept:string) => Api.patch(`/api/CruiseApplications/${location?.state.cruiseApplicationId}
+    /supervisorAnswer?accept=${accept}&supervisorCode=${location?.state.supervisorCode}`,
+        null, {raw:true}).catch(err=>{ setResponse(err.request.response); throw err})
+    const accept = () => acceptPatch("true")
+        .then(_=>setResponse("Zgłoszenie zostało zaakceptowane")).catch(err=>{})
+
+    const deny = () =>  acceptPatch("false")
+        .then(_=>setResponse("Zgłoszenie zostało odrzucone")).catch(err=>{})
+
+
+
+    const AcceptButton = () => {
+        return (<button onClick={accept} className="form-page-option-button-default"> Zaakceptuj zgłoszenie </button>)
+    }
+
+    const DenyButton = () => (
+        <button onClick={deny} className="form-page-option-button bg-danger w-100"> Odrzuć zgłoszenie </button>
+    )
+
+    return(
+        <>
+            {!response &&
+                <>
+                    <AcceptButton/>
+                    <DenyButton/>
+                </>
+            }
+            {response && <div className={"text-center justify-content-center w-100 p-2"}> {response} </div>}
+
+        </>
+    )
+}
 
 
 const SendMenu = () => {
@@ -35,10 +75,11 @@ const SendMenu = () => {
     )
     const ConfirmSendButton = () => {
         const formContext = useContext(FormContext)
-        const handleSubmit = () => Api.post("/api/CruiseApplications/", formContext?.getValues())
+        const navigate = useNavigate()
+        const handleSubmit = () => Api.post("/api/CruiseApplications/", formContext?.getValues()).then(()=>navigate(Path.CruiseApplications))
         const onClickAction = formContext!.handleSubmit(handleSubmit)
         return (
-            <button onClick={handleSubmit} className="form-page-option-button w-100"> Potwierdź </button>
+            <button onClick={onClickAction} className="form-page-option-button w-100"> Potwierdź </button>
         )
     }
 
@@ -65,7 +106,7 @@ export const BottomOptionBar = () => {
     const formContext = useContext(FormContext)
     const saveMenu = SaveMenu()
     const sendMenu = SendMenu()
-
+    const location = extendedUseLocation()
 
     const EditableFormButtons = () => (
         <>
@@ -77,6 +118,7 @@ export const BottomOptionBar = () => {
     const ReadonlyFormButtons = () => (
         <>
             <PrintButton/>
+            <ResendButton/>
             <DownloadButtonDefault/>
         </>
     )
@@ -86,12 +128,22 @@ export const BottomOptionBar = () => {
             {!formContext!.readOnly && <EditableFormButtons/> }
             {formContext!.readOnly && <ReadonlyFormButtons/> }
         </>
-
     )
+
+
+
+
+
     return(
     <div className="form-page-option-bar">
-        {!saveMenu.enabled && !sendMenu.enabled && <DefaultMenu/>}
-        {saveMenu.enabled && <saveMenu.menu/>}
-        {sendMenu.enabled && <sendMenu.Menu/>}
+        {location?.state.supervisorCode && <SupervisorMenu/>}
+        {!location?.state.supervisorCode &&
+            <>
+                {!saveMenu.enabled && !sendMenu.enabled && <DefaultMenu/>}
+                {saveMenu.enabled && <saveMenu.menu/>}
+                {sendMenu.enabled && <sendMenu.Menu/>}
+            </>
+        }
+
     </div>)
 }

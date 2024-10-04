@@ -31,8 +31,6 @@ function EmailConfirmPage(){
             await ConfirmEmail()
             setConfirmed(true)
         } catch (error) {
-            console.log(error)
-
             handleConfirmError(error)
         }
     }

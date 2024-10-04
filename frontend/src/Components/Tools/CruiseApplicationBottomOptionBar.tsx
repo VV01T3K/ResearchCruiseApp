@@ -102,7 +102,6 @@ export const BottomOptionBar = () => {
     )
 
     const applicationContext = useContext(CruiseApplicationContext)
-    console.log(applicationContext)
     const WaitingForSupervisorMenu = () => {
         const CancelApplication = CancelApplicationButton()
 

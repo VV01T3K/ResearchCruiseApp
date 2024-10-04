@@ -77,7 +77,8 @@ export const FStringValueField = () => {
 
     return(
         <>
-            {initContext && initContext.find((unit:UgUnit)=>unit.id == cellValue)?.name}
+            {!displayContext && initContext && initContext.find((unit:UgUnit)=>unit.id == cellValue)?.name}
+            {displayContext && cellValue}
         </>
     )
 }

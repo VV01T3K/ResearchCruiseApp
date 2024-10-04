@@ -32,11 +32,9 @@ function EvaluatedUgTeamsTable(props: Props) {
     return (
         <div className={props.className + " field-wrapper"}>
             <FieldLabel fieldLabel={props.fieldLabel}/>
-            <InitContext.Provider value={props.initValues}>
                 <DisplayValueContext.Provider value={props.ugTeams}>
                     <Render/>
                 </DisplayValueContext.Provider>
-            </InitContext.Provider>
         </div>
     )
 }

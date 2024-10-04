@@ -24,8 +24,10 @@ export const CreateRow = ()=> {
     const fieldContext = useContext(FieldContext)
 
     return (selectedOption: SelectSingleValue) => {
-        fieldContext!.value.push(selectedOption!.value)
-        fieldContext!.onBlur()
+        console.log(selectedOption!.value)
+
+        var newValue = [...fieldContext!.value, {...selectedOption!.value}]
+        fieldContext!.onChange(newValue)
         formContext!.trigger(fieldContext!.name)
     }
 }
@@ -34,6 +36,7 @@ export const CreateRowWithButton = ()=> {
     const formContext = useContext(FormContext)
     const fieldContext = useContext(FieldContext)
     return (newRow:any) => {
+        console.log(newRow)
         var newValue = [...fieldContext!.value, {...newRow}]
         fieldContext!.onChange(newValue)
         formContext!.trigger(fieldContext!.name)
@@ -124,7 +127,6 @@ export const CellFormTools = () => {
     const fieldContext = useContext(FieldContext)
     const keyContext = useContext(KeyContext)
     const rowValue = fieldContext!.value[cellContext!.rowIndex]
-    // console.log(rowValue)
     const cellValue = rowValue ? rowValue[keyContext!]: null
     function setCellValue (e: any){
         fieldContext!.value[cellContext!.rowIndex][keyContext!] = e;

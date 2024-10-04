@@ -132,6 +132,10 @@ public class FormADto
                         options.MapFrom(src =>
                             src.OptimalPeriod.Max()))
                 .ForMember(
+                    dest => dest.ResearchArea,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
                     dest => dest.Permissions,
                     options =>
                         options.Ignore()) // Member requires complex logic

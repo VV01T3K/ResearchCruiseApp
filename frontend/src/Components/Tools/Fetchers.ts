@@ -10,8 +10,7 @@ export async function fetchCruiseApplications(
         cruiseApplicationsShortInfo.map(cruiseApplicationShortInfo =>
             Api
                 .get(`/api/CruiseApplications/${cruiseApplicationShortInfo.id}`)
-                .catch(error =>
-                    console.log(error.message)
+                .catch(error => {}
                 )
         )
     )

@@ -6,6 +6,8 @@ import {BottomMenuWithAddButtonAndHistory, OrdinalNumber, RemoveRowButton} from 
 import {FieldProps} from "./FormRadio";
 import FieldWrapper from "./FieldWrapper";
 import {FormContext} from "../Wrappers/FormTemplate";
+import {notEmptyArray} from "./PublicationsTable/PublicationsTable";
+import {FieldContextWrapper} from "./PermissionsTable/PermissionsTable";
 
 
 export type SpubTask = {
@@ -77,32 +79,20 @@ const SpubTaskRowLabel = (row:SpubTask) =>
 
 export const SpubTaskTable = (props: ThesesTableProps) => {
 
+    const formContext = useContext(FormContext)
 
-    const SpubTaskRender = ({field}:FieldValues)=> {
-
-        const formContext = useContext(FormContext)
-
-        const selectOptions = props.historicalSpubTasks?.map((row: SpubTask) =>
-            ({label: SpubTaskRowLabel(row), value: row})) ?? []
+    const selectOptions = props.historicalSpubTasks?.map((row: SpubTask) =>
+        ({label: SpubTaskRowLabel(row), value: row})) ?? []
 
 
-        const mdColWidths = [5,15,15,60, 5]
-        const mdColTitles = ["Lp.", "Rok rozpoczęcia", "Rok zakończenia", "Nazwa zadania", ""]
-        const colTitle = "Zadania"
-        const bottomMenu =
-            <BottomMenuWithAddButtonAndHistory newOption={spubTaskDefaultValue} historicalOptions={selectOptions}/>
-        const emptyText = "Nie dodano żadnego zadania"
-        const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,ThesesTableContent,
-            bottomMenu, emptyText, formContext!.getValues(props.fieldName))
-
-
-        return(
-            <FieldContext.Provider value={field}>
-                <Render/>
-            </FieldContext.Provider>
-        )
-    }
-
+    const mdColWidths = [5,15,15,60, 5]
+    const mdColTitles = ["Lp.", "Rok rozpoczęcia", "Rok zakończenia", "Nazwa zadania", ""]
+    const colTitle = "Zadania"
+    const bottomMenu =
+        <BottomMenuWithAddButtonAndHistory newOption={spubTaskDefaultValue} historicalOptions={selectOptions}/>
+    const emptyText = "Nie dodano żadnego zadania"
+    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,ThesesTableContent,
+        bottomMenu, emptyText, formContext!.getValues(props.fieldName))
 
     const fieldProps = {
         ...props,
@@ -110,22 +100,14 @@ export const SpubTaskTable = (props: ThesesTableProps) => {
         rules: {
             required: false,
             validate: {
-                notEmptyArray: (value:FieldValues) => {
-                    if (value.some((row:SpubTask) => {
-                        return Object.values(row).some(field => {
-                                return !field
-                            }
-                        )
-                    }))
-                        return"Wypełnij wszystkie pola"
-                },
+                notEmptyArray: notEmptyArray<SpubTask>,
                 rightYearPeriod:(value:FieldValues) => {
                     if (value.some((row:SpubTask) => row.yearTo<row.yearFrom))
                         return "Rok zakończenia przed rokiem rozpoczęcia"
                 }
             }
         },
-        render: SpubTaskRender
+        render: FieldContextWrapper(Render)
     }
 
     return (

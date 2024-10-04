@@ -38,26 +38,35 @@ export const FormSections = (props: { sections: FormSectionType[] }) => (
 )
 
 export const WatchContext = createContext(null)
+
 function FormTemplate(props: Props) {
 
     const location = extendedUseLocation()
 
+
+    const defaultGetForm = () => Api.get(
+        `/api/CruiseApplications/${location?.state.cruiseApplicationId}/form${location?.state.formType}`
+    )
+    const getFormForSupervisor  = () => Api.get(
+        `/api/CruiseApplications/${location?.state.cruiseApplicationId}
+        /formAForSupervisor?supervisorCode=${location?.state.supervisorCode}`
+    )
+
+    const getForm = location?.state.supervisorCode ? getFormForSupervisor : defaultGetForm
+
     const [defaultValues, setDefaultValues] = useState(props.defaultValues ?? undefined)
 
     useEffect(() => {
-        if (location?.state.cruiseApplicationId && !defaultValues && location.state?.formType == 'A') {
-            Api
-                .get(`/api/CruiseApplications/${location.state?.cruiseApplicationId}/form${location.state?.formType}`)
-                .then(response => {
+        if(location?.state.cruiseApplicationId && location.state.formType && !defaultValues ) {
+                getForm().then(response => {
                     setDefaultValues(response?.data)
                     form.reset(response?.data)
                 })
         }
     }, []);
 
-
-    const initEndpoint = (_formType: FormTypeValues)=> {
-        switch (_formType) {
+    const initEndpoint = (_formType: FormTypeValues) => {
+        switch (_formType){
             case formType.A:
                 return '/Forms/InitValues/A'
             case formType.ApplicationDetails:
@@ -75,7 +84,6 @@ function FormTemplate(props: Props) {
         Api
             .get(initValuesPath)
             .then(response => {
-                console.log(response?.data)
                 setFormInitValues(response?.data)
                 form.reset()
             })
@@ -109,7 +117,8 @@ function FormTemplate(props: Props) {
         initValues: formInitValues
     };
 
-    console.log(formContext.formState.errors)
+    console.log(formContext!.getValues())
+
 
 
     return (

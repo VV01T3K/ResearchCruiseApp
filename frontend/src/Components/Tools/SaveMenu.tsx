@@ -16,6 +16,13 @@ export const DownloadButtonDefault = () => {
     )
 }
 
+export const ResendButton = () => {
+    const formContext = useContext(FormContext)
+    return(
+        <div onClick={()=>formContext!.setReadOnly(false)} className="form-page-option-button-default"> Kopiuj</div>
+    )
+}
+
 export function SaveMenu(){
     const [savingStated, setSavingStarted] = useState(false)
 

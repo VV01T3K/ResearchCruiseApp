@@ -17,7 +17,7 @@ const ResetPassword = async (resetData: FieldValues) =>
 const ChangePassword = async (changePasswordData:FieldValues) =>
     Api.patch('/account/password', changePasswordData, {raw:true})
 
-const IsUserLoggedIn = () =>  sessionStorage.getItem("accessToken") != null
+export const IsUserLoggedIn = () =>  sessionStorage.getItem("accessToken") != null
 
 const ConfirmEmail = () => {
     const { search} = useLocation();

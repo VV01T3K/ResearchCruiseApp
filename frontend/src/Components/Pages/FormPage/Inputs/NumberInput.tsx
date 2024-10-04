@@ -23,8 +23,6 @@ export const ConvertNumberToString = (value:number) => {
 
 function NumberInput(props: Props){
     const formContext = useContext(FormContext)
-    console.log(props.defaultValue)
-
     const ParseInput = (value:string) => {
         let returnVal;
         if (textIsIntNumber(value)) {

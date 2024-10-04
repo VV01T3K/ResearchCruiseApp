@@ -27,6 +27,7 @@ internal static class CruiseApplicationsQueryableExtensions
     {
         return query
             .Include(cruiseApplication => cruiseApplication.FormA!.Permissions)
+            .Include(cruiseApplication => cruiseApplication.FormA!.ResearchArea)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
             .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)

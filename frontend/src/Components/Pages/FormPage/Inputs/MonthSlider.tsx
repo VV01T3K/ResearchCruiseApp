@@ -57,8 +57,6 @@ const MonthSlider = (props: Props) => {
     // const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
 
     const onChange = (selectedOption: MonthRange) => {
-        console.log(selectedOption)
-        console.log(minVal, maxVal)
         if(Number(selectedOption[0])>=minVal && Number(selectedOption[1])<=maxVal){
             formContext!.setValue( props.fieldName, selectedOption?.map((value)=>String(value)), readyFieldOptions);
             if(props.fieldNameToAlsoSet)

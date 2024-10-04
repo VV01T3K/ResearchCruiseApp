@@ -83,7 +83,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
     
     [AllowAnonymous]
-    [HttpGet("{cruiseApplicationId:guid}/formAForAcceptance")]
+    [HttpGet("{cruiseApplicationId:guid}/formAForSupervisor")]
     public async Task<IActionResult> GetFormAForSupervisor(Guid cruiseApplicationId, [FromQuery] string supervisorCode)
     {
         var result = await mediator.Send(new GetFormAForSupervisorQuery(cruiseApplicationId, supervisorCode));

@@ -14,7 +14,7 @@ const researchTeamsSectionFieldNames = {
 
 const UgTeamsField = () => {
     const formContext = useContext(FormContext)
-
+    console.log(formContext?.initValues!)
     return(
     <EvaluatedUgTeamsTable
         className="two-fields-beside-md"

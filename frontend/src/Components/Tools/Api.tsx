@@ -27,10 +27,10 @@ const setAccessToken = (config: InternalAxiosRequestConfig) => {
 
 
 async function refreshToken () {
+
     const refreshResponse = await axios.post('/account/refresh', {
         accessToken: sessionStorage.getItem('accessToken'),
         refreshToken:  sessionStorage.getItem('refreshToken')})
-    console.log(refreshResponse)
     const newAccessToken = refreshResponse?.data.accessToken;
     sessionStorage.setItem('accessToken', newAccessToken);
 }
@@ -39,11 +39,11 @@ export const Interceptors = () => {
     const {ForceLogout} = userDataManager()
     const navigate = useNavigate()
     async function HandleErrNetwork(config: InternalAxiosRequestConfig<any>) {
-        console.log('connection problems..')
         if(config && !config._retry) {
             config._retry = true;
             try {
-                await refreshToken()
+                // if(sessionStorage.getItem('accessToken'))
+                    await refreshToken()
                 // return axios(config);
             } catch (refreshError) {
                 ForceLogout()

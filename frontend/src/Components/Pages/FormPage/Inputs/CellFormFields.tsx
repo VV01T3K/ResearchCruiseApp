@@ -21,7 +21,8 @@ export const FormStandardDateField = (props: { className?: string }) => {
         <DatePicker
             disabled={readOnlyContext!}
             className={"field-common " + props.className}
-            {...field} {...datePickerCommon}
+             {...datePickerCommon}
+            onBlur={()=>field!.onBlur()}
             selected={cellValue ? new Date(cellValue) : null}
             onChange={(e)=>setCellValue(e?.toISOString())}
         />
@@ -55,7 +56,8 @@ export const FormDateFieldOnlyYear = (props: { className?: string }) => {
             dateFormat="yyyy"
             showYearPicker
             className={"field-common w-100 " + props.className}
-            {...field} {...datePickerCommon}
+            onBlur={()=>field!.onBlur()}
+            {...datePickerCommon}
             selected={cellValue ? new Date(cellValue, 0) : null}
             onChange={(e)=>setCellValue(e?.getFullYear().toString())}
         />
@@ -94,7 +96,8 @@ export const FormDateFieldEnd = (props:{className?:string}) => {
             endDate={cellValue ? new Date(cellValue) : undefined}
             minDate={rowValue.startDate ? new Date(rowValue.startDate) : undefined}
             selectsEnd
-            {...field} {...datePickerPeriodCommon}
+            onBlur={()=>field!.onBlur()}
+            {...datePickerPeriodCommon}
             selected={cellValue}
             onChange={(e)=>setCellValue(e?.toISOString())}
         />
@@ -118,7 +121,8 @@ export const FormDateFieldStart = (props: { className?: string }) => {
             startDate={cellValue ? new Date(cellValue  as string) : undefined}
             maxDate={rowValue.endDate ? new Date(rowValue.endDate) : undefined}
             selectsStart
-            {...field} {...datePickerPeriodCommon}
+            onBlur={()=>field!.onBlur()}
+            {...datePickerPeriodCommon}
             selected={cellValue}
             onChange={(e)=>setCellValue(e?.toISOString())}
         />
