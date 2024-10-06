@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AcceptCruiseApplication;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AnswerAsSupervisor;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
@@ -20,7 +21,7 @@ namespace ResearchCruiseApp_API.Web.Controllers;
 [ApiController]
 public class CruiseApplicationsController(IMediator mediator) : ControllerBase
 {
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet]
     public async Task<IActionResult> GetAllCruiseApplications()
     {
@@ -30,7 +31,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
         
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCruiseApplicationById(Guid id)
     {
@@ -40,7 +41,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpPost]
     public async Task<IActionResult> AddCruiseApplication(FormADto formADto)
     {
@@ -50,7 +51,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
     
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("{id:guid}/evaluation")]
     public async Task<IActionResult> GetCruiseApplicationEvaluation(Guid id)
     {
@@ -99,6 +100,18 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator
             .Send(new AnswerAsSupervisorCommand(cruiseApplicationId, accept, supervisorCode));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPatch("{cruiseApplicationId:guid}/answer")]
+    public async Task<IActionResult> AcceptCruiseApplication(
+        Guid cruiseApplicationId, [FromQuery] bool accept)
+    {
+        var result = await mediator
+            .Send(new AcceptCruiseApplicationCommand(cruiseApplicationId, accept));
         return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);

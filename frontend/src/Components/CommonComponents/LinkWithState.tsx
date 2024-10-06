@@ -2,7 +2,7 @@ import React from "react";
 import {useNavigate} from "react-router-dom";
 import {Buffer} from "buffer";
 
-type Props = {
+export type LinkWithStateProps = {
     to: string,
     state: any, // TODO: change type
     label: string,
@@ -13,7 +13,7 @@ type Props = {
 }
 
 
-export default function LinkWithState(props: Props) {
+export default function LinkWithState(props: LinkWithStateProps) {
     const navigate = useNavigate()
 
     return (

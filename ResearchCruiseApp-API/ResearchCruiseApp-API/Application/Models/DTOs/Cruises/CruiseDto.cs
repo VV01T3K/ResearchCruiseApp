@@ -23,7 +23,7 @@ public class CruiseDto
     
     public Guid MainDeputyManagerId { get; set; }
     
-    public List<CruiseApplicationShortInfoDto> CruiseApplicationsShortInfo { get; set; } = null!;
+    public List<CruiseApplicationShortInfoDto> CruiseApplicationsShortInfo { get; set; } = [];
 
 
     private class MapProfile : Profile
@@ -34,8 +34,7 @@ public class CruiseDto
                 .ForMember(
                     dest => dest.CruiseApplicationsShortInfo,
                     options=>
-                        options.MapFrom(src => 
-                            src.CruiseApplications));
+                        options.Ignore());
         }
     }
 }   

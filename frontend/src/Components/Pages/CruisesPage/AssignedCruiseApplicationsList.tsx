@@ -1,40 +1,93 @@
 import {CruiseApplication, CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
-import LinkWithState from "../../CommonComponents/LinkWithState";
+import LinkWithState, {LinkWithStateProps} from "../../CommonComponents/LinkWithState";
 import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
 import React, {useEffect, useState} from "react";
 import {fetchCruiseApplications} from "../../Tools/Fetchers";
+import {Path} from "../../Tools/Path";
+import {useNavigate} from "react-router-dom";
+import {Buffer} from "buffer";
+import Api from "../../Tools/Api";
+import userDataManager from "../../CommonComponents/UserDataManager";
+import {prop} from "react-data-table-component/dist/DataTable/util";
 
 
 type Props = {
     cruiseApplicationsShortInfo: CruiseApplicationShortInfo[]
 }
 
+type LinkWithStateDownloadApplicationProps = LinkWithStateProps & {
+    cruiseApplicationId:string
+}
 
-export default function AssignedCruiseApplicationsList(props: Props) {
-    const [applications, setApplications] =
-        useState<CruiseApplication[]>([])
-    useEffect(() => {
-        fetchCruiseApplications(props.cruiseApplicationsShortInfo, setApplications)
-    }, [props.cruiseApplicationsShortInfo]);
+
+export function LinkWithStateDownloadApplication(props: LinkWithStateDownloadApplicationProps) {
+    const navigate = useNavigate()
 
     return (
+        <a
+            className={!props.disabled ? "link-with-state" : "link-with-state-disabled"}
+            onClick={() =>{
+
+                Api.get(
+                    `/api/CruiseApplications/${props.cruiseApplicationId}`).then((response)=>{
+                        props.state.cruiseApplication = response.data
+                    if(!props.disabled) {
+                        if(props.useWindow){
+                            const param = Buffer.from(JSON.stringify(props.state)).toString("base64")
+                            // temporary
+                            let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+                            width=900,height=1200,left=-1000,top=-1000`;
+                            window.open(props.to + "?data="+param, "_blank", params)
+                        }
+                        else
+                            navigate(props.to, {
+                                state: props.state
+                            })
+                    }
+                })
+            }
+            }
+        >
+            {props.label}
+        </a>
+    )
+}
+
+export const CanCurrentUserAccessCruiseApplication = () => {
+    const {userData} = userDataManager()
+    return (cruiseApplication:CruiseApplicationShortInfo)=>cruiseApplication.cruiseManagerId == userData?.id || cruiseApplication.deputyManagerId == userData?.id
+}
+
+export default function AssignedCruiseApplicationsList(props: Props) {
+    const canCurrentUserAccessCruiseApplication = CanCurrentUserAccessCruiseApplication()
+    console.log(props.cruiseApplicationsShortInfo)
+    return (
         <>
-            {applications.length == 0 &&
+            {props.cruiseApplicationsShortInfo.length == 0 &&
                 <div>Brak zgłoszeń</div>
             }
-            {applications.map((cruiseApplication: CruiseApplication, index: number) => (
+            {props.cruiseApplicationsShortInfo.map((cruiseApplication, index: number) => (
                     <div
                         key={index}
                         className={`d-flex col-12 ${(index < props.cruiseApplicationsShortInfo.length - 1) && "mb-2"}`}
                     >
-                        <div className="d-flex flex-wrap align-content-center col-6">
+                        <div className="d-flex flex-wrap align-content-center justify-content-center col-6">
                             <div className="d-flex justify-content-center w-100">Numer:</div>
-                            <LinkWithState
-                                className="text-center w-100"
-                                to="/CruiseApplicationDetails"
-                                label={cruiseApplication.number}
-                                state={{cruiseApplication: cruiseApplication, readOnly:true}}
-                            />
+                            {
+                                canCurrentUserAccessCruiseApplication(cruiseApplication) &&
+                                <LinkWithStateDownloadApplication
+                                    className="text-center w-100"
+                                    to={Path.CruiseApplicationDetails}
+                                    label={cruiseApplication.number}
+                                    state={{readOnly:true}}
+                                    cruiseApplicationId={cruiseApplication.id}
+                                />
+                            }
+                            {
+                                !canCurrentUserAccessCruiseApplication(cruiseApplication) &&
+                                <div className={"justify-content-center"}>{cruiseApplication.number}</div>
+                            }
+
                         </div>
                         <div className="d-flex flex-wrap align-content-center col-6 mb-2">
                             <div className="d-flex justify-content-center w-100">Punkty:</div>

@@ -1,246 +1,207 @@
-import React, {useEffect, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import Page from "../Page";
 import Api from "../../Tools/Api";
-import DataTable from 'react-data-table-component';
-import useCustomEvent from "../../Tools/useCustomEvent";
 import AddUserForm from "./AddUserForm/AddUserForm";
-import PageMenuBar from "../CommonComponents/PageMenuBar";
 import PageTitle from "../CommonComponents/PageTitle";
+import {CellContext, FieldTableWrapper} from "../FormPage/Wrappers/FieldTableWrapper";
+import {UserData} from "../../CommonComponents/DataTypes";
+import ReadOnlyTextInput from "../../CommonComponents/ReadOnlyTextInput";
+import {AnyStringFilterOption} from "../CommonComponents/ListFilterMenu";
 
 
-type Props = {
-    className?: string
+export const FilteredUsersContext = createContext<null | UserData[]>(null)
+export const UsersContext = createContext<null | UserData[]>(null)
+
+
+export const UsersTools = () => {
+    const cellContext = useContext(CellContext)
+    const filteredUsersContext = useContext(FilteredUsersContext)
+    const usersContext = useContext(UsersContext)
+
+    const setUserListContext = useContext(SetUserListContext)
+    const user:UserData = filteredUsersContext![cellContext?.rowIndex!]
+    const updateUser = (fieldKey:keyof UserData, value:UserData) => {
+        user[fieldKey] = value
+        const newUserList = [...usersContext!]
+        const userIndex = newUserList.findIndex(_user=>_user.id == user.id)
+        newUserList![userIndex] = user
+        setUserListContext!(newUserList)
+    }
+    return {user, updateUser}
 }
 
+const TableReadOnlyField = (props:{fieldLabel:string, fieldKey: keyof UserData}) => {
+    const {user} = UsersTools()
+    return (
+        <div className={"task-field-input"}>
+            <label className={"table-field-input-label"}>
+                {props.fieldLabel}
+            </label>
+            <ReadOnlyTextInput value={user![props.fieldKey] as string}/>
+        </div>
+    )
+}
+export const UserName = () => ( <TableReadOnlyField fieldLabel={"Nazwa użytkownika:"} fieldKey={"userName"}/> )
+export const FirstAndLastName = () => (
+    <div className={"d-flex flex-column w-100"}>
+        <TableReadOnlyField fieldLabel={"Imię:"} fieldKey={"firstName"}/>
+        <TableReadOnlyField fieldLabel={"Nazwisko:"} fieldKey={"lastName"}/>
+    </div>)
+export const Accepted = () => {
+    const {user} = UsersTools()
+    return (
+        <div className={"task-field-input"}>
+            <label className={"table-field-input-label"}>
+                Zaakceptowany:
+            </label>
+            <ReadOnlyTextInput className={!user.accepted ? "bg-danger":"bg-success"} value={user.accepted ? "tak":"nie"}/>
+        </div>
+    )
+}
+export const EmailConfirmed = () => {
+    const {user} = UsersTools()
+    return (
+        <div className={"task-field-input"}>
+            <label className={"table-field-input-label"}>
+                Email potwierdzony:
+            </label>
+            <ReadOnlyTextInput className={!user.emailConfirmed ? "bg-danger":"bg-success"} value={user.emailConfirmed ? "tak":"nie"}/>
+        </div>
+    )
+}
+export const Roles = () => {
+    const {user} = UsersTools()
+    return (
+        <div className={"task-field-input"}>
+            <label className={"table-field-input-label"}>
+                Role:
+            </label>
+            <ReadOnlyTextInput value={user.roles.join(", ")}/>
+        </div>
+    )
+}
 
-function ManageUsersPage(props: Props) {
-    const { dispatchEvent } = useCustomEvent('busy')
-    const [userList, setUserList] = useState(
+export const Actions = () => {
+    const {user, updateUser} = UsersTools()
+
+    const [emailText, setEmailText] = useState("Wyślij email")
+    const emailSent = "Wysłano email"
+    return (
+        <div className="btn-group-vertical">
+            {!user.accepted && <div className={"user-action-link"} onClick={()=>activateUser(user).then(()=>updateUser("accepted", true))}>Aktywuj konto</div>}
+            {user.accepted && <div className={"user-action-link"} onClick={()=>deactivateUser(user).then(()=>updateUser("accepted", false))}> Dezaktywuj </div>}
+            {!user.emailConfirmed && <div className={!(emailText == emailSent) ? "user-action-link": ""} onClick={emailSent ? ()=>requestEmail(user).then(()=>setEmailText(emailSent)): ()=>{}}>{emailText}</div>}
+        </div>
+    )
+}
+const manageUsersPageTableContent = () => [
+    UserName,
+    FirstAndLastName,
+    Accepted,
+    EmailConfirmed,
+    Roles,
+    Actions,
+]
+
+const activateUser = (user:UserData) => Api.patch('/Users/unaccepted/' + user.id)
+const deactivateUser = (user:UserData) => Api.patch('/Users/' + user.id + "/deactivate")
+
+const requestEmail =  (user:UserData) => Api.post('/Account/emailConfirmationRequest', {email:user.email})
+
+const getUsers = () => Api.get('/Users',).then(response => { return response.data })
+
+export const SetUserListContext = createContext<React.Dispatch<React.SetStateAction<UserData[]>>|null>(null)
+
+
+
+
+
+function ManageUsersPage() {
+    const [userList, setUserList] = useState<UserData[]>(
         [])
     const fetchData = async () => {
-        return  Api.get(
-            '/Users',)
-            .then(response => {
-                return response.data;
-            }).then(response => setUserList(response)).finally(()=>dispatchEvent(null)).catch(()=>{})
-
+        return  getUsers().then(response => setUserList(response))
     }
-    useEffect(
-        () => {
-            dispatchEvent("Trwa ładowanie użytkowników")
-            fetchData()
-        },[]
-    )
-
-        const columns = [
-
-            {
-                name: 'Nazwa użytkownika',
-                selector: row => row.userName,
-                sortable: true,
-                center:true,
-                wrap:true
-
-            },
-            {
-                name: 'Imię',
-                selector: row => row.firstName,
-                sortable: true,
-                center:true
-            },
-
-            {
-                name: 'Nazwisko',
-                selector: row => row.lastName,
-                sortable: true,
-                center:true
-            },
-            {
-                name: 'Zaakceptowany',
-                selector: row => row.accepted ? "tak": "nie",
-                sortable: true,
-                center:true,
-                conditionalCellStyles: [
-                    {
-                        when: row => row.accepted === false,
-                        style: {
-                            backgroundColor: 'red',
-                            color: 'white',
-                        },
-                    }],
-
-            },
-            {
-                name: 'Email potwierdzony',
-                selector: row => row.emailConfirmed ? "tak": "nie",
-                sortable: true,
-                center:true,
-                conditionalCellStyles: [ {
-                    when: row => row.emailConfirmed === false,
-                    style: {
-                        backgroundColor: 'red',
-                        color: 'white',
-                    },
-                },
-                ]
-
-            },
-
-
-            {
-                name: 'Rola',
-                selector: row => row.roles,
-                sortable: true,
-            },
-            // {
-            //     name: 'Akcje',
-            //     button: true,
-            //     cell: row => (
-            //         <div className={"d-flex flex-wrap"}>
-            //             {!row.accepted && <button className={"btn btn-primary d-flex m-1"} style={{fontSize:"0.8rem"}} onClick={()=>{}}>Potwierdź</button>
-            //             }
-            //             {!row.emailConfirmed && <button className={"btn btn-primary d-flex m-1"} style={{fontSize:"0.8rem"}} onClick={()=>{}}>Wyślij mail</button>
-            //             }
-            //         </div>
-            //     ),
-            // },
-            // {
-            //     name: 'Usuń',
-            //     button: true,
-            //     cell: row => (
-            //             <button  onClick={()=>{}} className={"btn btn-danger d-flex m-1"} disabled={row.roles.includes("Administrator")} style={{fontSize:"0.8rem"}} onClick={()=>{}}>-</button>
-            //     ),
-            // },
-        ];
-
+    useEffect(() =>  {(fetchData)()},[])
 
 
     const [filterText, setFilterText] = React.useState('');
 
 
-    const nameFilter = (list: any[]) => list.filter(
-        item => item.firstName && item.lastName && (item.firstName.toLowerCase().includes(filterText.toLowerCase())
-        || item.lastName.toLowerCase().includes(filterText.toLowerCase())),
-    );
+    const anyStringFilterOptions: AnyStringFilterOption[] = [
+        {
+            label: "Imię/nazwisko",
+            filter: setFilterText
+        }
+    ]
 
 
     const [notAcceptedToggle, setNotAcceptedToggle] = useState(false)
     const [withoutConfirmedMailToggle, setWithoutConfirmedMailToggle] = useState(false)
-    const notAccepted = (list: any[]) => list.filter(
-        item => !item.accepted,
-    );
-    const withoutConfirmedMail =  (list: any[]) => list.filter(
-        item => !item.emailConfirmed,
-    );
 
-    const applyFilters = (list:any[]) => {
-        var tmp = list
-        if(tmp.length) {
-            if (notAcceptedToggle)
-                tmp = notAccepted(tmp)
-            if (withoutConfirmedMailToggle)
-                tmp = withoutConfirmedMail(tmp)
-            tmp = nameFilter(tmp)
-        }
-        return tmp
-    }
+    const applyFilters = (row: UserData): boolean => (
+        !(notAcceptedToggle && row.accepted) && !(withoutConfirmedMailToggle && row.emailConfirmed)
+        && ((row.firstName?.toLowerCase().includes(filterText.toLowerCase())
+        || row.lastName?.toLowerCase().includes(filterText.toLowerCase())))
+    )
 
-    const subHeaderComponentMemo =
-            <>
-                <>
-                    <input className={"btn btn-primary text-white "}
 
-                           id="search"
-                           type="text"
-                           placeholder="Wyszukaj po imieniu lub nazwisku"
-                           aria-label="Search Input"
-                           value={filterText}
-                           onChange={e => {setFilterText(e.target.value)}}
-                    />
-                    <button className={"btn btn-danger"} type="button" onClick={()=>setFilterText("")}>
-                        X
-                    </button>
-                </>
-                <button className={`btn  m-1 ${notAcceptedToggle ? "btn-danger": "btn-primary"}`} onClick={() => {
-                    setNotAcceptedToggle(!notAcceptedToggle)
-                }}>Niezaakceptowani
-                </button>
-                <button className={`btn m-1 ${withoutConfirmedMailToggle ? "btn-danger": "btn-primary "}`} onClick={() => {
-                    setWithoutConfirmedMailToggle(!withoutConfirmedMailToggle)
-                }}>Niepotwierdzony mail
-                </button>
-            </>
 
     const [selectedRows, setSelectedRows] = React.useState([]);
     const [toggleCleared, setToggleCleared] = React.useState(false);
     const handleRowSelected = React.useCallback(state => {
         setSelectedRows(state.selectedRows);
     }, []);
-    const contextActions = React.useMemo(() => {
-        const handleAccept = () => {
-            if (window.confirm(`Czy na pewno chcesz zaakcptować:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
-                // setToggleCleared(!toggleCleared);
-                dispatchEvent("Trwa zapisywanie zmian")
-                selectedRows.forEach((user) => Api.patch('/Users/unaccepted/' + user.id))
-                fetchData()
-                // dispatchEvent(null)
-                // setData(differenceBy(data, selectedRows, 'title'));
-            }
-        }
 
-        const handleSendMail = () => {
-            if (window.confirm(`Czy na pewno chcesz wysłać email:\n\n ${selectedRows.map(r => r.userName).join('\n')}?`)) {
-                // setToggleCleared(!toggleCleared);
-                dispatchEvent("Trwa wysyłanie maili")
-                selectedRows.forEach((user) => Api.post('/Account/emailConfirmationRequest', {email:user.userName}).catch(()=>{}))
-                dispatchEvent(null)
-                // setData(differenceBy(data, selectedRows, 'title'));
-            }
-        }
+    const mdColWidths = [20,20,15, 15, 20,10]
+    const mdColTitles = ["Nazwa użytkownika", "Imię i nazwisko",  "Zaakceptowany", "Email potwierdzony", "Rola", "Akcje"]
+    const colTitle = "Użytkownicy"
 
-        return <>
-            <button className={"btn btn-primary m-1"} onClick={handleAccept}>
-                Zaakceptuj
-            </button>
-            <button className={"btn btn-primary m-1"} onClick={handleSendMail}>
-                Wyślij Mail
-            </button>
-        </>;
-    }, [selectedRows, toggleCleared]);
+    const emptyText = "Brak użytkowników"
+    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, manageUsersPageTableContent,
+        null, emptyText, userList.filter(applyFilters))
 
     return (
-        <Page className="justify-content-center col-12 col-xl-9 bg-white">
-            <div className="d-flex flex-column w-100 h-100" style={{fontSize: "0.8rem"}}>
+        <Page className="form-page">
                 <PageTitle title="Zarządzanie użytkownikami" />
-                <div className="d-flex flex-column align-items-center w-100 h-100 overflow-y-scroll">
-                    <PageMenuBar className="justify-content-start">
-                        <AddUserForm fetchUsers={fetchData} />
-                    </PageMenuBar>
-
-                    <div className="d-flex flex-column flex-wrap justify-content-center  p-2 p-xl-5 align-items-center">
-                        <DataTable className={"dataTable"}
-                            title="Lista użytkowników"
-                            columns={columns}
-                            data={applyFilters(userList)}
-                            pagination // Włącza paginację
-                            highlightOnHover // Podświetla wiersze przy najechaniu
-                            responsive // Sprawia, że tabela jest responsywna
-                            striped // Dodaj paski kolorystyczne dla wierszy
-                            selectableRows // Dodaj możliwość zaznaczania wierszy
-                            selectableRowsHighlight // Podświetl zaznaczone wiersze
-                            pointerOnHover // Zmień kursor na hoverze wierszy
-                            noDataComponent="Nie znaleziono użytkowników" // Komunikat, gdy brak danych
-                            paginationComponentOptions={{ rowsPerPageText: 'Wierszy na stronę:', rangeSeparatorText: 'z', noRowsPerPage: false, selectAllRowsItem: true, selectAllRowsItemText: 'Wszystkie' }}
-                           contextMessage={{ singular: 'wiersz', plural: 'wiersze', message: 'zaznaczone' }}
-                           subHeader
-                           subHeaderComponent={subHeaderComponentMemo}
-                           contextActions={contextActions}
-                           onSelectedRowsChange={handleRowSelected}
-                           clearSelectedRows={toggleCleared}
-                        />
+            <SetUserListContext.Provider value={setUserList}>
+            <UsersContext.Provider value={userList}>
+            <FilteredUsersContext.Provider value={userList.filter(applyFilters)}>
+            <div className="form-page-content d-flex flex-column align-items-center w-100">
+                    <AddUserForm fetchUsers={fetchData} />
+                    <div className={"d-flex flex-row flex-wrap justify-content-end w-100"}>
+                        {anyStringFilterOptions.map((anyStringFilter, index) =>
+                            <div key={index} className={`d-flex flex-column col-3 p-1`}>
+                                <input
+                                    className="field-common" placeholder={anyStringFilter.label}
+                                    onChange={(e) => {
+                                        anyStringFilter.filter(e.target.value)
+                                    }}
+                                />
+                            </div>
+                        )}
+                        <button className={"btn btn-danger m-1"} type="button" onClick={() => setFilterText("")}>
+                            X
+                        </button>
+                        <button className={`btn  m-1 ${notAcceptedToggle ? "btn-danger" : "btn-primary"}`}
+                                onClick={() => {
+                                    setNotAcceptedToggle(!notAcceptedToggle)
+                                }}>Niezaakceptowani
+                        </button>
+                        <button className={`btn m-1 ${withoutConfirmedMailToggle ? "btn-danger" : "btn-primary "}`}
+                                onClick={() => {
+                                    setWithoutConfirmedMailToggle(!withoutConfirmedMailToggle)
+                                }}>Niepotwierdzony mail
+                        </button>
                     </div>
+
+                                <Render className={"overflow-y-scroll w-100"}/>
+
                 </div>
-            </div>
+            </FilteredUsersContext.Provider>
+            </UsersContext.Provider>
+            </SetUserListContext.Provider>
+
         </Page>
     )
 }

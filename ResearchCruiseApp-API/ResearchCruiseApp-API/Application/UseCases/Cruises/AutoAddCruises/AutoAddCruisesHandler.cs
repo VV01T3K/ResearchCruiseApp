@@ -9,7 +9,8 @@ namespace ResearchCruiseApp_API.Application.UseCases.Cruises.AutoAddCruises;
 
 public class AutoAddCruisesHandler(
     ICruisesService cruisesService,
-    ICruiseApplicationsRepository cruiseApplicationsRepository)
+    ICruiseApplicationsRepository cruiseApplicationsRepository,
+    ICruisesRepository cruisesRepository)
     : IRequestHandler<AutoAddCruisesCommand, Result>
 {
     public async Task<Result> Handle(AutoAddCruisesCommand request, CancellationToken cancellationToken)
@@ -17,11 +18,16 @@ public class AutoAddCruisesHandler(
         var cruiseApplications =
             await cruiseApplicationsRepository.GetAllWithFormsAndFormAContent(cancellationToken);
         
+        var cruises = 
+            await cruisesRepository.GetAllWithCruiseApplications(cancellationToken);
+        
         foreach (var cruiseApplication in cruiseApplications)
         {
-            // TODO Change to only add cruise if application not exist in any other cruise
             var newCruise = CreateCruise(cruiseApplication);
             if (newCruise is null)
+                continue;
+            
+            if(cruises.Any(cruise=>cruise.CruiseApplications.Contains(cruiseApplication)))
                 continue;
             
             await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);

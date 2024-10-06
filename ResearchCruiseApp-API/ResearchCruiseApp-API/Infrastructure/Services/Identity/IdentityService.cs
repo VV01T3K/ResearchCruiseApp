@@ -75,6 +75,20 @@ public class IdentityService(
         return Result.Empty;
     }
     
+    public async Task<Result> DeactivateUser(Guid id)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null)
+            return Error.NotFound();
+        
+        user.Accepted = false;
+        
+        var identityResult = await userManager.UpdateAsync(user);
+        if (!identityResult.Succeeded)
+            return identityResult.ToApplicationResult();
+        
+        return Result.Empty;
+    }
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
     {
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)

@@ -27,23 +27,22 @@ export default function TextInput(props: Props) {
 
     return (
         <>
-            <div className="d-flex flex-wrap w-100 align-items-center mb-1">
+            <div className="d-flex flex-wrap col-md-3 col-12  mb-1">
                 <label
-                    className="d-flex col-12 w-25 align-items-center"
+                    className="d-flex p-2"
                     style={{fontSize: "inherit"}}
                 >
                     {props.label}:
                 </label>
                 <input
-                    className="d-flex col-12 w-75 form-control"
+                    className="d-flex w-100 field-common"
                     type={props.inputType ?? "text"}
-                    style={{fontSize: "inherit"}}
                     disabled={props.disabled}
                     {...props.form.register(props.name, fieldOptions)}
                 />
                 {props.form.formState.errors[props.name] &&
-                    <div className="d-flex col-12 justify-content-end">
-                        <ErrorMessageIfPresentNoContext className="w-75" message={props.form.formState.errors[props.name]?.message} />
+                    <div className="d-flex col-12 justify-content-center">
+                        <ErrorMessageIfPresentNoContext  message={props.form.formState.errors[props.name]?.message} />
                     </div>
                 }
             </div>

@@ -4,12 +4,30 @@ import { handleSave} from "./FormButtonsHandlers";
 import Api from "./Api";
 import {CruiseApplicationContext} from "../Pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsPage";
 import {CruiseApplicationStatus} from "../Pages/CruiseApplicationsPage/CruiseApplicationsPage";
+import {extendedUseLocation} from "../Pages/FormPage/FormPage";
+import {useNavigate} from "react-router-dom";
+import {Path} from "./Path";
+import userBasedAccess from "../UserBasedAccess";
 
+export const RefreshApplicationDetailsPage = () => {
+    const location = extendedUseLocation()
+    const navigate = useNavigate()
+
+    return ()=>Api.get(`/api/CruiseApplications/${location?.state.cruiseApplication.id}`)
+        .then((response)=>
+            navigate(Path.CruiseApplicationDetails,{state:{cruiseApplication: response.data, readOnly:true}}))
+}
 const SendButton = () => {
     const formContext = useContext(FormContext)
-    const handleSubmit = () => Api.post("/api/CruiseApplications/", formContext?.getValues()).then(()=>formContext!.setReadOnly(true))
+    const location = extendedUseLocation()
+    const refreshApplicationDetailsPage = RefreshApplicationDetailsPage()
+
+    const handleSubmit = () => Api.patch(`/api/CruiseApplications/${location?.state.cruiseApplication.id}/evaluation`, formContext?.getValues())
+        .then(refreshApplicationDetailsPage).finally(()=>formContext!.setReadOnly(true))
     const onClickAction = formContext!.handleSubmit(handleSubmit)
-    return ( <button onClick={handleSubmit} className="form-page-option-button-default"> Zapisz punkty </button> )
+
+
+    return ( <button onClick={onClickAction} className="form-page-option-button-default"> Zapisz punkty </button> )
 }
 
 const CancelButton = () => {
@@ -28,17 +46,25 @@ const EditButton = () => {
     return (<button onClick={editPoints} className="form-page-option-button-default"> Edytuj punkty </button>)
 }
 
+const AcceptApplication = (accept:string) => {
+    const refreshApplicationDetailsPage = RefreshApplicationDetailsPage()
+    const location = extendedUseLocation()
+    console.log(location)
+    return () => Api.patch(`/api/CruiseApplications/${location?.state.cruiseApplication.id}
+    /answer?accept=${accept}`).then(refreshApplicationDetailsPage)
+}
 
 export const ConfirmApplicationButton = () => {
-    const formContext = useContext(FormContext)
+    const acceptApplication = AcceptApplication("true")
     return(
-        <div onClick={()=>handleSave(formContext!)} className="form-page-option-button w-100"> Potwierdź zgłoszenie </div>
+        <div onClick={acceptApplication} className="form-page-option-button w-100"> Potwierdź zgłoszenie </div>
     )
 }
 
 export const CancelApplicationButton = () => {
     const formContext = useContext(FormContext)
     const [confirm, setConfirm] = useState(false)
+    const acceptApplication = AcceptApplication("false")
     const Button = () => (
         <div onClick={()=>setConfirm(true)} className="form-page-option-button bg-danger w-100"> Odrzuć zgłoszenie </div>
     )
@@ -47,9 +73,7 @@ export const CancelApplicationButton = () => {
             <div className={"w-100 text-danger text-center mt-1"}>Po odrzuceniu wymagane będzie ponowne złożenie wniosku</div>
             <div className={"d-flex flex-row w-100"}>
                 <div onClick={() => setConfirm(false)} className="form-page-option-button w-50"> Anuluj </div>
-                <div onClick={() => {
-                    setConfirm(false)
-                }} className="form-page-option-button w-50 bg-danger"> Potwierdź odrzucenie </div>
+                <div onClick={acceptApplication} className="form-page-option-button w-50 bg-danger"> Potwierdź odrzucenie </div>
             </div>
         </div>
 
@@ -75,6 +99,7 @@ const AcceptedBySupervisorMenu = () => {
 
 export const BottomOptionBar = () => {
     const formContext = useContext(FormContext)
+    const {UserHasShipownerAccess, UserHasAdminAccess} = userBasedAccess()
     const EditableFormButtons = () => (
         <>
             <CancelButton/>
@@ -151,15 +176,21 @@ export const BottomOptionBar = () => {
     )
 
     return(
-    <div className="form-page-option-bar">
-        {/*{applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <WaitingForSupervisorMenu/>}*/}
-        {applicationContext!.status == CruiseApplicationStatus.AcceptedBySupervisor && <AcceptedBySupervisorMenu/>}
-        {applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <EditPointsMenu/>}
-        {applicationContext!.status == CruiseApplicationStatus.FormBRequired && <FormBRequired/>}
-        {applicationContext!.status == CruiseApplicationStatus.FormBFilled && <FormBFilled/>}
-        {applicationContext!.status == CruiseApplicationStatus.CruiseBegan && <CruiseBegan/>}
-        {applicationContext!.status == CruiseApplicationStatus.Undertaken && <UnderTaken/>}
-        {applicationContext!.status == CruiseApplicationStatus.Reported && <Reported/>}
-    </div>
+        <>
+            {(UserHasShipownerAccess() || UserHasAdminAccess()) &&
+                <div className="form-page-option-bar">
+                    {/*{applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <WaitingForSupervisorMenu/>}*/}
+                    {applicationContext!.status == CruiseApplicationStatus.WaitingForSupervisor && <WaitingForSupervisorMenu/>}
+                    {applicationContext!.status == CruiseApplicationStatus.AcceptedBySupervisor && <AcceptedBySupervisorMenu/>}
+                    {applicationContext!.status == CruiseApplicationStatus.Accepted && <EditPointsMenu/>}
+                    {applicationContext!.status == CruiseApplicationStatus.FormBRequired && <FormBRequired/>}
+                    {applicationContext!.status == CruiseApplicationStatus.FormBFilled && <FormBFilled/>}
+                    {applicationContext!.status == CruiseApplicationStatus.CruiseBegan && <CruiseBegan/>}
+                    {applicationContext!.status == CruiseApplicationStatus.Undertaken && <UnderTaken/>}
+                    {applicationContext!.status == CruiseApplicationStatus.Reported && <Reported/>}
+                </div>
+            }
+        </>
+
     )
 }

@@ -5,5 +5,5 @@ public class EvaluationEditDto
 {
     public Guid EvaluationId { get; set; }
 
-    public int NewPoints { get; set; }
+    public string NewPoints { get; set; }
 }

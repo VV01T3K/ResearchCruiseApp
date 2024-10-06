@@ -4,6 +4,7 @@ import {NewUserFormValues, Role} from "./AddUserForm";
 import UserBasedAccess from "../../../UserBasedAccess";
 import Select from "react-select";
 import {ErrorMessageIfPresentNoContext} from "../../CommonComponents/ErrorMessageIfPresent";
+import {SelectWrapper} from "../../FormPage/Wrappers/ReactSelectWrapper";
 
 
 type RoleOption = {
@@ -58,19 +59,20 @@ export default function RoleInput(props: Props) {
 
     return (
         <>
-            <div className="d-flex flex-wrap w-100 align-items-center mb-1">
+            <div className="d-flex flex-wrap col-md-3 col-12 mb-1">
                 <label
-                    className="d-flex col-12 w-25 align-items-center"
+                    className="d-flex p-2"
                     style={{fontSize: "inherit"}}
                 >
                     {props.label}:
                 </label>
-                <Select
+                <SelectWrapper
                     {...props.form.register(props.name, fieldOptions)}
-                    className="d-flex w-75"
+                    className="d-flex w-100"
                     options={getRoleOptions()}
-                    placeholder={"Wybierz wartość"}
-                    isDisabled={props.disabled}
+                    placeHolder={"Wybierz wartość"}
+                    disabled={props.disabled}
+
                     // defaultValue={roleOptions
                     //     .filter(roleOption => roleOption.value == Role.Guest)
                     //     .at(0)
@@ -90,8 +92,8 @@ export default function RoleInput(props: Props) {
                     }}
                 />
                 {props.form.formState.errors[props.name] &&
-                    <div className="d-flex col-12 justify-content-end">
-                        <ErrorMessageIfPresentNoContext className="w-75" message={props.form.formState.errors[props.name]?.message} />
+                    <div className="d-flex col-12 justify-content-center">
+                        <ErrorMessageIfPresentNoContext message={props.form.formState.errors[props.name]?.message} />
                     </div>
                 }
             </div>

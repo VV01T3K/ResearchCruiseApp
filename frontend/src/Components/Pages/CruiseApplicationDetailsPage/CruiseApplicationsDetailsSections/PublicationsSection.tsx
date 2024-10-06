@@ -6,7 +6,7 @@ import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 
 const PublicationsSectionFieldNames = {
-    publications:"publications",
+    publications:"publicationsEvaluationsEdits",
 }
 
 const PublicationsField = () =>
@@ -17,7 +17,7 @@ const PublicationsField = () =>
            fieldLabel={""}
            className={"single-field"}
            fieldName={PublicationsSectionFieldNames.publications}
-            evaluatedPublications={formContext!.initValues?.formAPublications}
+           evaluatedPublications={formContext!.initValues?.formAPublications}
        />
     )
 }

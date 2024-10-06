@@ -5,6 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {Path} from "./Path";
 import BusyEvent from "../CommonComponents/BusyEvent";
 import {extendedUseLocation} from "../Pages/FormPage/FormPage";
+import UserBasedAccess from "../UserBasedAccess";
 export const SaveButton = () => {
     const formContext = useContext(FormContext)
     const locationState = extendedUseLocation()?.state
@@ -47,9 +48,15 @@ export const ClearFormButton = () => {
 }
 
 
-export const BottomOptionBar = () => (
-    <div className="form-page-option-bar">
-        <ClearFormButton/>
-        <SaveButton/>
-    </div>
-)
+export const BottomOptionBar = () => {
+    const {UserHasShipownerAccess, UserHasAdminAccess} = UserBasedAccess()
+    return(
+        <>
+            {(UserHasShipownerAccess() || UserHasAdminAccess()) &&
+                <div className="form-page-option-bar">
+                    <ClearFormButton/>
+                    <SaveButton/>
+                </div>
+            }
+        </>)
+}

@@ -4,7 +4,7 @@ import Api from "../../Tools/Api";
 import {AnyStringFilterOption, SelectStringFilterOption} from "../CommonComponents/ListFilterMenu";
 import {FormPageLocationState} from "../FormPage/FormPage";
 import {FieldContext, FieldTableWrapper} from "../FormPage/Wrappers/FieldTableWrapper";
-import {cruiseApplicationsSortOptions} from "./CruiseApplicationsListMisc";
+import {cruiseApplicationsSortOptions, sortCruiseApplicationsByDate} from "./CruiseApplicationsListMisc";
 import {SelectWrapper} from "../FormPage/Wrappers/ReactSelectWrapper";
 import {CruiseApplicationsTableContent} from "./CruiseApplicationsTableContent";
 import {CruiseApplicationsContext} from "../CruiseFormPage/CruiseFormPage";
@@ -89,7 +89,7 @@ export default function CruiseApplicationsList(props: Props) {
     }
 
     const rowShouldBeShown = RowShouldBeShown(props.mode)
-    const applicationsToDisplay = fetchedCruiseApplications.filter(rowShouldBeShown).filter(applyFilters)
+    const applicationsToDisplay = sortCruiseApplicationsByDate(fetchedCruiseApplications).reverse().filter(rowShouldBeShown).filter(applyFilters)
 
     const mdColWidths = [14, 10, 21,  12,12,15, 16]
     const mdColTitles = ["Numer/data", "Rok rejsu", "Kierownik", "Formularze", "Punkty", "Status", "Akcje", ]
@@ -101,39 +101,39 @@ export default function CruiseApplicationsList(props: Props) {
     const sortOptions = cruiseApplicationsSortOptions(fetchedCruiseApplications)
     return (
         <div className={"table-with-filters"}>
+            {!(props.mode == CruiseApplicationListMode.Deletion) &&
             <div className={"w-100 d-flex flex-row p-2"}>
-                <SelectWrapper className="d-flex col-3 p-1" options={sortOptions} placeHolder={"Sortuj"}
-                    onChange={(selectedOption) => setFetchedCruiseApplications(selectedOption!.value())}/>
-                {anyStringFilterOptions.map((anyStringFilter, index) =>
-                    <div key={index} className={`d-flex flex-column col-3 p-1`}>
-                        <input
-                            className="field-common" placeholder={anyStringFilter.label}
-                            onChange={(e) => {
-                                anyStringFilter.filter(e.target.value)
-                            }}
-                        />
-                    </div>
-                )}
-                {selectStringFilterOptions.map((selectStringFilter, index) =>
-                    <SelectWrapper className={"col-3 d-flex p-1"}
-                                   placeHolder={"Sortuj"}
-                                   options={
-                                       [selectStringFilterDefaultOption].concat(
-                                           selectStringFilter.selectValues.map(selectValue => ({
-                                               label: selectValue,
-                                               value: selectValue
-                                           }))
-                                       )
-                                   }
-                                   defaultValue={selectStringFilterDefaultOption}
-                                   onChange={selectedOption =>
-                                       selectStringFilter.setFilter(selectedOption?.value)
-                                   }
-                    />
-                    // </div>
-                )}
-                {/*</div>*/}
+                        <SelectWrapper className="d-flex col-3 p-1" options={sortOptions} placeHolder={"Sortuj"}
+                                       onChange={(selectedOption) => setFetchedCruiseApplications(selectedOption!.value())}/>
+                        {anyStringFilterOptions.map((anyStringFilter, index) =>
+                            <div key={index} className={`d-flex flex-column col-3 p-1`}>
+                                <input
+                                    className="field-common" placeholder={anyStringFilter.label}
+                                    onChange={(e) => {
+                                        anyStringFilter.filter(e.target.value)
+                                    }}
+                                />
+                            </div>
+                        )}
+                        {selectStringFilterOptions.map((selectStringFilter, index) =>
+                            <SelectWrapper className={"col-3 d-flex p-1"}
+                                           placeHolder={"Sortuj"}
+                                           options={
+                                               [selectStringFilterDefaultOption].concat(
+                                                   selectStringFilter.selectValues.map(selectValue => ({
+                                                       label: selectValue,
+                                                       value: selectValue
+                                                   }))
+                                               )
+                                           }
+                                           defaultValue={selectStringFilterDefaultOption}
+                                           onChange={selectedOption =>
+                                               selectStringFilter.setFilter(selectedOption?.value)
+                                           }
+                            />
+                        )}
             </div>
+            }
             <ListModeContext.Provider value={{mode:props.mode}}>
                 <ApplicationsContext.Provider value={applicationsToDisplay}>
                     <Render className={"overflow-y-scroll " + props.className}/>

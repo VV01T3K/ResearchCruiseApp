@@ -46,7 +46,7 @@ export const CruisesListFilterAndSort = () => {
         )
     }
 
-    const cruisesToDisplay = cruiseStateContext!.cruises?.filter(applyFilters)
+    const cruisesToDisplay = sortCruiseListByStartDate(cruiseStateContext!.cruises)?.filter(applyFilters)
 
     const sortOptions = cruiseListSortOptions(cruiseStateContext!.cruises)
 

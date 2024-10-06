@@ -13,6 +13,7 @@ public interface IIdentityService
     Task<bool> UserWithIdExists(Guid id);
     Task<bool> UserWithEmailExists(string email);
     Task<Result> AcceptUser(Guid id);
+    Task<Result> DeactivateUser (Guid id);
     Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail);
     Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName);
     Task<bool> CanUserLogin(string email, string password);

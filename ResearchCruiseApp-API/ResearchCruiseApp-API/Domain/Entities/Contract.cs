@@ -28,7 +28,7 @@ public class Contract : Entity
             get => _scanName ?? throw new InvalidOperationException("ScanName has not been set.");
             set
             {
-                  if (_scanName is null)
+                  if (_scanName is not null)
                         throw new InvalidOperationException("ScanName can only be set once.");
                   _scanName = value;
             }
@@ -41,8 +41,8 @@ public class Contract : Entity
             get => _scanContent ?? throw new InvalidOperationException("ScanContent has not been set.");
             set
             {
-                  if (_scanContent is null)
-                        throw new InvalidOperationException("ScanName can only be set once.");
+                  if (_scanContent is not null)
+                        throw new InvalidOperationException("ScanContent can only be set once.");
                   _scanContent = value;
             }
       }

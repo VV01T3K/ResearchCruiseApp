@@ -5,6 +5,7 @@ import RoleInput from "./RoleInput";
 import Api from "../../../Tools/Api";
 import ErrorMessageIfPresent, {ErrorMessageIfPresentNoContext} from "../../CommonComponents/ErrorMessageIfPresent";
 import SuccessMessage from "../../CommonComponents/SuccessMessage";
+import {emailPattern} from "../../../CommonComponents/useFormWrapper";
 
 
 export enum Role {
@@ -49,7 +50,7 @@ export default function AddUserForm(props: Props) {
         Api.
             post(
                 "/users",
-                newUserForm.getValues()
+                newUserForm.getValues(), {raw:true}
             )
             .then(response => {
                 setSending(false)
@@ -66,44 +67,23 @@ export default function AddUserForm(props: Props) {
     return (
         <div className="d-flex flex-wrap p-3 col-12">
             <a
-                className="d-flex btn btn-info mb-2"
+                className="d-flex btn btn-primary mb-2"
                 style={{fontSize: "inherit"}}
                 onClick={() => setShowDropDown(!showDropDown)}
             >
                 Nowy użytkownik {showDropDown ? " ▲" : " ▼"}
             </a>
             {showDropDown &&
-                <div className="d-flex flex-wrap w-100 p-3 border border-dark-subtle rounded-2">
-                    <RoleInput
-                        form={newUserForm}
-                        label="Rola"
-                        name="role"
-                        disabled={sending}
-                    />
-                    <TextInput
-                        form={newUserForm}
-                        label="E-mail"
-                        name="email"
-                        validationPattern={/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/}
-                        validationPatternMessage="Nieprawidłowy adres e-mail"
-                        disabled={sending}
-                    />
-                    <TextInput
-                        form={newUserForm}
-                        label="Imię"
-                        name="firstName"
-                        disabled={sending}
-                    />
-                    <TextInput
-                        form={newUserForm}
-                        label="Nazwisko"
-                        name="lastName"
-                        disabled={sending}
-                    />
+                <div className="d-flex row flex-wrap w-100  rounded-2">
+                    <RoleInput form={newUserForm} label="Rola" name="role" disabled={sending}/>
+                    <TextInput form={newUserForm} label="E-mail" name="email" validationPattern={emailPattern}
+                        validationPatternMessage="Nieprawidłowy adres e-mail" disabled={sending}/>
+                    <TextInput form={newUserForm} label="Imię" name="firstName" disabled={sending}/>
+                    <TextInput form={newUserForm} label="Nazwisko" name="lastName" disabled={sending}/>
 
-                    <div className="d-flex w-100 align-items-center mt-1 justify-content-start">
+                    <div className="d-flex w-100 mt-1 justify-content-end">
                         <a
-                            className={`btn btn-info ${sending ? "disabled" : ""}`}
+                            className={`btn btn-primary ${sending ? "disabled" : ""}`}
                             type="submit"
                             style={{fontSize: "inherit"}}
                             onClick={newUserForm.handleSubmit(handleSubmit)}
@@ -111,16 +91,17 @@ export default function AddUserForm(props: Props) {
                             Dodaj
                         </a>
                     </div>
-                    {sendingError != "" &&
+
                         <div className="d-flex col-12 justify-content-end">
+                            {sendingError != "" &&
                             <ErrorMessageIfPresentNoContext className="w-100" message={sendingError} />
+                            }
+                            {success &&
+                                <SuccessMessage className="w-100" message="Użytkownik dodany poprawnie" />
+                            }
+
                         </div>
-                    }
-                    {success &&
-                        <div className="d-flex col-12 justify-content-end">
-                            <SuccessMessage className="w-100" message="Użytkownik dodany poprawnie" />
-                        </div>
-                    }
+
                 </div>
             }
         </div>

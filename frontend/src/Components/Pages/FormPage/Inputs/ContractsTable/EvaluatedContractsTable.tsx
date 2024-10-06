@@ -42,7 +42,7 @@ export const EvaluatedContractTable = (props: ContractTableProps) => {
         null, emptyText, props.evaluatedContracts)
 
     const idAndPoints = props.evaluatedContracts?.map((value) =>
-        ({id:value.id, points:value.points}))
+        ({evaluationId:value.id, newPoints:value.points}))
     const displayValue = props.evaluatedContracts?.map((value) =>
         ({...value.contract}))
 

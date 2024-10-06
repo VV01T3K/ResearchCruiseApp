@@ -73,9 +73,10 @@ export const DifferentShipUsageField = () => {
     useEffect(() => {
         const lastFieldInShipUsageSelected = formContext!.initValues && formContext!.initValues?.shipUsages.length > 0 &&
             formContext!.getValues("shipUsage") == formContext!.initValues?.shipUsages?.length - 1
-        if(!disabled && !lastFieldInShipUsageSelected) {
+        if(!disabled && formContext!.initValues?.shipUsages && !lastFieldInShipUsageSelected) {
             setDisabled(true)
-            if(formContext?.getValues(timeSectionFieldNames.differentUsage))formContext?.resetField(timeSectionFieldNames.differentUsage)
+            if(formContext?.getValues(timeSectionFieldNames.differentUsage))
+                formContext?.resetField(timeSectionFieldNames.differentUsage)
             if(formContext?.formState?.errors[timeSectionFieldNames.differentUsage])formContext!.clearErrors(timeSectionFieldNames.differentUsage)
         }
         else if(disabled && lastFieldInShipUsageSelected)

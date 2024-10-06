@@ -6,6 +6,7 @@ import Api from "../../Tools/Api";
 import CruisesList from "./CruisesList";
 import ReactSwitch from "react-switch";
 import CruisesCalendar from "./CruisesCalendar";
+import UserBasedAccess from "../../UserBasedAccess";
 
 export const fetchCruises = () => Api.get('/api/Cruises')
 export const autoAddCruises =  () => Api.put('/api/Cruises/autoAdded')
@@ -49,11 +50,11 @@ export const AddCruiseButtons = () => {
 
 export const CruisePageContent = () => {
     const {CalendarListSwitch, listView} = ModeSwitch()
-
+    const {UserHasShipownerAccess, UserHasAdminAccess} = UserBasedAccess()
     const OptionBar = () => (
         <div className={"d-flex flex-row w-100"}>
             <CalendarListSwitch/>
-            <AddCruiseButtons/>
+            {(UserHasAdminAccess() || UserHasShipownerAccess()) && <AddCruiseButtons/>}
         </div>
     )
 

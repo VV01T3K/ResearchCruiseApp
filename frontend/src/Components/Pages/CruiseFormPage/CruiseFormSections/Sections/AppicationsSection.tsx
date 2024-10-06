@@ -10,6 +10,7 @@ import {FieldContext} from "../../../FormPage/Wrappers/FieldTableWrapper";
 import {extendedUseLocation} from "../../../FormPage/FormPage";
 import {fetchCruiseApplications} from "../../../../Tools/Fetchers";
 import {CruiseApplication} from "../../../CruiseApplicationsPage/CruiseApplicationsPage";
+import UserBasedAccess from "../../../../UserBasedAccess";
 
 export const applicationsSectionFieldNames = {
     applicationsIds:"cruiseApplicationsIds",
@@ -43,15 +44,19 @@ const render = ({field} : FieldValues) => {
 
 const X = () => {
     const {applicationsAddingMode, EnableAddingModeButton, DisableAddingModeButton} = ToggleAddingModeButtons()
-
+    const formContext = useContext(FormContext)
     return(
         <>
             <CruiseApplicationsList mode={CruiseApplicationListMode.Deletion}/>
-            { !applicationsAddingMode && <EnableAddingModeButton/> }
-            { applicationsAddingMode &&
+            { !formContext?.readOnly &&
                 <>
-                    <DisableAddingModeButton/>
-                    {applicationsAddingMode && <CruiseApplicationsList className={"mt-3"} mode={CruiseApplicationListMode.Add}/>}
+                    { !applicationsAddingMode && <EnableAddingModeButton/> }
+                    { applicationsAddingMode &&
+                        <>
+                            <DisableAddingModeButton/>
+                            {applicationsAddingMode && <CruiseApplicationsList className={"mt-3"} mode={CruiseApplicationListMode.Add}/>}
+                        </>
+                    }
                 </>
             }
         </>
@@ -78,14 +83,17 @@ const AddedApplicationsField = () => {
     return  <FieldWrapper className={"w-100"} {...fieldProps}/>
 }
 
-export const ApplicationsSection = () => SectionWrapper(
-    {
-        shortTitle: "Zgłoszenia",
-        longTitle: "Zgłoszenia przypisane do rejsu",
-        children:
-            <>
-                <AddedApplicationsField/>
-            </>
+export const ApplicationsSection = () => {
+    const {UserHasShipownerAccess,UserHasAdminAccess} = UserBasedAccess()
+    return SectionWrapper(
+        {
+            shortTitle: "Zgłoszenia",
+            longTitle: (UserHasShipownerAccess() || UserHasAdminAccess()) ? "Zgłoszenia przypisane do rejsu": "Moje zgłoszenia przypisane do rejsu",
+            children:
+                <>
+                    <AddedApplicationsField/>
+                </>
 
-    }
-)
+        }
+    )
+}

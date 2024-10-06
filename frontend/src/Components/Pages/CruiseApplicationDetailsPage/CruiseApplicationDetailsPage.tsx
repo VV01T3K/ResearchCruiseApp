@@ -33,34 +33,12 @@ const ApplicationDetailsSections = () => {
 
 function CruiseApplicationDetailsPage() {
     const location = extendedUseLocation()
-    const [locationState, _]: [CruiseApplicationDetailsPageLocationState, Dispatch<any>]
-        = useState(location.state || { })
-
-    // Set the values to be loaded to the form if applicable
-    // const [evaluatedApplication, setEvaluatedApplication]
-    //     = useState<FormValues | undefined>()
-    // useEffect(() => {
-        // if (locationState?.cruiseApplication.id) {
-        //     Api
-        //         .get(
-        //             `/api/CruiseApplications/${locationState?.cruiseApplication.id}/points`
-        //         )
-        //         .then(response => {
-        //             console.log(response)
-        //             // setEvaluatedApplication(response.data)
-        //             }
-        //         )
-        //         .catch(error => {
-        //             console.log(error.message)
-        //         })
-        // }
-    // },[locationState]);
 
     const sections = ApplicationDetailsSections()
 
 
     return (
-        <CruiseApplicationContext.Provider value={locationState.cruiseApplication}>
+        <CruiseApplicationContext.Provider value={location?.state.cruiseApplication}>
             <FormTemplate type={formType.ApplicationDetails} sections={sections} BottomOptionBar={BottomOptionBar}/>
         </CruiseApplicationContext.Provider>
 

@@ -23,6 +23,22 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
     {
         return DbContext.Cruises
             .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.Permissions)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
+            .Include(cruise => cruise.CruiseApplications)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAUgUnits)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAGuestUnits)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
+            .Include(cruise => cruise.CruiseApplications)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormASpubTasks)
+            .Include(cruise => cruise.CruiseApplications)
             .ToListAsync(cancellationToken);
     }
 

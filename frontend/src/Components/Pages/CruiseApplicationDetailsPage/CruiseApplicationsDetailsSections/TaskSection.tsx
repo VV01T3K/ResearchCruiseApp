@@ -4,7 +4,7 @@ import {EvaluatedTasksTable} from "../../FormPage/Inputs/TaskTable/EvaluatedTask
 import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 const researchTasksSectionFieldNames = {
-    researchTasks:"researchTasks",
+    researchTasks:"researchTasksEvaluationsEdits",
 }
 
 const TasksField = () => {

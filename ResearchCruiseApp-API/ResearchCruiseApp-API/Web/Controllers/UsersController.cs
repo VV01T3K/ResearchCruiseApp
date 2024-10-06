@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Application.UseCases.Users.AcceptUser;
 using ResearchCruiseApp_API.Application.UseCases.Users.AddUser;
+using ResearchCruiseApp_API.Application.UseCases.Users.DeactivateUser;
 using ResearchCruiseApp_API.Application.UseCases.Users.GetAllUsers;
 using ResearchCruiseApp_API.Application.UseCases.Users.GetUserById;
 using ResearchCruiseApp_API.Application.UseCases.Users.ToggleUserRole;
@@ -52,6 +53,16 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AcceptUser([FromRoute] Guid id)
     {
         var result = await mediator.Send(new AcceptUserCommand(id));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPatch("{id}/deactivate")]
+    public async Task<IActionResult> Deactivate([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new DeactivateUserCommand(id));
         return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);

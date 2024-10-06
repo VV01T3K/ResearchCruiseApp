@@ -16,10 +16,25 @@ public enum CruiseApplicationStatus
         
     [StringValue("Zaakceptowane")]
     Accepted,
-        
+    
+    [StringValue("Odrzucone")]
+    Denied,
+    
+    [StringValue("Wymagane uzupełnienie formularza B przez kierownika")]
+    FormBRequired,
+    
+    [StringValue("Formularz B wypełniony oczekiwanie na rejs")]
+    FormBFilled,
+    
+    [StringValue("Rejs w trakcie")]
+    CruiseBegan,
+    
     [StringValue("Zrealizowane")]
     Undertaken,
         
     [StringValue("Rozliczone")]
-    Reported
+    Reported,
+    
+    [StringValue("Archiwalne")]
+    Archived
 }

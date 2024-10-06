@@ -5,19 +5,15 @@ import UserSelect, {FormUser} from "../../../Inputs/UserSelect";
 import FormYearSelect from "../../../Inputs/FormYearSelect";
 import {cruiseManagerSectionFieldNames} from "./CruiseManagerSection";
 import {ErrorMessageIfPresentNoContext} from "../../../../CommonComponents/ErrorMessageIfPresent";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 
+export const EmptyFunction = ()=>{}
 export const CruiseManagerField = () => {
     const formContext = useContext(FormContext)
-    const {userData} = userDataManager()
-    useEffect(() => {
-        if(userData) {
-            const foundUserManager = formContext!.initValues?.deputyManagers.find((user: FormUser) => user.id == userData.id)
-            if(foundUserManager)
-                formContext?.setValue(cruiseManagerSectionFieldNames.cruiseManagerId, foundUserManager!.id)
-        }
-    }, [userData]);
+    const user = userDataManager()
     return(
-        <UserSelect className="three-fields-beside-md" fieldName={cruiseManagerSectionFieldNames.cruiseManagerId} fieldLabel="Kierownik rejsu"
+        <UserSelect defaultValue={user.userData?.id} className="three-fields-beside-md" fieldName={cruiseManagerSectionFieldNames.cruiseManagerId} fieldLabel="Kierownik rejsu"
                     initValues={formContext?.initValues?.cruiseManagers}
         />
     )
@@ -39,17 +35,54 @@ export const YearField = () => {
     )
 }
 
+const cruiseManagerSameAsDeputyErrName = "cruiseManagerIsTheSameAsDeputyManager"
+const cruiseManagerNorDeputyIsCurrentUserErrName = "cruiseManagerNorDeputyIsCurrentUser"
+
+const CruiseAndDeputyManagerExtraValidation = () => {
+    const formContext = useContext(FormContext)
+    const {userData} = userDataManager()
+
+
+    const cruiseManager = formContext!.getValues(cruiseManagerSectionFieldNames.cruiseManagerId)
+    const deputyManager = formContext!.getValues(cruiseManagerSectionFieldNames.deputyManagerId)
+
+    const cruiseManagerSameAsDeputyError = formContext?.formState.errors[cruiseManagerSameAsDeputyErrName]
+    const cruiseManagerNorDeputyIsCurrentUserErr = formContext?.formState.errors[cruiseManagerNorDeputyIsCurrentUserErrName]
+
+    return {
+        validation: !formContext!.readOnly ? () => {
+
+        const areFieldsEqual = cruiseManager ==  deputyManager
+
+        if(cruiseManager && deputyManager && areFieldsEqual && !cruiseManagerSameAsDeputyError)
+            formContext!.setError(cruiseManagerSameAsDeputyErrName,
+                {type:"custom",message:"Kierownik i jego zastępca muszą być innymi osobami."})
+        else if(!areFieldsEqual && cruiseManagerSameAsDeputyError)
+            formContext!.clearErrors(cruiseManagerSameAsDeputyErrName)
+
+        const isCruiseOrDeputyCurrentUser = (cruiseManager == userData?.id || deputyManager == userData?.id)
+
+        console.log(cruiseManagerNorDeputyIsCurrentUserErr)
+        if(cruiseManager && deputyManager && !isCruiseOrDeputyCurrentUser && !cruiseManagerNorDeputyIsCurrentUserErr)
+            formContext!.setError(cruiseManagerNorDeputyIsCurrentUserErrName,
+                {type:"custom",message:"Musisz zadeklarować się jako kierownik albo zastepca."})
+        else if(isCruiseOrDeputyCurrentUser && cruiseManagerNorDeputyIsCurrentUserErr)
+            formContext!.clearErrors(cruiseManagerNorDeputyIsCurrentUserErrName)
+    }: EmptyFunction,
+        ErrorMessage:
+            () =>
+                <>
+                    <ErrorMessageIfPresentNoContext message={cruiseManagerSameAsDeputyError?.message as string}/>
+                    <ErrorMessageIfPresentNoContext message={cruiseManagerNorDeputyIsCurrentUserErr?.message as string}/>
+                </>
+    }
+}
+
 export const CruiseAndDeputyManager = () => {
     const formContext = useContext(FormContext)
-    useEffect(() => {
-        const areFieldsEqual = formContext!.getValues(cruiseManagerSectionFieldNames.cruiseManagerId)
-            == formContext!.getValues(cruiseManagerSectionFieldNames.deputyManagerId)
-        if(areFieldsEqual && !formContext?.formState.errors["cruiseManagerIsTheSameAsDeputyManager"])
-            formContext!.setError("cruiseManagerIsTheSameAsDeputyManager",
-                {type:"custom",message:"Kierownik i jego zastępca muszą być innymi osobami"})
-        else if(!areFieldsEqual && formContext?.formState.errors["cruiseManagerIsTheSameAsDeputyManager"])
-            formContext!.clearErrors("cruiseManagerIsTheSameAsDeputyManager")
-    }, []);
+    const {validation, ErrorMessage} = CruiseAndDeputyManagerExtraValidation()
+
+    useEffect(validation, []);
 
     return (
         <>
@@ -58,8 +91,7 @@ export const CruiseAndDeputyManager = () => {
                 <DeputyManagerField/>
                 <YearField/>
             </div>
-            <ErrorMessageIfPresentNoContext
-                message={formContext?.formState?.errors["cruiseManagerIsTheSameAsDeputyManager"]?.message as string}/>
+            <ErrorMessage/>
         </>
 
     )

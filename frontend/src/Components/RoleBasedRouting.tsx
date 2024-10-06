@@ -35,9 +35,14 @@ const RoleBasedRouting = () => {
     const ShipownerRoute = () => {
         return (
             <>
-                <Route path="/NewForm" element={<NewFormPage />} />
-                <Route path="/ManageUsers" element={<ManageUsersPage />} />
-                <Route path="/*" element={<ShipOwnerPanel />} />
+                <Route path={Path.Form} element={<FormPage />} />
+                <Route path={Path.ManageUsers} element={<ManageUsersPage />} />
+                {/*<Route path={Path.Messages} element={<MessagesPage />} />*/}
+                <Route path={Path.CruiseApplications} element={<CruiseApplicationsPage />} />
+                <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
+                <Route path={Path.Cruises} element={<CruisesPage />} />
+                <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
+                <Route path={Path.Any} element={<ShipOwnerPanel />} />
             </>
         )
     }
@@ -46,11 +51,11 @@ const RoleBasedRouting = () => {
         return (
             <>
                 <Route path={Path.SavedApplications} element={<SavedFormPage />} />
-                <Route path={Path.NewForm} element={<NewFormPage />} />
+                {/*<Route path={Path.NewForm} element={<NewFormPage />} />*/}
                 <Route path={Path.Form} element={<FormPage />} />
                 <Route path={Path.ManageUsers} element={<ManageUsersPage />} />
                 <Route path={Path.Any} element={<AdminPanel />} />
-                <Route path={Path.Messages} element={<MessagesPage />} />
+                {/*<Route path={Path.Messages} element={<MessagesPage />} />*/}
                 <Route path={Path.CruiseApplications} element={<CruiseApplicationsPage />} />
                 <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
                 <Route path={Path.Cruises} element={<CruisesPage />} />
@@ -62,9 +67,13 @@ const RoleBasedRouting = () => {
     const CruiseManagerRoute = () => {
         return (
             <>
-                <Route path={Path.NewForm} element={<NewFormPage />} />
+                {/*<Route path={Path.NewForm} element={<NewFormPage />} />*/}
                 <Route path={Path.Form} element={<FormPage />} />
                 <Route path={Path.Any} element={<ManagerPanel />} />
+                <Route path={Path.CruiseApplications} element={<CruiseApplicationsPage />} />
+                <Route path={Path.CruiseApplicationDetails} element={<CruiseApplicationDetailsPage />} />
+                <Route path={Path.Cruises} element={<CruisesPage />} />
+                <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
             </>
         )
     }

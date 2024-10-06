@@ -9,7 +9,7 @@ import userDataManager from "../../CommonComponents/UserDataManager";
 export default function ChangePasswordForm() {
     const {ChangePassword} = userDataManager()
     const HandleError = (error:unknown) => {
-        if(axios.isAxiosError(error) && error.response?.status == 401)
+        if(axios.isAxiosError(error) && error.response?.status == 400)
             setChangePasswordError("Podano błędne hasło")
         else
             setChangePasswordError("Nieznany błąd")

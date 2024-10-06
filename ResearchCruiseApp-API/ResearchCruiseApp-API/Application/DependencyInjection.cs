@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
+using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Cruises;
@@ -8,6 +9,7 @@ using ResearchCruiseApp_API.Application.Services.Factories.Contracts;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationEvaluationDetailsDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationShortInfoDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Cruises;
 using ResearchCruiseApp_API.Application.Services.Factories.FormAContractDtos;
@@ -54,6 +56,7 @@ public static class DependencyInjection
             .AddScoped<ICruiseApplicationEvaluationDetailsDtosFactory, CruiseApplicationEvaluationDetailsDtosFactory>()
             .AddScoped<ICruisesFactory, CruisesFactory>()
             .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>()
+            .AddScoped<ICruiseApplicationShortInfoDtosFactory, CruiseApplicationShortInfoDtosFactory>()
             .AddScoped<IFormAInitValuesDtosFactory, FormAInitValuesDtosFactory>()
             .AddScoped<IFormUserDtosFactory, FormUserDtosFactory>();
     }

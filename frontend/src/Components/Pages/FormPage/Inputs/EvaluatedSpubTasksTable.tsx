@@ -37,7 +37,7 @@ export const EvaluatedSpubTaskTable = (props: EvaluatedSpubTasksTable) => {
         null, emptyText, props.evaluatedSpubTasks)
 
     const idAndPoints = props.evaluatedSpubTasks?.map((value) =>
-        ({id:value.id, points:value.points}))
+        ({evaluationId:value.id, newPoints:value.points}))
     const displayValue = props.evaluatedSpubTasks?.map((value) =>
         ({...value.spubTask}))
 

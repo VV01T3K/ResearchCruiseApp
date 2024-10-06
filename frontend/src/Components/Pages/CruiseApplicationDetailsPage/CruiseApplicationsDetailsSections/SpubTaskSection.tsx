@@ -6,7 +6,7 @@ import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 
 const spubTasksSectionFieldNames = {
-    spubTasks:"spubTasks",
+    spubTasks:"spubTaskEvaluationsEdits",
 }
 
 const SpubTaskField = () => {

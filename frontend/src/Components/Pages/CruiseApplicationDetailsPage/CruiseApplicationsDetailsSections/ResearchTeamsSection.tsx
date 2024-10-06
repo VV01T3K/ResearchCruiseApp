@@ -9,7 +9,7 @@ import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 
 const researchTeamsSectionFieldNames = {
-    points:"researchTeamsPoints"
+    newPoints:"newUgUnitsPoints"
 }
 
 const UgTeamsField = () => {
@@ -20,7 +20,7 @@ const UgTeamsField = () => {
         className="two-fields-beside-md"
         fieldLabel="Uczestnictwo osób z jednostek organizacyjnych UG"
         ugTeams={formContext!.initValues?.ugTeams}
-        initValues={administrationUnits.map((name, index)=>({name:name, id:String(index)}))}
+        initValues={administrationUnits.map((name, index)=>({name:name, evaluationId:String(index)}))}
     />
         )
 }
@@ -43,7 +43,7 @@ const UgTeamsField = () => {
       const formContext = useContext(FormContext)
       return(
         <NumberInput className="two-fields-beside-md"
-                          fieldName={researchTeamsSectionFieldNames.points}
+                          fieldName={researchTeamsSectionFieldNames.newPoints}
                           fieldLabel="Punkty"
                      defaultValue={formContext!.initValues?.ugUnitsPoints}
       /> )

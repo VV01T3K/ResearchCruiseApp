@@ -2,7 +2,7 @@ import React, {createContext, useEffect, useState} from 'react';
 import Page from "../Page";
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import PageTitle from "../CommonComponents/PageTitle";
-import {CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
+import {CruiseApplication, CruiseApplicationShortInfo} from "../CruiseApplicationsPage/CruiseApplicationsPage";
 import {CruisePageContent, fetchCruises} from "./CruisesPageMisc";
 
 
@@ -14,7 +14,8 @@ export type Cruise = {
     mainCruiseManagerFirstName: string,
     mainCruiseManagerLastName: string,
     mainDeputyManagerId: string,
-    cruiseApplicationsShortInfo: CruiseApplicationShortInfo[]
+    cruiseApplicationsShortInfo: CruiseApplicationShortInfo[],
+    cruiseApplications?:CruiseApplication[]
 }
 
 export const CruiseStateContext =
@@ -24,7 +25,8 @@ export default function CruisesPage() {
     const [cruises, setCruises] = useState<Cruise[]>([])
 
     useEffect(() => {
-        fetchCruises().then((response) =>setCruises(response?.data))
+        if(cruises.length <= 0)
+         fetchCruises().then((response) =>setCruises(response?.data))
     },[]);
 
 

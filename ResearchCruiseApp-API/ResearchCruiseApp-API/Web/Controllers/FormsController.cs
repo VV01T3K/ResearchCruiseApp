@@ -8,7 +8,7 @@ using ResearchCruiseApp_API.Web.Common.Extensions;
 namespace ResearchCruiseApp_API.Web.Controllers;
 
 
-[Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
+[Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
 [Route("[controller]")]
 [ApiController]
 public class FormsController(IMediator mediator) : ControllerBase

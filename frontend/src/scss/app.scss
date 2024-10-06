@@ -622,7 +622,6 @@ $top-bar-min-width: 380px;
   @extend
   .text-center,
   .rounded,
-  .h-100,
 }
 
 .field-common:focus{
@@ -1243,6 +1242,13 @@ body > [class^="select"] {
 .rbc-event-allday{
   @extend
   .bg-primary
+}
+
+.user-action-link{
+  cursor: pointer;
+  @extend
+  .text-decoration-underline,
+  .mb-1
 }
 
 /* Zmieniamy kolor tła i obramowania dni w widoku miesiąca */

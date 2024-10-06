@@ -14,13 +14,16 @@ export enum CruiseApplicationStatus {
     FormBFilled = "Formularz B wypełniony oczekiwanie na rejs",
     CruiseBegan = "Rejs w trakcie",
     Undertaken = "Zrealizowane",
-    Reported = "Rozliczone"
+    Reported = "Rozliczone",
+    Archived = "Archiwalne"
 }
 
 export type CruiseApplicationShortInfo = {
     id: string,
     number: string,
-    points: number
+    points: number,
+    cruiseManagerId:string,
+    deputyManagerId:string
 }
 
 export type CruiseApplication = {

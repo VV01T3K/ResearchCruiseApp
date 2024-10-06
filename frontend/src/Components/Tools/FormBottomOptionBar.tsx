@@ -9,6 +9,8 @@ import api from "./Api";
 import {_} from "react-hook-form/dist/__typetest__/__fixtures__";
 import {useNavigate} from "react-router-dom";
 import {Path} from "./Path";
+import userDataManager from "../CommonComponents/UserDataManager";
+import userBasedAccess from "../UserBasedAccess";
 
 const SupervisorMenu = () => {
     const location = extendedUseLocation()
@@ -21,7 +23,6 @@ const SupervisorMenu = () => {
 
     const deny = () =>  acceptPatch("false")
         .then(_=>setResponse("Zgłoszenie zostało odrzucone")).catch(err=>{})
-
 
 
     const AcceptButton = () => {
@@ -115,13 +116,14 @@ export const BottomOptionBar = () => {
         </>
     )
 
-    const ReadonlyFormButtons = () => (
-        <>
+    const ReadonlyFormButtons = () => {
+        const {UserHasCruiseManagerAccess, UserHasShipownerAccess, UserHasAdminAccess} = userBasedAccess()
+        return(<>
             <PrintButton/>
             <ResendButton/>
-            <DownloadButtonDefault/>
-        </>
-    )
+            {(UserHasShipownerAccess() || UserHasAdminAccess()) && <DownloadButtonDefault/>}
+        </>)
+    }
 
     const DefaultMenu = () => (
         <>

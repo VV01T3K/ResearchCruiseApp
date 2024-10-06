@@ -15,11 +15,11 @@ using ResearchCruiseApp_API.Web.Common.Extensions;
 namespace ResearchCruiseApp_API.Web.Controllers;
 
 
-[Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
 [Route("api/[controller]")]
 [ApiController]
 public class CruisesController(IMediator mediator) : ControllerBase
 {
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet]
     public async Task<IActionResult> GetAllCruises()
     {
@@ -28,7 +28,8 @@ public class CruisesController(IMediator mediator) : ControllerBase
             ? Ok(result.Data)
             : this.CreateError(result);
     }
-
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPost]
     public async Task<IActionResult> AddCruise([FromBody] CruiseFormDto cruiseFormModel)
     {
@@ -38,6 +39,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> EditCruise([FromRoute] Guid id, [FromBody] CruiseFormDto cruiseFormModel)
     {
@@ -57,6 +59,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteCruise([FromRoute] Guid id)
     {
@@ -65,7 +68,8 @@ public class CruisesController(IMediator mediator) : ControllerBase
             ? NoContent()
             : this.CreateError(result);
     }
-        
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPut("autoAdded")]
     public async Task<IActionResult> AutoAddCruises()
     {

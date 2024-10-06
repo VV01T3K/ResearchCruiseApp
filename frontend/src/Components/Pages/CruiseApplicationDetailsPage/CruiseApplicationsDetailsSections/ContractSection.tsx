@@ -4,7 +4,7 @@ import {EvaluatedContractTable} from "../../FormPage/Inputs/ContractsTable/Evalu
 import {FormContext} from "../../FormPage/Wrappers/FormTemplate";
 
 const contractSectionFieldNames = {
-    contracts:"contracts"
+    contracts:"contractsEvaluationsEdits"
 }
 
 const ContractsField = () => {

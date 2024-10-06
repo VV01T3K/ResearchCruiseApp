@@ -10,7 +10,7 @@ public class FormAResearchTaskDto
     
     public ResearchTaskDto ResearchTask { get; init; } = null!;
     
-    public int Points { get; init; }
+    public string Points { get; init; }
 
 
     private class MapProfile : Profile

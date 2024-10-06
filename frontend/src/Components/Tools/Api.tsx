@@ -42,7 +42,7 @@ export const Interceptors = () => {
         if(config && !config._retry) {
             config._retry = true;
             try {
-                // if(sessionStorage.getItem('accessToken'))
+                if(sessionStorage.getItem('accessToken'))
                     await refreshToken()
                 // return axios(config);
             } catch (refreshError) {

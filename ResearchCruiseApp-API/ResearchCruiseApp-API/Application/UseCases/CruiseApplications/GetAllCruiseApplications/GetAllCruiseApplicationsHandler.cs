@@ -3,13 +3,15 @@ using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationDtos;
+using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 
 
 public class GetAllCruiseApplicationsHandler(
     ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
-    ICruiseApplicationsRepository cruiseApplicationsRepository) 
+    ICruiseApplicationsRepository cruiseApplicationsRepository,
+    IUserPermissionVerifier userPermissionVerifier) 
     : IRequestHandler<GetAllCruiseApplicationsQuery, Result<List<CruiseApplicationDto>>>
 {
     public async Task<Result<List<CruiseApplicationDto>>> Handle(
@@ -20,9 +22,11 @@ public class GetAllCruiseApplicationsHandler(
             .GetAllWithFormsAndFormAContent(cancellationToken);
             
         var cruiseApplicationDtos = new List<CruiseApplicationDto>();
+        
         foreach (var cruiseApplication in cruiseApplications)
         {
-            cruiseApplicationDtos.Add(await cruiseApplicationDtosFactory.Create(cruiseApplication));
+            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(cruiseApplication)) 
+                cruiseApplicationDtos.Add(await cruiseApplicationDtosFactory.Create(cruiseApplication));
         }
 
         return cruiseApplicationDtos;
