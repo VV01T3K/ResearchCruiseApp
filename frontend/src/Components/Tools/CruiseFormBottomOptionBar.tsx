@@ -6,6 +6,9 @@ import {Path} from "./Path";
 import BusyEvent from "../CommonComponents/BusyEvent";
 import {extendedUseLocation} from "../Pages/FormPage/FormPage";
 import UserBasedAccess from "../UserBasedAccess";
+import {Simulate} from "react-dom/test-utils";
+import toggle = Simulate.toggle;
+import {EmptyFunction} from "../Pages/FormPage/Forms/FormA/FormASections/CruiseManagerSectionFields";
 export const SaveButton = () => {
     const formContext = useContext(FormContext)
     const locationState = extendedUseLocation()?.state
@@ -47,15 +50,59 @@ export const ClearFormButton = () => {
     )
 }
 
+export const ConfirmCruiseButton = () => {
+    const [toggleConfirm, setToggleConfirm] = useState(false)
+    const formContext = useContext(FormContext)
+    const Render = () =>
+        <>
+            {toggleConfirm &&
+
+                <div className={"d-flex flex-column w-100"}>
+                    <div className={"w-100 text-danger text-center mt-1"}>Uwaga! Po zatwierdzeniu rejsu nie będzie możliwości
+                        edycji!
+                    </div>
+                    <div className={"d-flex flex-row w-100"}>
+                        <div  onClick={() => {
+                            setToggleConfirm(!toggleConfirm);
+                            formContext?.setReadOnly(!toggleConfirm)
+                        }} className="form-page-option-button w-50"> Anuluj</div>
+                        <div onClick={EmptyFunction} className="form-page-option-button w-50 bg-danger"> Potwierdź
+                        </div>
+                    </div>
+                </div>
+            }
+            {!toggleConfirm &&
+                <>
+                    <div onClick={() => {
+                        setToggleConfirm(!toggleConfirm);
+                        formContext?.setReadOnly(!toggleConfirm)
+                    }}
+                         className="form-page-option-button w-100"> Zatwierdź rejs
+                    </div>
+                </>
+            }
+        </>
+
+    return {toggleConfirm, Render}
+}
+
 
 export const BottomOptionBar = () => {
     const {UserHasShipownerAccess, UserHasAdminAccess} = UserBasedAccess()
+    const {toggleConfirm, Render} = ConfirmCruiseButton()
     return(
         <>
             {(UserHasShipownerAccess() || UserHasAdminAccess()) &&
                 <div className="form-page-option-bar">
-                    <ClearFormButton/>
-                    <SaveButton/>
+                    {!toggleConfirm &&
+                        <>
+                            <ClearFormButton/>
+                            <SaveButton/>
+                        </>
+                    }
+                    <Render/>
+
+
                 </div>
             }
         </>)

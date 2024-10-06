@@ -1,6 +1,7 @@
 import {SectionWrapper} from "../../../FormPage/Wrappers/FormASections";
 import React, {useContext, useEffect, useState} from "react";
 import CruiseApplicationsList, {
+    ApplicationsContext,
     CruiseApplicationListMode
 } from "../../../CruiseApplicationsPage/CruiseApplicationsList";
 import {FieldValues} from "react-hook-form";
@@ -11,6 +12,8 @@ import {extendedUseLocation} from "../../../FormPage/FormPage";
 import {fetchCruiseApplications} from "../../../../Tools/Fetchers";
 import {CruiseApplication} from "../../../CruiseApplicationsPage/CruiseApplicationsPage";
 import UserBasedAccess from "../../../../UserBasedAccess";
+import Api from "../../../../Tools/Api";
+import {CruiseApplicationsContext} from "../../CruiseFormPage";
 
 export const applicationsSectionFieldNames = {
     applicationsIds:"cruiseApplicationsIds",
@@ -54,7 +57,7 @@ const X = () => {
                     { applicationsAddingMode &&
                         <>
                             <DisableAddingModeButton/>
-                            {applicationsAddingMode && <CruiseApplicationsList className={"mt-3"} mode={CruiseApplicationListMode.Add}/>}
+                            <CruiseApplicationsList className={"mt-3"} mode={CruiseApplicationListMode.Add}/>
                         </>
                     }
                 </>
@@ -69,7 +72,7 @@ const AddedApplicationsField = () => {
 
     const [cruiseApplications, setCruiseApplications] = useState<CruiseApplication[]>([])
     useEffect(() => {
-        if (location?.state?.cruise)
+        if (location?.state?.cruise || cruiseApplications.length<=0)
             (fetchCruiseApplications)(location.state.cruise.cruiseApplicationsShortInfo, setCruiseApplications)
     }, []);
 
@@ -85,14 +88,24 @@ const AddedApplicationsField = () => {
 
 export const ApplicationsSection = () => {
     const {UserHasShipownerAccess,UserHasAdminAccess} = UserBasedAccess()
+
+    const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState([])
+    useEffect(() => {
+        if(fetchedCruiseApplications.length<=0){
+            Api.get('/api/CruiseApplications').then(response =>
+                setFetchedCruiseApplications(response?.data))
+        }
+
+    }, []);
+
     return SectionWrapper(
         {
             shortTitle: "Zgłoszenia",
             longTitle: (UserHasShipownerAccess() || UserHasAdminAccess()) ? "Zgłoszenia przypisane do rejsu": "Moje zgłoszenia przypisane do rejsu",
             children:
-                <>
+                <CruiseApplicationsContext.Provider value={fetchedCruiseApplications}>
                     <AddedApplicationsField/>
-                </>
+                </CruiseApplicationsContext.Provider>
 
         }
     )

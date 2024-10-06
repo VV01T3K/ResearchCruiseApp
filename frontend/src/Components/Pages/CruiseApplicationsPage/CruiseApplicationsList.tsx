@@ -42,9 +42,10 @@ export const ListModeContext = createContext<null|{mode?:CruiseApplicationListMo
 export const ApplicationsContext = createContext<CruiseApplication[]>([])
 
 export default function CruiseApplicationsList(props: Props) {
-    const [fetchedCruiseApplications, setFetchedCruiseApplications]: [CruiseApplication[], CruiseApplicationsSetter]
-        = useState([])
     const applicationsContext = useContext(CruiseApplicationsContext)
+
+    const [fetchedCruiseApplications, setFetchedCruiseApplications]: [CruiseApplication[], CruiseApplicationsSetter]
+        = useState(applicationsContext ?? [])
     useEffect(() => {
         if(fetchedCruiseApplications.length<=0)
             if(applicationsContext)

@@ -15,7 +15,6 @@ const ugTeamsTableContent = () =>
     ]
 
 type Props =  {
-    initValues: UgUnit[]
     ugTeams?: UgTeam[]
     fieldLabel:string,
     className?:string

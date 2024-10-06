@@ -20,20 +20,17 @@ const UgTeamsField = () => {
         className="two-fields-beside-md"
         fieldLabel="Uczestnictwo osób z jednostek organizacyjnych UG"
         ugTeams={formContext!.initValues?.ugTeams}
-        initValues={administrationUnits.map((name, index)=>({name:name, evaluationId:String(index)}))}
     />
         )
 }
 
   const GuestTeamsField = () => {
-      // const formContext = useContext(FormContext)
+      const formContext = useContext(FormContext)
       return(
         <EvaluatedGuestTeamsTable
             className="two-fields-beside-md"
             fieldLabel="Uczestnictwo gości spoza UG"
-            guestTeams={[
-
-            ]}
+            guestTeams={formContext!.initValues?.guestUnits}
         />
     )
   }

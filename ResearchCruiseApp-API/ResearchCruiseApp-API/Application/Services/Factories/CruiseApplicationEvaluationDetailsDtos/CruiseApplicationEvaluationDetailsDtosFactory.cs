@@ -20,6 +20,7 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
         var formAResearchTaskDtos = CreateFormAResearchTaskDtos(formA);
         var formAContractDtos = await CreateContractDtos(formA);
         var ugUnitDtos = CreateUgTeamDtos(formA);
+        var guestUnitDtos = CreateGuestUnitDtos(formA);
         var formAPublicationDtos = CreateFormAPublicationDtos(formA);
         var formASpubTaskDtos = CreateFormASpubTaskDtos(formA);
         
@@ -28,6 +29,7 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
             FormAResearchTasks = formAResearchTaskDtos,
             FormAContracts = formAContractDtos,
             UgTeams = ugUnitDtos,
+            GuestUnits = guestUnitDtos,
             UgUnitsPoints = formA?.UgUnitsPoints ?? "0",
             FormAPublications = formAPublicationDtos,
             FormASpubTasks = formASpubTaskDtos
@@ -63,16 +65,28 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
         return formAContractDtos;
     }
 
-    private List<UgTeamDto> CreateUgTeamDtos(FormA? formA)
+    private List<UgTeamWithNameDto> CreateUgTeamDtos(FormA? formA)
     {
         if (formA is null)
             return [];
 
         var ugTeamDtos = formA.FormAUgUnits
-            .Select(mapper.Map<UgTeamDto>)
+            .Select(mapper.Map<UgTeamWithNameDto>)
             .ToList();
 
         return ugTeamDtos;
+    }
+    
+    private List<GuestUnitDto> CreateGuestUnitDtos(FormA? formA)
+    {
+        if (formA is null)
+            return [];
+
+        var guestUnitDtos = formA.FormAGuestUnits
+            .Select(mapper.Map<GuestUnitDto>)
+            .ToList();
+
+        return guestUnitDtos;
     }
 
     private List<FormAPublicationDto> CreateFormAPublicationDtos(FormA? formA)
