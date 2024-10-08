@@ -8,17 +8,14 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 
 
 internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICruiseApplicationsRepository
-{
-    private IQueryable<CruiseApplication> CruiseApplicationsQuery => DbContext.CruiseApplications.AsQueryable();
-    
-    
+{ 
     public CruiseApplicationsRepository(ApplicationDbContext dbContext) : base(dbContext)
     { }
 
 
     public Task<List<CruiseApplication>> GetAllWithFormsAndFormAContent(CancellationToken cancellationToken)
     {
-        return CruiseApplicationsQuery
+        return DbContext.CruiseApplications
             .IncludeForms()
             .IncludeFormAContent()
             .ToListAsync(cancellationToken);
@@ -33,7 +30,7 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
     
     public Task<CruiseApplication?> GetByIdWithFormsAndFormAContent(Guid id, CancellationToken cancellationToken)
     {
-        return CruiseApplicationsQuery
+        return DbContext.CruiseApplications
             .IncludeForms()
             .IncludeFormAContent()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
@@ -44,6 +41,15 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
         return DbContext.CruiseApplications
             .IncludeFormA()
             .IncludeFormAContent()
+            .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
+    }
+
+    public Task<CruiseApplication?> GetByIdWithFormAAndFormBContent(Guid id, CancellationToken cancellationToken)
+    {
+        return DbContext.CruiseApplications
+            .IncludeFormA()
+            .IncludeFormB()
+            .IncludeFormBContent()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
     
@@ -66,7 +72,7 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
 
     public Task<List<CruiseApplication>> GetAllByUserIdWithFormA(Guid userId, CancellationToken cancellationToken)
     {
-        return CruiseApplicationsQuery
+        return DbContext.CruiseApplications
             .IncludeFormA()
             .IncludeFormAContent()
             .Where(cruiseApplication =>

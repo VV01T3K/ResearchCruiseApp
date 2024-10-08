@@ -1,61 +1,44 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
 public class FormC : Entity
 {
-    public Guid CruiseManagerId { get; set; }
+    [StringLength(1024)]
+    public string ShipUsage { get; init; } = null!;
+    
+    public List<Permission> Permissions { get; init; } = [];
+    
+    public ResearchArea ResearchArea { get; init; } = null!;
 
-    public Guid DeputyManagerId { get; set; }
+    public List<FormCUgUnit> FormCUgUnits { get; init; } = [];
     
-    public int Year { get; set; }
-  
-    public int AcceptablePeriodBeg { get; set; }
-    
-    public int AcceptablePeriodEnd { get; set; }
-    
-    public int OptimalPeriodBeg { get; set; }
-    
-    public int OptimalPeriodEnd { get; set; }
-    
-    public int CruiseHours { get; set; }
+    public List<FormCGuestUnit> FormCGuestUnits { get; init; } = [];
 
-    public string PeriodNotes { get; set; }
+    public List<FormCResearchTask> FormCResearchTasks { get; init; } = [];
+
+    public List<Contract> Contracts { get; init; } = [];
+
+    public List<FormCSpubTask> FormCSpubTasks { get; init; } = [];
+
+    public List<FormCShortResearchEquipment> FormCShortResearchEquipments { get; init; } = [];
+
+    public List<FormCLongResearchEquipment> FormCLongResearchEquipments { get; init; } = [];
+
+    public List<FormCPort> FormCPorts { get; init; } = [];
+
+    public List<CruiseDayDetails> CruiseDaysDetails { get; init; } = [];
+
+    public List<FormCResearchEquipment> FormCResearchEquipments { get; init; } = [];
+
+    public List<ShipEquipment> ShipEquipments { get; init; } = [];
+
+    public List<CollectedSample> CollectedSamples { get; init; } = [];
+
+    [StringLength(1024)]
+    public string AdditionalSpubData { get; init; } = null!;
     
-    public int ShipUsage { get; set; }
-    
-    private bool _permissionsRequired;
-    public bool PermissionsRequired
-    {
-        get{return _permissionsRequired;}
-        set
-        {
-            _permissionsRequired = value;
-            if (!value)
-            {
-                Permissions = null;
-            }
-        }
-    }
-    
-    public string? Permissions { get; set; }
-    
-    public List<int> ResearchArea { get; set; } 
-    
-    public int CruiseGoal { get; set; }
-    
-    public string CruiseGoalDescription { get; set; }
-    
-    public List<ResearchTask> ResearchTasks { get; set; } 
-    
-    public List<Contract> Contracts { get; set; } 
-    
-    public List<FormAUgUnit> UGTeams { get; set; }
-    
-    public List<FormAGuestUnit> GuestTeams { get; set; }
-    
-    public List<Publication> Publications { get; set; }
-    
-    public List<SpubTask> SPUBTasks { get; set; } 
+    [StringLength(1024)]
+    public string AdditionalDescription { get; init; } = null!;
 }

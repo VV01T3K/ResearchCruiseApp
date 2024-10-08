@@ -27,6 +27,13 @@ internal class Repository<T> : IRepository<T>
         return await DbContext.Set<T>().FindAsync(keyValues, cancellationToken);
     }
 
+    public Task<T?> Get(T searchedEntity, CancellationToken cancellationToken)
+    {
+        return DbContext.Set<T>()
+            .Where(entity => entity.Equals(searchedEntity))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task Add(T newEntity, CancellationToken cancellationToken)
     {
         await DbContext.Set<T>().AddAsync(newEntity, cancellationToken);

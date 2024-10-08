@@ -30,10 +30,8 @@ public class Publication: Entity
     
     public override bool Equals(object? other)
     {
-        if (other is null)
+        if (other is not Publication otherPublication)
             return false;
-
-        var otherPublication = (Publication)other;
 
         return otherPublication.Category == Category &&
                otherPublication.Doi == Doi &&

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AcceptCruiseApplication;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AnswerAsSupervisor;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
@@ -11,6 +12,7 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApp
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormB;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
@@ -43,7 +45,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpPost]
-    public async Task<IActionResult> AddCruiseApplication(FormADto formADto)
+    public async Task<IActionResult> AddCruiseApplication([FromBody] FormADto formADto)
     {
         var result = await mediator.Send(new AddCruiseApplicationCommand(formADto));
         return result.IsSuccess
@@ -64,12 +66,22 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPatch("{id:guid}/evaluation")]
     public async Task<IActionResult> EditCruiseApplicationEvaluation(
-        Guid id, CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationsEditsDto)
+        Guid id, [FromBody] CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationsEditsDto)
     {
         var result = await mediator
             .Send(new EditCruiseApplicationEvaluationCommand(id, cruiseApplicationEvaluationsEditsDto));
         return result.IsSuccess
             ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
+    [HttpPost("{id:guid}/FormB")]
+    public async Task<IActionResult> AddFormB(Guid id, [FromBody] FormBDto formBDto)
+    {
+        var result = await mediator.Send(new AddFormBCommand(id, formBDto));
+        return result.IsSuccess
+            ? Created()
             : this.CreateError(result);
     }
     
@@ -114,6 +126,16 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             .Send(new AcceptCruiseApplicationCommand(cruiseApplicationId, accept));
         return result.IsSuccess
             ? NoContent()
+            : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
+    [HttpGet("{cruiseApplicationId:guid}/formB")]
+    public async Task<IActionResult> GetFormB(Guid cruiseApplicationId)
+    {
+        var result = await mediator.Send(new GetFormBQuery(cruiseApplicationId));
+        return result.IsSuccess
+            ? Ok(result.Data)
             : this.CreateError(result);
     }
 }

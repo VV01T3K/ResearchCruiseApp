@@ -13,14 +13,14 @@ public class SpubTask : Entity
     public string Name { get; init; } = null!;
     
     public List<FormASpubTask> FormASpubTasks { get; init; } = [];
+    
+    public List<FormCSpubTask> FormCSpubTasks { get; init; } = [];
 
 
     public override bool Equals(object? other)
     {
-        if (other is null)
+        if (other is not SpubTask otherSpubTask)
             return false;
-
-        var otherSpubTask = (SpubTask)other;
 
         return otherSpubTask.YearFrom == YearFrom &&
                otherSpubTask.YearTo == YearTo &&

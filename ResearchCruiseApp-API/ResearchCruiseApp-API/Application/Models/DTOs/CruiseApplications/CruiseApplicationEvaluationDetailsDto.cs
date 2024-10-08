@@ -13,7 +13,7 @@ public class CruiseApplicationEvaluationDetailsDto
     
     public List<UgTeamWithNameDto> UgTeams { get; init; } = [];
     
-    public List<GuestUnitDto> GuestUnits { get; init; } = [];
+    public List<GuestTeamDto> GuestTeams { get; init; } = [];
     
     public string UgUnitsPoints { get; init; } = null!;
     

@@ -4,9 +4,10 @@ using ResearchCruiseApp_API.Domain.Entities;
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 
-public class GuestUnitDto
+public class GuestTeamDto
 {
     public string Name { get; init; } = null!;
+    
     public string NoOfPersons { get; init; } = null!;
 
 
@@ -14,7 +15,7 @@ public class GuestUnitDto
     {
         public MapProfile()
         {
-            CreateMap<GuestUnitDto, GuestUnit>()
+            CreateMap<GuestTeamDto, GuestUnit>()
                 .ForMember(
                     dest => dest.Id,
                     options =>
@@ -24,7 +25,13 @@ public class GuestUnitDto
                     options =>
                         options.Ignore());
 
-            CreateMap<FormAGuestUnit, GuestUnitDto>()
+            CreateMap<FormAGuestUnit, GuestTeamDto>()
+                .ForMember(
+                    dest => dest.Name,
+                    options =>
+                        options.MapFrom(src => src.GuestUnit.Name));
+            
+            CreateMap<FormBGuestUnit, GuestTeamDto>()
                 .ForMember(
                     dest => dest.Name,
                     options =>

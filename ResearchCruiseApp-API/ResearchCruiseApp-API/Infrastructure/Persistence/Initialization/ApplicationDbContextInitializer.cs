@@ -19,15 +19,13 @@ internal class ApplicationDbContextInitializer(
         await SeedAdministrationData();
         await SeedUgUnits();
         await SeedResearchAreas();
+        await SeedShipEquipments();
     }
 
 
     private async Task Migrate()
-    {
-        var pendingMigrations = await applicationDbContext.Database.GetPendingMigrationsAsync();
-        
-        if (pendingMigrations.Any())
-            await applicationDbContext.Database.MigrateAsync();
+    { 
+        await applicationDbContext.Database.MigrateAsync();
     }
 
     private async Task SeedAdministrationData()
@@ -90,6 +88,24 @@ internal class ApplicationDbContextInitializer(
             await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
         }
         
+        await applicationDbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedShipEquipments()
+    {
+        if (await applicationDbContext.ShipEquipments.AnyAsync())
+            return;
+
+        foreach (var shipEquipmentName in InitialShipEquipmentData.ShipEquipmentsNames)
+        {
+            var newShipEquipment = new ShipEquipment
+            {
+                Name = shipEquipmentName,
+                IsActive = true
+            };
+            await applicationDbContext.ShipEquipments.AddAsync(newShipEquipment);
+        }
+
         await applicationDbContext.SaveChangesAsync();
     }
 }

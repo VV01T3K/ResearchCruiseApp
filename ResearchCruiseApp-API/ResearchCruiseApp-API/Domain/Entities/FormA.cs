@@ -37,7 +37,6 @@ public class FormA : Entity
     
     public List<Permission> Permissions { get; init; } = [];
 
-    [StringLength(1024)]
     public ResearchArea ResearchArea { get; set; } = null!;
     
     [MaxLength(1024)]

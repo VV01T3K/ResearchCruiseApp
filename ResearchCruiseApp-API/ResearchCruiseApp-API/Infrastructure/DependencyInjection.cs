@@ -90,6 +90,7 @@ public static class DependencyInjection
         services
             .AddScoped<IFormsARepository, FormsARepository>()
             .AddScoped<IResearchAreasRepository, ResearchAreasRepository>()
+            .AddScoped<IContractsRepository, ContractsRepository>()
             .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()
             .AddScoped<IPublicationsRepository, PublicationsRepository>()
             .AddScoped<IUgUnitsRepository, UgUnitsRepository>()
@@ -100,6 +101,11 @@ public static class DependencyInjection
             .AddScoped<IFormAPublicationsRepository, FormAPublicationsRepository>()
             .AddScoped<IFormASpubTasksRepository, FormASpubTasksRepository>()
             .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()
-            .AddScoped<ICruisesRepository, CruisesRepository>();
+            .AddScoped<ICruisesRepository, CruisesRepository>()
+            .AddScoped<ICrewMembersRepository, CrewMembersRepository>()
+            .AddScoped<IResearchEquipmentsRepository, ResearchEquipmentsRepository>()
+            .AddScoped<IPortsRepository, PortsRepository>()
+            .AddScoped<ICruiseDaysDetailsRepository, CruiseDaysDetailsRepository>()
+            .AddScoped<IShipEquipmentsRepository, ShipEquipmentsRepository>();
     }
 }

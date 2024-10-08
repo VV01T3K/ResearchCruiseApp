@@ -1,61 +1,30 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
 public class FormB : Entity
 {
-    public Guid CruiseManagerId { get; set; }
+    [StringLength(1024)]
+    public string IsCruiseManagerPresent { get; init; } = null!;
 
-    public Guid DeputyManagerId { get; set; }
-    
-    public int Year { get; set; }
-  
-    public int AcceptablePeriodBeg { get; set; }
-    
-    public int AcceptablePeriodEnd { get; set; }
-    
-    public int OptimalPeriodBeg { get; set; }
-    
-    public int OptimalPeriodEnd { get; set; }
-    
-    public int CruiseHours { get; set; }
+    public List<Permission> Permissions { get; init; } = [];
 
-    public string PeriodNotes { get; set; }
+    public List<FormBUgUnit> FormBUgUnits { get; init; } = [];
+
+    public List<FormBGuestUnit> FormBGuestUnits { get; init; } = [];
     
-    public int ShipUsage { get; set; }
+    public List<CrewMember> CrewMembers { get; init; } = [];
+
+    public List<FormBShortResearchEquipment> FormBShortResearchEquipments { get; init; } = [];
+
+    public List<FormBLongResearchEquipment> FormBLongResearchEquipments { get; init; } = [];
+
+    public List<FormBPort> FormBPorts { get; init; } = [];
+
+    public List<CruiseDayDetails> CruiseDaysDetails { get; init; } = [];
     
-    private bool _permissionsRequired;
-    public bool PermissionsRequired
-    {
-        get{return _permissionsRequired;}
-        set
-        {
-            _permissionsRequired = value;
-            if (!value)
-            {
-                Permissions = null;
-            }
-        }
-    }
-    
-    public string? Permissions { get; set; }
-    
-    public List<int>  ResearchArea { get; set; } 
-    
-    public int CruiseGoal { get; set; }
-    
-    public string CruiseGoalDescription { get; set; }
-    
-    public List<ResearchTask> ResearchTasks { get; set; } 
-    
-    public List<Contract> Contracts { get; set; } 
-    
-    public List<FormAUgUnit> UGTeams { get; set; }
-    
-    public List<FormAGuestUnit> GuestTeams { get; set; }
-    
-    public List<Publication> Publications { get; set; }
-    
-    public List<SpubTask> SPUBTasks { get; set; } 
+    public List<FormBResearchEquipment> FormBResearchEquipments { get; init; } = [];
+
+    public List<ShipEquipment> ShipEquipments { get; init; } = [];
 }

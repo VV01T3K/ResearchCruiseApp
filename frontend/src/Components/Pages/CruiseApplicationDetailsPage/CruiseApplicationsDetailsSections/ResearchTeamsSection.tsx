@@ -30,7 +30,7 @@ const UgTeamsField = () => {
         <EvaluatedGuestTeamsTable
             className="two-fields-beside-md"
             fieldLabel="Uczestnictwo gości spoza UG"
-            guestTeams={formContext!.initValues?.guestUnits}
+            guestTeams={formContext!.initValues?.guestTeams}
         />
     )
   }

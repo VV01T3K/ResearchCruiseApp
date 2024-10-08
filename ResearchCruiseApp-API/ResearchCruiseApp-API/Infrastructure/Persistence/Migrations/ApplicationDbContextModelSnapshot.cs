@@ -22,6 +22,51 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CrewMemberFormB", b =>
+                {
+                    b.Property<Guid>("CrewMembersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormsBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CrewMembersId", "FormsBId");
+
+                    b.HasIndex("FormsBId");
+
+                    b.ToTable("CrewMemberFormB");
+                });
+
+            modelBuilder.Entity("FormBShipEquipment", b =>
+                {
+                    b.Property<Guid>("FormsBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ShipEquipmentsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FormsBId", "ShipEquipmentsId");
+
+                    b.HasIndex("ShipEquipmentsId");
+
+                    b.ToTable("FormBShipEquipment");
+                });
+
+            modelBuilder.Entity("FormCShipEquipment", b =>
+                {
+                    b.Property<Guid>("FormsCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ShipEquipmentsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FormsCId", "ShipEquipmentsId");
+
+                    b.HasIndex("ShipEquipmentsId");
+
+                    b.ToTable("FormCShipEquipment");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -155,6 +200,42 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CollectedSample", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Analysis")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid?>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Publishing")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.ToTable("CollectedSamples");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Contract", b =>
                 {
                     b.Property<Guid>("Id")
@@ -170,9 +251,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
-
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("FormCId")
                         .HasColumnType("uniqueidentifier");
@@ -203,11 +281,60 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FormBId");
-
                     b.HasIndex("FormCId");
 
                     b.ToTable("Contracts");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CrewMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BirthDate")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("BirthPlace")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("DocumentExpiryDate")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Institution")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CrewMembers");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Cruise", b =>
@@ -282,6 +409,81 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.HasIndex("FormCId");
 
                     b.ToTable("CruiseApplications");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CruiseApplicationEffect", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CruiseApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EffectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CruiseApplicationId");
+
+                    b.HasIndex("EffectId");
+
+                    b.ToTable("CruiseApplicationEffects");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CruiseDayDetails", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid?>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Hours")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("TaskName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("FormCId");
+
+                    b.ToTable("CruiseDaysDetails");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormA", b =>
@@ -405,12 +607,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("FormAId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormCId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("GuestUnitId")
                         .HasColumnType("uniqueidentifier");
 
@@ -422,10 +618,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FormAId");
-
-                    b.HasIndex("FormBId");
-
-                    b.HasIndex("FormCId");
 
                     b.HasIndex("GuestUnitId");
 
@@ -513,12 +705,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("FormAId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormCId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("NoOfEmployees")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -536,10 +722,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FormAId");
 
-                    b.HasIndex("FormBId");
-
-                    b.HasIndex("FormCId");
-
                     b.HasIndex("UgUnitId");
 
                     b.ToTable("FormAUgUnits");
@@ -551,57 +733,201 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AcceptablePeriodBeg")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AcceptablePeriodEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CruiseGoal")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CruiseGoalDescription")
+                    b.Property<string>("IsCruiseManagerPresent")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
-                    b.Property<int>("CruiseHours")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("CruiseManagerId")
+                    b.Property<Guid?>("ResearchAreaId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DeputyManagerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("OptimalPeriodBeg")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OptimalPeriodEnd")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PeriodNotes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Permissions")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PermissionsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ResearchArea")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShipUsage")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ResearchAreaId");
+
                     b.ToTable("FormsB");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBGuestUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GuestUnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NoOfPersons")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("GuestUnitId");
+
+                    b.ToTable("FormBGuestUnits");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBLongResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResearchEquipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("ResearchEquipmentId");
+
+                    b.ToTable("FormBLongResearchEquipments");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBPort", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EndTime")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("PortId");
+
+                    b.ToTable("FormBPorts");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("InsuranceEndDate")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("InsuranceStartDate")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Permission")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("ResearchEquipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("ResearchEquipmentId");
+
+                    b.ToTable("FormBResearchEquipments");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBShortResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EndDate")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResearchEquipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StartDate")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("ResearchEquipmentId");
+
+                    b.ToTable("FormBShortResearchEquipments");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBUgUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NoOfEmployees")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("NoOfStudents")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("UgUnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("UgUnitId");
+
+                    b.ToTable("FormBUgUnits");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormC", b =>
@@ -610,57 +936,270 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AcceptablePeriodBeg")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AcceptablePeriodEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CruiseGoal")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CruiseGoalDescription")
+                    b.Property<string>("AdditionalDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
-                    b.Property<int>("CruiseHours")
-                        .HasColumnType("int");
+                    b.Property<string>("AdditionalSpubData")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
-                    b.Property<Guid>("CruiseManagerId")
+                    b.Property<Guid>("ResearchAreaId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DeputyManagerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("OptimalPeriodBeg")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OptimalPeriodEnd")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PeriodNotes")
+                    b.Property<string>("ShipUsage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Permissions")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PermissionsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ResearchArea")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShipUsage")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ResearchAreaId");
+
                     b.ToTable("FormsC");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCGuestUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GuestUnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NoOfPersons")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("GuestUnitId");
+
+                    b.ToTable("FormGuestUnits");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCLongResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResearchEquipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("ResearchEquipmentId");
+
+                    b.ToTable("FormCLongResearchEquipments");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCPort", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EndTime")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("PortId");
+
+                    b.ToTable("FormCPorts");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Insurance")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Permission")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("ResearchEquipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("ResearchEquipmentId");
+
+                    b.ToTable("FormCResearchEquipments");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCResearchTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DeputyConditionMet")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Done")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ManagerConditionMet")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("ResearchTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("ResearchTaskId");
+
+                    b.ToTable("FormCResearchTasks");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCShortResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EndDate")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResearchEquipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StartDate")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("ResearchEquipmentId");
+
+                    b.ToTable("FormCShortResearchEquipments");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCSpubTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SpubTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("SpubTaskId");
+
+                    b.ToTable("FormCSpubTasks");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCUgUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NoOfEmployees")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("NoOfStudents")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("UgUnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormCId");
+
+                    b.HasIndex("UgUnitId");
+
+                    b.ToTable("FormCUgUnits");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.GuestUnit", b =>
@@ -698,6 +1237,12 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("FormAId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("FormBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FormCId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("ScanContent")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -712,7 +1257,47 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FormAId");
 
+                    b.HasIndex("FormBId");
+
+                    b.HasIndex("FormCId");
+
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Photo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Port", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ports");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Publication", b =>
@@ -736,12 +1321,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormCId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Magazine")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -764,10 +1343,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FormBId");
-
-                    b.HasIndex("FormCId");
-
                     b.ToTable("Publications");
                 });
 
@@ -788,6 +1363,22 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ResearchAreas");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ResearchEquipments");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchTask", b =>
@@ -820,12 +1411,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormCId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Institution")
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
@@ -851,23 +1436,32 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FormBId");
-
-                    b.HasIndex("FormCId");
-
                     b.ToTable("ResearchTasks");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ShipEquipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShipEquipments");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.SpubTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormBId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FormCId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -886,10 +1480,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FormBId");
-
-                    b.HasIndex("FormCId");
 
                     b.ToTable("SpubTasks");
                 });
@@ -998,6 +1588,51 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("CrewMemberFormB", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.CrewMember", null)
+                        .WithMany()
+                        .HasForeignKey("CrewMembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
+                        .WithMany()
+                        .HasForeignKey("FormsBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FormBShipEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
+                        .WithMany()
+                        .HasForeignKey("FormsBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ShipEquipment", null)
+                        .WithMany()
+                        .HasForeignKey("ShipEquipmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FormCShipEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
+                        .WithMany()
+                        .HasForeignKey("FormsCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ShipEquipment", null)
+                        .WithMany()
+                        .HasForeignKey("ShipEquipmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1049,12 +1684,15 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CollectedSample", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
+                        .WithMany("CollectedSamples")
+                        .HasForeignKey("FormCId");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Contract", b =>
                 {
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
-                        .WithMany("Contracts")
-                        .HasForeignKey("FormBId");
-
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
                         .WithMany("Contracts")
                         .HasForeignKey("FormCId");
@@ -1083,6 +1721,36 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Navigation("FormB");
 
                     b.Navigation("FormC");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CruiseApplicationEffect", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.CruiseApplication", "CruiseApplication")
+                        .WithMany("CruiseApplicationEffects")
+                        .HasForeignKey("CruiseApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormCResearchTask", "Effect")
+                        .WithMany()
+                        .HasForeignKey("EffectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CruiseApplication");
+
+                    b.Navigation("Effect");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CruiseDayDetails", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
+                        .WithMany("CruiseDaysDetails")
+                        .HasForeignKey("FormBId");
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
+                        .WithMany("CruiseDaysDetails")
+                        .HasForeignKey("FormCId");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormA", b =>
@@ -1122,14 +1790,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasForeignKey("FormAId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
-                        .WithMany("GuestTeams")
-                        .HasForeignKey("FormBId");
-
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
-                        .WithMany("GuestTeams")
-                        .HasForeignKey("FormCId");
 
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.GuestUnit", "GuestUnit")
                         .WithMany("FormAGuestUnits")
@@ -1207,14 +1867,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
-                        .WithMany("UGTeams")
-                        .HasForeignKey("FormBId");
-
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
-                        .WithMany("UGTeams")
-                        .HasForeignKey("FormCId");
-
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.UgUnit", "UgUnit")
                         .WithMany("FormAUgUnits")
                         .HasForeignKey("UgUnitId")
@@ -1226,43 +1878,302 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Navigation("UgUnit");
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormB", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchArea", null)
+                        .WithMany("FormsB")
+                        .HasForeignKey("ResearchAreaId");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBGuestUnit", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", "FormB")
+                        .WithMany("FormBGuestUnits")
+                        .HasForeignKey("FormBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.GuestUnit", "GuestUnit")
+                        .WithMany("FormBGuestUnits")
+                        .HasForeignKey("GuestUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormB");
+
+                    b.Navigation("GuestUnit");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBLongResearchEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", "FormB")
+                        .WithMany("FormBLongResearchEquipments")
+                        .HasForeignKey("FormBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", "ResearchEquipment")
+                        .WithMany("FormBLongResearchEquipments")
+                        .HasForeignKey("ResearchEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormB");
+
+                    b.Navigation("ResearchEquipment");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBPort", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", "FormB")
+                        .WithMany("FormBPorts")
+                        .HasForeignKey("FormBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.Port", "Port")
+                        .WithMany("FormBPorts")
+                        .HasForeignKey("PortId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormB");
+
+                    b.Navigation("Port");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBResearchEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", "FormB")
+                        .WithMany("FormBResearchEquipments")
+                        .HasForeignKey("FormBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", "ResearchEquipment")
+                        .WithMany("FormBResearchEquipments")
+                        .HasForeignKey("ResearchEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormB");
+
+                    b.Navigation("ResearchEquipment");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBShortResearchEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", "FormB")
+                        .WithMany("FormBShortResearchEquipments")
+                        .HasForeignKey("FormBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", "ResearchEquipment")
+                        .WithMany("FormBShortResearchEquipments")
+                        .HasForeignKey("ResearchEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormB");
+
+                    b.Navigation("ResearchEquipment");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormBUgUnit", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", "FormB")
+                        .WithMany("FormBUgUnits")
+                        .HasForeignKey("FormBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.UgUnit", "UgUnit")
+                        .WithMany("FormBUgUnits")
+                        .HasForeignKey("UgUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormB");
+
+                    b.Navigation("UgUnit");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormC", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchArea", "ResearchArea")
+                        .WithMany()
+                        .HasForeignKey("ResearchAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ResearchArea");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCGuestUnit", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCGuestUnits")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.GuestUnit", "GuestUnit")
+                        .WithMany("FormCGuestUnits")
+                        .HasForeignKey("GuestUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("GuestUnit");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCLongResearchEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCLongResearchEquipments")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", "ResearchEquipment")
+                        .WithMany("FormCLongResearchEquipments")
+                        .HasForeignKey("ResearchEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("ResearchEquipment");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCPort", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCPorts")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.Port", "Port")
+                        .WithMany("FormCPorts")
+                        .HasForeignKey("PortId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("Port");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCResearchEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCResearchEquipments")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", "ResearchEquipment")
+                        .WithMany("FormCResearchEquipments")
+                        .HasForeignKey("ResearchEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("ResearchEquipment");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCResearchTask", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCResearchTasks")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchTask", "ResearchTask")
+                        .WithMany("FormCResearchTasks")
+                        .HasForeignKey("ResearchTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("ResearchTask");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCShortResearchEquipment", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCShortResearchEquipments")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", "ResearchEquipment")
+                        .WithMany("FormCShortResearchEquipments")
+                        .HasForeignKey("ResearchEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("ResearchEquipment");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCSpubTask", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCSpubTasks")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.SpubTask", "SpubTask")
+                        .WithMany("FormCSpubTasks")
+                        .HasForeignKey("SpubTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("SpubTask");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormCUgUnit", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
+                        .WithMany("FormCUgUnits")
+                        .HasForeignKey("FormCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.UgUnit", "UgUnit")
+                        .WithMany("FormCUgUnits")
+                        .HasForeignKey("UgUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormC");
+
+                    b.Navigation("UgUnit");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Permission", b =>
                 {
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormA", null)
                         .WithMany("Permissions")
                         .HasForeignKey("FormAId");
-                });
 
-            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Publication", b =>
-                {
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
-                        .WithMany("Publications")
+                        .WithMany("Permissions")
                         .HasForeignKey("FormBId");
 
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
-                        .WithMany("Publications")
-                        .HasForeignKey("FormCId");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchTask", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
-                        .WithMany("ResearchTasks")
-                        .HasForeignKey("FormBId");
-
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
-                        .WithMany("ResearchTasks")
-                        .HasForeignKey("FormCId");
-                });
-
-            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.SpubTask", b =>
-                {
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormB", null)
-                        .WithMany("SPUBTasks")
-                        .HasForeignKey("FormBId");
-
-                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", null)
-                        .WithMany("SPUBTasks")
+                        .WithMany("Permissions")
                         .HasForeignKey("FormCId");
                 });
 
@@ -1274,6 +2185,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Cruise", b =>
                 {
                     b.Navigation("CruiseApplications");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.CruiseApplication", b =>
+                {
+                    b.Navigation("CruiseApplicationEffects");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormA", b =>
@@ -1295,37 +2211,64 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormB", b =>
                 {
-                    b.Navigation("Contracts");
+                    b.Navigation("CruiseDaysDetails");
 
-                    b.Navigation("GuestTeams");
+                    b.Navigation("FormBGuestUnits");
 
-                    b.Navigation("Publications");
+                    b.Navigation("FormBLongResearchEquipments");
 
-                    b.Navigation("ResearchTasks");
+                    b.Navigation("FormBPorts");
 
-                    b.Navigation("SPUBTasks");
+                    b.Navigation("FormBResearchEquipments");
 
-                    b.Navigation("UGTeams");
+                    b.Navigation("FormBShortResearchEquipments");
+
+                    b.Navigation("FormBUgUnits");
+
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormC", b =>
                 {
+                    b.Navigation("CollectedSamples");
+
                     b.Navigation("Contracts");
 
-                    b.Navigation("GuestTeams");
+                    b.Navigation("CruiseDaysDetails");
 
-                    b.Navigation("Publications");
+                    b.Navigation("FormCGuestUnits");
 
-                    b.Navigation("ResearchTasks");
+                    b.Navigation("FormCLongResearchEquipments");
 
-                    b.Navigation("SPUBTasks");
+                    b.Navigation("FormCPorts");
 
-                    b.Navigation("UGTeams");
+                    b.Navigation("FormCResearchEquipments");
+
+                    b.Navigation("FormCResearchTasks");
+
+                    b.Navigation("FormCShortResearchEquipments");
+
+                    b.Navigation("FormCSpubTasks");
+
+                    b.Navigation("FormCUgUnits");
+
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.GuestUnit", b =>
                 {
                     b.Navigation("FormAGuestUnits");
+
+                    b.Navigation("FormBGuestUnits");
+
+                    b.Navigation("FormCGuestUnits");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Port", b =>
+                {
+                    b.Navigation("FormBPorts");
+
+                    b.Navigation("FormCPorts");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Publication", b =>
@@ -1336,21 +2279,46 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchArea", b =>
                 {
                     b.Navigation("FormsA");
+
+                    b.Navigation("FormsB");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchEquipment", b =>
+                {
+                    b.Navigation("FormBLongResearchEquipments");
+
+                    b.Navigation("FormBResearchEquipments");
+
+                    b.Navigation("FormBShortResearchEquipments");
+
+                    b.Navigation("FormCLongResearchEquipments");
+
+                    b.Navigation("FormCResearchEquipments");
+
+                    b.Navigation("FormCShortResearchEquipments");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchTask", b =>
                 {
                     b.Navigation("FormAResearchTasks");
+
+                    b.Navigation("FormCResearchTasks");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.SpubTask", b =>
                 {
                     b.Navigation("FormASpubTasks");
+
+                    b.Navigation("FormCSpubTasks");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.UgUnit", b =>
                 {
                     b.Navigation("FormAUgUnits");
+
+                    b.Navigation("FormBUgUnits");
+
+                    b.Navigation("FormCUgUnits");
                 });
 #pragma warning restore 612, 618
         }

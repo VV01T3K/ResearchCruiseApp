@@ -52,18 +52,16 @@ public class Contract : Entity
       
       public override bool Equals(object? other)
       {
-            if (other is null)
+            if (other is not Contract otherContract)
                   return false;
-
-            var otherResearchTask = (Contract)other;
-
-            return otherResearchTask.Category == Category &&
-                   otherResearchTask.InstitutionName == InstitutionName &&
-                   otherResearchTask.InstitutionUnit == InstitutionUnit &&
-                   otherResearchTask.InstitutionLocalization == InstitutionLocalization &&
-                   otherResearchTask.Description == Description &&
-                   otherResearchTask.ScanName == ScanName &&
-                   otherResearchTask.ScanContent.SequenceEqual(ScanContent);
+          
+            return otherContract.Category == Category &&
+                   otherContract.InstitutionName == InstitutionName &&
+                   otherContract.InstitutionUnit == InstitutionUnit &&
+                   otherContract.InstitutionLocalization == InstitutionLocalization &&
+                   otherContract.Description == Description &&
+                   otherContract.ScanName == ScanName &&
+                   otherContract.ScanContent.SequenceEqual(ScanContent);
       }
 
       public override int GetHashCode()

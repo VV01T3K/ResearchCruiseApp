@@ -21,8 +21,6 @@ services:
     environment:
       SA_PASSWORD: "p@ssw0rd"
       ACCEPT_EULA: "Y"
-      MSSQL_DATABASE: "ResearchCruiseApp"
-      MSSQL_SERVER_NAME: "researchcruiseapp-db-dc"
     ports:
       - 1433:1433
     volumes:
@@ -35,7 +33,7 @@ services:
       context: ./ResearchCruiseApp-API/
     container_name: researchcruiseapp-api-dc
     environment:
-      - APP_UID=1000 # Przykładowy UID, dostosuj do swoich potrzeb
+      - APP_UID=1000
     ports:
       - "8080:8080"
       - "8081:8081"

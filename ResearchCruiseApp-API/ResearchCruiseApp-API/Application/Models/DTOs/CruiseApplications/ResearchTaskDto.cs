@@ -39,6 +39,7 @@ public class ResearchTaskDto
                 dest => dest.Type,
                 options =>
                     options.MapFrom(src => ((int)src.Type).ToString()));
+            
             CreateMap<FormAResearchTask, ResearchTaskDto>()
                 .ForMember(
                     dest => dest.Type,

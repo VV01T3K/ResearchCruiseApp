@@ -9,7 +9,7 @@ public class UgUnitDto
 {
     public Guid Id { get; init; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
 
     private class MapProfile : Profile
