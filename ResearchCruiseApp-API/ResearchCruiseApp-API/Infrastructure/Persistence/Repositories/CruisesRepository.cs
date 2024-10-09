@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 
@@ -14,38 +15,41 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
     public Task<Cruise?> GetByIdWithCruiseApplications(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.Cruises
-            .Include(cruise => cruise.CruiseApplications)
-            .Where(cruise => cruise.Id == id)
-            .SingleOrDefaultAsync(cancellationToken);
+            .IncludeCruiseApplications()
+            .SingleOrDefaultAsync(cruise => cruise.Id == id, cancellationToken);
     }
 
     public Task<List<Cruise>> GetAllWithCruiseApplications(CancellationToken cancellationToken)
     {
         return DbContext.Cruises
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<Cruise>> GetAllWithCruiseApplicationsWithFormAContent(CancellationToken cancellationToken)
+    {
+        return DbContext.Cruises
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.Permissions)
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
-            .Include(cruise => cruise.CruiseApplications)
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAUgUnits)
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAGuestUnits)
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
-            .Include(cruise => cruise.CruiseApplications)
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormASpubTasks)
-            .Include(cruise => cruise.CruiseApplications)
             .ToListAsync(cancellationToken);
     }
 
     public Task<List<Cruise>> GetByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken)
     {
         return DbContext.Cruises
-            .Include(cruise => cruise.CruiseApplications)
+            .IncludeCruiseApplications()
             .Where(cruise => ids.Any(id =>
                 cruise.CruiseApplications
                     .Select(cruiseApplication => cruiseApplication.Id)

@@ -17,9 +17,8 @@ public class AutoAddCruisesHandler(
     {
         var cruiseApplications =
             await cruiseApplicationsRepository.GetAllWithFormsAndFormAContent(cancellationToken);
-        
-        var cruises = 
-            await cruisesRepository.GetAllWithCruiseApplications(cancellationToken);
+
+        var cruises = await cruisesRepository.GetAllWithCruiseApplications(cancellationToken);
         
         foreach (var cruiseApplication in cruiseApplications)
         {
@@ -27,7 +26,7 @@ public class AutoAddCruisesHandler(
             if (newCruise is null)
                 continue;
             
-            if(cruises.Any(cruise=>cruise.CruiseApplications.Contains(cruiseApplication)))
+            if (cruises.Any(cruise => cruise.CruiseApplications.Contains(cruiseApplication)))
                 continue;
             
             await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);
@@ -58,13 +57,13 @@ public class AutoAddCruisesHandler(
     {
         // Optimal period beg/end is a number from range 0...24 representing a point in a year
 
-        var startDay = Int32.Parse(formA.OptimalPeriodBeg) % 2 == 0
+        var startDay = int.Parse(formA.OptimalPeriodBeg) % 2 == 0
             ? 1 // start at the beginning of a month 
             : 15; // start at the middle of a month
-        var startMonth = Int32.Parse(formA.OptimalPeriodBeg) / 2 + 1;
+        var startMonth = int.Parse(formA.OptimalPeriodBeg) / 2 + 1;
 
-        var startDate = new DateTime(Int32.Parse(formA.Year), startMonth, startDay, 8, 0, 0);
-        var endDate = startDate.AddHours(Int32.Parse(formA.CruiseHours));
+        var startDate = new DateTime(int.Parse(formA.Year), startMonth, startDay, 8, 0, 0);
+        var endDate = startDate.AddHours(int.Parse(formA.CruiseHours));
 
         return new Tuple<DateTime, DateTime>(startDate, endDate);
     }
