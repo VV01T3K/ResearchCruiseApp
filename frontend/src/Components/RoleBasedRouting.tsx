@@ -23,6 +23,7 @@ import ResetPasswordPage from "./Pages/LoginPage/ResetPasswordPage";
 import CruiseApplicationsPage from "./Pages/CruiseApplicationsPage/CruiseApplicationsPage";
 import CruiseApplicationDetailsPage from "./Pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsPage";
 import FormAForSupervisorPage from "./Pages/FormAForSupervisorPage";
+import PriorityInformationPage from "./Pages/PriorityInformationPage/PriorityInformationPage";
 
 
 
@@ -83,7 +84,7 @@ const RoleBasedRouting = () => {
             <>
                 <Route path={Path.ForcedLogout} element={<LogoutPage />} />
                 <Route path={Path.AccountSettings} element={<AccountPage />} />
-
+                <Route path={Path.PriorityInformation} element={<PriorityInformationPage/>}/>
             </>
         )
     }

@@ -17,5 +17,6 @@ export enum Path {
     ConfirmEmail = "/ConfirmEmail",
     Register = "/Register",
     ResetPassword = "/ResetPassword",
-    FormAForSupervisor = "/FormAForSupervisor"
+    FormAForSupervisor = "/FormAForSupervisor",
+    PriorityInformation = "/PriorityInformation",
 }

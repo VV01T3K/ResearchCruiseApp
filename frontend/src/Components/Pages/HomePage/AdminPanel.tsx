@@ -7,6 +7,7 @@ import AccountSettingsTile from "./Tiles/AccountSettingsTile";
 import CruisesTile from "./Tiles/CruisesTile";
 import CruiseApplicationsTile from "./Tiles/CruiseApplicationsTile";
 import NewCruiseApplicationTile from "./Tiles/NewCruiseApplicationTile";
+import PriorityInformationTile from "./Tiles/PriorityInformationTile";
 
 
 export default function AdminPanel() {
@@ -14,9 +15,10 @@ export default function AdminPanel() {
         { element: <NewCruiseApplicationTile />, cols: 2, rows: 2 },
         { element: <SavedCruiseApplicationsTile />, cols: 2, rows: 1 },
         { element: <ManageUserTile />, cols: 1, rows: 1 },
-        { element: <AccountSettingsTile />, cols: 1, rows: 2 },
+        { element: <PriorityInformationTile/>, cols: 1, rows: 1 },
         { element: <CruiseApplicationsTile />, cols: 1, rows: 1},
-        { element: <CruisesTile />, cols: 2, rows: 1 }
+        { element: <CruisesTile />, cols: 2, rows: 1 },
+        { element: <AccountSettingsTile/>, cols: 1, rows: 1 }
     ];
 
     return(
