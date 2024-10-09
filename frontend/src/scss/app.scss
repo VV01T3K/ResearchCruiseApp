@@ -512,6 +512,48 @@ $top-bar-min-width: 380px;
    .w-50
  }
 
+.priority-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Arial', sans-serif;
+  background-color: white;
+  border: 1px solid map-get($theme-colors, "primary");
+}
+
+.priority-cell{
+  border: 1px solid black;
+  padding: 10px;
+  text-align: left;
+  white-space: pre-line;
+}
+
+.priority-header{
+  background-color: lightgrey;
+  font-size: 18px;
+  @extend
+  .priority-cell
+}
+
+.priority-section-header{
+  font-weight: bold;
+  text-align: left;
+  background-color: #ddd;
+  padding: 10px;
+  border: 1px solid black;
+}
+
+@media (max-width: 450px) {
+  .priority-cell{
+    padding: 4px;
+    font-size: 11px;
+  }
+  .priority-header{
+    font-size: 13px;
+  }
+  .priority-section-header{
+    padding: 4px;
+  }
+}
 
 .form-page-option-bar{
   @extend
