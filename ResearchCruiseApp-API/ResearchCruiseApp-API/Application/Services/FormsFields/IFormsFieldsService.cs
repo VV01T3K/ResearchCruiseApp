@@ -17,6 +17,11 @@ public interface IFormsFieldsService
 
     Task<Contract> GetUniqueContract(
         ContractDto contractDto, IEnumerable<Contract> contractsInMemory, CancellationToken cancellationToken);
+
+    Task<Publication> GetUniquePublication(
+        PublicationDto publicationDto,
+        IEnumerable<Publication> publicationInMemory,
+        CancellationToken cancellationToken);
     
     Task<SpubTask> GetUniqueSpubTask(
         SpubTaskDto spubTaskDto, IEnumerable<SpubTask> spubTasksInMemory, CancellationToken cancellationToken);

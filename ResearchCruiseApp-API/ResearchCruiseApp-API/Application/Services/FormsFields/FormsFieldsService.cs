@@ -13,6 +13,7 @@ public class FormsFieldsService(
     IResearchTasksRepository researchTasksRepository,
     IContractsRepository contractsRepository,
     IGuestUnitsRepository guestUnitsRepository,
+    IPublicationsRepository publicationsRepository,
     ISpubTasksRepository spubTasksRepository,
     ICrewMembersRepository crewMembersRepository,
     IResearchEquipmentsRepository researchEquipmentsRepository,
@@ -40,11 +41,24 @@ public class FormsFieldsService(
         var newContract = await contractsFactory.Create(contractDto);
         var oldContract =
             Find(newContract, contractsInMemory) ??
-            await contractsRepository.Get(searchedEntity: newContract, cancellationToken: cancellationToken);
+            await contractsRepository.Get(newContract, cancellationToken);
 
         return oldContract ?? newContract;
     }
 
+    public async Task<Publication> GetUniquePublication(
+        PublicationDto publicationDto,
+        IEnumerable<Publication> publicationInMemory,
+        CancellationToken cancellationToken)
+    {
+        var newPublication = mapper.Map<Publication>(publicationDto);
+        var oldPublication =
+            Find(newPublication, publicationInMemory) ??
+            await publicationsRepository.Get(newPublication, cancellationToken);
+
+        return oldPublication ?? newPublication;
+    }
+    
     public async Task<SpubTask> GetUniqueSpubTask(
         SpubTaskDto spubTaskDto, IEnumerable<SpubTask> spubTasksInMemory, CancellationToken cancellationToken)
     {
