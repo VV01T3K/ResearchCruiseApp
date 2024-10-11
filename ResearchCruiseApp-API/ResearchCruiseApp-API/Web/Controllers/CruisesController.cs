@@ -6,9 +6,13 @@ using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.AddCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.AutoAddCruises;
+using ResearchCruiseApp_API.Application.UseCases.Cruises.ConfirmCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.DeleteCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.EditCruise;
+using ResearchCruiseApp_API.Application.UseCases.Cruises.EndCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.GetAllCruises;
+using ResearchCruiseApp_API.Application.UseCases.Cruises.GetCruise;
+using ResearchCruiseApp_API.Application.UseCases.Cruises.StartCruise;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
@@ -24,6 +28,16 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllCruises()
     {
         var result = await mediator.Send(new GetAllCruisesQuery());
+        return result.IsSuccess
+            ? Ok(result.Data)
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetCruise([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new GetCruiseQuery(id));
         return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
@@ -64,6 +78,36 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteCruise([FromRoute] Guid id)
     {
         var result = await mediator.Send(new DeleteCruiseCommand(id));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}/confirm")]
+    public async Task<IActionResult> ConfirmCruise([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new ConfirmCruiseCommand(id));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}/start")]
+    public async Task<IActionResult> StartCruise([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new StartCruiseCommand(id));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}/end")]
+    public async Task<IActionResult> EndCruise([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new EndCruiseCommand(id));
         return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);

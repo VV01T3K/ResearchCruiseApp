@@ -1,5 +1,6 @@
 using AutoMapper;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
+using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
@@ -25,12 +26,19 @@ public class CruiseDto
     
     public List<CruiseApplicationShortInfoDto> CruiseApplicationsShortInfo { get; set; } = [];
 
+    public string Status { get; init; } = null!;
 
     private class MapProfile : Profile
     {
         public MapProfile()
         {
             CreateMap<Cruise, CruiseDto>()
+                .ForMember(
+                    dest => dest.Status,
+                    options =>
+                        options.MapFrom(src => 
+                            src.Status.GetStringValue()
+                        ))
                 .ForMember(
                     dest => dest.CruiseApplicationsShortInfo,
                     options=>

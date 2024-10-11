@@ -1,67 +1,74 @@
-import React, {useContext} from "react";
-import {FieldValues} from "react-hook-form";
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from "../TableParts";
-import {FieldProps} from "../FormRadio";
-import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
-import FieldWrapper from "../FieldWrapper";
-import {CategoryPicker, InformationsColumn, MinisterialPointsField, YearField} from "./PublicationsTableFields";
-import {DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField} from "../TaskTable/EvaluatedTaskTable";
-import {Publication} from "./PublicationsTable";
+import React, { useContext } from 'react';
+import { FieldValues } from 'react-hook-form';
+
+import { CategoryPicker, InformationColumn, MinisterialPointsField, YearField } from './PublicationsTableFields';
+import { Publication } from './PublicationsTable';
+import {
+    DisplayValueContext,
+    DisplayWrapper,
+    pointFieldRules,
+    PointsField,
+} from '@app/pages/FormPage/Inputs/TaskTable/EvaluatedTaskTable';
+import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
+import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import { OrdinalNumber } from '@app/pages/FormPage/Inputs/TableParts';
+import { FieldContext } from '@contexts/FieldContext';
+import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 
 
 type EvaluatedPublication = {
-    id:string,
-    publication:Publication,
-    points:string
+    id: string,
+    publication: Publication,
+    points: string
 }
 
 
 const PublicationTableContent = () =>
     [
-        ()=>(<OrdinalNumber label={"Publikacja"}/>),
+        () => (<OrdinalNumber label={'Publikacja'} />),
         DisplayWrapper(CategoryPicker),
-        DisplayWrapper(InformationsColumn),
+        DisplayWrapper(InformationColumn),
         DisplayWrapper(YearField),
         DisplayWrapper(MinisterialPointsField),
         PointsField,
-    ]
+    ];
 
 type PublicationsTableProps = FieldProps &
-    {evaluatedPublications?: EvaluatedPublication[]}
+    { evaluatedPublications?: EvaluatedPublication[] }
 
 
 export const PublicationsTable = (props: PublicationsTableProps) => {
 
 
-    const mdColWidths = [5,15,46,10, 14,10]
-    const mdColTitles = ["Lp.", "Kategoria", "Informacje", "Rok wydania", "Punkty ministerialne", "Punkty"]
-    const colTitle = "Publikacje"
-    const emptyText = "Nie dodano żadnej publikacji"
-    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,PublicationTableContent,
-        null, emptyText, props.evaluatedPublications)
+    const mdColWidths = [5, 15, 46, 10, 14, 10];
+    const mdColTitles = ['Lp.', 'Kategoria', 'Informacje', 'Rok wydania', 'Punkty ministerialne', 'Punkty'];
+    const colTitle = 'Publikacje';
+    const emptyText = 'Nie dodano żadnej publikacji';
+    const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, PublicationTableContent,
+        null, emptyText, props.evaluatedPublications);
 
 
     const idAndPoints = props.evaluatedPublications?.map((value) =>
-        ({evaluationId:value.id, newPoints:value.points}))
+        ({ evaluationId: value.id, newPoints: value.points }));
     const displayValue = props.evaluatedPublications?.map((value) =>
-        ({...value.publication}))
+        ({ ...value.publication }));
 
     const fieldProps = {
         ...props,
         defaultValue: idAndPoints,
         rules: pointFieldRules,
-        render: ({field}:FieldValues)=>(
+        render: ({ field }: FieldValues) => (
             <FieldContext.Provider value={field}>
                 <DisplayValueContext.Provider value={displayValue}>
-                    <Render/>
+                    <Render />
                 </DisplayValueContext.Provider>
             </FieldContext.Provider>
-        )
-    }
+        ),
+    };
 
     return (
-        <FieldWrapper {...fieldProps}/>
-    )
-}
+        <FieldWrapper {...fieldProps} />
+    );
+};
 
-export default PublicationsTable
+export default PublicationsTable;

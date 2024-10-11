@@ -10,4 +10,6 @@ public interface ITemplateFileReader
     Task<string> ReadEmailConfirmationEmailSubject();
     Task<string> ReadAccountAcceptedEmailSubject();
     Task<string> ReadRequestToSupervisorEmailSubject();
+    Task<string> ReadCruiseConfirmedMessageTemplate();
+    Task<string> ReadCruiseConfirmedSubject();
 }

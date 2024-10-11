@@ -24,6 +24,9 @@ internal class TemplateFileReader : ITemplateFileReader
 
     public Task<string> ReadRequestToSupervisorMessageTemplate() =>
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "requestToSupervisorMessage.html");
+    
+    public Task<string> ReadCruiseConfirmedMessageTemplate() =>
+        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "cruiseConfirmedMessage.html");
 
     public Task<string> ReadEmailConfirmationEmailSubject() =>
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "emailConfirmationEmailSubject.html");
@@ -32,7 +35,9 @@ internal class TemplateFileReader : ITemplateFileReader
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "accountAcceptedEmailSubject.html");
     
     public Task<string> ReadRequestToSupervisorEmailSubject() =>
-        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "requestToSupervisorEmailSubject.html");
+        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "requestToSupervisorEmailSubject.html"); 
+    public Task<string> ReadCruiseConfirmedSubject() =>
+        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "cruiseConfirmedEmailSubject.html");
 
 
     private static Task<string> ReadFileText(string filePath)

@@ -2,6 +2,7 @@ using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Services.Cruises;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Cruises.AutoAddCruises;
@@ -22,6 +23,9 @@ public class AutoAddCruisesHandler(
         
         foreach (var cruiseApplication in cruiseApplications)
         {
+            if(cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+                continue;
+            
             var newCruise = CreateCruise(cruiseApplication);
             if (newCruise is null)
                 continue;

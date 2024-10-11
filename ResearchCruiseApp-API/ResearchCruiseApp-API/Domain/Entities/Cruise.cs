@@ -16,6 +16,8 @@ public class Cruise : Entity, IYearBasedNumbered
     public DateTime StartDate { get; set; }
     
     public DateTime EndDate { get; set; }
+    
+    public CruiseStatus Status { get; set; }
 
     public List<CruiseApplication> CruiseApplications { get; set; } = null!;
 }

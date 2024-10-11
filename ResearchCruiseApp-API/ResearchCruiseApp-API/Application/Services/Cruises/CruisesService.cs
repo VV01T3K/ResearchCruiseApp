@@ -1,6 +1,7 @@
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 
@@ -19,7 +20,8 @@ internal class CruisesService(
         return unitOfWork.ExecuteIsolated(async () =>
             {
                 cruise.Number = await yearBasedKeyGenerator.GenerateKey(cruisesRepository, cancellationToken);
-
+                cruise.Status = CruiseStatus.New;
+                
                 await cruisesRepository.Add(cruise, cancellationToken);
                 await unitOfWork.Complete(cancellationToken);
             },

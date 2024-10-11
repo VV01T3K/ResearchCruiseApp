@@ -24,7 +24,7 @@ public class CruiseFormDto
                     dest => dest.MainCruiseManagerId,
                     options =>
                         options.MapFrom(src =>
-                            src.ManagersTeam.MainDeputyManagerId))
+                            src.ManagersTeam.MainCruiseManagerId))
                 .ForMember(
                     dest => dest.MainDeputyManagerId,
                     options =>

@@ -4,6 +4,7 @@ using MimeKit;
 using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
@@ -79,6 +80,21 @@ internal class EmailSender(
         await SendEmail(supervisorEmail, emailSubject, emailMessage);
     }
     
+    public async Task SendCruiseConfirmMessage(
+        CruiseDto cruise, UserDto cruiseManager, string email)
+    {
+
+        var messageTemplate = await templateFileReader.ReadCruiseConfirmedMessageTemplate();
+        var emailSubject = await templateFileReader.ReadCruiseConfirmedSubject();
+
+        var emailMessage = messageTemplate
+            .Replace("{{startDate}}", cruise.StartDate)
+            .Replace("{{endDate}}", cruise.EndDate)
+            .Replace("{{firstName}}", cruiseManager.FirstName)
+            .Replace("{{lastName}}", cruiseManager.LastName);
+
+        await SendEmail(email, emailSubject, emailMessage);
+    }
     
     private async Task SendEmail(string email, string subject, string body)
     {

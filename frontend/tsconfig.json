@@ -19,14 +19,56 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "baseUrl": "./",
-    "paths": {
-      "*": [
-        "src/types/*"
-      ]
-    },
+    "baseUrl": "src",
     "include": [
-      "src"
-    ]
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.d.ts"
+      // Dodaj ten wpis, aby uwzględnić pliki deklaracji
+    ],
+    "paths": {
+      "@api/*": [
+        "api/*"
+      ],
+      "@app/*": [
+        "app/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@consts/*": [
+        "consts/*"
+      ],
+      "@defaultValues/*": [
+        "defaultValues/*"
+      ],
+      "@enums/*": [
+        "enums/*"
+      ],
+      "@helpers/*": [
+        "defaultValues/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@resources/*": [
+        "resources/*"
+      ],
+      "@styles/*": [
+        "styles/*"
+      ],
+      "@types/*": [
+        "types/*"
+      ],
+      "@contexts/*": [
+        "contexts/*"
+      ]
+    }
   }
 }

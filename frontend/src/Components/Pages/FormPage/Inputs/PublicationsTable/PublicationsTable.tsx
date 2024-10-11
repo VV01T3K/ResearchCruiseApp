@@ -1,22 +1,22 @@
-import React, {useContext} from "react";
-import {FieldValues} from "react-hook-form";
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from "../TableParts";
-import {FieldProps} from "../FormRadio";
-import {FormContext} from "../../Wrappers/FormTemplate";
-import {FieldContext, FieldTableWrapper} from "../../Wrappers/FieldTableWrapper";
-import FieldWrapper from "../FieldWrapper";
-import {CategoryPicker, InformationsColumn, MinisterialPointsField, YearField} from "./PublicationsTableFields";
-import {FieldContextWrapper} from "../PermissionsTable/PermissionsTable";
+import { CategoryPicker, InformationColumn, MinisterialPointsField, YearField } from './PublicationsTableFields';
+import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
+import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
+import { useContext } from 'react';
+import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import { FieldValues } from 'react-hook-form';
+import { FormContext } from '@contexts/FormContext';
+import { FieldContextWrapper } from '@app/pages/FormPage/Inputs/CrewTable/CrewTable';
+import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 
-export const notEmptyArray = <T extends object>(value:FieldValues) => {
-    if (value.some((row:T) => {
+export const notEmptyArray = <T extends object>(value: FieldValues) => {
+    if (value.some((row: T) => {
         return Object.values(row).some(field => {
-                return !field
-            }
-        )
+                return !field;
+            },
+        );
     }))
-        return"Wypełnij wszystkie pola"
-}
+        return 'Wypełnij wszystkie pola';
+};
 
 export type Publication = {
     category: string,
@@ -30,85 +30,81 @@ export type Publication = {
 
 const publicationDefaultValues = [
     {
-        category: "subject",
-        doi: "",
-        authors: "",
-        title: "",
-        magazine: "",
+        category: 'subject',
+        doi: '',
+        authors: '',
+        title: '',
+        magazine: '',
         year: 0,
-        ministerialPoints: "0"
+        ministerialPoints: '0',
     },
     {
-        category: "postscript",
-        doi: "",
-        authors: "",
-        title: "",
-        magazine: "",
+        category: 'postscript',
+        doi: '',
+        authors: '',
+        title: '',
+        magazine: '',
         year: 0,
-        ministerialPoints: "0"
-    }]
+        ministerialPoints: '0',
+    }];
 
 export const publicationCategories = [
-    "subject",
-    "postscript"
-]
+    'subject',
+    'postscript',
+];
 
 export const publicationCategoriesPL = [
-    "Temat",
-    "Dopisek"
-]
-
+    'Temat',
+    'Dopisek',
+];
 
 
 export const publicationOptions = publicationCategoriesPL.map((taskLabel, index) =>
-    ({label:taskLabel, value:publicationDefaultValues[index]}))
+    ({ label: taskLabel, value: publicationDefaultValues[index] }));
 
 const PublicationTableContent = () =>
     [
-        ()=>(<OrdinalNumber label={"Publikacja"}/>),
+        () => (<OrdinalNumber label={'Publikacja'} />),
         CategoryPicker,
-        InformationsColumn,
+        InformationColumn,
         YearField,
         MinisterialPointsField,
         RemoveRowButton,
-    ]
+    ];
 
 type PublicationsTableProps = FieldProps &
-    {historicalPublications?: Publication[]}
+    { historicalPublications?: Publication[] }
 
-const PublicationRowLabel = (row:Publication) =>
+const PublicationRowLabel = (row: Publication) =>
     `DOI: ${row.doi}\n
     Autorzy: ${row.authors}\n
     Tytuł: ${row.title}\n
     Czasopismo: ${row.magazine}\n
     Rok wydania: ${row.year}\n
-    Punkty: ${row.ministerialPoints}`
+    Punkty: ${row.ministerialPoints}`;
 
 
 export const PublicationsTable = (props: PublicationsTableProps) => {
 
-    const formContext = useContext(FormContext)
+    const formContext = useContext(FormContext);
 
-    const FilteredHistoricalPublications = (category:string) =>
+    const FilteredHistoricalPublications = (category: string) =>
         props.historicalPublications?.filter((row) => row.category == category)
             .map((row: Publication) =>
-                ({label: PublicationRowLabel(row), value: row})) ?? []
+                ({ label: PublicationRowLabel(row), value: row })) ?? [];
 
-    const selectOptions =  publicationCategories.map((publicationCategory, index)=>
-        ({label:publicationCategoriesPL[index], options: FilteredHistoricalPublications(publicationCategory)})) ?? []
+    const selectOptions = publicationCategories.map((publicationCategory, index) =>
+        ({ label: publicationCategoriesPL[index], options: FilteredHistoricalPublications(publicationCategory) })) ?? [];
 
 
-
-    const mdColWidths = [5,15,51,10, 14,5]
-    const mdColTitles = ["Lp.", "Kategoria", "Informacje", "Rok wydania", "Punkty ministerialne", ""]
-    const colTitle = "Publikacje"
+    const mdColWidths = [5, 15, 51, 10, 14, 5];
+    const mdColTitles = ['Lp.', 'Kategoria', 'Informacje', 'Rok wydania', 'Punkty ministerialne', ''];
+    const colTitle = 'Publikacje';
     const bottomMenu =
-        <BottomMenuWithHistory newOptions={publicationOptions} historicalOptions={selectOptions}/>
-    const emptyText = "Nie dodano żadnej publikacji"
-    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles,PublicationTableContent,
-        bottomMenu, emptyText, formContext!.getValues(props.fieldName))
-
-
+        <BottomMenuWithHistory newOptions={publicationOptions} historicalOptions={selectOptions} />;
+    const emptyText = 'Nie dodano żadnej publikacji';
+    const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, PublicationTableContent,
+        bottomMenu, emptyText, formContext!.getValues(props.fieldName));
 
 
     const fieldProps = {
@@ -116,14 +112,14 @@ export const PublicationsTable = (props: PublicationsTableProps) => {
         defaultValue: [],
         rules: {
             required: false,
-            validate: { notEmptyArray: notEmptyArray<Publication> }
+            validate: { notEmptyArray: notEmptyArray<Publication> },
         },
-        render:  FieldContextWrapper(Render)
-    }
+        render: FieldContextWrapper(Render),
+    };
 
     return (
-        <FieldWrapper {...fieldProps}/>
-    )
-}
+        <FieldWrapper {...fieldProps} />
+    );
+};
 
-export default PublicationsTable
+export default PublicationsTable;
