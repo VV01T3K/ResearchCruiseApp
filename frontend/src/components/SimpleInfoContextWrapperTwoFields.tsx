@@ -13,11 +13,11 @@ export const SimpleInfoContextWrapperTwoFields =
         return (
             <SimpleInfoTile title={props.title}>
                 <ReadOnlyTextInput
-                    value={context ? context![props.firstSelector] : undefined}
+                    value={context ? context![props.firstSelector] as string : undefined}
                     className={!context ? 'bg-secondary' : ''}
                 />
                 <ReadOnlyTextInput
-                    value={context ? context![props.secondSelector] : undefined}
+                    value={context ? context![props.secondSelector] as string : undefined}
                     className={'mt-1 ' + !context ? 'bg-secondary' : ''} />
             </SimpleInfoTile>
         );

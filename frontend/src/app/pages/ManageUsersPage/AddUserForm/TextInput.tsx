@@ -1,19 +1,23 @@
 import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { FieldError, UseFormReturn } from 'react-hook-form';
 
 import {
     ErrorMessageIfPresentNoContext,
 } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
-import { NewUserFormValues } from '../../../../types/NewUserFormValues';
+import { NewUserFormValues } from 'NewUserFormValues';
 
 type Props = {
     form: UseFormReturn<NewUserFormValues>;
     label: string;
-    name: NewUserFormValues[keyof NewUserFormValues];
+    name: keyof NewUserFormValues;
     inputType?: string;
     validationPattern?: RegExp;
     validationPatternMessage?: string;
     disabled: boolean;
+};
+
+type FormError<T> = FieldError & {
+    [K in keyof T]?: FieldError;
 };
 
 export default function TextInput(props: Props) {
@@ -41,9 +45,7 @@ export default function TextInput(props: Props) {
                 {props.form?.formState?.errors[props.name] && (
                     <div className="d-flex col-12 justify-content-center">
                         <ErrorMessageIfPresentNoContext
-                            message={
-                                props.form.formState.errors[props.name].message as string
-                            }
+                            message={(props.form.formState.errors[props.name] as FormError<NewUserFormValues>).message}
                         />
                     </div>
                 )}

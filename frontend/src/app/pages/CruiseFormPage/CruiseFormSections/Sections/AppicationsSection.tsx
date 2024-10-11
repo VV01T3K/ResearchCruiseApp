@@ -8,7 +8,7 @@ import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
 import UserBasedAccess from '../../../../../ToBeMoved/UserBasedAccess';
 import {
     CruiseApplicationListMode,
-} from '../../../../../types/CruiseApplicationListMode';
+} from 'CruiseApplicationListMode';
 
 export const applicationsSectionFieldNames = {
     applicationsIds: 'cruiseApplicationsIds',

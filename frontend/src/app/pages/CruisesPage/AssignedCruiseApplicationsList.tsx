@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Api from '../../../api/Api';
 import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
 import { Path } from '../../../ToBeMoved/Tools/Path';
-import { CruiseApplicationShortInfo } from '../../../types/CruiseApplicationShortInfo';
+import { CruiseApplicationShortInfo } from 'CruiseApplicationShortInfo';
 import { Buffer } from 'buffer';
 
 type Props = {

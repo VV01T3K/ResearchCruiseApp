@@ -11,7 +11,7 @@ import FieldWrapper from './FieldWrapper';
 import { notEmptyArray } from './PublicationsTable/PublicationsTable';
 import { FieldContextWrapper } from './PermissionsTable/PermissionsTable';
 import { FormContext } from '@contexts/FormContext';
-import { SpubTask } from '../../../../types/SpubTask';
+import { SpubTask } from 'SpubTask';
 import { spubTaskDefaultValue } from '@helpers/spubTaskDefaultValue';
 import { FieldTableWrapper } from '../Wrappers/FieldTableWrapper';
 import { KeyContext } from '@contexts/KeyContext';

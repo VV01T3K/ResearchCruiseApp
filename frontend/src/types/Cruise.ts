@@ -1,5 +1,5 @@
-import { CruiseApplication } from './CruiseApplication';
-import { CruiseApplicationShortInfo } from './CruiseApplicationShortInfo';
+import { CruiseApplication } from 'CruiseApplication';
+import { CruiseApplicationShortInfo } from 'CruiseApplicationShortInfo';
 import { CruiseStatus } from '@enums/CruiseStatus';
 
 export type Cruise = {

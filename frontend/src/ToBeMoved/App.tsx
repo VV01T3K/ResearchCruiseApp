@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useState } from 'react';
-import { UserData } from '../types/User/UserData';
+import { UserData } from 'User/UserData';
 import { useLocation } from 'react-router-dom';
 import { Interceptors } from '@api/Api';
 import BusyEvent from './CommonComponents/BusyEvent';

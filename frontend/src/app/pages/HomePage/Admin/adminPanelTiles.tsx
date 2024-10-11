@@ -1,5 +1,4 @@
 import NewCruiseApplicationTile from '../../../../components/MainPageMenu/Tiles/NewCruiseApplicationTile';
-import SavedCruiseApplicationsTile from '../../../../components/MainPageMenu/Tiles/SavedCruiseApplicationsTile';
 import ManageUserTile from '../../../../components/MainPageMenu/Tiles/ManageUserTile';
 import AccountSettingsTile from '../../../../components/MainPageMenu/Tiles/AccountSettingsTile';
 import CruiseApplicationsTile from '../../../../components/MainPageMenu/Tiles/CruiseApplicationsTile';

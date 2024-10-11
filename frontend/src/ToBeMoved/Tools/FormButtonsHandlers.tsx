@@ -2,9 +2,9 @@ import { FieldValues } from 'react-hook-form';
 import Api from '../../api/Api';
 import { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
-import { ExtendedUseFormReturn } from '../../types/ExtendedUseFormReturn';
+import { FormContextFields } from '@app/pages/FormPage/Wrappers/FormTemplate';
 
-export const handleSave = (formContext: ExtendedUseFormReturn) => {
+export const handleSave = (formContext: FormContextFields) => {
     // const navigate = useNavigate()
     // SetBusyWithMessage("Trwa zapisywanie")
     // Api

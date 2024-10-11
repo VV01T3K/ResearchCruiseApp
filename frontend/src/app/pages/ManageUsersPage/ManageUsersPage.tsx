@@ -1,5 +1,5 @@
 import Api from '../../../api/Api';
-import { UserData } from '../../../types/User/UserData';
+import { UserData } from 'User/UserData';
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import { AnyStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
 import {

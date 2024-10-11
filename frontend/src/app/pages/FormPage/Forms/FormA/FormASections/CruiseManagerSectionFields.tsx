@@ -9,6 +9,7 @@ import {
 } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import userDataManager from '../../../../../../ToBeMoved/CommonComponents/UserDataManager';
 import { EmptyFunction } from '@consts/EmptyFunction';
+import { FormAInitValues } from 'FormAInitValues';
 
 export const CruiseManagerField = () => {
     const formContext = useContext(FormContext);
@@ -19,7 +20,7 @@ export const CruiseManagerField = () => {
             className="three-fields-beside-md"
             fieldName={cruiseManagerSectionFieldNames.cruiseManagerId}
             fieldLabel="Kierownik rejsu"
-            initValues={formContext?.initValues?.cruiseManagers}
+            initValues={(formContext?.initValues as FormAInitValues)?.cruiseManagers}
         />
     );
 };
@@ -30,7 +31,7 @@ export const DeputyManagerField = () => {
             className="three-fields-beside-md"
             fieldName={cruiseManagerSectionFieldNames.deputyManagerId}
             fieldLabel="Zastępca"
-            initValues={formContext!.initValues?.deputyManagers}
+            initValues={(formContext!.initValues as FormAInitValues)!.deputyManagers}
         />
     );
 };
@@ -41,7 +42,7 @@ export const YearField = () => {
             className="three-fields-beside-md"
             fieldName={cruiseManagerSectionFieldNames.year}
             fieldLabel="Rok rejsu"
-            initValues={formContext!.initValues?.years}
+            initValues={(formContext!.initValues as FormAInitValues)?.years}
         />
     );
 };

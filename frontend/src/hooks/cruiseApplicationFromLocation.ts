@@ -1,5 +1,5 @@
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { CruiseApplication } from '@types/CruiseApplication';
+import { CruiseApplication } from 'CruiseApplication';
 
 const cruiseApplicationFromLocation = () => {
     const location = extendedUseLocation();

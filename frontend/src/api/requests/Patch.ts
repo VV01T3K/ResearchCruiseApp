@@ -5,3 +5,8 @@ const patch = (url: string, data: any, raw?: boolean) => Api.patch(url, data, { 
 
 export const changePassword = (data: ChangePasswordData) =>
     patch('/account/password', data, true);
+
+export type ChangePasswordData = {
+    password: string,
+    newPassword: string
+}

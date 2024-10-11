@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
-    formType,
+    FormType, FormTypeKeys,
     FormTypeValues,
 } from '../../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 import Api from '@api/Api';
 import { useOnBlurForm } from '@hooks/useOnBlurForm';
-import { FormTemplateProps } from '@types/Form/FormTemplateProps';
+import { FormTemplateProps } from 'Form/FormTemplateProps';
 import Page from '../../../../ToBeMoved/Pages/Page';
 import FormTitleWithNavigation from '../../../../components/Form/FormTitleWithNavigation';
 
@@ -14,12 +14,41 @@ import { BottomOptionBar } from '../../../../ToBeMoved/Tools/FormBottomOptionBar
 import { FormContext } from '@contexts/FormContext';
 import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
 import { getFormA, getFormForSupervisor } from '@api/requests';
-import { FormAInitValues } from '@types/FormAInitValues';
+import { FormAInitValues } from 'FormAInitValues';
 
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { Guid } from '@types/Guid';
-import { CruiseApplication } from '@types/CruiseApplication';
+import { Guid } from 'Guid';
+import { CruiseApplication } from 'CruiseApplication';
+import {
+    Control, DefaultValues,
+    FormState,
+    UseFormClearErrors,
+    UseFormGetValues,
+    UseFormHandleSubmit, UseFormReset,
+    UseFormResetField, UseFormSetError, UseFormSetValue,
+    UseFormTrigger,
+} from 'react-hook-form';
+import { FormSectionType } from 'Form/Section/FormSectionType';
+import { FormInitValues } from 'FormInitValues';
 
+export type FormContextFields = {
+    resetField: UseFormResetField<any>,
+    clearErrors: UseFormClearErrors<any>,
+    trigger: UseFormTrigger<any>,
+    formState: FormState<any>,
+    handleSubmit: UseFormHandleSubmit<any>,
+    getValues: UseFormGetValues<any>,
+    reset: UseFormReset<any>,
+    control: Control,
+    setValue: UseFormSetValue<any>,
+    setError: UseFormSetError<any>,
+    defaultValues: DefaultValues<any>,
+    setReadOnly: Dispatch<SetStateAction<boolean>>,
+    type: FormTypeKeys,
+    readOnly: boolean,
+    sections: FormSectionType[],
+    initValues: FormInitValues | undefined,
+};
 const locationToDataMapper = () => {
     const location = extendedUseLocation();
     return {
@@ -63,10 +92,10 @@ function FormTemplate(props: FormTemplateProps) {
 
     const initEndpoint = (_formType: FormTypeValues) => {
         switch (_formType) {
-            case formType.A:
-            case formType.B:
+            case FormType.A:
+            case FormType.B:
                 return '/Forms/InitValues/A';
-            case formType.ApplicationDetails:
+            case FormType.ApplicationDetails:
                 return `/api/CruiseApplications/${cruiseApplication.id}/evaluation`;
         }
     };
@@ -90,7 +119,7 @@ function FormTemplate(props: FormTemplateProps) {
 
     const [readOnly, setReadOnly] = useState(_readOnly);
 
-    const formContext = {
+    const formContext: FormContextFields = {
         resetField: form.resetField,
         clearErrors: form.clearErrors,
         trigger: form.trigger,
@@ -111,7 +140,7 @@ function FormTemplate(props: FormTemplateProps) {
 
     return (
         <Page className="form-page">
-            <FormContext.Provider value={formContext}>
+            <FormContext.Provider value={formContext as FormContextFields}>
                 <ReadOnlyContext.Provider value={formContext.readOnly}>
                     <FormTitleWithNavigation />
                     <FormContent sections={props.sections} />

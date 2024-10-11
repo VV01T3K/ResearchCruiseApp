@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-import { ExtendedUseFormReturn } from '../types/ExtendedUseFormReturn';
+import { FormContextFields } from '@app/pages/FormPage/Wrappers/FormTemplate';
 
-export const FormContext = createContext<ExtendedUseFormReturn | null>(null);
+export const FormContext = createContext<FormContextFields | null>(null);

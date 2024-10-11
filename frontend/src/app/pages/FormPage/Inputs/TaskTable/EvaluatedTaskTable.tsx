@@ -11,13 +11,13 @@ import { FIntField } from '../CellFormFields';
 import { FieldForKey, ResearchTask, taskTypes, taskTypesDefaultValues } from './TaskTable';
 import { FormContext } from '@contexts/FormContext';
 import { FieldContext } from '@contexts/FieldContext';
-import { Guid } from '../../../../../types/Guid';
+import { Guid } from 'Guid';
 import { KeyContext } from '@contexts/KeyContext';
 import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
 
 registerLocale('pl', pl);
 
-type EvaluatedReseachTask = {
+export type EvaluatedReseachTask = {
     id: string,
     researchTask: ResearchTask,
     points: string

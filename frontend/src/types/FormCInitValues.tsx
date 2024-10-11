@@ -1,9 +1,9 @@
-import { FormUser } from '@types/FormUser';
+import { FormUser } from 'FormUser';
 import { ResearchArea } from '@app/pages/FormPage/Inputs/ResearchAreaSelect';
 import { ResearchTask } from '@app/pages/FormPage/Inputs/TaskTable/TaskTable';
 import { Contract } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import { UgUnit } from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
-import { SpubTask } from '@types/SpubTask';
+import { SpubTask } from 'SpubTask';
 
 // TODO: Change
 export type FormCInitValues = {

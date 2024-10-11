@@ -5,7 +5,7 @@ import { Path } from './Path';
 import userBasedAccess from '../UserBasedAccess';
 import { FormContext } from '@contexts/FormContext';
 import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
-import { CruiseApplicationStatus } from '../../types/CruiseApplicationStatus';
+import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
 
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';

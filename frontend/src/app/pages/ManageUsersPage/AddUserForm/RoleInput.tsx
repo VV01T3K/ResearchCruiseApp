@@ -6,8 +6,8 @@ import {
     ErrorMessageIfPresentNoContext,
 } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import UserBasedAccess from '../../../../ToBeMoved/UserBasedAccess';
-import { Role } from '../../../../types/Role';
-import { NewUserFormValues } from '../../../../types/NewUserFormValues';
+import { Role } from 'Role';
+import { NewUserFormValues } from 'NewUserFormValues';
 
 type RoleOption = {
     label: string;
@@ -17,7 +17,7 @@ type RoleOption = {
 type Props = {
     form: UseFormReturn<NewUserFormValues>;
     label: string;
-    name: NewUserFormValues[keyof NewUserFormValues];
+    name: keyof NewUserFormValues;
     disabled: boolean;
 };
 
@@ -76,7 +76,7 @@ export default function RoleInput(props: Props) {
                     // }
                     onChange={(selectedValue) => {
                         if (selectedValue) {
-                            props.form.setValue(props.name, selectedValue.value, {
+                            props.form.setValue(props.name, selectedValue.value as string, {
                                 shouldTouch: true,
                                 shouldValidate: true,
                                 shouldDirty: true,

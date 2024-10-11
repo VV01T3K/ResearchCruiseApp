@@ -1,12 +1,12 @@
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import pl from 'date-fns/locale/pl';
 import { FieldValues, useWatch } from 'react-hook-form';
 import React, { useContext } from 'react';
 import FieldWrapper from './FieldWrapper';
 import { FieldProps } from './FormRadio';
 import { datePickerCommon } from './DatePickerCommon';
 import { FormContext } from '@contexts/FormContext';
+import { pl } from 'date-fns/locale';
 
 registerLocale('pl', pl);
 
@@ -46,7 +46,7 @@ export function StartDateField(props: StartDateFieldProps) {
                 startDate={field.value ? new Date(field.value as string) : undefined}
                 maxDate={endDateValue ? new Date(endDateValue) : undefined}
                 selectsStart
-                value={field.value ? new Date(field.value) : undefined}
+                value={field.value ? field.value : undefined}
                 selected={field.value ? new Date(field.value) : undefined}
                 dateFormat="Pp"
             />
@@ -89,7 +89,7 @@ export function EndDateField(props: EndDateFieldProps) {
                 minDate={startDateValue ? new Date(startDateValue) : undefined}
                 selectsEnd
                 showTimeSelect
-                value={field.value ? new Date(field.value) : undefined}
+                value={field.value ? field.value : undefined}
                 selected={field.value ? new Date(field.value) : undefined}
                 dateFormat="Pp"
             />

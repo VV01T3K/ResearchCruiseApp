@@ -1,4 +1,4 @@
-import { FormSectionProps } from '../../../types/Form/Section/FormSectionProps';
+import { FormSectionProps } from 'Form/Section/FormSectionProps';
 import React from 'react';
 import { SectionContent } from './SectionContent';
 import { SectionLabel } from './SectionLabel';

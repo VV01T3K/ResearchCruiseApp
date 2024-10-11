@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { formType } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import { FormType } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 import { Path } from '../../ToBeMoved/Tools/Path';
 
 export default function FormAForSupervisorPage() {
@@ -14,7 +14,7 @@ export default function FormAForSupervisorPage() {
         if (applicationId && supervisorCode) {
             navigate(Path.Form, {
                 state: {
-                    formType: formType.A,
+                    formType: FormType.A,
                     cruiseApplicationId: applicationId,
                     supervisorCode: supervisorCode,
                     readOnly: true,

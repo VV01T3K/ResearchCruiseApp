@@ -1,7 +1,7 @@
 import { SectionIdFromTitle } from '@components/Form/Section/helpers/SectionIdFromTitle';
 import Section from '@components/Form/Section/Section';
-import { SectionContentProps } from '@types/Form/Section/SectionContentProps';
-import { FormSectionType } from '@types/Form/Section/FormSectionType';
+import { SectionContentProps } from 'Form/Section/SectionContentProps';
+import { FormSectionType } from 'Form/Section/FormSectionType';
 
 export const spubTasksSectionFieldNames = {
     spubTasks: 'spubTasks',

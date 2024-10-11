@@ -20,13 +20,10 @@
     "noEmit": true,
     "jsx": "preserve",
     "baseUrl": "src",
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx",
-      "src/**/*.d.ts"
-      // Dodaj ten wpis, aby uwzględnić pliki deklaracji
-    ],
     "paths": {
+      "*": [
+        "types/*"
+      ],
       "@api/*": [
         "api/*"
       ],
@@ -62,9 +59,6 @@
       ],
       "@styles/*": [
         "styles/*"
-      ],
-      "@types/*": [
-        "types/*"
       ],
       "@contexts/*": [
         "contexts/*"

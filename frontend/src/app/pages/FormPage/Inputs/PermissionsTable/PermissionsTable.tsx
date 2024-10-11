@@ -10,6 +10,11 @@ import { DescriptionField, ExecutiveField } from './PermissionsTableFields';
 import { FormContext } from '@contexts/FormContext';
 import { FieldContext } from '@contexts/FieldContext';
 
+export type ScanType = {
+    name: string,
+    content: string
+}
+
 export type Permission = {
     description: string,
     executive: string,

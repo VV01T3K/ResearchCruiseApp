@@ -5,7 +5,7 @@ import { applicationsSectionFieldNames } from './AppicationsSection';
 import { useWatch } from 'react-hook-form';
 import { FormContext } from '@contexts/FormContext';
 import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import { FormUser } from '../../../../../types/FormUser';
+import { FormUser } from 'FormUser';
 
 import {
     ErrorMessageIfPresentNoContext,

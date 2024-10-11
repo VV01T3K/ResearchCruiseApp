@@ -1,5 +1,5 @@
 import { SimpleInfoContextWrapperTwoFields } from '@components/SimpleInfoContextWrapperTwoFields';
-import { CruiseApplication } from '../../../../types/CruiseApplication';
+import { CruiseApplication } from 'CruiseApplication';
 import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
 
 export const SimpleInfoWrapperTwoFieldsCruiseApplication = (props: {

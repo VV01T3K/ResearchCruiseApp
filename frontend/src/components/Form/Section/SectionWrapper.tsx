@@ -1,9 +1,9 @@
-import { SectionWrapperProps } from '../../../types/Form/Section/SectionWrapperProps';
-import { FormSectionType } from '../../../types/Form/Section/FormSectionType';
+import { SectionWrapperProps } from 'Form/Section/SectionWrapperProps';
+import { FormSectionType } from 'Form/Section/FormSectionType';
 import { SectionIdFromTitle } from './helpers/SectionIdFromTitle';
 import React from 'react';
 import Section from './Section';
-import { SectionContentProps } from '../../../types/Form/Section/SectionContentProps';
+import { SectionContentProps } from 'Form/Section/SectionContentProps';
 
 export const SectionWrapper = (props: SectionWrapperProps): FormSectionType => {
     const id = SectionIdFromTitle(props.shortTitle);

@@ -1,6 +1,10 @@
 import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
 import { useContext } from 'react';
-import { InstitutionField, PersonalDataColumn } from '@app/pages/FormPage/Inputs/CrewTable/CrewTableFields';
+import {
+    IdentityColumn,
+    InstitutionField,
+    PersonalDataColumn,
+} from '@app/pages/FormPage/Inputs/CrewTable/CrewTableFields';
 import {
     BottomMenuWithAddButtonAndHistory,
     OrdinalNumber,
@@ -57,6 +61,7 @@ const crewTableContent = () => {
     return [
         () => (<OrdinalNumber label={'Członek załogi'} />),
         PersonalDataColumn,
+        IdentityColumn,
         InstitutionField,
         RemoveRowButton,
     ];
@@ -77,8 +82,8 @@ function CrewTable(props: CrewTableProps) {
         ({ label: CrewRowLabel(row), value: row })) ?? [];
 
 
-    const mdColWidths = [5, 45, 45, 5];
-    const mdColTitles = ['Lp.', 'Dane osobowe', 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej', ''];
+    const mdColWidths = [5, 30, 35, 25, 5];
+    const mdColTitles = ['Lp.', 'Dane osobowe', 'Dokument tożsamości', 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej', ''];
     const colTitle = 'Lista uczestników rejsu';
     const bottomMenu =
         <BottomMenuWithAddButtonAndHistory newOption={crewDefault as SingleValue<any>}

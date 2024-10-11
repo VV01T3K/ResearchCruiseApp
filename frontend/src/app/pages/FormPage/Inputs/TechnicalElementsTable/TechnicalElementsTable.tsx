@@ -10,6 +10,7 @@ import { FieldContext } from '@contexts/FieldContext';
 import { FormContext } from '@contexts/FormContext';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
+import { Crew } from '@app/pages/FormPage/Inputs/CrewInput';
 
 
 export type TechnicalElements = {

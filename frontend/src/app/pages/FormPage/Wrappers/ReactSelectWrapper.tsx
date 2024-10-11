@@ -8,6 +8,9 @@ export const readyFieldOptions = { shouldDirty: true, shouldValidate: true };
 export type SelectSingleValue = SingleValue<{ label: string, value: string }> | SingleValue<{
     label: string,
     value: FieldValues
+}> | SingleValue<{
+    label: string,
+    value: () => {}
 }>
 export type SelectOptions = OptionsOrGroups<SelectSingleValue, GroupBase<SelectSingleValue>> | undefined
 

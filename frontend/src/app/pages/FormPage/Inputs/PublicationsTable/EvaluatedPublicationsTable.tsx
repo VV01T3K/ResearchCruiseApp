@@ -10,7 +10,7 @@ import { FieldContext } from '@contexts/FieldContext';
 import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
 
 
-type EvaluatedPublication = {
+export type EvaluatedPublication = {
     id: string,
     publication: Publication,
     points: string

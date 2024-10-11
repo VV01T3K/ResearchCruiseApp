@@ -73,7 +73,9 @@ export const Interceptors = () => {
             // ForceLogout()
         }
         if (statusCode === 404) {
-        } else if (statusCode === 500) navigate(Path.ServerError);
+        } else if (statusCode === 500) {
+            navigate(Path.ServerError);
+        }
     }
 
     function HandleErrWithoutResponse() {
@@ -85,11 +87,21 @@ export const Interceptors = () => {
         const request = error?.request;
         const config = error?.config;
 
-        if (error.code === 'ERR_NETWORK' && config) return HandleErrNetwork(config);
-        else if (error.code === 'ERR_CANCELED') HandleErrCanceled();
-        else if (response) HandleErrWithResponse(response);
-        else if (request) HandleErrWithoutResponse();
-        else {
+        if (error.code === 'ERR_NETWORK' && config) {
+            return HandleErrNetwork(config);
+        } else {
+            if (error.code === 'ERR_CANCELED') {
+                HandleErrCanceled();
+            } else {
+                if (response) {
+                    HandleErrWithResponse(response);
+                } else {
+                    if (request) {
+                        HandleErrWithoutResponse();
+                    } else {
+                    }
+                }
+            }
         }
 
         return Promise.resolve(null);
@@ -101,8 +113,9 @@ export const Interceptors = () => {
         error.config?.raw ? Promise.reject(error) : httpErrorHandler(error);
 
     function requestHandler(config: InternalAxiosRequestConfig) {
-        if (config.url && !config.url.startsWith('http'))
+        if (config.url && !config.url.startsWith('http')) {
             config.url = defaultServerAddress + config.url;
+        }
         return setAccessToken(config);
     }
 

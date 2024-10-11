@@ -1,4 +1,4 @@
-import { CruiseApplication } from '../../../../types/CruiseApplication';
+import { CruiseApplication } from 'CruiseApplication';
 
 export const sortCruiseApplicationsByPoints = (cruiseApplications: CruiseApplication[]) => [
     ...cruiseApplications?.sort((a, b): number =>

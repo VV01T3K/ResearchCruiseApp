@@ -4,7 +4,7 @@ import moment from 'moment/moment';
 import 'moment/locale/pl';
 import { CruiseStateContext } from './CruisesPage';
 import { useNavigate } from 'react-router-dom';
-import { Cruise } from '../../../types/Cruise';
+import { Cruise } from 'Cruise';
 import { EMPTY_GUID } from '@consts/emptyGuid';
 
 type CalendarCruiseEvent = {

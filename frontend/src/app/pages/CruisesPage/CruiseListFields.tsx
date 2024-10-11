@@ -1,4 +1,4 @@
-import { Cruise } from '../../../types/Cruise';
+import { Cruise } from 'Cruise';
 import { CruisesTools } from './CruisesList';
 import { HandleDeleteCruises } from './CruisesPageMisc';
 import userBasedAccess from '../../../ToBeMoved/UserBasedAccess';

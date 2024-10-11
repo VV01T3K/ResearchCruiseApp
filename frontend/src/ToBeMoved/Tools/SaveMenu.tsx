@@ -3,10 +3,10 @@ import React, { useContext, useState } from 'react';
 import { ReactComponent as DownloadIcon } from '/node_modules/bootstrap-icons/icons/download.svg';
 import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
 import { FormContext } from '@contexts/FormContext';
-import { ExtendedUseFormReturn } from '../../types/ExtendedUseFormReturn';
+import { FormContextFields } from '@app/pages/FormPage/Wrappers/FormTemplate';
 
 
-const formDownloadProps = (formContext: ExtendedUseFormReturn) => {
+const formDownloadProps = (formContext: FormContextFields) => {
     return { download: fileName(formContext?.type!), href: handleDownload(formContext?.getValues()!) };
 };
 

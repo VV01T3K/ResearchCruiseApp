@@ -1,8 +1,8 @@
 // TODO: Extract methods
 import React, { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
-import { FormSectionType } from '../../types/Form/Section/FormSectionType';
-import { formType } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import { FormSectionType } from 'Form/Section/FormSectionType';
+import { FormType } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
 
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
@@ -19,11 +19,11 @@ function FormTitleWithNavigation() {
         const locationState = extendedUseLocation()?.state;
         return (
             <div className={'form-page-title'}>
-                {[formType.A, formType.B, formType.C].includes(formContext!.type) &&
+                {[FormType.A, FormType.B, FormType.C].includes(formContext!.type) &&
                     `Formularz ${formContext!.type}`}
-                {formContext!.type == formType.ApplicationDetails &&
+                {formContext!.type == FormType.ApplicationDetails &&
                     `Szczegóły zgłoszenia`}
-                {formContext!.type == formType.CruiseDetails &&
+                {formContext!.type == FormType.CruiseDetails &&
                     (locationState?.cruise ? 'Szczegóły rejsu' : 'Nowy rejs')}
             </div>
         );

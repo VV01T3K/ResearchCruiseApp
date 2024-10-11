@@ -1,16 +1,16 @@
 import { KeyContext } from '@contexts/KeyContext';
 import React from 'react';
-import { FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import { FDateFieldDayAndHour, FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
 
 
 export const StartDateField = () => {
     return (
         <KeyContext.Provider value={'startDate'}>
             <div className={'task-field-input'}>
-                <label>
+                <label className={'table-field-input-label'}>
                     Od
                 </label>
-                <FStandardDateField />
+                <FDateFieldDayAndHour />
             </div>
         </KeyContext.Provider>
     );
@@ -19,11 +19,11 @@ export const StartDateField = () => {
 export const EndDateField = () => {
     return (
         <KeyContext.Provider value={'endDate'}>
-            <div className={'task-field-input col-md-6'}>
-                <label>
+            <div className={'task-field-input'}>
+                <label className={'table-field-input-label'}>
                     Do
                 </label>
-                <FStandardDateField />
+                <FDateFieldDayAndHour />
             </div>
         </KeyContext.Provider>
     );
@@ -32,9 +32,9 @@ export const EndDateField = () => {
 export const NameField = () => {
     return (
         <KeyContext.Provider value={'name'}>
-            <div className={'task-field-input col-md-6'}>
-                <label>
-                    Nazwa
+            <div className={'task-field-input'}>
+                <label className={'table-field-input-label'}>
+                    Nazwa sprzętu
                 </label>
                 <FTextField />
             </div>

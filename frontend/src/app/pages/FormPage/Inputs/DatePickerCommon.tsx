@@ -15,3 +15,12 @@ export const datePickerPeriodCommon = {
     showYearDropdown: true,
     showMonthYearPicker: true,
 };
+
+export const datePickerDayAndHour = {
+    ...datePickerCommon,
+    showTimeSelect: true,
+    timeFormat: 'HH:mm',
+    timeIntervals: 15,
+    dateFormat: 'yyyy/MM/dd HH:mm',
+    timeCaption: 'Godzina',
+};

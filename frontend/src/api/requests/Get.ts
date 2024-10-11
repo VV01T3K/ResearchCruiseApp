@@ -1,5 +1,5 @@
 import Api from '../Api';
-import { Guid } from '../../types/Guid';
+import { Guid } from 'Guid';
 
 const get = (url: string) => Api.get(url);
 

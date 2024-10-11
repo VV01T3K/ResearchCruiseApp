@@ -10,7 +10,7 @@ export const SimpleInfoContextWrapperSingleField = <T, >(props: {
     const context = useContext(props.context);
     return (
         <SimpleInfoTile title={props.title}>
-            <ReadOnlyTextInput value={context![props.selector]} />
+            <ReadOnlyTextInput value={context![props.selector] as string} />
         </SimpleInfoTile>
     );
 };

@@ -16,7 +16,7 @@ import {
     CruisesListFilterAndSort,
     FilterMapper,
 } from './CruiseListFilterAndSort';
-import { Cruise } from '../../../types/Cruise';
+import { Cruise } from 'Cruise';
 import { CellContext } from '@contexts/CellContext';
 
 export const CruisesTools = () => {
@@ -73,7 +73,7 @@ export default function CruisesList() {
                     options={sortOptions}
                     placeHolder={'Sortuj'}
                     onChange={(selectedOption) =>
-                        cruiseStateContext!.setCruises(selectedOption!.value())
+                        cruiseStateContext!.setCruises((selectedOption!.value as () => Cruise[])())
                     }
                 />
                 <FilterMapper

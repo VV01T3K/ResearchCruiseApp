@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
 import NumberInput from '../../../FormPage/Inputs/NumberInput';
 import { researchTeamsSectionFieldNames } from './ResearchTeamsSectionFieldNames';
+import { CruiseApplicationDetailsFormInitValues } from 'CruiseApplicationDetailsFormInitValues';
 
 export const CalculatedPointsField = () => {
     const formContext = useContext(FormContext);
@@ -10,7 +11,7 @@ export const CalculatedPointsField = () => {
             className="two-fields-beside-md"
             fieldName={researchTeamsSectionFieldNames.newPoints}
             fieldLabel="Punkty"
-            defaultValue={formContext!.initValues?.ugUnitsPoints}
+            defaultValue={(formContext!.initValues as CruiseApplicationDetailsFormInitValues)?.ugUnitsPoints}
         />
     );
 };

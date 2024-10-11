@@ -5,6 +5,7 @@ import TextArea from '../../../Inputs/TextArea';
 import FormRadio from '../../../Inputs/FormRadio';
 import { timeSectionFieldNames } from './TimeSection';
 import { FormContext } from '@contexts/FormContext';
+import { FormAInitValues } from 'FormAInitValues';
 
 export const AcceptablePeriodField = () => (
     <MonthSlider className="two-fields-beside-md"
@@ -60,7 +61,7 @@ export const ShipUsageField = () => {
                    isVertical={true}
                    fieldLabel="Statek na potrzeby badań będzie wykorzystywany:"
                    fieldName={timeSectionFieldNames.shipUsage}
-                   initValues={formContext!.initValues?.shipUsages}
+                   initValues={(formContext!.initValues as FormAInitValues)?.shipUsages}
         />
     );
 };
@@ -71,9 +72,9 @@ export const DifferentShipUsageField = () => {
     const [disabled, setDisabled] = useState(false);
 
     useEffect(() => {
-        const lastFieldInShipUsageSelected = formContext!.initValues && formContext!.initValues?.shipUsages.length > 0 &&
-            formContext!.getValues('shipUsage') == formContext!.initValues?.shipUsages?.length - 1;
-        if (!disabled && formContext!.initValues?.shipUsages && !lastFieldInShipUsageSelected) {
+        const lastFieldInShipUsageSelected = formContext!.initValues && (formContext!.initValues as FormAInitValues)?.shipUsages.length > 0 &&
+            formContext!.getValues('shipUsage') === (formContext!.initValues as FormAInitValues)?.shipUsages?.length - 1;
+        if (!disabled && (formContext!.initValues as FormAInitValues)?.shipUsages && !lastFieldInShipUsageSelected) {
             setDisabled(true);
             if (formContext?.getValues(timeSectionFieldNames.differentUsage)) {
                 formContext?.resetField(timeSectionFieldNames.differentUsage);

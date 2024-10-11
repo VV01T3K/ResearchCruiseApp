@@ -111,9 +111,13 @@ export const PersonalDataColumn = () => (
         <TitleField />
         <NamesField />
         <SurnameField />
+    </div>
+);
+
+export const IdentityColumn = () => (
+    <div className={'w-100 d-flex flex-row flex-wrap'}>
         <BirthPlaceField />
         <BirthDateField />
         <IDField />
         <ExpiryDateField />
-    </div>
-);
+    </div>);

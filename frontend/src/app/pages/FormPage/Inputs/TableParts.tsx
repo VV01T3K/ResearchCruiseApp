@@ -140,7 +140,7 @@ export const BottomMenuSingleSelect = (props: { options: SelectOptions }) => (
 );
 
 export const BottomMenuWithAddButtonAndHistory = (props: {
-    newOption: SelectOptions;
+    newOption: any;
     historicalOptions: SelectOptions;
 }) => (
     <BottomMenu className={'align-items-center'}>

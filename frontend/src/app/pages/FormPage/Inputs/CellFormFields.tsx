@@ -1,18 +1,15 @@
 import DatePicker from 'react-datepicker';
 import React, { HTMLProps, useContext } from 'react';
-import { datePickerCommon, datePickerPeriodCommon } from './DatePickerCommon';
-import { ParseFloatInput, ParseIntInput } from './Misc';
+import { datePickerCommon, datePickerDayAndHour, datePickerPeriodCommon } from './DatePickerCommon';
+import { ParseIntInput } from './Misc';
 import TextareaAutosize from 'react-textarea-autosize';
 import { CellFormTools, CellTools } from './TableParts';
-import {
-    SelectOptions,
-    SelectSingleValue,
-    SelectWrapper,
-} from '../Wrappers/ReactSelectWrapper';
+import { SelectOptions, SelectSingleValue, SelectWrapper } from '../Wrappers/ReactSelectWrapper';
 import { DisplayContext } from './TaskTable/EvaluatedTaskTable';
 import { FormContext } from '@contexts/FormContext';
 import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
 import CustomConverter from '../../../../ToBeMoved/Tools/CustomConverter';
+import { FloatInputOnBlur } from '@app/pages/FormPage/Inputs/FloatInputOnBlur';
 
 export const FStandardDateField = (props: HTMLProps<any>) => {
     const displayContext = useContext(DisplayContext);
@@ -45,6 +42,46 @@ export const StandardDateField = (props: { className?: string }) => {
             disabled={true}
             className={'field-common ' + props.className}
             {...datePickerCommon}
+            selected={cellValue ? new Date(cellValue) : null}
+            onChange={() => {
+            }}
+        />
+    );
+};
+
+export const FDateFieldDayAndHour = (props: HTMLProps<any>) => {
+    const displayContext = useContext(DisplayContext);
+    return displayContext ? (
+        <DateFieldDayAndHour {...props} />
+    ) : (
+        <FormDateFieldDayAndHour {...props} />
+    );
+};
+
+export const FormDateFieldDayAndHour = (props: { className?: string }) => {
+    const { cellValue, setCellValue, field } = CellFormTools();
+    const readOnlyContext = useContext(ReadOnlyContext);
+    return (
+        <DatePicker
+            disabled={readOnlyContext!}
+            // showYearPicker
+            className={'field-common w-100 ' + props.className}
+            onBlur={() => field!.onBlur()}
+            {...datePickerDayAndHour}
+            selected={cellValue ? new Date(cellValue) : null}
+            onChange={(e) => setCellValue(e?.toISOString())}
+        />
+    );
+};
+
+export const DateFieldDayAndHour = (props: { className?: string }) => {
+    const { cellValue } = CellTools();
+    return (
+        <DatePicker
+            disabled={true}
+            // showYearPicker
+            className={'field-common w-100 ' + props.className}
+            {...datePickerDayAndHour}
             selected={cellValue ? new Date(cellValue) : null}
             onChange={() => {
             }}
@@ -184,15 +221,6 @@ export const IntInputOnBlur = () => {
     const { setCellValue, field } = CellFormTools();
     return (e: React.ChangeEvent<HTMLInputElement>) => {
         setCellValue(String(ParseIntInput(e.target.value)));
-        field!.onBlur(field!.value);
-    };
-};
-
-export const FloatInputOnBlur = () => {
-    const { setCellValue, field } = CellFormTools();
-
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCellValue(String(ParseFloatInput(e.target.value)));
         field!.onBlur(field!.value);
     };
 };

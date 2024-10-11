@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { contractSectionFieldNames } from './ContractSection';
 
 import { FormContext } from '@contexts/FormContext';
+import { FormAInitValues } from 'FormAInitValues';
 
 export const ContractsField = () => {
     const formContext = useContext(FormContext);
@@ -10,7 +11,7 @@ export const ContractsField = () => {
         <ContractTable className="single-field"
                        fieldLabel=""
                        fieldName={contractSectionFieldNames.contracts}
-                       historicalContracts={formContext!.initValues?.historicalContracts}
+                       historicalContracts={(formContext!.initValues as FormAInitValues)?.historicalContracts}
         />
     );
 };

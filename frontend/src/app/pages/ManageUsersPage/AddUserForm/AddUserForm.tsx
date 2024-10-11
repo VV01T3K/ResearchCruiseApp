@@ -10,8 +10,8 @@ import {
 } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import Api from '../../../../api/Api';
 import SuccessMessage from '../../../../ToBeMoved/Pages/CommonComponents/SuccessMessage';
-import { Role } from '../../../../types/Role';
-import { NewUserFormValues } from '../../../../types/NewUserFormValues';
+import { Role } from 'Role';
+import { NewUserFormValues } from 'NewUserFormValues';
 import { AxiosRequestConfig } from 'axios';
 
 type Props = {

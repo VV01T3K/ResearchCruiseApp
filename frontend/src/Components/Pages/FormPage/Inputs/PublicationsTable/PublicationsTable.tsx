@@ -14,8 +14,9 @@ export const notEmptyArray = <T extends object>(value: FieldValues) => {
                 return !field;
             },
         );
-    }))
+    })) {
         return 'Wypełnij wszystkie pola';
+    }
 };
 
 export type Publication = {
@@ -94,7 +95,10 @@ export const PublicationsTable = (props: PublicationsTableProps) => {
                 ({ label: PublicationRowLabel(row), value: row })) ?? [];
 
     const selectOptions = publicationCategories.map((publicationCategory, index) =>
-        ({ label: publicationCategoriesPL[index], options: FilteredHistoricalPublications(publicationCategory) })) ?? [];
+        ({
+            label: publicationCategoriesPL[index],
+            options: FilteredHistoricalPublications(publicationCategory),
+        })) ?? [];
 
 
     const mdColWidths = [5, 15, 51, 10, 14, 5];

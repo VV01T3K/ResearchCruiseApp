@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import FormTemplate from '../Wrappers/FormTemplate';
 import { FormContext } from '@contexts/FormContext';
-import { FormSectionType } from '../../../../types/Form/Section/FormSectionType';
-import { FormTypeValues } from '../../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import { FormSectionType } from 'Form/Section/FormSectionType';
+import { FormTypeKeys, FormTypeValues } from '../../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
 export const FormHelpers = () => {
     const formContext = useContext(FormContext);
@@ -23,5 +23,5 @@ export const FormWrapper = (props: {
     type: FormTypeValues;
 }) => {
     const sections = props.sections();
-    return <FormTemplate sections={sections} type={props.type} />;
+    return <FormTemplate sections={sections} type={props.type as FormTypeKeys} />;
 };

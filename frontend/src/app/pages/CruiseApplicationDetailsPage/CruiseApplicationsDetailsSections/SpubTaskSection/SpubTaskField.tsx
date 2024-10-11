@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
 import { EvaluatedSpubTaskTable } from '../../../FormPage/Inputs/EvaluatedSpubTasksTable';
 import { spubTasksSectionFieldNames } from './SpubTasksSectionFieldNames';
+import { CruiseApplicationDetailsFormInitValues } from 'CruiseApplicationDetailsFormInitValues';
 
 export const SpubTaskField = () => {
     const formContext = useContext(FormContext);
@@ -10,7 +11,7 @@ export const SpubTaskField = () => {
             fieldLabel={''}
             className={'single-field'}
             fieldName={spubTasksSectionFieldNames.spubTasks}
-            evaluatedSpubTasks={formContext!.initValues?.formASpubTasks}
+            evaluatedSpubTasks={(formContext!.initValues as CruiseApplicationDetailsFormInitValues)?.formASpubTasks}
         />
     );
 };

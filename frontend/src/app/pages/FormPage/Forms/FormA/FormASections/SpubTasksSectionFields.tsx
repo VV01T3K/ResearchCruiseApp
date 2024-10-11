@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { spubTasksSectionFieldNames } from './SpubTasksSection';
 
 import { FormContext } from '@contexts/FormContext';
+import { FormAInitValues } from 'FormAInitValues';
 
 export const SpubTaskField = () => {
     const formContext = useContext(FormContext);
@@ -11,7 +12,7 @@ export const SpubTaskField = () => {
             className={'single-field'}
             fieldName={spubTasksSectionFieldNames.spubTasks}
             fieldLabel={''}
-            historicalSpubTasks={formContext!.initValues?.historicalSpubTasks}
+            historicalSpubTasks={(formContext!.initValues as FormAInitValues)?.historicalSpubTasks}
         />
     );
 };

@@ -4,12 +4,12 @@ import { ApplicationsSection } from './CruiseFormSections/Sections/AppicationsSe
 import { DateSection } from './CruiseFormSections/Sections/InfoSection';
 import { CruiseManagersSection } from './CruiseFormSections/Sections/CruiseManagersSection';
 
-import { Cruise } from '../../../types/Cruise';
+import { Cruise } from 'Cruise';
 import { InfoSection } from './CruiseFormSections/Sections/DateSection';
 import { CruiseFormBottomOptionBar } from '../../../ToBeMoved/Tools/CruiseFormBottomOptionBar';
 import Api from '../../../api/Api';
-import { formType } from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
-import { CruiseApplication } from '../../../types/CruiseApplication';
+import { FormType, FormTypeKeys } from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import { CruiseApplication } from 'CruiseApplication';
 import { CruiseStatus } from '@enums/CruiseStatus';
 import { EMPTY_GUID } from '@consts/emptyGuid';
 import { ApplicationsContext } from '@contexts/ApplicationsContext';
@@ -97,7 +97,7 @@ export default function CruiseFormPage() {
         >
             <FormTemplate
                 sections={sections}
-                type={formType.CruiseDetails}
+                type={FormType.CruiseDetails as FormTypeKeys}
                 BottomOptionBar={CruiseFormBottomOptionBar}
                 defaultValues={editCruiseFormDefaultValues}
             />

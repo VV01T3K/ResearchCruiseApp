@@ -4,6 +4,7 @@ import EquipmentLeaveTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/
 import PortTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/PortTable';
 import { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
+import { FormBInitValues } from 'FormBInitValues';
 
 
 export const CruiseDetailsDescription = () => (
@@ -19,7 +20,7 @@ export const EquipmentOutsideField = () => {
             className="single-field"
             fieldLabel="Wystawienie sprzętu"
             fieldName={cruiseDetailsSectionFieldNames.equipmentOutside}
-            historicalEquipmentOutside={formContext!.initValues?.historicalEquipmentOutside}
+            historicalEquipmentOutside={(formContext!.initValues as FormBInitValues)?.historicalEquipmentOutside}
         />
     );
 

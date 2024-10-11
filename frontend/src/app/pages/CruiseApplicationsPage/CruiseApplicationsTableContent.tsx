@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
-import userBasedAccess from '../../../ToBeMoved/UserBasedAccess';
 
 import ReadOnlyTextInput from '../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 import {
@@ -14,11 +13,11 @@ import { FormContext } from '@contexts/FormContext';
 import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
 import { CellContext } from '@contexts/CellContext';
 import { FieldContext } from '@contexts/FieldContext';
-import { CruiseApplicationListMode } from '../../../types/CruiseApplicationListMode';
+import { CruiseApplicationListMode } from 'CruiseApplicationListMode';
 import { ListModeContext } from '@contexts/ListModeContext';
 import { ApplicationsContext } from '@contexts/ApplicationsContext';
-import { CruiseApplication } from '../../../types/CruiseApplication';
-import { CruiseApplicationStatus } from '../../../types/CruiseApplicationStatus';
+import { CruiseApplication } from 'CruiseApplication';
+import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
 
 export const ApplicationTools = () => {
     const cellContext = useContext(CellContext);

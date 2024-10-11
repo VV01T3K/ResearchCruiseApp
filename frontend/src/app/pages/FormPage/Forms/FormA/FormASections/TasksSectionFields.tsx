@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { researchTasksSectionFieldNames } from './TasksSection';
 
 import { FormContext } from '@contexts/FormContext';
+import { FormAInitValues } from 'FormAInitValues';
 
 export const TasksField = () => {
     const formContext = useContext(FormContext);
@@ -10,7 +11,7 @@ export const TasksField = () => {
         <TasksTable className="single-field"
                     fieldLabel=""
                     fieldName={researchTasksSectionFieldNames.researchTasks}
-                    historicalTasks={formContext!.initValues?.historicalResearchTasks}
+                    historicalTasks={(formContext!.initValues as FormAInitValues)?.historicalResearchTasks}
         />
     );
 };

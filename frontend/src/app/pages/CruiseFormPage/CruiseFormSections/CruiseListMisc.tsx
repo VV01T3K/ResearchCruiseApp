@@ -1,5 +1,5 @@
-import { FormUser } from '../../../../types/FormUser';
-import { CruiseApplication } from '../../../../types/CruiseApplication';
+import { FormUser } from 'FormUser';
+import { CruiseApplication } from 'CruiseApplication';
 
 export const ApplicationToCruiseManagersMap = (
     cruiseApplication: CruiseApplication,

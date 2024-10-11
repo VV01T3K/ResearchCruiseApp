@@ -3,7 +3,7 @@ import React from 'react';
 import FieldWrapper from './FieldWrapper';
 import { SelectWrapper } from '../Wrappers/ReactSelectWrapper';
 import { FormField } from './FormYearSelect';
-import { FormUser } from '../../../../types/FormUser';
+import { FormUser } from 'FormUser';
 
 type Props = FormField & {
     initValues?: FormUser[];

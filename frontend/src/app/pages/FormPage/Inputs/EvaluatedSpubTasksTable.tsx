@@ -10,11 +10,11 @@ import {
     PointsField,
 } from './TaskTable/EvaluatedTaskTable';
 import { EndYearField, NameField, StartYearField } from './SpubTasksTable';
-import { SpubTask } from '../../../../types/SpubTask';
+import { SpubTask } from 'SpubTask';
 import { FieldTableWrapper } from '../Wrappers/FieldTableWrapper';
 import { FieldContext } from '@contexts/FieldContext';
 
-type EvaluatedSpubTask = {
+export type EvaluatedSpubTask = {
     id: string;
     spubTask: SpubTask;
     points: string;

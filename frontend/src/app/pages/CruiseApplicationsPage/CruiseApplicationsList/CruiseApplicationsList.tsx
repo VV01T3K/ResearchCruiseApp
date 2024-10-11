@@ -9,11 +9,11 @@ import { cruiseApplicationsSortOptions, sortCruiseApplicationsByDate } from './C
 import { SelectSingleValue, SelectWrapper } from '../../FormPage/Wrappers/ReactSelectWrapper';
 import { CruiseApplicationsTableContent } from '../CruiseApplicationsTableContent';
 import { FieldContext } from '@contexts/FieldContext';
-import { CruiseApplicationListMode } from '../../../../types/CruiseApplicationListMode';
+import { CruiseApplicationListMode } from 'CruiseApplicationListMode';
 import { ApplicationsContext } from '@contexts/ApplicationsContext';
 import { ListModeContext } from '@contexts/ListModeContext';
-import { CruiseApplication } from '../../../../types/CruiseApplication';
-import { CruiseApplicationStatus } from '../../../../types/CruiseApplicationStatus';
+import { CruiseApplication } from 'CruiseApplication';
+import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
 
 const selectStringFilterDefaultOption: SelectSingleValue = {
     label: '--- Filtr wyłączony ---',
@@ -128,8 +128,9 @@ export default function CruiseApplicationsList(props: Props) {
                         className="d-flex col-3 p-1"
                         options={sortOptions}
                         placeHolder={'Sortuj'}
-                        onChange={(selectedOption) =>
-                            setFetchedCruiseApplications(selectedOption!.value())
+                        onChange={(selectedOption) => {
+                            setFetchedCruiseApplications((selectedOption!.value as () => CruiseApplication[])());
+                        }
                         }
                     />
                     {anyStringFilterOptions.map((anyStringFilter, index) => (

@@ -1,12 +1,13 @@
 import React from 'react';
 import { FormSectionType } from './Section/FormSectionType';
-import { FormAInitValues } from '@types/FormAInitValues';
-import { FormBInitValues } from '@types/FormBInitValues';
-import { CruiseFormInitValues } from '@types/CruiseFormInitValues';
-import { CruiseApplicationDetailsFormInitValues } from '@types/CruiseApplicationDetailsFormInitValues';
+import { FormAInitValues } from 'FormAInitValues';
+import { FormBInitValues } from 'FormBInitValues';
+import { CruiseFormInitValues } from 'CruiseFormInitValues';
+import { CruiseApplicationDetailsFormInitValues } from 'CruiseApplicationDetailsFormInitValues';
+import { FormTypeKeys, FormTypeValues } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
 export type FormTemplateProps = {
-    type: string;
+    type: FormTypeKeys;
     readOnly?: boolean;
     sections: FormSectionType[];
     initValues?: FormAInitValues | FormBInitValues | CruiseFormInitValues | CruiseApplicationDetailsFormInitValues;

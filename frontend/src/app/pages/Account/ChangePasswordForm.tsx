@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, SubmitHandler } from 'react-hook-form';
 import useFormWrapper from '../../../ToBeMoved/CommonComponents/useFormWrapper';
 import React, { useState } from 'react';
 import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
 
 import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import { ChangePasswordData } from '@api/requests';
 
 // TODO : Move to different place
 export default function ChangePasswordForm() {
@@ -24,7 +25,7 @@ export default function ChangePasswordForm() {
         reset();
     };
 
-    const onPasswordChangeSubmit = async (data: FieldValues) => {
+    const onPasswordChangeSubmit = async (data: ChangePasswordData) => {
         setDisabled(true);
         try {
             await ChangePassword(data);
@@ -61,7 +62,7 @@ export default function ChangePasswordForm() {
 
     return (
         <>
-            <form className="h6" onSubmit={handleSubmit(onPasswordChangeSubmit)}>
+            <form className="h6" onSubmit={handleSubmit(onPasswordChangeSubmit as SubmitHandler<FieldValues>)}>
                 <FormFields />
                 {changePasswordError && (
                     <ErrorMessageIfPresentNoContext message={changePasswordError} />

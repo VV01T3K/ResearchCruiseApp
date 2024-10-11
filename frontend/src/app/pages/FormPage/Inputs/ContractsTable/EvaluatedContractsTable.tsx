@@ -4,11 +4,11 @@ import { OrdinalNumber } from '../TableParts';
 import { FieldProps } from '../FormRadio';
 import FieldWrapper from '../FieldWrapper';
 import { CategoryPicker, ContractDescriptionField, DownloadField, InstitutionCell } from './ContractTableFields';
-import { Contract } from './ContractsTable';
 import { DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField } from '../TaskTable/EvaluatedTaskTable';
 import { FormContext } from '@contexts/FormContext';
 import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
 import { FieldContext } from '@contexts/FieldContext';
+import { EvaluatedContract } from 'EvaluatedContract';
 
 const ContractTableContent = () => {
     return [
@@ -20,12 +20,6 @@ const ContractTableContent = () => {
         PointsField,
     ];
 };
-
-type EvaluatedContract = {
-    id: string,
-    contract: Contract,
-    points: string
-}
 
 type ContractTableProps = FieldProps &
     { evaluatedContracts?: EvaluatedContract[] }
