@@ -18,12 +18,15 @@ public class AddFormBHandler(
     public async Task<Result> Handle(AddFormBCommand request, CancellationToken cancellationToken)
     {
         var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormA(request.CruiseApplicationId, cancellationToken);
+            .GetByIdWithFormAAndFormB(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication is null)
             return Error.NotFound();
 
-        if (!await userPermissionVerifier.CanCurrentUserAddFormB(cruiseApplication))
-            return Error.Forbidden();
+        if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
+            return Error.NotFound();
+
+        if (cruiseApplication.FormB is not null)
+            return Error.Forbidden("Formularz B został już dodany do tego zgłoszenia.");
 
         var formB = await formsBFactory.Create(request.FormBDto, cancellationToken);
         cruiseApplication.FormB = formB;

@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using ResearchCruiseApp_API.Domain.Common.Enums;
+using ResearchCruiseApp_API.Domain.Common.Interfaces;
 
 namespace  ResearchCruiseApp_API.Domain.Entities;
 
 
-public class ResearchTask : Entity
+public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpression<ResearchTask>
 {
     public ResearchTaskType Type { get; init; }
 
@@ -43,24 +45,11 @@ public class ResearchTask : Entity
     
     public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];
     
-    public List<FormCResearchTask> FormCResearchTasks { get; set; } = [];
-    
-    public override bool Equals(object? other)
-    {
-        if (other is not ResearchTask otherResearchTask)
-            return false;
+    public List<ResearchTaskEffect> FormCResearchTasks { get; set; } = [];
 
-        return otherResearchTask.Type == Type &&
-               otherResearchTask.Title == Title &&
-               otherResearchTask.Author == Author &&
-               otherResearchTask.Institution == Institution &&
-               otherResearchTask.Date == Date &&
-               otherResearchTask.StartDate == StartDate &&
-               otherResearchTask.EndDate == EndDate &&
-               otherResearchTask.FinancingAmount == FinancingAmount &&
-               otherResearchTask.Description == Description &&
-               otherResearchTask.FinancingApproved == FinancingApproved;
-    }
+
+    public override bool Equals(object? other) =>
+        Equals((ResearchTask?)other);
 
     public override int GetHashCode()
     {
@@ -74,5 +63,36 @@ public class ResearchTask : Entity
             FinancingAmount?.GetHashCode() ?? 0 +
             Description?.GetHashCode() ?? 0 +
             FinancingApproved?.GetHashCode() ?? 0;
+    }
+    
+    public bool Equals(ResearchTask? other)
+    {
+        return other is not null &&
+               other.Type == Type &&
+               other.Title == Title &&
+               other.Author == Author &&
+               other.Institution == Institution &&
+               other.Date == Date &&
+               other.StartDate == StartDate &&
+               other.EndDate == EndDate &&
+               other.FinancingAmount == FinancingAmount &&
+               other.Description == Description &&
+               other.FinancingApproved == FinancingApproved;
+    }
+    
+    public static Expression<Func<ResearchTask, bool>> EqualsByExpression(ResearchTask? other)
+    {
+        return researchTask =>
+            other != null &&
+            other.Type == researchTask.Type &&
+            other.Title == researchTask.Title &&
+            other.Author == researchTask.Author &&
+            other.Institution == researchTask.Institution &&
+            other.Date == researchTask.Date &&
+            other.StartDate == researchTask.StartDate &&
+            other.EndDate == researchTask.EndDate &&
+            other.FinancingAmount == researchTask.FinancingAmount &&
+            other.Description == researchTask.Description &&
+            other.FinancingApproved == researchTask.FinancingApproved;
     }
 }

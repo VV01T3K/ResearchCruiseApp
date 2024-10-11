@@ -12,7 +12,7 @@ internal class ContractDtosFactory(IMapper mapper, ICompressor compressor) : ICo
     {
         var contractDto = mapper.Map<ContractDto>(contract);
 
-        contractDto.Scan = new ScanDto
+        contractDto.Scan = new FileDto
         {
             Name = contract.ScanName,
             Content = await compressor.Decompress(contract.ScanContent)

@@ -13,5 +13,5 @@ public class ResearchArea : Entity, IDbDictionary
     
     public List<FormA> FormsA { get; init; } = [];
 
-    public List<FormB> FormsB { get; init; } = [];
+    public List<FormC> FormsC { get; init; } = [];
 }

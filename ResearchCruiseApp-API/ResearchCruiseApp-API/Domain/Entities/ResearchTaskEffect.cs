@@ -3,7 +3,7 @@
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class FormCResearchTask : Entity
+public class ResearchTaskEffect : Entity
 {
     public FormC FormC { get; init; } = null!;
 

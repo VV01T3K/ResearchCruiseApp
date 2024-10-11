@@ -30,6 +30,12 @@ public class ResearchEquipmentDto : IResearchEquipmentDto
                     dest => dest.Name,
                     options =>
                         options.MapFrom(src => src.ResearchEquipment.Name));
+            
+            CreateMap<FormCResearchEquipment, ResearchEquipmentDto>()
+                .ForMember(
+                    dest => dest.Name,
+                    options =>
+                        options.MapFrom(src => src.ResearchEquipment.Name));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using FluentValidation;
-using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Cruises;
@@ -12,13 +11,17 @@ using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationShortInfoDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Cruises;
+using ResearchCruiseApp_API.Application.Services.Factories.FileDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormAContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormADtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtosFactory;
 using ResearchCruiseApp_API.Application.Services.Factories.FormBDtos;
+using ResearchCruiseApp_API.Application.Services.Factories.FormCDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsA;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsB;
+using ResearchCruiseApp_API.Application.Services.Factories.FormsC;
 using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
+using ResearchCruiseApp_API.Application.Services.Factories.Photos;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 
@@ -64,6 +67,10 @@ public static class DependencyInjection
             .AddScoped<IFormAInitValuesDtosFactory, FormAInitValuesDtosFactory>()
             .AddScoped<IFormUserDtosFactory, FormUserDtosFactory>()
             .AddScoped<IFormsBFactory, FormsBFactory>()
-            .AddScoped<IFormBDtosFactory, FormBDtosFactory>();
+            .AddScoped<IFormBDtosFactory, FormBDtosFactory>()
+            .AddScoped<IFormsCFactory, FormsCFactory>()
+            .AddScoped<IPhotosFactory, PhotosFactory>()
+            .AddScoped<IFileDtosFactory, FileDtosFactory>()
+            .AddScoped<IFormCDtosFactory, FormCDtosFactory>();
     }
 }

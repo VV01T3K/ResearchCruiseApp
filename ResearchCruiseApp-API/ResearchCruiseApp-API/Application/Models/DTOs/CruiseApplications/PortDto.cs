@@ -33,6 +33,12 @@ public class PortDto
                     dest => dest.Name,
                     options =>
                         options.MapFrom(src => src.Port.Name));
+            
+            CreateMap<FormCPort, PortDto>()
+                .ForMember(
+                    dest => dest.Name,
+                    options =>
+                        options.MapFrom(src => src.Port.Name));
         }
     }
 }

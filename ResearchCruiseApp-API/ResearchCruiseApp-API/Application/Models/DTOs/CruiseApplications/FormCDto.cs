@@ -1,87 +1,121 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 
-// TODO Check how form C looks like and fill all the fields
 public class FormCDto
 {
-    //Ogólne informacje
-    //public CruiseInfo CruiseInfoData { get; set; }
+    [StringLength(1)]
+    public string ShipUsage { get; init; } = null!;
     
-    [RegularExpression(@"^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$")]
-    public Guid? Id { get; set; } = null!;
-    //\p{L}\p{M}
-    public Guid? CruiseManagerId { get; set; } = null!;
-    public Guid? DeputyManagerId { get; set; } = null!;
+    public List<PermissionDto> Permissions { get; init; } = [];
     
-    //(?) jaki format na rok
-    [Range(2024, 2050)]
-    public int? Year { get; set; } = 0;
+    public Guid ResearchAreaId { get; init; }
     
-    //Dopuszczlny termin rejsu (typ?)
-    //[Length(2,2)]
-    //[Range(0,24)]
-    public HashSet<int>? AcceptablePeriod { get; set; } = null!;
+    public List<UgTeamDto> UgTeams { get; init; } = [];
+
+    public List<GuestTeamDto> GuestTeams { get; init; } = [];
+
+    public List<ResearchTaskEffectDto> ResearchTasksEffects { get; init; } = [];
     
-    //Optymalny termin rejsu (typ?)
-    //[Length(2,2)]
-    //[Range(0,24)]
-    public HashSet<int>? OptimalPeriod { get; set; } = null!;
+    public List<ContractDto> Contracts { get; init; } = [];
     
-    [Range(1,99)]
-    public int? CruiseHours { get; set; } = 0;
+    public List<SpubTaskDto> SpubTasks { get; init; } = [];
     
-    //Uwaga dotycząca terminu:
-    [StringLength(200)]
-    public string? PeriodNotes { get; set; } = null!;
-    //Czy statek na potrzeby badań będzie wykorzystywany
-    [Range(0,4)]
-    public int? ShipUsage { get; set; } = 0;
+    public List<ShortResearchEquipmentDto> ShortResearchEquipments { get; init; } = [];
     
-    //koniec CruiseInfo
+    public List<LongResearchEquipmentDto> LongResearchEquipments { get; init; } = [];
+    
+    public List<PortDto> Ports { get; init; } = [];
+    
+    public List<CruiseDayDetailsDto> CruiseDaysDetails { get; init; } = [];
+    
+    public List<ResearchEquipmentDto> ResearchEquipments { get; init; } = [];
+    
+    public List<ShipEquipmentDto> ShipEquipments { get; init; } = [];
+
+    public List<CollectedSampleDto> CollectedSamples { get; init; } = [];
+    
+    [StringLength(1024)]
+    public string? SpubReportData { get; init; } = null!;
+    
+    [StringLength(1024)]
+    public string? AdditionalDescription { get; init; } = null!;
+
+    public List<FileDto> Photos { get; init; } = []!;
 
 
-    //Czy do badań prowadzonych podczas rejsu są potrzebne dodatkowe pozwolenia?:
-    public int? PermissionsRequired { get; set; }
-    
-    [MaxLength(200)]
-    public string? Permissions { get; set; }
-    
-    
-    //(?) opcjonalnie opis. 
-    [Range(0,20)]
-    public int? ResearchArea { get; set; }
-    
-    
-    //Cel rejsu (opis max. 100 słów):
-    public int? CruiseGoal { get; set; }
-    
-    [MaxLength(200)]
-    public string? CruiseGoalDescription { get; set; }
-
-    
-    //Zadania
-    public List<ResearchTask>? ResearchTasks { get; set; }
-
-    
-    //Lista umów
-    public List<Contract>? Contracts { get; set; }
-    
-    
-    // Zespoły z UG
-    public List<FormAUgUnit>? UgTeams { get; set; }
-    
-    
-    //Zespoły goscinne
-    public List<FormAGuestUnit>? GuestTeams { get; set; }
-    
-    
-    //Publikacje i Prace
-    public List<Publication>? Publications { get; set; }
-    
-    
-    //Zadania SPUB
-    public List<SpubTask> SpubTasks { get; set; } = [];
+    private class MapProfile : Profile
+    {
+        public MapProfile()
+        {
+            CreateMap<FormCDto, FormC>()
+                .ForAllMembers(options =>
+                {
+                    // They require complex logic
+                    var mappedPropsNames = new List<string>
+                    {
+                        nameof(FormC.ShipUsage),
+                        nameof(FormC.CollectedSamples),
+                        nameof(FormC.SpubReportData),
+                        nameof(FormC.AdditionalDescription)
+                    };
+                    
+                    if (!mappedPropsNames.Contains(options.DestinationMember.Name))
+                        options.Ignore();
+                });
+            
+            CreateMap<FormC, FormCDto>()
+                .ForMember(
+                    dest => dest.Permissions,
+                    options =>
+                        options.Ignore()) // In progress
+                .ForMember(
+                    dest => dest.ResearchAreaId,
+                    options =>
+                        options.MapFrom(src => src.ResearchArea.Id))
+                .ForMember(
+                    dest => dest.UgTeams,
+                    options =>
+                        options.MapFrom(src => src.FormCUgUnits))
+                .ForMember(
+                    dest => dest.GuestTeams,
+                    options =>
+                        options.MapFrom(src => src.FormCGuestUnits))
+                .ForMember(
+                    dest => dest.ResearchTasksEffects,
+                    options =>
+                        options.MapFrom(src => src.ResearchTaskEffects))
+                .ForMember(
+                    dest => dest.Contracts,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
+                    dest => dest.SpubTasks,
+                    options =>
+                        options.MapFrom(src => src.FormCSpubTasks))
+                .ForMember(
+                    dest => dest.ShortResearchEquipments,
+                    options =>
+                        options.MapFrom(src => src.FormCShortResearchEquipments))
+                .ForMember(
+                    dest => dest.LongResearchEquipments,
+                    options =>
+                        options.MapFrom(src => src.FormCLongResearchEquipments))
+                .ForMember(
+                    dest => dest.Ports,
+                    options =>
+                        options.MapFrom(src => src.FormCPorts))
+                .ForMember(
+                    dest => dest.ResearchEquipments,
+                    options =>
+                        options.MapFrom(src => src.FormCResearchEquipments))
+                .ForMember(
+                    dest => dest.Photos,
+                    options =>
+                        options.Ignore());  // Member requires complex logic
+        }
+    }
 }

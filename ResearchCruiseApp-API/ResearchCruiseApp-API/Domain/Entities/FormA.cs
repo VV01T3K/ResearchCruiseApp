@@ -64,5 +64,5 @@ public class FormA : Entity
     public List<FormASpubTask> FormASpubTasks { get; init; } = [];
     
     [StringLength(1024)]
-    public string SupervisorEmail { get; set; } = null!;
+    public string SupervisorEmail { get; init; } = null!;
 }

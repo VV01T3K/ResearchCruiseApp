@@ -6,9 +6,11 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class SpubTaskDto
 {
-    public string YearFrom { get; set; } = null!;
-    public string YearTo { get; set; } = null!;
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
+    
+    public string YearFrom { get; init; } = null!;
+    
+    public string YearTo { get; init; } = null!;
     
     
     private class MapProfile : Profile
@@ -25,6 +27,20 @@ public class SpubTaskDto
             CreateMap<SpubTask, SpubTaskDto>();
             
             CreateMap<FormASpubTask, SpubTaskDto>()
+                .ForMember(
+                    dest => dest.YearFrom,
+                    options =>
+                        options.MapFrom(src => src.SpubTask.YearFrom))
+                .ForMember(
+                    dest => dest.YearTo,
+                    options =>
+                        options.MapFrom(src => src.SpubTask.YearTo))
+                .ForMember(
+                    dest => dest.Name,
+                    options =>
+                        options.MapFrom(src => src.SpubTask.Name));
+            
+            CreateMap<FormCSpubTask, SpubTaskDto>()
                 .ForMember(
                     dest => dest.YearFrom,
                     options =>

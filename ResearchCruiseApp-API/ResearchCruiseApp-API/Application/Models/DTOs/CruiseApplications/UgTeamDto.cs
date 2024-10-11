@@ -31,6 +31,12 @@ public class UgTeamDto
                     dest => dest.UgUnitId,
                     options =>
                         options.MapFrom(src => src.UgUnit.Id));
+            
+            CreateMap<FormCUgUnit, UgTeamDto>()
+                .ForMember(
+                    dest => dest.UgUnitId,
+                    options =>
+                        options.MapFrom(src => src.UgUnit.Id));
         }
     }
 }

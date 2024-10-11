@@ -11,5 +11,5 @@ public class PermissionDto
     [StringLength(1024)]
     public string Executive { get; set; } = null!;
 
-    public ScanDto? Scan { get; set; }
+    public FileDto? Scan { get; set; }
 }

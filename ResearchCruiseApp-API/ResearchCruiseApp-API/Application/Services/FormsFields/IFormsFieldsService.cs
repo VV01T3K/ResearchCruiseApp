@@ -7,8 +7,19 @@ namespace ResearchCruiseApp_API.Application.Services.FormsFields;
 
 public interface IFormsFieldsService
 {
+    Task<ResearchTask> GetUniqueResearchTask(
+        IResearchTaskDto researchTaskDto,
+        IEnumerable<ResearchTask> researchTasksInMemory,
+        CancellationToken cancellationToken);
+    
     Task<GuestUnit> GetUniqueGuestUnit(
         GuestTeamDto guestTeamDto, IEnumerable<GuestUnit> guestUnitsInMemory, CancellationToken cancellationToken);
+
+    Task<Contract> GetUniqueContract(
+        ContractDto contractDto, IEnumerable<Contract> contractsInMemory, CancellationToken cancellationToken);
+    
+    Task<SpubTask> GetUniqueSpubTask(
+        SpubTaskDto spubTaskDto, IEnumerable<SpubTask> spubTasksInMemory, CancellationToken cancellationToken);
     
     Task<CrewMember> GetUniqueCrewMember(
         CrewMemberDto crewMemberDto, IEnumerable<CrewMember> crewMembersInMemory, CancellationToken cancellationToken);

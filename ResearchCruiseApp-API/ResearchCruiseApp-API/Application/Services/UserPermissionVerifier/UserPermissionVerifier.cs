@@ -89,7 +89,7 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
         return false;
     }
     
-    public async Task<bool> CanCurrentUserAddFormB(CruiseApplication cruiseApplication)
+    public async Task<bool> CanCurrentUserAddForm(CruiseApplication cruiseApplication)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
@@ -107,7 +107,7 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
                cruiseApplication.FormA.DeputyManagerId == currentUserId;
     }
     
-    public async Task<bool> CanCurrentUserViewFormB(CruiseApplication cruiseApplication)
+    public async Task<bool> CanCurrentUserViewForm(CruiseApplication cruiseApplication)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 

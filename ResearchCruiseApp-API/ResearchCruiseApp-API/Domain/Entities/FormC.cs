@@ -10,13 +10,13 @@ public class FormC : Entity
     
     public List<Permission> Permissions { get; init; } = [];
     
-    public ResearchArea ResearchArea { get; init; } = null!;
+    public ResearchArea ResearchArea { get; set; } = null!;
 
     public List<FormCUgUnit> FormCUgUnits { get; init; } = [];
     
     public List<FormCGuestUnit> FormCGuestUnits { get; init; } = [];
 
-    public List<FormCResearchTask> FormCResearchTasks { get; init; } = [];
+    public List<ResearchTaskEffect> ResearchTaskEffects { get; init; } = [];
 
     public List<Contract> Contracts { get; init; } = [];
 
@@ -37,8 +37,10 @@ public class FormC : Entity
     public List<CollectedSample> CollectedSamples { get; init; } = [];
 
     [StringLength(1024)]
-    public string AdditionalSpubData { get; init; } = null!;
+    public string? SpubReportData { get; init; } = null!;
     
     [StringLength(1024)]
-    public string AdditionalDescription { get; init; } = null!;
+    public string? AdditionalDescription { get; init; } = null!;
+
+    public List<Photo> Photos { get; set; } = [];
 }

@@ -10,9 +10,9 @@ internal static class CruiseApplicationsQueryableExtensions
     public static IQueryable<CruiseApplication> IncludeForms(this IQueryable<CruiseApplication> query)
     {
         return query
-            .Include(cruiseApplication => cruiseApplication.FormA)
-            .Include(cruiseApplication => cruiseApplication.FormB)
-            .Include(cruiseApplication => cruiseApplication.FormC);
+            .IncludeFormA()
+            .IncludeFormB()
+            .IncludeFormC();
     }
 
     public static IQueryable<CruiseApplication> IncludeFormA(this IQueryable<CruiseApplication> query)
@@ -25,6 +25,11 @@ internal static class CruiseApplicationsQueryableExtensions
         return query.Include(cruiseApplication => cruiseApplication.FormB);
     }
 
+    public static IQueryable<CruiseApplication> IncludeFormC(this IQueryable<CruiseApplication> query)
+    {
+        return query.Include(cruiseApplication => cruiseApplication.FormC);
+    }
+    
     public static IQueryable<CruiseApplication> IncludeFormAContent(this IQueryable<CruiseApplication> query)
     {
         return query
@@ -63,5 +68,33 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormB!.FormBResearchEquipments)
             .ThenInclude(formBResearchEquipment => formBResearchEquipment.ResearchEquipment)
             .Include(cruiseApplication => cruiseApplication.FormB!.ShipEquipments);
+    }
+
+    public static IQueryable<CruiseApplication> IncludeFormCContent(this IQueryable<CruiseApplication> query)
+    {
+        return query
+            .Include(cruiseApplication => cruiseApplication.FormC!.Permissions)
+            .Include(cruiseApplication => cruiseApplication.FormC!.ResearchArea)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCUgUnits)
+            .ThenInclude(formCUgUnit => formCUgUnit.UgUnit)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCGuestUnits)
+            .ThenInclude(formCGuestUnit => formCGuestUnit.GuestUnit)
+            .Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects)
+            .ThenInclude(researchTaskEffect => researchTaskEffect.ResearchTask)
+            .Include(cruiseApplication => cruiseApplication.FormC!.Contracts)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCSpubTasks)
+            .ThenInclude(formCSpubTask => formCSpubTask.SpubTask)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCShortResearchEquipments)
+            .ThenInclude(formCShortResearchEquipment => formCShortResearchEquipment.ResearchEquipment)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCLongResearchEquipments)
+            .ThenInclude(formCLongResearchEquipment => formCLongResearchEquipment.ResearchEquipment)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCPorts)
+            .ThenInclude(formCPort => formCPort.Port)
+            .Include(cruiseApplication => cruiseApplication.FormC!.CruiseDaysDetails)
+            .Include(cruiseApplication => cruiseApplication.FormC!.FormCResearchEquipments)
+            .ThenInclude(formCResearchEquipment => formCResearchEquipment.ResearchEquipment)
+            .Include(cruiseApplication => cruiseApplication.FormC!.ShipEquipments)
+            .Include(cruiseApplication => cruiseApplication.FormC!.CollectedSamples)
+            .Include(cruiseApplication => cruiseApplication.FormC!.Photos);
     }
 }

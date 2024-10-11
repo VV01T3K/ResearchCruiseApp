@@ -43,7 +43,7 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
 
     public DbSet<FormCUgUnit> FormCUgUnits { get; init; } = null!;
     public DbSet<FormCGuestUnit> FormGuestUnits { get; init; } = null!;
-    public DbSet<FormCResearchTask> FormCResearchTasks { get; init; } = null!;
+    public DbSet<ResearchTaskEffect> ResearchTaskEffects { get; init; } = null!;
     public DbSet<FormCSpubTask> FormCSpubTasks { get; init; } = null!;
     public DbSet<FormCShortResearchEquipment> FormCShortResearchEquipments { get; init; } = null!;
     public DbSet<FormCLongResearchEquipment> FormCLongResearchEquipments { get; init; } = null!;

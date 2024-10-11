@@ -13,7 +13,7 @@ public interface IUserPermissionVerifier
     
     Task<bool> CanCurrentUserViewCruise(Cruise cruise);
     
-    Task<bool> CanCurrentUserAddFormB(CruiseApplication cruiseApplication);
+    Task<bool> CanCurrentUserAddForm(CruiseApplication cruiseApplication);
 
-    Task<bool> CanCurrentUserViewFormB(CruiseApplication cruiseApplication);
+    Task<bool> CanCurrentUserViewForm(CruiseApplication cruiseApplication);
 }
