@@ -41,8 +41,6 @@ public class CruiseApplicationDto
     
     public string Status { get; init; } = null!;
     
-    public CruiseShortInfo = null!;
-
 
     private class MapProfile : Profile
     {

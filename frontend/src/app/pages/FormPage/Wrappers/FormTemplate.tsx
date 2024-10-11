@@ -41,7 +41,7 @@ function FormTemplate(props: FormTemplateProps) {
     } = locationToDataMapper();
 
     console.log(cruiseApplication);
-    const _getFormA = () => getFormA(cruiseApplication.id);
+    const _getFormA = () => getFormA(cruiseApplication?.id ?? cruiseApplicationId);
 
     const _getFormForSupervisor = () =>
         getFormForSupervisor(cruiseApplicationId, supervisorCode);
@@ -53,7 +53,7 @@ function FormTemplate(props: FormTemplateProps) {
     );
 
     useEffect(() => {
-        if (cruiseApplication.id && typeOfForm && !defaultValues) {
+        if ((cruiseApplication?.id || cruiseApplicationId) && typeOfForm && !defaultValues) {
             getForm().then((response) => {
                 setDefaultValues(response?.data);
                 form.reset(response?.data);
