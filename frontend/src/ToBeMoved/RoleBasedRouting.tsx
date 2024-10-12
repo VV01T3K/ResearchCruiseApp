@@ -98,7 +98,7 @@ const RoleBasedRouting = () => {
     const CommonAccessRoute = () => {
         return (
             <>
-                <Route path={Path.ForcedLogout} element={<LogoutPage />} />
+                {/*<Route path={Path.ForcedLogout} element={<LogoutPage />} />*/}
                 <Route path={Path.AccountSettings} element={<AccountPage />} />
                 <Route path={Path.PriorityInformation} element={<PriorityInformationPage />} />
             </>
@@ -124,7 +124,7 @@ const RoleBasedRouting = () => {
                 <Route path={Path.Form} element={<FormPage />} />
                 <Route path={Path.Register} element={<RegisterPage />} />
                 <Route path={Path.ResetPassword} element={<ResetPasswordPage />} />
-                <Route path={Path.ForcedLogout} element={<LogoutPage />} />
+                {/*<Route path={Path.ForcedLogout} element={<LogoutPage />} />*/}
             </>
         );
     };

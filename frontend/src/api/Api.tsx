@@ -11,6 +11,7 @@ import { defaultServerAddress } from '@config/defaultServerAddress';
 
 declare module 'axios' {
     export interface AxiosRequestConfig {
+        _retry?: boolean;
         raw?: boolean;
     }
 
@@ -37,7 +38,7 @@ async function refreshToken() {
     const refreshResponse = await axios.post('/account/refresh', {
         accessToken: sessionStorage.getItem('accessToken'),
         refreshToken: sessionStorage.getItem('refreshToken'),
-    });
+    }, { _retry: true });
     const newAccessToken = refreshResponse?.data.accessToken;
     sessionStorage.setItem('accessToken', newAccessToken);
 }
@@ -48,17 +49,19 @@ export const Interceptors = () => {
 
     async function HandleErrNetwork(config: InternalAxiosRequestConfig<any>) {
         if (config && !config._retry) {
-            config._retry = true;
             try {
                 if (sessionStorage.getItem('accessToken')) {
                     await refreshToken();
+                    navigate(Path.ForcedLogout);
+                    return Promise.resolve(null);
                 }
                 // return axios(config);
             } catch (refreshError) {
                 ForceLogout();
             }
-        }
-        ForceLogout();
+        } else
+            ForceLogout();
+        return Promise.resolve(null);
     }
 
     function HandleErrCanceled() {
@@ -87,10 +90,10 @@ export const Interceptors = () => {
         const request = error?.request;
         const config = error?.config;
 
-        if (error.code === 'ERR_NETWORK' && config) {
+        if (error.code == 'ERR_NETWORK' && config) {
             return HandleErrNetwork(config);
         } else {
-            if (error.code === 'ERR_CANCELED') {
+            if (error.code == 'ERR_CANCELED') {
                 HandleErrCanceled();
             } else {
                 if (response) {

@@ -46,7 +46,7 @@ export function StartDateField(props: StartDateFieldProps) {
                 startDate={field.value ? new Date(field.value as string) : undefined}
                 maxDate={endDateValue ? new Date(endDateValue) : undefined}
                 selectsStart
-                value={field.value ? field.value : undefined}
+                value={field.value ? new Date(field.value).toLocaleDateString('pl-PL') : undefined}
                 selected={field.value ? new Date(field.value) : undefined}
                 dateFormat="Pp"
             />
@@ -89,7 +89,7 @@ export function EndDateField(props: EndDateFieldProps) {
                 minDate={startDateValue ? new Date(startDateValue) : undefined}
                 selectsEnd
                 showTimeSelect
-                value={field.value ? field.value : undefined}
+                value={field.value ? new Date(field.value).toLocaleDateString('pl-PL') : undefined}
                 selected={field.value ? new Date(field.value) : undefined}
                 dateFormat="Pp"
             />
