@@ -14,6 +14,8 @@ import { ApplicationsContext } from '@contexts/ApplicationsContext';
 import { ListModeContext } from '@contexts/ListModeContext';
 import { CruiseApplication } from 'CruiseApplication';
 import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
+import { CruiseStatus } from '@enums/CruiseStatus';
+import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
 
 const selectStringFilterDefaultOption: SelectSingleValue = {
     label: '--- Filtr wyłączony ---',
@@ -38,12 +40,16 @@ const RowShouldBeShown = (mode?: CruiseApplicationListMode) => {
 
 export default function CruiseApplicationsList(props: Props) {
     const cruiseApplicationsContext = useContext(ApplicationsContext);
+    console.log(cruiseApplicationsContext);
+    const cruise = cruiseFromLocation();
+
+    const cruiseIsNew = !cruise || cruise?.status == CruiseStatus.New;
 
     const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState(
         cruiseApplicationsContext ?? [],
     );
     useEffect(() => {
-        if (fetchedCruiseApplications.length <= 0) {
+        if (!cruiseIsNew && fetchedCruiseApplications.length <= 0) {
             if (cruiseApplicationsContext.length > 0) {
                 setFetchedCruiseApplications(cruiseApplicationsContext);
             } else {

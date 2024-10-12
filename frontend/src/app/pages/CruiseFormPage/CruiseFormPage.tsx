@@ -73,21 +73,21 @@ export const CruiseApplicationsContext = createContext<{
 export default function CruiseFormPage() {
     const cruise = cruiseFromLocation();
     const editCruiseFormDefaultValues = EditCruiseFormDefaultValues(cruise);
-
     const sections = CruiseFormSections();
+    console.log(cruise);
 
-    const cruiseIsNew = !cruise || cruise?.status === CruiseStatus.New;
+    const cruiseIsNew = !cruise || cruise?.status == CruiseStatus.New;
     const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState<
         CruiseApplication[]
     >([]);
     useEffect(() => {
-        if (fetchedCruiseApplications.length <= 0) {
-            Api.get(
-                cruiseIsNew
-                    ? '/api/CruiseApplications/forCruise'
-                    : '/api/CruiseApplications',
-            ).then((response) => setFetchedCruiseApplications(response?.data));
-        }
+        // if (fetchedCruiseApplications.length <= 0) {
+        Api.get(
+            cruiseIsNew
+                ? '/api/CruiseApplications/forCruise'
+                : '/api/CruiseApplications',
+        ).then((response) => setFetchedCruiseApplications(response?.data));
+        // }
     }, []);
 
     return (

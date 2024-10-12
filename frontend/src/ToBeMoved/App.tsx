@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction, useState } from 'react';
 import { UserData } from 'User/UserData';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Interceptors } from '@api/Api';
 import BusyEvent from './CommonComponents/BusyEvent';
 import PageBackground from '../components/Page/Background/PageBackground';
@@ -20,6 +20,8 @@ export const OpenedWithLocation = () => {
 };
 
 const AppContent = () => {
+    const navigate = useNavigate();
+
     const { SetInterceptors } = Interceptors();
     const { DisplayIfBuisy, DisplayIfNotBuisy } = BusyEvent();
     const OnAppStart = () => {

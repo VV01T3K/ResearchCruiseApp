@@ -31,7 +31,7 @@ export const DeputyManagerField = () => {
             className="three-fields-beside-md"
             fieldName={cruiseManagerSectionFieldNames.deputyManagerId}
             fieldLabel="Zastępca"
-            initValues={(formContext!.initValues as FormAInitValues)!.deputyManagers}
+            initValues={(formContext!.initValues as FormAInitValues)?.deputyManagers}
         />
     );
 };
@@ -71,7 +71,7 @@ const CruiseAndDeputyManagerExtraValidation = () => {
     return {
         validation: !formContext!.readOnly
             ? () => {
-                const areFieldsEqual = cruiseManager == deputyManager;
+                const areFieldsEqual = cruiseManager === deputyManager;
 
                 if (
                     cruiseManager &&
