@@ -15,11 +15,17 @@ internal class ApplicationDbContextInitializer(
 {
     public async Task Initialize()
     {
+        var firstMigration = !await applicationDbContext.Database.CanConnectAsync();
+        
         await Migrate();
-        await SeedAdministrationData();
-        await SeedUgUnits();
-        await SeedResearchAreas();
-        await SeedShipEquipments();
+
+        if (firstMigration)
+        {
+          await SeedAdministrationData();
+          await SeedUgUnits();
+          await SeedResearchAreas();
+          await SeedShipEquipments();
+        }
     }
 
 
