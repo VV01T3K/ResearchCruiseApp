@@ -11,7 +11,7 @@ export const NameField = () => {
         <KeyContext.Provider value={'name'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
-                    Dzień
+                    Nazwa
                 </label>
                 <FTextField />
             </div>
@@ -19,25 +19,25 @@ export const NameField = () => {
     );
 };
 
-export const InsuranceField = () => {
-    return (
-        <KeyContext.Provider value={'insurance'}>
-            <div className={'task-field-input'}>
-                <label>
-                    Czy uzyskano
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+// export const InsuranceField = () => {
+//     return (
+//         <KeyContext.Provider value={'insurance'}>
+//             <div className={'task-field-input'}>
+//                 <label>
+//                     Czy uzyskano
+//                 </label>
+//                 <FBoolField />
+//             </div>
+//         </KeyContext.Provider>
+//     );
+// };
 
 export const PermissionField = () => {
     return (
         <KeyContext.Provider value={'permission'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
-                    Nazwa zadania
+                    Czy uzyskano zgodę opiekuna
                 </label>
                 <FBoolField />
             </div>
@@ -50,7 +50,7 @@ export const StartDateField = () => {
         <KeyContext.Provider value={'startDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
-                    Początek
+                    Początek ubezpieczenia (jesli ubezpieczono)
                 </label>
                 <FDateFieldDayAndHour />
             </div>
@@ -63,7 +63,7 @@ export const EndDateField = () => {
         <KeyContext.Provider value={'endDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
-                    Koniec
+                    Koniec ubezpieczenia (jeśli ubezpieczono)
                 </label>
 
                 <FDateFieldDayAndHour />
@@ -74,7 +74,7 @@ export const EndDateField = () => {
 
 export const InsuranceColumn = () => (
     <div className={'w-100 d-flex flex-row flex-wrap'}>
-        <InsuranceField />
+        {/*<InsuranceField />*/}
         <StartDateField />
         <EndDateField />
     </div>

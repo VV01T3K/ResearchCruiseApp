@@ -1,13 +1,16 @@
 import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
 import { useContext } from 'react';
-import { InsuranceColumn, PermissionField } from '@app/pages/FormPage/Inputs/EquipmentTable/EquipmentTableFields';
+import {
+    InsuranceColumn,
+    NameField,
+    PermissionField,
+} from '@app/pages/FormPage/Inputs/EquipmentTable/EquipmentTableFields';
 import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
 import { FieldValues } from 'react-hook-form';
 import { SingleValue } from 'react-select';
 import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
 import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import { FormContext } from '@contexts/FormContext';
-import { NameField } from '@app/pages/FormPage/Inputs/SpubTasksTable';
 import { FieldContext } from '@contexts/FieldContext';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
@@ -17,7 +20,7 @@ export type Equipment = {
     startDate: string,
     endDate: string,
     name: string,
-    insurance: string,
+    // insurance: string,
     permission: string
 }
 
@@ -25,7 +28,7 @@ const equipmentDefault = {
     startDate: undefined,
     endDate: undefined,
     name: '',
-    insurance: 'false',
+    // insurance: 'false',
     permission: 'false',
 };
 
@@ -57,8 +60,8 @@ function EquipmentTable(props: EquipmentProps) {
 
 
     const mdColWidths = [5, 41, 35, 14, 5];
-    const mdColTitles = ['Lp.', 'Nazwa sprzętu / aparatury', 'Zgłoszenie do ubezpieczenia', 'Czy uzyskano zgodę opiekuna', ''];
-    const colTitle = 'Lista uczestników rejsu';
+    const mdColTitles = ['Lp.', 'Nazwa sprzętu / aparatury', 'Data zgłoszenia do ubezpieczenia (jeśli zgłoszono)', 'Czy uzyskano zgodę opiekuna', ''];
+    const colTitle = 'Lista sprzętu i aparatury badawczej';
     const bottomMenu =
         <BottomMenuWithAddButton newOption={equipmentDefault as SingleValue<any>} />;
     const emptyText = 'Nie dodano żadnego sprzętu';
@@ -72,16 +75,12 @@ function EquipmentTable(props: EquipmentProps) {
         rules: {
             required: false,
             validate: {
-                dateRequired: (value: Equipment[]) => value.length > 0 ? value.some((row: Equipment) => {
-                    if (row.name == '')
-                        return 'sas';
-                    if (row.insurance == 'true') {
-                        console.log(row.startDate, row.endDate);
-                        return ((row.startDate == undefined || row.endDate == undefined));
-                    }
-                    return false;
-                }) && 'Uzupełnij wszystkie pola' : true,
-
+                nameNeeded: (value: Equipment[]) =>
+                    (value.length > 0 && value.some((row) => !row.name)) ? 'Wpisz nazwę sprzętu' : true,
+                bothDatesNeeded: (value: Equipment[]) =>
+                    (value.length > 0 && value.some((row) =>
+                        (row.startDate && !row.endDate) || (!row.startDate && row.endDate),
+                    )) ? 'Podaj obydwie daty' : true,
             },
         },
         render: FieldContextWrapper(Render),

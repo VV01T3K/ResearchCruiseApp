@@ -47,7 +47,7 @@ const PortTableContent = () => {
     const formContext = useContext(FormContext);
 
     return [
-        () => (<OrdinalNumber label={'Sprzęt'} />),
+        () => (<OrdinalNumber label={''} />),
         EntranceDateField,
         ExitDateField,
         NameField,
@@ -71,7 +71,7 @@ function PortTable(props: PortTableProps) {
 
     const mdColWidths = [5, 15, 15, 60, 5];
     const mdColTitles = ['Lp.', 'Wejście', 'Wyjście', 'Nazwa portu', ''];
-    const colTitle = '';
+    const colTitle = 'Wchodzenie/wychodzenie z portu';
     const bottomMenu =
         <BottomMenuWithAddButton newOption={portDefault as SingleValue<any>} />;
     const emptyText = 'Nie dodano żadnego sprzętu';

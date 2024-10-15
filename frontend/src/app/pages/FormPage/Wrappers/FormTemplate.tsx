@@ -116,6 +116,7 @@ function FormTemplate(props: FormTemplateProps) {
     }, []);
 
     const form = useOnBlurForm(defaultValues);
+    console.log(form.formState.errors);
 
     const [readOnly, setReadOnly] = useState(_readOnly);
     console.log(form.getValues());

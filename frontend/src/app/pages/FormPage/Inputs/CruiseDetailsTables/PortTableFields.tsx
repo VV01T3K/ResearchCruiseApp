@@ -34,7 +34,7 @@ export const NameField = () => {
         <KeyContext.Provider value={'name'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
-                    Nazwa
+                    Nazwa portu
                 </label>
                 <FTextField />
             </div>

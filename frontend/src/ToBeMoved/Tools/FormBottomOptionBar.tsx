@@ -105,8 +105,7 @@ const SendMenu = () => {
 
     const Points = () => (
         <div className="text-primary pt-2 text-center">
-            {' '}
-            Obliczona liczba punktów: 5{' '}
+            Obliczona liczba punktów: ?
         </div>
     );
     const ConfirmSendButton = () => {
@@ -133,7 +132,7 @@ const SendMenu = () => {
     return {
         Menu: () => (
             <div className={'d-flex flex-column w-100'}>
-                <Points />
+                {formContext!.type == FormType.A && <Points />}
                 <div className={'d-flex flex-row w-100'}>
                     <ConfirmSendButton />
                     <CancelButton />
@@ -159,7 +158,7 @@ export const BottomOptionBar = () => {
 
     const EditableFormButtons = () => (
         <>
-            {!sendMenu.enabled && <saveMenu.saveButton />}
+            {/*{!sendMenu.enabled && <saveMenu.saveButton />}*/}
             {!saveMenu.enabled && <sendMenu.Button />}
         </>
     );

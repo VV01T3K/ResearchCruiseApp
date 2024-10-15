@@ -8,6 +8,7 @@ import {
     CruiseApplicationDeputyManagerName,
 } from '@app/pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsFields/CruiseApplicationDeputyManagerName';
 import FormRadio from '@app/pages/FormPage/Inputs/FormRadio';
+import BoolField from '@app/pages/FormPage/Inputs/BoolField';
 
 const cruiseManagerSectionFieldNames = {
     isCruiseManagerPresent: 'isCruiseManagerPresent',
@@ -21,9 +22,9 @@ export const BasicInfo = () => {
 
 const IsCruiseManagerPresentField = () => {
     return (
-        <FormRadio fieldLabel={'Czy kierownik obecny jest na rejsie'}
+        <BoolField fieldLabel={'Czy kierownik obecny jest na rejsie'}
                    fieldName={cruiseManagerSectionFieldNames.isCruiseManagerPresent}
-                   initValues={['tak', 'nie']}
+                   defaultValue={'true'}
         />
     );
 };

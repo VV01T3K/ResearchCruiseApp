@@ -95,7 +95,7 @@ function EquipmentLeaveTable(props: EquipmentLeaveTableProps) {
 
     const mdColWidths = [5, 20, 30, 40, 5];
     const mdColTitles = ['Lp.', 'Czynność', 'Czas (pora dnia, przedział czasu itp.)', 'Nazwa sprzętu', ''];
-    const colTitle = '';
+    const colTitle = 'Pozostawienie lub zabranie sprzętu';
     const bottomMenu =
         <BottomMenuSingleSelect options={equipmentLeaveOptions} />;
     const emptyText = 'Nie dodano żadnego sprzętu';

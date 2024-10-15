@@ -66,7 +66,7 @@ function DetailedPlanTable(props: DetailedPlanProps) {
 
     const mdColWidths = [10, 14, 17, 18, 18, 18, 5];
     const mdColTitles = ['Dzień', 'Liczba godzin', 'Nazwa zadania', 'Rejon zadania', 'Pozycja', 'Uwagi', ''];
-    const colTitle = 'Lista uczestników rejsu';
+    const colTitle = 'Plan rejsu';
     const bottomMenu =
         <BottomMenuWithAddButton newOption={detailedPlanDefault as SingleValue<any>} />;
     const emptyText = 'Nie dodano żadnego dnia';

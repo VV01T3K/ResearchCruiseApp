@@ -70,7 +70,7 @@ function EquipmentOutsideTable(props: EquipmentOutsideTableProps) {
 
     const mdColWidths = [5, 15, 15, 60, 5];
     const mdColTitles = ['Lp.', 'Od', 'Do', 'Nazwa sprzętu', ''];
-    const colTitle = '';
+    const colTitle = 'Wystawienie sprzętu';
     const bottomMenu =
         <BottomMenuWithAddButton newOption={equipmentOutsideDefault as SingleValue<any>}
         />;
