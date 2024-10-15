@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.SignalR.Protocol;
+﻿using System.Diagnostics;
+using AutoMapper;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
@@ -7,7 +7,6 @@ using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
 using ResearchCruiseApp_API.Application.Services.Factories.ContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
-using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtosFactory;
@@ -28,26 +27,46 @@ public class FormAInitValuesDtosFactory(
     {
         var allUserDtos = await identityService.GetAllUsersDtos(cancellationToken);
         var cruiseApplications = await GetAllCruiseApplicationsForUser(cancellationToken);
-        
-        var result = new FormAInitValuesDto
-        {
-            CruiseManagers = GetCruiseManagers(allUserDtos),
-            DeputyManagers = GetDeputyManagers(allUserDtos),
-            Years = GetYears(),
-            ShipUsages = GetShipUsages(),
-            ResearchAreas = await GetResearchAreas(cancellationToken),
-            CruiseGoals = GetCruiseGoals(),
-            HistoricalResearchTasks = GetHistoricalResearchTasks(cruiseApplications),
-            HistoricalContracts = await GetHistoricalContracts(cruiseApplications),
-            UgUnits = await GetUgUnits(cancellationToken),
-            HistoricalGuestInstitutions = GetHistoricalInstitutions(cruiseApplications),
-            HistoricalSpubTasks = GetHistoricalSpubTasks(cruiseApplications)
-        };
+
+        var result = await CreatePublic(cancellationToken);
+        result.CruiseManagers = GetCruiseManagers(allUserDtos);
+        result.DeputyManagers = GetDeputyManagers(allUserDtos);
+        result.HistoricalResearchTasks = GetHistoricalResearchTasks(cruiseApplications);
+        result.HistoricalContracts = await GetHistoricalContracts(cruiseApplications);
+        result.HistoricalGuestInstitutions = GetHistoricalInstitutions(cruiseApplications);
+        result.HistoricalSpubTasks = GetHistoricalSpubTasks(cruiseApplications);
+
+        return result;
+    }
+
+    public async Task<FormAInitValuesDto> CreateForSupervisor(
+        CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+    {
+        Debug.Assert(cruiseApplication.FormA is not null);
+
+        var manager = await identityService.GetUserDtoById(cruiseApplication.FormA.CruiseManagerId);
+        var deputy = await identityService.GetUserDtoById(cruiseApplication.FormA.DeputyManagerId);
+
+        var result = await CreatePublic(cancellationToken);
+        result.CruiseManagers = manager is not null ? [formUserDtosFactory.Create(manager)] : [];
+        result.DeputyManagers = deputy is not null ? [formUserDtosFactory.Create(deputy)] : [];
 
         return result;
     }
 
 
+    private async Task<FormAInitValuesDto> CreatePublic(CancellationToken cancellationToken)
+    {
+        return new FormAInitValuesDto
+        {
+            Years = GetYears(),
+            ShipUsages = GetShipUsages(),
+            ResearchAreas = await GetResearchAreas(cancellationToken),
+            CruiseGoals = GetCruiseGoals(),
+            UgUnits = await GetUgUnits(cancellationToken)
+        };
+    }
+    
     private async Task<List<CruiseApplication>> GetAllCruiseApplicationsForUser(CancellationToken cancellationToken)
     {
         var userId = currentUserService.GetId();

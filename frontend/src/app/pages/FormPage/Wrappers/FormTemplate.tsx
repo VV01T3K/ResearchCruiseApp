@@ -69,7 +69,6 @@ function FormTemplate(props: FormTemplateProps) {
         cruiseApplication,
     } = locationToDataMapper();
 
-    console.log(cruiseApplication);
     const _getFormA = () => getFormA(cruiseApplication?.id ?? cruiseApplicationId);
 
     const _getFormForSupervisor = () =>
@@ -97,6 +96,8 @@ function FormTemplate(props: FormTemplateProps) {
                 return '/Forms/InitValues/A';
             case FormType.ApplicationDetails:
                 return `/api/CruiseApplications/${cruiseApplication.id}/evaluation`;
+            case FormType.AForSupervisor:
+                return `/Forms/InitValuesForSupervisor/A?cruiseApplicationId=${cruiseApplicationId}&supervisorCode=${supervisorCode}`
         }
     };
 
@@ -104,15 +105,19 @@ function FormTemplate(props: FormTemplateProps) {
         FormAInitValues | undefined
     >(undefined);
     useEffect(() => {
-        const initValuesPath = initEndpoint(props.type);
+        const _formType = supervisorCode ? FormType.AForSupervisor : props.type;
+        const initValuesPath = initEndpoint(_formType);
+
         if (!initValuesPath) {
             return;
         }
 
-        Api.get(initValuesPath).then((response) => {
-            setFormInitValues(response?.data);
-            form.reset();
-        });
+        Api
+            .get(initValuesPath)
+            .then((response) => {
+                setFormInitValues(response?.data);
+                form.reset();
+            });
     }, []);
 
     const form = useOnBlurForm(defaultValues);
