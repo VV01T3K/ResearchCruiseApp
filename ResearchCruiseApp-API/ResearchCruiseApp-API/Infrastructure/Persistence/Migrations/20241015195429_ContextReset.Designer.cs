@@ -12,8 +12,8 @@ using ResearchCruiseApp_API.Infrastructure.Persistence;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241012222158_FormAInitValuesForSupervisor")]
-    partial class FormAInitValuesForSupervisor
+    [Migration("20241015195429_ContextReset")]
+    partial class ContextReset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -3,4 +3,4 @@
 namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 
 
-public interface IResearchAreasRepository : IRepository<ResearchArea>;
+public interface IResearchAreasRepository : IRepository<ResearchArea>, IDbDictionaryRepository<ResearchArea>;

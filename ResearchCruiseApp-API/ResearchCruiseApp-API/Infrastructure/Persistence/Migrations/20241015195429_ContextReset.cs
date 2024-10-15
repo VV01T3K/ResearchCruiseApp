@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FormAInitValuesForSupervisor : Migration
+    public partial class ContextReset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

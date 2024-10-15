@@ -28,7 +28,7 @@ public class FormBDto
 
     public List<ResearchEquipmentDto> ResearchEquipments { get; init; } = [];
 
-    public List<ShipEquipmentDto> ShipEquipments { get; init; } = [];
+    public List<Guid> ShipEquipmentsIds { get; init; } = [];
 
     
     private class MapProfile : Profile
@@ -70,7 +70,11 @@ public class FormBDto
                 .ForMember(
                     dest => dest.ResearchEquipments,
                     options =>
-                        options.MapFrom(src => src.FormBResearchEquipments));
+                        options.MapFrom(src => src.FormBResearchEquipments))
+                .ForMember(
+                    dest => dest.ShipEquipmentsIds,
+                    options =>
+                        options.MapFrom(src => src.ShipEquipments));
         }
     }
 }

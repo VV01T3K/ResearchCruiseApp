@@ -13,5 +13,6 @@ public class ShipEquipment : Entity, IDbDictionary
 
 
     public List<FormB> FormsB { get; init; } = [];
+    
     public List<FormC> FormsC { get; init; } = [];
 }

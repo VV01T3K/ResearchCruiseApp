@@ -34,7 +34,7 @@ public class FormCDto
     
     public List<ResearchEquipmentDto> ResearchEquipments { get; init; } = [];
     
-    public List<ShipEquipmentDto> ShipEquipments { get; init; } = [];
+    public List<Guid> ShipEquipmentsIds { get; init; } = [];
 
     public List<CollectedSampleDto> CollectedSamples { get; init; } = [];
     
@@ -54,7 +54,7 @@ public class FormCDto
             CreateMap<FormCDto, FormC>()
                 .ForAllMembers(options =>
                 {
-                    // They require complex logic
+                    // They don't require complex logic
                     var mappedPropsNames = new List<string>
                     {
                         nameof(FormC.ShipUsage),
@@ -112,6 +112,10 @@ public class FormCDto
                     dest => dest.ResearchEquipments,
                     options =>
                         options.MapFrom(src => src.FormCResearchEquipments))
+                .ForMember(
+                    dest => dest.ShipEquipmentsIds,
+                    options =>
+                        options.MapFrom(src => src.ShipEquipments))
                 .ForMember(
                     dest => dest.Photos,
                     options =>
