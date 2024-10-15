@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
-using ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtosFactory;
+using ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtos;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Forms.GetFormAInitValues;
 

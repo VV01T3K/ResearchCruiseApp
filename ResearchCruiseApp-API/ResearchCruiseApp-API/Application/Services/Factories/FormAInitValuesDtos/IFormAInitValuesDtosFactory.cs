@@ -1,7 +1,7 @@
 ﻿using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtosFactory;
+namespace ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtos;
 
 
 public interface IFormAInitValuesDtosFactory

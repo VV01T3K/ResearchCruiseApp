@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using AutoMapper;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
@@ -9,7 +9,7 @@ using ResearchCruiseApp_API.Application.Services.Factories.ContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtosFactory;
+namespace ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtos;
 
 
 public class FormAInitValuesDtosFactory(
@@ -117,7 +117,7 @@ public class FormAInitValuesDtosFactory(
     private async Task<List<ResearchAreaDto>> GetResearchAreas(CancellationToken cancellationToken)
     {
         return (await researchAreasRepository
-                .GetAll(cancellationToken))
+                .GetAllActive(cancellationToken))
             .Select(mapper.Map<ResearchAreaDto>)
             .ToList();
     }
@@ -146,7 +146,7 @@ public class FormAInitValuesDtosFactory(
     private async Task<List<UgUnitDto>> GetUgUnits(CancellationToken cancellationToken)
     {
         return (await ugUnitsRepository
-                .GetAll(cancellationToken))
+                .GetAllActive(cancellationToken))
             .Select(mapper.Map<UgUnitDto>)
             .ToList();
     }

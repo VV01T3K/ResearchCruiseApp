@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.UseCases.Forms.GetFormAInitValues;
 using ResearchCruiseApp_API.Application.UseCases.Forms.GetFormAInitValuesForSupervisor;
+using ResearchCruiseApp_API.Application.UseCases.Forms.GetFormBInitValues;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
@@ -29,6 +30,16 @@ public class FormsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator
             .Send(new GetFormAInitValuesForSupervisorQuery(cruiseApplicationId, supervisorCode));
+        return result.IsSuccess
+            ? Ok(result.Data)
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [HttpGet("InitValues/B")]
+    public async Task<IActionResult> GetFormBInitValues()
+    {
+        var result = await mediator.Send(new GetFormBInitValuesQuery());
         return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);

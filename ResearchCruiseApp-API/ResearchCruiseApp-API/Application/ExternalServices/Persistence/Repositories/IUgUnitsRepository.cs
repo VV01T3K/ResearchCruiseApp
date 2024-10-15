@@ -3,4 +3,4 @@
 namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 
 
-public interface IUgUnitsRepository : IRepository<UgUnit>;
+public interface IUgUnitsRepository : IRepository<UgUnit>, IDbDictionaryRepository<UgUnit>;

@@ -10,7 +10,7 @@ public class FormBDtosFactory(IMapper mapper) : IFormBDtosFactory
     public FormBDto Create(FormB formB, CancellationToken cancellationToken)
     {
         var formBDto = mapper.Map<FormBDto>(formB);
-
+        
         return formBDto;
     }
 }

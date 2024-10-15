@@ -195,9 +195,9 @@ public class FormsBFactory(
 
     private async Task AddShipEquipments(FormB formB, FormBDto formBDto, CancellationToken cancellationToken)
     {
-        foreach (var shipEquipmentDto in formBDto.ShipEquipments)
+        foreach (var shipEquipmentId in formBDto.ShipEquipmentsIds)
         {
-            var shipEquipment = await shipEquipmentsRepository.GetById(shipEquipmentDto.Id, cancellationToken);
+            var shipEquipment = await shipEquipmentsRepository.GetById(shipEquipmentId, cancellationToken);
             if (shipEquipment is null)
                 continue;
             
