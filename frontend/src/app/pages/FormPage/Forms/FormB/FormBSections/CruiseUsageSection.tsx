@@ -2,6 +2,7 @@ import React from 'react';
 import { DifferentShipUsageField, ShipUsageField } from '../../FormA/FormASections/TimeSectionFields';
 import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
 import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
+import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
 
 export const cruiseUsageFieldNames = {
     shipUsage: 'shipUsage',
@@ -15,9 +16,9 @@ export const CruiseUsageSection = () => SectionWrapper(
         longTitle: 'Sposób wykorzystania statku',
         sectionFieldNames: cruiseUsageFieldNames,
         children:
-            <ReadOnlyContext.Provider value={true}>
+            <ReadonlyOverrideWrapper>
                 <ShipUsageField />
                 <DifferentShipUsageField />
-            </ReadOnlyContext.Provider>,
+            </ReadonlyOverrideWrapper>,
     },
 );

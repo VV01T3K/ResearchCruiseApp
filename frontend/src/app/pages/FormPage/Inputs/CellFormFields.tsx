@@ -69,7 +69,10 @@ export const FormDateFieldDayAndHour = (props: { className?: string }) => {
             onBlur={() => field!.onBlur()}
             {...datePickerDayAndHour}
             selected={cellValue ? new Date(cellValue) : null}
-            onChange={(e) => setCellValue(e?.toISOString())}
+            onChange={(e) => {
+                setCellValue(e?.toISOString());
+                field!.onBlur();
+            }}
         />
     );
 };
@@ -304,7 +307,10 @@ export const FormBoolField = (props: { className?: string }) => {
                 className={
                     ' field-common col-6 ' + (isTrue ? ' bg-primary text-white' : '')
                 }
-                onClick={!readOnlyContext ? () => setCellValue('true') : () => {
+                onClick={!readOnlyContext ? () => {
+                    setCellValue('true');
+                    field!.onBlur();
+                } : () => {
                 }}
             >
                 Tak
@@ -313,8 +319,12 @@ export const FormBoolField = (props: { className?: string }) => {
                 className={
                     'field-common col-6 ' + (!isTrue ? ' bg-primary text-white' : '')
                 }
-                onClick={!readOnlyContext ? () => setCellValue('false') : () => {
-                }}
+                onClick={!readOnlyContext ? () => {
+                        setCellValue('false');
+                        field!.onBlur();
+                    }
+                    : () => {
+                    }}
             >
                 Nie
             </div>

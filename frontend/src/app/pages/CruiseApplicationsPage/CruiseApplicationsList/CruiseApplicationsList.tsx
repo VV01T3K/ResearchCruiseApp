@@ -43,13 +43,13 @@ export default function CruiseApplicationsList(props: Props) {
     console.log(cruiseApplicationsContext);
     const cruise = cruiseFromLocation();
 
-    const cruiseIsNew = !cruise || cruise?.status == CruiseStatus.New;
-
+    const cruiseIsNew = !cruise || cruise?.status === CruiseStatus.New;
+    console.log(cruise);
     const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState(
         cruiseApplicationsContext ?? [],
     );
     useEffect(() => {
-        if (!cruiseIsNew && fetchedCruiseApplications.length <= 0) {
+        if (cruiseIsNew && fetchedCruiseApplications.length <= 0) {
             if (cruiseApplicationsContext.length > 0) {
                 setFetchedCruiseApplications(cruiseApplicationsContext);
             } else {

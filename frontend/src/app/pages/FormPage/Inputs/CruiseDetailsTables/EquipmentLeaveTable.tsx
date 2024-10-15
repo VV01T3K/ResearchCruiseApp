@@ -5,7 +5,12 @@ import {
     NameField,
     TimeField,
 } from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentLeaveTableFields';
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
+import {
+    BottomMenuSingleSelect,
+    BottomMenuWithHistory,
+    OrdinalNumber,
+    RemoveRowButton,
+} from '@app/pages/FormPage/Inputs/TableParts';
 import { FieldValues } from 'react-hook-form';
 import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
 import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
@@ -88,11 +93,11 @@ function EquipmentLeaveTable(props: EquipmentLeaveTableProps) {
             options: FilteredHistoricalEquipmentLeave(equipmentLeaveCategory),
         })) ?? [];
 
-    const mdColWidths = [5, 30, 30, 30, 5];
+    const mdColWidths = [5, 20, 30, 40, 5];
     const mdColTitles = ['Lp.', 'Czynność', 'Czas (pora dnia, przedział czasu itp.)', 'Nazwa sprzętu', ''];
     const colTitle = '';
     const bottomMenu =
-        <BottomMenuWithHistory newOptions={equipmentLeaveOptions} historicalOptions={selectOptions} />;
+        <BottomMenuSingleSelect options={equipmentLeaveOptions} />;
     const emptyText = 'Nie dodano żadnego sprzętu';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, EquipmentLeaveTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName));
@@ -105,7 +110,6 @@ function EquipmentLeaveTable(props: EquipmentLeaveTableProps) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<EquipmentLeave>,
-                fileExists: fileExists,
             },
         },
         render: FieldContextWrapper(Render),

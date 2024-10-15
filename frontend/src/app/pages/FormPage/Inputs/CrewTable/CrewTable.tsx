@@ -6,6 +6,7 @@ import {
     PersonalDataColumn,
 } from '@app/pages/FormPage/Inputs/CrewTable/CrewTableFields';
 import {
+    BottomMenuWithAddButton,
     BottomMenuWithAddButtonAndHistory,
     OrdinalNumber,
     RemoveRowButton,
@@ -86,8 +87,8 @@ function CrewTable(props: CrewTableProps) {
     const mdColTitles = ['Lp.', 'Dane osobowe', 'Dokument tożsamości', 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej', ''];
     const colTitle = 'Lista uczestników rejsu';
     const bottomMenu =
-        <BottomMenuWithAddButtonAndHistory newOption={crewDefault as SingleValue<any>}
-                                           historicalOptions={selectOptions} />;
+        <BottomMenuWithAddButton newOption={crewDefault as SingleValue<any>}
+        />;
     const emptyText = 'Nie dodano żadnego członka załogi';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, crewTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName));
@@ -100,7 +101,6 @@ function CrewTable(props: CrewTableProps) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<Crew>,
-                fileExists: fileExists,
             },
         },
         render: FieldContextWrapper(Render),

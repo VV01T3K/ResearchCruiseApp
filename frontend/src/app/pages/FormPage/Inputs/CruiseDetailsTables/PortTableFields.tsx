@@ -1,16 +1,16 @@
 import { KeyContext } from '@contexts/KeyContext';
 import React from 'react';
-import { FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import { FDateFieldDayAndHour, FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
 
 
 export const EntranceDateField = () => {
     return (
         <KeyContext.Provider value={'entranceDate'}>
             <div className={'task-field-input'}>
-                <label>
+                <label className={'table-field-input-label'}>
                     Wejście
                 </label>
-                <FStandardDateField />
+                <FDateFieldDayAndHour className={'w-100'} />
             </div>
         </KeyContext.Provider>
     );
@@ -19,11 +19,11 @@ export const EntranceDateField = () => {
 export const ExitDateField = () => {
     return (
         <KeyContext.Provider value={'exitDate'}>
-            <div className={'task-field-input col-md-6'}>
-                <label>
+            <div className={'task-field-input'}>
+                <label className={'table-field-input-label'}>
                     Wyjście
                 </label>
-                <FStandardDateField />
+                <FDateFieldDayAndHour className={'w-100'} />
             </div>
         </KeyContext.Provider>
     );
@@ -32,8 +32,8 @@ export const ExitDateField = () => {
 export const NameField = () => {
     return (
         <KeyContext.Provider value={'name'}>
-            <div className={'task-field-input col-md-6'}>
-                <label>
+            <div className={'task-field-input'}>
+                <label className={'table-field-input-label'}>
                     Nazwa
                 </label>
                 <FTextField />

@@ -1,4 +1,9 @@
-import { FBoolField, FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import {
+    FBoolField,
+    FDateFieldDayAndHour,
+    FStandardDateField,
+    FTextField,
+} from '@app/pages/FormPage/Inputs/CellFormFields';
 import { KeyContext } from '@contexts/KeyContext';
 
 export const NameField = () => {
@@ -43,11 +48,11 @@ export const PermissionField = () => {
 export const StartDateField = () => {
     return (
         <KeyContext.Provider value={'startDate'}>
-            <div className={'task-field-input'}>
+            <div className={'task-field-input col-md-6'}>
                 <label>
                     Początek
                 </label>
-                <FStandardDateField />
+                <FDateFieldDayAndHour />
             </div>
         </KeyContext.Provider>
     );
@@ -56,11 +61,12 @@ export const StartDateField = () => {
 export const EndDateField = () => {
     return (
         <KeyContext.Provider value={'endDate'}>
-            <div className={'task-field-input'}>
+            <div className={'task-field-input col-md-6'}>
                 <label>
                     Koniec
                 </label>
-                <FStandardDateField />
+
+                <FDateFieldDayAndHour />
             </div>
         </KeyContext.Provider>
     );

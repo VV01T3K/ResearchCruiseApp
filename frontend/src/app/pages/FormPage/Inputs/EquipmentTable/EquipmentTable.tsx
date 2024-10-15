@@ -17,16 +17,16 @@ export type Equipment = {
     startDate: string,
     endDate: string,
     name: string,
-    insurance: boolean,
-    permission: boolean
+    insurance: string,
+    permission: string
 }
 
 const equipmentDefault = {
-    startDate: '',
-    endDate: '',
+    startDate: undefined,
+    endDate: undefined,
     name: '',
-    insurance: false,
-    permission: false,
+    insurance: 'false',
+    permission: 'false',
 };
 
 type EquipmentProps = FieldProps
@@ -72,8 +72,16 @@ function EquipmentTable(props: EquipmentProps) {
         rules: {
             required: false,
             validate: {
-                notEmptyArray: notEmptyArray<Crew>,
-                fileExists: fileExists,
+                dateRequired: (value: Equipment[]) => value.length > 0 ? value.some((row: Equipment) => {
+                    if (row.name == '')
+                        return 'sas';
+                    if (row.insurance == 'true') {
+                        console.log(row.startDate, row.endDate);
+                        return ((row.startDate == undefined || row.endDate == undefined));
+                    }
+                    return false;
+                }) && 'Uzupełnij wszystkie pola' : true,
+
             },
         },
         render: FieldContextWrapper(Render),

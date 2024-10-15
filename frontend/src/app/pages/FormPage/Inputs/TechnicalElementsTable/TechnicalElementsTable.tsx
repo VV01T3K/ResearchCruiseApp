@@ -14,47 +14,47 @@ import { Crew } from '@app/pages/FormPage/Inputs/CrewInput';
 
 
 export type TechnicalElements = {
-    bowStarboard: boolean,
-    aftStarboard: boolean,
-    aftPortSide: boolean,
-    mainCrane: boolean,
-    bomSTBS: boolean,
-    bomPS: boolean,
-    cableRope35kN: boolean,
-    cableRope5kN: boolean,
-    mainGantry: boolean,
-    STBSAuxiliaryGate: boolean,
-    STBSTrawlElevator: boolean,
-    PSTrawlElevator: boolean,
-    workboat: boolean,
-    observatory: boolean
+    bowStarboard: string,
+    aftStarboard: string,
+    aftPortSide: string,
+    mainCrane: string,
+    bomSTBS: string,
+    bomPS: string,
+    cableRope35kN: string,
+    cableRope5kN: string,
+    mainGantry: string,
+    STBSAuxiliaryGate: string,
+    STBSTrawlElevator: string,
+    PSTrawlElevator: string,
+    workboat: string,
+    observatory: string
 
 }
 
-const technicalElementsDefault = {
-    bowStarboard: false,
-    aftStarboard: false,
-    aftPortSide: false,
-    mainCrane: false,
-    bomSTBS: false,
-    bomPS: false,
-    cableRope35kN: false,
-    cableRope5kN: false,
-    mainGantry: false,
-    STBSAuxiliaryGate: false,
-    STBSTrawlElevator: false,
-    PSTrawlElevator: false,
-    workboat: false,
-    observatory: false,
-};
+const technicalElementsDefault = [
+    {
+        bowStarboard: 'false',
+        aftStarboard: 'false',
+        aftPortSide: 'false',
+        mainCrane: 'false',
+        bomSTBS: 'false',
+        bomPS: 'false',
+        cableRope35kN: 'false',
+        cableRope5kN: 'false',
+        mainGantry: 'false',
+        STBSAuxiliaryGate: 'false',
+        STBSTrawlElevator: 'false',
+        PSTrawlElevator: 'false',
+        workboat: 'false',
+        observatory: 'false',
+    },
+];
 
 type TechnicalElementsProps = FieldProps
 
 
 const technicalElementsTableContent = () => [
-    () => (<OrdinalNumber label={'Elementy techniczne'} />),
     ElementsColumn,
-    RemoveRowButton,
 ];
 
 export const FieldContextWrapper = (Render: React.JSXElementConstructor<any>) => ({ field }: FieldValues) => (
@@ -65,29 +65,21 @@ export const FieldContextWrapper = (Render: React.JSXElementConstructor<any>) =>
 
 function TechnicalElementsTable(props: TechnicalElementsProps) {
 
-
-    const formContext = useContext(FormContext);
-
-
-    const mdColWidths = [5, 90, 5];
-    const mdColTitles = ['Lp.', 'Elementy techniczne', ''];
+    const mdColWidths = [100];
+    const mdColTitles = ['Elementy techniczne'];
     const colTitle = '';
     const bottomMenu =
         <BottomMenuWithAddButton newOption={technicalElementsDefault as SingleValue<any>} />;
     const emptyText = 'Nie dodano żadnych elementów';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, technicalElementsTableContent,
-        bottomMenu, emptyText, formContext!.getValues(props.fieldName));
+        null, emptyText, [1]);
 
 
     const fieldProps = {
         ...props,
-        defaultValue: [],
+        defaultValue: technicalElementsDefault,
         rules: {
             required: false,
-            validate: {
-                notEmptyArray: notEmptyArray<Crew>,
-                fileExists: fileExists,
-            },
         },
         render: FieldContextWrapper(Render),
     };

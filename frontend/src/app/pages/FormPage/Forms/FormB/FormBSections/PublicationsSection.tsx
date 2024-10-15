@@ -1,23 +1,24 @@
-import { FormSectionType } from 'Form/Section/FormSectionType';
-import { SectionIdFromTitle } from '@components/Form/Section/helpers/SectionIdFromTitle';
-import Section from '@components/Form/Section/Section';
-import { SectionContentProps } from 'Form/Section/SectionContentProps';
+import React from 'react';
+import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {
+    PublicationsDescription,
+    PublicationsField,
+} from '@app/pages/FormPage/Forms/FormA/FormASections/PublicationsSectionFields';
+import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
 
-export const PublicationsSectionFieldNames = {
-    theses: 'theses',
+export const publicationsSectionFieldNames = {
     publications: 'publications',
-
 };
 
-export const PublicationAndThesesSection = (): FormSectionType => {
-    const shortTitle = 'Publikacje';
-    const longTitle = 'Publikacje';
-    const id = SectionIdFromTitle(shortTitle);
-
-    const Content = (props: SectionContentProps) => (
-        <Section index={props.index} id={id} title={longTitle}>
-
-        </Section>
-    );
-    return { Content, id, shortTitle, longTitle, sectionFieldNames: PublicationsSectionFieldNames };
-};
+export const PublicationsSection = () => SectionWrapper(
+    {
+        shortTitle: 'Publikacje',
+        longTitle: 'Publikacje',
+        sectionFieldNames: publicationsSectionFieldNames,
+        children:
+            <ReadonlyOverrideWrapper>
+                <PublicationsDescription />
+                <PublicationsField />
+            </ReadonlyOverrideWrapper>,
+    },
+);

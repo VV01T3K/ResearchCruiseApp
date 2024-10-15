@@ -118,7 +118,7 @@ function FormTemplate(props: FormTemplateProps) {
     const form = useOnBlurForm(defaultValues);
 
     const [readOnly, setReadOnly] = useState(_readOnly);
-
+    console.log(form.getValues());
     const formContext: FormContextFields = {
         resetField: form.resetField,
         clearErrors: form.clearErrors,

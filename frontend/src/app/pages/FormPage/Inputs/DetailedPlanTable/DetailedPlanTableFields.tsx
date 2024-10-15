@@ -1,5 +1,5 @@
 import { KeyContext } from '@contexts/KeyContext';
-import { FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import { FIntField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
 
 export const DayField = () => {
     return (
@@ -8,7 +8,7 @@ export const DayField = () => {
                 <label className={'table-field-input-label'}>
                     Dzień
                 </label>
-                <FTextField />
+                <FIntField />
             </div>
         </KeyContext.Provider>
     );
@@ -21,7 +21,7 @@ export const HoursField = () => {
                 <label className={'table-field-input-label'}>
                     Liczba godzin
                 </label>
-                <FTextField />
+                <FIntField />
             </div>
         </KeyContext.Provider>
     );

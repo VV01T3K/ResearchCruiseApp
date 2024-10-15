@@ -5,11 +5,11 @@ import { KeyContext } from '@contexts/KeyContext';
 export const TitleField = () => {
     return (
         <KeyContext.Provider value={'title'}>
-            <div className={'task-field-input'}>
+            <div className={'task-field-input col-md-3'}>
                 <label>
-                    Tytuł (nauk., zawod.)
+                    Tytuł
                 </label>
-                <FTextField />
+                <FTextField placeholder={'(nauk., zawod.)'} />
             </div>
         </KeyContext.Provider>
     );
@@ -18,7 +18,7 @@ export const TitleField = () => {
 export const NamesField = () => {
     return (
         <KeyContext.Provider value={'names'}>
-            <div className={'task-field-input col-md-6'}>
+            <div className={'task-field-input col-md-9'}>
                 <label>
                     Imiona
                 </label>
@@ -31,7 +31,7 @@ export const NamesField = () => {
 export const SurnameField = () => {
     return (
         <KeyContext.Provider value={'surname'}>
-            <div className={'task-field-input col-md-6'}>
+            <div className={'task-field-input col-md-12'}>
                 <label>
                     Nazwisko
                 </label>
@@ -61,7 +61,7 @@ export const BirthDateField = () => {
                 <label>
                     Data urodzenia
                 </label>
-                <FStandardDateField />
+                <FStandardDateField className={'w-100'} />
             </div>
         </KeyContext.Provider>
     );
@@ -87,7 +87,7 @@ export const ExpiryDateField = () => {
                 <label>
                     Data ważności dokumentu
                 </label>
-                <FStandardDateField />
+                <FStandardDateField className={'w-100'} />
             </div>
         </KeyContext.Provider>
     );

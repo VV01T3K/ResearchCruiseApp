@@ -1,13 +1,12 @@
 import { KeyContext } from '@contexts/KeyContext';
 import { FBoolField } from '@app/pages/FormPage/Inputs/CellFormFields';
 
-export const BowStarboardField = () => {
+const TechnicalElementsWrapper = (props: { keySelector: string, label: string }) => {
     return (
-        <KeyContext.Provider value={'bowStarboard'}>
-            <div className={'w-50'}>
+        <KeyContext.Provider value={props.keySelector}>
+            <div className={'w-50 p-2'}>
                 <label>
-                    Żurawik dziobowy
-                    prawa burta
+                    {props.label}
                 </label>
                 <FBoolField />
             </div>
@@ -15,187 +14,56 @@ export const BowStarboardField = () => {
     );
 };
 
-export const AftStarboardField = () => {
-    return (
-        <KeyContext.Provider value={'aftStarboard'}>
-            <div className={'w-50'}>
-                <label>
-                    Żurawik rufowy
-                    prawa burta
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const BowStarboardField = () =>
+    <TechnicalElementsWrapper label={'Żurawik dziobowy prawa burta'} keySelector={'bowStarboard'} />;
 
-export const AftPortSideField = () => {
-    return (
-        <KeyContext.Provider value={'aftPortSide'}>
-            <div className={'w-50'}>
-                <label>
-                    Żurawik rufowy
-                    lewa burta
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
 
-export const MainCraneField = () => {
-    return (
-        <KeyContext.Provider value={'mainCrane'}>
-            <div className={'w-50'}>
-                <label>
-                    Dźwig
-                    główny
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const AftStarboardField = () =>
+    <TechnicalElementsWrapper label={'Żurawik rufowy prawa burta'} keySelector={'aftStarboard'} />;
 
-export const BomSTBSField = () => {
-    return (
-        <KeyContext.Provider value={'bomSTBS'}>
-            <div className={'w-50'}>
-                <label>
-                    Bom
-                    STBS (prawa burta)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
 
-export const BomPSField = () => {
-    return (
-        <KeyContext.Provider value={'bomPS'}>
-            <div className={'w-50'}>
-                <label>
-                    Bom
-                    PS (lewa burta)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const AftPortSideField = () =>
+    <TechnicalElementsWrapper label={'Żurawik rufowy lewa burta'} keySelector={'aftPortSide'} />;
 
-export const CableRope35kNField = () => {
-    return (
-        <KeyContext.Provider value={'cableRope35kN'}>
-            <div className={'w-50'}>
-                <label>
-                    Kablolina
-                    35 kN
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const MainCraneField = () =>
+    <TechnicalElementsWrapper label={'Dźwig główny'} keySelector={'mainCrane'} />;
 
-export const CableRope5kNField = () => {
-    return (
-        <KeyContext.Provider value={'cableRope5kN'}>
-            <div className={'w-50'}>
-                <label>
-                    Kablolina
-                    5 kN
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
 
-export const MainGantryField = () => {
-    return (
-        <KeyContext.Provider value={'mainGantry'}>
-            <div className={'w-50'}>
-                <label>
-                    Bramownica
-                    główna (rufowa)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const BomSTBSField = () =>
+    <TechnicalElementsWrapper label={'Bom STBS (prawa burta)'} keySelector={'bomSTBS'} />;
 
-export const STBSAuxiliaryGateField = () => {
-    return (
-        <KeyContext.Provider value={'STBSAuxiliaryGate'}>
-            <div className={'w-50'}>
-                <label>
-                    Bramownica
-                    pomocnicza STBS (prawa burta)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const BomPSField = () =>
+    <TechnicalElementsWrapper label={'Bom PS (lewa burta)'} keySelector={'bomPS'} />;
 
-export const STBSTrawlElevatorField = () => {
-    return (
-        <KeyContext.Provider value={'STBSTrawlElevator'}>
-            <div className={'w-50'}>
-                <label>
-                    Winda
-                    trałowa STBS (prawa burta)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const CableRope35kNField = () =>
+    <TechnicalElementsWrapper label={'Kablolina 35 kN'} keySelector={'cableRope35kN'} />;
 
-export const PSTrawlElevatorField = () => {
-    return (
-        <KeyContext.Provider value={'PSTrawlElevator'}>
-            <div className={'w-50'}>
-                <label>
-                    Winda
-                    trałowa PS (lewa burta)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
 
-export const WorkboatField = () => {
-    return (
-        <KeyContext.Provider value={'workboat'}>
-            <div className={'w-50'}>
-                <label>
-                    Łódź
-                    robocza
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+export const CableRope5kNField = () =>
+    <TechnicalElementsWrapper label={'Kablolina 5 kN'} keySelector={'cableRope5kN'} />;
 
-export const ObservatoryField = () => {
-    return (
-        <KeyContext.Provider value={'observatory'}>
-            <div className={'w-50'}>
-                <label>
-                    Obserwatorium
-                    (bocianie gniazdo)
-                </label>
-                <FBoolField />
-            </div>
-        </KeyContext.Provider>
-    );
-};
+
+export const MainGantryField = () =>
+    <TechnicalElementsWrapper label={'Bramownica główna (rufowa)'} keySelector={'mainGantry'} />;
+
+
+export const STBSAuxiliaryGateField = () =>
+    <TechnicalElementsWrapper label={'Bramownica pomocnicza STBS (prawa burta)'}
+                              keySelector={'STBSAuxiliaryGate'} />;
+
+
+export const STBSTrawlElevatorField = () =>
+    <TechnicalElementsWrapper label={'Winda trałowa STBS (prawa burta)'} keySelector={'STBSTrawlElevator'} />;
+
+export const PSTrawlElevatorField = () =>
+    <TechnicalElementsWrapper label={'Winda trałowa PS (lewa burta)'} keySelector={'PSTrawlElevator'} />;
+
+export const WorkboatField = () =>
+    <TechnicalElementsWrapper label={'Łódź robocza'} keySelector={'workboat'} />;
+
+export const ObservatoryField = () =>
+    <TechnicalElementsWrapper label={'Obserwatorium (bocianie gniazdo)'} keySelector={'observatory'} />;
+
 
 export const ElementsColumn = () => (
     <div className={'w-100 d-flex flex-row flex-wrap'}>
@@ -204,7 +72,7 @@ export const ElementsColumn = () => (
         <AftPortSideField />
         <MainCraneField />
         <BomSTBSField />
-        <BomSTBSField />
+        <BomPSField />
         <CableRope35kNField />
         <CableRope5kNField />
         <MainGantryField />

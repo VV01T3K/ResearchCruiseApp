@@ -13,6 +13,8 @@ import { extendedUseLocation } from '@hooks/extendedUseLocation';
 import { AxiosRequestConfig } from 'axios';
 import { cruiseApplicationIdFromLocation } from '@hooks/cruiseApplicationIdFromLocation';
 import { supervisorCodeFromLocation } from '@hooks/supervisorCodeFromLocation';
+import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
+import CruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
 
 const SupervisorMenu = () => {
     const cruiseApplicationId = cruiseApplicationIdFromLocation();
@@ -110,10 +112,16 @@ const SendMenu = () => {
     const ConfirmSendButton = () => {
         const formContext = useContext(FormContext);
         const navigate = useNavigate();
+        const cruiseApplication = CruiseApplicationFromLocation();
         const handleSubmit = () =>
-            Api.post('/api/CruiseApplications/', formContext?.getValues()).then(() =>
-                navigate(Path.CruiseApplications),
-            );
+            formContext!.type === FormType.A ?
+                Api.post('/api/CruiseApplications/', formContext?.getValues()).then(() =>
+                    navigate(Path.CruiseApplications),
+                ) :
+                Api.post(`/api/CruiseApplications/${cruiseApplication.id}/FormB`, formContext?.getValues()).then(() =>
+                    navigate(Path.CruiseApplications),
+                )
+        ;
         const onClickAction = formContext!.handleSubmit(handleSubmit);
         return (
             <button onClick={onClickAction} className="form-page-option-button w-100">
@@ -157,6 +165,7 @@ export const BottomOptionBar = () => {
     );
 
     const ReadonlyFormButtons = () => {
+        const formContext = useContext(FormContext);
         const {
             UserHasCruiseManagerAccess,
             UserHasShipownerAccess,
@@ -165,7 +174,7 @@ export const BottomOptionBar = () => {
         return (
             <>
                 <PrintButton />
-                <ResendButton />
+                {formContext?.type === FormType.A && <ResendButton />}
                 {(UserHasShipownerAccess() || UserHasAdminAccess()) && (
                     <DownloadButtonDefault />
                 )}

@@ -2,6 +2,7 @@ import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
 import { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
 import {
+    BottomMenuWithAddButton,
     BottomMenuWithAddButtonAndHistory,
     OrdinalNumber,
     RemoveRowButton,
@@ -18,6 +19,7 @@ import { SingleValue } from 'react-select';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
+import { EquipmentOutside } from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentOutsideTable';
 
 
 export type Port = {
@@ -67,12 +69,11 @@ function PortTable(props: PortTableProps) {
     const selectOptions = props.historicalPorts?.map((row: Port) =>
         ({ label: PortRowLabel(row), value: row })) ?? [];
 
-    const mdColWidths = [5, 30, 30, 30, 5];
+    const mdColWidths = [5, 15, 15, 60, 5];
     const mdColTitles = ['Lp.', 'Wejście', 'Wyjście', 'Nazwa portu', ''];
     const colTitle = '';
     const bottomMenu =
-        <BottomMenuWithAddButtonAndHistory newOption={portDefault as SingleValue<any>}
-                                           historicalOptions={selectOptions} />;
+        <BottomMenuWithAddButton newOption={portDefault as SingleValue<any>} />;
     const emptyText = 'Nie dodano żadnego sprzętu';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, PortTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName));
@@ -85,7 +86,11 @@ function PortTable(props: PortTableProps) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<Port>,
-                fileExists: fileExists,
+                rightDatePeriod: (value: Port[]) => {
+                    if (value.some((row: Port) => row.entranceDate >= row.exitDate)) {
+                        return 'Data zakończenia przed datą rozpoczęcia';
+                    }
+                },
             },
         },
         render: FieldContextWrapper(Render),

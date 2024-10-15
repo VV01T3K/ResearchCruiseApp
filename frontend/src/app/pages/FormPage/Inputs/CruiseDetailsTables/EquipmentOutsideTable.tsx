@@ -5,6 +5,7 @@ import { FormContext } from '@contexts/FormContext';
 import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
 import { useContext } from 'react';
 import {
+    BottomMenuWithAddButton,
     BottomMenuWithAddButtonAndHistory,
     OrdinalNumber,
     RemoveRowButton,
@@ -17,6 +18,7 @@ import { FieldValues } from 'react-hook-form';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 import { FieldContext } from '@contexts/FieldContext';
+import { SpubTask } from 'SpubTask';
 
 
 export type EquipmentOutside = {
@@ -66,12 +68,12 @@ function EquipmentOutsideTable(props: EquipmentOutsideTableProps) {
     const selectOptions = props.historicalEquipmentOutside?.map((row: EquipmentOutside) =>
         ({ label: EquipmentOutsideRowLabel(row), value: row })) ?? [];
 
-    const mdColWidths = [5, 30, 30, 30, 5];
+    const mdColWidths = [5, 15, 15, 60, 5];
     const mdColTitles = ['Lp.', 'Od', 'Do', 'Nazwa sprzętu', ''];
     const colTitle = '';
     const bottomMenu =
-        <BottomMenuWithAddButtonAndHistory newOption={equipmentOutsideDefault as SingleValue<any>}
-                                           historicalOptions={selectOptions} />;
+        <BottomMenuWithAddButton newOption={equipmentOutsideDefault as SingleValue<any>}
+        />;
     const emptyText = 'Nie dodano żadnego sprzętu';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, EquipmentOutsideTableContent,
         bottomMenu, emptyText, formContext!.getValues(props.fieldName));
@@ -84,7 +86,11 @@ function EquipmentOutsideTable(props: EquipmentOutsideTableProps) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<EquipmentOutside>,
-                fileExists: fileExists,
+                rightDatePeriod: (value: EquipmentOutside[]) => {
+                    if (value.some((row: EquipmentOutside) => row.startDate >= row.endDate)) {
+                        return 'Data zakończenia przed datą rozpoczęcia';
+                    }
+                },
             },
         },
         render: FieldContextWrapper(Render),

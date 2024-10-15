@@ -21,6 +21,6 @@ export const datePickerDayAndHour = {
     showTimeSelect: true,
     timeFormat: 'HH:mm',
     timeIntervals: 15,
-    dateFormat: 'yyyy/MM/dd HH:mm',
+    dateFormat: 'dd/MM/yyyy HH:mm',
     timeCaption: 'Godzina',
 };
