@@ -16,12 +16,17 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
         </div>
     );
     const MdColTitle = (props: { title: string, colIndex: number }) => (
-        <div className="table-field-column-title-md" style={cellWidth(props.colIndex)}>
-            <b>{props.title}</b>
-        </div>
+        <>
+            {props.title && <div className="table-field-column-title-md border-end border-white h-100 d-flex"
+                 style={cellWidth(props.colIndex)}>
+                <b>{props.title}</b>
+            </div>}
+            {!props.title && <></>}
+        </>
+
     );
     const TableHeader = () => (
-        <div className="table-field-header d-flex">
+        <div className="table-field-header d-flex flex-row">
             {colTitles.map((title, colIndex) => (
                 <MdColTitle key={colIndex} title={title} colIndex={colIndex} />
             ))}
@@ -44,7 +49,7 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
     );
 
     const TableContent = () => (
-        <div className={'flex-grow-1 overflow-scroll d-flex flex-column'}>
+        <div className={'flex-grow-1 overflow-scroll-override d-flex flex-column'}>
             {content.map((_: any, rowIndex: number) => (
                 <NonEmptyRow key={rowIndex} rowIndex={rowIndex} />
             ))}

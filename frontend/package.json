@@ -63,7 +63,7 @@
     "build": "react-app-rewired  build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "install-bootstrap": "npm install typescript@4.9.5 --save-dev",
+    "install-bootstrap": "npm install",
     "audit": "npm update",
     "fund": "npm fund",
     "cos": "npm install typescript @types/react @types/node --save-dev"

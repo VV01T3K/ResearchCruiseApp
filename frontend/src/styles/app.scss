@@ -20,6 +20,25 @@ $theme-colors: (
   .m-5,
   .flex-column,
 }
+.overflow-scroll-override {
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.overflow-scroll-override::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-y-scroll-override {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.overflow-y-scroll-override::-webkit-scrollbar {
+  display: none;
+}
 
 .load-spinner {
   border-top: 4px solid #052d73;

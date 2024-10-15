@@ -259,7 +259,7 @@ function ManageUsersPage() {
                                 </button>
                             </div>
 
-                            <Render className={'overflow-y-scroll w-100'} />
+                            <Render className={'overflow-y-scroll-override w-100'} />
                         </div>
                     </FilteredUsersContext.Provider>
                 </UsersContext.Provider>

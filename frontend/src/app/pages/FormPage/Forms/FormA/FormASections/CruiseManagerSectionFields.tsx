@@ -135,7 +135,7 @@ export const CruiseAndDeputyManager = () => {
 
     return (
         <>
-            <div className={'d-flex flex-row w-100'}>
+            <div className={'d-flex flex-row flex-wrap w-100'}>
                 <CruiseManagerField />
                 <DeputyManagerField />
                 <YearField />

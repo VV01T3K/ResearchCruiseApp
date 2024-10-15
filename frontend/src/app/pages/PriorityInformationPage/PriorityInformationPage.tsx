@@ -27,10 +27,10 @@ function PriorityInformationPage() {
     );
 
     return (
-        <Page className={'bg-white d-flex flex-column m-3'}>
+        <Page className={'form-page'}>
             <PageTitle title={'Informacje o priorytetyzacji'} />
-            <div className="table-striped w-100 p-5">
-                <table className={'priority-table overflow-y-scroll'}>
+            <div className="table-striped w-100 p-5  overflow-y-scroll-override">
+                <table className={'priority-table'}>
                     <thead>
                     <tr>
                         <th className={'priority-header'}>Rodzaj zadania z formularza</th>

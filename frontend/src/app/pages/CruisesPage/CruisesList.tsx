@@ -82,7 +82,7 @@ export default function CruisesList() {
                 />
             </div>
             <CruisesContext.Provider value={cruisesToDisplay}>
-                <Render className={'overflow-y-scroll'} />
+                <Render className={'overflow-y-scroll-override'} />
             </CruisesContext.Provider>
         </div>
     );
