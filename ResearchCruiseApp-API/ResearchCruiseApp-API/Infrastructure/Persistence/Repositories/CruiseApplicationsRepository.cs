@@ -58,7 +58,17 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
             .IncludeFormAContent()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
-    
+
+    public Task<CruiseApplication?> GetByIdWithFormsAndFormAContentAndEffects(Guid id,
+        CancellationToken cancellationToken)
+    {
+        return DbContext.CruiseApplications
+            .IncludeForms()
+            .IncludeFormAContent()
+            .IncludeEffects()
+            .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
+    }
+
     public Task<CruiseApplication?> GetByIdWithFormAAndFormBContent(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.CruiseApplications
@@ -89,6 +99,19 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
         return DbContext.CruiseApplications
             .IncludeFormA()
             .IncludeFormAContent()
+            .Where(cruiseApplication =>
+                cruiseApplication.FormA!.CruiseManagerId == userId ||
+                cruiseApplication.FormA.DeputyManagerId == userId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<CruiseApplication>> GetAllByUserIdWithFormAAndFormCContent(
+        Guid userId, CancellationToken cancellationToken)
+    {
+        return DbContext.CruiseApplications
+            .IncludeFormA()
+            .IncludeFormC()
+            .IncludeFormCContent()
             .Where(cruiseApplication =>
                 cruiseApplication.FormA!.CruiseManagerId == userId ||
                 cruiseApplication.FormA.DeputyManagerId == userId)

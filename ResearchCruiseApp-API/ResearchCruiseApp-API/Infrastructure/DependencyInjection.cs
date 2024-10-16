@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
@@ -106,6 +105,7 @@ public static class DependencyInjection
             .AddScoped<IResearchEquipmentsRepository, ResearchEquipmentsRepository>()
             .AddScoped<IPortsRepository, PortsRepository>()
             .AddScoped<ICruiseDaysDetailsRepository, CruiseDaysDetailsRepository>()
-            .AddScoped<IShipEquipmentsRepository, ShipEquipmentsRepository>();
+            .AddScoped<IShipEquipmentsRepository, ShipEquipmentsRepository>()
+            .AddScoped<ICruiseApplicationEffectsRepository, CruiseApplicationEffectsRepository>();
     }
 }

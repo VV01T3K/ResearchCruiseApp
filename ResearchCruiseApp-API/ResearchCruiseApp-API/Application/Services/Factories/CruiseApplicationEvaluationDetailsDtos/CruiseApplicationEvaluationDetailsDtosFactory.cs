@@ -22,6 +22,7 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
         var guestTeamsDtos = CreateGuestUnitDtos(formA);
         var formAPublicationDtos = CreateFormAPublicationDtos(formA);
         var formASpubTaskDtos = CreateFormASpubTaskDtos(formA);
+        var cruiseApplicationEffects = CreateCruiseApplicationEffects(cruiseApplication);
         
         var cruiseApplicationEvaluationDetailsDto = new CruiseApplicationEvaluationDetailsDto
         {
@@ -31,7 +32,8 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
             GuestTeams = guestTeamsDtos,
             UgUnitsPoints = formA?.UgUnitsPoints ?? "0",
             FormAPublications = formAPublicationDtos,
-            FormASpubTasks = formASpubTaskDtos
+            FormASpubTasks = formASpubTaskDtos,
+            CruiseApplicationEffects = cruiseApplicationEffects 
         };
 
         return cruiseApplicationEvaluationDetailsDto;
@@ -110,5 +112,14 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
             .ToList();
 
         return formASpubTaskDtos;
+    }
+
+    private List<CruiseApplicationEffectDto> CreateCruiseApplicationEffects(CruiseApplication cruiseApplication)
+    {
+        var cruiseApplicationEffectDtos = cruiseApplication.CruiseApplicationEffects
+            .Select(mapper.Map<CruiseApplicationEffectDto>)
+            .ToList();
+
+        return cruiseApplicationEffectDtos;
     }
 }

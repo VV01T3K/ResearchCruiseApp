@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Domain.Entities;
+using ResearchCruiseApp_API.Infrastructure.Persistence.Configurations;
 using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp_API.Infrastructure.Persistence;
@@ -58,18 +59,8 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     {
         base.OnModelCreating(builder);
         
-        foreach (var entityType in builder.Model.GetEntityTypes())
-        {
-            if (typeof(Entity).IsAssignableFrom(entityType.ClrType))
-            {
-                builder.Entity(entityType.ClrType)
-                    .Property(nameof(Entity.Id))
-                    .ValueGeneratedOnAdd();
-            }
-        }
+        EntityConfiguration.Apply(builder);
+        builder.ApplyConfiguration(new CruiseApplicationConfiguration());
 
-        builder.Entity<CruiseApplication>()
-            .Property(nameof(CruiseApplication.Number))
-            .ValueGeneratedOnAdd();
     }
 }

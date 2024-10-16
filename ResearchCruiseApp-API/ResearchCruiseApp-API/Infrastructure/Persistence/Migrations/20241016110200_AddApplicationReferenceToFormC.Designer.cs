@@ -12,8 +12,8 @@ using ResearchCruiseApp_API.Infrastructure.Persistence;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241015195429_ContextReset")]
-    partial class ContextReset
+    [Migration("20241016110200_AddApplicationReferenceToFormC")]
+    partial class AddApplicationReferenceToFormC
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -432,10 +432,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("FormCId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                    b.Property<int>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Number"));
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -452,7 +453,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FormBId");
 
-                    b.HasIndex("FormCId");
+                    b.HasIndex("FormCId")
+                        .IsUnique()
+                        .HasFilter("[FormCId] IS NOT NULL");
 
                     b.ToTable("CruiseApplications");
                 });
@@ -1459,6 +1462,10 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
+                    b.Property<string>("PublicationMinisterialPoints")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
                     b.Property<Guid>("ResearchTaskId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1783,8 +1790,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .HasForeignKey("FormBId");
 
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.FormC", "FormC")
-                        .WithMany()
-                        .HasForeignKey("FormCId");
+                        .WithOne("CruiseApplication")
+                        .HasForeignKey("ResearchCruiseApp_API.Domain.Entities.CruiseApplication", "FormCId");
 
                     b.Navigation("FormA");
 
@@ -2288,6 +2295,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.FormC", b =>
                 {
                     b.Navigation("CollectedSamples");
+
+                    b.Navigation("CruiseApplication")
+                        .IsRequired();
 
                     b.Navigation("FormCGuestUnits");
 

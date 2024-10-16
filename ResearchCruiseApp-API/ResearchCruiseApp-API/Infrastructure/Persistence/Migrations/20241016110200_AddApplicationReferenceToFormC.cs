@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class ContextReset : Migration
+    public partial class AddApplicationReferenceToFormC : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -870,7 +870,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    Number = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     FormAId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FormBId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1199,6 +1200,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     FormCId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ResearchTaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Done = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    PublicationMinisterialPoints = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     ManagerConditionMet = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     DeputyConditionMet = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false)
                 },
@@ -1327,7 +1329,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CruiseApplications_FormCId",
                 table: "CruiseApplications",
-                column: "FormCId");
+                column: "FormCId",
+                unique: true,
+                filter: "[FormCId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CruiseDayDetailsFormB_FormsBId",

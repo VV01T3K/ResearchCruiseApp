@@ -41,7 +41,7 @@ export const LogoutLink = (props: Props) => {
     const { Logout } = UserDataManager();
 
     return (
-        <Link className={props.className} onClick={Logout} to="/">
+        <Link className={props.className} onClick={Logout} to="/" title="Wyloguj się">
             <LogoutIcon className={'bi-header-common'} />
         </Link>
     );

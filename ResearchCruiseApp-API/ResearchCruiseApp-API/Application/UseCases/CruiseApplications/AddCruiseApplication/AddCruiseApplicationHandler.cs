@@ -51,7 +51,7 @@ public class AddCruiseApplicationHandler(
     {
         var newFormA = await formsAFactory.Create(formADto, cancellationToken);
         await unitOfWork.Complete(cancellationToken);
-        var newCruiseApplication = cruiseApplicationsFactory.Create(newFormA, cancellationToken);
+        var newCruiseApplication = await cruiseApplicationsFactory.Create(newFormA, cancellationToken);
 
         await cruiseApplicationsRepository.Add(newCruiseApplication, cancellationToken);
         await unitOfWork.Complete(cancellationToken);

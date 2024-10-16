@@ -43,4 +43,6 @@ public class FormC : Entity
     public string? AdditionalDescription { get; init; } = null!;
 
     public List<Photo> Photos { get; set; } = [];
+
+    public CruiseApplication CruiseApplication { get; set; } = null!;
 }

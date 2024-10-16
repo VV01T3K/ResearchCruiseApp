@@ -33,6 +33,8 @@ public class ResearchTaskEffectDto : IResearchTaskDto
     
     public string Done { get; init; } = null!;
 
+    public string? PublicationMinisterialPoints { get; init; }
+
     public string ManagerConditionMet { get; init; } = null!;
     
     public string DeputyConditionMet { get; init; } = null!;

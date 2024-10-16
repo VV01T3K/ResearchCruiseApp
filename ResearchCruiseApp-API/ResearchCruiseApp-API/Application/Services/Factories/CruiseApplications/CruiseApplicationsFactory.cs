@@ -12,7 +12,7 @@ internal class CruiseApplicationsFactory(
     ICruiseApplicationsRepository cruiseApplicationsRepository)
     : ICruiseApplicationsFactory
 {
-    public CruiseApplication Create(FormA formA, CancellationToken cancellationToken)
+    public async Task<CruiseApplication> Create(FormA formA, CancellationToken cancellationToken)
     {
         var newCruiseApplication = new CruiseApplication
         {
@@ -23,7 +23,28 @@ internal class CruiseApplicationsFactory(
             Status = CruiseApplicationStatus.WaitingForSupervisor,
             SupervisorCode = randomGenerator.CreateSecureCodeBytes()
         };
+        await AddCruiseApplicationEffects(newCruiseApplication, formA, cancellationToken);
 
         return newCruiseApplication;
+    }
+
+
+    private async Task AddCruiseApplicationEffects(
+        CruiseApplication cruiseApplication, FormA formA, CancellationToken cancellationToken)
+    {
+        var otherCruiseApplications = await cruiseApplicationsRepository
+            .GetAllByUserIdWithFormAAndFormCContent(formA.CruiseManagerId, cancellationToken);
+
+        foreach (var otherCruiseApplication in otherCruiseApplications)
+        {
+            if (otherCruiseApplication.FormC is null)
+                continue;
+
+            foreach (var researchTaskEffect in otherCruiseApplication.FormC.ResearchTaskEffects)
+            {
+                var cruiseApplicationEffect = new CruiseApplicationEffect { Effect = researchTaskEffect };
+                cruiseApplication.CruiseApplicationEffects.Add(cruiseApplicationEffect);
+            }
+        }
     }
 }

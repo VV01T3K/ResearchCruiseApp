@@ -103,6 +103,7 @@ public class FormsCFactory(
             {
                 ResearchTask = researchTask,
                 Done = researchTaskEffectDto.Done,
+                PublicationMinisterialPoints = researchTaskEffectDto.PublicationMinisterialPoints,
                 ManagerConditionMet = researchTaskEffectDto.ManagerConditionMet,
                 DeputyConditionMet = researchTaskEffectDto.DeputyConditionMet
             };

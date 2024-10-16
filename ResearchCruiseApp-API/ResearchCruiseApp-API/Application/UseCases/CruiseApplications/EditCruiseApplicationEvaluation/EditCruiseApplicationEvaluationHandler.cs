@@ -13,6 +13,7 @@ public class EditCruiseApplicationEvaluationHandler(
     IFormAContractsRepository formAContractsRepository,
     IFormAPublicationsRepository formAPublicationsRepository,
     IFormASpubTasksRepository formASpubTasksRepository,
+    ICruiseApplicationEffectsRepository cruiseApplicationEffectsRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<EditCruiseApplicationEvaluationCommand, Result>
 {
@@ -26,6 +27,7 @@ public class EditCruiseApplicationEvaluationHandler(
         await EditUgUnitsEvaluations(request, cancellationToken);
         await EditPublicationsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
         await EditSpubTasksEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
+        await EditEffectsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
 
         await unitOfWork.Complete(cancellationToken);
         
@@ -43,7 +45,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formAResearchTask is null)
                 continue;
 
-            formAResearchTask.Points = Int32.Parse(researchTaskEvaluationEdit.NewPoints);
+            formAResearchTask.Points = int.Parse(researchTaskEvaluationEdit.NewPoints);
         }
     }
     
@@ -57,7 +59,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formAContract is null)
                 continue;
 
-            formAContract.Points = Int32.Parse(contractEvaluationEdit.NewPoints);
+            formAContract.Points = int.Parse(contractEvaluationEdit.NewPoints);
         }
     }
     
@@ -80,7 +82,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formAPublication is null)
                 continue;
 
-            formAPublication.Points = Int32.Parse(publicationEvaluationEdit.NewPoints);
+            formAPublication.Points = int.Parse(publicationEvaluationEdit.NewPoints);
         }
     }
     
@@ -94,7 +96,21 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formASpubTask is null)
                 continue;
 
-            formASpubTask.Points = Int32.Parse(spubTaskEvaluationEdit.NewPoints);
+            formASpubTask.Points = int.Parse(spubTaskEvaluationEdit.NewPoints);
+        }
+    }
+    
+    private async Task EditEffectsEvaluations(
+        CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationEditsDto, CancellationToken cancellationToken)
+    {
+        foreach (var effectTaskEvaluationEdit in cruiseApplicationEvaluationEditsDto.EffectsEvaluationsEdits)
+        {
+            var cruiseApplicationEffect = await cruiseApplicationEffectsRepository
+                .GetById(effectTaskEvaluationEdit.EvaluationId, cancellationToken);
+            if (cruiseApplicationEffect is null)
+                continue;
+
+            cruiseApplicationEffect.Points = int.Parse(effectTaskEvaluationEdit.NewPoints);
         }
     }
 }

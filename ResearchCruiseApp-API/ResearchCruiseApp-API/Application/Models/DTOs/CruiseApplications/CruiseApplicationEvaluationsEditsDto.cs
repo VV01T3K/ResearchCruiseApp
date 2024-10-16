@@ -12,4 +12,6 @@ public class CruiseApplicationEvaluationsEditsDto
     public List<EvaluationEditDto> PublicationsEvaluationsEdits { get; init; } = [];
     
     public List<EvaluationEditDto> SpubTaskEvaluationsEdits { get; init; } = [];
+
+    public List<EvaluationEditDto> EffectsEvaluationsEdits { get; set; } = [];
 }
