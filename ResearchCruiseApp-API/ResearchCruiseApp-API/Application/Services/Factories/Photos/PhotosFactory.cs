@@ -6,7 +6,7 @@ using ResearchCruiseApp_API.Domain.Entities;
 namespace ResearchCruiseApp_API.Application.Services.Factories.Photos;
 
 
-internal class PhotosFactory(IMapper mapper, ICompressor compressor) : IPhotosFactory
+internal class PhotosFactory(ICompressor compressor) : IPhotosFactory
 {
     public async Task<Photo> Create(FileDto fileDto)
     {

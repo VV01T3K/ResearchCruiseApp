@@ -5,10 +5,9 @@ using ResearchCruiseApp_API.Domain.Common.Interfaces;
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class CruiseApplication : Entity, IYearBasedNumbered
+public class CruiseApplication : Entity
 {
-    [StringLength(1024)]
-    public string Number { get; set; } = null!;
+    public int Number { get; set; }
     
     public DateOnly Date { get; init; }
     

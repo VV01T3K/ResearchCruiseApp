@@ -51,5 +51,25 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     public DbSet<FormCResearchEquipment> FormCResearchEquipments { get; init; } = null!;
     public DbSet<CollectedSample> CollectedSamples { get; init; } = null!;
     public DbSet<Photo> Photos { get; init; } = null!;
-    public DbSet<CruiseApplicationEffect> CruiseApplicationEffects { get; set; } = null!;
+    public DbSet<CruiseApplicationEffect> CruiseApplicationEffects { get; init; } = null!;
+
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            if (typeof(Entity).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType)
+                    .Property(nameof(Entity.Id))
+                    .ValueGeneratedOnAdd();
+            }
+        }
+
+        builder.Entity<CruiseApplication>()
+            .Property(nameof(CruiseApplication.Number))
+            .ValueGeneratedOnAdd();
+    }
 }

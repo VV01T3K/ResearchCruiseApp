@@ -7,6 +7,7 @@ using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsA;
@@ -32,9 +33,8 @@ public class AddCruiseApplicationHandler(
         if (!validationResult.IsValid)
             return validationResult.ToApplicationResult();
         
-        var newFormA = await formsAFactory.Create(request.FormADto, cancellationToken);
         var newCruiseApplication = await unitOfWork.ExecuteIsolated(
-            () => GetNewPersistedCruiseApplication(newFormA, cancellationToken),
+            () => GetNewPersistedCruiseApplication(request.FormADto, cancellationToken),
             IsolationLevel.Serializable,
             cancellationToken);
         
@@ -47,9 +47,11 @@ public class AddCruiseApplicationHandler(
     }
 
     private async Task<CruiseApplication> GetNewPersistedCruiseApplication(
-        FormA formA, CancellationToken cancellationToken)
+        FormADto formADto, CancellationToken cancellationToken)
     {
-        var newCruiseApplication = await cruiseApplicationsFactory.Create(formA, cancellationToken);
+        var newFormA = await formsAFactory.Create(formADto, cancellationToken);
+        await unitOfWork.Complete(cancellationToken);
+        var newCruiseApplication = cruiseApplicationsFactory.Create(newFormA, cancellationToken);
 
         await cruiseApplicationsRepository.Add(newCruiseApplication, cancellationToken);
         await unitOfWork.Complete(cancellationToken);

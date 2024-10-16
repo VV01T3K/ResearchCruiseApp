@@ -12,11 +12,10 @@ internal class CruiseApplicationsFactory(
     ICruiseApplicationsRepository cruiseApplicationsRepository)
     : ICruiseApplicationsFactory
 {
-    public async Task<CruiseApplication> Create(FormA formA, CancellationToken cancellationToken)
+    public CruiseApplication Create(FormA formA, CancellationToken cancellationToken)
     {
         var newCruiseApplication = new CruiseApplication
         {
-            Number = await yearBasedKeyGenerator.GenerateKey(cruiseApplicationsRepository, cancellationToken),
             Date = DateOnly.FromDateTime(DateTime.Now),
             FormA = formA,
             FormB = null,
