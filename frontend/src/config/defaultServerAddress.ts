@@ -1,1 +1,1 @@
-export const defaultServerAddress = 'http://localhost:8080';
+export const defaultServerAddress = process.env.REACT_APP_API_URL ?? 'http://localhost:8080';

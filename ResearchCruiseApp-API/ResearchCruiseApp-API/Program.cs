@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddWeb();
-builder.Configuration.AddJsonFile("users.json", optional: false, reloadOnChange: false);
+builder.Configuration.AddJsonFile("users.json", optional: false, reloadOnChange: false)
+    .AddEnvironmentVariables();
 
 builder.WebHost.ConfigureKestrel(options =>
 {

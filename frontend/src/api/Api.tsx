@@ -116,7 +116,7 @@ export const Interceptors = () => {
         error.config?.raw ? Promise.reject(error) : httpErrorHandler(error);
 
     function requestHandler(config: InternalAxiosRequestConfig) {
-        if (config.url && !config.url.startsWith('http')) {
+        if (config.url && !config.url.startsWith(defaultServerAddress!)) {
             config.url = defaultServerAddress + config.url;
         }
         return setAccessToken(config);

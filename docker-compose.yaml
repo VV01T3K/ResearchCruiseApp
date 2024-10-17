@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   web:
+    env_file: "app.env"
     container_name: researchcruiseapp-frontend-dc
     build:
       context: ./frontend
@@ -29,6 +30,7 @@ services:
     networks:
       - researchcruiseapp-network-dc
   api:
+    env_file: "app.env"
     build:
       context: ./ResearchCruiseApp-API/
     container_name: researchcruiseapp-api-dc
