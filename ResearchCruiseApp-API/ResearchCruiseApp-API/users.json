@@ -1,0 +1,22 @@
+{ "Users":[
+    {
+        "FirstName": "Michał",
+        "LastName": "Tarnacki",
+        "Email": "theedzio@gmail.com",
+        "Role": "Administrator",
+    },
+    {
+        "FirstName": "Mateusz",
+        "LastName": "Kowalczyk",
+        "Email": "admin@admin.com",
+        "Role": "Shipowner",
+    },
+    {
+        "FirstName": "john_doe",
+        "LastName": "sdasadsa",
+        "Email": "admin@admin2.com",
+        "Role": "CruiseManager",
+    }
+    ]
+}
+

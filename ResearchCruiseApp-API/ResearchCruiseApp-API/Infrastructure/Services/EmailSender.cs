@@ -131,8 +131,7 @@ internal class EmailSender(
 
     private string GetFrontEndUrl()
     {
-        var protocol = configuration.GetSection("ProtocolUsed").Value;
         var frontendUrl = configuration.GetSection("FrontendUrl").Value;
-        return $"{protocol}://{frontendUrl}";
+        return $"{frontendUrl}";
     }
 }

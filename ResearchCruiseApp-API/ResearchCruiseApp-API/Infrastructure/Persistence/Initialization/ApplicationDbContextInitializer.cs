@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization.InitialData;
@@ -11,7 +12,10 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    IIdentityService identityService,
+    IRandomGenerator randomGenerator,
+    IConfiguration configuration)
 {
     public async Task Initialize()
     {
@@ -21,7 +25,8 @@ internal class ApplicationDbContextInitializer(
 
         if (firstMigration)
         {
-          await SeedAdministrationData();
+          await SeedRoleData();
+          await SeedUsersData();
           await SeedUgUnits();
           await SeedResearchAreas();
           await SeedShipEquipments();
@@ -34,7 +39,21 @@ internal class ApplicationDbContextInitializer(
         await applicationDbContext.Database.MigrateAsync();
     }
 
-    private async Task SeedAdministrationData()
+    private async Task SeedUsersData()
+    {
+        var users = new InitialUsersData(configuration).Users;
+
+        if(users is null)
+            return;
+
+        foreach (var user in users)
+        {
+            var password = randomGenerator.CreateSecurePassword();
+            await identityService.AddUserWithRole(user, password, user.Role!);
+        }
+    }
+
+    private async Task SeedRoleData()
     {
         var roleNames = InitialAdministrationData.RoleNames;
     
@@ -42,22 +61,6 @@ internal class ApplicationDbContextInitializer(
         {
             if (!await roleManager.RoleExistsAsync(roleName))
                 await roleManager.CreateAsync(new IdentityRole(roleName));
-        }
-
-        var admin = await userManager.FindByEmailAsync(InitialAdministrationData.AdminEmail);
-        if (admin is null)
-        {
-            var adminUser = new User
-            {
-                UserName = InitialAdministrationData.AdminEmail,
-                Email = InitialAdministrationData.AdminEmail,
-                FirstName = InitialAdministrationData.AdminFirstName,
-                LastName = InitialAdministrationData.AdminLastName,
-                EmailConfirmed = true,
-                Accepted = true
-            };
-            await userManager.CreateAsync(adminUser, InitialAdministrationData.AdminPassword);
-            await userManager.AddToRoleAsync(adminUser, RoleName.Administrator);
         }
     }
 
