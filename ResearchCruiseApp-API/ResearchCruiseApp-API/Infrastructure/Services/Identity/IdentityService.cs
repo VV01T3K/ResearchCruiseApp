@@ -149,7 +149,8 @@ public class IdentityService(
     {
         var user = await userManager.FindByEmailAsync(email);
         return user is not null &&
-               user.Accepted &&
+               user.Accepted && 
+               user.EmailConfirmed &&
                await userManager.CheckPasswordAsync(user, password);
     }
 
@@ -280,9 +281,9 @@ public class IdentityService(
         CreateUser(registerFormDto.Email, registerFormDto.FirstName, registerFormDto.LastName, false);
 
     private static User CreateUser(AddUserFormDto addUserFormDto) =>
-        CreateUser(addUserFormDto.Email, addUserFormDto.FirstName, addUserFormDto.LastName, true);
+        CreateUser(addUserFormDto.Email, addUserFormDto.FirstName, addUserFormDto.LastName, true, true);
 
-    private static User CreateUser(string email, string firstName, string lastName, bool accepted)
+    private static User CreateUser(string email, string firstName, string lastName, bool accepted, bool emailConfirmed = false)
     {
         return new User
         {
@@ -290,7 +291,8 @@ public class IdentityService(
             Email = email,
             FirstName = firstName,
             LastName = lastName,
-            Accepted = accepted
+            Accepted = accepted,
+            EmailConfirmed = emailConfirmed
         };
     }
 
