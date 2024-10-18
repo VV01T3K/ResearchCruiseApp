@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
@@ -14,11 +15,14 @@ internal class FormsAFactory(
     IMapper mapper)
     : IFormsAFactory
 {
-    public async Task<FormA> Create(FormADto formADto, CancellationToken cancellationToken)
+    public async Task<Result<FormA>> Create(FormADto formADto, CancellationToken cancellationToken)
     {
         var formA = mapper.Map<FormA>(formADto);
 
-        await AddResearchArea(formA, formADto, cancellationToken);
+        var result = await AddResearchArea(formA, formADto, cancellationToken);
+        if (!result.IsSuccess)
+            return result.Error!;
+        
         await AddFormAResearchTasks(formA, formADto, cancellationToken);
         await AddFormAContracts(formA, formADto, cancellationToken);
         await AddFormAUgUnits(formA, formADto, cancellationToken);
@@ -30,13 +34,14 @@ internal class FormsAFactory(
     }
 
 
-    private async Task AddResearchArea(FormA formA, FormADto formADto, CancellationToken cancellationToken)
+    private async Task<Result> AddResearchArea(FormA formA, FormADto formADto, CancellationToken cancellationToken)
     {
         var researchArea = await researchAreasRepository.GetById(formADto.ResearchAreaId, cancellationToken);
         if (researchArea is null)
-            return;
+            return Error.BadRequest("Podany obszar badawczy nie istnieje.");
 
         formA.ResearchArea = researchArea;
+        return Result.Empty;
     }
     
     private async Task AddFormAResearchTasks(FormA formA, FormADto formADto, CancellationToken cancellationToken)

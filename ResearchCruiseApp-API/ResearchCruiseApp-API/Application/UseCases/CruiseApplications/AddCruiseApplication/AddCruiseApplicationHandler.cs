@@ -33,10 +33,14 @@ public class AddCruiseApplicationHandler(
         if (!validationResult.IsValid)
             return validationResult.ToApplicationResult();
         
-        var newCruiseApplication = await unitOfWork.ExecuteIsolated(
+        var newCruiseApplicationResult = await unitOfWork.ExecuteIsolated(
             () => GetNewPersistedCruiseApplication(request.FormADto, cancellationToken),
             IsolationLevel.Serializable,
             cancellationToken);
+
+        if (!newCruiseApplicationResult.IsSuccess)
+            return newCruiseApplicationResult.Error!;
+        var newCruiseApplication = newCruiseApplicationResult.Data!;
         
         cruiseApplicationEvaluator.Evaluate(newCruiseApplication);
         await unitOfWork.Complete(cancellationToken);
@@ -46,10 +50,14 @@ public class AddCruiseApplicationHandler(
         return Result.Empty;
     }
 
-    private async Task<CruiseApplication> GetNewPersistedCruiseApplication(
+    private async Task<Result<CruiseApplication>> GetNewPersistedCruiseApplication(
         FormADto formADto, CancellationToken cancellationToken)
     {
-        var newFormA = await formsAFactory.Create(formADto, cancellationToken);
+        var newFormAResult = await formsAFactory.Create(formADto, cancellationToken);
+        if (!newFormAResult.IsSuccess)
+            return newFormAResult.Error!;
+        var newFormA = newFormAResult.Data!;
+        
         await unitOfWork.Complete(cancellationToken);
         var newCruiseApplication = await cruiseApplicationsFactory.Create(newFormA, cancellationToken);
 
