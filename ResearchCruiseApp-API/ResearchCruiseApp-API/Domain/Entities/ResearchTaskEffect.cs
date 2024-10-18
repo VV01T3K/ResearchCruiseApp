@@ -20,4 +20,6 @@ public class ResearchTaskEffect : Entity
     
     [StringLength(1024)]
     public string DeputyConditionMet { get; init; } = null!;
+    
+    public List<UserEffect> UserEffects { get; set; } = [];
 }

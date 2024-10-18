@@ -10,7 +10,7 @@ public class FormAContractDto
 
     public ContractDto Contract { get; set; } = null!;
     
-    public string Points { get; init; }
+    public string Points { get; init; } = "0";
 
 
     private class MapProfile : Profile

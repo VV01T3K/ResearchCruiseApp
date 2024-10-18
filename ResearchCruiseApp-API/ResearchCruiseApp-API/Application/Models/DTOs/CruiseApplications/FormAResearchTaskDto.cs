@@ -9,8 +9,8 @@ public class FormAResearchTaskDto
     public Guid Id { get; init; }
     
     public ResearchTaskDto ResearchTask { get; init; } = null!;
-    
-    public string Points { get; init; }
+
+    public string Points { get; init; } = "0";
 
 
     private class MapProfile : Profile

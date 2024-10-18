@@ -16,6 +16,8 @@ public class GetCruiseHandler(ICruiseDtosFactory cruiseDtosFactory, ICruisesRepo
     public async Task<Result<CruiseDto>> Handle(GetCruiseQuery request, CancellationToken cancellationToken)
     {
         var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
+        if (cruise is null)
+            return Error.NotFound();
         
         if(await userPermissionVerifier.CanCurrentUserViewCruise(cruise)) 
             return await cruiseDtosFactory.Create(cruise);

@@ -3,6 +3,7 @@ using FluentValidation;
 using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Cruises;
+using ResearchCruiseApp_API.Application.Services.EffectsEvaluator;
 using ResearchCruiseApp_API.Application.Services.Factories.ContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Contracts;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationDtos;
@@ -44,7 +45,7 @@ public static class DependencyInjection
         services
             .AddScoped<ICruiseApplicationsService, CruiseApplicationsService>()
             .AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>()
-            .AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>()
+            .AddScoped<IEffectsEvaluator, EffectsEvaluator>()
             .AddScoped<ICruisesService, CruisesService>()
             .AddScoped<IFormsFieldsService, FormsFieldsService>()
             .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();

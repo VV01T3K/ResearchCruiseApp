@@ -13,7 +13,6 @@ public class EditCruiseApplicationEvaluationHandler(
     IFormAContractsRepository formAContractsRepository,
     IFormAPublicationsRepository formAPublicationsRepository,
     IFormASpubTasksRepository formASpubTasksRepository,
-    ICruiseApplicationEffectsRepository cruiseApplicationEffectsRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<EditCruiseApplicationEvaluationCommand, Result>
 {
@@ -27,7 +26,6 @@ public class EditCruiseApplicationEvaluationHandler(
         await EditUgUnitsEvaluations(request, cancellationToken);
         await EditPublicationsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
         await EditSpubTasksEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
-        await EditEffectsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
 
         await unitOfWork.Complete(cancellationToken);
         
@@ -97,20 +95,6 @@ public class EditCruiseApplicationEvaluationHandler(
                 continue;
 
             formASpubTask.Points = int.Parse(spubTaskEvaluationEdit.NewPoints);
-        }
-    }
-    
-    private async Task EditEffectsEvaluations(
-        CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationEditsDto, CancellationToken cancellationToken)
-    {
-        foreach (var effectTaskEvaluationEdit in cruiseApplicationEvaluationEditsDto.EffectsEvaluationsEdits)
-        {
-            var cruiseApplicationEffect = await cruiseApplicationEffectsRepository
-                .GetById(effectTaskEvaluationEdit.EvaluationId, cancellationToken);
-            if (cruiseApplicationEffect is null)
-                continue;
-
-            cruiseApplicationEffect.Points = int.Parse(effectTaskEvaluationEdit.NewPoints);
         }
     }
 }

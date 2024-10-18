@@ -18,7 +18,7 @@ public class GetCruiseApplicationEvaluationHandler(
         GetCruiseApplicationEvaluationQuery request, CancellationToken cancellationToken)
     {
         var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormsAndFormAContentAndEffects(request.Id, cancellationToken);
+            .GetByIdWithFormsAndFormAContent(request.Id, cancellationToken);
         if (cruiseApplication is null)
             return Error.NotFound();
 

@@ -34,9 +34,9 @@ internal class ApplicationDbContextInitializer(
     }
 
 
-    private async Task Migrate()
-    { 
-        await applicationDbContext.Database.MigrateAsync();
+    private Task Migrate()
+    {
+        return applicationDbContext.Database.MigrateAsync();
     }
 
     private async Task SeedUsersData()

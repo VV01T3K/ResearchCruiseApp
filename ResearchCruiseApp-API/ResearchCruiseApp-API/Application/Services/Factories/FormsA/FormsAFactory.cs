@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp_API.Application.Services.Factories.Contracts;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -12,10 +11,7 @@ internal class FormsAFactory(
     IFormsFieldsService formsFieldsService,
     IResearchAreasRepository researchAreasRepository,
     IUgUnitsRepository ugUnitsRepository,
-    IPublicationsRepository publicationsRepository,
-    ISpubTasksRepository spubTasksRepository,
-    IMapper mapper,
-    IContractsFactory contractsFactory)
+    IMapper mapper)
     : IFormsAFactory
 {
     public async Task<FormA> Create(FormADto formADto, CancellationToken cancellationToken)

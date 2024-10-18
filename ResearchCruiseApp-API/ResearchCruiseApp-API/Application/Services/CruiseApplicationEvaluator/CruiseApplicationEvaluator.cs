@@ -19,7 +19,6 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         EvaluateUgUnits(cruiseApplication);
         EvaluatePublications(cruiseApplication);
         EvaluateSpubTasks(cruiseApplication);
-        EvaluateEffects(cruiseApplication);
     }
 
     public int GetPointsSum(CruiseApplication cruiseApplication)
@@ -141,62 +140,8 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
             formASpubTask.Points = EvaluationConstants.PointsForSpubTask;
         }
     }
+
     
-    
-    private static void EvaluateEffects(CruiseApplication cruiseApplication)
-    {
-        Debug.Assert(cruiseApplication.FormA is not null);
-        var currentCruiseManagerId = cruiseApplication.FormA.CruiseManagerId;
-        
-        foreach (var cruiseApplicationEffect in cruiseApplication.CruiseApplicationEffects)
-        {
-            var effect = cruiseApplicationEffect.Effect;
-            if (!effect.Done.ToBool())
-                continue;
-
-            // Some points are assigned only if some additional condition is satisfied for the completed cruise's
-            // manager or deputy. They are called 'conditional points'. Points that can be assign without additional
-            // requirements are called 'unconditional points'.
-            var assignConditionalPoints = CheckIfAssignConditionalEffectsPoints(effect, currentCruiseManagerId);
-
-            cruiseApplicationEffect.Points = effect.ResearchTask.Type switch
-            {
-                ResearchTaskType.BachelorThesis =>
-                    assignConditionalPoints ? EvaluationConstants.PointsForBachelorThesisEffect : 0,
-                
-                ResearchTaskType.MasterThesis =>
-                    assignConditionalPoints ? EvaluationConstants.PointsForMasterThesisEffect : 0,
-                
-                ResearchTaskType.DoctoralThesis =>
-                    assignConditionalPoints ? EvaluationConstants.PointsForDoctoralThesisEffect : 0,
-                
-                ResearchTaskType.ProjectPreparation =>
-                    GetPointsForProjectPreparationEffect(effect, assignConditionalPoints),
-                
-                ResearchTaskType.DomesticProject or
-                    ResearchTaskType.ForeignProject or
-                    ResearchTaskType.InternalUgProject or
-                    ResearchTaskType.OtherProject or 
-                    ResearchTaskType.OwnResearchTask =>
-                    int.Parse(effect.PublicationMinisterialPoints ?? "0") / 2,
-                
-                _ => 0
-            };
-        }
-    }
-
-    private static bool CheckIfAssignConditionalEffectsPoints(ResearchTaskEffect effect, Guid currentCruiseManagerId)
-    {
-        if (effect.FormC.CruiseApplication.FormA is null) // Should have been loaded by CruiseApplicationFactory
-            return false;
-        
-        var wasCurrentManagerManager = effect.FormC.CruiseApplication.FormA.CruiseManagerId == currentCruiseManagerId;
-        var wasCurrentManagerDeputy = effect.FormC.CruiseApplication.FormA.DeputyManagerId == currentCruiseManagerId;
-
-        return
-            wasCurrentManagerManager && effect.ManagerConditionMet.ToBool() ||
-            wasCurrentManagerDeputy && effect.DeputyConditionMet.ToBool();
-    }
 
     private static int GetPointsForProjectPreparationEffect(ResearchTaskEffect effect, bool assignConditinalPoints)
     {

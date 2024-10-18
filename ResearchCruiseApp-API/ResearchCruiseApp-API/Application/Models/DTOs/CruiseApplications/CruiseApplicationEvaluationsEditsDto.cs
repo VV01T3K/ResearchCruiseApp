@@ -10,8 +10,6 @@ public class CruiseApplicationEvaluationsEditsDto
     public string NewUgUnitsPoints { get; init; } = "0";
     
     public List<EvaluationEditDto> PublicationsEvaluationsEdits { get; init; } = [];
-    
-    public List<EvaluationEditDto> SpubTaskEvaluationsEdits { get; init; } = [];
 
-    public List<EvaluationEditDto> EffectsEvaluationsEdits { get; set; } = [];
+    public List<EvaluationEditDto> SpubTaskEvaluationsEdits { get; init; } = [];
 }
