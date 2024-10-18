@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Factories.Photos;
@@ -19,11 +20,14 @@ public class FormsCFactory(
     IPhotosFactory photosFactory)
     : IFormsCFactory
 {
-    public async Task<FormC> Create(FormCDto formCDto, CancellationToken cancellationToken)
+    public async Task<Result<FormC>> Create(FormCDto formCDto, CancellationToken cancellationToken)
     {
         var formC = mapper.Map<FormC>(formCDto);
         
-        await AddResearchArea(formC, formCDto, cancellationToken);
+        var result = await AddResearchArea(formC, formCDto, cancellationToken);
+        if (!result.IsSuccess)
+            return result.Error!;
+        
         await AddFormCUgUnits(formC, formCDto, cancellationToken);
         await AddFormCGuestUnits(formC, formCDto, cancellationToken);
         await AddResearchTaskEffects(formC, formCDto, cancellationToken);
@@ -43,13 +47,14 @@ public class FormsCFactory(
     }
 
 
-    private async Task AddResearchArea(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)
+    private async Task<Result> AddResearchArea(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)
     {
         var researchArea = await researchAreasRepository.GetById(formCDto.ResearchAreaId, cancellationToken);
         if (researchArea is null)
-            return;
+            return Error.BadRequest("Podany obszar badawczy nie istnieje.");
 
         formC.ResearchArea = researchArea;
+        return Result.Empty;
     }
     
     private async Task AddFormCUgUnits(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)

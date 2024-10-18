@@ -30,7 +30,11 @@ public class AddFormCHandler(
         if (cruiseApplication.FormC is not null)
             return Error.Forbidden("Formularz C został już dodany do tego zgłoszenia.");
 
-        var formC = await formsCFactory.Create(request.FormCDto, cancellationToken);
+        var formCResult = await formsCFactory.Create(request.FormCDto, cancellationToken);
+        if (!formCResult.IsSuccess)
+            return formCResult.Error!;
+        
+        var formC = formCResult.Data!;
         cruiseApplication.FormC = formC;
         
         await effectsEvaluator.Evaluate(cruiseApplication, cancellationToken);
