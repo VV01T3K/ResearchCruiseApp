@@ -14,6 +14,9 @@ const UserBasedAccess = () => {
     const UserHasShipownerAccess = () =>
         UserRoleIncludes('Shipowner');
 
+    const UserHasGuestAccess = () =>
+        UserRoleIncludes('Guest');
+
     const UserHasAdminAccess = () =>
         UserRoleIncludes('Administrator');
 
@@ -31,7 +34,7 @@ const UserBasedAccess = () => {
 
     return {
         UserHasAdminAccess, UserHasShipownerAccess, UserHasCruiseManagerAccess,
-        CommonAccess, NotLoggedInAccess, WaitingForUserData,
+        CommonAccess, NotLoggedInAccess, WaitingForUserData, UserHasGuestAccess,
     };
 };
 export default UserBasedAccess;

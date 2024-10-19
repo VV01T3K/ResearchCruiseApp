@@ -76,8 +76,8 @@ export const Interceptors = () => {
         const { ForceLogout } = userDataManager();
 
         const statusCode = response?.status;
-        if (statusCode == 400 || statusCode == 401) {
-            // ForceLogout()
+        if (statusCode == 401) {
+            ForceLogout();
         }
         if (statusCode === 404) {
         } else if (statusCode === 500) {
@@ -125,7 +125,7 @@ export const Interceptors = () => {
     };
 
     function requestHandler(config: InternalAxiosRequestConfig) {
-      
+
         if (config.url && !config.url.startsWith(defaultServerAddress!)) {
             config.url = defaultServerAddress + config.url;
         }

@@ -166,14 +166,14 @@ export const BottomOptionBar = () => {
     const ReadonlyFormButtons = () => {
         const formContext = useContext(FormContext);
         const {
-            UserHasCruiseManagerAccess,
+            UserHasGuestAccess,
             UserHasShipownerAccess,
             UserHasAdminAccess,
         } = userBasedAccess();
         return (
             <>
                 <PrintButton />
-                {formContext?.type === FormType.A && <ResendButton />}
+                {formContext?.type === FormType.A && !UserHasGuestAccess() && <ResendButton />}
                 {(UserHasShipownerAccess() || UserHasAdminAccess()) && (
                     <DownloadButtonDefault />
                 )}

@@ -5,12 +5,15 @@ import CruiseApplicationsTile from '../../../../components/MainPageMenu/Tiles/Cr
 import CruisesTile from '../../../../components/MainPageMenu/Tiles/CruisesTile';
 import React from 'react';
 import { PriorityInformationTile } from '@components/MainPageMenu/Tiles/PriorityInformationTile';
+import { HelpInformationTile } from '@components/MainPageMenu/Tiles/HelpInformationTile';
 
 export const adminPanelTiles = () => [
     { element: <NewCruiseApplicationTile />, cols: 2, rows: 2 },
     { element: <PriorityInformationTile />, cols: 2, rows: 1 },
     { element: <ManageUserTile />, cols: 1, rows: 1 },
-    { element: <AccountSettingsTile />, cols: 1, rows: 2 },
+    { element: <AccountSettingsTile />, cols: 1, rows: 1 },
     { element: <CruiseApplicationsTile />, cols: 1, rows: 1 },
     { element: <CruisesTile />, cols: 2, rows: 1 },
+    { element: <HelpInformationTile />, cols: 1, rows: 1 },
+
 ];

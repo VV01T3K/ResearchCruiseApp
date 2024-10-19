@@ -56,8 +56,8 @@ const UserDataManager = () => {
         );
 
     const ForceLogout = () => {
-        navigate(Path.ManageUsers, { state: { forcedLogout: true } });
-        // Logout();
+        navigate(Path.Default, { state: { forcedLogout: true } });
+        Logout();
     };
     const confirmMail = ConfirmEmail();
 

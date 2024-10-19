@@ -10,6 +10,7 @@ import PageTitle from '../../../components/Page/PageTitle';
 import Page from '../../../ToBeMoved/Pages/Page';
 import AddUserForm from './AddUserForm/AddUserForm';
 import { CellContext } from '@contexts/CellContext';
+import { UserRole } from '@enums/UserRole';
 
 export const FilteredUsersContext = createContext<null | UserData[]>(null);
 export const UsersContext = createContext<null | UserData[]>(null);
@@ -85,7 +86,7 @@ export const Roles = () => {
     return (
         <div className={'task-field-input'}>
             <label className={'table-field-input-label'}>Role:</label>
-            <ReadOnlyTextInput value={user.roles.join(', ')} />
+            <ReadOnlyTextInput value={user.roles.map((role) => UserRole[role as keyof typeof UserRole]).join(', ')} />
         </div>
     );
 };

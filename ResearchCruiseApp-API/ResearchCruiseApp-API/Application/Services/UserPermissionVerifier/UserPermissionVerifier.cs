@@ -49,7 +49,8 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
             return false;
 
         if (currentUserRoles.Contains(RoleName.Administrator) ||
-            currentUserRoles.Contains(RoleName.Shipowner))
+            currentUserRoles.Contains(RoleName.Shipowner) ||
+            currentUserRoles.Contains(RoleName.Guest))
         {
             return true;
         }
@@ -73,7 +74,8 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
             return false;
 
         if (currentUserRoles.Contains(RoleName.Administrator) ||
-            currentUserRoles.Contains(RoleName.Shipowner))
+            currentUserRoles.Contains(RoleName.Shipowner) ||
+            currentUserRoles.Contains(RoleName.Guest))
         {
             return true;
         }
@@ -112,7 +114,8 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
         if (currentUserRoles.Contains(RoleName.Administrator) ||
-            currentUserRoles.Contains(RoleName.Shipowner))
+            currentUserRoles.Contains(RoleName.Shipowner) ||
+            currentUserRoles.Contains(RoleName.Guest))
         {
             return true;
         }

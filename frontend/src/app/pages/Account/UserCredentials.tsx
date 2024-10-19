@@ -5,6 +5,7 @@ import Person from '/node_modules/bootstrap-icons/icons/person-bounding-box.svg'
 import axios from 'axios';
 
 import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import { UserRole } from '@enums/UserRole';
 
 // TODO : Move to different place
 export function UserCredentials() {
@@ -27,7 +28,8 @@ export function UserCredentials() {
             alt="Zdjęcie użytkownika"
         />
     );
-    const UserRoles = () => <div className="h6">{userData?.roles}</div>;
+    const UserRoles = () => <div
+        className="h6">{userData && userData.roles.map((role) => UserRole[role as keyof typeof UserRole]).join(', ')}</div>;
     const UserIdentity = () => (
         <div className="p-1">
             {userData?.firstName + ' ' + userData?.lastName}

@@ -161,7 +161,7 @@ function FormTemplate(props: FormTemplateProps) {
     >(undefined);
 
     const LoadInitValues = async () => {
-        const initValues = await GetFormInitValues(props.type);
+        const initValues = await GetFormInitValues(typeOfForm ?? props.type);
         if (initValues) {
             setFormInitValues(initValues);
             form.reset();
