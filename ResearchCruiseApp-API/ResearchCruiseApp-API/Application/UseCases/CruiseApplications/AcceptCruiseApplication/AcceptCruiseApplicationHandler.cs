@@ -40,13 +40,9 @@ public class AcceptCruiseApplicationHandler(
             )
             return Error.Forbidden("Czas na zmianę decyzji minął");
 
-        if (cruiseApplication.Status == CruiseApplicationStatus.Accepted)
-        {
-            var cruises = await cruisesRepository.GetAllWithCruiseApplications(cancellationToken);
-            if (cruises.Any(cruise => cruise.CruiseApplications.Contains(cruiseApplication)))
-                return Error.Conflict("Najpierw usuń zgłoszenie z rejsu");
+        if (cruiseApplication.Status == CruiseApplicationStatus.Accepted && cruiseApplication.Cruise is not null)
+            return Error.Conflict("Najpierw usuń zgłoszenie z rejsu");
 
-        }
         
         cruiseApplication.Status = accept
             ? CruiseApplicationStatus.Accepted

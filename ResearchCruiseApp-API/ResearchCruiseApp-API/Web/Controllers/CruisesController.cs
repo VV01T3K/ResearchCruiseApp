@@ -58,16 +58,6 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> EditCruise([FromRoute] Guid id, [FromBody] CruiseFormDto cruiseFormModel)
     {
         var result = await mediator.Send(new EditCruiseCommand(id, cruiseFormModel));
-
-        var a = Result.Empty;
-        
-        var b = new FormAInitValuesDto();
-        Result<FormAInitValuesDto> e = b; 
-        
-        var c = Error.NotFound();
-        Result d = c;
-        
-        
         return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);

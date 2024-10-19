@@ -26,6 +26,9 @@ public class EditCruiseHandler(
         if (cruise is null)
             return Error.NotFound();
         
+        if (cruise.Status != CruiseStatus.New)
+            return Error.BadRequest("Można edytować jedynie nowe zgłoszenia");
+        
         if (cruise.CruiseApplications.Any(application => application.Status != CruiseApplicationStatus.Accepted))
             return Error.BadRequest("Można dodać do rejsu jedynie zgłoszenia w stanie: zaakceptowane");
 

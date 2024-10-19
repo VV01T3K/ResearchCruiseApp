@@ -36,6 +36,9 @@ public class AnswerAsSupervisorHandler(
 
     private static Result UpdateCruiseApplicationStatus(CruiseApplication cruiseApplication, bool accept)
     {
+        if (cruiseApplication.Status == CruiseApplicationStatus.Denied)
+            return Error.BadRequest("Biuro armatora już wcześniej odrzuciło zgłoszenie");
+        
         if (cruiseApplication.Status != CruiseApplicationStatus.WaitingForSupervisor)
             return Error.BadRequest("Odpowiedź od przełożonego została już udzielona.");
         

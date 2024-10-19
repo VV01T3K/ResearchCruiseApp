@@ -26,8 +26,8 @@ public class AddFormBHandler(
         if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
             return Error.NotFound();
 
-        if (cruiseApplication.FormB is not null)
-            return Error.Forbidden("Formularz B został już dodany do tego zgłoszenia.");
+        if (cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+            return Error.Forbidden("Obecnie nie można przesłać formularza B.");
 
         var formB = await formsBFactory.Create(request.FormBDto, cancellationToken);
         cruiseApplication.FormB = formB;

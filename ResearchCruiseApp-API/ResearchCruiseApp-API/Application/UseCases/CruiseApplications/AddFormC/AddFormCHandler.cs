@@ -5,6 +5,7 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositorie
 using ResearchCruiseApp_API.Application.Services.EffectsEvaluator;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsC;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddFormC;
 
@@ -27,7 +28,12 @@ public class AddFormCHandler(
         if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
             return Error.NotFound();
 
-        if (cruiseApplication.FormC is not null)
+        if (cruiseApplication.Status != CruiseApplicationStatus.Undertaken &&
+            cruiseApplication.Status != CruiseApplicationStatus.Reported &&
+            cruiseApplication.Status != CruiseApplicationStatus.Archived)
+            return Error.Forbidden("Obecnie nie można wysłać zgłoszenie");
+
+        if (cruiseApplication.Status == CruiseApplicationStatus.Archived && cruiseApplication.FormC is not null)
             return Error.Forbidden("Formularz C został już dodany do tego zgłoszenia.");
 
         var formCResult = await formsCFactory.Create(request.FormCDto, cancellationToken);
@@ -36,6 +42,9 @@ public class AddFormCHandler(
         
         var formC = formCResult.Data!;
         cruiseApplication.FormC = formC;
+
+        if (cruiseApplication.Status == CruiseApplicationStatus.Undertaken)
+            cruiseApplication.Status = CruiseApplicationStatus.Reported;
         
         await effectsEvaluator.Evaluate(cruiseApplication, cancellationToken);
 
