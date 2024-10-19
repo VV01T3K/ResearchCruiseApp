@@ -152,6 +152,7 @@ export default function CruiseApplicationsList(props: Props) {
                     ))}
                     {selectStringFilterOptions.map((selectStringFilter, index) => (
                         <SelectWrapper
+                            key={index}
                             className={'col-3 d-flex p-1'}
                             placeHolder={'Sortuj'}
                             options={[selectStringFilterDefaultOption].concat(

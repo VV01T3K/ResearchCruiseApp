@@ -7,6 +7,7 @@ import PageBackground from '../components/Page/Background/PageBackground';
 import PageHeader from './Pages/PageHeader/PageHeader';
 import RoleBasedRouting from './RoleBasedRouting';
 import WaitingPage from '../app/pages/WaitingPage';
+import { BusyContext } from '@contexts/BusyContext';
 
 export const UserContext = createContext<null | {
     userData: UserData | null;
@@ -20,10 +21,8 @@ export const OpenedWithLocation = () => {
 };
 
 const AppContent = () => {
-    const navigate = useNavigate();
-
+    const { isBusy } = BusyEvent();
     const { SetInterceptors } = Interceptors();
-    const { DisplayIfBuisy, DisplayIfNotBuisy } = BusyEvent();
     const OnAppStart = () => {
         const [isLoaded, setIsLoaded] = useState(false);
         if (!isLoaded) {
@@ -39,23 +38,25 @@ const AppContent = () => {
         <div className="vh-100">
             <PageBackground />
             {!openedWithLocation && <PageHeader />}
-            <div className={DisplayIfNotBuisy() + ' h-100'}>
-                <RoleBasedRouting />
-            </div>
-            <div className={DisplayIfBuisy() + ' w-100'}>
-                <WaitingPage />
-            </div>
+            {/*<div className={isBusy ? 'visually-hidden' : ' h-100'}>*/}
+            <RoleBasedRouting />
+            {/*</div>*/}
+            {/*{isBusy && <></>*/}
+            {/*// <WaitingPage />*/}
+            {/*}*/}
         </div>
     );
 };
 
 function App() {
     const [userData, setUserData] = useState<UserData | null>(null);
-
+    const busyMessage = useState<string | null>(null);
     return (
-        <UserContext.Provider value={{ userData, setUserData }}>
-            <AppContent />
-        </UserContext.Provider>
+        <BusyContext.Provider value={busyMessage}>
+            <UserContext.Provider value={{ userData, setUserData }}>
+                <AppContent />
+            </UserContext.Provider>
+        </BusyContext.Provider>
     );
 }
 

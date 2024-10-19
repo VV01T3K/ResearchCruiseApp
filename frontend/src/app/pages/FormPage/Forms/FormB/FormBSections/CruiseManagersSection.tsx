@@ -1,17 +1,18 @@
 import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
 import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
 import CruiseBasicInfo from '@app/pages/CruiseFormPage/CruiseFormSections/CruiseBasicInfo';
-import {
-    CruiseApplicationCruiseManagerName,
-} from '@app/pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsFields/CruiseApplicationCruiseManagerName';
-import {
-    CruiseApplicationDeputyManagerName,
-} from '@app/pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsFields/CruiseApplicationDeputyManagerName';
-import FormRadio from '@app/pages/FormPage/Inputs/FormRadio';
 import BoolField from '@app/pages/FormPage/Inputs/BoolField';
+import React, { useContext } from 'react';
+import { FormContext } from '@contexts/FormContext';
+import userDataManager from '../../../../../../ToBeMoved/CommonComponents/UserDataManager';
+import UserSelect from '@app/pages/FormPage/Inputs/UserSelect';
+import { FormAInitValues } from 'FormAInitValues';
+import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
 
 const cruiseManagerSectionFieldNames = {
     isCruiseManagerPresent: 'isCruiseManagerPresent',
+    cruiseManagerId: 'cruiseManagerId',
+    deputyManagerId: 'deputyManagerId',
 };
 export const BasicInfo = () => {
     const cruise = cruiseFromLocation();
@@ -29,6 +30,31 @@ const IsCruiseManagerPresentField = () => {
     );
 };
 
+export const CruiseManagerField = () => {
+    const formContext = useContext(FormContext);
+    const user = userDataManager();
+    return (
+        <UserSelect
+            defaultValue={user.userData?.id}
+            className="two-fields-beside-md"
+            fieldName={cruiseManagerSectionFieldNames.cruiseManagerId}
+            fieldLabel="Kierownik rejsu"
+            initValues={(formContext?.initValues as FormAInitValues)?.cruiseManagers}
+        />
+    );
+};
+export const DeputyManagerField = () => {
+    const formContext = useContext(FormContext);
+    return (
+        <UserSelect
+            className="two-fields-beside-md"
+            fieldName={cruiseManagerSectionFieldNames.deputyManagerId}
+            fieldLabel="Zastępca"
+            initValues={(formContext!.initValues as FormAInitValues)?.deputyManagers}
+        />
+    );
+};
+
 export const CruiseManagersSection = () => SectionWrapper(
     {
         shortTitle: 'Kierownik',
@@ -36,8 +62,10 @@ export const CruiseManagersSection = () => SectionWrapper(
         sectionFieldNames: cruiseManagerSectionFieldNames,
         children:
             <>
-                <CruiseApplicationCruiseManagerName />
-                <CruiseApplicationDeputyManagerName />
+                <ReadonlyOverrideWrapper>
+                    <CruiseManagerField />
+                    <DeputyManagerField />
+                </ReadonlyOverrideWrapper>
                 <IsCruiseManagerPresentField />
             </>,
     },

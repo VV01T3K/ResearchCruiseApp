@@ -6,6 +6,7 @@ import NotFoundPage from '../NotFoundPage';
 import { Path } from '../../../ToBeMoved/Tools/Path';
 
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import { FormType } from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
 export type FormPageLocationState = {
     formType: string;
@@ -24,9 +25,10 @@ function FormPage() {
 
     return (
         <>
-            {location?.state?.formType == 'A' && <FormA />}
-            {location?.state?.formType == 'B' && <FormB />}
-            {/*{location.state?.formType == "C" && <FormC/>}*/}
+            {location?.state?.formType == FormType.A && <FormA />}
+            {location?.state?.formType == FormType.AForSupervisor && <FormA />}
+            {location?.state?.formType == FormType.B && <FormB />}
+            {location?.state?.formType == FormType.C && <FormB />}
             {!location?.state && <NotFoundPage />}
         </>
     );

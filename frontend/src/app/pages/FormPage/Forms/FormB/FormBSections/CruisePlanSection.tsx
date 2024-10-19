@@ -2,7 +2,7 @@ import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
 import DetailedPlanTable from '@app/pages/FormPage/Inputs/DetailedPlanTable/DetailedPlanTable';
 
 export const cruisePlanSectionFieldNames = {
-    detailedPlan: 'DetailedPlan',
+    cruiseDaysDetails: 'cruiseDaysDetails',
 };
 
 export const CruisePlanSection = () => SectionWrapper(
@@ -12,7 +12,7 @@ export const CruisePlanSection = () => SectionWrapper(
         sectionFieldNames: cruisePlanSectionFieldNames,
         children: <>
             <DetailedPlanTable
-                fieldName={cruisePlanSectionFieldNames.detailedPlan}
+                fieldName={cruisePlanSectionFieldNames.cruiseDaysDetails}
                 className={'single-field'}
                 fieldLabel={'Szczegółowy plan rejsu'} />
         </>,

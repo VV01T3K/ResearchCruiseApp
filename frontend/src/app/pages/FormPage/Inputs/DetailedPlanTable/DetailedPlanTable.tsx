@@ -1,38 +1,23 @@
 import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
 import { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
-import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
+import { BottomMenuWithAddButton, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
 import {
     DayField,
-    HoursField, NotesField, PositionField,
+    HoursField,
+    NotesField,
+    PositionField,
     RegionField,
     TaskNameField,
 } from '@app/pages/FormPage/Inputs/DetailedPlanTable/DetailedPlanTableFields';
 import { FieldValues } from 'react-hook-form';
-import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import { FieldContext } from '@contexts/FieldContext';
 import { SingleValue } from 'react-select';
 import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-
-export type DetailedPlan = {
-    day: string,
-    hours: string,
-    taskName: string,
-    region: string,
-    position: string,
-    notes: string
-}
-
-const detailedPlanDefault = {
-    day: '',
-    hours: '',
-    taskName: '',
-    region: '',
-    position: '',
-    notes: '',
-};
+import { DetailedPlan } from 'DetailedPlan';
+import { detailedPlanDefault } from '@helpers/detailedPlanDefault';
 
 
 type DetailedPlanProps = FieldProps

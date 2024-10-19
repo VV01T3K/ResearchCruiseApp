@@ -14,7 +14,7 @@ export default function FormAForSupervisorPage() {
         if (applicationId && supervisorCode) {
             navigate(Path.Form, {
                 state: {
-                    formType: FormType.A,
+                    formType: FormType.AForSupervisor,
                     cruiseApplicationId: applicationId,
                     supervisorCode: supervisorCode,
                     readOnly: true,

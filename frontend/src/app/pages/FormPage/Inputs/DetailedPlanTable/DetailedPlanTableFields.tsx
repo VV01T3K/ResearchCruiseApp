@@ -3,7 +3,7 @@ import { FIntField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields
 
 export const DayField = () => {
     return (
-        <KeyContext.Provider value={'day'}>
+        <KeyContext.Provider value={'number'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Dzień
@@ -68,7 +68,7 @@ export const PositionField = () => {
 
 export const NotesField = () => {
     return (
-        <KeyContext.Provider value={'notes'}>
+        <KeyContext.Provider value={'comment'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Uwagi

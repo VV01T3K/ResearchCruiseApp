@@ -39,9 +39,9 @@ const FormLink = (props: { formType: string }) => {
 
 export const FormALink = () => <FormLink formType={'A'} />;
 
-export const FormCLink = () => <FormLink formType={'B'} />;
+export const FormCLink = () => <FormLink formType={'C'} />;
 
-export const FormBLink = () => <FormLink formType={'C'} />;
+export const FormBLink = () => <FormLink formType={'B'} />;
 
 export const CruiseApplicationInfo = () => (
     <div className="cruise-application-info">

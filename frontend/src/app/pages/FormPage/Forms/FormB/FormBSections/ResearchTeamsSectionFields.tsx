@@ -10,7 +10,7 @@ export const CrewField = () => {
         <CrewTable
             className="single-field"
             fieldLabel="Lista uczestników rejsu"
-            fieldName={researchTeamsSectionFieldNames.crew}
+            fieldName={researchTeamsSectionFieldNames.crewMembers}
             historicalCrew={(formContext!.initValues as FormBInitValues)?.historicalCrew}
 
         />

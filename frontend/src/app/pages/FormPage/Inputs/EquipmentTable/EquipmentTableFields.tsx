@@ -19,19 +19,6 @@ export const NameField = () => {
     );
 };
 
-// export const InsuranceField = () => {
-//     return (
-//         <KeyContext.Provider value={'insurance'}>
-//             <div className={'task-field-input'}>
-//                 <label>
-//                     Czy uzyskano
-//                 </label>
-//                 <FBoolField />
-//             </div>
-//         </KeyContext.Provider>
-//     );
-// };
-
 export const PermissionField = () => {
     return (
         <KeyContext.Provider value={'permission'}>
@@ -47,7 +34,7 @@ export const PermissionField = () => {
 
 export const StartDateField = () => {
     return (
-        <KeyContext.Provider value={'startDate'}>
+        <KeyContext.Provider value={'insuranceStartDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
                     Początek ubezpieczenia (jesli ubezpieczono)
@@ -60,7 +47,7 @@ export const StartDateField = () => {
 
 export const EndDateField = () => {
     return (
-        <KeyContext.Provider value={'endDate'}>
+        <KeyContext.Provider value={'insuranceEndDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
                     Koniec ubezpieczenia (jeśli ubezpieczono)
@@ -74,7 +61,6 @@ export const EndDateField = () => {
 
 export const InsuranceColumn = () => (
     <div className={'w-100 d-flex flex-row flex-wrap'}>
-        {/*<InsuranceField />*/}
         <StartDateField />
         <EndDateField />
     </div>

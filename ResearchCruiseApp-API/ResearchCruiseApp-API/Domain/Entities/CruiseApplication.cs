@@ -21,5 +21,9 @@ public class CruiseApplication : Entity
     
     public byte[] SupervisorCode { get; init; } = [];
 
+    public List<CruiseApplicationEffect> CruiseApplicationEffects { get; set; } = [];
+
+    public Cruise? Cruise { get; set; }
+    
     public int EffectsPoints { get; set; }
 }
