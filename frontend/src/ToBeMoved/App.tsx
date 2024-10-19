@@ -5,7 +5,7 @@ import { Interceptors } from '@api/Api';
 import BusyEvent from './CommonComponents/BusyEvent';
 import PageBackground from '../components/Page/Background/PageBackground';
 import PageHeader from './Pages/PageHeader/PageHeader';
-import RoleBasedRouting from './RoleBasedRouting';
+import RoleBasedRouting from '../route/RoleBasedRouting';
 import WaitingPage from '../app/pages/WaitingPage';
 import { BusyContext } from '@contexts/BusyContext';
 

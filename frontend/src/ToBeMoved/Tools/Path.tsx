@@ -19,4 +19,5 @@ export enum Path {
     ResetPassword = "/ResetPassword",
     FormAForSupervisor = "/FormAForSupervisor",
     PriorityInformation = "/PriorityInformation",
+    HelpInformation = "/HelpInformation",
 }

@@ -1,7 +1,7 @@
 import { Cruise } from 'Cruise';
 import { CruisesTools } from './CruisesList';
 import { HandleDeleteCruises } from './CruisesPageMisc';
-import userBasedAccess from '../../../ToBeMoved/UserBasedAccess';
+import userBasedAccess from '../../../route/UserBasedAccess';
 import ReadOnlyTextInput from '../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 import AssignedCruiseApplicationsList from './AssignedCruiseApplicationsList';
 import LinkWithState from '../../../components/Navigation/LinkWithState';

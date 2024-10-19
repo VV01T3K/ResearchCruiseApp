@@ -23,6 +23,12 @@ export const SupervisorSection = () => SectionWrapper(
         shortTitle: 'Przełożony',
         longTitle: 'Dane kontaktowe przełożonego',
         sectionFieldNames: supervisorSectionFieldNames,
-        children: <SupervisorEmailField />,
+        children:
+            <>
+                <div className={"d-"}>
+                    Użytkownik odpowiada za podanie prawidłowego adresu e-mail przełożonego, a w przypadku falszywych danych zgłoszenie może zostać odrzucone.
+                </div>
+                <SupervisorEmailField />
+            </>,
     },
 );

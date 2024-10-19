@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Path } from './Path';
 
 import { FormContext } from '@contexts/FormContext';
-import UserBasedAccess from '../UserBasedAccess';
+import UserBasedAccess from '../../route/UserBasedAccess';
 
 import { CruiseStatus } from '@enums/CruiseStatus';
 import { cruiseFromLocation } from '@hooks/cruiseFromLocation';

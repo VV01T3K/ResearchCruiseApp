@@ -5,7 +5,7 @@ import { SelectWrapper } from '../../FormPage/Wrappers/ReactSelectWrapper';
 import {
     ErrorMessageIfPresentNoContext,
 } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
-import UserBasedAccess from '../../../../ToBeMoved/UserBasedAccess';
+import UserBasedAccess from '../../../../route/UserBasedAccess';
 import { Role } from 'Role';
 import { NewUserFormValues } from 'NewUserFormValues';
 

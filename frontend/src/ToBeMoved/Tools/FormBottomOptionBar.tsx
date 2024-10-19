@@ -5,7 +5,7 @@ import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icon
 import Api from '../../api/Api';
 import { useNavigate } from 'react-router-dom';
 import { Path } from './Path';
-import userBasedAccess from '../UserBasedAccess';
+import userBasedAccess from '../../route/UserBasedAccess';
 import { FormContext } from '@contexts/FormContext';
 
 

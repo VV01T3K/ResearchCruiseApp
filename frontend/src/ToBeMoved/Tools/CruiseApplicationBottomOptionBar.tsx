@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import Api from '../../api/Api';
 import { useNavigate } from 'react-router-dom';
 import { Path } from './Path';
-import userBasedAccess from '../UserBasedAccess';
+import userBasedAccess from '../../route/UserBasedAccess';
 import { FormContext } from '@contexts/FormContext';
 import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
 import { CruiseApplicationStatus } from 'CruiseApplicationStatus';

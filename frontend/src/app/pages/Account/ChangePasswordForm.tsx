@@ -5,7 +5,8 @@ import React, { useState } from 'react';
 import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
 
 import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
-import { ChangePasswordData } from '@api/requests';
+
+import {ChangePasswordData} from "ChangePasswordData";
 
 // TODO : Move to different place
 export default function ChangePasswordForm() {

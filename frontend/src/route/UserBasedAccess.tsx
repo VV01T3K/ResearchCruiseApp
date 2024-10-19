@@ -1,4 +1,4 @@
-import userDataManager from './CommonComponents/UserDataManager';
+import userDataManager from '../ToBeMoved/CommonComponents/UserDataManager';
 import { useEffect } from 'react';
 
 const UserBasedAccess = () => {

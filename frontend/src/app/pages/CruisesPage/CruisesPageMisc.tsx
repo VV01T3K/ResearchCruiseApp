@@ -4,7 +4,7 @@ import { CruiseStateContext } from './CruisesPage';
 import CruisesList from './CruisesList';
 import ReactSwitch from 'react-switch';
 import CruisesCalendar from './CruisesCalendar';
-import UserBasedAccess from '../../../ToBeMoved/UserBasedAccess';
+import UserBasedAccess from '../../../route/UserBasedAccess';
 import { Path } from '../../../ToBeMoved/Tools/Path';
 import { fetchCruises } from '@api/requests';
 import { autoAddCruises } from '@api/requests/Put';
