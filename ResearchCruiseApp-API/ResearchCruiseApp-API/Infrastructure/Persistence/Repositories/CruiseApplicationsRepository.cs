@@ -59,7 +59,7 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
             .IncludeFormAContent()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
-    
+
     public Task<CruiseApplication?> GetByIdWithFormAAndFormBContent(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.CruiseApplications
@@ -77,6 +77,15 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
             .IncludeFormCContent()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
+
+    public Task<CruiseApplication?> GetByIdWithFormsAndResearchTasks(Guid id, CancellationToken cancellationToken)
+    {
+        return DbContext.CruiseApplications
+            .IncludeForms()
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
+            .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
+            .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
+    }
     
     public Task<List<CruiseApplication>> GetAllByIds(List<Guid> ids, CancellationToken cancellationToken)
     {
@@ -90,6 +99,19 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
         return DbContext.CruiseApplications
             .IncludeFormA()
             .IncludeFormAContent()
+            .Where(cruiseApplication =>
+                cruiseApplication.FormA!.CruiseManagerId == userId ||
+                cruiseApplication.FormA.DeputyManagerId == userId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<CruiseApplication>> GetAllByUserIdWithFormAAndFormCContent(
+        Guid userId, CancellationToken cancellationToken)
+    {
+        return DbContext.CruiseApplications
+            .IncludeFormA()
+            .IncludeFormC()
+            .IncludeFormCContent()
             .Where(cruiseApplication =>
                 cruiseApplication.FormA!.CruiseManagerId == userId ||
                 cruiseApplication.FormA.DeputyManagerId == userId)

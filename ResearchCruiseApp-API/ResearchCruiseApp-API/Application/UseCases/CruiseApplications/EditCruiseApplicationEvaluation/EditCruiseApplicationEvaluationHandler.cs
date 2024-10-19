@@ -43,7 +43,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formAResearchTask is null)
                 continue;
 
-            formAResearchTask.Points = Int32.Parse(researchTaskEvaluationEdit.NewPoints);
+            formAResearchTask.Points = int.Parse(researchTaskEvaluationEdit.NewPoints);
         }
     }
     
@@ -57,7 +57,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formAContract is null)
                 continue;
 
-            formAContract.Points = Int32.Parse(contractEvaluationEdit.NewPoints);
+            formAContract.Points = int.Parse(contractEvaluationEdit.NewPoints);
         }
     }
     
@@ -80,7 +80,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formAPublication is null)
                 continue;
 
-            formAPublication.Points = Int32.Parse(publicationEvaluationEdit.NewPoints);
+            formAPublication.Points = int.Parse(publicationEvaluationEdit.NewPoints);
         }
     }
     
@@ -94,7 +94,7 @@ public class EditCruiseApplicationEvaluationHandler(
             if (formASpubTask is null)
                 continue;
 
-            formASpubTask.Points = Int32.Parse(spubTaskEvaluationEdit.NewPoints);
+            formASpubTask.Points = int.Parse(spubTaskEvaluationEdit.NewPoints);
         }
     }
 }

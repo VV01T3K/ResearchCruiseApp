@@ -7,22 +7,24 @@ namespace ResearchCruiseApp_API.Application.Services.Factories.CruiseApplication
 
 
 internal class CruiseApplicationsFactory(
-    IYearBasedKeyGenerator yearBasedKeyGenerator,
     IRandomGenerator randomGenerator,
-    ICruiseApplicationsRepository cruiseApplicationsRepository)
+    IUserEffectsRepository userEffectsRepository)
     : ICruiseApplicationsFactory
 {
     public async Task<CruiseApplication> Create(FormA formA, CancellationToken cancellationToken)
     {
+        var effectsPoints = await userEffectsRepository
+            .GetPointsSumByUserId(formA.CruiseManagerId, cancellationToken);
+        
         var newCruiseApplication = new CruiseApplication
         {
-            Number = await yearBasedKeyGenerator.GenerateKey(cruiseApplicationsRepository, cancellationToken),
             Date = DateOnly.FromDateTime(DateTime.Now),
             FormA = formA,
             FormB = null,
             FormC = null,
             Status = CruiseApplicationStatus.WaitingForSupervisor,
-            SupervisorCode = randomGenerator.CreateSecureCodeBytes()
+            SupervisorCode = randomGenerator.CreateSecureCodeBytes(),
+            EffectsPoints = effectsPoints
         };
 
         return newCruiseApplication;

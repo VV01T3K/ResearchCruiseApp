@@ -14,7 +14,7 @@ const PageHeaderText = () => {
                 break;
             default:
                 if (UserLoggedIn() && userData) {
-                    text = `Witaj ${userData!.firstName}`;
+                    text = `Witaj, ${userData!.firstName}`;
                 }
                 break;
         }

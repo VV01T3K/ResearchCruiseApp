@@ -71,13 +71,21 @@ public class ResearchTaskDto : IResearchTaskDto
                     options =>
                         options.MapFrom(src => src.ResearchTask.FinancingAmount))
                 .ForMember(
+                    dest => dest.FinancingApproved,
+                    options =>
+                        options.MapFrom(src => src.ResearchTask.FinancingApproved))
+                .ForMember(
                     dest => dest.Description,
                     options =>
                         options.MapFrom(src => src.ResearchTask.Description))
                 .ForMember(
-                    dest => dest.FinancingApproved,
+                    dest => dest.SecuredAmount,
                     options =>
-                        options.MapFrom(src => src.ResearchTask.FinancingApproved));
+                        options.MapFrom(src => src.ResearchTask.SecuredAmount))
+                .ForMember(
+                    dest => dest.MinisterialPoints,
+                    options =>
+                        options.MapFrom(src => src.ResearchTask.MinisterialPoints));
             
             CreateMap<ResearchTask, ResearchTaskDto>()
                 .ForMember(

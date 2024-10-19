@@ -125,7 +125,7 @@ export const Interceptors = () => {
     };
 
     function requestHandler(config: InternalAxiosRequestConfig) {
-        SetBusyWithMessage('Wczytywanie');
+      
         if (config.url && !config.url.startsWith(defaultServerAddress!)) {
             config.url = defaultServerAddress + config.url;
         }

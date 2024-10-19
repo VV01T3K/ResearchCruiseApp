@@ -1,7 +1,3 @@
-using AutoMapper;
-using Microsoft.CodeAnalysis;
-using ResearchCruiseApp_API.Domain.Entities;
-
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 

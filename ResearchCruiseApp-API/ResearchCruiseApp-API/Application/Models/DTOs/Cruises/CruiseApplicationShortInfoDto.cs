@@ -26,11 +26,15 @@ public class CruiseApplicationShortInfoDto
                 .ForMember(
                     dest => dest.DeputyManagerId,
                     options =>
-                        options.MapFrom(src => src.FormA.DeputyManagerId))
+                        options.MapFrom(src => src.FormA != null
+                            ? src.FormA.DeputyManagerId
+                            : Guid.Empty))
                 .ForMember(
                     dest => dest.CruiseManagerId,
                     options =>
-                        options.MapFrom(src => src.FormA.CruiseManagerId))
+                        options.MapFrom(src => src.FormA != null
+                            ? src.FormA.CruiseManagerId
+                            : Guid.Empty))
                 .ForMember(
                 dest => dest.Points,
                 options=>

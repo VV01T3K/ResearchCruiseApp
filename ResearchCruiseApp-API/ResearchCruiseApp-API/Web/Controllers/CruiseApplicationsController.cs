@@ -16,6 +16,8 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormC;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnEffectsEvaluations;
+using ResearchCruiseApp_API.Application.UseCases.GetEffectsEvaluations;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
@@ -38,7 +40,6 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpGet("forCruise")]
-
     public async Task<IActionResult> GetCruiseApplicationsForCruise()
     {
         var result = await mediator.Send(new GetCruiseApplicationsForCruiseQuery());
@@ -78,12 +79,15 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
-    [HttpPatch("{id:guid}/evaluation")]
+    [HttpPatch("{cruiseApplicationId:guid}/evaluation")]
     public async Task<IActionResult> EditCruiseApplicationEvaluation(
-        Guid id, [FromBody] CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationsEditsDto)
+        Guid cruiseApplicationId, [FromBody] CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationsEditsDto)
     {
         var result = await mediator
-            .Send(new EditCruiseApplicationEvaluationCommand(id, cruiseApplicationEvaluationsEditsDto));
+            .Send(new EditCruiseApplicationEvaluationCommand(
+                cruiseApplicationId,
+                cruiseApplicationEvaluationsEditsDto)
+            );
         return result.IsSuccess
             ? NoContent()
             : this.CreateError(result);
@@ -168,6 +172,26 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetFormC(Guid cruiseApplicationId)
     {
         var result = await mediator.Send(new GetFormCQuery(cruiseApplicationId));
+        return result.IsSuccess
+            ? Ok(result.Data)
+            : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpGet("{userId:guid}/effectsEvaluations")]
+    public async Task<IActionResult> GetEffectsEvaluations(Guid userId)
+    {
+        var result = await mediator.Send(new GetEffectsEvaluationsQuery(userId));
+        return result.IsSuccess
+            ? Ok(result.Data)
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
+    [HttpGet("effectsEvaluations")]
+    public async Task<IActionResult> GetOwnEffectsEvaluations()
+    {
+        var result = await mediator.Send(new GetOwnEffectsEvaluationsQuery());
         return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);

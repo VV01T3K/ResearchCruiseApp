@@ -60,7 +60,7 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
                     EvaluationConstants.PointsForDoctoralThesisResearchTask,
 
                 ResearchTaskType.ProjectPreparation =>
-                    researchTask.FinancingApproved.ToBool()
+                    researchTask.FinancingApproved?.ToBool() ?? false
                         ? EvaluationConstants.PointsForProjectPreparationWithFinancing
                         : EvaluationConstants.PointsForProjectPreparationWithoutFinancing,
 
@@ -139,5 +139,19 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         {
             formASpubTask.Points = EvaluationConstants.PointsForSpubTask;
         }
+    }
+
+    
+
+    private static int GetPointsForProjectPreparationEffect(ResearchTaskEffect effect, bool assignConditinalPoints)
+    {
+        var assignUnconditionalPoints =
+            effect.PublicationMinisterialPoints is not null &&
+            int.Parse(effect.PublicationMinisterialPoints) >=
+                EvaluationConstants.ProjectPreparationPublicationMinisterialPointsThreshold;
+
+        return assignUnconditionalPoints || assignConditinalPoints
+            ? EvaluationConstants.PointsForProjectPreparationEffect
+            : 0;
     }
 }

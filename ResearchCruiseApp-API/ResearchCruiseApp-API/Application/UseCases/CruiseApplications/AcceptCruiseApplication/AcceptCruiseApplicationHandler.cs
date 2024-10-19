@@ -3,7 +3,6 @@ using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.Services.CruiseApplications;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
@@ -12,7 +11,6 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AcceptCr
 
 
 public class AcceptCruiseApplicationHandler(
-    ICruiseApplicationsService cruiseApplicationsService,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     ICruisesRepository cruisesRepository,
     IUnitOfWork unitOfWork)
