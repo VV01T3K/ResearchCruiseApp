@@ -9,6 +9,11 @@ import UserBasedAccess from '../../../../../route/UserBasedAccess';
 import {
     CruiseApplicationListMode,
 } from 'CruiseApplicationListMode';
+import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import { CruiseStatus } from '@enums/CruiseStatus';
+import { deleteCruise } from '@api/requests/Delete';
+import { useNavigate } from 'react-router-dom';
+import { Path } from '../../../../../ToBeMoved/Tools/Path';
 
 export const applicationsSectionFieldNames = {
     applicationsIds: 'cruiseApplicationsIds',
@@ -87,15 +92,54 @@ const AddedApplicationsField = () => {
     return <FieldWrapper className={'w-100'} {...fieldProps} />;
 };
 
+const RemoveCruiseField = () => {
+    const [remove, setRemove] = useState(false);
+    const location = extendedUseLocation();
+    const navigate = useNavigate();
+    const cruiseId = location?.state?.cruise.id;
+    return (
+        <>
+            {!remove &&
+                <div className={'text-decoration-underline'} style={{ cursor: 'pointer' }}
+                     onClick={() => setRemove(true)}>
+                    Awaryjne usuwanie rejsu
+                </div>
+            }
+            {remove &&
+                <>
+                    <div className={'m-1'}>Do wszystkich kierowników zgłoszeń i ich zastępców zostanie wysłane
+                        powiadomienie o anulowaniu
+                        rejsu:
+                    </div>
+                    <div onClick={() => deleteCruise(cruiseId).then(() => navigate(Path.Cruises))}
+                         style={{ cursor: 'pointer' }}
+                         className={'text-danger text-decoration-underline'}>
+                        Potwierdź
+                    </div>
+                </>
+            }
+
+        </>
+
+    );
+};
+
 export const ApplicationsSection = () => {
-    const { UserHasShipownerAccess, UserHasAdminAccess } = UserBasedAccess();
+    const { UserHasShipownerAccess, UserHasAdminAccess, UserHasGuestAccess } = UserBasedAccess();
+    const location = extendedUseLocation();
 
     return SectionWrapper({
         shortTitle: 'Zgłoszenia',
         longTitle:
-            UserHasShipownerAccess() || UserHasAdminAccess()
+            UserHasShipownerAccess() || UserHasAdminAccess() || UserHasGuestAccess()
                 ? 'Zgłoszenia przypisane do rejsu'
                 : 'Moje zgłoszenia przypisane do rejsu',
-        children: <AddedApplicationsField />,
+        children:
+            <>
+                <AddedApplicationsField />
+                {(UserHasShipownerAccess() ||
+                        UserHasAdminAccess())
+                    && location?.state?.cruise.status === CruiseStatus.Confirmed && <RemoveCruiseField />}
+            </>,
     });
 };

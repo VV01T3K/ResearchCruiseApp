@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using System.Runtime.InteropServices.JavaScript;
+using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
 
@@ -19,8 +21,12 @@ public class EditCruiseApplicationEvaluationHandler(
     public async Task<Result> Handle(
         EditCruiseApplicationEvaluationCommand request, CancellationToken cancellationToken)
     {
+        var cruiseApplication = await cruiseApplicationsRepository
+            .GetByIdWithFormA(request.Id, cancellationToken);
+        if (cruiseApplication is not null && cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+            return Error.BadRequest("Czas na edycję punktów minął");
         var cruiseApplicationEvaluationEditsDto = request.CruiseApplicationEvaluationsEditsDto;
-
+        
         await EditResearchTasksEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
         await EditContractsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
         await EditUgUnitsEvaluations(request, cancellationToken);
