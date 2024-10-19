@@ -1,44 +1,21 @@
 import useCustomEvent from '../Tools/useCustomEvent';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import { BusyContext } from '@contexts/BusyContext';
 
-// TODO: Change to use context
 const BusyEvent = () => {
-    const { dispatchEvent, addEventListener: busyListener } =
-        useCustomEvent('busy');
-
-    const [isBusy, setIsBusy] = useState<null | string>(null);
-    useEffect(() => {
-        const unsubscribeBusy = busyListener((data: null | string) => {
-            setIsBusy(data);
-        });
-        return () => {
-            unsubscribeBusy();
-        };
-    }, [busyListener]);
-
+    const [busyMessage, setBusyMessage] = useContext(BusyContext)!;
     const location = extendedUseLocation();
-    useEffect(() => {
-        ResetBusyState();
-    }, [location]);
-    const ResetBusyState = () => dispatchEvent(null);
-    const SetBusyWithMessage = (message: string) => dispatchEvent(message);
 
-    const DisplayIfBuisy = () => {
-        return isBusy ? '' : 'd-none';
-    };
-    const DisplayIfNotBuisy = () => {
-        return !isBusy ? '' : 'd-none';
-    };
+    const ResetBusyState = () => setBusyMessage(null);
 
     return {
         ResetBusyState,
-        SetBusyWithMessage,
-        isBusy,
-        DisplayIfNotBuisy,
-        DisplayIfBuisy,
+        SetBusyWithMessage: setBusyMessage,
+        isBusy: busyMessage !== null,
+        BusyMessage: busyMessage,
     };
 };
 export default BusyEvent;

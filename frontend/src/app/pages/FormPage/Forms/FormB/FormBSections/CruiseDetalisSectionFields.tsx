@@ -1,5 +1,5 @@
 import { cruiseDetailsSectionFieldNames } from '@app/pages/FormPage/Forms/FormB/FormBSections/CruiseDetailsSection';
-import EquipmentOutsideTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentOutsideTable';
+import ShortResearchEquipmentTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/ShortResearchEquipmentTable';
 import EquipmentLeaveTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentLeaveTable';
 import PortTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/PortTable';
 import { useContext } from 'react';
@@ -16,10 +16,10 @@ export const CruiseDetailsDescription = () => (
 export const EquipmentOutsideField = () => {
     const formContext = useContext(FormContext);
     return (
-        <EquipmentOutsideTable
+        <ShortResearchEquipmentTable
             className="single-field"
             fieldLabel="Wystawienie sprzętu"
-            fieldName={cruiseDetailsSectionFieldNames.equipmentOutside}
+            fieldName={cruiseDetailsSectionFieldNames.shortResearchEquipments}
             historicalEquipmentOutside={(formContext!.initValues as FormBInitValues)?.historicalEquipmentOutside}
         />
     );
@@ -31,7 +31,7 @@ export const EquipmentLeaveField = () => {
         <EquipmentLeaveTable
             className="single-field"
             fieldLabel="Pozostawienie lub zabranie sprzętu"
-            fieldName={cruiseDetailsSectionFieldNames.equipmentLeave}
+            fieldName={cruiseDetailsSectionFieldNames.longResearchEquipments}
         />
     );
 
@@ -42,7 +42,7 @@ export const PortLeaveField = () => {
         <PortTable
             className="single-field"
             fieldLabel="Wchodzenie lub wychodzenie z portu"
-            fieldName={cruiseDetailsSectionFieldNames.portLeave}
+            fieldName={cruiseDetailsSectionFieldNames.ports}
         />
     );
 

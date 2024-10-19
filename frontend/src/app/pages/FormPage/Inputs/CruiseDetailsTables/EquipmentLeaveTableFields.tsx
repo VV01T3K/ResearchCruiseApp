@@ -21,7 +21,7 @@ export const ActionPicker = () => {
 
 export const TimeField = () => {
     return (
-        <KeyContext.Provider value={'time'}>
+        <KeyContext.Provider value={'duration'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Czas (pora dnia, przedział czasu itp.)

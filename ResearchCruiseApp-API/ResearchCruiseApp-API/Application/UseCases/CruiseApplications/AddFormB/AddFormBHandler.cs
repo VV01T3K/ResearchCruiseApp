@@ -4,6 +4,7 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsB;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddFormB;
 
@@ -30,6 +31,13 @@ public class AddFormBHandler(
 
         var formB = await formsBFactory.Create(request.FormBDto, cancellationToken);
         cruiseApplication.FormB = formB;
+        
+        
+        if (cruiseApplication.Cruise is not null && (cruiseApplication.Cruise?.Status == CruiseStatus.Ended ||
+            cruiseApplication.Cruise?.Status == CruiseStatus.Archive))
+            cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
+        else
+            cruiseApplication.Status = CruiseApplicationStatus.FormBFilled;
         
         await unitOfWork.Complete(cancellationToken);
         return Result.Empty;

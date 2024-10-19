@@ -1,6 +1,8 @@
 import PublicationsTable from '../../../Inputs/PublicationsTable/PublicationsTable';
-import React from 'react';
+import React, { useContext } from 'react';
 import { publicationsSectionFieldNames } from './PublicationsSection';
+import { FormContext } from '@contexts/FormContext';
+import { FormAInitValues } from 'FormAInitValues';
 
 export const PublicationsDescription = () => (
 
@@ -20,22 +22,13 @@ export const PublicationsDescription = () => (
 );
 
 export const PublicationsField = () => {
+    const formContext = useContext(FormContext);
+    console.log(formContext?.initValues);
     return (
         <PublicationsTable
             className={'single-field'}
             fieldName={publicationsSectionFieldNames.publications}
-            historicalPublications={[
-                {
-                    category: 'subject',
-                    doi: '10.1016/j.marenvres.2023.106132',
-                    authors: 'Urszula Kwasigroch, Katarzyna Łukawska-Matuszewska, Agnieszka Jędruch, Olga Brocławik, Magdalena Bełdowska',
-                    title: 'Mobility and bioavailability of mercury in sediments of the southern Baltic sea in relation to the chemical fractions of iron: Spatial and temporal patterns',
-                    magazine: 'Marine Environmental Research',
-                    year: '2023',
-                    ministerialPoints: '0',
-
-                },
-            ]}
+            historicalPublications={(formContext?.initValues as FormAInitValues)?.historicalPublications}
         />
     );
 };

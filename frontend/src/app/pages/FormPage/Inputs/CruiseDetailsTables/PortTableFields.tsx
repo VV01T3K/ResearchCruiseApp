@@ -5,7 +5,7 @@ import { FDateFieldDayAndHour, FStandardDateField, FTextField } from '@app/pages
 
 export const EntranceDateField = () => {
     return (
-        <KeyContext.Provider value={'entranceDate'}>
+        <KeyContext.Provider value={'startTime'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Wejście
@@ -18,7 +18,7 @@ export const EntranceDateField = () => {
 
 export const ExitDateField = () => {
     return (
-        <KeyContext.Provider value={'exitDate'}>
+        <KeyContext.Provider value={'endTime'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Wyjście

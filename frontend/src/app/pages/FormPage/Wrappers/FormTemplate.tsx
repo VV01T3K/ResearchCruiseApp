@@ -13,7 +13,14 @@ import { FormContent } from '@components/Form/FormContent';
 import { BottomOptionBar } from '../../../../ToBeMoved/Tools/FormBottomOptionBar';
 import { FormContext } from '@contexts/FormContext';
 import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
-import { getFormA, getFormForSupervisor } from '@api/requests';
+import {
+    getApplicationDetails,
+    getFormA,
+    getFormAInitValues,
+    getFormAInitValuesForSupervisor,
+    getFormB, getFormBInitValues,
+    getFormForSupervisor,
+} from '@api/requests';
 import { FormAInitValues } from 'FormAInitValues';
 
 import { extendedUseLocation } from '@hooks/extendedUseLocation';
@@ -30,6 +37,7 @@ import {
 } from 'react-hook-form';
 import { FormSectionType } from 'Form/Section/FormSectionType';
 import { FormInitValues } from 'FormInitValues';
+import { type } from 'node:os';
 
 export type FormContextFields = {
     resetField: UseFormResetField<any>,
@@ -69,55 +77,98 @@ function FormTemplate(props: FormTemplateProps) {
         cruiseApplication,
     } = locationToDataMapper();
 
-    const _getFormA = () => getFormA(cruiseApplication?.id ?? cruiseApplicationId);
+    const _getFormA = () => getFormA(cruiseApplication?.id ?? cruiseApplicationId)
+        .then(response => response?.data);
+    const _getFormB = () => getFormB(cruiseApplication?.id ?? cruiseApplicationId)
+        .then(response => response?.data);
 
     const _getFormForSupervisor = () =>
-        getFormForSupervisor(cruiseApplicationId, supervisorCode);
+        getFormForSupervisor(cruiseApplicationId, supervisorCode)
+            .then(response => response?.data);
 
-    const getForm = supervisorCode ? _getFormForSupervisor : _getFormA;
+    const _getFormAInitValues = () =>
+        getFormAInitValues().then(response => response.data);
+
+    const _getFormBInitValues = () =>
+        getFormBInitValues().then(response => response.data);
+
+    const _getApplicationDetailsInitValues = () =>
+        getApplicationDetails(cruiseApplication.id).then(response => response.data);
+
+    const _getFormAInitValuesForSupervisor = () =>
+        getFormAInitValuesForSupervisor(cruiseApplicationId, supervisorCode).then(response => response.data);
+
+    const GetFormData = async (formType: FormTypeValues) => {
+        switch (formType) {
+            case 'A':
+                return await _getFormA();
+            case 'AForSupervisor':
+                return await _getFormForSupervisor();
+            case 'ApplicationDetails':
+                return null;
+            case 'B':
+                const formB = await _getFormB();
+                const formA = await _getFormA();
+                return { ...formA, ...formB };
+            case 'C':
+                return null;
+            case 'CruiseDetails':
+                return null;
+            default:
+                return null;
+        }
+    };
+
 
     const [defaultValues, setDefaultValues] = useState(
         props.defaultValues ?? undefined,
     );
 
+    const SetFormDefaultValues = async () => {
+        const formData = await GetFormData(typeOfForm);
+        if (formData) {
+            setDefaultValues(formData);
+            form.reset(formData);
+        }
+    };
+
     useEffect(() => {
         if ((cruiseApplication?.id || cruiseApplicationId) && typeOfForm && !defaultValues) {
-            getForm().then((response) => {
-                setDefaultValues(response?.data);
-                form.reset(response?.data);
-            });
+            (SetFormDefaultValues)();
         }
     }, []);
 
-    const initEndpoint = (_formType: FormTypeValues) => {
-        switch (_formType) {
+    const GetFormInitValues = async (formType: FormTypeValues) => {
+        console.log(formType);
+        switch (formType) {
             case FormType.A:
+                return await _getFormAInitValues();
             case FormType.B:
-                return '/Forms/InitValues/A';
+                const formAInitValues = await _getFormAInitValues();
+                const formBInitValues = await _getFormBInitValues();
+                return { ...formAInitValues, ...formBInitValues };
             case FormType.ApplicationDetails:
-                return `/api/CruiseApplications/${cruiseApplication.id}/evaluation`;
+                return await _getApplicationDetailsInitValues();
             case FormType.AForSupervisor:
-                return `/Forms/InitValuesForSupervisor/A?cruiseApplicationId=${cruiseApplicationId}&supervisorCode=${supervisorCode}`
+                return await _getFormAInitValuesForSupervisor();
+            default:
+                return null;
         }
     };
 
     const [formInitValues, setFormInitValues] = useState<
         FormAInitValues | undefined
     >(undefined);
-    useEffect(() => {
-        const _formType = supervisorCode ? FormType.AForSupervisor : props.type;
-        const initValuesPath = initEndpoint(_formType);
 
-        if (!initValuesPath) {
-            return;
+    const LoadInitValues = async () => {
+        const initValues = await GetFormInitValues(props.type);
+        if (initValues) {
+            setFormInitValues(initValues);
+            form.reset();
         }
-
-        Api
-            .get(initValuesPath)
-            .then((response) => {
-                setFormInitValues(response?.data);
-                form.reset();
-            });
+    };
+    useEffect(() => {
+        (LoadInitValues)();
     }, []);
 
     const form = useOnBlurForm(defaultValues);

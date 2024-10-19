@@ -1,58 +1,32 @@
 import { SingleValue } from 'react-select';
 import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import { FormContext } from '@contexts/FormContext';
 import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
 import { useContext } from 'react';
+import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
 import {
-    BottomMenuWithAddButton,
-    BottomMenuWithAddButtonAndHistory,
-    OrdinalNumber,
-    RemoveRowButton,
-} from '@app/pages/FormPage/Inputs/TableParts';
-import {
-    EndDateField, NameField,
+    EndDateField,
+    NameField,
     StartDateField,
 } from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentOutsideTableFields';
 import { FieldValues } from 'react-hook-form';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 import { FieldContext } from '@contexts/FieldContext';
-import { SpubTask } from 'SpubTask';
+import { ShortResearchEquipement } from 'ShortResearchEquipement';
+import { shortResearchEquipementDefaul } from '@helpers/shortResearchEquipementDefault';
 
-
-export type EquipmentOutside = {
-    startDate: string,
-    endDate: string,
-    name: string
-}
-
-const equipmentOutsideDefault = {
-    startDate: '',
-    endDate: '',
-    name: '',
-};
 
 type EquipmentOutsideTableProps = FieldProps &
-    { historicalEquipmentOutside?: EquipmentOutside[] }
+    { historicalEquipmentOutside?: ShortResearchEquipement[] }
 
-const EquipmentOutsideRowLabel = (row: EquipmentOutside) =>
-    `Od: ${row.startDate}\n
-    Do: ${row.endDate}\n
-    Nazwa sprzętu: ${row.name}\n`;
-
-
-const EquipmentOutsideTableContent = () => {
-    const formContext = useContext(FormContext);
-
-    return [
-        () => (<OrdinalNumber label={'Sprzęt'} />),
-        StartDateField,
-        EndDateField,
-        NameField,
-        RemoveRowButton,
-    ];
-};
+const EquipmentOutsideTableContent = () => [
+    () => (<OrdinalNumber label={'Sprzęt'} />),
+    StartDateField,
+    EndDateField,
+    NameField,
+    RemoveRowButton,
+];
 
 export const FieldContextWrapper = (Render: React.JSXElementConstructor<any>) => ({ field }: FieldValues) => (
     <FieldContext.Provider value={field}>
@@ -60,19 +34,16 @@ export const FieldContextWrapper = (Render: React.JSXElementConstructor<any>) =>
     </FieldContext.Provider>
 );
 
-function EquipmentOutsideTable(props: EquipmentOutsideTableProps) {
+function ShortResearchEquipmentTable(props: EquipmentOutsideTableProps) {
 
 
     const formContext = useContext(FormContext);
-
-    const selectOptions = props.historicalEquipmentOutside?.map((row: EquipmentOutside) =>
-        ({ label: EquipmentOutsideRowLabel(row), value: row })) ?? [];
 
     const mdColWidths = [5, 15, 15, 60, 5];
     const mdColTitles = ['Lp.', 'Od', 'Do', 'Nazwa sprzętu', ''];
     const colTitle = 'Wystawienie sprzętu';
     const bottomMenu =
-        <BottomMenuWithAddButton newOption={equipmentOutsideDefault as SingleValue<any>}
+        <BottomMenuWithAddButton newOption={shortResearchEquipementDefaul as SingleValue<any>}
         />;
     const emptyText = 'Nie dodano żadnego sprzętu';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, EquipmentOutsideTableContent,
@@ -85,9 +56,9 @@ function EquipmentOutsideTable(props: EquipmentOutsideTableProps) {
         rules: {
             required: false,
             validate: {
-                notEmptyArray: notEmptyArray<EquipmentOutside>,
-                rightDatePeriod: (value: EquipmentOutside[]) => {
-                    if (value.some((row: EquipmentOutside) => row.startDate >= row.endDate)) {
+                notEmptyArray: notEmptyArray<ShortResearchEquipement>,
+                rightDatePeriod: (value: ShortResearchEquipement[]) => {
+                    if (value.some((row: ShortResearchEquipement) => row.startDate >= row.endDate)) {
                         return 'Data zakończenia przed datą rozpoczęcia';
                     }
                 },
@@ -102,4 +73,4 @@ function EquipmentOutsideTable(props: EquipmentOutsideTableProps) {
 }
 
 
-export default EquipmentOutsideTable;
+export default ShortResearchEquipmentTable;

@@ -5,56 +5,29 @@ import {
     InstitutionField,
     PersonalDataColumn,
 } from '@app/pages/FormPage/Inputs/CrewTable/CrewTableFields';
-import {
-    BottomMenuWithAddButton,
-    BottomMenuWithAddButtonAndHistory,
-    OrdinalNumber,
-    RemoveRowButton,
-} from '@app/pages/FormPage/Inputs/TableParts';
+import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
 import { FieldValues } from 'react-hook-form';
 import { SingleValue } from 'react-select';
 import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import { FormContext } from '@contexts/FormContext';
 import { FieldContext } from '@contexts/FieldContext';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-
-
-export type Crew = {
-    title: string,
-    names: string,
-    surname: string,
-    birthPlace: string,
-    birthDate: string,
-    ID: string,
-    expiryDate: string,
-    institution: string
-}
-
-const crewDefault = {
-    title: '',
-    names: '',
-    surname: '',
-    birthPlace: '',
-    birthDate: '',
-    ID: '',
-    expiryDate: '',
-    institution: '',
-};
+import { CrewMember } from 'CrewMember';
+import { crewMemberDefault } from '@helpers/crewMemberDefault';
 
 
 type CrewTableProps = FieldProps &
-    { historicalCrew?: Crew[] }
+    { historicalCrew?: CrewMember[] }
 
-const CrewRowLabel = (row: Crew) =>
+const CrewRowLabel = (row: CrewMember) =>
     `Tytuł: ${row.title}\n
-    Imiona: ${row.names}\n
-    Nazwisko: ${row.surname}\n
+    Imiona: ${row.firstName}\n
+    Nazwisko: ${row.lastName}\n
     Miejsce urodzenia: ${row.birthPlace}\n
     Data urodzenia: ${row.birthDate}\n
-    Numer ID: ${row.ID}\n
-    Data ważności dokumentu: ${row.expiryDate}`;
+    Numer ID: ${row.documentNumber}\n
+    Data ważności dokumentu: ${row.documentExpiryDate}`;
 
 const crewTableContent = () => {
     const formContext = useContext(FormContext);
@@ -79,7 +52,7 @@ function CrewTable(props: CrewTableProps) {
 
     const formContext = useContext(FormContext);
 
-    const selectOptions = props.historicalCrew?.map((row: Crew) =>
+    const selectOptions = props.historicalCrew?.map((row: CrewMember) =>
         ({ label: CrewRowLabel(row), value: row })) ?? [];
 
 
@@ -87,7 +60,7 @@ function CrewTable(props: CrewTableProps) {
     const mdColTitles = ['Lp.', 'Dane osobowe', 'Dokument tożsamości', 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej', ''];
     const colTitle = 'Lista uczestników rejsu';
     const bottomMenu =
-        <BottomMenuWithAddButton newOption={crewDefault as SingleValue<any>}
+        <BottomMenuWithAddButton newOption={crewMemberDefault as SingleValue<any>}
         />;
     const emptyText = 'Nie dodano żadnego członka załogi';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, crewTableContent,
@@ -100,7 +73,7 @@ function CrewTable(props: CrewTableProps) {
         rules: {
             required: false,
             validate: {
-                notEmptyArray: notEmptyArray<Crew>,
+                notEmptyArray: notEmptyArray<CrewMember>,
             },
         },
         render: FieldContextWrapper(Render),

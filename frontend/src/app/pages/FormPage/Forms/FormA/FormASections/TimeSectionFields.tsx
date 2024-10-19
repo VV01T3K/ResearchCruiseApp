@@ -11,7 +11,7 @@ export const AcceptablePeriodField = () => (
     <MonthSlider className="two-fields-beside-md"
                  fieldName={timeSectionFieldNames.acceptablePeriod}
                  fieldNameToAlsoSet="optimalPeriod"
-                 fieldLabel="Rok rejsu"
+                 fieldLabel="Dopuszczalny okres, w którym miałby się odbywać rejs"
     />
 );
 
@@ -85,7 +85,7 @@ export const DifferentShipUsageField = () => {
         } else if (disabled && lastFieldInShipUsageSelected) {
             setDisabled(false);
         }
-    }, []);
+    }, [formContext]);
 
     return (
         <TextArea className="two-fields-beside-md"

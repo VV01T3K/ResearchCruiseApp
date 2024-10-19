@@ -9,7 +9,7 @@ import {
 export const researchTeamsSectionFieldNames = {
     ugTeams: 'ugTeams',
     guestTeams: 'guestTeams',
-    crew: 'crew',
+    crewMembers: 'crewMembers',
 };
 
 export const ResearchTeamsSection = () => SectionWrapper(

@@ -6,9 +6,9 @@ import {
 
 
 export const cruiseDetailsSectionFieldNames = {
-    equipmentLeave: 'equipmentLeave',
-    equipmentOutside: 'equipmentOutside',
-    portLeave: 'portLeave',
+    shortResearchEquipments: 'shortResearchEquipments',
+    longResearchEquipments: 'longResearchEquipments',
+    ports: 'ports',
 };
 
 export const CruiseDetailsSection = () => SectionWrapper(

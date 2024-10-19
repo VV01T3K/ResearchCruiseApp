@@ -23,4 +23,6 @@ public class CruiseApplication : Entity, IYearBasedNumbered
     public byte[] SupervisorCode { get; init; } = [];
 
     public List<CruiseApplicationEffect> CruiseApplicationEffects { get; set; } = [];
+
+    public Cruise? Cruise { get; set; }
 }

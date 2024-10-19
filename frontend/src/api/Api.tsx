@@ -7,6 +7,9 @@ import { Path as Path } from '../ToBeMoved/Tools/Path';
 import userDataManager from '../ToBeMoved/CommonComponents/UserDataManager';
 import { useNavigate } from 'react-router-dom';
 import { defaultServerAddress } from '@config/defaultServerAddress';
+import BusyEvent from '../ToBeMoved/CommonComponents/BusyEvent';
+import { Simulate } from 'react-dom/test-utils';
+import error = Simulate.error;
 
 
 declare module 'axios' {
@@ -46,6 +49,7 @@ async function refreshToken() {
 export const Interceptors = () => {
     const { ForceLogout } = userDataManager();
     const navigate = useNavigate();
+    const { SetBusyWithMessage, ResetBusyState } = BusyEvent();
 
     async function HandleErrNetwork(config: InternalAxiosRequestConfig<any>) {
         if (config && !config._retry) {
@@ -110,22 +114,31 @@ export const Interceptors = () => {
         return Promise.resolve(null);
     }
 
-    const responseHandler = (response: AxiosResponse<any>) => response;
+    const responseHandler = (response: AxiosResponse<any>) => {
+        ResetBusyState();
+        return response;
+    };
 
-    const responseErrorHandler = (error: InternalAxiosError) =>
-        error.config?.raw ? Promise.reject(error) : httpErrorHandler(error);
+    const responseErrorHandler = (error: InternalAxiosError) => {
+        ResetBusyState();
+        return error.config?.raw ? Promise.reject(error) : httpErrorHandler(error);
+    };
 
     function requestHandler(config: InternalAxiosRequestConfig) {
+        SetBusyWithMessage('Wczytywanie');
         if (config.url && !config.url.startsWith(defaultServerAddress!)) {
             config.url = defaultServerAddress + config.url;
         }
         return setAccessToken(config);
     }
 
+    function requestErrorHandler(error: AxiosError) {
+        ResetBusyState();
+        return Promise.reject(error);
+    }
+
     function SetInterceptors() {
-        axios.interceptors.request.use(requestHandler, (error) =>
-            Promise.reject(error),
-        );
+        axios.interceptors.request.use(requestHandler, requestErrorHandler);
         axios.interceptors.response.use(responseHandler, responseErrorHandler);
     }
 

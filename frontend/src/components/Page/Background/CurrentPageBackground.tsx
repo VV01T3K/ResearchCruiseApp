@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import UserDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
+import UserDataManager, { IsUserLoggedIn } from '../../../ToBeMoved/CommonComponents/UserDataManager';
 
 export const CurrentPageBackground = () => {
     const [pageBackground, _setpageBackground] = useState<string>('default-bg');
     const { UserLoggedIn } = UserDataManager();
+
     const setPageBackground = () => {
         let image = 'default-bg';
-        if (!UserLoggedIn()) {
+        if (!IsUserLoggedIn()) {
             image = 'default-bg-stretch';
         }
 

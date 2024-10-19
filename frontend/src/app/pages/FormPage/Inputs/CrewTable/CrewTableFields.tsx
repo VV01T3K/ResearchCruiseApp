@@ -17,7 +17,7 @@ export const TitleField = () => {
 
 export const NamesField = () => {
     return (
-        <KeyContext.Provider value={'names'}>
+        <KeyContext.Provider value={'firstName'}>
             <div className={'task-field-input col-md-9'}>
                 <label>
                     Imiona
@@ -30,7 +30,7 @@ export const NamesField = () => {
 
 export const SurnameField = () => {
     return (
-        <KeyContext.Provider value={'surname'}>
+        <KeyContext.Provider value={'lastName'}>
             <div className={'task-field-input col-md-12'}>
                 <label>
                     Nazwisko
@@ -69,7 +69,7 @@ export const BirthDateField = () => {
 
 export const IDField = () => {
     return (
-        <KeyContext.Provider value={'ID'}>
+        <KeyContext.Provider value={'documentNumber'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
                     Numer ID dokumentu
@@ -82,7 +82,7 @@ export const IDField = () => {
 
 export const ExpiryDateField = () => {
     return (
-        <KeyContext.Provider value={'expiryDate'}>
+        <KeyContext.Provider value={'documentExpiryDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
                     Data ważności dokumentu

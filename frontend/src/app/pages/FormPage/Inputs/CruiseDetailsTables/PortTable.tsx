@@ -19,18 +19,19 @@ import { SingleValue } from 'react-select';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { EquipmentOutside } from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentOutsideTable';
+
+import { ShortResearchEquipement } from 'ShortResearchEquipement';
 
 
 export type Port = {
-    entranceDate: string,
-    exitDate: string,
+    startTime: string | undefined,
+    endTime: string | undefined,
     name: string
 }
 
-const portDefault = {
-    entranceDate: '',
-    exitDate: '',
+const portDefault: Port = {
+    startTime: '',
+    endTime: '',
     name: '',
 };
 
@@ -38,8 +39,8 @@ type PortTableProps = FieldProps &
     { historicalPorts?: Port[] }
 
 const PortRowLabel = (row: Port) =>
-    `Od: ${row.entranceDate}\n
-    Do: ${row.exitDate}\n
+    `Od: ${row.startTime}\n
+    Do: ${row.endTime}\n
     Nazwa sprzętu: ${row.name}\n`;
 
 
@@ -87,7 +88,7 @@ function PortTable(props: PortTableProps) {
             validate: {
                 notEmptyArray: notEmptyArray<Port>,
                 rightDatePeriod: (value: Port[]) => {
-                    if (value.some((row: Port) => row.entranceDate >= row.exitDate)) {
+                    if (value.some((row: Port) => (row.startTime && row.endTime) && (row.startTime >= row.endTime))) {
                         return 'Data zakończenia przed datą rozpoczęcia';
                     }
                 },

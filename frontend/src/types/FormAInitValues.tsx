@@ -5,6 +5,7 @@ import { Contract } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTab
 import { UgUnit } from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
 import { SpubTask } from 'SpubTask';
 import { GuestsTeam } from '@app/pages/FormPage/Inputs/GuestTeamsTable/GuestTeamsTable';
+import { Publication } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 
 export type FormAInitValues = {
     cruiseManagers: FormUser[];
@@ -16,6 +17,7 @@ export type FormAInitValues = {
     historicalResearchTasks: ResearchTask[];
     guestTeams: GuestsTeam[],
     historicalContracts: Contract[];
+    historicalPublications: Publication[];
     ugUnits: UgUnit[];
     historicalGuestInstitutions: string[];
     historicalSpubTasks: SpubTask[];

@@ -8,7 +8,7 @@ import { ResearchTeamsSection } from '@app/pages/FormPage/Forms/FormB/FormBSecti
 import { CruiseDetailsSection } from '@app/pages/FormPage/Forms/FormB/FormBSections/CruiseDetailsSection';
 import { CruisePlanSection } from '@app/pages/FormPage/Forms/FormB/FormBSections/CruisePlanSection';
 import { EquipementSection } from '@app/pages/FormPage/Forms/FormB/FormBSections/EquipmentSection';
-import { TechnicalElementsSection } from '@app/pages/FormPage/Forms/FormB/FormBSections/TechnicalElementsSection';
+import { ShipEquipmentSection } from '@app/pages/FormPage/Forms/FormB/FormBSections/ShipEquipmentSection';
 import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
 import { PermissionsSection } from '@app/pages/FormPage/Forms/FormB/FormBSections/PermissionsSection';
@@ -33,7 +33,7 @@ const FormBSections = () => [
     CruiseDetailsSection(),
     CruisePlanSection(),
     EquipementSection(),
-    TechnicalElementsSection(),
+    ShipEquipmentSection(),
 ];
 
 function FormB() {

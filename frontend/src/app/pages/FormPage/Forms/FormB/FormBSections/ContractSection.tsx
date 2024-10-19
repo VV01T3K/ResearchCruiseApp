@@ -14,9 +14,9 @@ export const ContractSection = () =>
             longTitle: 'Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze',
             sectionFieldNames: contractSectionFieldNames,
             children:
-                <>
+                <ReadonlyOverrideWrapper>
                     <ContractsField />
-                </>,
+                </ReadonlyOverrideWrapper>,
         },
     );
 

@@ -20,9 +20,16 @@ public class EndCruiseHandler(
             return Error.NotFound();
 
         var result = UpdateCruiseStatus(cruise);
-            ;
-        if (result.IsSuccess)
-            await unitOfWork.Complete(cancellationToken);
+        
+        if (!result.IsSuccess)
+            return result;
+
+        foreach (var cruiseApplication in cruise.CruiseApplications)
+        {
+            if (cruiseApplication.Status == CruiseApplicationStatus.FormBFilled)
+                cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
+        }
+        await unitOfWork.Complete(cancellationToken);
         
         return result;
     }

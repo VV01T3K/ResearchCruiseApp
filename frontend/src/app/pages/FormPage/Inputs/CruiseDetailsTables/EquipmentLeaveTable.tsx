@@ -22,24 +22,24 @@ import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 
 export type EquipmentLeave = {
     action: string,
-    time: string,
+    duration: string,
     name: string
 }
 
-const equipmentLeaveDefault = [{
-    action: 'leaving',
-    time: '',
+const equipmentLeaveDefault: EquipmentLeave[] = [{
+    action: 'Put',
+    duration: '',
     name: '',
 },
     {
-        action: 'taking',
-        time: '',
+        action: 'Collect',
+        duration: '',
         name: '',
     }];
 
 export const equipmentLeaveActions = [
-    'leaving',
-    'taking',
+    'Put',
+    'Collect',
 ];
 
 export const equipmentLeaveActionsPL = [
@@ -55,21 +55,17 @@ type EquipmentLeaveTableProps = FieldProps &
 
 const EquipmentLeaveRowLabel = (row: EquipmentLeave) =>
     `Czynność: ${row.action}\n
-    Czas: ${row.time}\n
+    Czas: ${row.duration}\n
     Nazwa sprzętu: ${row.name}\n`;
 
 
-const EquipmentLeaveTableContent = () => {
-    const formContext = useContext(FormContext);
-
-    return [
-        () => (<OrdinalNumber label={'Sprzęt'} />),
-        ActionPicker,
-        TimeField,
-        NameField,
-        RemoveRowButton,
-    ];
-};
+const EquipmentLeaveTableContent = () => [
+    () => (<OrdinalNumber label={'Sprzęt'} />),
+    ActionPicker,
+    TimeField,
+    NameField,
+    RemoveRowButton,
+];
 
 export const FieldContextWrapper = (Render: React.JSXElementConstructor<any>) => ({ field }: FieldValues) => (
     <FieldContext.Provider value={field}>
