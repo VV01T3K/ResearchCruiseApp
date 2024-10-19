@@ -11,6 +11,7 @@ import Page from '../../../ToBeMoved/Pages/Page';
 import AddUserForm from './AddUserForm/AddUserForm';
 import { CellContext } from '@contexts/CellContext';
 import { UserRole } from '@enums/UserRole';
+import UserDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
 
 export const FilteredUsersContext = createContext<null | UserData[]>(null);
 export const UsersContext = createContext<null | UserData[]>(null);
@@ -93,7 +94,7 @@ export const Roles = () => {
 
 export const Actions = () => {
     const { user, updateUser } = UsersTools();
-
+    const { userData } = UserDataManager();
     const [emailText, setEmailText] = useState('Wyślij email');
     const emailSent = 'Wysłano email';
     return (
@@ -108,7 +109,7 @@ export const Actions = () => {
                     Aktywuj konto
                 </div>
             )}
-            {user.accepted && (
+            {user.accepted && user.id !== userData?.id && (
                 <div
                     className={'user-action-link'}
                     onClick={() =>

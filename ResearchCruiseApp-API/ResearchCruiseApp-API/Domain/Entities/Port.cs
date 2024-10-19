@@ -33,6 +33,6 @@ public class Port : Entity, IEquatable<Port>, IEquatableByExpression<Port>
     {
         return port =>
             other != null &&
-            other.Name != port.Name;
+            other.Name == port.Name;
     }
 }

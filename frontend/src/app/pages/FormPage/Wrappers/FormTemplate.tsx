@@ -87,16 +87,16 @@ function FormTemplate(props: FormTemplateProps) {
             .then(response => response?.data);
 
     const _getFormAInitValues = () =>
-        getFormAInitValues().then(response => response.data);
+        getFormAInitValues().then(response => response?.data);
 
     const _getFormBInitValues = () =>
-        getFormBInitValues().then(response => response.data);
+        getFormBInitValues().then(response => response?.data);
 
     const _getApplicationDetailsInitValues = () =>
-        getApplicationDetails(cruiseApplication.id).then(response => response.data);
+        getApplicationDetails(cruiseApplication.id).then(response => response?.data);
 
     const _getFormAInitValuesForSupervisor = () =>
-        getFormAInitValuesForSupervisor(cruiseApplicationId, supervisorCode).then(response => response.data);
+        getFormAInitValuesForSupervisor(cruiseApplicationId, supervisorCode).then(response => response?.data);
 
     const GetFormData = async (formType: FormTypeValues) => {
         switch (formType) {

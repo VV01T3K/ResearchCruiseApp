@@ -5,10 +5,15 @@ using ResearchCruiseApp_API.Application.ExternalServices;
 namespace ResearchCruiseApp_API.Application.UseCases.Users.DeactivateUser;
 
 
-public class DeactivateUserHandler(IIdentityService identityService) : IRequestHandler<DeactivateUserCommand, Result>
+public class DeactivateUserHandler(IIdentityService identityService, ICurrentUserService currentUserService) : IRequestHandler<DeactivateUserCommand, Result>
 {
-    public Task<Result> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
     {
-        return identityService.DeactivateUser(request.Id);
+        if (request.Id == currentUserService.GetId())
+            return Error.Conflict("Nie można dezaktywować bieżącego konta");
+
+        var status = await identityService.DeactivateUser(request.Id);
+        
+        return status ;
     }
 }

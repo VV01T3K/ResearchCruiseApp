@@ -7,6 +7,7 @@ import AssignedCruiseApplicationsList from './AssignedCruiseApplicationsList';
 import LinkWithState from '../../../components/Navigation/LinkWithState';
 import { Path } from '../../../ToBeMoved/Tools/Path';
 import { EMPTY_GUID } from '@consts/emptyGuid';
+import { CruiseStatus } from '@enums/CruiseStatus';
 
 export const TableReadOnlyField = (props: {
     fieldLabel: string;
@@ -104,7 +105,7 @@ export const Actions = () => {
                 label="Szczegóły"
                 state={{ cruise: cruise, readOnly: true }}
             />
-            {(UserHasShipownerAccess() || UserHasAdminAccess()) && (
+            {(UserHasShipownerAccess() || UserHasAdminAccess()) && cruise.status === CruiseStatus.New && (
                 <button
                     className="cruises-button"
                     onClick={() => handleDeleteCruise(cruise.id)}
