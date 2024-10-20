@@ -33,7 +33,7 @@ public class AddFormCHandler(
             cruiseApplication.Status != CruiseApplicationStatus.Archived)
             return Error.Forbidden("Obecnie nie można wysłać zgłoszenie");
 
-        if (cruiseApplication.Status == CruiseApplicationStatus.Archived && cruiseApplication.FormC is not null)
+        if (cruiseApplication is { Status: CruiseApplicationStatus.Archived, FormC: not null })
             return Error.Forbidden("Formularz C został już dodany do tego zgłoszenia.");
 
         var formCResult = await formsCFactory.Create(request.FormCDto, cancellationToken);

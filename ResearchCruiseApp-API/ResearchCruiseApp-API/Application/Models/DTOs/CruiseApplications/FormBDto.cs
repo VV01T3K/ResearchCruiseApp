@@ -46,7 +46,7 @@ public class FormBDto
                 .ForMember(
                     dest => dest.Permissions,
                     options =>
-                        options.Ignore()) // In progress
+                        options.Ignore()) // Member requires complex logic
                 .ForMember(
                     dest => dest.UgTeams,
                     options =>

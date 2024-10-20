@@ -28,6 +28,7 @@ public class FormsCFactory(
         if (!result.IsSuccess)
             return result.Error!;
         
+        await AddPermissions(formC, formCDto, cancellationToken);
         await AddFormCUgUnits(formC, formCDto, cancellationToken);
         await AddFormCGuestUnits(formC, formCDto, cancellationToken);
         await AddResearchTaskEffects(formC, formCDto, cancellationToken);
@@ -47,6 +48,20 @@ public class FormsCFactory(
     }
 
 
+    private async Task AddPermissions(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)
+    {
+        var alreadyAddedPermissions = new HashSet<Permission>();
+
+        foreach (var permissionDto in formCDto.Permissions)
+        {
+            var permission = await formsFieldsService
+                .GetUniquePermission(permissionDto, alreadyAddedPermissions, cancellationToken);
+            alreadyAddedPermissions.Add(permission);
+
+            formC.Permissions.Add(permission);
+        }
+    }
+    
     private async Task<Result> AddResearchArea(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)
     {
         var researchArea = await researchAreasRepository.GetById(formCDto.ResearchAreaId, cancellationToken);

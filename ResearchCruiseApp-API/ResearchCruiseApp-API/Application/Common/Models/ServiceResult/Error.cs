@@ -24,3 +24,11 @@ public sealed record Error(int StatusCode, string? ErrorMessage = null)
     public static Error ServiceUnavailable(string? message = null) =>
         new(StatusCodes.Status503ServiceUnavailable, message);
 }
+
+public class A
+{
+    public A()
+    {
+        var e = new Error(1, "sa");
+    }
+}

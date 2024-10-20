@@ -6,5 +6,5 @@ namespace ResearchCruiseApp_API.Application.Services.Factories.FormBDtos;
 
 public interface IFormBDtosFactory
 {
-    FormBDto Create(FormB formB, CancellationToken cancellationToken);
+    Task<FormBDto> Create(FormB formB, CancellationToken cancellationToken);
 }

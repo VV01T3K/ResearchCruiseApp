@@ -12,12 +12,12 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruise
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationsForCruise;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetEffectsEvaluations;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormC;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnEffectsEvaluations;
-using ResearchCruiseApp_API.Application.UseCases.GetEffectsEvaluations;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 

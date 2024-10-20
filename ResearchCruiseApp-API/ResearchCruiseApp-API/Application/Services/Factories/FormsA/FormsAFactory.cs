@@ -23,6 +23,7 @@ internal class FormsAFactory(
         if (!result.IsSuccess)
             return result.Error!;
         
+        await AddPermissions(formA, formADto, cancellationToken);
         await AddFormAResearchTasks(formA, formADto, cancellationToken);
         await AddFormAContracts(formA, formADto, cancellationToken);
         await AddFormAUgUnits(formA, formADto, cancellationToken);
@@ -34,6 +35,20 @@ internal class FormsAFactory(
     }
 
 
+    private async Task AddPermissions(FormA formA, FormADto formADto, CancellationToken cancellationToken)
+    {
+        var alreadyAddedPermissions = new HashSet<Permission>();
+
+        foreach (var permissionDto in formADto.Permissions)
+        {
+            var permission = await formsFieldsService
+                .GetUniquePermission(permissionDto, alreadyAddedPermissions, cancellationToken);
+            alreadyAddedPermissions.Add(permission);
+            
+            formA.Permissions.Add(permission);
+        }
+    }
+    
     private async Task<Result> AddResearchArea(FormA formA, FormADto formADto, CancellationToken cancellationToken)
     {
         var researchArea = await researchAreasRepository.GetById(formADto.ResearchAreaId, cancellationToken);

@@ -7,6 +7,9 @@ namespace ResearchCruiseApp_API.Domain.Entities;
 
 public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Contract>
 {
+      private string? _scanName;
+      private byte[]? _scanContent;
+      
       [StringLength(1024)]
       public string Category { get; init; } = null!;
       
@@ -22,9 +25,7 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
       [MaxLength(1024)]
       public string Description { get; init; } = null!;
 
-      private string? _scanName;
-      
-      [MaxLength(1024)]  
+      [MaxLength(1024)]
       public string ScanName
       {
             get => _scanName ?? throw new InvalidOperationException("ScanName has not been set.");
@@ -35,8 +36,6 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
                   _scanName = value;
             }
       }
-
-      private byte[]? _scanContent;
 
       public byte[] ScanContent
       {

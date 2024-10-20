@@ -24,7 +24,7 @@ public class GetFormBHandler(
         if (!await userPermissionVerifier.CanCurrentUserViewForm(cruiseApplication))
             return Error.NotFound();
 
-        var formBDto = formBDtosFactory.Create(cruiseApplication.FormB, cancellationToken);
+        var formBDto = await formBDtosFactory.Create(cruiseApplication.FormB, cancellationToken);
         return formBDto;
     }
 }

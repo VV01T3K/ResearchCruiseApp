@@ -3,6 +3,7 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositorie
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Models.Interfaces;
 using ResearchCruiseApp_API.Application.Services.Factories.Contracts;
+using ResearchCruiseApp_API.Application.Services.Factories.Permissions;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.FormsFields;
@@ -10,6 +11,7 @@ namespace ResearchCruiseApp_API.Application.Services.FormsFields;
 
 public class FormsFieldsService(
     IMapper mapper,
+    IPermissionsRepository permissionsRepository,
     IResearchTasksRepository researchTasksRepository,
     IContractsRepository contractsRepository,
     IGuestUnitsRepository guestUnitsRepository,
@@ -19,9 +21,23 @@ public class FormsFieldsService(
     IResearchEquipmentsRepository researchEquipmentsRepository,
     IPortsRepository portsRepository,
     ICruiseDaysDetailsRepository cruiseDaysDetailsRepository,
+    IPermissionsFactory permissionsFactory,
     IContractsFactory contractsFactory)
     : IFormsFieldsService
 {
+    public async Task<Permission> GetUniquePermission(
+        PermissionDto permissionDto,
+        IEnumerable<Permission> permissionsInMemory,
+        CancellationToken cancellationToken)
+    {
+        var newPermission = await permissionsFactory.Create(permissionDto);
+        var oldPermission =
+            Find(newPermission, permissionsInMemory) ??
+            await permissionsRepository.Get(newPermission, cancellationToken);
+
+        return oldPermission ?? newPermission;
+    }
+    
     public async Task<ResearchTask> GetUniqueResearchTask(
         IResearchTaskDto researchTaskDto,
         IEnumerable<ResearchTask> researchTasksInMemory,
