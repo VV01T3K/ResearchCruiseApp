@@ -24,7 +24,7 @@ import {
     TaskDescriptionField,
     TitleField,
 } from './TaskInputFields';
-import { BottomMenuWithHistory, CellFormTools, OrdinalNumber, RemoveRowButton } from '../TableParts';
+import { BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton } from '../TableParts';
 import { DisplayContext } from './EvaluatedTaskTable';
 import { FormContext } from '@contexts/FormContext';
 import { KeyContext } from '@contexts/KeyContext';
@@ -84,8 +84,11 @@ const taskTypeOptions = () => {
 };
 
 export const FieldForKey = () => {
-    const { rowValue } = CellFormTools();
+    const displayContext = useContext(DisplayContext);
+    const { rowValue } = displayContext ? CellTools() : CellFormTools();
     const keyContext = useContext(KeyContext);
+    console.log(rowValue);
+
     switch (keyContext) {
         case 'author':
             return <AuthorField />;

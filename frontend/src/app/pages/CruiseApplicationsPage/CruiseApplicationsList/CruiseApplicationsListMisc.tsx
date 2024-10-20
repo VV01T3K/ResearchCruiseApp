@@ -1,22 +1,22 @@
 import { CruiseApplication } from 'CruiseApplication';
 
-export const sortCruiseApplicationsByPoints = (cruiseApplications: CruiseApplication[]) => [
+export const sortCruiseApplicationsByPoints = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
     ...cruiseApplications?.sort((a, b): number =>
         (parseInt(a.points) - parseInt(b.points)),
     ),
-];
+] : [];
 
-export const sortCruiseApplicationsByDate = (cruiseApplications: CruiseApplication[]) => [
+export const sortCruiseApplicationsByDate = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
     ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
         (Date.parse(a.date) - Date.parse(b.date)),
     ),
-];
+] : [];
 
-export const sortCruiseApplicationsByYear = (cruiseApplications: CruiseApplication[]) => [
+export const sortCruiseApplicationsByYear = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
     ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
         (Number(a.year) - Number(b.year)),
     ),
-];
+] : [];
 
 export const cruiseApplicationsSortOptions = (cruiseApplications: CruiseApplication[]) => [
     {
