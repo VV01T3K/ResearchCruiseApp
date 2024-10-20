@@ -19,7 +19,7 @@ public class GetOwnEffectsEvaluationsHandler(
     {
         var userId = currentUserService.GetId();
         if (userId is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         var userEffects = await userEffectsRepository
             .GetAllByUserIdWithCruiseApplication((Guid)userId, cancellationToken);

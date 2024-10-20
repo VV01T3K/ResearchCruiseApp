@@ -20,10 +20,10 @@ public class GetCruiseApplicationEvaluationHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormsAndFormAContent(request.Id, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!await userPermissionVerifier.CanCurrentUserViewCruiseApplication(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         return await cruiseApplicationEvaluationDetailsDtosFactory.Create(cruiseApplication, cancellationToken);
     }

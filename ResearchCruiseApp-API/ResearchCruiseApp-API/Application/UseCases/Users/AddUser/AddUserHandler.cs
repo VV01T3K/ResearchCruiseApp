@@ -16,21 +16,21 @@ public class AddUserHandler(
     public async Task<Result> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         if (request.AddUserForm.Role is null)
-            return Error.BadRequest("Nie wybrano roli dla nowego użytkownika");
+            return Error.InvalidArgument("Nie wybrano roli dla nowego użytkownika");
 
         var emailAddressAttribute = new EmailAddressAttribute();
         if (string.IsNullOrEmpty(request.AddUserForm.Email) || !emailAddressAttribute.IsValid(request.AddUserForm.Email))
-            return Error.BadRequest("Adres e-mail jest niepoprawny");
+            return Error.InvalidArgument("Adres e-mail jest niepoprawny");
 
         if (!await userPermissionVerifier.CanCurrentUserAssignRole(request.AddUserForm.Role))
-            return Error.Forbidden("Nie można nadać tej roli");
+            return Error.ForbiddenOperation("Nie można nadać tej roli");
         
         if (await identityService.UserWithEmailExists(request.AddUserForm.Email))
             return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
 
         var rolesNames = await identityService.GetAllRoleNames(cancellationToken);
         if (!rolesNames.Contains(request.AddUserForm.Role))
-            return Error.BadRequest("Rola nie istnieje");
+            return Error.InvalidArgument("Rola nie istnieje");
 
         var password = randomGenerator.CreateSecurePassword();
         

@@ -26,7 +26,7 @@ public class ConfirmCruiseHandler(
     {
         var cruise = await cruisesRepository.GetByIdWithCruiseApplicationsWithForm(request.Id, cancellationToken);
         if (cruise is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         var result = UpdateCruiseStatus(cruise);
         if (!result.IsSuccess)
@@ -37,7 +37,7 @@ public class ConfirmCruiseHandler(
         foreach (var cruiseApplication in cruise.CruiseApplications)
         {
             if (cruiseApplication.FormA is null)
-                return Error.InternalServerError("Formularz nie istnieje");
+                return Error.ServerError("Formularz nie istnieje");
             
             cruiseApplication.Status = CruiseApplicationStatus.FormBRequired;
 
@@ -61,7 +61,7 @@ public class ConfirmCruiseHandler(
     private static Result UpdateCruiseStatus(Cruise cruise)
     {
         if (cruise.Status != CruiseStatus.New)
-            return Error.BadRequest("Rejs został już potwierdzony");
+            return Error.InvalidArgument("Rejs został już potwierdzony");
 
         cruise.Status = CruiseStatus.Confirmed;
 

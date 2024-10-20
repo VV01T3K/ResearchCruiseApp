@@ -21,28 +21,28 @@ public class AcceptCruiseApplicationHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormsAndFormAContent(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
-        var result = await UpdateCruiseApplicationStatus(cruiseApplication, request.Accept, cancellationToken);
+        var result = UpdateCruiseApplicationStatus(cruiseApplication, request.Accept);
+        if (!result.IsSuccess)
+            return result; 
         
-        if (result.IsSuccess)
-            await unitOfWork.Complete(cancellationToken);
-        
-        return result;
+        await unitOfWork.Complete(cancellationToken);
+        return Result.Empty;
     }
 
 
-    private async Task <Result> UpdateCruiseApplicationStatus(CruiseApplication cruiseApplication, bool accept, CancellationToken cancellationToken)
+    private Result UpdateCruiseApplicationStatus(CruiseApplication cruiseApplication, bool accept)
     {
         if (cruiseApplication.Status != CruiseApplicationStatus.WaitingForSupervisor &&
             cruiseApplication.Status != CruiseApplicationStatus.AcceptedBySupervisor &&
-            cruiseApplication.Status != CruiseApplicationStatus.Accepted
-            )
-            return Error.Forbidden("Czas na zmianę decyzji minął");
+            cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+        {
+            return Error.ForbiddenOperation("Czas na zmianę decyzji minął");
+        }
 
-        if (cruiseApplication.Status == CruiseApplicationStatus.Accepted && cruiseApplication.Cruise is not null)
-            return Error.Conflict("Najpierw usuń zgłoszenie z rejsu");
-
+        if (cruiseApplication is { Status: CruiseApplicationStatus.Accepted, Cruise: not null })
+            return Error.ForbiddenOperation("Najpierw usuń zgłoszenie z rejsu");
         
         cruiseApplication.Status = accept
             ? CruiseApplicationStatus.Accepted

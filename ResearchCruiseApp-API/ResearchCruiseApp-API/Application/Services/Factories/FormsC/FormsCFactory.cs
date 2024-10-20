@@ -66,7 +66,7 @@ public class FormsCFactory(
     {
         var researchArea = await researchAreasRepository.GetById(formCDto.ResearchAreaId, cancellationToken);
         if (researchArea is null)
-            return Error.BadRequest("Podany obszar badawczy nie istnieje.");
+            return Error.InvalidArgument("Podany obszar badawczy nie istnieje.");
 
         formC.ResearchArea = researchArea;
         return Result.Empty;

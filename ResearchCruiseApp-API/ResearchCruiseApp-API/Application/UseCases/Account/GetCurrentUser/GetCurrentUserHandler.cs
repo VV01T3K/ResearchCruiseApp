@@ -15,11 +15,11 @@ public class GetCurrentUserHandler(
     {
         var currentUserId = currentUserService.GetId();
         if (currentUserId is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         var currentUserDto = await identityService.GetUserDtoById((Guid)currentUserId);
         if (currentUserDto is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         return currentUserDto;
     }

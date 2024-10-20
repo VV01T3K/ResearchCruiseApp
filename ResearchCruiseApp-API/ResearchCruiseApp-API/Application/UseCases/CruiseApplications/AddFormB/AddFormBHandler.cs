@@ -28,13 +28,13 @@ public class AddFormBHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormAAndFormB(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (cruiseApplication.Status != CruiseApplicationStatus.FormBRequired)
-            return Error.Forbidden("Obecnie nie można przesłać formularza B.");
+            return Error.ForbiddenOperation("Obecnie nie można przesłać formularza B.");
 
         var formB = await formsBFactory.Create(request.FormBDto, cancellationToken);
         cruiseApplication.FormB = formB;

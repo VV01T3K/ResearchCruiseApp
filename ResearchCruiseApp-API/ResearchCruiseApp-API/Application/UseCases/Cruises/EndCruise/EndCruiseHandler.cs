@@ -17,7 +17,7 @@ public class EndCruiseHandler(
     {
         var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
         if (cruise is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         var result = UpdateCruiseStatus(cruise);
         
@@ -38,13 +38,13 @@ public class EndCruiseHandler(
     {
         
         if (cruise.Status == CruiseStatus.New)
-            return Error.BadRequest("Rejs nie został potwierdzony");
+            return Error.InvalidArgument("Rejs nie został potwierdzony");
         
         if (cruise.Status == CruiseStatus.Confirmed)
-            return Error.BadRequest("Rejs nie został rozpoczęty");
+            return Error.InvalidArgument("Rejs nie został rozpoczęty");
         
         if (cruise.Status != CruiseStatus.Started)
-            return Error.BadRequest("Rejs został już zakończony");
+            return Error.InvalidArgument("Rejs został już zakończony");
 
         cruise.Status = CruiseStatus.Ended;
 

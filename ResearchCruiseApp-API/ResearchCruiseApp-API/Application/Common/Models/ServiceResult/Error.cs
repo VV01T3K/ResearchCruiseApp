@@ -1,34 +1,28 @@
+using ResearchCruiseApp_API.Domain.Common.Enums;
+
 namespace ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 
 
-public sealed record Error(int StatusCode, string? ErrorMessage = null)
+public sealed record Error(ErrorType Type, string? Message = null)
 {
-    public static Error BadRequest(string? message = null) =>
-        new(StatusCodes.Status400BadRequest, message);
+    public static Error InvalidArgument(string? message = null) =>
+        new(ErrorType.InvalidArgument, message);
 
-    public static Error Unauthorized(string? message = null) =>
-        new(StatusCodes.Status401Unauthorized, message);
+    public static Error UnknownIdentity(string? message = null) =>
+        new(ErrorType.UnknownIdentity, message);
     
-    public static Error Forbidden(string? message = null) =>
-        new(StatusCodes.Status403Forbidden, message);
+    public static Error ForbiddenOperation(string? message = null) =>
+        new(ErrorType.ForbiddenOperation, message);
     
-    public static Error NotFound(string? message = null) =>
-        new(StatusCodes.Status404NotFound, message);
+    public static Error ResourceNotFound(string? message = null) =>
+        new(ErrorType.ResourceNotFound, message);
     
     public static Error Conflict(string? message = null) =>
-        new(StatusCodes.Status409Conflict, message);
+        new(ErrorType.Conflict, message);
     
+    public static Error ServerError(string? message = null) =>
+        new(ErrorType.ServerError, message);
     
-    public static Error InternalServerError(string? message = null) =>
-        new(StatusCodes.Status500InternalServerError, message);
     public static Error ServiceUnavailable(string? message = null) =>
-        new(StatusCodes.Status503ServiceUnavailable, message);
-}
-
-public class A
-{
-    public A()
-    {
-        var e = new Error(1, "sa");
-    }
+        new(ErrorType.ServiceUnavailable, message);
 }
