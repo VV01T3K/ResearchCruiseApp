@@ -4,7 +4,7 @@ import axios, {
     InternalAxiosRequestConfig,
 } from 'axios';
 import { Path as Path } from '../ToBeMoved/Tools/Path';
-import userDataManager from '../ToBeMoved/CommonComponents/UserDataManager';
+import userDataManager, { IsUserLoggedIn } from '../ToBeMoved/CommonComponents/UserDataManager';
 import { useNavigate } from 'react-router-dom';
 import { defaultServerAddress } from '@config/defaultServerAddress';
 import BusyEvent from '../ToBeMoved/CommonComponents/BusyEvent';
@@ -37,29 +37,32 @@ const setAccessToken = (config: InternalAxiosRequestConfig) => {
     return config;
 };
 
-async function refreshToken() {
-    const refreshResponse = await axios.post('/account/refresh', {
-        accessToken: sessionStorage.getItem('accessToken'),
-        refreshToken: sessionStorage.getItem('refreshToken'),
-    }, { _retry: true });
-    const newAccessToken = refreshResponse?.data.accessToken;
-    sessionStorage.setItem('accessToken', newAccessToken);
-}
 
 export const Interceptors = () => {
-    const { ForceLogout } = userDataManager();
+    const { ForceLogout, UserLoggedIn } = userDataManager();
     const navigate = useNavigate();
     const { SetBusyWithMessage, ResetBusyState } = BusyEvent();
+
+
+    async function refreshToken() {
+        const refreshResponse = await axios.post('/account/refresh', {
+            accessToken: sessionStorage.getItem('accessToken'),
+            refreshToken: sessionStorage.getItem('refreshToken'),
+        }, { _retry: true });
+        const newAccessToken = refreshResponse?.data.accessToken;
+        if (!newAccessToken)
+            ForceLogout();
+        else
+            sessionStorage.setItem('accessToken', newAccessToken);
+    }
 
     async function HandleErrNetwork(config: InternalAxiosRequestConfig<any>) {
         if (config && !config._retry) {
             try {
                 if (sessionStorage.getItem('accessToken')) {
                     await refreshToken();
-                    navigate(Path.ForcedLogout);
                     return Promise.resolve(null);
                 }
-                // return axios(config);
             } catch (refreshError) {
                 ForceLogout();
             }

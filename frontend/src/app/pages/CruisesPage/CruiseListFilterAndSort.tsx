@@ -3,20 +3,20 @@ import React, { useContext, useState } from 'react';
 import { Cruise } from 'Cruise';
 import { AnyStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
 
-export const sortCruiseListByNumber = (list: Cruise[]) => [
+export const sortCruiseListByNumber = (list?: Cruise[]) => list ? [
     ...list?.sort((a: Cruise, b: Cruise): number =>
         a.number.localeCompare(b.number),
     ),
-];
+] : [];
 
-export const sortCruiseListByStartDate = (list: Cruise[]) => [
+export const sortCruiseListByStartDate = (list?: Cruise[]) => list ? [
     ...list?.sort(
         (a: Cruise, b: Cruise): number =>
             Date.parse(a.startDate) - Date.parse(b.endDate),
     ),
-];
+] : [];
 
-export const cruiseListSortOptions = (list: Cruise[]) => [
+export const cruiseListSortOptions = (list?: Cruise[]) => [
     { label: 'Numer (rosnąco)', value: () => sortCruiseListByNumber(list) },
     {
         label: 'Numer (malejąco)',

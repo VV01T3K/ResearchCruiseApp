@@ -155,7 +155,7 @@ const requestEmail = (user: UserData) =>
 
 const getUsers = () =>
     Api.get('/Users').then((response) => {
-        return response.data;
+        return response?.data;
     });
 
 export const SetUserListContext = createContext<Dispatch<
@@ -165,7 +165,7 @@ export const SetUserListContext = createContext<Dispatch<
 function ManageUsersPage() {
     const [userList, setUserList] = useState<UserData[]>([]);
     const fetchData = async () => {
-        return getUsers().then((response) => setUserList(response));
+        return getUsers().then((response) => setUserList(response ?? []));
     };
     useEffect(() => {
         (fetchData)();
