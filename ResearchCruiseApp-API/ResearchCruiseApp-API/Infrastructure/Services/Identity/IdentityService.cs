@@ -62,7 +62,7 @@ public class IdentityService(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         user.Accepted = true;
         
@@ -79,7 +79,7 @@ public class IdentityService(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         user.Accepted = false;
         
@@ -92,7 +92,7 @@ public class IdentityService(
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
     {
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
-            return Error.Unauthorized();
+            return Error.UnknownIdentity();
     
         try
         {
@@ -100,7 +100,7 @@ public class IdentityService(
         }
         catch (FormatException)
         {
-            return Error.Unauthorized();
+            return Error.UnknownIdentity();
         }
     
         IdentityResult result;
@@ -117,7 +117,7 @@ public class IdentityService(
 
         return result.Succeeded
             ? Result.Empty
-            : Error.Unauthorized();
+            : Error.UnknownIdentity();
     }
     
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
@@ -128,7 +128,7 @@ public class IdentityService(
             return Error.ServiceUnavailable();
 
         if (string.IsNullOrEmpty(registerForm.Email) || !emailAddressAttribute.IsValid(registerForm.Email))
-            return Error.BadRequest("E-mail jest niepoprawny");
+            return Error.InvalidArgument("E-mail jest niepoprawny");
 
         var user = CreateUser(registerForm);
         var identityResult = await userManager.CreateAsync(user, registerForm.Password);
@@ -170,7 +170,7 @@ public class IdentityService(
     {
         var user = await userManager.FindByEmailAsync(userEmail);
         if (user is null)
-            return Error.Unauthorized();
+            return Error.UnknownIdentity();
 
         return await CreateLoginResponseDto(user);
     }
@@ -183,7 +183,7 @@ public class IdentityService(
 
         var user = await userManager.FindByIdAsync(userIdResult.Data!);
         if (user is null || user.RefreshTokenExpiry < DateTime.Now || user.RefreshToken != refreshDto.RefreshToken)
-            return Error.Unauthorized();
+            return Error.UnknownIdentity();
 
         return await CreateLoginResponseDto(user);
     }
@@ -192,17 +192,17 @@ public class IdentityService(
     {
         var userId = currentUserService.GetId();
         if (userId is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         var user = await userManager.FindByIdAsync(userId.ToString()!);
         if (user is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         var identityResult = await userManager
             .ChangePasswordAsync(user, changePasswordFormDto.Password, changePasswordFormDto.NewPassword);
 
         if (!identityResult.Succeeded)
-            return Error.BadRequest();
+            return Error.InvalidArgument();
 
         await userManager.UpdateAsync(user);
         return Result.Empty;
@@ -231,7 +231,7 @@ public class IdentityService(
     {
         var user = await userManager.FindByEmailAsync(userId.ToString());
         if (user is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         var result = await userManager.AddToRoleAsync(user, roleName);
         return result.ToApplicationResult();
@@ -241,7 +241,7 @@ public class IdentityService(
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         var result = await userManager.RemoveFromRoleAsync(user, roleName);
         return result.ToApplicationResult();
@@ -323,7 +323,7 @@ public class IdentityService(
         if (concurrencyError is not null)
             return Error.Conflict("Wykonano wiele żądań w zbyt krótkim odstępie czasowym.");
         if (!identityResult.Succeeded)
-            return Error.InternalServerError();
+            return Error.ServerError();
 
         var loginResponseDto = new LoginResponseDto
         {
@@ -350,7 +350,7 @@ public class IdentityService(
         var audience = configuration["JWT:ValidAudience"];
         
         if (issuer is null || audience is null)
-            return Error.InternalServerError();
+            return Error.ServerError();
         
         var authenticationClaims = new List<Claim>
         {
@@ -404,17 +404,17 @@ public class IdentityService(
         {
             var principal = new JwtSecurityTokenHandler().ValidateToken(accessToken, validation, out _);
             if (principal is null)
-                return Error.Unauthorized();
+                return Error.UnknownIdentity();
             
             var userName = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userName is null)
-                return Error.Unauthorized();
+                return Error.UnknownIdentity();
 
             return userName;
         }
         catch (SecurityTokenArgumentException)
         {
-            return Error.Unauthorized();
+            return Error.UnknownIdentity();
         }
     }
     
@@ -422,7 +422,7 @@ public class IdentityService(
     {
         var secret = configuration["JWT:Secret"];
         if (secret is null)
-            return Error.InternalServerError();
+            return Error.ServerError();
         
         return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
     }

@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
         
         services
+            .AddScoped<IFileInspector, FileInspector>()
             .AddScoped<ICompressor, Compressor>()
             .AddScoped<IRandomGenerator, RandomGenerator>()
             .AddScoped<IEmailSender, EmailSender>()
@@ -88,6 +89,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services
             .AddScoped<IFormsARepository, FormsARepository>()
+            .AddScoped<IPermissionsRepository, PermissionsRepository>()
             .AddScoped<IResearchAreasRepository, ResearchAreasRepository>()
             .AddScoped<IContractsRepository, ContractsRepository>()
             .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()

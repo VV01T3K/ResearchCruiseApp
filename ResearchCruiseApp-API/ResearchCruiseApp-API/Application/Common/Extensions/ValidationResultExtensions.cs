@@ -16,6 +16,6 @@ public static class ValidationResultExtensions
                 .Select(error => error.ErrorMessage)
                 .ToList());
 
-        return Error.BadRequest(errorMessage);
+        return Error.InvalidArgument(errorMessage);
     }
 }

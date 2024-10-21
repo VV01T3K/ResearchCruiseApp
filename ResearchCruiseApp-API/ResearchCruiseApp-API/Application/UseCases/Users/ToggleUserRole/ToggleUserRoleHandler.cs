@@ -12,7 +12,7 @@ public class ToggleUserRoleHandler(IIdentityService identityService) : IRequestH
         var rolesNames = await identityService.GetAllRoleNames(cancellationToken);
 
         if (!rolesNames.Contains(request.RoleToggleDto.RoleName))
-            return Error.BadRequest("Rola nie istnieje");
+            return Error.InvalidArgument("Rola nie istnieje");
 
         var result = request.RoleToggleDto.AddRole
             ? await identityService.AddRoleToUser(request.UserId, request.RoleToggleDto.RoleName)

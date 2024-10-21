@@ -23,6 +23,8 @@ using ResearchCruiseApp_API.Application.Services.Factories.FormsA;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsB;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsC;
 using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
+using ResearchCruiseApp_API.Application.Services.Factories.PermissionDtos;
+using ResearchCruiseApp_API.Application.Services.Factories.Permissions;
 using ResearchCruiseApp_API.Application.Services.Factories.Photos;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
@@ -57,6 +59,8 @@ public static class DependencyInjection
         services
             .AddScoped<IFormsAFactory, FormsAFactory>()
             .AddScoped<IFormADtosFactory, FormADtosFactory>()
+            .AddScoped<IPermissionsFactory, PermissionsFactory>()
+            .AddScoped<IPermissionDtosFactory, PermissionDtosFactory>()
             .AddScoped<IContractsFactory, ContractsFactory>()
             .AddScoped<IContractDtosFactory, ContractDtosFactory>()
             .AddScoped<IFormAContractDtosFactory, FormAContractDtosFactory>()

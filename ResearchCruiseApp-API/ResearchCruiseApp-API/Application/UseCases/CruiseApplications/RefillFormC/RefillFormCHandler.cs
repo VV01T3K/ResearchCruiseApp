@@ -18,10 +18,10 @@ public class RefillFormCHandler(
     {
         var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithForms(request.Id, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (cruiseApplication.Status != CruiseApplicationStatus.Reported)
-            return Error.BadRequest("Obecnie nie można umożliwić edycji formularza C");
+            return Error.InvalidArgument("Obecnie nie można umożliwić edycji formularza C");
 
         cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
         

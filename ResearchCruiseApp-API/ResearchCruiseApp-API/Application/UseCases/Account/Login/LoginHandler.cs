@@ -11,7 +11,7 @@ public class LoginHandler(IIdentityService identityService) : IRequestHandler<Lo
     public async Task<Result<LoginResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         if (!await identityService.CanUserLogin(request.LoginFormDto.Email, request.LoginFormDto.Password))
-            return Error.Unauthorized();
+            return Error.UnknownIdentity();
 
         return await identityService.LoginUser(request.LoginFormDto.Email);
     }

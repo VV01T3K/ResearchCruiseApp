@@ -10,10 +10,10 @@ public class DeactivateUserHandler(IIdentityService identityService, ICurrentUse
     public async Task<Result> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
     {
         if (request.Id == currentUserService.GetId())
-            return Error.Conflict("Nie można dezaktywować bieżącego konta");
+            return Error.ForbiddenOperation("Nie można dezaktywować bieżącego.");
 
         var status = await identityService.DeactivateUser(request.Id);
         
-        return status ;
+        return status;
     }
 }

@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
+using ResearchCruiseApp_API.Application.Common.Extensions;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
@@ -10,6 +12,7 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddFormB
 
 
 public class AddFormBHandler(
+    IValidator<AddFormBCommand> validator,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     IUserPermissionVerifier userPermissionVerifier,
     IFormsBFactory formsBFactory,
@@ -18,16 +21,20 @@ public class AddFormBHandler(
 {
     public async Task<Result> Handle(AddFormBCommand request, CancellationToken cancellationToken)
     {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+            return validationResult.ToApplicationResult();
+
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormAAndFormB(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (cruiseApplication.Status != CruiseApplicationStatus.FormBRequired)
-            return Error.Forbidden("Obecnie nie można przesłać formularza B.");
+            return Error.ForbiddenOperation("Obecnie nie można przesłać formularza B.");
 
         var formB = await formsBFactory.Create(request.FormBDto, cancellationToken);
         cruiseApplication.FormB = formB;

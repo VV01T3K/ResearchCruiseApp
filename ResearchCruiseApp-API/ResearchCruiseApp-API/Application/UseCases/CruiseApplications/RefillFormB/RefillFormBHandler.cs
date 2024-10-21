@@ -18,11 +18,11 @@ public class RefillFormBHandler(
     {
         var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithForms(request.Id, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (cruiseApplication.Status != CruiseApplicationStatus.Undertaken
             && cruiseApplication.Status != CruiseApplicationStatus.FormBFilled)
-            return Error.BadRequest("Obecnie nie można umożliwić edycji formularza B");
+            return Error.ForbiddenOperation("Obecnie nie można umożliwić edycji formularza B");
 
         cruiseApplication.Status = CruiseApplicationStatus.FormBRequired;
         

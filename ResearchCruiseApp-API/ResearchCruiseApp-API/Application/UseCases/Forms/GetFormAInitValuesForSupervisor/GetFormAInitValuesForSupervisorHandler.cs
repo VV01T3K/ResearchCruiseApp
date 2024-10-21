@@ -20,10 +20,10 @@ public class GetFormAInitValuesForSupervisorHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormA(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication?.FormA is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!cruiseApplicationsService.CheckSupervisorCode(cruiseApplication.SupervisorCode, request.SupervisorCode))
-            return Error.NotFound(); // Returning 401 or similar would give too much information
+            return Error.ResourceNotFound(); // Returning 401 or similar would give too much information
 
         var formAInitValuesDto = await formAInitValuesDtosFactory
             .CreateForSupervisor(cruiseApplication, cancellationToken);

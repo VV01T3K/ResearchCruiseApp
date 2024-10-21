@@ -19,10 +19,10 @@ public class GetFormAHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormAContent(request.ApplicationId, cancellationToken);
         if (cruiseApplication?.FormA is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!await userPermissionVerifier.CanCurrentUserViewForm(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         return await formADtosFactory.Create(cruiseApplication.FormA);
     }

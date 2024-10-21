@@ -19,10 +19,10 @@ public class GetFormCHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormAAndFormCContent(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication?.FormC is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         if (!await userPermissionVerifier.CanCurrentUserViewForm(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         var formCDto = await formCDtosFactory.Create(cruiseApplication.FormC);
         return formCDto;

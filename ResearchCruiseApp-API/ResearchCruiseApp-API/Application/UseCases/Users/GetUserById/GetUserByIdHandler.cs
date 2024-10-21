@@ -16,9 +16,9 @@ public class GetUserByIdHandler(
         var userDto = await identityService.GetUserDtoById(request.Id);
         
         if (userDto is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         if (await userPermissionVerifier.CanCurrentUserAccess(userDto.Id))
-            return Error.NotFound(); // Returning Forbidden would provide with too much information
+            return Error.ResourceNotFound(); // Returning Forbidden would provide with too much information
 
         return userDto;
     }

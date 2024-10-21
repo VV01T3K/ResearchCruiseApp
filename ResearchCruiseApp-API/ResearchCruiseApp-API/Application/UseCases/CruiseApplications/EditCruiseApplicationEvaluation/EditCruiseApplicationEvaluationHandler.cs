@@ -5,6 +5,7 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Domain.Common.Enums;
+using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
 
@@ -23,15 +24,20 @@ public class EditCruiseApplicationEvaluationHandler(
     {
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormA(request.Id, cancellationToken);
-        if (cruiseApplication is not null && cruiseApplication.Status != CruiseApplicationStatus.Accepted)
-            return Error.BadRequest("Czas na edycję punktów minął");
-        var cruiseApplicationEvaluationEditsDto = request.CruiseApplicationEvaluationsEditsDto;
+
+        if (cruiseApplication?.FormA is null)
+            return Error.ResourceNotFound();
         
-        await EditResearchTasksEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
-        await EditContractsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
-        await EditUgUnitsEvaluations(request, cancellationToken);
-        await EditPublicationsEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
-        await EditSpubTasksEvaluations(cruiseApplicationEvaluationEditsDto, cancellationToken);
+        if (cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+            return Error.InvalidArgument("Czas na edycję punktów minął.");
+        
+        var editsDto = request.CruiseApplicationEvaluationsEditsDto;
+        
+        await EditResearchTasksEvaluations(editsDto, cancellationToken);
+        await EditContractsEvaluations(editsDto, cancellationToken);
+        EditUgUnitsEvaluations(cruiseApplication, editsDto);
+        await EditPublicationsEvaluations(editsDto, cancellationToken);
+        await EditSpubTasksEvaluations(editsDto, cancellationToken);
 
         await unitOfWork.Complete(cancellationToken);
         
@@ -67,13 +73,10 @@ public class EditCruiseApplicationEvaluationHandler(
         }
     }
     
-    private async Task EditUgUnitsEvaluations(
-        EditCruiseApplicationEvaluationCommand request, CancellationToken cancellationToken)
+    private static void EditUgUnitsEvaluations(
+        CruiseApplication cruiseApplication, CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationEditsDto)
     {
-        var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormA(request.Id, cancellationToken);
-        if (cruiseApplication?.FormA is not null)
-            cruiseApplication.FormA.UgUnitsPoints = request.CruiseApplicationEvaluationsEditsDto.NewUgUnitsPoints;
+        cruiseApplication.FormA!.UgUnitsPoints = cruiseApplicationEvaluationEditsDto.NewUgUnitsPoints;
     }
     
     private async Task EditPublicationsEvaluations(
