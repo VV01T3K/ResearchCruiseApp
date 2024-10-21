@@ -78,6 +78,10 @@ public class FormADto
                         options.MapFrom(src =>
                             new HashSet<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }))
                 .ForMember(
+                    dest => dest.Permissions,
+                    options =>
+                        options.Ignore()) // Member requires complex logic
+                .ForMember(
                     dest => dest.ResearchAreaId,
                     options =>
                         options.MapFrom(src => src.ResearchArea.Id))

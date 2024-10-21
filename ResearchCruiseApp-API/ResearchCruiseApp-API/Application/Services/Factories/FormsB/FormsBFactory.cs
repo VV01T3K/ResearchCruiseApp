@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
@@ -19,7 +20,8 @@ public class FormsBFactory(
     public async Task<FormB> Create(FormBDto formBDto, CancellationToken cancellationToken)
     {
         var formB = mapper.Map<FormB>(formBDto);
-        
+
+        await AddPermissions(formB, formBDto, cancellationToken);
         await AddFormBUgUnits(formB, formBDto, cancellationToken);
         await AddFormBGuestUnits(formB, formBDto, cancellationToken);
         await AddCrewMembers(formB, formBDto, cancellationToken);
@@ -36,6 +38,20 @@ public class FormsBFactory(
     }
 
 
+    private async Task AddPermissions(FormB formB, FormBDto formBDto, CancellationToken cancellationToken)
+    {
+        var alreadyAddedPermissions = new HashSet<Permission>();
+
+        foreach (var permissionDto in formBDto.Permissions)
+        {
+            var permission = await formsFieldsService
+                .GetUniquePermission(permissionDto, alreadyAddedPermissions, cancellationToken);
+            alreadyAddedPermissions.Add(permission);
+
+            formB.Permissions.Add(permission);
+        }
+    }
+    
     private async Task AddFormBUgUnits(FormB formB, FormBDto formBDto, CancellationToken cancellationToken)
     {
         foreach (var ugTeamDto in formBDto.UgTeams)

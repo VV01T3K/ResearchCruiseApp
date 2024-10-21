@@ -17,11 +17,11 @@ public class GetCruiseHandler(ICruiseDtosFactory cruiseDtosFactory, ICruisesRepo
     {
         var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
         if (cruise is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         if(await userPermissionVerifier.CanCurrentUserViewCruise(cruise)) 
             return await cruiseDtosFactory.Create(cruise);
    
-        return Error.NotFound();
+        return Error.ResourceNotFound();
     }
 }

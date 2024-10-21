@@ -22,7 +22,7 @@ public class AddCruiseHandler(
         var newCruise = await cruisesFactory.Create(request.CruiseFormDto, cancellationToken);
 
         if (newCruise.CruiseApplications.Any(application => application.Status != CruiseApplicationStatus.Accepted))
-            return Error.BadRequest("Można dodac do rejsu jedynie zgłoszenia w stanie: zaakceptowane");
+            return Error.InvalidArgument("Można dodac do rejsu jedynie zgłoszenia w stanie: zaakceptowane");
         
         // Cruises that already contain any of newCruise applications. The application will be deleted from them
         // since an application cannot be assigned to more than one cruise

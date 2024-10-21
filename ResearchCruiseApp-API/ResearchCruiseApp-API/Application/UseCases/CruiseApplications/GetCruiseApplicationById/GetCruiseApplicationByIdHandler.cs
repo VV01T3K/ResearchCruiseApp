@@ -23,10 +23,10 @@ public class GetCruiseApplicationByIdHandler(
             await cruiseApplicationsRepository.GetByIdWithFormsAndFormAContent(request.Id, cancellationToken);
 
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!await userPermissionVerifier.CanCurrentUserViewCruiseApplication(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         var cruiseApplicationDto = await cruiseApplicationDtosFactory.Create(cruiseApplication);
         

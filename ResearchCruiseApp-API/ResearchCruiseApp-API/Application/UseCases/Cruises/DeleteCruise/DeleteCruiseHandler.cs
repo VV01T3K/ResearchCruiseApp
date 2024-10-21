@@ -16,10 +16,10 @@ public class DeleteCruiseHandler(
     {
         var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
         if (cruise is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (cruise.Status != CruiseStatus.New && cruise.Status != CruiseStatus.Confirmed)
-            return Error.BadRequest("Nie można już usunąć rejsu");
+            return Error.InvalidArgument("Nie można już usunąć rejsu");
         
         if (cruise.Status == CruiseStatus.Confirmed)
         {

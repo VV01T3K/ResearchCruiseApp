@@ -19,12 +19,12 @@ public class GetFormBHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormAAndFormBContent(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication?.FormB is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
         if (!await userPermissionVerifier.CanCurrentUserViewForm(cruiseApplication))
-            return Error.NotFound();
+            return Error.ResourceNotFound();
 
-        var formBDto = formBDtosFactory.Create(cruiseApplication.FormB, cancellationToken);
+        var formBDto = await formBDtosFactory.Create(cruiseApplication.FormB, cancellationToken);
         return formBDto;
     }
 }

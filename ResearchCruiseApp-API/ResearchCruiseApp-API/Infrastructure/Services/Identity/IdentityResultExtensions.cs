@@ -16,6 +16,6 @@ public static class IdentityResultExtensions
                 .Select(e => e.Description)
                 .ToList());
 
-        return Error.BadRequest(errorMessage);
+        return Error.InvalidArgument(errorMessage);
     }
 }

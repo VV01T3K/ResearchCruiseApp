@@ -20,10 +20,10 @@ public class AnswerAsSupervisorHandler(
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormsAndFormAContent(request.CruiseApplicationId, cancellationToken);
         if (cruiseApplication is null)
-            return Error.NotFound();
+            return Error.ResourceNotFound();
         
         if (!cruiseApplicationsService.CheckSupervisorCode(cruiseApplication.SupervisorCode, request.SupervisorCode))
-            return Error.NotFound(); // Returning 401 or similar would give too much information
+            return Error.ResourceNotFound(); // Returning 401 or similar would give too much information
 
         var result = UpdateCruiseApplicationStatus(cruiseApplication, request.Accept);
         
@@ -37,10 +37,10 @@ public class AnswerAsSupervisorHandler(
     private static Result UpdateCruiseApplicationStatus(CruiseApplication cruiseApplication, bool accept)
     {
         if (cruiseApplication.Status == CruiseApplicationStatus.Denied)
-            return Error.BadRequest("Biuro armatora już wcześniej odrzuciło zgłoszenie");
+            return Error.InvalidArgument("Biuro armatora już wcześniej odrzuciło zgłoszenie");
         
         if (cruiseApplication.Status != CruiseApplicationStatus.WaitingForSupervisor)
-            return Error.BadRequest("Odpowiedź od przełożonego została już udzielona.");
+            return Error.InvalidArgument("Odpowiedź od przełożonego została już udzielona.");
         
         cruiseApplication.Status = accept
             ? CruiseApplicationStatus.AcceptedBySupervisor

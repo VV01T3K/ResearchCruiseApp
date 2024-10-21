@@ -7,6 +7,11 @@ namespace ResearchCruiseApp_API.Application.Services.FormsFields;
 
 public interface IFormsFieldsService
 {
+    Task<Permission> GetUniquePermission(
+        PermissionDto permissionDto,
+        IEnumerable<Permission> permissionsInMemory,
+        CancellationToken cancellationToken);
+    
     Task<ResearchTask> GetUniqueResearchTask(
         IResearchTaskDto researchTaskDto,
         IEnumerable<ResearchTask> researchTasksInMemory,

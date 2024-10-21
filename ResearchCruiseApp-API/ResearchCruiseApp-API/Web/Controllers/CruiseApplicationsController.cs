@@ -12,6 +12,7 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruise
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationsForCruise;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetEffectsEvaluations;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormB;
@@ -149,7 +150,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("{cruiseApplicationId:guid}/formB")]
     public async Task<IActionResult> GetFormB(Guid cruiseApplicationId)
     {
@@ -169,7 +170,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager},  {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> GetFormC(Guid cruiseApplicationId)
     {
@@ -178,7 +179,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             ? Ok(result.Data)
             : this.CreateError(result);
     }
-    
+
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPut("{id:guid}/FormC/Refill")]
     public async Task<IActionResult> RefillFormC([FromRoute] Guid id)
@@ -188,7 +189,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             ? NoContent()
             : this.CreateError(result);
     }
-    
+
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPut("{id:guid}/FormB/Refill")]
     public async Task<IActionResult> RefillFormB([FromRoute] Guid id)
@@ -200,7 +201,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner},  {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}")]
     [HttpGet("{userId:guid}/effectsEvaluations")]
     public async Task<IActionResult> GetEffectsEvaluations(Guid userId)
     {
@@ -210,7 +211,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
     
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("effectsEvaluations")]
     public async Task<IActionResult> GetOwnEffectsEvaluations()
     {
