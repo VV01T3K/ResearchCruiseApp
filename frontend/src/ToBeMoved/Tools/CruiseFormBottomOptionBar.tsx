@@ -67,7 +67,7 @@ export const RefreshCruiseFormPage = () => {
             (response) =>
                 response &&
                 navigate(Path.CruiseForm, {
-                    state: { cruise: response?.data, readOnly: true },
+                    state: { cruise: response?.data, readOnly: true }, replace: true,
                 }),
         );
 };
@@ -192,24 +192,11 @@ const ConfirmedCruiseButtons = () => {
     const cruise = cruiseFromLocation();
     const refreshCruiseFormPage = RefreshCruiseFormPage();
     const action = () =>
-        Api.put(`/api/Cruises/${cruise.id}/start`).then(refreshCruiseFormPage);
-
-    return (
-        <div onClick={action} className="form-page-option-button w-100">
-            Rozpocznij rejs
-        </div>
-    );
-};
-
-const StartedCruiseButtons = () => {
-    const cruise = cruiseFromLocation();
-    const refreshCruiseFormPage = RefreshCruiseFormPage();
-    const action = () =>
         Api.put(`/api/Cruises/${cruise.id}/end`).then(refreshCruiseFormPage);
 
     return (
         <div onClick={action} className="form-page-option-button w-100">
-            Zakończ rejs
+            Oznacz rejs jako zakończony
         </div>
     );
 };
@@ -230,7 +217,6 @@ const PermittedUserMenu = () => {
             {!cruise && <NoCruiseButtons />}
             {cruise?.status == CruiseStatus.New && <NewCruiseButtons />}
             {cruise?.status == CruiseStatus.Confirmed && <ConfirmedCruiseButtons />}
-            {cruise?.status == CruiseStatus.Started && <StartedCruiseButtons />}
             {cruise?.status == CruiseStatus.Ended && <EndedCruiseButtons />}
         </div>
     );

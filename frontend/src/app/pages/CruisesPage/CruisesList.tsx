@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { CruiseStateContext } from './CruisesPage';
 import { SelectWrapper } from '../FormPage/Wrappers/ReactSelectWrapper';
 import {
@@ -8,9 +8,9 @@ import {
     Number,
     Actions,
     Cruises,
-    EndDate,
+    Status,
     MainCruiseManagerId,
-    StartDate,
+    StartAndEndDate,
 } from './CruiseListFields';
 import {
     CruisesListFilterAndSort,
@@ -18,6 +18,12 @@ import {
 } from './CruiseListFilterAndSort';
 import { Cruise } from 'Cruise';
 import { CellContext } from '@contexts/CellContext';
+import { SelectStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
+import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
+import { CruiseStatus } from '@enums/CruiseStatus';
+import {
+    selectStringFilterDefaultOption,
+} from '@app/pages/CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsList';
 
 export const CruisesTools = () => {
     const cellContext = useContext(CellContext);
@@ -31,8 +37,8 @@ export const CruisesContext = createContext<undefined | Cruise[]>(undefined);
 
 const CruisesListTableContent = () => [
     Number,
-    StartDate,
-    EndDate,
+    StartAndEndDate,
+    Status,
     MainCruiseManagerId,
     Cruises,
     Actions,
@@ -43,16 +49,28 @@ export default function CruisesList() {
     const { cruisesToDisplay, sortOptions, anyStringFilterOptions } =
         CruisesListFilterAndSort();
 
+    const [statusFilter, setStatusFilter] = useState('');
+
+    const selectStringFilterOptions: SelectStringFilterOption[] = [
+        {
+            label: 'Status',
+            selectValues: Object.values(CruiseStatus),
+            setFilter: setStatusFilter,
+        },
+    ];
+
     // const _UpperMenu = UpperMenu()
     const mdColWidths = [12, 16, 16, 23, 17, 16];
     const mdColTitles = [
         'Numer',
-        'Czas rozpoczęcia',
-        'Czas zakończenia',
+        'Czas trwania',
+        'Status',
         'Kierownik główny',
         'Zgłoszenia',
         'Akcje',
     ];
+
+    const _cruisesToDisplay = cruisesToDisplay.filter(row => (statusFilter == '' || row.status.toString() == statusFilter));
     const colTitle = 'Rejsy';
     const emptyText = 'Brak rejsów';
     const { Render } = FieldTableWrapper(
@@ -62,14 +80,14 @@ export default function CruisesList() {
         CruisesListTableContent,
         null,
         emptyText,
-        cruisesToDisplay,
+        _cruisesToDisplay,
     );
 
     return (
         <div className={'table-with-filters w-100'}>
-            <div className={'d-flex flex-row w-100'}>
+            <div className={'d-flex flex-row flex-wrap w-100'}>
                 <SelectWrapper
-                    className="d-flex col-3 p-1"
+                    className="d-flex col-12 col-md-3 p-1"
                     options={sortOptions}
                     placeHolder={'Sortuj'}
                     onChange={(selectedOption) =>
@@ -78,10 +96,33 @@ export default function CruisesList() {
                 />
                 <FilterMapper
                     filterOptions={anyStringFilterOptions}
-                    optionClassName="d-flex col-3 p-1"
+                    optionClassName="d-flex col-12 col-md-3 p-1"
                 />
+                <div>
+
+                </div>
+                <div className={'col-md-6 col-12'}>
+                    {selectStringFilterOptions.map((selectStringFilter, index) => (
+                        <SelectWrapper
+                            key={index}
+                            className={'col-md-6 col-12 me-0 ms-auto  justify d-flex p-1'}
+                            placeHolder={'Sortuj'}
+                            options={[selectStringFilterDefaultOption].concat(
+                                selectStringFilter.selectValues.map((selectValue) => ({
+                                    label: selectValue,
+                                    value: selectValue,
+                                })),
+                            )}
+                            defaultValue={selectStringFilterDefaultOption}
+                            onChange={(selectedOption) =>
+                                selectStringFilter.setFilter(selectedOption?.value)
+                            }
+                        />
+                    ))}
+                </div>
+
             </div>
-            <CruisesContext.Provider value={cruisesToDisplay}>
+            <CruisesContext.Provider value={_cruisesToDisplay}>
                 <Render className={'overflow-y-scroll-override'} />
             </CruisesContext.Provider>
         </div>

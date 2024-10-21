@@ -20,7 +20,7 @@ export const RefreshApplicationDetailsPage = () => {
             `/api/CruiseApplications/${location?.state.cruiseApplication.id}`,
         ).then((response) =>
             navigate(Path.CruiseApplicationDetails, {
-                state: { cruiseApplication: response.data, readOnly: true },
+                state: { cruiseApplication: response.data, readOnly: true }, replace: true,
             }),
         );
 };
@@ -231,12 +231,6 @@ export const BottomOptionBar = () => {
         </div>
     );
 
-    const CruiseBegan = () => (
-        <div className="form-page-option-element w-100">
-            {CruiseApplicationStatus.CruiseBegan}
-        </div>
-    );
-
     const UnderTaken = () => (
         <div className="form-page-option-element w-100">
             {CruiseApplicationStatus.Undertaken}
@@ -268,8 +262,6 @@ export const BottomOptionBar = () => {
                         CruiseApplicationStatus.FormBRequired && <FormBRequired />}
                     {applicationContext!.status ===
                         CruiseApplicationStatus.FormBFilled && <FormBFilled />}
-                    {applicationContext!.status ===
-                        CruiseApplicationStatus.CruiseBegan && <CruiseBegan />}
                     {applicationContext!.status === CruiseApplicationStatus.Undertaken && (
                         <UnderTaken />
                     )}

@@ -3,10 +3,17 @@ import React, { useContext, useState } from 'react';
 import { Cruise } from 'Cruise';
 import { AnyStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
 
+
 export const sortCruiseListByNumber = (list?: Cruise[]) => list ? [
-    ...list?.sort((a: Cruise, b: Cruise): number =>
-        a.number.localeCompare(b.number),
-    ),
+    ...list.sort((a: Cruise, b: Cruise): number => {
+        const [aYear, aNumber] = a.number.split('/').map(Number);
+        const [bYear, bNumber] = b.number.split('/').map(Number);
+
+        if (aYear !== bYear) {
+            return aYear - bYear;
+        }
+        return aNumber - bNumber;
+    }),
 ] : [];
 
 export const sortCruiseListByStartDate = (list?: Cruise[]) => list ? [
@@ -40,7 +47,7 @@ export const FilterMapper = (props: {
         {props.filterOptions.map((anyStringFilter, index) => (
             <div key={index} className={props.optionClassName}>
                 <input
-                    className="field-common"
+                    className="field-common w-100"
                     placeholder={anyStringFilter.label}
                     onChange={(e) => {
                         anyStringFilter.filter(e.target.value);
@@ -66,9 +73,7 @@ export const CruisesListFilterAndSort = () => {
         );
     };
 
-    const cruisesToDisplay = sortCruiseListByStartDate(
-        cruiseStateContext!.cruises,
-    )?.filter(applyFilters);
+    const cruisesToDisplay = cruiseStateContext!.cruises.filter(applyFilters);
 
     const sortOptions = cruiseListSortOptions(cruiseStateContext!.cruises);
 

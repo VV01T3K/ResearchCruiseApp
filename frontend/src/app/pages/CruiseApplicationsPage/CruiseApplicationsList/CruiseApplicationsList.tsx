@@ -5,7 +5,11 @@ import {
     SelectStringFilterOption,
 } from '../../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
 import { FieldTableWrapper } from '../../FormPage/Wrappers/FieldTableWrapper';
-import { cruiseApplicationsSortOptions, sortCruiseApplicationsByDate } from './CruiseApplicationsListMisc';
+import {
+    cruiseApplicationsSortOptions,
+    sortCruiseApplicationsByDate,
+    sortCruiseApplicationsByNumber,
+} from './CruiseApplicationsListMisc';
 import { SelectSingleValue, SelectWrapper } from '../../FormPage/Wrappers/ReactSelectWrapper';
 import { CruiseApplicationsTableContent } from '../CruiseApplicationsTableContent';
 import { FieldContext } from '@contexts/FieldContext';
@@ -17,7 +21,7 @@ import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
 import { CruiseStatus } from '@enums/CruiseStatus';
 import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
 
-const selectStringFilterDefaultOption: SelectSingleValue = {
+export const selectStringFilterDefaultOption: SelectSingleValue = {
     label: '--- Filtr wyłączony ---',
     value: '',
 };
@@ -40,23 +44,17 @@ const RowShouldBeShown = (mode?: CruiseApplicationListMode) => {
 
 export default function CruiseApplicationsList(props: Props) {
     const cruiseApplicationsContext = useContext(ApplicationsContext);
-    console.log(cruiseApplicationsContext);
-    const cruise = cruiseFromLocation();
 
-    const cruiseIsNew = !cruise || cruise?.status === CruiseStatus.New;
-    console.log(cruise);
     const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState(
         cruiseApplicationsContext ?? [],
     );
     useEffect(() => {
-        if (cruiseIsNew && fetchedCruiseApplications.length <= 0) {
-            if (cruiseApplicationsContext.length > 0) {
-                setFetchedCruiseApplications(cruiseApplicationsContext);
-            } else {
-                Api.get('/api/CruiseApplications').then((response) =>
-                    setFetchedCruiseApplications(response?.data),
-                );
-            }
+        if (cruiseApplicationsContext != undefined) {
+            setFetchedCruiseApplications(sortCruiseApplicationsByNumber(cruiseApplicationsContext).reverse());
+        } else {
+            Api.get('/api/CruiseApplications').then((response) =>
+                setFetchedCruiseApplications(sortCruiseApplicationsByNumber(response?.data).reverse()),
+            );
         }
     }, []);
 
@@ -96,10 +94,7 @@ export default function CruiseApplicationsList(props: Props) {
     };
 
     const rowShouldBeShown = RowShouldBeShown(props.mode);
-    const applicationsToDisplay = sortCruiseApplicationsByDate(
-        fetchedCruiseApplications,
-    )
-        .reverse()
+    const applicationsToDisplay = fetchedCruiseApplications
         .filter(rowShouldBeShown)
         .filter(applyFilters);
 

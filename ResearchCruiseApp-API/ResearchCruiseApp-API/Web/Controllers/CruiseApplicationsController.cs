@@ -17,6 +17,8 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForS
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormC;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnEffectsEvaluations;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormB;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormC;
 using ResearchCruiseApp_API.Application.UseCases.GetEffectsEvaluations;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
@@ -176,6 +178,27 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             ? Ok(result.Data)
             : this.CreateError(result);
     }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}/FormC/Refill")]
+    public async Task<IActionResult> RefillFormC([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new RefillFormCCommand(id));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}/FormB/Refill")]
+    public async Task<IActionResult> RefillFormB([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new RefillFormBCommand(id));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner},  {RoleName.Guest}")]
     [HttpGet("{userId:guid}/effectsEvaluations")]

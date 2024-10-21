@@ -50,17 +50,25 @@ export const Number = () => (
     <TableReadOnlyField fieldLabel={'Numer:'} fieldKey={'number'} />
 );
 
-export const StartDate = () => (
-    <TableReadOnlyFieldDate
-        fieldLabel={'Czas rozpoczęcia:'}
-        fieldKey={'startDate'}
-    />
+export const StartAndEndDate = () => (
+    <div className={'d-flex flex-column w-100'}>
+        <TableReadOnlyFieldDate
+            fieldLabel={'Czas rozpoczęcia:'}
+            fieldKey={'startDate'}
+        />
+        <TableReadOnlyFieldDate
+            fieldLabel={'Czas zakończenia:'}
+            fieldKey={'endDate'}
+        />
+    </div>
+
+
 );
 
-export const EndDate = () => (
-    <TableReadOnlyFieldDate
-        fieldLabel={'Czas zakończenia:'}
-        fieldKey={'endDate'}
+export const Status = () => (
+    <TableReadOnlyField
+        fieldLabel={'Status:'}
+        fieldKey={'status'}
     />
 );
 

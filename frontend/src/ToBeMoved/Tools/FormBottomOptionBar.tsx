@@ -1,4 +1,4 @@
-import { DownloadButtonDefault, ResendButton, SaveMenu } from './SaveMenu';
+import { DownloadButtonDefault, RefillBButton, RefillCButton, ResendButton, SaveMenu } from './SaveMenu';
 import React, { useContext, useState } from 'react';
 import { handlePrint } from './FormButtonsHandlers';
 import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
@@ -15,6 +15,8 @@ import { cruiseApplicationIdFromLocation } from '@hooks/cruiseApplicationIdFromL
 import { supervisorCodeFromLocation } from '@hooks/supervisorCodeFromLocation';
 import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
 import CruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
+import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
+import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
 
 const SupervisorMenu = () => {
     const cruiseApplicationId = cruiseApplicationIdFromLocation();
@@ -165,6 +167,8 @@ export const BottomOptionBar = () => {
 
     const ReadonlyFormButtons = () => {
         const formContext = useContext(FormContext);
+        const cruiseApplication = cruiseApplicationFromLocation();
+        console.log(cruiseApplication);
         const {
             UserHasGuestAccess,
             UserHasShipownerAccess,
@@ -174,6 +178,14 @@ export const BottomOptionBar = () => {
             <>
                 <PrintButton />
                 {formContext?.type === FormType.A && !UserHasGuestAccess() && <ResendButton />}
+                {formContext?.type === FormType.B
+                    && (UserHasAdminAccess() || UserHasShipownerAccess())
+                    && (cruiseApplication?.status === CruiseApplicationStatus.FormBFilled || cruiseApplication?.status === CruiseApplicationStatus.Undertaken)
+                    && <RefillBButton />}
+                {formContext?.type === FormType.C
+                    && (UserHasAdminAccess() || UserHasShipownerAccess())
+                    && (cruiseApplication?.status === CruiseApplicationStatus.Reported)
+                    && <RefillCButton />}
                 {(UserHasShipownerAccess() || UserHasAdminAccess()) && (
                     <DownloadButtonDefault />
                 )}

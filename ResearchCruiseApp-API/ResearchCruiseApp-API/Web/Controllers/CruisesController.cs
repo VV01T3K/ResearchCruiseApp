@@ -12,7 +12,6 @@ using ResearchCruiseApp_API.Application.UseCases.Cruises.EditCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.EndCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.GetAllCruises;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.GetCruise;
-using ResearchCruiseApp_API.Application.UseCases.Cruises.StartCruise;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
@@ -83,15 +82,6 @@ public class CruisesController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
     
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
-    [HttpPut("{id:guid}/start")]
-    public async Task<IActionResult> StartCruise([FromRoute] Guid id)
-    {
-        var result = await mediator.Send(new StartCruiseCommand(id));
-        return result.IsSuccess
-            ? NoContent()
-            : this.CreateError(result);
-    }
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPut("{id:guid}/end")]

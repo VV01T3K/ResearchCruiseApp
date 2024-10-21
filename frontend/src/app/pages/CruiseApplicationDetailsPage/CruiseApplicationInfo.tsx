@@ -29,6 +29,7 @@ const FormLink = (props: { formType: string }) => {
             state={{
                 formType: props.formType,
                 cruiseApplicationId: cruiseApplicationContext!.id,
+                cruiseApplication: cruiseApplicationContext,
                 readOnly: true,
             }}
             label={'Formularz ' + props.formType}

@@ -86,7 +86,7 @@ export default function CruiseFormPage() {
             cruiseIsNew
                 ? '/api/CruiseApplications/forCruise'
                 : '/api/CruiseApplications',
-        ).then((response) => setFetchedCruiseApplications(response?.data));
+        ).then((response) => setFetchedCruiseApplications(response?.data ?? []));
         // }
     }, []);
 

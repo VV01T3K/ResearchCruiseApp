@@ -33,8 +33,7 @@ public class AddFormBHandler(
         cruiseApplication.FormB = formB;
         
         
-        if (cruiseApplication.Cruise is not null && (cruiseApplication.Cruise?.Status == CruiseStatus.Ended ||
-            cruiseApplication.Cruise?.Status == CruiseStatus.Archive))
+        if (cruiseApplication.Cruise is not null && (cruiseApplication.Cruise?.Status == CruiseStatus.Ended))
             cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
         else
             cruiseApplication.Status = CruiseApplicationStatus.FormBFilled;

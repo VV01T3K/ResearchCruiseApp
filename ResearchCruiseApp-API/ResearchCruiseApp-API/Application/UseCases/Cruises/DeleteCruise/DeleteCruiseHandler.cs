@@ -25,6 +25,7 @@ public class DeleteCruiseHandler(
         {
             foreach (var cruiseApplication in cruise.CruiseApplications)
             {
+                // TODO Send email about cruise cancellation
                 cruiseApplication.Status = CruiseApplicationStatus.Accepted;
             }
         }

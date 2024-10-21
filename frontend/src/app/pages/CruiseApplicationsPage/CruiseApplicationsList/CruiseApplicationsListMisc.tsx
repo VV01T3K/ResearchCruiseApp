@@ -1,14 +1,22 @@
 import { CruiseApplication } from 'CruiseApplication';
 
 export const sortCruiseApplicationsByPoints = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
-    ...cruiseApplications?.sort((a, b): number =>
-        (parseInt(a.points) - parseInt(b.points)),
+    ...cruiseApplications?.sort((a, b): number => {
+            console.log((parseInt(a.points) - parseInt(b.points)) + ' ' + a.points + ' ' + b.points);
+            return (parseInt(a.points) - parseInt(b.points));
+        },
     ),
 ] : [];
 
 export const sortCruiseApplicationsByDate = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
     ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
         (Date.parse(a.date) - Date.parse(b.date)),
+    ),
+] : [];
+
+export const sortCruiseApplicationsByNumber = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
+    ...cruiseApplications?.sort((a: CruiseApplication, b: CruiseApplication): number =>
+        (parseInt(a.number) - parseInt(b.number)),
     ),
 ] : [];
 
@@ -24,6 +32,12 @@ export const cruiseApplicationsSortOptions = (cruiseApplications: CruiseApplicat
     },
     {
         label: 'Data utworzenia (malejąco)', value: () => sortCruiseApplicationsByDate(cruiseApplications).reverse(),
+    },
+    {
+        label: 'Numer (rosnąco)', value: () => sortCruiseApplicationsByNumber(cruiseApplications),
+    },
+    {
+        label: 'Numer (malejąco)', value: () => sortCruiseApplicationsByNumber(cruiseApplications).reverse(),
     },
     {
         label: 'Rok rejsu (rosnąco)', value: () => sortCruiseApplicationsByYear(cruiseApplications),

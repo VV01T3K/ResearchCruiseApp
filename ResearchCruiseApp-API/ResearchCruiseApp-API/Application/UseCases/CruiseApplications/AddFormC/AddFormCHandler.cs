@@ -29,13 +29,9 @@ public class AddFormCHandler(
             return Error.NotFound();
 
         if (cruiseApplication.Status != CruiseApplicationStatus.Undertaken &&
-            cruiseApplication.Status != CruiseApplicationStatus.Reported &&
-            cruiseApplication.Status != CruiseApplicationStatus.Archived)
+            cruiseApplication.Status != CruiseApplicationStatus.Reported)
             return Error.Forbidden("Obecnie nie można wysłać zgłoszenie");
-
-        if (cruiseApplication.Status == CruiseApplicationStatus.Archived && cruiseApplication.FormC is not null)
-            return Error.Forbidden("Formularz C został już dodany do tego zgłoszenia.");
-
+        
         var formCResult = await formsCFactory.Create(request.FormCDto, cancellationToken);
         if (!formCResult.IsSuccess)
             return formCResult.Error!;
@@ -45,7 +41,11 @@ public class AddFormCHandler(
 
         if (cruiseApplication.Status == CruiseApplicationStatus.Undertaken)
             cruiseApplication.Status = CruiseApplicationStatus.Reported;
-        
+
+        if (cruiseApplication.Status == CruiseApplicationStatus.Reported)
+        {
+            // TODO only effects should be changed
+        }
         await effectsEvaluator.Evaluate(cruiseApplication, cancellationToken);
 
         await unitOfWork.Complete(cancellationToken);

@@ -4,6 +4,12 @@ import { ReactComponent as DownloadIcon } from '/node_modules/bootstrap-icons/ic
 import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
 import { FormContext } from '@contexts/FormContext';
 import { FormContextFields } from '@app/pages/FormPage/Wrappers/FormTemplate';
+import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
+import { refillFormB, refillFormC } from '@api/requests/Put';
+import { useNavigate } from 'react-router-dom';
+import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
+import { Path } from './Path';
 
 
 const formDownloadProps = (formContext: FormContextFields) => {
@@ -23,6 +29,33 @@ export const ResendButton = () => {
         <div onClick={() => formContext!.setReadOnly(false)} className="form-page-option-button-default"> Kopiuj</div>
     );
 };
+
+export const RefillBButton = () => {
+    const location = extendedUseLocation();
+    const navigate = useNavigate();
+    return (
+        <div
+            onClick={() => refillFormB(location?.state.cruiseApplication?.id).then(_ => {
+                location!.state.cruiseApplication.status = CruiseApplicationStatus.FormBRequired;
+                navigate(Path.Form, { state: location!.state, replace: true });
+            })}
+            className="form-page-option-button-default"> Umożliw ponowną edycję</div>
+    );
+};
+
+
+export const RefillCButton = () => {
+    const location = extendedUseLocation();
+    const navigate = useNavigate();
+    return (
+        <div onClick={() => refillFormC(location?.state.cruiseApplication?.id).then(_ => {
+            location!.state.cruiseApplication.status = CruiseApplicationStatus.Undertaken;
+            navigate(Path.Form, { state: location!.state, replace: true });
+        })}
+             className="form-page-option-button-default"> Umożliw ponowną edycję </div>
+    );
+};
+
 
 export function SaveMenu() {
     const [savingStated, setSavingStarted] = useState(false);
