@@ -14,6 +14,12 @@
             "Role": "Shipowner"
         },
         {
+            "FirstName": "Maksymilian",
+            "LastName": "Panicz",
+            "Email": "maksympanicz@wp.pl",
+            "Role": "Administrator"
+        },
+        {
             "FirstName": "john_doe",
             "LastName": "sdasadsa",
             "Email": "admin@admin2.com",

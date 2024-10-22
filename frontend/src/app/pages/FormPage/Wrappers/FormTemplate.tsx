@@ -68,7 +68,8 @@ const locationToDataMapper = () => {
     };
 };
 
-function FormTemplate(props: FormTemplateProps) {
+function
+FormTemplate(props: FormTemplateProps) {
     const {
         supervisorCode,
         cruiseApplicationId,
