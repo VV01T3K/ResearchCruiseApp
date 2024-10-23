@@ -96,7 +96,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
-    [HttpPost("{cruiseApplicationId:guid}/FormB")]
+    [HttpPut("{cruiseApplicationId:guid}/FormB")]
     public async Task<IActionResult> AddFormB(Guid cruiseApplicationId, [FromBody] FormBDto formBDto)
     {
         var result = await mediator.Send(new AddFormBCommand(cruiseApplicationId, formBDto));
@@ -160,7 +160,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
-    [HttpPost("{cruiseApplicationId:guid}/FormC")]
+    [HttpPut("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> AddFormC(Guid cruiseApplicationId, [FromBody] FormCDto formCDto)
     {
         var result = await mediator.Send(new AddFormCCommand(cruiseApplicationId, formCDto));

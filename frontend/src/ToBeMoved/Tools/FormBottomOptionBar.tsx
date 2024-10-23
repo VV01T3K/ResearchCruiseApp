@@ -119,7 +119,7 @@ const SendMenu = () => {
                 Api.post('/api/CruiseApplications/', formContext?.getValues()).then(() =>
                     navigate(Path.CruiseApplications),
                 ) :
-                Api.post(`/api/CruiseApplications/${cruiseApplication.id}/FormB`, formContext?.getValues()).then(() =>
+                Api.put(`/api/CruiseApplications/${cruiseApplication.id}/FormB`, formContext?.getValues()).then(() =>
                     navigate(Path.CruiseApplications),
                 )
         ;
