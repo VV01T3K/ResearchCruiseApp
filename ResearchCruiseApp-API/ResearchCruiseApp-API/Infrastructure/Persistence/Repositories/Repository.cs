@@ -41,4 +41,9 @@ internal class Repository<T> : IRepository<T>
     {
         await DbContext.Set<T>().AddAsync(newEntity, cancellationToken);
     }
+
+    public void Delete(T entity)
+    {
+        DbContext.Set<T>().Remove(entity);
+    }
 }

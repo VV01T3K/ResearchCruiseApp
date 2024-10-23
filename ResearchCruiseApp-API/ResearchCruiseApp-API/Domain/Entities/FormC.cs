@@ -20,7 +20,7 @@ public class FormC : Entity
 
     public List<Contract> Contracts { get; init; } = [];
 
-    public List<FormCSpubTask> FormCSpubTasks { get; init; } = [];
+    public List<SpubTask> SpubTasks { get; init; } = [];
 
     public List<FormCShortResearchEquipment> FormCShortResearchEquipments { get; init; } = [];
 

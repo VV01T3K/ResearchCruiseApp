@@ -5,13 +5,13 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddFormB;
 
 
-public class AddFormBValidator: AbstractValidator<AddFormBCommand>
+public class AddFormBValidator : AbstractValidator<AddFormBCommand>
 {
     public AddFormBValidator(IFileInspector fileInspector)
     {
         RuleForEach(command => command.FormBDto.Permissions)
             .Must(permissionDto => permissionDto.Scan is not null)
-            .WithMessage("Na etapie formularza B wymagane jest przesłanie skanów pozwoleń.");
+            .WithMessage("Na etapie Formularza B wymagane jest przesłanie skanów pozwoleń.");
         
         RuleForEach(command => command.FormBDto.Permissions)
             .Must(contractDto =>

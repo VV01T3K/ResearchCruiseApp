@@ -26,6 +26,7 @@ using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.PermissionDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Permissions;
 using ResearchCruiseApp_API.Application.Services.Factories.Photos;
+using ResearchCruiseApp_API.Application.Services.Forms;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 
@@ -50,7 +51,8 @@ public static class DependencyInjection
             .AddScoped<IEffectsEvaluator, EffectsEvaluator>()
             .AddScoped<ICruisesService, CruisesService>()
             .AddScoped<IFormsFieldsService, FormsFieldsService>()
-            .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>();
+            .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>()
+            .AddScoped<IFormsService, FormsService>();
     }
 
 

@@ -3,4 +3,7 @@
 namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 
 
-public interface ICrewMembersRepository : IRepository<CrewMember>;
+public interface ICrewMembersRepository : IRepository<CrewMember>
+{
+    Task<int> CountUniqueFormsB(CrewMember crewMember, CancellationToken cancellationToken);
+}

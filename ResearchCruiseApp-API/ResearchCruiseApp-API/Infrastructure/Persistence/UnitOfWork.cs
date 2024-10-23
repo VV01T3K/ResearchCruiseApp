@@ -12,11 +12,10 @@ internal class UnitOfWork(ApplicationDbContext applicationDbContext) : IUnitOfWo
         return applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task ExecuteIsolated(
-        Func<Task> action, IsolationLevel isolationLevel, CancellationToken cancellationToken)
+    public async Task ExecuteIsolated(Func<Task> action, CancellationToken cancellationToken)
     {
-        await using var transaction =
-            await applicationDbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+        await using var transaction = await applicationDbContext.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         try
         {
             await action();
@@ -29,11 +28,10 @@ internal class UnitOfWork(ApplicationDbContext applicationDbContext) : IUnitOfWo
         }
     }
 
-    public async Task<TResult> ExecuteIsolated<TResult>(
-        Func<Task<TResult>> action, IsolationLevel isolationLevel, CancellationToken cancellationToken)
+    public async Task<TResult> ExecuteIsolated<TResult>(Func<Task<TResult>> action, CancellationToken cancellationToken)
     {
-        await using var transaction =
-            await applicationDbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+        await using var transaction = await applicationDbContext.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         try
         {
             var result = await action();

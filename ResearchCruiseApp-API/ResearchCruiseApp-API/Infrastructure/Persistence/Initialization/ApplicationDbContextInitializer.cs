@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization.InitialData;
-using ResearchCruiseApp_API.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
 
@@ -12,7 +10,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    UserManager<User> userManager,
     IIdentityService identityService,
     IRandomGenerator randomGenerator,
     IConfiguration configuration)

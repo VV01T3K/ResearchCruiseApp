@@ -35,7 +35,6 @@ public class AddCruiseApplicationHandler(
         
         var newCruiseApplicationResult = await unitOfWork.ExecuteIsolated(
             () => GetNewPersistedCruiseApplication(request.FormADto, cancellationToken),
-            IsolationLevel.Serializable,
             cancellationToken);
 
         if (!newCruiseApplicationResult.IsSuccess)

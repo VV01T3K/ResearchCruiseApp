@@ -8,6 +8,8 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
     Task<List<CruiseApplication>> GetAllWithFormsAndFormAContent(CancellationToken cancellationToken);
     
     Task<CruiseApplication?> GetByIdWithFormA(Guid id, CancellationToken cancellationToken);
+
+    Task LoadFormA(CruiseApplication cruiseApplication, CancellationToken cancellationToken);
     
     Task<CruiseApplication?> GetByIdWithFormAContent(Guid id, CancellationToken cancellationToken);
     
@@ -21,7 +23,8 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
 
     Task<CruiseApplication?> GetByIdWithFormAAndFormCContent(Guid id, CancellationToken cancellationToken);
     
-    Task<CruiseApplication?> GetByIdWithFormsAndResearchTasks(Guid id, CancellationToken cancellationToken);
+    Task<CruiseApplication?> GetByIdWithFormsAndFormCContentAndResearchTasks(
+        Guid id, CancellationToken cancellationToken);
     
     Task<List<CruiseApplication>> GetAllByIds(List<Guid> ids, CancellationToken cancellationToken);
     

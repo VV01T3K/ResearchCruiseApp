@@ -155,8 +155,7 @@ public class FormsCFactory(
                 .GetUniqueSpubTask(spubTaskDto, alreadyAddedSpubTasks, cancellationToken);
             alreadyAddedSpubTasks.Add(spubTask);
             
-            var formCSpubTask = new FormCSpubTask { SpubTask = spubTask };
-            formC.FormCSpubTasks.Add(formCSpubTask);
+            formC.SpubTasks.Add(spubTask);
         }
     }
     
