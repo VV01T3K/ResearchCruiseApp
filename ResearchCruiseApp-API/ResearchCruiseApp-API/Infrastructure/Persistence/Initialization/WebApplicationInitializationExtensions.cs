@@ -3,7 +3,7 @@
 
 internal static class WebApplicationInitializationExtensions
 {
-    public static async Task InitialiseDatabase(this WebApplication app)
+    public static async Task InitializeDatabase(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         

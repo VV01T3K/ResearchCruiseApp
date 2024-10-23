@@ -89,6 +89,7 @@ public class IdentityService(
         
         return Result.Empty;
     }
+    
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
     {
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
@@ -148,10 +149,9 @@ public class IdentityService(
     public async Task<bool> CanUserLogin(string email, string password)
     {
         var user = await userManager.FindByEmailAsync(email);
-        return user is not null &&
-               user.Accepted && 
-               user.EmailConfirmed &&
-               await userManager.CheckPasswordAsync(user, password);
+        return
+            user is { Accepted: true, EmailConfirmed: true } &&
+            await userManager.CheckPasswordAsync(user, password);
     }
 
     public async Task ResendEmailConfirmationEmail(string email, string roleName)
@@ -306,10 +306,11 @@ public class IdentityService(
 
     private async Task<Result<LoginResponseDto>> CreateLoginResponseDto(User user)
     {
-        var accessToken = await CreateAccessToken(user);
-        if (accessToken.Error is not null)
-            return accessToken.Error;
-
+        var accessTokenResult = await CreateAccessToken(user);
+        if (!accessTokenResult.IsSuccess)
+            return accessTokenResult.Error!;
+        var accessToken = accessTokenResult.Data;
+        
         var refreshToken = CreateRefreshToken();
         var refreshTokenExpiry = DateTime.Now.AddSeconds(24_000);
 
@@ -327,8 +328,8 @@ public class IdentityService(
 
         var loginResponseDto = new LoginResponseDto
         {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken.Data),
-            ExpiresIn = accessToken.Data?.ValidTo ?? DateTime.Now,
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
+            ExpiresIn = accessToken?.ValidTo ?? DateTime.Now,
             RefreshToken = refreshToken
         };
         return loginResponseDto;
@@ -348,6 +349,7 @@ public class IdentityService(
     {
         var issuer = configuration["JWT:ValidIssuer"];
         var audience = configuration["JWT:ValidAudience"];
+        var lifetime = int.Parse(configuration["JWT:AccessTokenLifetimeSeconds"] ?? "0");
         
         if (issuer is null || audience is null)
             return Error.ServerError();
@@ -366,13 +368,14 @@ public class IdentityService(
         var securityKeyResult = CreateSecurityKey();
         if (securityKeyResult.Error is not null)
             return securityKeyResult.Error;
-        
+
+        var securityKey = securityKeyResult.Data;
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
-            expires: DateTime.Now.AddSeconds(24_000),
+            expires: DateTime.Now.AddSeconds(lifetime),
             claims: authenticationClaims,
-            signingCredentials: new SigningCredentials(securityKeyResult.Data, SecurityAlgorithms.HmacSha256)
+            signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
         );
 
         return token;
