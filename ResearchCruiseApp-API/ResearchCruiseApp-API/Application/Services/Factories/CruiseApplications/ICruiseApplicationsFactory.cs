@@ -5,5 +5,5 @@ namespace ResearchCruiseApp_API.Application.Services.Factories.CruiseApplication
 
 public interface ICruiseApplicationsFactory
 {
-    Task<CruiseApplication> Create(FormA formA, CancellationToken cancellationToken);
+    CruiseApplication Create(FormA formA);
 }

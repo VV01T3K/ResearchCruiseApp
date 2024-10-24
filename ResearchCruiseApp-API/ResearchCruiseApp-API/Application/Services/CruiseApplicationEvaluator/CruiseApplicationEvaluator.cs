@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using ResearchCruiseApp_API.Application.Common.Constants;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
@@ -7,9 +8,12 @@ using ResearchCruiseApp_API.Domain.Entities;
 namespace ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 
 
-public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
+public class CruiseApplicationEvaluator(
+    IUserEffectsRepository userEffectsRepository,
+    ICruiseApplicationsRepository cruiseApplicationsRepository)
+    : ICruiseApplicationEvaluator
 {
-    public void Evaluate(CruiseApplication cruiseApplication)
+    public async Task Evaluate(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
     {
         if (cruiseApplication.FormA is null)
             return;
@@ -19,6 +23,7 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         EvaluateUgUnits(cruiseApplication);
         EvaluatePublications(cruiseApplication);
         EvaluateSpubTasks(cruiseApplication);
+        await EvaluateEffects(cruiseApplication, cancellationToken);
     }
 
     public int GetPointsSum(CruiseApplication cruiseApplication)
@@ -36,7 +41,31 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         var spubTasksPoints = formA.FormASpubTasks
             .Sum(formASpubTask => formASpubTask.Points);
 
-        return researchTaskPoints + contractsPoints + int.Parse(formA.UgUnitsPoints) + publicationsPoints + spubTasksPoints;
+        return
+            researchTaskPoints +
+            contractsPoints +
+            int.Parse(formA.UgUnitsPoints) +
+            publicationsPoints +
+            spubTasksPoints;
+    }
+
+    public async Task UpdateCruiseApplicationsEffectsEvaluations(
+        List<Guid> cruiseManagersIds, CancellationToken cancellationToken)
+    {
+        var cruiseApplications = await cruiseApplicationsRepository
+            .GetAllByCruiseManagersAndStatusesWithFormAContent(
+                cruiseManagersIds,
+                [
+                    CruiseApplicationStatus.WaitingForSupervisor,
+                    CruiseApplicationStatus.AcceptedBySupervisor,
+                    CruiseApplicationStatus.Accepted
+                ],
+                cancellationToken);
+
+        foreach (var cruiseApplication in cruiseApplications)
+        {
+            await EvaluateEffects(cruiseApplication, cancellationToken);
+        }
     }
     
 
@@ -141,17 +170,9 @@ public class CruiseApplicationEvaluator : ICruiseApplicationEvaluator
         }
     }
 
-    
-
-    private static int GetPointsForProjectPreparationEffect(ResearchTaskEffect effect, bool assignConditinalPoints)
+    private async Task EvaluateEffects(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
     {
-        var assignUnconditionalPoints =
-            effect.PublicationMinisterialPoints is not null &&
-            int.Parse(effect.PublicationMinisterialPoints) >=
-                EvaluationConstants.ProjectPreparationPublicationMinisterialPointsThreshold;
-
-        return assignUnconditionalPoints || assignConditinalPoints
-            ? EvaluationConstants.PointsForProjectPreparationEffect
-            : 0;
+        cruiseApplication.EffectsPoints = await userEffectsRepository
+            .GetPointsSumByUserId(cruiseApplication.FormA!.CruiseManagerId, cancellationToken);
     }
 }

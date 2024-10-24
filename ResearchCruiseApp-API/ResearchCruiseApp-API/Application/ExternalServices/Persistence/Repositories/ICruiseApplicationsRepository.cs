@@ -1,4 +1,5 @@
-﻿using ResearchCruiseApp_API.Domain.Entities;
+﻿using ResearchCruiseApp_API.Domain.Common.Enums;
+using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 
@@ -26,6 +27,7 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
     Task<List<CruiseApplication>> GetAllByIds(List<Guid> ids, CancellationToken cancellationToken);
     
     Task<List<CruiseApplication>> GetAllByUserIdWithFormA(Guid userId, CancellationToken cancellationToken);
-    
-    Task<List<CruiseApplication>> GetAllByUserIdWithFormAAndFormCContent(Guid userId, CancellationToken cancellationToken);
+
+    Task<List<CruiseApplication>> GetAllByCruiseManagersAndStatusesWithFormAContent(
+        List<Guid> cruiseManagersIds, List<CruiseApplicationStatus> statuses, CancellationToken cancellationToken);
 }

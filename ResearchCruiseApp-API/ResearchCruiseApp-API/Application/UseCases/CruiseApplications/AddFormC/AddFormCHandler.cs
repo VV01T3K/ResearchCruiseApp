@@ -5,6 +5,7 @@ using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.Effects;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsC;
 using ResearchCruiseApp_API.Application.Services.Forms;
@@ -22,7 +23,8 @@ public class AddFormCHandler(
     IUnitOfWork unitOfWork,
     IUserPermissionVerifier userPermissionVerifier,
     IFormsService formsService,
-    IEffectsService effectsService)
+    IEffectsService effectsService,
+    ICruiseApplicationEvaluator cruiseApplicationEvaluator)
     : IRequestHandler<AddFormCCommand, Result>
 {
     public async Task<Result> Handle(AddFormCCommand request, CancellationToken cancellationToken)
@@ -36,18 +38,11 @@ public class AddFormCHandler(
             return cruiseApplicationResult;
         
         var cruiseApplication = cruiseApplicationResult.Data!;
-        var formCreationResult = await unitOfWork.ExecuteIsolated(
+        var result = await unitOfWork.ExecuteIsolated(
             () => AddNewFormC(request.FormCDto, cruiseApplication, cancellationToken),
             cancellationToken);
         
-        if (!formCreationResult.IsSuccess)
-            return formCreationResult;
-        
-        cruiseApplication.Status = CruiseApplicationStatus.Reported;
-        await effectsService.EvaluateEffects(cruiseApplication, cancellationToken);
-        
-        await unitOfWork.Complete(cancellationToken);
-        return Result.Empty;
+        return result;
     }
 
 
@@ -65,7 +60,7 @@ public class AddFormCHandler(
 
         return cruiseApplication;
     }
-    
+
     private async Task<Result> AddNewFormC(
         FormCDto formCDto, CruiseApplication cruiseApplication, CancellationToken cancellationToken)
     {
@@ -74,13 +69,34 @@ public class AddFormCHandler(
         
         if (!newFormCResult.IsSuccess)
             return newFormCResult.Error!;
-        
-        cruiseApplication.FormC = newFormCResult.Data!;
+        var newFormC = newFormCResult.Data!;
+
+        cruiseApplication.FormC = newFormC;
+        cruiseApplication.Status = CruiseApplicationStatus.Reported;
+
         await unitOfWork.Complete(cancellationToken);
-        
+
         if (oldFormC is not null)
             await formsService.DeleteFormC(oldFormC, cancellationToken);
 
+        await HandleEvaluations(cruiseApplication, cancellationToken);
+
         return Result.Empty;
+    }
+
+    private async Task HandleEvaluations(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+    {
+        await effectsService.EvaluateEffects(cruiseApplication, cancellationToken);
+
+        await unitOfWork.Complete(cancellationToken);
+
+        await cruiseApplicationEvaluator.UpdateCruiseApplicationsEffectsEvaluations(
+            [
+                cruiseApplication.FormA!.CruiseManagerId,
+                cruiseApplication.FormA.DeputyManagerId
+            ],
+            cancellationToken);
+
+        await unitOfWork.Complete(cancellationToken);
     }
 }

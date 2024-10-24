@@ -1,7 +1,5 @@
 using ResearchCruiseApp_API.Application;
 using ResearchCruiseApp_API.Infrastructure;
-using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
-using ResearchCruiseApp_API.Web;
 using ResearchCruiseApp_API.Web.Configuration;
 
 

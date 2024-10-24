@@ -1,5 +1,4 @@
 ﻿using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -7,15 +6,11 @@ namespace ResearchCruiseApp_API.Application.Services.Factories.CruiseApplication
 
 
 internal class CruiseApplicationsFactory(
-    IRandomGenerator randomGenerator,
-    IUserEffectsRepository userEffectsRepository)
+    IRandomGenerator randomGenerator)
     : ICruiseApplicationsFactory
 {
-    public async Task<CruiseApplication> Create(FormA formA, CancellationToken cancellationToken)
+    public CruiseApplication Create(FormA formA)
     {
-        var effectsPoints = await userEffectsRepository
-            .GetPointsSumByUserId(formA.CruiseManagerId, cancellationToken);
-        
         var newCruiseApplication = new CruiseApplication
         {
             Date = DateOnly.FromDateTime(DateTime.Now),
@@ -23,8 +18,7 @@ internal class CruiseApplicationsFactory(
             FormB = null,
             FormC = null,
             Status = CruiseApplicationStatus.WaitingForSupervisor,
-            SupervisorCode = randomGenerator.CreateSecureCodeBytes(),
-            EffectsPoints = effectsPoints
+            SupervisorCode = randomGenerator.CreateSecureCodeBytes()
         };
 
         return newCruiseApplication;
