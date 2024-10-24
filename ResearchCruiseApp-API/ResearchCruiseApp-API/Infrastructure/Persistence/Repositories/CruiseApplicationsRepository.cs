@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Repositories.Extensions;
@@ -83,17 +82,7 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
             .IncludeFormA()
             .IncludeFormC()
             .IncludeFormCContent()
-            .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
-    }
-
-    public Task<CruiseApplication?> GetByIdWithFormsAndFormCContentAndResearchTasks(
-        Guid id, CancellationToken cancellationToken)
-    {
-        return DbContext.CruiseApplications
-            .IncludeForms()
-            .IncludeFormCContent()
-            .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
-            .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
     

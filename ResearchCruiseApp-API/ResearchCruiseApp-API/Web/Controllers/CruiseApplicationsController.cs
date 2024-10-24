@@ -20,6 +20,7 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormC;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnEffectsEvaluations;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormC;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.UpdateEffects;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
@@ -169,6 +170,16 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
+    [HttpPatch("{cruiseApplicationId:guid}/FormC/Effects")]
+    public async Task<IActionResult> UpdateEffects(Guid cruiseApplicationId, EffectsUpdatesDto effectsUpdatesDto)
+    {
+        var result = await mediator.Send(new UpdateEffectsCommand(cruiseApplicationId, effectsUpdatesDto));
+        return result.IsSuccess
+            ? NoContent()
+            : this.CreateError(result);
+    }
+
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> GetFormC(Guid cruiseApplicationId)
@@ -198,8 +209,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             ? NoContent()
             : this.CreateError(result);
     }
-
-
+    
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}")]
     [HttpGet("{userId:guid}/effectsEvaluations")]
     public async Task<IActionResult> GetEffectsEvaluations(Guid userId)

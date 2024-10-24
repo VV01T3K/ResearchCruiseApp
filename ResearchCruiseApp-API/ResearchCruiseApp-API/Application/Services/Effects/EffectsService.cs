@@ -1,16 +1,23 @@
 ﻿using System.Diagnostics;
 using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.EffectsEvaluator;
+namespace ResearchCruiseApp_API.Application.Services.Effects;
 
 
-public class EffectsEvaluator(IUserEffectsRepository userEffectsRepository) : IEffectsEvaluator
+public class EffectsService(
+    IResearchTasksRepository researchTasksRepository,
+    IResearchTaskEffectsRepository researchTaskEffectsRepository,
+    IUserEffectsRepository userEffectsRepository,
+    IFormsFieldsService formsFieldsService
+    ) : IEffectsService
 {
-    public async Task Evaluate(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+    public async Task EvaluateEffects(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
     {
         if (cruiseApplication.FormA is null)
             throw new ArgumentException("CruiseApplication must have a FormA for its effects to be evaluated");
@@ -23,27 +30,69 @@ public class EffectsEvaluator(IUserEffectsRepository userEffectsRepository) : IE
 
         var doneEffects = cruiseApplication.FormC.ResearchTaskEffects
             .Where(effect => effect.Done.ToBool());
-        
+
         foreach (var effect in doneEffects)
         {
             var pointsForManagersTeam = GetPointsForManagersTeam(effect, cruiseApplication);
 
-            if (pointsForManagersTeam[CruiseFunction.CruiseManager] > 0)
-                await AddEvaluationForUser(
-                    effect,
-                    cruiseManagerId,
-                    pointsForManagersTeam[CruiseFunction.CruiseManager],
-                    cancellationToken);
-            if (pointsForManagersTeam[CruiseFunction.DeputyManager] > 0)
-                await AddEvaluationForUser(
-                    effect,
-                    deputyManagerId,
-                    pointsForManagersTeam[CruiseFunction.DeputyManager],
-                    cancellationToken);
+            await AddEvaluationForUser(
+                effect,
+                cruiseManagerId,
+                pointsForManagersTeam[CruiseFunction.CruiseManager],
+                cancellationToken);
+            await AddEvaluationForUser(
+                effect,
+                deputyManagerId,
+                pointsForManagersTeam[CruiseFunction.DeputyManager],
+                cancellationToken);
+        }
+    }
+    
+    public async Task DeleteResearchTasksEffects(FormC formC, CancellationToken cancellationToken)
+    {
+        foreach (var researchTaskEffect in formC.ResearchTaskEffects)
+        {
+            var researchTask = researchTaskEffect.ResearchTask;
+            researchTaskEffectsRepository.Delete(researchTaskEffect);
+            
+            foreach (var userEffect in researchTaskEffect.UserEffects)
+            {
+                userEffectsRepository.Delete(userEffect);
+            }
+            
+            if (await researchTasksRepository.CountFormAResearchTasks(researchTask, cancellationToken) == 0 &&
+                await researchTasksRepository.CountUniqueFormsC(researchTask, cancellationToken) == 1) // The given one
+            {
+                researchTasksRepository.Delete(researchTask);
+            }
         }
     }
 
-    private Dictionary<CruiseFunction, int> GetPointsForManagersTeam(
+    public async Task AddResearchTasksEffects(
+        FormC formC, List<ResearchTaskEffectDto> researchTaskEffectDtos, CancellationToken cancellationToken)
+    {
+        var alreadyAddedResearchTasks = new HashSet<ResearchTask>();
+        
+        foreach (var researchTaskEffectDto in researchTaskEffectDtos)
+        {
+            var researchTask = await formsFieldsService
+                .GetUniqueResearchTask(researchTaskEffectDto, alreadyAddedResearchTasks, cancellationToken);
+            alreadyAddedResearchTasks.Add(researchTask);
+            
+            var researchTaskEffect = new ResearchTaskEffect
+            {
+                ResearchTask = researchTask,
+                Done = researchTaskEffectDto.Done,
+                PublicationMinisterialPoints = researchTaskEffectDto.PublicationMinisterialPoints,
+                ManagerConditionMet = researchTaskEffectDto.ManagerConditionMet,
+                DeputyConditionMet = researchTaskEffectDto.DeputyConditionMet
+            };
+            formC.ResearchTaskEffects.Add(researchTaskEffect);
+        }
+    }
+    
+    
+    private static Dictionary<CruiseFunction, int> GetPointsForManagersTeam(
         ResearchTaskEffect effect, CruiseApplication cruiseApplication)
     {
         var managerPoints = 0;
@@ -74,7 +123,9 @@ public class EffectsEvaluator(IUserEffectsRepository userEffectsRepository) : IE
                 managerPoints = supplementaryConditionMet || managerConditionMet
                     ? EvaluationConstants.PointsForProjectPreparationEffect
                     : 0;
-                deputyPoints = supplementaryConditionMet ? EvaluationConstants.PointsForProjectPreparationEffect : 0;
+                deputyPoints = supplementaryConditionMet
+                    ? EvaluationConstants.PointsForProjectPreparationEffect
+                    : 0;
                 break;
 
             case ResearchTaskType.DomesticProject:
@@ -88,7 +139,7 @@ public class EffectsEvaluator(IUserEffectsRepository userEffectsRepository) : IE
                 break;
             
             case ResearchTaskType.OtherResearchTask:
-                var evaluationBeforeCruise = GetResearchTaskEvaluationFromBeforeCruise(effect, cruiseApplication);
+                var evaluationBeforeCruise = GetResearchTaskEvaluationBeforeCruise(effect, cruiseApplication);
                 managerPoints = evaluationBeforeCruise;
                 deputyPoints = evaluationBeforeCruise;
                 break;
@@ -120,7 +171,7 @@ public class EffectsEvaluator(IUserEffectsRepository userEffectsRepository) : IE
     /// Returns the number of points that have been assigned to the researchTask linked with the given effect when
     /// the cruiseApplication was evaluated before the cruise
     /// </summary>
-    private static int GetResearchTaskEvaluationFromBeforeCruise(
+    private static int GetResearchTaskEvaluationBeforeCruise(
         ResearchTaskEffect effect, CruiseApplication cruiseApplication)
     {
         Debug.Assert(cruiseApplication.FormA is not null);

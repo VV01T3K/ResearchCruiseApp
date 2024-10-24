@@ -130,4 +130,7 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
         return cruiseApplication.FormA.CruiseManagerId == currentUserId ||
                cruiseApplication.FormA.DeputyManagerId == currentUserId;
     }
+
+    public Task<bool> CanCurrentUserUpdateEffects(CruiseApplication cruiseApplication) =>
+        CanCurrentUserAddForm(cruiseApplication);
 }

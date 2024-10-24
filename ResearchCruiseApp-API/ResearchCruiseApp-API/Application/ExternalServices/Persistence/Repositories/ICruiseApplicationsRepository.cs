@@ -23,9 +23,6 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
 
     Task<CruiseApplication?> GetByIdWithFormAAndFormCContent(Guid id, CancellationToken cancellationToken);
     
-    Task<CruiseApplication?> GetByIdWithFormsAndFormCContentAndResearchTasks(
-        Guid id, CancellationToken cancellationToken);
-    
     Task<List<CruiseApplication>> GetAllByIds(List<Guid> ids, CancellationToken cancellationToken);
     
     Task<List<CruiseApplication>> GetAllByUserIdWithFormA(Guid userId, CancellationToken cancellationToken);

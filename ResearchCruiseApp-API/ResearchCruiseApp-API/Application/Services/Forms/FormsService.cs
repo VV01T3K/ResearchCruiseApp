@@ -1,11 +1,16 @@
 ﻿using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.Effects;
+using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.Forms;
 
 
 public class FormsService(
+    IFormsFieldsService formsFieldsService,
+    IEffectsService effectsService,
     IPermissionsRepository permissionsRepository,
     IFormBUgUnitsRepository formBUgUnitsRepository,
     IFormCUgUnitsRepository formCUgUnitsRepository,
@@ -27,9 +32,6 @@ public class FormsService(
     IContractsRepository contractsRepository,
     ISpubTasksRepository spubTasksRepository,
     ICollectedSamplesRepository collectedSamplesRepository,
-    IResearchTasksRepository researchTasksRepository,
-    IResearchTaskEffectsRepository researchTaskEffectsRepository,
-    IUserEffectsRepository userEffectsRepository,
     IPhotosRepository photosRepository,
     IFormsBRepository formsBRepository,
     IFormsCRepository formsCRepository,
@@ -58,7 +60,7 @@ public class FormsService(
         await DeletePermissions(formC, cancellationToken);
         DeleteFormCUgUnits(formC);
         await DeleteFormCGuestUnits(formC, cancellationToken);
-        await DeleteResearchTaskEffects(formC, cancellationToken);
+        await effectsService.DeleteResearchTasksEffects(formC, cancellationToken);
         await DeleteContracts(formC, cancellationToken);
         await DeleteSpubTasks(formC, cancellationToken);
         await DeleteFormCShortResearchEquipments(formC, cancellationToken);
@@ -73,8 +75,8 @@ public class FormsService(
         formsCRepository.Delete(formC);
         await unitOfWork.Complete(cancellationToken);
     }
-
-
+    
+    
     private async Task DeletePermissions(FormB formB, CancellationToken cancellationToken)
     {
         foreach (var permission in formB.Permissions)
@@ -237,26 +239,6 @@ public class FormsService(
                 await guestUnitsRepository.CountUniqueFormsC(guestUnit, cancellationToken) == 1) // The one to be deleted
             {
                 guestUnitsRepository.Delete(guestUnit);
-            }
-        }
-    }
-
-    private async Task DeleteResearchTaskEffects(FormC formC, CancellationToken cancellationToken)
-    {
-        foreach (var researchTaskEffect in formC.ResearchTaskEffects)
-        {
-            var researchTask = researchTaskEffect.ResearchTask;
-            researchTaskEffectsRepository.Delete(researchTaskEffect);
-            
-            foreach (var userEffect in researchTaskEffect.UserEffects)
-            {
-                userEffectsRepository.Delete(userEffect);
-            }
-            
-            if (await researchTasksRepository.CountFormAResearchTasks(researchTask, cancellationToken) == 0 &&
-                await researchTasksRepository.CountUniqueFormsC(researchTask, cancellationToken) == 1) // The one to be deleted
-            {
-                researchTasksRepository.Delete(researchTask);
             }
         }
     }

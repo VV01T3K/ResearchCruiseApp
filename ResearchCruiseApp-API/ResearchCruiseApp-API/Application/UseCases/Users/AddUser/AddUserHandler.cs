@@ -17,7 +17,7 @@ public class AddUserHandler(
     {
         if (request.AddUserForm.Role is null)
             return Error.InvalidArgument("Nie wybrano roli dla nowego użytkownika");
-
+        
         var emailAddressAttribute = new EmailAddressAttribute();
         if (string.IsNullOrEmpty(request.AddUserForm.Email) || !emailAddressAttribute.IsValid(request.AddUserForm.Email))
             return Error.InvalidArgument("Adres e-mail jest niepoprawny");
