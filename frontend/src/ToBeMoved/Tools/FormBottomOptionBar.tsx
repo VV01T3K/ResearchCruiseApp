@@ -176,7 +176,6 @@ export const BottomOptionBar = () => {
     const ReadonlyFormButtons = () => {
         const formContext = useContext(FormContext);
         const cruiseApplication = cruiseApplicationFromLocation();
-        console.log(cruiseApplication);
         const {
             UserHasGuestAccess,
             UserHasShipownerAccess,

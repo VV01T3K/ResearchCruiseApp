@@ -2,7 +2,6 @@ import { CruiseApplication } from 'CruiseApplication';
 
 export const sortCruiseApplicationsByPoints = (cruiseApplications?: CruiseApplication[]) => cruiseApplications ? [
     ...cruiseApplications?.sort((a, b): number => {
-            console.log((parseInt(a.points) - parseInt(b.points)) + ' ' + a.points + ' ' + b.points);
             return (parseInt(a.points) - parseInt(b.points));
         },
     ),

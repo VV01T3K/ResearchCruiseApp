@@ -64,7 +64,7 @@
     "build": "react-app-rewired  build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "install-bootstrap": "npm install --save @types/react-virtualized",
+    "install-bootstrap": "npm install --save cellMesurer",
     "audit": "npm update",
     "fund": "npm fund",
     "cos": "npm install typescript @types/react @types/node --save-dev"

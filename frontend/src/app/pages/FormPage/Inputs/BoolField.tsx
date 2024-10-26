@@ -14,7 +14,6 @@ type Props = FieldProps & {
 function BoolField(props: Props) {
 
     const render = ({ field }: FieldValues) => {
-        console.log(field.value);
         const isTrue = CustomConverter.stringToBoolean(field.value);
         const readOnlyContext = useContext(ReadOnlyContext);
         return (

@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, Ref, useContext, useEffect, useRef, useState } from 'react';
 import useWindowWidth from '../../../../hooks/useWindowWidth';
 import { CellContext } from '@contexts/CellContext';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -45,8 +45,12 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
         </div>
     );
 
-    const NonEmptyRow = ({ index, style }: { index: number, style: CSSProperties | undefined }) => (
-        <div className={index % 2 ? 'table-field-odd-row' : 'table-field-even-row'} style={style}>
+    const NonEmptyRow = ({ index, style, _ref }: {
+        index: number,
+        style: CSSProperties | undefined,
+        _ref?: Ref<any>
+    }) => (
+        <div ref={_ref} className={index % 2 ? 'table-field-odd-row' : 'table-field-even-row'} style={style}>
             {colWidths.map((_, colIndex) => (
                 <Cell key={colIndex} rowIndex={index} colIndex={colIndex} />
             ))}
@@ -78,7 +82,8 @@ export const FieldTableWrapper = (title: string, colWidths: number[],
                                         columnIndex={0}
                                         rowIndex={index}
                                     >
-                                        <NonEmptyRow key={key} index={index} style={style} />
+                                        {({ registerChild }) => (
+                                            <NonEmptyRow key={key} index={index} style={style} _ref={registerChild} />)}
                                     </CellMeasurer>
                                 )}
                             />

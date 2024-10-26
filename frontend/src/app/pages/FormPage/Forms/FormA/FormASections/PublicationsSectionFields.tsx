@@ -23,7 +23,6 @@ export const PublicationsDescription = () => (
 
 export const PublicationsField = () => {
     const formContext = useContext(FormContext);
-    console.log(formContext?.initValues);
     return (
         <PublicationsTable
             className={'single-field'}
