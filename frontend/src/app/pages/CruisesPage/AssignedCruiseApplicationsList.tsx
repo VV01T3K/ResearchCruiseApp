@@ -29,7 +29,7 @@ export function LinkWithStateDownloadApplication(
             onClick={() => {
                 Api.get(`/api/CruiseApplications/${props.cruiseApplicationId}`).then(
                     (response) => {
-                        props.state.cruiseApplication = response.data;
+                        props.state.cruiseApplication = response?.data;
                         if (!props.disabled) {
                             if (props.useWindow) {
                                 const param = Buffer.from(JSON.stringify(props.state)).toString(

@@ -117,7 +117,7 @@ export const Status = () => {
                             <LinkWithState
                                 to={Path.Form}
                                 state={{ formType: 'C' }}
-                                label={'Wypełnij raport'}
+                                label={'Wypełnij formularz C'}
                             />
                         )}
                 </>

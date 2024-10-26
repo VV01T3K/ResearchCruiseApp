@@ -1,6 +1,11 @@
 import DatePicker from 'react-datepicker';
 import React, { HTMLProps, useContext } from 'react';
-import { datePickerCommon, datePickerDayAndHour, datePickerPeriodCommon } from './DatePickerCommon';
+import {
+    datePickerCommon,
+    datePickerDayAndHour,
+    datePickerDayCommon,
+    datePickerPeriodCommon,
+} from './DatePickerCommon';
 import { ParseIntInput } from './Misc';
 import TextareaAutosize from 'react-textarea-autosize';
 import { CellFormTools, CellTools } from './TableParts';
@@ -27,7 +32,7 @@ export const FormStandardDateField = (props: { className?: string }) => {
         <DatePicker
             disabled={readOnlyContext!}
             className={'field-common ' + props.className}
-            {...datePickerCommon}
+            {...datePickerDayCommon}
             onBlur={() => field!.onBlur()}
             selected={cellValue ? new Date(cellValue) : null}
             onChange={(e) => setCellValue(e?.toISOString())}
@@ -41,7 +46,7 @@ export const StandardDateField = (props: { className?: string }) => {
         <DatePicker
             disabled={true}
             className={'field-common ' + props.className}
-            {...datePickerCommon}
+            {...datePickerDayCommon}
             selected={cellValue ? new Date(cellValue) : null}
             onChange={() => {
             }}
@@ -279,6 +284,7 @@ export const FormTextField = (props: { className?: string }) => {
     const readOnlyContext = useContext(ReadOnlyContext);
     return (
         <TextareaAutosize
+            maxLength={200}
             disabled={readOnlyContext!}
             className={'field-common ' + props.className}
             {...field}

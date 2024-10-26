@@ -7,7 +7,7 @@ const post = (url: string, data: any, raw?: boolean) =>
 
 export const registerUser = (data: RegisterData) =>
     post('/account/register', data, true).then(
-        (response: { status: number; data: any }) => response.data,
+        (response: { status: number; data: any }) => response?.data,
     );
 
 export const resetPassword = (data: ResetData) =>

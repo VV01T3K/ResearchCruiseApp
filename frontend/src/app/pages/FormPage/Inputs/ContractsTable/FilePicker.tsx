@@ -25,6 +25,20 @@ export const FileIconLabel = () => {
     );
 };
 
+const CheckFileTypeAndSize = (file: File) => {
+    if (file.type !== 'application/pdf') {
+        alert('Dozwolone są tylko pliki PDF.');
+        return false;
+    }
+
+    const maxFileSize = 30 * 1024 * 1024;
+    if (file.size > maxFileSize) {
+        alert('Plik przekracza maksymalny rozmiar 30 MB.');
+        return false;
+    }
+    return true;
+};
+
 const SetFile = () => {
     const { setCellValue, field } = CellFormTools();
     return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +48,10 @@ const SetFile = () => {
             const fileName = e.target.files![0].name;
             reader.onloadend = () => {
                 if (e.target.files) {
+
+                    if (!CheckFileTypeAndSize(e.target.files![0]))
+                        return;
+
                     const fileContent = reader.result!.toString();
                     scan = { name: fileName, content: fileContent };
                     setCellValue(scan);

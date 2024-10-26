@@ -9,6 +9,11 @@ import { Path } from '../../../ToBeMoved/Tools/Path';
 import { fetchCruises } from '@api/requests';
 import { autoAddCruises } from '@api/requests/Put';
 import { deleteCruise } from '@api/requests/Delete';
+import {
+    sortCruiseApplicationsByNumber,
+} from '@app/pages/CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsListMisc';
+import { Cruise } from 'Cruise';
+import { sortCruiseListByNumber } from '@app/pages/CruisesPage/CruiseListFilterAndSort';
 
 export const ModeSwitch = () => {
     const [listView, setListView] = useState(true);
@@ -36,7 +41,7 @@ export const LoadCruises = () => {
     const cruiseStateContext = useContext(CruiseStateContext);
     return () =>
         fetchCruises().then((response) =>
-            cruiseStateContext!.setCruises(response.data),
+            cruiseStateContext!.setCruises(response ? sortCruiseListByNumber(response?.data).reverse() : []),
         );
 };
 export const AddCruiseButtons = () => {

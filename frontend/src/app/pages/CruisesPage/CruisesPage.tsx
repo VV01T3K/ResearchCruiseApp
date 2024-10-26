@@ -5,6 +5,7 @@ import { CruisePageContent } from './CruisesPageMisc';
 import { Cruise } from 'Cruise';
 import Page from '../../../ToBeMoved/Pages/Page';
 import { fetchCruises } from '@api/requests';
+import { sortCruiseListByNumber } from '@app/pages/CruisesPage/CruiseListFilterAndSort';
 
 export const CruiseStateContext = createContext<null | {
     cruises: Cruise[];
@@ -16,7 +17,7 @@ export default function CruisesPage() {
 
     useEffect(() => {
         if (cruises.length <= 0) {
-            fetchCruises().then((response) => setCruises(response?.data));
+            fetchCruises().then((response) => setCruises(response ? sortCruiseListByNumber(response?.data).reverse() : []));
         }
     }, []);
 

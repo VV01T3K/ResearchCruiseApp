@@ -90,10 +90,10 @@ export const FStringValueField = () => {
     const { cellValue } = displayContext ? CellTools() : CellFormTools();
 
     return (
-        <>
+        <div className={'text-break'}>
             {!displayContext && initContext && initContext.find((unit: UgUnit) => unit.id == cellValue)?.name}
             {displayContext && cellValue}
-        </>
+        </div>
     );
 };
 

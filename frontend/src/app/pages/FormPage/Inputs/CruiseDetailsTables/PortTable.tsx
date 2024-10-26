@@ -70,7 +70,7 @@ function PortTable(props: PortTableProps) {
     const selectOptions = props.historicalPorts?.map((row: Port) =>
         ({ label: PortRowLabel(row), value: row })) ?? [];
 
-    const mdColWidths = [5, 15, 15, 60, 5];
+    const mdColWidths = [5, 20, 20, 50, 5];
     const mdColTitles = ['Lp.', 'Wejście', 'Wyjście', 'Nazwa portu', ''];
     const colTitle = 'Wchodzenie/wychodzenie z portu';
     const bottomMenu =

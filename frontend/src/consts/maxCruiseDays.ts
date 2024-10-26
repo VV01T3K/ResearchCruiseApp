@@ -1,0 +1,1 @@
+export const maxCruiseDays = 14;

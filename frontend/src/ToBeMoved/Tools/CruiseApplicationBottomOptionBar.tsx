@@ -20,7 +20,7 @@ export const RefreshApplicationDetailsPage = () => {
             `/api/CruiseApplications/${location?.state.cruiseApplication.id}`,
         ).then((response) =>
             navigate(Path.CruiseApplicationDetails, {
-                state: { cruiseApplication: response.data, readOnly: true }, replace: true,
+                state: { cruiseApplication: response?.data, readOnly: true }, replace: true,
             }),
         );
 };

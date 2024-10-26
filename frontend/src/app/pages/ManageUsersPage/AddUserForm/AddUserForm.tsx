@@ -45,7 +45,7 @@ export default function AddUserForm(props: Props) {
                 props.fetchUsers();
             })
             .catch((error) => {
-                setSendingError(error.response.data);
+                setSendingError(error.response?.data);
                 setSending(false);
             });
     };

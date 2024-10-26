@@ -51,11 +51,14 @@ const AppContent = () => {
 function App() {
     const [userData, setUserData] = useState<UserData | null>(null);
     const busyMessage = useState<string | null>(null);
+    const [isBusy, _] = busyMessage;
     return (
         <BusyContext.Provider value={busyMessage}>
-            <UserContext.Provider value={{ userData, setUserData }}>
-                <AppContent />
-            </UserContext.Provider>
+            <div style={{ cursor: isBusy ? 'progress' : 'default' }}>
+                <UserContext.Provider value={{ userData, setUserData }}>
+                    <AppContent />
+                </UserContext.Provider>
+            </div>
         </BusyContext.Provider>
     );
 }
