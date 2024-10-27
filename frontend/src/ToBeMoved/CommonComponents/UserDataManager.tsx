@@ -5,11 +5,12 @@ import { Path as Path } from '../Tools/Path';
 import { CopyResponseToSessionStorage } from '../Misc';
 import { FieldValues } from 'react-hook-form';
 import { UserContext } from '../App';
-import { registerUser, resetPassword } from '@api/requests';
+import {registerUser, forgotPassword, resetPassword} from '@api/requests';
 import { changePassword } from '@api/requests';
 
 const Register = registerUser;
 
+const ForgotPassword = forgotPassword;
 const ResetPassword = resetPassword;
 const ChangePassword = changePassword;
 
@@ -69,7 +70,8 @@ const UserDataManager = () => {
         UserLoggedIn: IsUserLoggedIn,
         GetUserData,
         Register,
-        ResetPassword,
+        ForgotPassword: ForgotPassword,
+        ResetPassword: ResetPassword,
         ConfirmEmail: confirmMail,
         ChangePassword,
     };

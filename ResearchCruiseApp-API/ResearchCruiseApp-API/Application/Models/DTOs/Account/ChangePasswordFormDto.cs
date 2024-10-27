@@ -3,6 +3,7 @@
 
 public class ChangePasswordFormDto
 {
-    public string Password { get; set; } = null!;
-    public string NewPassword { get; set; } = null!;
+    public string Password { get; init; } = null!;
+    
+    public string NewPassword { get; init; } = null!;
 }
