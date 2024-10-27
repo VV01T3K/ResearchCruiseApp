@@ -56,6 +56,7 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
     {
         return DbContext.CruiseApplications
             .IncludeForms()
+            .IncludeCruise()
             .SingleOrDefaultAsync(cruiseApplication => cruiseApplication.Id == id, cancellationToken);
     }
     
