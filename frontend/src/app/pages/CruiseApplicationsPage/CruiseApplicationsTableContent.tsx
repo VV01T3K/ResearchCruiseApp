@@ -135,7 +135,6 @@ export const Actions = () => {
     return (
         <div className="task-field-input">
             <LinkWithState
-                className="btn btn-info"
                 useWindow={listModeContext?.mode != undefined}
                 to={Path.CruiseApplicationDetails}
                 label="Szczegóły"

@@ -76,8 +76,6 @@ export const Interceptors = () => {
     }
 
     function HandleErrWithResponse(response: AxiosResponse<any>) {
-        const { ForceLogout } = userDataManager();
-
         const statusCode = response?.status;
         if (statusCode == 401) {
             ForceLogout();

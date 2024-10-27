@@ -12,6 +12,7 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetAllCruise
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseApplicationsForCruise;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetCruiseForCruiseApplication;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetEffectsEvaluations;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
@@ -215,6 +216,16 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetEffectsEvaluations(Guid userId)
     {
         var result = await mediator.Send(new GetEffectsEvaluationsQuery(userId));
+        return result.IsSuccess
+            ? Ok(result.Data)
+            : this.CreateError(result);
+    }
+    
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}, {RoleName.CruiseManager}")]
+    [HttpGet("{cruiseApplicationId:guid}/cruise")]
+    public async Task<IActionResult> GetCruiseForCruiseApplication(Guid cruiseApplicationId)
+    {
+        var result = await mediator.Send(new GetCruiseForCruiseApplicationQuery(cruiseApplicationId));
         return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);

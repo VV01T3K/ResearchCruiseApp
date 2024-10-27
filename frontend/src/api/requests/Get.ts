@@ -28,3 +28,5 @@ export const getApplicationDetails = (cruiseApplicationId: Guid) => get(`/api/Cr
 
 export const getFormAInitValuesForSupervisor = (cruiseApplicationId: Guid, supervisorCode: Guid) =>
     get(`/Forms/InitValuesForSupervisor/A?cruiseApplicationId=${cruiseApplicationId}&supervisorCode=${supervisorCode}`);
+
+export const getCruiseForCruiseApplication = (id: Guid) => Api.get(`/api/CruiseApplications/${id}/cruise`);
