@@ -2,21 +2,16 @@
     "Users":
     [
         {
-            "FirstName": "Michał",
-            "LastName": "Tarnacki",
-            "Email": "theedzio@gmail.com",
+            "FirstName": "Admin",
+            "LastName": "Adminowy",
+            "Email": "admin@gmail.com",
             "Role": "Administrator"
         },
+
         {
-            "FirstName": "Mateusz",
-            "LastName": "Kowalczyk",
-            "Email": "admin@admin.com",
-            "Role": "Shipowner"
-        },
-        {
-            "FirstName": "john_doe",
-            "LastName": "sdasadsa",
-            "Email": "admin@admin2.com",
+            "FirstName": "Kierownik",
+            "LastName": "Kierowniczy",
+            "Email": "kierownik@o2.com",
             "Role": "CruiseManager"
         }
     ]
