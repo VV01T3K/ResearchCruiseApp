@@ -1,9 +1,9 @@
-import {Sample} from 'Sample';
+import {CollectedSample} from 'Sample';
 
-export const samplesDefault: Sample = {
-    material: '',
+export const samplesDefault: CollectedSample = {
+    type: '',
     amount: '',
     analysis: '',
-    goingPublic: ''
+    publishing: ''
 };
 

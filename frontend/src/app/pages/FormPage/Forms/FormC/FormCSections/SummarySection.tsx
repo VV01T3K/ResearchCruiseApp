@@ -4,7 +4,7 @@ import TextArea from "@app/pages/FormPage/Inputs/TextArea";
 
 
 export const summaryFieldNames = {
-    summary: 'summary'
+    additionalDescription: 'additionalDescription'
 };
 
 export const SummarySection = () => SectionWrapper(
@@ -16,7 +16,7 @@ export const SummarySection = () => SectionWrapper(
             <TextArea className="single-field"
                       fieldLabel="Opis"
                       placeholder={'Krótki opis podsumowujący dany rejs (do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.)'}
-                      fieldName={summaryFieldNames.summary}
+                      fieldName={summaryFieldNames.additionalDescription}
                       required="Opisz cel"
             />
     },

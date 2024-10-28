@@ -141,11 +141,41 @@ export const DidacticsDescriptionField = () =>
         </div>
     );
 
-export const IsDoneField = () =>
+export const DoneField = () =>
     (
         <div className={'task-field-input'}>
             <label>
                 Czy efekt zrealizowano?
+            </label>
+            <FBoolField />
+        </div>
+    );
+
+export const PublicationMinisterialPointsField = () =>
+    (
+        <div className={'task-field-input'}>
+            <label>
+                Punkty ministerialne za publikację
+            </label>
+            <FBoolField />
+        </div>
+    );
+
+export const ManagerConditionMetField = () =>
+    (
+        <div className={'task-field-input'}>
+            <label>
+                Czy spełniono dla kierownika?
+            </label>
+            <FBoolField />
+        </div>
+    );
+
+export const DeputyConditionMetField = () =>
+    (
+        <div className={'task-field-input'}>
+            <label>
+                Czy spełniono dla zastępcy?
             </label>
             <FBoolField />
         </div>

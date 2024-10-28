@@ -1,6 +1,6 @@
-export type Sample = {
-    material: string,
+export type CollectedSample = {
+    type: string,
     amount: string,
     analysis: string,
-    goingPublic: string
+    publishing: string
 }

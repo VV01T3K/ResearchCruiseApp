@@ -4,7 +4,7 @@ import TextArea from "@app/pages/FormPage/Inputs/TextArea";
 
 
 export const spubDataFieldNames = {
-    spubData: 'spubData'
+    spubReportData: 'spubReportData'
 };
 
 export const SPUBDataSection = () => SectionWrapper(
@@ -16,7 +16,7 @@ export const SPUBDataSection = () => SectionWrapper(
             <TextArea className="single-field"
                       fieldLabel="Dane"
                       placeholder={'Wpisać czy podczas rejsu były pozyskane dane do ekspertyzy lub do oceny oddziaływań na środowisko przy współpracy z otoczeniem gospodarczym i biznesowym lub w celach popularnonaukowych, edukacyjnych...'}
-                      fieldName={spubDataFieldNames.spubData}
+                      fieldName={spubDataFieldNames.spubReportData}
                       required="Opisz cel"
             />
     },

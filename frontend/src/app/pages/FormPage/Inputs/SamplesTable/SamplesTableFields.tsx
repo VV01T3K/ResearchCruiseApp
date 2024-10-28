@@ -4,9 +4,9 @@ import {
 } from '@app/pages/FormPage/Inputs/CellFormFields';
 import { KeyContext } from '@contexts/KeyContext';
 
-export const MaterialField = () => {
+export const TypeField = () => {
     return (
-        <KeyContext.Provider value={'material'}>
+        <KeyContext.Provider value={'type'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Rodzaj próbki
@@ -43,9 +43,9 @@ export const AnalysisField = () => {
     );
 };
 
-export const GoingPublicField = () => {
+export const PublishingField = () => {
     return (
-        <KeyContext.Provider value={'goingPublic'}>
+        <KeyContext.Provider value={'publishing'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
                     Upublicznienie danych

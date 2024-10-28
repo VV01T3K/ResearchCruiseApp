@@ -8,12 +8,12 @@ import { FormContext } from '@contexts/FormContext';
 import { FieldContext } from '@contexts/FieldContext';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 import {samplesDefault} from "@helpers/samplesDeafult";
-import {Sample} from "Sample";
+import {CollectedSample} from "Sample";
 import {
     AmountField,
     AnalysisField,
-    GoingPublicField,
-    MaterialField
+    PublishingField,
+    TypeField
 } from "@app/pages/FormPage/Inputs/SamplesTable/SamplesTableFields";
 
 type SamplesProps = FieldProps
@@ -24,10 +24,10 @@ const samplesTableContent = () => {
 
     return [
         () => (<OrdinalNumber label={'Próbka'} />),
-        MaterialField,
+        TypeField,
         AmountField,
         AnalysisField,
-        GoingPublicField,
+        PublishingField,
         RemoveRowButton,
     ];
 };
@@ -60,8 +60,8 @@ function SamplesTable(props: SamplesProps) {
         rules: {
             required: false,
             validate: {
-                nameNeeded: (value: Sample[]) =>
-                    (value.length > 0 && value.some((row) => !row.material)) ? 'Wpisz rodzaj próbki' : true,
+                nameNeeded: (value: CollectedSample[]) =>
+                    (value.length > 0 && value.some((row) => !row.type)) ? 'Wpisz rodzaj próbki' : true,
 
             },
         },

@@ -9,13 +9,13 @@ import { FieldProps } from '../FormRadio';
 import { FieldContext } from '@contexts/FieldContext';
 import {
     AuthorField,
-    DateField,
+    DateField, DeputyConditionMetField,
     DidacticsDescriptionField,
     EndDateField,
     FinancingAmountField,
     FinancingApprovedField,
     InstitutionField,
-    MagazineField,
+    MagazineField, ManagerConditionMetField,
     MinisterialPointsField,
     ProjectDraftTitleField,
     PublicationDraftTitleField,
@@ -29,11 +29,11 @@ import { DisplayContext } from '@app/pages/FormPage/Inputs/TaskTable/EvaluatedTa
 import { FormContext } from '@contexts/FormContext';
 import { KeyContext } from '@contexts/KeyContext';
 import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
-import {IsDoneField} from "@app/pages/FormPage/Inputs/EffectsTable/EffectsTableFields";
+import {DoneField} from "@app/pages/FormPage/Inputs/EffectsTable/EffectsTableFields";
 
 registerLocale('pl', pl);
 
-export type ResearchTask = {
+export type ResearchTaskEffect = {
     type: string,
     title?: string,
     magazine?: string,
@@ -47,8 +47,11 @@ export type ResearchTask = {
     financingAmount?: string,
     description?: string
     securedAmount?: string,
-    ministerialPoints?: string
-    isDone?: boolean
+    ministerialPoints?: string,
+    done: string,
+    publicationMinisterialPoints?: string,
+    managerConditionMet: string,
+    deputyConditionMet: string
 }
 
 export const taskTypes = [
@@ -66,19 +69,19 @@ export const taskTypes = [
     'Inne zadanie',
 ];
 
-export const taskTypesDefaultValues: ResearchTask[] = [
-    { type: '0', author: '', title: '', isDone: false },
-    { type: '1', author: '', title: '', isDone: false },
-    { type: '2', author: '', title: '', isDone: false },
-    { type: '3', title: '', date: '', financingApproved: 'false', isDone: false },
-    { type: '4', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', isDone: false },
-    { type: '5', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', isDone: false },
-    { type: '6', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', isDone: false },
-    { type: '7', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', isDone: false },
-    { type: '8', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', isDone: false },
-    { type: '9', description: '', isDone: false },
-    { type: '10', title: '', date: '', magazine: '', ministerialPoints: '0', isDone: false },
-    { type: '11', description: '', isDone: false },
+export const taskTypesDefaultValues: ResearchTaskEffect[] = [
+    { type: '0', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '1', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '2', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '3', title: '', date: '', financingApproved: 'false', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '4', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '5', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '6', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '7', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '8', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '9', description: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '10', title: '', date: '', magazine: '', ministerialPoints: '0', done: '', publicationMinisterialPoints: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '11', description: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
 ];
 const taskTypeOptions = () => {
     return taskTypes.map((taskLabel, index) =>
@@ -130,8 +133,14 @@ export const FieldForKey = () => {
             }
         case 'ministerialPoints':
             return <MinisterialPointsField />;
-        case 'isDone':
-            return <IsDoneField/>;
+        case 'done':
+            return <DoneField/>;
+        case 'publicationMinisterialPoints':
+            return <PublicationDraftTitleField/>;
+        case 'managerConditionMet':
+            return <ManagerConditionMetField/>;
+        case 'deputyConditionMet':
+            return <DeputyConditionMetField/>;
         default:
             return <></>;
     }
@@ -170,11 +179,11 @@ const taskTableContent = () =>
     ];
 
 type TaskTableProps = FieldProps &
-    { historicalTasks?: ResearchTask[] }
+    { historicalTasks?: ResearchTaskEffect[] }
 
 const dateOptions: Intl.DateTimeFormatOptions = { month: '2-digit', year: 'numeric' };
 
-const TaskRowLabel = (row: ResearchTask) => (row.author ? ('Autor: ' + row.author + ', ') : '')
+const TaskRowLabel = (row: ResearchTaskEffect) => (row.author ? ('Autor: ' + row.author + ', ') : '')
     + (row.title ? ('Tytuł: ' + row.title + ', ') : '')
     + (row.institution ? ('Instytucja: ' + row.institution + ', ') : '')
     + (row.date ? ('Data: ' + new Date(row.date).toLocaleDateString('pl-PL') + ', ') : '')
@@ -193,7 +202,7 @@ export const EffectsTable = (props: TaskTableProps) => {
             ?.filter((row) =>
                 Number(row.type) == index,
             )
-            .map((row: ResearchTask) => ({
+            .map((row: ResearchTaskEffect) => ({
                 label: TaskRowLabel(row),
                 value: row,
             })) ?? [];
@@ -223,13 +232,13 @@ export const EffectsTable = (props: TaskTableProps) => {
             required: 'Pole wymagane',
             validate: {
                 notEmptyArray: (value: FieldValues) => {
-                    if (value.some((row: ResearchTask) => {
+                    if (value.some((row: ResearchTaskEffect) => {
                         return Object
                             .keys(taskTypesDefaultValues[Number(row.type)])
                             .some((key) => {
                                 return key == 'type'
                                     ? false
-                                    : row[key as keyof ResearchTask] == '' || row[key as keyof ResearchTask] == undefined;
+                                    : row[key as keyof ResearchTaskEffect] == '' || row[key as keyof ResearchTaskEffect] == undefined;
                             });
                     })) {
                         return 'Wypełnij wszystkie pola';
