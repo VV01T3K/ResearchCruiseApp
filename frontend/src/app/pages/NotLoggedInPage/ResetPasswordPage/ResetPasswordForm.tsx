@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
     ErrorMessageIfPresentNoContext,
@@ -8,26 +8,38 @@ import {
 import userDataManager from '../../../../ToBeMoved/CommonComponents/UserDataManager';
 import useFormWrapper from '../../../../ToBeMoved/CommonComponents/useFormWrapper';
 import { Path } from '../../../../ToBeMoved/Tools/Path';
+import {ResetPasswordData} from "ResetPasswordData";
 
 function ResetPasswordForm() {
     const { ResetPassword } = userDataManager();
     const {
         handleSubmit,
-        EmailTextInput,
+        PasswordTextInput,
+        ConfirmPasswordTextInput,
         ConfirmButton,
-        RegisterLink,
         setDisabled,
         ReturnToLoginLink,
     } = useFormWrapper();
     const [resetError, setError] = useState<null | string>(null);
     const [resetSuccessful, setResetSuccessful] = useState(false);
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const resetCode = queryParams.get('resetCode');
+    const emailBase64 = queryParams.get('emailBase64');
+
     const navigate = useNavigate();
-    const onSubmit = async (data: FieldValues) => {
+    const onSubmit = async (fieldValues: FieldValues) => {
         setDisabled(true);
         try {
-            await ResetPassword(data);
-            setResetSuccessful(true);
+            const resetPasswordData: ResetPasswordData | undefined = createResetPasswordData(fieldValues);
+            if (resetPasswordData) {
+                await ResetPassword(resetPasswordData);
+                setResetSuccessful(true);
+            }
+            else {
+                setError('Wystąpił problem z resetowaniem hasła');
+                setDisabled(false);
+            }
         } catch (e) {
             setError('Wystąpił problem z resetowaniem hasła');
             setDisabled(false);
@@ -38,22 +50,13 @@ function ResetPasswordForm() {
         navigate(Path.Default);
     };
 
-    const RememberPasswordLink = () => {
-        return (
-            <Link className="forget-password-link" to={Path.Default}>
-                Znasz hasło?
-            </Link>
-        );
-    };
-
     const DefaultForm = () => {
         return (
             <form onSubmit={handleSubmit(onSubmit)}>
-                <EmailTextInput />
-                <RememberPasswordLink />
+                <PasswordTextInput />
+                <ConfirmPasswordTextInput />
                 <ConfirmButton />
                 {resetError && <ErrorMessageIfPresentNoContext message={resetError} />}
-                <RegisterLink />
             </form>
         );
     };
@@ -62,12 +65,24 @@ function ResetPasswordForm() {
         return (
             <form onSubmit={handleSubmit(onSubmitWhenSuccess)}>
                 <div className={'signup-link'}>
-                    Jeśli konto istnieje, został wysłany link do zmiany hasła na podany
-                    adres e-mail
+                    Hasło zostało pomyślnie zmienione.
                 </div>
                 <ReturnToLoginLink />
             </form>
         );
+    };
+
+    const createResetPasswordData = (fieldValues: FieldValues): ResetPasswordData | undefined => {
+        if (!emailBase64 || !resetCode) {
+            return undefined;
+        }
+
+        return {
+            password: fieldValues.password,
+            passwordConfirm: fieldValues.passwordConfirm,
+            emailBase64: emailBase64,
+            resetCode: resetCode
+        }
     };
 
     return (

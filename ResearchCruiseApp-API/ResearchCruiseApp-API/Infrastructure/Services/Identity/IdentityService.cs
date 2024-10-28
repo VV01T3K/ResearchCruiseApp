@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NeoSmart.Utils;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
@@ -79,15 +79,15 @@ public class IdentityService(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
-            return Error.ResourceNotFound();
+            return Error.ForbiddenOperation();
         
         user.Accepted = false;
         
         var identityResult = await userManager.UpdateAsync(user);
-        if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
         
-        return Result.Empty;
+        return identityResult.Succeeded
+            ? Result.Empty
+            : identityResult.ToApplicationResult();
     }
     
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
@@ -208,6 +208,48 @@ public class IdentityService(
         return Result.Empty;
     }
 
+    public async Task<Result> EnablePasswordReset(ForgotPasswordFormDto forgotPasswordFormDto)
+    {
+        var user = await userManager.FindByEmailAsync(forgotPasswordFormDto.Email);
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var code = await userManager.GeneratePasswordResetTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        var userDto = await GetUserDtoById(Guid.Parse(user.Id));
+        if (userDto is null)
+            return Error.ResourceNotFound();
+        
+        await emailSender.SendPasswordResetMessage(userDto, code);
+
+        return Result.Empty;
+    }
+
+    public async Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto)
+    {
+        var emailBytes = UrlBase64.Decode(resetPasswordFormDto.EmailBase64);
+        if (emailBytes is null)
+            return Error.UnknownIdentity();
+        
+        var email = Encoding.UTF8.GetString(emailBytes);
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is null)
+            return Error.ForbiddenOperation();
+
+        var resetCodeBytes = UrlBase64.Decode(resetPasswordFormDto.ResetCode);
+        if (resetCodeBytes is null)
+            return Error.UnknownIdentity();
+        
+        var resetCode = Encoding.UTF8.GetString(resetCodeBytes);
+        var result = await userManager
+            .ResetPasswordAsync(user, resetCode, resetPasswordFormDto.Password);
+
+        return result.Succeeded
+            ? Result.Empty
+            : Error.UnknownIdentity();
+    }
+    
     public async Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName)
     {
         var user = CreateUser(addUserFormDto);

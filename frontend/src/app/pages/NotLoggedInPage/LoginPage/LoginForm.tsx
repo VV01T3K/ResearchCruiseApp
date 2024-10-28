@@ -56,7 +56,7 @@ function LoginForm() {
     };
     const ForgetPasswordLink = () => {
         return (
-            <Link className="forget-password-link" to={Path.ResetPassword}>
+            <Link className="forget-password-link" to={Path.ForgotPassword}>
                 Nie pamiętam hasła
             </Link>
         );

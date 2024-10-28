@@ -33,6 +33,10 @@ public interface IIdentityService
     Task<Result<LoginResponseDto>> RefreshUserTokens(RefreshDto refreshDto);
     
     Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto);
+
+    Task<Result> EnablePasswordReset(ForgotPasswordFormDto forgotPasswordFormDto);
+
+    Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto);
     
     Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName);
     
