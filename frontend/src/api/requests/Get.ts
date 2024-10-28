@@ -18,11 +18,16 @@ export const getFormA = (cruiseApplicationId: Guid) =>
 export const getFormB = (cruiseApplicationId: Guid) =>
     get(`/api/CruiseApplications/${cruiseApplicationId}/formB`);
 
+export const getFormC = (cruiseApplicationId: Guid) =>
+    get(`/api/CruiseApplications/${cruiseApplicationId}/formC`);
+
 export const fetchCruises = () => Api.get('/api/Cruises');
 
 export const getFormAInitValues = () => get('/Forms/InitValues/A');
 
 export const getFormBInitValues = () => get('/Forms/InitValues/B');
+
+export const getFormCInitValues = () => get('/Forms/InitValues/C');
 
 export const getApplicationDetails = (cruiseApplicationId: Guid) => get(`/api/CruiseApplications/${cruiseApplicationId}/evaluation`);
 
