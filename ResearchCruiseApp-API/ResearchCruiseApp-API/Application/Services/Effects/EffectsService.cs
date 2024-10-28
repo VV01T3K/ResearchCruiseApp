@@ -28,10 +28,7 @@ public class EffectsService(
         var cruiseManagerId = cruiseApplication.FormA.CruiseManagerId;
         var deputyManagerId = cruiseApplication.FormA.DeputyManagerId;
 
-        var doneEffects = cruiseApplication.FormC.ResearchTaskEffects
-            .Where(effect => effect.Done.ToBool());
-
-        foreach (var effect in doneEffects)
+        foreach (var effect in cruiseApplication.FormC.ResearchTaskEffects)
         {
             var pointsForManagersTeam = GetPointsForManagersTeam(effect, cruiseApplication);
 
@@ -98,6 +95,15 @@ public class EffectsService(
         var managerPoints = 0;
         var deputyPoints = 0;
 
+        if (!effect.Done.ToBool())
+        {
+            return new Dictionary<CruiseFunction, int>
+            {
+                { CruiseFunction.CruiseManager, managerPoints },
+                { CruiseFunction.DeputyManager, deputyPoints }
+            };
+        }
+        
         var managerConditionMet = effect.ManagerConditionMet.ToBool();
         var deputyConditionMet = effect.DeputyConditionMet.ToBool();
 
