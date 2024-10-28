@@ -16,8 +16,8 @@ internal class TemplateFileReader : ITemplateFileReader
     public Task<string> ReadEmailConfirmationMessageTemplate() =>
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "emailConfirmationMessage.html");
     
-    public Task<string> ReadEmailConfirmationMessageWithPasswordTemplate() =>
-        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "emailConfirmationMessageWithPassword.html");
+    public Task<string> ReadAccountCreatedMessageTemplate() =>
+        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "accountCreatedMessage.html");
     
     public Task<string> ReadAccountAcceptedMessageTemplate() =>
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "accountAcceptedMessage.html");
@@ -34,6 +34,9 @@ internal class TemplateFileReader : ITemplateFileReader
     public Task<string> ReadEmailConfirmationEmailSubject() =>
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "emailConfirmationEmailSubject.html");
 
+    public Task<string> ReadAccountCreatedEmailSubject() =>
+        ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "accountCreatedEmailSubject.html");
+    
     public Task<string> ReadAccountAcceptedEmailSubject() =>
         ReadFileText(_emailTemplatesPath + Path.DirectorySeparatorChar + "accountAcceptedEmailSubject.html");
     

@@ -5,7 +5,7 @@ public interface ITemplateFileReader
 {
     Task<string> ReadEmailConfirmationMessageTemplate();
     
-    Task<string> ReadEmailConfirmationMessageWithPasswordTemplate();
+    Task<string> ReadAccountCreatedMessageTemplate();
     
     Task<string> ReadAccountAcceptedMessageTemplate();
     
@@ -16,6 +16,8 @@ public interface ITemplateFileReader
     Task<string> ReadPasswordResetMessageTemplate();
     
     Task<string> ReadEmailConfirmationEmailSubject();
+
+    Task<string> ReadAccountCreatedEmailSubject();
     
     Task<string> ReadAccountAcceptedEmailSubject();
     

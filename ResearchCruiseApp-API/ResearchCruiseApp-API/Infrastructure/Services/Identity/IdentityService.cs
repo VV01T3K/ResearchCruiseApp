@@ -261,10 +261,8 @@ public class IdentityService(
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
         
-        var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
         var userDto = await CreateUserDto(user);
-        
-        await emailSender.SendEmailConfirmationEmail(userDto, roleName, emailConfirmationCode, password);
+        await emailSender.SendAccountCreatedMessage(userDto, roleName, password);
         
         return Result.Empty;
     }
