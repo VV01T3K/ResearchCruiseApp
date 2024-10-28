@@ -79,24 +79,9 @@ public class AddFormCHandler(
         if (oldFormC is not null)
             await formsService.DeleteFormC(oldFormC, cancellationToken);
 
-        await HandleEvaluations(cruiseApplication, cancellationToken);
-
-        return Result.Empty;
-    }
-
-    private async Task HandleEvaluations(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
-    {
         await effectsService.EvaluateEffects(cruiseApplication, cancellationToken);
 
         await unitOfWork.Complete(cancellationToken);
-
-        await cruiseApplicationEvaluator.UpdateCruiseApplicationsEffectsEvaluations(
-            [
-                cruiseApplication.FormA!.CruiseManagerId,
-                cruiseApplication.FormA.DeputyManagerId
-            ],
-            cancellationToken);
-
-        await unitOfWork.Complete(cancellationToken);
+        return Result.Empty;
     }
 }

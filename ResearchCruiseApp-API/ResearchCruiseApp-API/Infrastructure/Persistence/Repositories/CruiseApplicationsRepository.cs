@@ -105,29 +105,4 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
                 cruiseApplication.FormA.DeputyManagerId == userId)
             .ToListAsync(cancellationToken);
     }
-
-    public Task<List<CruiseApplication>> GetAllByUserIdWithFormAAndFormCContent(
-        Guid userId, CancellationToken cancellationToken)
-    {
-        return DbContext.CruiseApplications
-            .IncludeFormA()
-            .IncludeFormC()
-            .IncludeFormCContent()
-            .Where(cruiseApplication =>
-                cruiseApplication.FormA!.CruiseManagerId == userId ||
-                cruiseApplication.FormA.DeputyManagerId == userId)
-            .ToListAsync(cancellationToken);
-    }
-
-    public Task<List<CruiseApplication>> GetAllByCruiseManagersAndStatusesWithFormAContent(
-        List<Guid> cruiseManagersIds, List<CruiseApplicationStatus> statuses, CancellationToken cancellationToken)
-    {
-        return DbContext.CruiseApplications
-            .IncludeFormA()
-            .IncludeFormAContent()
-            .Where(cruiseApplication =>
-                cruiseManagersIds.Contains(cruiseApplication.FormA!.CruiseManagerId) &&
-                statuses.Contains(cruiseApplication.Status))
-            .ToListAsync(cancellationToken);
-    }
 }

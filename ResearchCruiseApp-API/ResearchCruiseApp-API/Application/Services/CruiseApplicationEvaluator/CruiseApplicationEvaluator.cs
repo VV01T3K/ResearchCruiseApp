@@ -48,25 +48,6 @@ public class CruiseApplicationEvaluator(
             publicationsPoints +
             spubTasksPoints;
     }
-
-    public async Task UpdateCruiseApplicationsEffectsEvaluations(
-        List<Guid> cruiseManagersIds, CancellationToken cancellationToken)
-    {
-        var cruiseApplications = await cruiseApplicationsRepository
-            .GetAllByCruiseManagersAndStatusesWithFormAContent(
-                cruiseManagersIds,
-                [
-                    CruiseApplicationStatus.WaitingForSupervisor,
-                    CruiseApplicationStatus.AcceptedBySupervisor,
-                    CruiseApplicationStatus.Accepted
-                ],
-                cancellationToken);
-
-        foreach (var cruiseApplication in cruiseApplications)
-        {
-            await EvaluateEffects(cruiseApplication, cancellationToken);
-        }
-    }
     
 
     private static void EvaluateResearchTasks(CruiseApplication cruiseApplication)

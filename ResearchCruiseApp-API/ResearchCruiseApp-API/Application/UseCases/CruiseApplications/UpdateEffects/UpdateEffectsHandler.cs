@@ -65,13 +65,5 @@ public class UpdateEffectsHandler(
             cruiseApplication,
             cancellationToken);
         await unitOfWork.Complete(cancellationToken);
-
-        await cruiseApplicationEvaluator.UpdateCruiseApplicationsEffectsEvaluations(
-            [
-                cruiseApplication.FormA!.CruiseManagerId,
-                cruiseApplication.FormA.DeputyManagerId
-            ],
-            cancellationToken);
-        await unitOfWork.Complete(cancellationToken);
     }
 }
