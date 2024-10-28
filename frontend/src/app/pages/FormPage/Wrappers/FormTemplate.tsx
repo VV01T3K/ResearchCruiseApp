@@ -18,7 +18,7 @@ import {
     getFormA,
     getFormAInitValues,
     getFormAInitValuesForSupervisor,
-    getFormB, getFormBInitValues, getFormC, getFormCInitValues,
+    getFormB, getFormBInitValues,
     getFormForSupervisor,
 } from '@api/requests';
 import { FormAInitValues } from 'FormAInitValues';
@@ -68,8 +68,7 @@ const locationToDataMapper = () => {
     };
 };
 
-function
-FormTemplate(props: FormTemplateProps) {
+function FormTemplate(props: FormTemplateProps) {
     const {
         supervisorCode,
         cruiseApplicationId,
@@ -82,8 +81,6 @@ FormTemplate(props: FormTemplateProps) {
         .then(response => response?.data);
     const _getFormB = () => getFormB(cruiseApplication?.id ?? cruiseApplicationId)
         .then(response => response?.data);
-    const _getFormC = () => getFormC(cruiseApplication?.id ?? cruiseApplicationId)
-        .then(response => response?.data);
 
     const _getFormForSupervisor = () =>
         getFormForSupervisor(cruiseApplicationId, supervisorCode)
@@ -94,9 +91,6 @@ FormTemplate(props: FormTemplateProps) {
 
     const _getFormBInitValues = () =>
         getFormBInitValues().then(response => response?.data);
-
-    const _getFormCInitValues = () =>
-        getFormCInitValues().then(response => response?.data);
 
     const _getApplicationDetailsInitValues = () =>
         getApplicationDetails(cruiseApplication.id).then(response => response?.data);
@@ -117,8 +111,7 @@ FormTemplate(props: FormTemplateProps) {
                 const formA = await _getFormA();
                 return { ...formA, ...formB };
             case 'C':
-                const formC = await _getFormC();
-                return { ...formC };
+                return null;
             case 'CruiseDetails':
                 return null;
             default:
@@ -153,9 +146,6 @@ FormTemplate(props: FormTemplateProps) {
                 const formAInitValues = await _getFormAInitValues();
                 const formBInitValues = await _getFormBInitValues();
                 return { ...formAInitValues, ...formBInitValues };
-            case FormType.C:
-                const formCInitValues = await _getFormCInitValues();
-                return { ...formCInitValues };
             case FormType.ApplicationDetails:
                 return await _getApplicationDetailsInitValues();
             case FormType.AForSupervisor:
