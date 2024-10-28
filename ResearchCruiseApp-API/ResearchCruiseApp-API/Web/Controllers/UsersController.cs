@@ -59,7 +59,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     }
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
-    [HttpPatch("{id}/deactivate")]
+    [HttpPatch("{id:guid}/deactivate")]
     public async Task<IActionResult> Deactivate([FromRoute] Guid id)
     {
         var result = await mediator.Send(new DeactivateUserCommand(id));

@@ -79,15 +79,15 @@ public class IdentityService(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
-            return Error.ResourceNotFound();
+            return Error.ForbiddenOperation();
         
         user.Accepted = false;
         
         var identityResult = await userManager.UpdateAsync(user);
-        if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
         
-        return Result.Empty;
+        return identityResult.Succeeded
+            ? Result.Empty
+            : identityResult.ToApplicationResult();
     }
     
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
