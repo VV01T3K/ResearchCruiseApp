@@ -8,7 +8,7 @@ namespace ResearchCruiseApp_API.Domain.Entities;
 public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression<Permission>
 {
     private string? _scanName;
-    private byte[]? _scanContent = [];
+    private byte[]? _scanContent;
     
     [StringLength(1024)]
     public string Description { get; init; } = null!;
@@ -80,7 +80,7 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
                 (permission.ScanContent == null && other.ScanContent == null) ||
                 (
                     permission.ScanContent != null &&
-                    other.ScanContent !=  null &&
+                    other.ScanContent != null &&
                     other.ScanContent.SequenceEqual(permission.ScanContent)
                 )
             );
