@@ -210,6 +210,7 @@ function ManageUsersPage() {
         null,
         emptyText,
         userList.filter(applyFilters),
+        true,
     );
 
     return (

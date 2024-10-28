@@ -1,10 +1,12 @@
 ﻿using System.Globalization;
 using System.Resources;
+using System.Text;
 using MimeKit;
+using NeoSmart.Utils;
 using ResearchCruiseApp_API.App_GlobalResources;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
+using ResearchCruiseApp_API.Domain.Entities;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
@@ -51,14 +53,17 @@ internal class EmailSender(
         await SendEmail(userDto.Email, emailSubject, emailMessage);
     }
     
-    public Task SendPasswordResetLink(UserDto userDto, string email, string resetLink)
+    public async Task SendPasswordResetMessage(UserDto userDto, string resetCode)
     {
-        throw new NotImplementedException();
-    }
+        var messageTemplate = await templateFileReader.ReadPasswordResetMessageTemplate();
+        var emailSubject = await templateFileReader.ReadPasswordResetEmailSubject();
+        var emailBase64 = UrlBase64.Encode(Encoding.UTF8.GetBytes(userDto.Email));
+        
+        var link = GetFrontEndUrl() + $"/resetPassword?emailBase64={emailBase64}&resetCode={resetCode}";
 
-    public Task SendPasswordResetCode(UserDto userDto, string email, string resetCode)
-    {
-        throw new NotImplementedException();
+        var emailMessage = messageTemplate.Replace("{{link}}", link);
+
+        await SendEmail(userDto.Email, emailSubject, emailMessage);
     }
 
     public async Task SendRequestToSupervisorMessage(
@@ -80,16 +85,15 @@ internal class EmailSender(
         await SendEmail(supervisorEmail, emailSubject, emailMessage);
     }
     
-    public async Task SendCruiseConfirmMessage(
-        CruiseDto cruise, UserDto cruiseManager, string email)
+    public async Task SendCruiseConfirmMessage(Cruise cruise, UserDto cruiseManager, string email)
     {
 
         var messageTemplate = await templateFileReader.ReadCruiseConfirmedMessageTemplate();
         var emailSubject = await templateFileReader.ReadCruiseConfirmedSubject();
 
         var emailMessage = messageTemplate
-            .Replace("{{startDate}}", cruise.StartDate)
-            .Replace("{{endDate}}", cruise.EndDate)
+            .Replace("{{startDate}}", cruise.StartDate.ToString("dd.MM.yyyy (HH:mm)"))
+            .Replace("{{endDate}}", cruise.EndDate.ToString("dd.MM.yyyy (HH:mm)"))
             .Replace("{{firstName}}", cruiseManager.FirstName)
             .Replace("{{lastName}}", cruiseManager.LastName);
 

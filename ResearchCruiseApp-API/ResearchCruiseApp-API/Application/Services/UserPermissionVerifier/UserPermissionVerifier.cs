@@ -28,6 +28,7 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
 
         if (currentUserRoles.Contains(RoleName.Administrator))
             return true;
+        
         if (currentUserRoles.Contains(RoleName.Shipowner))
         {
             var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
@@ -129,5 +130,26 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
         
         return cruiseApplication.FormA.CruiseManagerId == currentUserId ||
                cruiseApplication.FormA.DeputyManagerId == currentUserId;
+    }
+
+    public Task<bool> CanCurrentUserUpdateEffects(CruiseApplication cruiseApplication) =>
+        CanCurrentUserAddForm(cruiseApplication);
+
+    public async Task<bool> CanUserDeactivate(Guid otherUserId)
+    {
+        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+
+        if (currentUserRoles.Contains(RoleName.Administrator))
+            return true;
+        
+        if (currentUserRoles.Contains(RoleName.Shipowner))
+        {
+            var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+
+            return !otherUserRoles.Contains(RoleName.Administrator) &&
+                   !otherUserRoles.Contains(RoleName.Shipowner);
+        }
+
+        return false;
     }
 }

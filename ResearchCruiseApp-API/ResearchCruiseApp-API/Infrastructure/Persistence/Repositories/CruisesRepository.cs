@@ -66,9 +66,4 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
                     .Contains(id)))
             .ToListAsync(cancellationToken);
     }
-
-    public void Delete(Cruise cruise)
-    {
-        DbContext.Cruises.Remove(cruise);
-    }
 }

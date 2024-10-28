@@ -14,6 +14,7 @@ import { FieldContext } from '@contexts/FieldContext';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 import { ResearchEquipment } from 'ResearchEquipment';
 import { researchEquipmentDefault } from '@helpers/researchEquipmentDefault';
+import { SpubTask } from 'SpubTask';
 
 type EquipmentProps = FieldProps
 
@@ -64,6 +65,11 @@ function EquipmentTable(props: EquipmentProps) {
                     (value.length > 0 && value.some((row) =>
                         (row.insuranceStartDate && !row.insuranceEndDate) || (!row.insuranceStartDate && row.insuranceEndDate),
                     )) ? 'Podaj obydwie daty' : true,
+                rightYearPeriod: (value: FieldValues) => {
+                    if (value.some((row: ResearchEquipment) => (row.insuranceStartDate && row.insuranceEndDate) && row.insuranceEndDate < row.insuranceStartDate)) {
+                        return 'Data zakończenia przed datą rozpoczęcia';
+                    }
+                },
             },
         },
         render: FieldContextWrapper(Render),

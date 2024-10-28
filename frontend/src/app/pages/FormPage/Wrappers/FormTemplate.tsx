@@ -146,7 +146,6 @@ FormTemplate(props: FormTemplateProps) {
     }, []);
 
     const GetFormInitValues = async (formType: FormTypeValues) => {
-        console.log(formType);
         switch (formType) {
             case FormType.A:
                 return await _getFormAInitValues();
@@ -182,10 +181,8 @@ FormTemplate(props: FormTemplateProps) {
     }, []);
 
     const form = useOnBlurForm(defaultValues);
-    console.log(form.formState.errors);
 
     const [readOnly, setReadOnly] = useState(_readOnly);
-    console.log(form.getValues());
     const formContext: FormContextFields = {
         resetField: form.resetField,
         clearErrors: form.clearErrors,

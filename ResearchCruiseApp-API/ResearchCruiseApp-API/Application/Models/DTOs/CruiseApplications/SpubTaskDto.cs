@@ -39,20 +39,6 @@ public class SpubTaskDto
                     dest => dest.Name,
                     options =>
                         options.MapFrom(src => src.SpubTask.Name));
-            
-            CreateMap<FormCSpubTask, SpubTaskDto>()
-                .ForMember(
-                    dest => dest.YearFrom,
-                    options =>
-                        options.MapFrom(src => src.SpubTask.YearFrom))
-                .ForMember(
-                    dest => dest.YearTo,
-                    options =>
-                        options.MapFrom(src => src.SpubTask.YearTo))
-                .ForMember(
-                    dest => dest.Name,
-                    options =>
-                        options.MapFrom(src => src.SpubTask.Name));
         }
     }
 }

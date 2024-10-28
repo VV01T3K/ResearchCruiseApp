@@ -6,6 +6,7 @@ import FormRadio from '../../../Inputs/FormRadio';
 import { timeSectionFieldNames } from './TimeSection';
 import { FormContext } from '@contexts/FormContext';
 import { FormAInitValues } from 'FormAInitValues';
+import { maxCruiseDays } from '@consts/maxCruiseDays';
 
 export const AcceptablePeriodField = () => (
     <MonthSlider className="two-fields-beside-md"
@@ -33,7 +34,7 @@ export const CruiseDaysField = () => (
                  setterFunction={(e) => e / 24}
                  onChange={(e) => e * 24}
                  notZero
-                 maxVal={24} />
+                 maxVal={maxCruiseDays} />
 );
 
 export const CruiseHoursField = () => (
@@ -41,7 +42,7 @@ export const CruiseHoursField = () => (
                  notZero
                  fieldName={timeSectionFieldNames.cruiseHours}
                  fieldLabel="Liczba planowanych godzin rejsowych"
-                 maxVal={99}
+                 maxVal={maxCruiseDays * 24}
     />
 );
 
@@ -72,7 +73,7 @@ export const DifferentShipUsageField = () => {
     const [disabled, setDisabled] = useState(false);
 
     useEffect(() => {
-        const lastFieldInShipUsageSelected = formContext!.initValues && (formContext!.initValues as FormAInitValues)?.shipUsages.length > 0 &&
+        const lastFieldInShipUsageSelected = formContext!.initValues && (formContext!.initValues as FormAInitValues)?.shipUsages?.length > 0 &&
             formContext!.getValues('shipUsage') == (formContext!.initValues as FormAInitValues)?.shipUsages?.length - 1;
         if (!disabled && (formContext!.initValues as FormAInitValues)?.shipUsages && !lastFieldInShipUsageSelected) {
             setDisabled(true);
@@ -89,7 +90,7 @@ export const DifferentShipUsageField = () => {
 
     return (
         <TextArea className="two-fields-beside-md"
-                  placeholder={'Podaj sposób'}
+                  placeholder={!disabled ? 'Podaj sposób' : 'Aby podać inny sposób zaznacz \'w inny sposób\''}
                   fieldLabel="Inny sposób użycia"
                   fieldName={timeSectionFieldNames.differentUsage}
                   disabled={disabled}

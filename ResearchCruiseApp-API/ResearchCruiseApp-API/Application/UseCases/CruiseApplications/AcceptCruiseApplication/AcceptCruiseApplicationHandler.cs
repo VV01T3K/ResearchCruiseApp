@@ -12,7 +12,6 @@ namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AcceptCr
 
 public class AcceptCruiseApplicationHandler(
     ICruiseApplicationsRepository cruiseApplicationsRepository,
-    ICruisesRepository cruisesRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<AcceptCruiseApplicationCommand, Result>
 {

@@ -108,7 +108,6 @@ export const Actions = () => {
     return (
         <div className="btn-group-vertical">
             <LinkWithState
-                className="cruises-button"
                 to={Path.CruiseForm}
                 label="Szczegóły"
                 state={{ cruise: cruise, readOnly: true }}

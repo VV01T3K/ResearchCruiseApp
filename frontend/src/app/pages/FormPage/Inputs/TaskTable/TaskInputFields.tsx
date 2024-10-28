@@ -106,7 +106,7 @@ export const FinancingAmountField = () =>
 export const MinisterialPointsField = () =>
     (
         <div className={'task-field-input col-md-4 '}>
-            <label>Punkty ministerialne</label>
+            <label>Przewidywane punkty ministerialne</label>
             <FIntField />
         </div>
     );

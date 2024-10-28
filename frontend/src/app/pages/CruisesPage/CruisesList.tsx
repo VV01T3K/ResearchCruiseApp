@@ -81,6 +81,7 @@ export default function CruisesList() {
         null,
         emptyText,
         _cruisesToDisplay,
+        true,
     );
 
     return (

@@ -37,7 +37,10 @@ export const StartDateField = () => {
         <KeyContext.Provider value={'insuranceStartDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
-                    Początek ubezpieczenia (jesli ubezpieczono)
+                    Początek
+                </label>
+                <label className={'table-field-input-label'}>
+                    ubezpieczenia (jesli ubezpieczono)
                 </label>
                 <FDateFieldDayAndHour />
             </div>
@@ -50,7 +53,10 @@ export const EndDateField = () => {
         <KeyContext.Provider value={'insuranceEndDate'}>
             <div className={'task-field-input col-md-6'}>
                 <label>
-                    Koniec ubezpieczenia (jeśli ubezpieczono)
+                    Koniec
+                </label>
+                <label className={'table-field-input-label'}>
+                    ubezpieczenia (jeśli ubezpieczono)
                 </label>
 
                 <FDateFieldDayAndHour />

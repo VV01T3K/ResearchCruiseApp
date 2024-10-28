@@ -1,15 +1,16 @@
 using ResearchCruiseApp_API.Application;
 using ResearchCruiseApp_API.Infrastructure;
-using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization;
-using ResearchCruiseApp_API.Web;
+using ResearchCruiseApp_API.Web.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddWeb();
-builder.Configuration.AddJsonFile("users.json", optional: false, reloadOnChange: false)
+builder.Services.AddWeb(builder.Configuration);
+
+builder.Configuration
+    .AddJsonFile("users.json", optional: false, reloadOnChange: false)
     .AddEnvironmentVariables();
 
 builder.WebHost.ConfigureKestrel(options =>
@@ -19,22 +20,6 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app
-    .UseAuthentication()
-    .UseAuthorization();
-
-app.UseCors("AllowAnyOrigin");
-
-app.MapControllers();
-
-await app.InitialiseDatabase();
+await app.Configure();
 
 app.Run();

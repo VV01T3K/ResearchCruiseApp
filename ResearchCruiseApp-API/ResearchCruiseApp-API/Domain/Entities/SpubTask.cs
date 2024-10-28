@@ -18,7 +18,7 @@ public class SpubTask : Entity, IEquatable<SpubTask>, IEquatableByExpression<Spu
     
     public List<FormASpubTask> FormASpubTasks { get; init; } = [];
     
-    public List<FormCSpubTask> FormCSpubTasks { get; init; } = [];
+    public List<FormC> FormsC { get; init; } = [];
 
 
     public override bool Equals(object? other) =>

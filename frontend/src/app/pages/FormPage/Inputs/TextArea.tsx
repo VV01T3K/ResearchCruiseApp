@@ -43,9 +43,11 @@ function TextArea(props: Props) {
         render: render,
         rules: {
             required: props.required ? 'Pole wymagane' : false,
-            maxLength: {
-                value: props.maxLength ?? 200, // Maksymalna długość
-                message: `Za długi tekst, maksymalna długość to ${props.maxLength ?? 200} znaków.`,
+            validate: {
+                maxLength: (field: FieldValues) => {
+                    const maxLength = props.maxLength ?? 200;
+                    return field.length <= maxLength || `Za długi tekst, maksymalna długość to ${maxLength} znaków. (Aktualnie ${field.length})`;
+                },
             },
             pattern: props.pattern
                 ? {

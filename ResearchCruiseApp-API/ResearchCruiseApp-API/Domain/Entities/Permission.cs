@@ -63,7 +63,10 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
                other.Description == Description &&
                other.Executive == Executive &&
                other.ScanName == ScanName &&
-               other.ScanContent.SequenceEqual(ScanContent);
+               (
+                   (other.ScanContent == null && ScanContent == null) ||
+                   (other.ScanContent != null && ScanContent != null && other.ScanContent.SequenceEqual(ScanContent))
+               );
     }
 
     public static Expression<Func<Permission, bool>> EqualsByExpression(Permission? other)
@@ -73,6 +76,13 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
             other.Description == permission.Description &&
             other.Executive == permission.Executive &&
             other.ScanName == permission.ScanName &&
-            other.ScanContent.SequenceEqual(permission.ScanContent);
+            (
+                (permission.ScanContent == null && other.ScanContent == null) ||
+                (
+                    permission.ScanContent != null &&
+                    other.ScanContent !=  null &&
+                    other.ScanContent.SequenceEqual(permission.ScanContent)
+                )
+            );
     }
 }

@@ -16,6 +16,7 @@ export enum Path {
     ServerError = "/serverError",
     ConfirmEmail = "/ConfirmEmail",
     Register = "/Register",
+    ForgotPassword = "/ForgotPassword",
     ResetPassword = "/ResetPassword",
     FormAForSupervisor = "/FormAForSupervisor",
     PriorityInformation = "/PriorityInformation",

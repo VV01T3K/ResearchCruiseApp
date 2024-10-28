@@ -15,4 +15,6 @@ public interface IRepository<T>
         where TUniqueEntity : T, IEquatableByExpression<TUniqueEntity>;
     
     Task Add(T newEntity, CancellationToken cancellationToken);
+
+    void Delete(T entity);
 }

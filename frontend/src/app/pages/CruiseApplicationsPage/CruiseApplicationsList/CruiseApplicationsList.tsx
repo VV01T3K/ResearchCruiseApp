@@ -118,6 +118,7 @@ export default function CruiseApplicationsList(props: Props) {
         null,
         emptyText,
         applicationsToDisplay,
+        !props.mode,
     );
 
     const sortOptions = cruiseApplicationsSortOptions(fetchedCruiseApplications);

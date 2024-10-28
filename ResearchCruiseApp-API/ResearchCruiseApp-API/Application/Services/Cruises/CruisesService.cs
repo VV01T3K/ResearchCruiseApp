@@ -3,7 +3,6 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
-using ResearchCruiseApp_API.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp_API.Application.Services.Cruises;
 
@@ -11,8 +10,8 @@ namespace ResearchCruiseApp_API.Application.Services.Cruises;
 internal class CruisesService(
     IYearBasedKeyGenerator yearBasedKeyGenerator,
     ICruisesRepository cruisesRepository,
-    IUnitOfWork unitOfWork,
-    ApplicationDbContext applicationDbContext)
+    ICruiseApplicationsRepository cruiseApplicationsRepository,
+    IUnitOfWork unitOfWork)
     : ICruisesService
 {
     public Task PersistCruiseWithNewNumber(Cruise cruise, CancellationToken cancellationToken)
@@ -25,7 +24,6 @@ internal class CruisesService(
                 await cruisesRepository.Add(cruise, cancellationToken);
                 await unitOfWork.Complete(cancellationToken);
             },
-            System.Data.IsolationLevel.Serializable,
             cancellationToken
         );
     }
@@ -34,11 +32,9 @@ internal class CruisesService(
     {
         foreach (var cruise in editedCruises)
         {
-            foreach (var application in cruise.CruiseApplications)
+            foreach (var cruiseApplication in cruise.CruiseApplications)
             {
-                await applicationDbContext.Entry(application)
-                    .Reference(applicationEntry => applicationEntry.FormA)
-                    .LoadAsync(cancellationToken);
+                await cruiseApplicationsRepository.LoadFormA(cruiseApplication, cancellationToken);
             }
 
             if (cruise.CruiseApplications.Any(app => app.FormA == null))

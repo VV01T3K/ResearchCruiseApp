@@ -93,10 +93,6 @@ public class FormCDto
                     options =>
                         options.Ignore()) // Member requires complex logic
                 .ForMember(
-                    dest => dest.SpubTasks,
-                    options =>
-                        options.MapFrom(src => src.FormCSpubTasks))
-                .ForMember(
                     dest => dest.ShortResearchEquipments,
                     options =>
                         options.MapFrom(src => src.FormCShortResearchEquipments))

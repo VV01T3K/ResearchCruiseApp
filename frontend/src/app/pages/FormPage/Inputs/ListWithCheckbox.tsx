@@ -27,7 +27,6 @@ const TechnicalElementsTools = () => {
     const rowValue = initContext[cellContext!.rowIndex];
 
     function isChecked() {
-        console.log(fieldContext!.value);
         return fieldContext!.value.includes(rowValue?.id);
     }
 
@@ -42,7 +41,6 @@ const TechnicalElementsTools = () => {
 
             fieldContext!.onChange(
                 text.filter(row => {
-                    console.log(rowValue.id);
                     return row !== rowValue.id;
                 }));
 

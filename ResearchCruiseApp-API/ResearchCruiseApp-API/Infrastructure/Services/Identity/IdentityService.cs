@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NeoSmart.Utils;
 using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
@@ -79,16 +79,17 @@ public class IdentityService(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
-            return Error.ResourceNotFound();
+            return Error.ForbiddenOperation();
         
         user.Accepted = false;
         
         var identityResult = await userManager.UpdateAsync(user);
-        if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
         
-        return Result.Empty;
+        return identityResult.Succeeded
+            ? Result.Empty
+            : identityResult.ToApplicationResult();
     }
+    
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
     {
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
@@ -148,10 +149,9 @@ public class IdentityService(
     public async Task<bool> CanUserLogin(string email, string password)
     {
         var user = await userManager.FindByEmailAsync(email);
-        return user is not null &&
-               user.Accepted && 
-               user.EmailConfirmed &&
-               await userManager.CheckPasswordAsync(user, password);
+        return
+            user is { Accepted: true, EmailConfirmed: true } &&
+            await userManager.CheckPasswordAsync(user, password);
     }
 
     public async Task ResendEmailConfirmationEmail(string email, string roleName)
@@ -208,6 +208,48 @@ public class IdentityService(
         return Result.Empty;
     }
 
+    public async Task<Result> EnablePasswordReset(ForgotPasswordFormDto forgotPasswordFormDto)
+    {
+        var user = await userManager.FindByEmailAsync(forgotPasswordFormDto.Email);
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var code = await userManager.GeneratePasswordResetTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        var userDto = await GetUserDtoById(Guid.Parse(user.Id));
+        if (userDto is null)
+            return Error.ResourceNotFound();
+        
+        await emailSender.SendPasswordResetMessage(userDto, code);
+
+        return Result.Empty;
+    }
+
+    public async Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto)
+    {
+        var emailBytes = UrlBase64.Decode(resetPasswordFormDto.EmailBase64);
+        if (emailBytes is null)
+            return Error.UnknownIdentity();
+        
+        var email = Encoding.UTF8.GetString(emailBytes);
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is null)
+            return Error.ForbiddenOperation();
+
+        var resetCodeBytes = UrlBase64.Decode(resetPasswordFormDto.ResetCode);
+        if (resetCodeBytes is null)
+            return Error.UnknownIdentity();
+        
+        var resetCode = Encoding.UTF8.GetString(resetCodeBytes);
+        var result = await userManager
+            .ResetPasswordAsync(user, resetCode, resetPasswordFormDto.Password);
+
+        return result.Succeeded
+            ? Result.Empty
+            : Error.UnknownIdentity();
+    }
+    
     public async Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName)
     {
         var user = CreateUser(addUserFormDto);
@@ -306,10 +348,11 @@ public class IdentityService(
 
     private async Task<Result<LoginResponseDto>> CreateLoginResponseDto(User user)
     {
-        var accessToken = await CreateAccessToken(user);
-        if (accessToken.Error is not null)
-            return accessToken.Error;
-
+        var accessTokenResult = await CreateAccessToken(user);
+        if (!accessTokenResult.IsSuccess)
+            return accessTokenResult.Error!;
+        var accessToken = accessTokenResult.Data;
+        
         var refreshToken = CreateRefreshToken();
         var refreshTokenExpiry = DateTime.Now.AddSeconds(24_000);
 
@@ -327,8 +370,8 @@ public class IdentityService(
 
         var loginResponseDto = new LoginResponseDto
         {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken.Data),
-            ExpiresIn = accessToken.Data?.ValidTo ?? DateTime.Now,
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
+            ExpiresIn = accessToken?.ValidTo ?? DateTime.Now,
             RefreshToken = refreshToken
         };
         return loginResponseDto;
@@ -348,6 +391,7 @@ public class IdentityService(
     {
         var issuer = configuration["JWT:ValidIssuer"];
         var audience = configuration["JWT:ValidAudience"];
+        var lifetime = int.Parse(configuration["JWT:AccessTokenLifetimeSeconds"] ?? "0");
         
         if (issuer is null || audience is null)
             return Error.ServerError();
@@ -366,13 +410,14 @@ public class IdentityService(
         var securityKeyResult = CreateSecurityKey();
         if (securityKeyResult.Error is not null)
             return securityKeyResult.Error;
-        
+
+        var securityKey = securityKeyResult.Data;
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
-            expires: DateTime.Now.AddSeconds(24_000),
+            expires: DateTime.Now.AddSeconds(lifetime),
             claims: authenticationClaims,
-            signingCredentials: new SigningCredentials(securityKeyResult.Data, SecurityAlgorithms.HmacSha256)
+            signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
         );
 
         return token;

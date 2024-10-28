@@ -39,7 +39,7 @@ function ShortResearchEquipmentTable(props: EquipmentOutsideTableProps) {
 
     const formContext = useContext(FormContext);
 
-    const mdColWidths = [5, 15, 15, 60, 5];
+    const mdColWidths = [5, 20, 20, 50, 5];
     const mdColTitles = ['Lp.', 'Od', 'Do', 'Nazwa sprzętu', ''];
     const colTitle = 'Wystawienie sprzętu';
     const bottomMenu =

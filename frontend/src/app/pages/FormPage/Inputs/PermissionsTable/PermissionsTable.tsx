@@ -78,6 +78,7 @@ function PermissionsTable(props: Props) {
             required: false,
             validate: {
                 notEmptyArray: notEmptyArray<Permission>,
+                
                 // fileExists:fileExists,
             },
         },

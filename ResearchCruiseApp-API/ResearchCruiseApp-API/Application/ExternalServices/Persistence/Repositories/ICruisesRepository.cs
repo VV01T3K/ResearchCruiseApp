@@ -13,6 +13,4 @@ public interface ICruisesRepository : IRepository<Cruise>
 
     Task<Cruise?> GetByIdWithCruiseApplicationsWithForm(Guid id, CancellationToken cancellationToken);
     Task<List<Cruise>> GetByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken);
-
-    void Delete(Cruise cruise);
 }

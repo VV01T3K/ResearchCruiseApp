@@ -34,36 +34,44 @@ public class AddCruiseApplicationHandler(
             return validationResult.ToApplicationResult();
         
         var newCruiseApplicationResult = await unitOfWork.ExecuteIsolated(
-            () => GetNewPersistedCruiseApplication(request.FormADto, cancellationToken),
-            IsolationLevel.Serializable,
+            () => AddCruiseApplication(request.FormADto, cancellationToken),
             cancellationToken);
 
         if (!newCruiseApplicationResult.IsSuccess)
-            return newCruiseApplicationResult.Error!;
+            return newCruiseApplicationResult;
         var newCruiseApplication = newCruiseApplicationResult.Data!;
-        
-        cruiseApplicationEvaluator.Evaluate(newCruiseApplication);
-        await unitOfWork.Complete(cancellationToken);
         
         await SendRequestToSupervisor(newCruiseApplication, request.FormADto.SupervisorEmail!);
 
         return Result.Empty;
     }
 
-    private async Task<Result<CruiseApplication>> GetNewPersistedCruiseApplication(
+    private async Task<Result<CruiseApplication>> AddCruiseApplication(
+        FormADto formADto, CancellationToken cancellationToken)
+    {
+        var newCruiseApplicationResult = await GetNewCruiseApplication(formADto, cancellationToken);
+        if (!newCruiseApplicationResult.IsSuccess)
+            return newCruiseApplicationResult;
+        var newCruiseApplication = newCruiseApplicationResult.Data!;
+        
+        await cruiseApplicationEvaluator.Evaluate(newCruiseApplication, cancellationToken);
+        
+        await unitOfWork.Complete(cancellationToken);
+        return newCruiseApplication;
+    }
+
+    private async Task<Result<CruiseApplication>> GetNewCruiseApplication(
         FormADto formADto, CancellationToken cancellationToken)
     {
         var newFormAResult = await formsAFactory.Create(formADto, cancellationToken);
         if (!newFormAResult.IsSuccess)
             return newFormAResult.Error!;
-        var newFormA = newFormAResult.Data!;
         
-        await unitOfWork.Complete(cancellationToken);
-        var newCruiseApplication = await cruiseApplicationsFactory.Create(newFormA, cancellationToken);
-
+        var newFormA = newFormAResult.Data!;
+        var newCruiseApplication = cruiseApplicationsFactory.Create(newFormA);
+        
         await cruiseApplicationsRepository.Add(newCruiseApplication, cancellationToken);
-        await unitOfWork.Complete(cancellationToken);
-
+        
         return newCruiseApplication;
     }
 

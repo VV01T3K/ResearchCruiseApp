@@ -20,7 +20,7 @@ export default function LinkWithState(props: LinkWithStateProps) {
 
     return (
         <a
-            className={!props.disabled ? 'link-with-state' : 'link-with-state-disabled'}
+            className={(!props.disabled ? 'link-with-state ' : 'link-with-state-disabled ') + props.className}
             onClick={() => {
                 if (!props.disabled) {
                     if (props.useWindow) {

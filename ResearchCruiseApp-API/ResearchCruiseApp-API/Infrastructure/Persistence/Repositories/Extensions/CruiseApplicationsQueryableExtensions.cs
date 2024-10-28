@@ -24,6 +24,7 @@ internal static class CruiseApplicationsQueryableExtensions
     {
         return query.Include(cruiseApplication => cruiseApplication.FormB);
     }
+    
     public static IQueryable<CruiseApplication> IncludeCruise(this IQueryable<CruiseApplication> query)
     {
         return query.Include(cruiseApplication => cruiseApplication.Cruise);
@@ -85,9 +86,10 @@ internal static class CruiseApplicationsQueryableExtensions
             .ThenInclude(formCGuestUnit => formCGuestUnit.GuestUnit)
             .Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects)
             .ThenInclude(researchTaskEffect => researchTaskEffect.ResearchTask)
+            .Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects)
+            .ThenInclude(researchTaskEffect => researchTaskEffect.UserEffects)
             .Include(cruiseApplication => cruiseApplication.FormC!.Contracts)
-            .Include(cruiseApplication => cruiseApplication.FormC!.FormCSpubTasks)
-            .ThenInclude(formCSpubTask => formCSpubTask.SpubTask)
+            .Include(cruiseApplication => cruiseApplication.FormC!.SpubTasks)
             .Include(cruiseApplication => cruiseApplication.FormC!.FormCShortResearchEquipments)
             .ThenInclude(formCShortResearchEquipment => formCShortResearchEquipment.ResearchEquipment)
             .Include(cruiseApplication => cruiseApplication.FormC!.FormCLongResearchEquipments)

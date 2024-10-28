@@ -2,6 +2,7 @@
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.Effects;
 using ResearchCruiseApp_API.Application.Services.Factories.Photos;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Domain.Common.Enums;
@@ -17,6 +18,7 @@ public class FormsCFactory(
     IUgUnitsRepository ugUnitsRepository,
     IShipEquipmentsRepository shipEquipmentsRepository,
     IFormsFieldsService formsFieldsService,
+    IEffectsService effectsService,
     IPhotosFactory photosFactory)
     : IFormsCFactory
 {
@@ -31,7 +33,7 @@ public class FormsCFactory(
         await AddPermissions(formC, formCDto, cancellationToken);
         await AddFormCUgUnits(formC, formCDto, cancellationToken);
         await AddFormCGuestUnits(formC, formCDto, cancellationToken);
-        await AddResearchTaskEffects(formC, formCDto, cancellationToken);
+        await effectsService.AddResearchTasksEffects(formC, formCDto.ResearchTasksEffects, cancellationToken);
         await AddContracts(formC, formCDto, cancellationToken);
         await AddFormCSpubTasks(formC, formCDto, cancellationToken);
         await AddFormCPorts(formC, formCDto, cancellationToken);
@@ -109,28 +111,6 @@ public class FormsCFactory(
         }
     }
 
-    private async Task AddResearchTaskEffects(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)
-    {
-        var alreadyAddedResearchTasks = new HashSet<ResearchTask>();
-        
-        foreach (var researchTaskEffectDto in formCDto.ResearchTasksEffects)
-        {
-            var researchTask = await formsFieldsService
-                .GetUniqueResearchTask(researchTaskEffectDto, alreadyAddedResearchTasks, cancellationToken);
-            alreadyAddedResearchTasks.Add(researchTask);
-            
-            var formCResearchTask = new ResearchTaskEffect
-            {
-                ResearchTask = researchTask,
-                Done = researchTaskEffectDto.Done,
-                PublicationMinisterialPoints = researchTaskEffectDto.PublicationMinisterialPoints,
-                ManagerConditionMet = researchTaskEffectDto.ManagerConditionMet,
-                DeputyConditionMet = researchTaskEffectDto.DeputyConditionMet
-            };
-            formC.ResearchTaskEffects.Add(formCResearchTask);
-        }
-    }
-
     private async Task AddContracts(FormC formC, FormCDto formCDto, CancellationToken cancellationToken)
     {
         var alreadyAddedContracts = new HashSet<Contract>();
@@ -155,8 +135,7 @@ public class FormsCFactory(
                 .GetUniqueSpubTask(spubTaskDto, alreadyAddedSpubTasks, cancellationToken);
             alreadyAddedSpubTasks.Add(spubTask);
             
-            var formCSpubTask = new FormCSpubTask { SpubTask = spubTask };
-            formC.FormCSpubTasks.Add(formCSpubTask);
+            formC.SpubTasks.Add(spubTask);
         }
     }
     

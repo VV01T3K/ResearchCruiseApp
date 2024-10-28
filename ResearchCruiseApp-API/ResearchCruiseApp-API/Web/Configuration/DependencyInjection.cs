@@ -1,9 +1,9 @@
-﻿namespace ResearchCruiseApp_API.Web;
+﻿namespace ResearchCruiseApp_API.Web.Configuration;
 
 
 public static class DependencyInjection
 {
-    public static void AddWeb(this IServiceCollection services)
+    public static void AddWeb(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddControllers()
@@ -17,13 +17,13 @@ public static class DependencyInjection
         
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAnyOrigin", policyBuilder =>
+            options.AddPolicy("CustomPolicy", policyBuilder =>
             {
                 policyBuilder
-                    .AllowAnyOrigin()
+                    .WithOrigins(configuration["FrontendUrl"] ?? "")
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
-        });
+        }); 
     }
 }

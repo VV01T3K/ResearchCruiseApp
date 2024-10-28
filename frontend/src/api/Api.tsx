@@ -76,8 +76,6 @@ export const Interceptors = () => {
     }
 
     function HandleErrWithResponse(response: AxiosResponse<any>) {
-        const { ForceLogout } = userDataManager();
-
         const statusCode = response?.status;
         if (statusCode == 401) {
             ForceLogout();
@@ -128,7 +126,7 @@ export const Interceptors = () => {
     };
 
     function requestHandler(config: InternalAxiosRequestConfig) {
-
+        SetBusyWithMessage('Trwa wczytywanie danych');
         if (config.url && !config.url.startsWith(defaultServerAddress!)) {
             config.url = defaultServerAddress + config.url;
         }

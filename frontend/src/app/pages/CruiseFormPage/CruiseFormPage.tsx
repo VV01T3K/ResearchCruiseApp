@@ -74,7 +74,6 @@ export default function CruiseFormPage() {
     const cruise = cruiseFromLocation();
     const editCruiseFormDefaultValues = EditCruiseFormDefaultValues(cruise);
     const sections = CruiseFormSections();
-    console.log(cruise);
 
     const cruiseIsNew = !cruise || cruise?.status == CruiseStatus.New;
     const [fetchedCruiseApplications, setFetchedCruiseApplications] = useState<

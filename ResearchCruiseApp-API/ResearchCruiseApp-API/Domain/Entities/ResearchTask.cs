@@ -45,7 +45,7 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
     
     public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];
     
-    public List<ResearchTaskEffect> FormCResearchTasks { get; set; } = [];
+    public List<ResearchTaskEffect> ResearchTasksEffects { get; set; } = [];
 
 
     public override bool Equals(object? other) =>

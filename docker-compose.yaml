@@ -11,24 +11,8 @@ services:
       - ./frontend:/researchcruiseapp-frontend-dc
     ports:
       - 3000:3000
-    networks:
-      - researchcruiseapp-network-dc
     environment:
       - CHOKIDAR_USEPOLLING=true
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: researchcruiseapp-db-dc
-    hostname: researchcruiseapp-db-dc
-    environment:
-      SA_PASSWORD: "p@ssw0rd"
-      ACCEPT_EULA: "Y"
-    ports:
-      - 1433:1433
-    volumes:
-      - researchcruiseapp-mssql-dc:/var/opt/mssql/data
-    user: root
-    networks:
-      - researchcruiseapp-network-dc
   api:
     env_file: "app.env"
     build:
@@ -38,14 +22,4 @@ services:
       - APP_UID=1000
     ports:
       - "8080:8080"
-      - "8081:8081"
     restart: always
-    networks:
-      - researchcruiseapp-network-dc
-
-networks:
-  researchcruiseapp-network-dc:
-    driver: bridge
-
-volumes:
-  researchcruiseapp-mssql-dc:
