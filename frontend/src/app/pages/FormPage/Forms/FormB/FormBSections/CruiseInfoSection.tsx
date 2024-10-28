@@ -58,7 +58,7 @@ export const CruiseExtraInfo = () => {
 export const CruiseInfoSection = () => SectionWrapper(
     {
         shortTitle: 'Rejs',
-        longTitle: 'Numer ewidencyjny rejsu',
+        longTitle: 'Informacje o rejsie',
         children:
             <>
                 <BasicInfo />

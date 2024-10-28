@@ -6,7 +6,7 @@ export enum CruiseApplicationStatus {
     Denied = 'Odrzucone',
     DeniedBySupervisor = 'Odrzucone przez przełożonego',
     FormBRequired = 'Wymagane uzupełnienie formularza B przez kierownika',
-    FormBFilled = 'Formularz B wypełniony oczekiwanie na rejs',
+    FormBFilled = 'Formularz B wypełniony. Oczekiwanie na rejs',
     Undertaken = 'Zrealizowane',
     Reported = 'Rozliczone',
 }
