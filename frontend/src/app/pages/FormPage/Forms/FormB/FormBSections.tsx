@@ -31,5 +31,5 @@ export const FormBSections = () => [
     CruiseDetailsSection(),
     CruisePlanSection(),
     EquipementSection(),
-    ShipEquipmentSection(),
+    ShipEquipmentSection()
 ];
