@@ -31,7 +31,8 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
             GuestTeams = guestTeamsDtos,
             UgUnitsPoints = formA?.UgUnitsPoints ?? "0",
             FormAPublications = formAPublicationDtos,
-            FormASpubTasks = formASpubTaskDtos
+            FormASpubTasks = formASpubTaskDtos,
+            EffectsPoints = cruiseApplication.EffectsPoints.ToString()
         };
 
         return cruiseApplicationEvaluationDetailsDto;

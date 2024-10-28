@@ -16,4 +16,6 @@ public class CruiseApplicationEvaluationDetailsDto
     public List<FormAPublicationDto> FormAPublications { get; init; } = [];
     
     public List<FormASpubTaskDto> FormASpubTasks { get; init; } = [];
+
+    public string EffectsPoints { get; init; } = null!;
 }

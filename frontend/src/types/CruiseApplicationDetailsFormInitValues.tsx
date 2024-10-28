@@ -9,6 +9,7 @@ export type CruiseApplicationDetailsFormInitValues = {
     formAContracts: EvaluatedContract[]
     formAPublications: EvaluatedPublication[],
     formASpubTasks: EvaluatedSpubTask[],
-    formAResearchTasks: EvaluatedReseachTask[]
-    ugTeams: UgTeam[]
+    formAResearchTasks: EvaluatedReseachTask[],
+    ugTeams: UgTeam[],
+    effectsPoints: string
 };
