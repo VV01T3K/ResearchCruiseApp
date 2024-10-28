@@ -8,7 +8,7 @@ export default function NewCruiseApplicationTile() {
   return (
     <Tile>
       <Link
-        state={{ formType: 'C' }}
+        state={{ formType: 'A' }}
         to={Path.Form}
         className={'common-tile-link'}
       >

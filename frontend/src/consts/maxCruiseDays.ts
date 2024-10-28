@@ -1,1 +1,1 @@
-export const maxCruiseDays = 14;
+export const maxCruiseDays = 60;
