@@ -18,7 +18,7 @@ import {
     getFormA,
     getFormAInitValues,
     getFormAInitValuesForSupervisor,
-    getFormB, getFormBInitValues,
+    getFormB, getFormBInitValues, getFormC, getFormCInitValues,
     getFormForSupervisor,
 } from '@api/requests';
 import { FormAInitValues } from 'FormAInitValues';
@@ -81,6 +81,8 @@ function FormTemplate(props: FormTemplateProps) {
         .then(response => response?.data);
     const _getFormB = () => getFormB(cruiseApplication?.id ?? cruiseApplicationId)
         .then(response => response?.data);
+    const _getFormC = () => getFormC(cruiseApplication?.id ?? cruiseApplicationId)
+        .then(response => response?.data);
 
     const _getFormForSupervisor = () =>
         getFormForSupervisor(cruiseApplicationId, supervisorCode)
@@ -91,6 +93,9 @@ function FormTemplate(props: FormTemplateProps) {
 
     const _getFormBInitValues = () =>
         getFormBInitValues().then(response => response?.data);
+
+    const _getFormCInitValues = () =>
+        getFormCInitValues().then(response => response?.data);
 
     const _getApplicationDetailsInitValues = () =>
         getApplicationDetails(cruiseApplication.id).then(response => response?.data);
@@ -111,7 +116,8 @@ function FormTemplate(props: FormTemplateProps) {
                 const formA = await _getFormA();
                 return { ...formA, ...formB };
             case 'C':
-                return null;
+                const formC = await _getFormC();
+                return { ...formC };
             case 'CruiseDetails':
                 return null;
             default:
@@ -146,6 +152,9 @@ function FormTemplate(props: FormTemplateProps) {
                 const formAInitValues = await _getFormAInitValues();
                 const formBInitValues = await _getFormBInitValues();
                 return { ...formAInitValues, ...formBInitValues };
+            case FormType.C:
+                const formCInitValues = await _getFormCInitValues();
+                return { ...formCInitValues };
             case FormType.ApplicationDetails:
                 return await _getApplicationDetailsInitValues();
             case FormType.AForSupervisor:
