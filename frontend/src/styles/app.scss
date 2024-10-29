@@ -469,16 +469,21 @@ $top-bar-min-width: 380px;
   .p-md-5
 }
 
-.form-page {
+.common-page {
+  min-height: 150px;
   font-size: 0.8rem;
   min-width: $top-bar-min-width;
   @extend .d-flex,
   .flex-column,
-  .mh-100,
   .justify-content-center,
   .col-12,
   .col-xl-9,
   .bg-white
+}
+.form-page {
+  @extend
+  .mh-100,
+  .common-page
 }
 
 .form-page-option-element {

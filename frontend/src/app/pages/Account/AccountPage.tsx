@@ -4,7 +4,7 @@ import PageTitle from '../../../components/Page/PageTitle';
 import { Content } from './AccountPageContent';
 
 const AccountPage = () => (
-  <Page className={'form-page'}>
+  <Page className={'common-page'}>
     <PageTitle title={'Ustawienia konta'} />
     <Content />
   </Page>
