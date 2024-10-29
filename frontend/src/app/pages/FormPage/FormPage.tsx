@@ -28,7 +28,7 @@ function FormPage() {
             {location?.state?.formType == FormType.A && <FormA />}
             {location?.state?.formType == FormType.AForSupervisor && <FormA />}
             {location?.state?.formType == FormType.B && <FormB />}
-            {location?.state?.formType == FormType.C && <FormB />}
+            {location?.state?.formType == FormType.C && <NotFoundPage />}
             {!location?.state && <NotFoundPage />}
         </>
     );
