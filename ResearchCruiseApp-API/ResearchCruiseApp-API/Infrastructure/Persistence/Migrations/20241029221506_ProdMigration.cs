@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddApplicationReferenceToFormC : Migration
+    public partial class ProdMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -148,6 +148,21 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GuestUnits", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    Executive = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    ScanName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
+                    ScanContent = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -449,6 +464,30 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FormBPermission",
+                columns: table => new
+                {
+                    FormsBId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PermissionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormBPermission", x => new { x.FormsBId, x.PermissionsId });
+                    table.ForeignKey(
+                        name: "FK_FormBPermission_FormsB_FormsBId",
+                        column: x => x.FormsBId,
+                        principalTable: "FormsB",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FormBPermission_Permissions_PermissionsId",
+                        column: x => x.PermissionsId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FormBPorts",
                 columns: table => new
                 {
@@ -471,6 +510,25 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         name: "FK_FormBPorts_Ports_PortId",
                         column: x => x.PortId,
                         principalTable: "Ports",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPublications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PublicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPublications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPublications_Publications_PublicationId",
+                        column: x => x.PublicationId,
+                        principalTable: "Publications",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -716,6 +774,30 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FormAPermission",
+                columns: table => new
+                {
+                    FormsAId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PermissionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormAPermission", x => new { x.FormsAId, x.PermissionsId });
+                    table.ForeignKey(
+                        name: "FK_FormAPermission_FormsA_FormsAId",
+                        column: x => x.FormsAId,
+                        principalTable: "FormsA",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FormAPermission_Permissions_PermissionsId",
+                        column: x => x.PermissionsId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FormAPublications",
                 columns: table => new
                 {
@@ -878,7 +960,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     FormCId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     SupervisorCode = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    CruiseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CruiseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    EffectsPoints = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -952,6 +1035,30 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         name: "FK_FormCLongResearchEquipments_ResearchEquipments_ResearchEquipmentId",
                         column: x => x.ResearchEquipmentId,
                         principalTable: "ResearchEquipments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FormCPermission",
+                columns: table => new
+                {
+                    FormsCId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PermissionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormCPermission", x => new { x.FormsCId, x.PermissionsId });
+                    table.ForeignKey(
+                        name: "FK_FormCPermission_FormsC_FormsCId",
+                        column: x => x.FormsCId,
+                        principalTable: "FormsC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FormCPermission_Permissions_PermissionsId",
+                        column: x => x.PermissionsId,
+                        principalTable: "Permissions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1063,25 +1170,24 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FormCSpubTasks",
+                name: "FormCSpubTask",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FormCId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SpubTaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FormsCId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SpubTasksId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FormCSpubTasks", x => x.Id);
+                    table.PrimaryKey("PK_FormCSpubTask", x => new { x.FormsCId, x.SpubTasksId });
                     table.ForeignKey(
-                        name: "FK_FormCSpubTasks_FormsC_FormCId",
-                        column: x => x.FormCId,
+                        name: "FK_FormCSpubTask_FormsC_FormsCId",
+                        column: x => x.FormsCId,
                         principalTable: "FormsC",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FormCSpubTasks_SpubTasks_SpubTaskId",
-                        column: x => x.SpubTaskId,
+                        name: "FK_FormCSpubTask_SpubTasks_SpubTasksId",
+                        column: x => x.SpubTasksId,
                         principalTable: "SpubTasks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1141,39 +1247,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    Executive = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    ScanName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    ScanContent = table.Column<byte[]>(type: "varbinary(1024)", maxLength: 1024, nullable: false),
-                    FormAId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    FormBId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    FormCId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Permissions_FormsA_FormAId",
-                        column: x => x.FormAId,
-                        principalTable: "FormsA",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Permissions_FormsB_FormBId",
-                        column: x => x.FormBId,
-                        principalTable: "FormsB",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Permissions_FormsC_FormCId",
-                        column: x => x.FormCId,
-                        principalTable: "FormsC",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Photos",
                 columns: table => new
                 {
@@ -1222,25 +1295,19 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CruiseApplicationEffects",
+                name: "UserEffects",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CruiseApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EffectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CruiseApplicationEffects", x => x.Id);
+                    table.PrimaryKey("PK_UserEffects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CruiseApplicationEffects_CruiseApplications_CruiseApplicationId",
-                        column: x => x.CruiseApplicationId,
-                        principalTable: "CruiseApplications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CruiseApplicationEffects_ResearchTaskEffects_EffectId",
+                        name: "FK_UserEffects_ResearchTaskEffects_EffectId",
                         column: x => x.EffectId,
                         principalTable: "ResearchTaskEffects",
                         principalColumn: "Id",
@@ -1302,16 +1369,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 column: "FormsBId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CruiseApplicationEffects_CruiseApplicationId",
-                table: "CruiseApplicationEffects",
-                column: "CruiseApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CruiseApplicationEffects_EffectId",
-                table: "CruiseApplicationEffects",
-                column: "EffectId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CruiseApplications_CruiseId",
                 table: "CruiseApplications",
                 column: "CruiseId");
@@ -1362,6 +1419,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "IX_FormAGuestUnits_GuestUnitId",
                 table: "FormAGuestUnits",
                 column: "GuestUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FormAPermission_PermissionsId",
+                table: "FormAPermission",
+                column: "PermissionsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FormAPublications_FormAId",
@@ -1424,6 +1486,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 column: "ResearchEquipmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FormBPermission_PermissionsId",
+                table: "FormBPermission",
+                column: "PermissionsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FormBPorts_FormBId",
                 table: "FormBPorts",
                 column: "FormBId");
@@ -1479,6 +1546,11 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 column: "ResearchEquipmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FormCPermission_PermissionsId",
+                table: "FormCPermission",
+                column: "PermissionsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FormCPorts_FormCId",
                 table: "FormCPorts",
                 column: "FormCId");
@@ -1514,14 +1586,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 column: "ResearchEquipmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FormCSpubTasks_FormCId",
-                table: "FormCSpubTasks",
-                column: "FormCId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FormCSpubTasks_SpubTaskId",
-                table: "FormCSpubTasks",
-                column: "SpubTaskId");
+                name: "IX_FormCSpubTask_SpubTasksId",
+                table: "FormCSpubTask",
+                column: "SpubTasksId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FormCUgUnits_FormCId",
@@ -1554,21 +1621,6 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 column: "ResearchAreaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permissions_FormAId",
-                table: "Permissions",
-                column: "FormAId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Permissions_FormBId",
-                table: "Permissions",
-                column: "FormBId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Permissions_FormCId",
-                table: "Permissions",
-                column: "FormCId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Photos_FormCId",
                 table: "Photos",
                 column: "FormCId");
@@ -1582,6 +1634,16 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "IX_ResearchTaskEffects_ResearchTaskId",
                 table: "ResearchTaskEffects",
                 column: "ResearchTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserEffects_EffectId",
+                table: "UserEffects",
+                column: "EffectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPublications_PublicationId",
+                table: "UserPublications",
+                column: "PublicationId");
         }
 
         /// <inheritdoc />
@@ -1612,7 +1674,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "CrewMemberFormB");
 
             migrationBuilder.DropTable(
-                name: "CruiseApplicationEffects");
+                name: "CruiseApplications");
 
             migrationBuilder.DropTable(
                 name: "CruiseDayDetailsFormB");
@@ -1625,6 +1687,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "FormAGuestUnits");
+
+            migrationBuilder.DropTable(
+                name: "FormAPermission");
 
             migrationBuilder.DropTable(
                 name: "FormAPublications");
@@ -1645,6 +1710,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "FormBLongResearchEquipments");
 
             migrationBuilder.DropTable(
+                name: "FormBPermission");
+
+            migrationBuilder.DropTable(
                 name: "FormBPorts");
 
             migrationBuilder.DropTable(
@@ -1663,6 +1731,9 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "FormCLongResearchEquipments");
 
             migrationBuilder.DropTable(
+                name: "FormCPermission");
+
+            migrationBuilder.DropTable(
                 name: "FormCPorts");
 
             migrationBuilder.DropTable(
@@ -1675,7 +1746,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "FormCShortResearchEquipments");
 
             migrationBuilder.DropTable(
-                name: "FormCSpubTasks");
+                name: "FormCSpubTask");
 
             migrationBuilder.DropTable(
                 name: "FormCUgUnits");
@@ -1684,10 +1755,13 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "FormGuestUnits");
 
             migrationBuilder.DropTable(
-                name: "Permissions");
+                name: "Photos");
 
             migrationBuilder.DropTable(
-                name: "Photos");
+                name: "UserEffects");
+
+            migrationBuilder.DropTable(
+                name: "UserPublications");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -1699,10 +1773,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "CrewMembers");
 
             migrationBuilder.DropTable(
-                name: "CruiseApplications");
-
-            migrationBuilder.DropTable(
-                name: "ResearchTaskEffects");
+                name: "Cruises");
 
             migrationBuilder.DropTable(
                 name: "CruiseDaysDetails");
@@ -1711,7 +1782,13 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "Contracts");
 
             migrationBuilder.DropTable(
-                name: "Publications");
+                name: "FormsA");
+
+            migrationBuilder.DropTable(
+                name: "FormsB");
+
+            migrationBuilder.DropTable(
+                name: "Permissions");
 
             migrationBuilder.DropTable(
                 name: "Ports");
@@ -1732,13 +1809,10 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 name: "GuestUnits");
 
             migrationBuilder.DropTable(
-                name: "Cruises");
+                name: "ResearchTaskEffects");
 
             migrationBuilder.DropTable(
-                name: "FormsA");
-
-            migrationBuilder.DropTable(
-                name: "FormsB");
+                name: "Publications");
 
             migrationBuilder.DropTable(
                 name: "FormsC");

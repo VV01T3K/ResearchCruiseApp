@@ -52,7 +52,8 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     public DbSet<CollectedSample> CollectedSamples { get; init; } = null!;
     public DbSet<Photo> Photos { get; init; } = null!;
 
-    public DbSet<UserEffect> UserEffects { get; set; } = null!;
+    public DbSet<UserEffect> UserEffects { get; init; } = null!;
+    public DbSet<UserPublication> UserPublications { get; init; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder builder)

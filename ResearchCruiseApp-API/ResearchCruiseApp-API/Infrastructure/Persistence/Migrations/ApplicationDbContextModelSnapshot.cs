@@ -1561,6 +1561,25 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                     b.ToTable("UserEffects");
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.UserPublication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PublicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PublicationId");
+
+                    b.ToTable("UserPublications");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp_API.Infrastructure.Services.Identity.User", b =>
                 {
                     b.Property<string>("Id")
@@ -2261,7 +2280,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("ResearchCruiseApp_API.Domain.Entities.ResearchTask", "ResearchTask")
-                        .WithMany("FormCResearchTasks")
+                        .WithMany("ResearchTasksEffects")
                         .HasForeignKey("ResearchTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2280,6 +2299,17 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Effect");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.UserPublication", b =>
+                {
+                    b.HasOne("ResearchCruiseApp_API.Domain.Entities.Publication", "Publication")
+                        .WithMany("UserPublications")
+                        .HasForeignKey("PublicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Publication");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Contract", b =>
@@ -2365,6 +2395,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.Publication", b =>
                 {
                     b.Navigation("FormAPublications");
+
+                    b.Navigation("UserPublications");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchArea", b =>
@@ -2393,7 +2425,7 @@ namespace ResearchCruiseApp_API.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("FormAResearchTasks");
 
-                    b.Navigation("FormCResearchTasks");
+                    b.Navigation("ResearchTasksEffects");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp_API.Domain.Entities.ResearchTaskEffect", b =>
