@@ -54,7 +54,7 @@ użytkownikami czy też do zmieniania danych rejsowych
 # Pierwsze uruchomienie aplikacji
 
 Aby uruchomić aplikację należy poprawnie skonfigurować powyższe pliki a następnie z poziomu terminala wykonać komendę
-``` sudo docker-compose up -d ``` (linux)
-``` docker-compose up -d ``` (windows)
+``` sudo docker-compose up -d --build ``` (linux)
+``` docker-compose up -d --build``` (windows)
 
 *Na adresy email podane w pliku users.json zostaną wysłane automatycznie wygenerowane hasła, które następnie można zmienić po zalogowaniu się do konta*
