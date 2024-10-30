@@ -10,6 +10,8 @@ public interface IResearchTaskDto
 
     string? Title { get; init; }
         
+    string? Magazine { get; init; }
+    
     string? Author { get; init; }
         
     string? Institution { get; init; }

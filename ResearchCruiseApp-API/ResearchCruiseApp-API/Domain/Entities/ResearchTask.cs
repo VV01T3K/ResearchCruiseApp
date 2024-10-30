@@ -14,6 +14,9 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
     public string? Title { get; init; }
     
     [StringLength(1024)]
+    public string? Magazine { get; init; }
+    
+    [StringLength(1024)]
     public string? Author { get; init; }
     
     [StringLength(1024)]
@@ -55,6 +58,7 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
     {
         return Type.GetHashCode() +
             Title?.GetHashCode() ?? 0 +
+            Magazine?.GetHashCode() ?? 0 +
             Author?.GetHashCode() ?? 0 +
             Institution?.GetHashCode() ?? 0 +
             Date?.GetHashCode() ?? 0 +
@@ -70,6 +74,7 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
         return other is not null &&
                other.Type == Type &&
                other.Title == Title &&
+               other.Magazine == Magazine &&
                other.Author == Author &&
                other.Institution == Institution &&
                other.Date == Date &&
@@ -86,6 +91,7 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
             other != null &&
             other.Type == researchTask.Type &&
             other.Title == researchTask.Title &&
+            other.Magazine == researchTask.Magazine &&
             other.Author == researchTask.Author &&
             other.Institution == researchTask.Institution &&
             other.Date == researchTask.Date &&

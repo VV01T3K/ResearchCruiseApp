@@ -10,7 +10,9 @@ public class ResearchTaskEffectDto : IResearchTaskDto
     public string Type { get; init; } = null!;
 
     public string? Title { get; init; }
-        
+
+    public string? Magazine { get; init; }
+    
     public string? Author { get; init; }
         
     public string? Institution { get; init; }
@@ -53,6 +55,10 @@ public class ResearchTaskEffectDto : IResearchTaskDto
                     dest => dest.Title,
                     options =>
                         options.MapFrom(src => src.ResearchTask.Title))
+                .ForMember(
+                    dest => dest.Magazine,
+                    options =>
+                        options.MapFrom(src => src.ResearchTask.Magazine))
                 .ForMember(
                     dest => dest.Author,
                     options =>
