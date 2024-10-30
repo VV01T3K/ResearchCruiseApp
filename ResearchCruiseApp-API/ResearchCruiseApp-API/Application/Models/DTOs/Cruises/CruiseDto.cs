@@ -1,5 +1,4 @@
 using AutoMapper;
-using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -28,6 +27,7 @@ public class CruiseDto
 
     public string Status { get; init; } = null!;
 
+    
     private class MapProfile : Profile
     {
         public MapProfile()

@@ -14,6 +14,7 @@ import { CruiseStatus } from '@enums/CruiseStatus';
 import { EMPTY_GUID } from '@consts/emptyGuid';
 import { ApplicationsContext } from '@contexts/ApplicationsContext';
 import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
+import { parse } from 'date-fns';
 
 type CruiseManagersTeam = {
     mainCruiseManagerId: string;
@@ -40,9 +41,14 @@ const CruiseFormSections = () => [
 
 const EditCruiseFormDefaultValues = (cruise?: Cruise) => {
     if (cruise) {
+        let startDate = new Date();
+        let endDate = new Date();
+        startDate = parse(cruise.startDate, "dd.MM.yyyy HH:mm:ss", startDate);
+        endDate = parse(cruise.endDate, "dd.MM.yyyy HH:mm:ss", endDate);
+
         return {
-            startDate: new Date(cruise.startDate).toISOString(),
-            endDate: new Date(cruise.endDate).toISOString(),
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
             managersTeam: {
                 mainCruiseManagerId: cruise.mainCruiseManagerId,
                 mainDeputyManagerId: cruise.mainDeputyManagerId,
