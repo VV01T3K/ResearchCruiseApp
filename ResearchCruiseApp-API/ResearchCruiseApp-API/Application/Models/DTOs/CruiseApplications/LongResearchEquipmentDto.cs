@@ -26,11 +26,7 @@ public class LongResearchEquipmentDto : IResearchEquipmentDto
                 .ForMember(
                     dest => dest.Name,
                     options =>
-                        options.MapFrom(src => src.ResearchEquipment.Name))
-                .ForMember(
-                    dest => dest.Action,
-                    options =>
-                        options.MapFrom(src => ((int)src.Action).ToString()));
+                        options.MapFrom(src => src.ResearchEquipment.Name));
             
             CreateMap<FormCLongResearchEquipment, LongResearchEquipmentDto>()
                 .ForMember(

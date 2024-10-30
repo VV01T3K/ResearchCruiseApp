@@ -39,7 +39,7 @@ export const RefillBButton = () => {
                 location!.state.cruiseApplication.status = CruiseApplicationStatus.FormBRequired;
                 navigate(Path.Form, { state: location!.state, replace: true });
             })}
-            className="form-page-option-button-default"> Umożliw ponowną edycję</div>
+            className="form-page-option-button-default">Cofnij do edycji</div>
     );
 };
 
@@ -52,7 +52,7 @@ export const RefillCButton = () => {
             location!.state.cruiseApplication.status = CruiseApplicationStatus.Undertaken;
             navigate(Path.Form, { state: location!.state, replace: true });
         })}
-             className="form-page-option-button-default"> Umożliw ponowną edycję </div>
+             className="form-page-option-button-default">Cofnij do edycji</div>
     );
 };
 

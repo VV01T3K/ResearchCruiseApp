@@ -23,7 +23,7 @@ export const BasicInfo = () => {
 
 const IsCruiseManagerPresentField = () => {
     return (
-        <BoolField fieldLabel={'Czy kierownik obecny jest na rejsie'}
+        <BoolField fieldLabel={'Czy kierownik jest obecny na rejsie?'}
                    fieldName={cruiseManagerSectionFieldNames.isCruiseManagerPresent}
                    defaultValue={'true'}
         />
