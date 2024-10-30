@@ -77,7 +77,11 @@ function PermissionsTable(props: Props) {
         rules: {
             required: false,
             validate: {
-                notEmptyArray: notEmptyArray<Permission>,
+                notEmptyArray:  (value:FieldValues)=>{ if (value.some((row: Permission) => {
+                    return (!row.description || !row.executive)
+                })) {
+                    return 'Wypełnij wszystkie pola';
+                }}            // quick fix notEmptyArray<Permission>,
                 
                 // fileExists:fileExists,
             },
