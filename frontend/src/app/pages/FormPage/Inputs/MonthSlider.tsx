@@ -6,6 +6,13 @@ import FieldWrapper from './FieldWrapper';
 import { readyFieldOptions } from '../Wrappers/ReactSelectWrapper';
 import { FormContext } from '@contexts/FormContext';
 
+Array.prototype.max = function (): number {
+    return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function (): number {
+    return Math.min.apply(null, this);
+};
 
 type Props = {
     className?: string,
@@ -82,10 +89,10 @@ const MonthSlider = (props: Props) => {
 
     const render = ({ field }: FieldValues) => {
         const MonthLabel = () => (
-            <label className={` text-center ${formContext!.readOnly ? 'd-none' : ''}`}>
+            <label className={` text-center`}>
                 Wybrano okres:
-                od początku {field.value && labels[field.value[0]] + ' '}
-                do końca {field.value && labels[field.value[1] - 1]}.
+                od początku {field.value && labels[field.value.min()] + ' '}
+                do końca {field.value && labels[field.value.max() - 1]}.
             </label>
         );
 

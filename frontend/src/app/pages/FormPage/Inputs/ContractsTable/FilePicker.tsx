@@ -81,10 +81,9 @@ export default function FilePicker() {
         field?.onBlur();
     };
 
-
     const RemoveFileButton = () => (
         <>
-            {cellValue?.content != '' &&
+            {cellValue?.content && cellValue?.content != '' &&
                 <a className="remove-file-button" onClick={handleRemoveScan}>
                     Usuń skan
                 </a>

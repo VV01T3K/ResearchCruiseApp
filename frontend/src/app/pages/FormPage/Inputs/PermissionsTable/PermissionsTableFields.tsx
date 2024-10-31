@@ -80,7 +80,7 @@ export const FSelectWrapper = (props: {
 );
 
 export const DescriptionField = () => (
-    <FTextFieldWrapper keySelector={'description'} label={'Opis'} />
+    <FTextFieldWrapper keySelector={'description'} label={'Treść pozwolenia'} />
 );
 
 export const ExecutiveField = () => (

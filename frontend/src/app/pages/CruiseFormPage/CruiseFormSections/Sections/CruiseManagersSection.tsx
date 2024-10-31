@@ -75,48 +75,51 @@ const CruiseManagersField = () => {
         }
     }, [formContext]);
 
-    if (
-        cruiseUsers
-            .map((user) => user.id)
-            .includes(cruise?.mainCruiseManagerId) &&
-        mainManagerField == EMPTY_GUID
-    ) {
-        formContext?.setValue(
-            cruiseManagerSectionFieldNames.mainCruiseManagerId,
-            cruise?.mainCruiseManagerId,
-        );
-    } else {
+    useEffect(() => {
         if (
-            !cruiseUsers.map((user) => user.id).includes(mainManagerField) &&
-            mainManagerField
+            cruiseUsers
+                .map((user) => user.id)
+                .includes(cruise?.mainCruiseManagerId) &&
+            mainManagerField == EMPTY_GUID
         ) {
             formContext?.setValue(
                 cruiseManagerSectionFieldNames.mainCruiseManagerId,
-                EMPTY_GUID,
+                cruise?.mainCruiseManagerId,
             );
+        } else {
+            if (
+                !cruiseUsers.map((user) => user.id).includes(mainManagerField) &&
+                mainManagerField
+            ) {
+                formContext?.setValue(
+                    cruiseManagerSectionFieldNames.mainCruiseManagerId,
+                    EMPTY_GUID,
+                );
+            }
         }
-    }
-    if (
-        cruiseUsers
-            .map((user) => user.id)
-            .includes(cruise?.mainDeputyManagerId) &&
-        deputyManagerField == EMPTY_GUID
-    ) {
-        formContext?.setValue(
-            cruiseManagerSectionFieldNames.mainDeputyManagerId,
-            cruise?.mainDeputyManagerId,
-        );
-    } else {
         if (
-            !cruiseUsers.map((user) => user.id).includes(deputyManagerField) &&
-            deputyManagerField
+            cruiseUsers
+                .map((user) => user.id)
+                .includes(cruise?.mainDeputyManagerId) &&
+            deputyManagerField == EMPTY_GUID
         ) {
             formContext?.setValue(
                 cruiseManagerSectionFieldNames.mainDeputyManagerId,
-                EMPTY_GUID,
+                cruise?.mainDeputyManagerId,
             );
+        } else {
+            if (
+                !cruiseUsers.map((user) => user.id).includes(deputyManagerField) &&
+                deputyManagerField
+            ) {
+                formContext?.setValue(
+                    cruiseManagerSectionFieldNames.mainDeputyManagerId,
+                    EMPTY_GUID,
+                );
+            }
         }
-    }
+    }, []);
+
 
     const users = getUsersFromCruiseApplications();
     return (

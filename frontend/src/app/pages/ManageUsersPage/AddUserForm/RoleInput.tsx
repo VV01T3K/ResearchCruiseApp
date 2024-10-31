@@ -66,6 +66,7 @@ export default function RoleInput(props: Props) {
                 </label>
                 <SelectWrapper
                     {...props.form.register(props.name, fieldOptions)}
+                    ref={null}
                     className="d-flex w-100"
                     options={getRoleOptions()}
                     placeHolder={'Wybierz wartość'}

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Path as Path } from '../Tools/Path';
 
 import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {emailPattern} from "@consts/emailPatterns";
 
 export default function useFormWrapper() {
     const form = useForm({ mode: 'onBlur', reValidateMode: 'onBlur' });
@@ -54,11 +55,11 @@ export default function useFormWrapper() {
                 label={'E-mail'}
                 name={'email'}
                 type={'text'}
-                registerOptions={{ required: 'Pole wymagane', maxLength: 30 }}
-                // pattern: {
-                // value: /\b[A-Za-z0-9._%+-]+@ug\.edu\.pl\b/,
-                // message: 'Podaj adres e-mail z domeny @ug.edu.pl',
-                // }}
+                registerOptions={{ required: 'Pole wymagane', maxLength: 200,
+                pattern: {
+                value: emailPattern,
+                message: 'Adres email jest niepoprawny',
+                }}}
             />
         );
     };
@@ -71,8 +72,7 @@ export default function useFormWrapper() {
 
     const passwordOptions = {
         required: 'Pole wymagane',
-        maxLength: 30,
-        // pattern:passwordPattern
+        maxLength: 200,
     };
 
     const PasswordTextInput = () => {
@@ -81,7 +81,8 @@ export default function useFormWrapper() {
                 label={'Hasło'}
                 name={'password'}
                 type={'password'}
-                registerOptions={passwordOptions}
+                registerOptions={{...passwordOptions, pattern:passwordPattern
+                }}
             />
         );
     };
@@ -92,7 +93,7 @@ export default function useFormWrapper() {
                 label={'Nowe hasło'}
                 name={'newPassword'}
                 type={'password'}
-                registerOptions={passwordOptions}
+                registerOptions={{...passwordOptions, pattern:passwordPattern}}
             />
         );
     };

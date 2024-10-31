@@ -8,7 +8,11 @@ import { SingleValue } from 'react-select';
 import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
 import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { Permission, permissionDefaultWithScan } from '@app/pages/FormPage/Inputs/PermissionsTable/PermissionsTable';
+import {
+    Permission,
+    permissionDefaultWithScan,
+    PermissionWithScan
+} from '@app/pages/FormPage/Inputs/PermissionsTable/PermissionsTable';
 import { FormField } from '@app/pages/FormPage/Inputs/FormYearSelect';
 import { DownloadField, UploadField } from '@app/pages/FormPage/Inputs/ContractsTable/ContractTableFields';
 
@@ -53,7 +57,7 @@ function PermissionsTableWithScan(props: Props) {
         rules: {
             required: false,
             validate: {
-                notEmptyArray: notEmptyArray<Permission>,
+                notEmptyArray: notEmptyArray<PermissionWithScan>,
                 // fileExists:fileExists,
             },
         },

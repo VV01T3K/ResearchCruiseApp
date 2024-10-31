@@ -54,7 +54,7 @@ export const StandardDateField = (props: { className?: string }) => {
     );
 };
 
-export const FDateFieldDayAndHour = (props: HTMLProps<any>) => {
+export const FDateFieldDayAndHour = (props: any) => {
     const displayContext = useContext(DisplayContext);
     return displayContext ? (
         <DateFieldDayAndHour {...props} />
@@ -63,13 +63,15 @@ export const FDateFieldDayAndHour = (props: HTMLProps<any>) => {
     );
 };
 
-export const FormDateFieldDayAndHour = (props: { className?: string }) => {
+export const FormDateFieldDayAndHour = (props: { className?: string, minDate?:Date, maxDate?:Date }) => {
     const { cellValue, setCellValue, field } = CellFormTools();
     const readOnlyContext = useContext(ReadOnlyContext);
     return (
         <DatePicker
             disabled={readOnlyContext!}
             // showYearPicker
+            minDate={props.minDate}
+            maxDate={props.maxDate}
             className={'field-common w-100 ' + props.className}
             onBlur={() => field!.onBlur()}
             {...datePickerDayAndHour}
@@ -309,9 +311,9 @@ export const FormBoolField = (props: { className?: string }) => {
     const isTrue = CustomConverter.stringToBoolean(cellValue);
     return (
         <div className={'d-flex flex-row w-100'}>
-            <div
+            <button disabled={readOnlyContext}
                 className={
-                    ' field-common col-6 ' + (isTrue ? ' bg-primary text-white' : '')
+                    ' field-common col-6 ' + (isTrue ? ' radio-button-selected' : 'radio-button-not-selected')
                 }
                 onClick={!readOnlyContext ? () => {
                     setCellValue('true');
@@ -320,10 +322,10 @@ export const FormBoolField = (props: { className?: string }) => {
                 }}
             >
                 Tak
-            </div>
-            <div
+            </button>
+            <button disabled={readOnlyContext}
                 className={
-                    'field-common col-6 ' + (!isTrue ? ' bg-primary text-white' : '')
+                    'field-common col-6 ' + (!isTrue ? ' radio-button-selected' : 'radio-button-not-selected')
                 }
                 onClick={!readOnlyContext ? () => {
                         setCellValue('false');
@@ -333,7 +335,7 @@ export const FormBoolField = (props: { className?: string }) => {
                     }}
             >
                 Nie
-            </div>
+            </button>
         </div>
     );
 };
@@ -341,22 +343,23 @@ export const BoolField = (props: { className?: string }) => {
     const { cellValue } = CellTools();
     return (
         <div className={'d-flex flex-row w-100'}>
-            <div
+            <button
+                disabled
                 className={
                     ' field-common col-6 ' +
-                    (Boolean(cellValue) ? ' bg-primary text-white' : '')
+                    (Boolean(cellValue) ? ' btn btn-primary' : '')
                 }
             >
                 Tak
-            </div>
-            <div
+            </button>
+            <button disabled
                 className={
                     'field-common col-6 ' +
-                    (!Boolean(cellValue) ? ' bg-primary text-white' : '')
+                    (!Boolean(cellValue) ? ' btn btn-primary' : '')
                 }
             >
                 Nie
-            </div>
+            </button>
         </div>
     );
 };

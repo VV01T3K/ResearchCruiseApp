@@ -475,7 +475,7 @@ $top-bar-min-width: 380px;
   min-width: $top-bar-min-width;
   @extend .d-flex,
   .flex-column,
-  .justify-content-center,
+  .justify-content-start,
   .col-12,
   .col-xl-9,
   .bg-white
@@ -567,6 +567,11 @@ $top-bar-min-width: 380px;
   }
 }
 
+.btn-primary:disabled {
+  background: rgba(0, 0, 0, 0.2) !important;
+  pointer-events: none; /* Utrzymuje stan wyłączenia przycisku */
+}
+
 .form-page-option-bar {
   @extend .d-flex,
   .flex-row,
@@ -624,7 +629,7 @@ $top-bar-min-width: 380px;
 
 .form-section-expansion-mark-error {
   @extend .form-section-expansion-mark,
-  .text-danger
+  //.text-danger
 }
 
 .form-section-children {

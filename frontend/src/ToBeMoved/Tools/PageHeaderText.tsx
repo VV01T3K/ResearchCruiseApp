@@ -7,23 +7,26 @@ const PageHeaderText = () => {
     const [pageHeaderText, _setPageHeaderText] = useState<string | null>(null);
     const { userData, UserLoggedIn } = UserDataManager();
     const location = useLocation();
+    const loggedIn = UserLoggedIn();
     const setPageHeaderText = () => {
         let text = null;
         switch (location.pathname) {
-            case Path.NewForm:
+            case Path.Form:
                 break;
-            default:
+            case Path.Default:
                 if (UserLoggedIn() && userData) {
                     text = `Witaj, ${userData!.firstName}`;
                 }
                 break;
+            default:
+                break
         }
         _setPageHeaderText(text);
     };
 
     useEffect(() => {
         setPageHeaderText();
-    }, [location, UserLoggedIn, 'load']);
+    }, [location.pathname, loggedIn, 'load']);
 
     return { pageHeaderText };
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {Ref, useContext, useState} from 'react';
 import Select, { CSSObjectWithLabel, GroupBase, OptionsOrGroups, SingleValue } from 'react-select';
 import { FieldValues } from 'react-hook-form';
 import { FormContext } from '@contexts/FormContext';
@@ -23,6 +23,7 @@ type SelectWrapperProps = {
     classNamePrefix?: string,
     onChange?: (value: SelectSingleValue) => void,
     defaultValue?: SelectSingleValue,
+    ref?:Ref<any>,
     value?: FieldValues | SelectSingleValue | GroupBase<SelectSingleValue>
 }
 export const SelectWrapper = (props: SelectWrapperProps) => {
@@ -44,7 +45,7 @@ export const SelectWrapper = (props: SelectWrapperProps) => {
         formContext!.setValue(props.fieldName!, selectedOption?.value, readyFieldOptions);
     };
     return (
-        <Select {...commonSelectProps} placeholder={props.placeHolder ?? 'Wyszukaj'}
+        <Select ref={props.ref} {...commonSelectProps} placeholder={props.placeHolder ?? 'Wyszukaj'}
                 noOptionsMessage={() => 'Brak wyników'}
                 inputValue={inputValue} onInputChange={(e) => setInputValue(e)} value={props.value}
                 {...props} className={'select ' + props.className} classNamePrefix={props.classNamePrefix ?? 'select'}

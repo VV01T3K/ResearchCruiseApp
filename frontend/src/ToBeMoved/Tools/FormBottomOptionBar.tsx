@@ -45,18 +45,23 @@ const SupervisorMenu = () => {
             });
 
     const AcceptButton = () => {
+        const [disable, setDisable] = useState(false);
         return (
-            <button onClick={accept} className="form-page-option-button-default">
+            <button disabled={disable} onClick={()=>{setDisable(true); accept()}} className="form-page-option-button-default">
                 Zaakceptuj zgłoszenie
             </button>
         );
     };
 
-    const DenyButton = () => (
-        <button onClick={deny} className="form-page-option-button bg-danger w-100">
-            Odrzuć zgłoszenie
-        </button>
-    );
+    const DenyButton = () => {
+        const [disable, setDisable] = useState(false);
+
+        return(
+            <button disabled={disable}  onClick={()=>{setDisable(true); deny()}} className="form-page-option-button bg-danger w-100">
+                Odrzuć zgłoszenie
+            </button>
+        );
+    }
 
     return (
         <>

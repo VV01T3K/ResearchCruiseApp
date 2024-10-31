@@ -22,7 +22,7 @@ function FormRadio(props: Props) {
         const fieldName = props.fieldName;
         const RadioOption = (props: { option: string, index: number }) => (
             <input key={props.index} disabled={formContext!.readOnly}
-                   className={`${field.value === String(props.index) ? 'radio-button-selected' : 'radio-button-not-selected'} w-100`}
+                   className={`${field.value === String(props.index) ? 'radio-button-selected ' : 'radio-button-not-selected'} w-100`}
                    type={'button'} value={props.option}
                    onClick={() => formContext!.setValue(fieldName, String(props.index), readyFieldOptions)}
             />

@@ -7,6 +7,8 @@ import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager
 import { Path } from '../../../ToBeMoved/Tools/Path';
 import { CruiseApplicationShortInfo } from 'CruiseApplicationShortInfo';
 import { Buffer } from 'buffer';
+import roleBasedRouting from "../../../route/RoleBasedRouting";
+import userBasedAccess from "../../../route/UserBasedAccess";
 
 type Props = {
     cruiseApplicationsShortInfo: CruiseApplicationShortInfo[];
@@ -56,9 +58,11 @@ export function LinkWithStateDownloadApplication(
 
 export const CanCurrentUserAccessCruiseApplication = () => {
     const { userData } = userDataManager();
+    const { UserHasAdminAccess, UserHasShipownerAccess, UserHasGuestAccess } = userBasedAccess();
     return (cruiseApplication: CruiseApplicationShortInfo) =>
-        cruiseApplication.cruiseManagerId == userData?.id ||
-        cruiseApplication.deputyManagerId == userData?.id;
+        (UserHasGuestAccess() || UserHasAdminAccess() || UserHasShipownerAccess()) ||
+        (cruiseApplication.cruiseManagerId == userData?.id ||
+        cruiseApplication.deputyManagerId == userData?.id);
 };
 
 export default function AssignedCruiseApplicationsList(props: Props) {

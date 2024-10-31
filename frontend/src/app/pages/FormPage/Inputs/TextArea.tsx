@@ -32,7 +32,7 @@ function TextArea(props: Props) {
         <TextareaAutosize
             className={'field-common h-100'}
             {...field}
-            disabled={formContext!.readOnly ?? props.disabled}
+            disabled={props.disabled ?? formContext!.readOnly}
             value={field.value?.toString()}
             // onBlur={onChange}
             placeholder={props.placeholder}

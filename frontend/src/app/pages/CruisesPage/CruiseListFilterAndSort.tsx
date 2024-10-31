@@ -19,7 +19,7 @@ export const sortCruiseListByNumber = (list?: Cruise[]) => list ? [
 export const sortCruiseListByStartDate = (list?: Cruise[]) => list ? [
     ...list?.sort(
         (a: Cruise, b: Cruise): number =>
-            Date.parse(a.startDate) - Date.parse(b.endDate),
+            Date.parse(a.startDate) - Date.parse(b.startDate),
     ),
 ] : [];
 
