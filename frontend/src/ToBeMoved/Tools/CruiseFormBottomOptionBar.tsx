@@ -204,7 +204,7 @@ const ConfirmedCruiseButtons = () => {
 const EndedCruiseButtons = () => {
     return (
         <div className="p-2 text-center w-100">
-            Rejs zakończony brak dodatkowych akcji
+            Rejs zakończony, brak dodatkowych akcji
         </div>
     );
 };

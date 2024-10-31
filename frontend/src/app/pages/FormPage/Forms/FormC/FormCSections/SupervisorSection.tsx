@@ -11,9 +11,9 @@ export const supervisorSectionFieldNames = {
 const SupervisorEmailField = () => (
     <TextArea
         className={'two-fields-beside-md'}
-        fieldLabel={'Adres email'}
+        fieldLabel={'Adres e-mail'}
         fieldName={supervisorSectionFieldNames.supervisor}
-        placeholder={'Wpisz adres email'}
+        placeholder={'Wpisz adres e-mail'}
         required={true}
         pattern={emailPattern}
     />

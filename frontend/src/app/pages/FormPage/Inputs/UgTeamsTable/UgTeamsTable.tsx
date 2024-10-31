@@ -65,7 +65,7 @@ export const UnitField = () => {
         <KeyContext.Provider value={'ugUnitId'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
-                    Jednostka
+                    Jednostka:
                 </label>
                 <FStringValueField />
             </div>

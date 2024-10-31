@@ -90,7 +90,7 @@ export const DifferentShipUsageField = () => {
 
     return (
         <TextArea className="two-fields-beside-md"
-                  placeholder={!disabled ? 'Podaj sposób' : 'Aby podać inny sposób zaznacz \'w inny sposób\''}
+                  placeholder={!disabled ? 'Podaj sposób' : 'Aby podać inny sposób, zaznacz „w inny sposób”'}
                   fieldLabel="Inny sposób użycia"
                   fieldName={timeSectionFieldNames.differentUsage}
                   disabled={disabled}

@@ -41,7 +41,7 @@ function GuestTeamsTable(props: Props) {
 
     const mdColWidths = [10, 60, 20, 10];
     const mdColTitles = ['Lp.', 'Instytucja', 'Liczba osób', ''];
-    const colTitle = 'Jednostki';
+    const colTitle = 'Instytucje';
     const bottomMenu =
         <BottomMenuWithAddButtonAndHistory newOption={guestTeamDefault as SingleValue<any>}
                                            historicalOptions={selectOptions} />;

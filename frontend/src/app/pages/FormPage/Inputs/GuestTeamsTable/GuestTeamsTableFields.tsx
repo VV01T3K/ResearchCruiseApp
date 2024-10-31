@@ -7,7 +7,7 @@ export const InstitutionField = () =>
         <KeyContext.Provider value={'name'}>
             <div className={'task-field-input'}>
                 <label className={'table-field-input-label'}>
-                    Instytucja
+                    Nazwa
                 </label>
                 <FTextField />
             </div>
