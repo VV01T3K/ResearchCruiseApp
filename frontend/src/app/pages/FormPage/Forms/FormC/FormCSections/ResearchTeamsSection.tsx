@@ -15,7 +15,7 @@ export const researchTeamsSectionFieldNames = {
 export const ResearchTeamsSection = () => SectionWrapper(
     {
         shortTitle: 'Z. badawcze',
-        longTitle: 'Zespoły badawcze, które miałyby uczestniczyć w rejsie',
+        longTitle: 'Zespoły badawcze, które uczestniczyły w rejsie',
         sectionFieldNames: researchTeamsSectionFieldNames,
         children:
             <>

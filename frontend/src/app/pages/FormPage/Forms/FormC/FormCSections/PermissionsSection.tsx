@@ -10,7 +10,7 @@ export const permissionsSectionFieldNames = {
 export const PermissionsSection = () => SectionWrapper(
     {
         shortTitle: 'Pozwolenia',
-        longTitle: 'Dodatkowe pozwolenia do planowanych podczas rejsu badań',
+        longTitle: 'Dodatkowe pozwolenia do wykonanych podczas rejsu badań',
         sectionFieldNames: permissionsSectionFieldNames,
         children:
             <>

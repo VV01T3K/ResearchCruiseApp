@@ -157,7 +157,7 @@ export const PublicationMinisterialPointsField = () =>
             <label>
                 Punkty ministerialne za publikację
             </label>
-            <FBoolField />
+            <FIntField />
         </div>
     );
 
@@ -165,7 +165,7 @@ export const ManagerConditionMetField = () =>
     (
         <div className={'task-field-input'}>
             <label>
-                Czy spełniono dla kierownika?
+                Czy kierownik naukowy zgłaszanego rejsu był promotorem tej pracy?
             </label>
             <FBoolField />
         </div>
@@ -175,7 +175,7 @@ export const DeputyConditionMetField = () =>
     (
         <div className={'task-field-input'}>
             <label>
-                Czy spełniono dla zastępcy?
+                Czy zastępca kierownika zgłaszanego rejsu był promotorem tej pracy?
             </label>
             <FBoolField />
         </div>

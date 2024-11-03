@@ -8,7 +8,7 @@ export const equipmentSectionFieldNames = {
 export const EquipementSection = () => SectionWrapper(
     {
         shortTitle: 'Sprzęt',
-        longTitle: 'Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu',
+        longTitle: 'Lista sprzętu i aparatury badawczej użytej podczas rejsu',
         sectionFieldNames: equipmentSectionFieldNames,
         children: <>
             <EquipmentTable

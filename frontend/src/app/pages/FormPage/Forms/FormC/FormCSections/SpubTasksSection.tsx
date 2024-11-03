@@ -10,7 +10,7 @@ export const spubTasksSectionFieldNames = {
 export const SpubTasksSection = () => SectionWrapper(
     {
         shortTitle: 'SPUB',
-        longTitle: 'Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie',
+        longTitle: 'Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie',
         sectionFieldNames: spubTasksSectionFieldNames,
         children:
             <ReadonlyOverrideWrapper>

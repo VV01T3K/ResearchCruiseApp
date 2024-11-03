@@ -2,7 +2,7 @@ import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
 import {
     CruiseDetailsDescription, EquipmentLeaveField,
     EquipmentOutsideField, PortLeaveField,
-} from '@app/pages/FormPage/Forms/FormB/FormBSections/CruiseDetalisSectionFields';
+} from '@app/pages/FormPage/Forms/FormC/FormCSections/CruiseDetalisSectionFields';
 
 
 export const cruiseDetailsSectionFieldNames = {

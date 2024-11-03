@@ -18,7 +18,7 @@ import {
     MagazineField, ManagerConditionMetField,
     MinisterialPointsField,
     ProjectDraftTitleField,
-    PublicationDraftTitleField,
+    PublicationDraftTitleField, PublicationMinisterialPointsField,
     SecuredAmountField,
     StartDateField,
     TaskDescriptionField,
@@ -50,8 +50,8 @@ export type ResearchTaskEffect = {
     ministerialPoints?: string,
     done: string,
     publicationMinisterialPoints?: string,
-    managerConditionMet: string,
-    deputyConditionMet: string
+    managerConditionMet?: string,
+    deputyConditionMet?: string
 }
 
 export const taskTypes = [
@@ -70,18 +70,18 @@ export const taskTypes = [
 ];
 
 export const taskTypesDefaultValues: ResearchTaskEffect[] = [
-    { type: '0', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '1', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '2', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '3', title: '', date: '', financingApproved: 'false', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '4', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '5', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '6', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '7', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '8', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '9', description: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '10', title: '', date: '', magazine: '', ministerialPoints: '0', done: '', publicationMinisterialPoints: '', managerConditionMet: '', deputyConditionMet: '' },
-    { type: '11', description: '', done: '', managerConditionMet: '', deputyConditionMet: '' },
+    { type: '0', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '', publicationMinisterialPoints: '' },
+    { type: '1', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '', publicationMinisterialPoints: '' },
+    { type: '2', author: '', title: '', done: '', managerConditionMet: '', deputyConditionMet: '', publicationMinisterialPoints: '' },
+    { type: '3', title: '', date: '', financingApproved: 'false', done: '', managerConditionMet: '', publicationMinisterialPoints: '' },
+    { type: '4', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', publicationMinisterialPoints: '' },
+    { type: '5', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', publicationMinisterialPoints: '' },
+    { type: '6', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', publicationMinisterialPoints: '' },
+    { type: '7', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: '', publicationMinisterialPoints: '' },
+    { type: '8', title: '', financingAmount: '0.00', startDate: '', endDate: '', securedAmount: '0.00', done: ''},
+    { type: '9', description: '', done: ''},
+    { type: '10', title: '', date: '', magazine: '', ministerialPoints: '0', done: '', publicationMinisterialPoints: ''},
+    { type: '11', description: '', done: ''},
 ];
 const taskTypeOptions = () => {
     return taskTypes.map((taskLabel, index) =>
@@ -136,7 +136,7 @@ export const FieldForKey = () => {
         case 'done':
             return <DoneField/>;
         case 'publicationMinisterialPoints':
-            return <PublicationDraftTitleField/>;
+            return <PublicationMinisterialPointsField/>;
         case 'managerConditionMet':
             return <ManagerConditionMetField/>;
         case 'deputyConditionMet':
