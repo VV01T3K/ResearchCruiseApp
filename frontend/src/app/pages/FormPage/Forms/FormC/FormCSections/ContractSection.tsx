@@ -11,7 +11,7 @@ export const ContractSection = () =>
     SectionWrapper(
         {
             shortTitle: 'Umowy',
-            longTitle: 'Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze',
+            longTitle: 'Umowy regulujące współpracę, w ramach której były zrealizowane zadania badawcze',
             sectionFieldNames: contractSectionFieldNames,
             children:
                 <ReadonlyOverrideWrapper>

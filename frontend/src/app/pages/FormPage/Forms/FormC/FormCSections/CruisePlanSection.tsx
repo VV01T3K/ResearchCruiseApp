@@ -8,7 +8,7 @@ export const cruisePlanSectionFieldNames = {
 export const CruisePlanSection = () => SectionWrapper(
     {
         shortTitle: 'Plan',
-        longTitle: 'Szczegółowy plan zadań do realizacji podczas rejsu',
+        longTitle: 'Szczegółowy plan zadań zrealizowanych podczas rejsu',
         sectionFieldNames: cruisePlanSectionFieldNames,
         children: <>
             <DetailedPlanTable

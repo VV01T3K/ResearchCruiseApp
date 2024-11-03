@@ -9,8 +9,7 @@ import { FormBInitValues } from 'FormBInitValues';
 
 export const CruiseDetailsDescription = () => (
 
-    <h5 className={`pb-0 p-4 col-12 text-center`}>Czy w ramach rejsu
-        planuje się:</h5>
+    <h5 className={`pb-0 p-4 col-12 text-center`}>Czy w ramach rejsu:</h5>
 );
 
 export const EquipmentOutsideField = () => {
@@ -18,7 +17,7 @@ export const EquipmentOutsideField = () => {
     return (
         <ShortResearchEquipmentTable
             className="single-field"
-            fieldLabel="Wystawienie sprzętu"
+            fieldLabel="Wystawiono sprzęt"
             fieldName={cruiseDetailsSectionFieldNames.shortResearchEquipments}
             historicalEquipmentOutside={(formContext!.initValues as FormBInitValues)?.historicalEquipmentOutside}
         />
@@ -30,7 +29,7 @@ export const EquipmentLeaveField = () => {
     return (
         <EquipmentLeaveTable
             className="single-field"
-            fieldLabel="Pozostawienie lub zabranie sprzętu"
+            fieldLabel="Pozostawiono lub zabrano sprzęt"
             fieldName={cruiseDetailsSectionFieldNames.longResearchEquipments}
         />
     );
@@ -41,7 +40,7 @@ export const PortLeaveField = () => {
     return (
         <PortTable
             className="single-field"
-            fieldLabel="Wchodzenie lub wychodzenie z portu"
+            fieldLabel="Wchodzono lub wychodzono z portu"
             fieldName={cruiseDetailsSectionFieldNames.ports}
         />
     );

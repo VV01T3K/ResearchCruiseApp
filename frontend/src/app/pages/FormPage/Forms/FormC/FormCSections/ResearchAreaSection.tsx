@@ -13,7 +13,7 @@ export const researchAreaSectionFieldNames = {
 export const ResearchAreaSection = () => SectionWrapper(
     {
         shortTitle: 'Rejon',
-        longTitle: 'Rejon prowadzenia badań',
+        longTitle: 'Rejon przeprowadzonych badań',
         sectionFieldNames: researchAreaSectionFieldNames,
         children:
             <ReadonlyOverrideWrapper>
