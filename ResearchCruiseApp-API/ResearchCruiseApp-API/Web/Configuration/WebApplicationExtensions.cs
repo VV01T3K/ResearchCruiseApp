@@ -5,7 +5,7 @@ namespace ResearchCruiseApp_API.Web.Configuration;
 
 public static class WebApplicationExtensions
 {
-    public static Task Configure(this WebApplication app)
+    public static async Task Configure(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
@@ -23,6 +23,6 @@ public static class WebApplicationExtensions
 
         app.MapControllers();
 
-        return app.InitializeDatabase();
+        await app.InitializeDatabase();
     }
 }

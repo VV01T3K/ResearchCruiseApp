@@ -82,7 +82,7 @@ public static class DependencyInjection
     private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("ResearchCruiseApp-DB")));
+            options.UseSqlServer(configuration.GetConnectionString("ResearchCruiseApp")));
 
         services.AddScoped<ApplicationDbContextInitializer>();
         

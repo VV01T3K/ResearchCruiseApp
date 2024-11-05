@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization.InitialData;
 
@@ -16,11 +17,9 @@ internal class ApplicationDbContextInitializer(
 {
     public async Task Initialize()
     {
-        var firstMigration = !await applicationDbContext.Database.CanConnectAsync();
-        
         await Migrate();
 
-        if (firstMigration)
+        if (configuration.GetSection("SeedDatabase").Value?.ToBool() ?? false)
         {
           await SeedRoleData();
           await SeedUsersData();
