@@ -22,9 +22,7 @@ public class FormsFieldsService(
     IPortsRepository portsRepository,
     ICruiseDaysDetailsRepository cruiseDaysDetailsRepository,
     IPermissionsFactory permissionsFactory,
-    IContractsFactory contractsFactory,
-    IResearchTaskEffectsRepository researchTaskEffectsRepository,
-    IUserEffectsRepository userEffectsRepository)
+    IContractsFactory contractsFactory)
     : IFormsFieldsService
 {
     public async Task<Permission> GetUniquePermission(

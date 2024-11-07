@@ -13,10 +13,12 @@ public class Cruise : Entity, IYearBasedNumbered
     public Guid MainCruiseManagerId { get; set; }
 
     public Guid MainDeputyManagerId { get; set; }
-    
-    public DateTime StartDate { get; set; }
-    
-    public DateTime EndDate { get; set; }
+
+    [StringLength(64)]
+    public string StartDate { get; set; } = null!;
+
+    [StringLength(64)]
+    public string EndDate { get; set; } = null!;
     
     public CruiseStatus Status { get; set; }
 

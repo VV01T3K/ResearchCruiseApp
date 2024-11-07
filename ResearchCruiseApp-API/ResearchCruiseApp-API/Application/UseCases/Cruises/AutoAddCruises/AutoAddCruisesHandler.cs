@@ -1,7 +1,9 @@
 using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Services.Cruises;
+using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
@@ -11,7 +13,8 @@ namespace ResearchCruiseApp_API.Application.UseCases.Cruises.AutoAddCruises;
 public class AutoAddCruisesHandler(
     ICruisesService cruisesService,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
-    ICruisesRepository cruisesRepository)
+    ICruisesRepository cruisesRepository,
+    IGlobalizationService globalizationService)
     : IRequestHandler<AutoAddCruisesCommand, Result>
 {
     public async Task<Result> Handle(AutoAddCruisesCommand request, CancellationToken cancellationToken)
@@ -23,14 +26,13 @@ public class AutoAddCruisesHandler(
         
         foreach (var cruiseApplication in cruiseApplications)
         {
-            if(cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+            if (cruiseApplication.Status != CruiseApplicationStatus.Accepted)
+                continue;
+            if (cruises.Any(cruise => cruise.CruiseApplications.Contains(cruiseApplication)))
                 continue;
             
             var newCruise = CreateCruise(cruiseApplication);
             if (newCruise is null)
-                continue;
-            
-            if (cruises.Any(cruise => cruise.CruiseApplications.Contains(cruiseApplication)))
                 continue;
             
             await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);
@@ -40,12 +42,12 @@ public class AutoAddCruisesHandler(
     }
 
 
-    private static Cruise? CreateCruise(CruiseApplication cruiseApplication)
+    private Cruise? CreateCruise(CruiseApplication cruiseApplication)
     {
         if (cruiseApplication.FormA is null)
             return null;
         
-        var (newCruiseStartDate, newCruiseEndDate) = GetAutoCalculatedCruiseDate(cruiseApplication.FormA);
+        var (newCruiseStartDate, newCruiseEndDate) = GetAutoCalculatedCruiseDates(cruiseApplication.FormA);
         
         return new Cruise
         {
@@ -57,7 +59,7 @@ public class AutoAddCruisesHandler(
         };
     }
     
-    private static Tuple<DateTime, DateTime> GetAutoCalculatedCruiseDate(FormA formA)
+    private (string start, string end) GetAutoCalculatedCruiseDates(FormA formA)
     {
         // Optimal period beg/end is a number from range 0...24 representing a point in a year
 
@@ -66,9 +68,13 @@ public class AutoAddCruisesHandler(
             : 15; // start at the middle of a month
         var startMonth = int.Parse(formA.OptimalPeriodBeg) / 2 + 1;
 
-        var startDate = new DateTime(int.Parse(formA.Year), startMonth, startDay, 8, 0, 0);
+        var startDate = new DateTime(int.Parse(formA.Year), startMonth, startDay, 8, 0, 0,
+            DateTimeKind.Unspecified);
         var endDate = startDate.AddHours(int.Parse(formA.CruiseHours));
+        
+        var startDateString = globalizationService.GetIsoUtcString(startDate);
+        var endDateString = globalizationService.GetIsoUtcString(endDate);
 
-        return new Tuple<DateTime, DateTime>(startDate, endDate);
+        return (startDateString, endDateString);
     }
 }

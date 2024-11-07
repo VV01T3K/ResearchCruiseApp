@@ -1,6 +1,4 @@
-using System.Globalization;
 using MediatR;
-using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
@@ -25,18 +23,14 @@ public class EditCruiseHandler(
         var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
         if (cruise is null)
             return Error.ResourceNotFound();
-        
-        if (cruise.Status != CruiseStatus.New)
-            return Error.InvalidArgument("Można edytować jedynie nowe zgłoszenia");
-        
-        if (cruise.CruiseApplications.Any(application => application.Status != CruiseApplicationStatus.Accepted))
-            return Error.InvalidArgument("Można dodać do rejsu jedynie zgłoszenia w stanie: zaakceptowane");
+
+        var result = CheckStatuses(cruise);
+        if (!result.IsSuccess) return result;
 
         UpdateCruiseDates(cruise, request);
         
-        var partialResult = await UpdateCruiseManagersTeam(cruise, request);
-        if (partialResult.Error is not null)
-            return partialResult;
+        result = await UpdateCruiseManagersTeam(cruise, request);
+        if (!result.IsSuccess) return result;
 
         await UpdateCruiseCruiseApplications(cruise, request, cancellationToken);
         
@@ -45,12 +39,21 @@ public class EditCruiseHandler(
     }
 
 
+    private static Result CheckStatuses(Cruise cruise)
+    {
+        if (cruise.Status != CruiseStatus.New)
+            return Error.InvalidArgument("Można edytować jedynie nowe zgłoszenia");
+        
+        if (cruise.CruiseApplications.Any(application => application.Status != CruiseApplicationStatus.Accepted))
+            return Error.InvalidArgument("Można dodać do rejsu jedynie zgłoszenia w stanie: zaakceptowane");
+        
+        return Result.Empty;
+    }
+    
     private static void UpdateCruiseDates(Cruise cruise, EditCruiseCommand request)
     {
-        var (startDateUtc, endDateUtc) = ParseDates(request.CruiseFormModel.StartDate, request.CruiseFormModel.EndDate);
-        
-        cruise.StartDate = TimeZoneInfo.ConvertTimeFromUtc(startDateUtc, TimeZoneInfo.Local);
-        cruise.EndDate = TimeZoneInfo.ConvertTimeFromUtc(endDateUtc, TimeZoneInfo.Local);
+        cruise.StartDate = request.CruiseFormModel.StartDate;
+        cruise.EndDate = request.CruiseFormModel.EndDate;
     }
 
     private async Task<Result> UpdateCruiseManagersTeam(Cruise cruise, EditCruiseCommand request)
@@ -84,18 +87,7 @@ public class EditCruiseHandler(
             affectedCruises.Add(cruise); // The explicitly edited cruise is of course also affected
 
         cruise.CruiseApplications = newCruiseApplications;
-        await unitOfWork.Complete(cancellationToken); // EF will remove new cruise applications from their old cruises
+        await unitOfWork.Complete(cancellationToken); // ORM will remove new cruise applications from their old cruises
         await cruisesService.CheckEditedCruisesManagersTeams(affectedCruises, cancellationToken);
-    }
-    
-    private static Tuple<DateTime, DateTime> ParseDates(string startDate, string endDate)
-    {
-        const string format = "yyyy-MM-ddTHH:mm:ss.fffK";
-        const DateTimeStyles style = DateTimeStyles.RoundtripKind;
-        
-        var _startDate = DateTime.ParseExact(startDate, format, null, style);
-        var _endDate = DateTime.ParseExact(endDate, format, null, style);
-
-        return new Tuple<DateTime, DateTime>(_startDate, _endDate);
     }
 }

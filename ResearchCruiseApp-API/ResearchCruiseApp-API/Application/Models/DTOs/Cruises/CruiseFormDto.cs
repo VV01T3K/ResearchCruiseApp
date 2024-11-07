@@ -33,8 +33,7 @@ public class CruiseFormDto
                 .ForMember(
                     dest => dest.Number,
                     options =>
-                        options.MapFrom(src =>
-                            string.Empty));
+                        options.MapFrom(src => string.Empty));
         }
     }
 }

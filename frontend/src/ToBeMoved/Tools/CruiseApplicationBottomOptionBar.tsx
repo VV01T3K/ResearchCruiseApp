@@ -89,7 +89,7 @@ export const ConfirmApplicationButton = () => {
     return (
         <div onClick={acceptApplication} className="form-page-option-button w-100">
             {' '}
-            Potwierdź zgłoszenie{' '}
+            Akceptuj zgłoszenie{' '}
         </div>
     );
 };

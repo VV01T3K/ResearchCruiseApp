@@ -2,14 +2,12 @@
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Effects;
-using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.Forms;
 
 
 public class FormsService(
-    IFormsFieldsService formsFieldsService,
     IEffectsService effectsService,
     IPermissionsRepository permissionsRepository,
     IFormBUgUnitsRepository formBUgUnitsRepository,

@@ -9,8 +9,7 @@ namespace ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 
 
 public class CruiseApplicationEvaluator(
-    IUserEffectsRepository userEffectsRepository,
-    ICruiseApplicationsRepository cruiseApplicationsRepository)
+    IUserEffectsRepository userEffectsRepository)
     : ICruiseApplicationEvaluator
 {
     public async Task Evaluate(CruiseApplication cruiseApplication, CancellationToken cancellationToken)

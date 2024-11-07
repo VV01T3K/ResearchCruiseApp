@@ -12,7 +12,7 @@ export const BasicInfo = () => {
     );
 };
 
-export const DateSection = () => SectionWrapper(
+export const InfoSection = () => SectionWrapper(
     {
         shortTitle: 'Podstawowe',
         longTitle: 'Podstawowe informacje o rejsie',

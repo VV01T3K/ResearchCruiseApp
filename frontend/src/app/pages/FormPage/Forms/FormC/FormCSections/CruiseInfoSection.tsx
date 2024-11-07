@@ -7,7 +7,6 @@ import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
 
 export const BasicInfo = () => {
     const cruise = cruiseFromLocation();
-    console.log(cruise);
     return (
         <CruiseBasicInfo cruise={cruise} />
     );

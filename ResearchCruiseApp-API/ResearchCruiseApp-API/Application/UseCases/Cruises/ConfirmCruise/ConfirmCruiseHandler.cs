@@ -1,4 +1,3 @@
-using AutoMapper;
 using MediatR;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
@@ -14,8 +13,7 @@ public class ConfirmCruiseHandler(
     ICruisesRepository cruisesRepository,
     IEmailSender emailSender,
     IUnitOfWork unitOfWork,
-    IIdentityService identityService,
-    IMapper mapper)
+    IIdentityService identityService)
     : IRequestHandler<ConfirmCruiseCommand, Result>
 {
     public async Task<Result> Handle(ConfirmCruiseCommand request, CancellationToken cancellationToken)

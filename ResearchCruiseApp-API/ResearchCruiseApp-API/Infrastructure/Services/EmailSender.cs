@@ -14,7 +14,8 @@ namespace ResearchCruiseApp_API.Infrastructure.Services;
 
 internal class EmailSender(
     IConfiguration configuration,
-    ITemplateFileReader templateFileReader) : IEmailSender
+    ITemplateFileReader templateFileReader,
+    IGlobalizationService globalizationService) : IEmailSender
 {
     public async Task SendEmailConfirmationEmail(UserDto userDto, string roleName, string emailConfirmationCode)
     {
@@ -107,8 +108,8 @@ internal class EmailSender(
         var emailSubject = await templateFileReader.ReadCruiseConfirmedSubject();
 
         var emailMessage = messageTemplate
-            .Replace("{{startDate}}", cruise.StartDate.ToString("dd.MM.yyyy (HH:mm)"))
-            .Replace("{{endDate}}", cruise.EndDate.ToString("dd.MM.yyyy (HH:mm)"))
+            .Replace("{{startDate}}", globalizationService.GetLocalString(cruise.StartDate))
+            .Replace("{{endDate}}", globalizationService.GetLocalString(cruise.EndDate))
             .Replace("{{firstName}}", cruiseManager.FirstName)
             .Replace("{{lastName}}", cruiseManager.LastName);
 

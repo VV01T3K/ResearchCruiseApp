@@ -7,6 +7,7 @@ import { FieldProps } from './FormRadio';
 import { datePickerCommon } from './DatePickerCommon';
 import { FormContext } from '@contexts/FormContext';
 import { pl } from 'date-fns/locale';
+import {dateFormat, localeCode} from "@consts/cultureConstants";
 
 registerLocale('pl', pl);
 
@@ -26,12 +27,10 @@ export function StartDateField(props: StartDateFieldProps) {
         control: formContext!.control,
         name: props.EndDateFieldName,
     });
+
     const render = ({ field }: FieldValues) => {
-
-
         return (
             <DatePicker
-                // {...field}
                 className={'field-common w-100'}
                 disabled={formContext!.readOnly ?? false}
                 onChange={(e: Date) => {
@@ -46,12 +45,9 @@ export function StartDateField(props: StartDateFieldProps) {
                 startDate={field.value ? new Date(field.value as string) : undefined}
                 maxDate={endDateValue ? new Date(endDateValue) : undefined}
                 selectsStart
-                value={field.value ? new Date(field.value).toLocaleDateString('pl-PL', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                }) : undefined}
+                value={field.value ? new Date(field.value).toLocaleDateString(localeCode, dateFormat) : undefined}
                 selected={field.value ? new Date(field.value) : undefined}
-                dateFormat="Pp"
+                //dateFormat="Pp"
             />
         );
     };

@@ -33,7 +33,8 @@ public static class DependencyInjection
             .AddScoped<IEmailSender, EmailSender>()
             .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
             .AddScoped<ITemplateFileReader, TemplateFileReader>()
-            .AddScoped<ICurrentUserService, CurrentUserService>();
+            .AddScoped<ICurrentUserService, CurrentUserService>()
+            .AddScoped<IGlobalizationService, GlobalizationService>();
     }
     
     

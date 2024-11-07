@@ -7,7 +7,7 @@ export const dateSectionFieldNames = {
     endDate: 'endDate',
 };
 
-const CruiseStartDateField = () => {
+const CruiseDatesField = () => {
     return (
         <>
             <StartDateField
@@ -25,13 +25,13 @@ const CruiseStartDateField = () => {
     );
 };
 
-export const InfoSection = () => SectionWrapper(
+export const DateSection = () => SectionWrapper(
     {
         shortTitle: 'Termin',
         longTitle: 'Termin rejsu',
         children:
             <>
-                <CruiseStartDateField />
+                <CruiseDatesField />
             </>,
     },
 );

@@ -92,7 +92,6 @@ export const FieldForKey = () => {
     const displayContext = useContext(DisplayContext);
     const { rowValue } = displayContext ? CellTools() : CellFormTools();
     const keyContext = useContext(KeyContext);
-    console.log(rowValue);
 
     switch (keyContext) {
         case 'author':

@@ -46,8 +46,11 @@ const CruisesListTableContent = () => [
 
 export default function CruisesList() {
     const cruiseStateContext = useContext(CruiseStateContext);
-    const { cruisesToDisplay, sortOptions, anyStringFilterOptions } =
-        CruisesListFilterAndSort();
+    const {
+        cruisesToDisplay,
+        sortOptions,
+        anyStringFilterOptions
+    } = CruisesListFilterAndSort();
 
     const [statusFilter, setStatusFilter] = useState('');
 

@@ -1,11 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react';
 import FormTemplate from '../FormPage/Wrappers/FormTemplate';
 import { ApplicationsSection } from './CruiseFormSections/Sections/AppicationsSection';
-import { DateSection } from './CruiseFormSections/Sections/InfoSection';
+import { InfoSection } from './CruiseFormSections/Sections/InfoSection';
 import { CruiseManagersSection } from './CruiseFormSections/Sections/CruiseManagersSection';
 
 import { Cruise } from 'Cruise';
-import { InfoSection } from './CruiseFormSections/Sections/DateSection';
+import { DateSection } from './CruiseFormSections/Sections/DateSection';
 import { CruiseFormBottomOptionBar } from '../../../ToBeMoved/Tools/CruiseFormBottomOptionBar';
 import Api from '../../../api/Api';
 import { FormType, FormTypeKeys } from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
@@ -15,6 +15,7 @@ import { EMPTY_GUID } from '@consts/emptyGuid';
 import { ApplicationsContext } from '@contexts/ApplicationsContext';
 import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
 import { parse } from 'date-fns';
+import {dateFormat, localeCode} from "@consts/cultureConstants";
 
 type CruiseManagersTeam = {
     mainCruiseManagerId: string;
@@ -33,22 +34,17 @@ type CruiseFormPageLocationState = {
 };
 
 const CruiseFormSections = () => [
-    DateSection(),
     InfoSection(),
+    DateSection(),
     CruiseManagersSection(),
     ApplicationsSection(),
 ];
 
 const EditCruiseFormDefaultValues = (cruise?: Cruise) => {
     if (cruise) {
-        let startDate = new Date();
-        let endDate = new Date();
-        startDate = parse(cruise.startDate, "dd.MM.yyyy HH:mm:ss", startDate);
-        endDate = parse(cruise.endDate, "dd.MM.yyyy HH:mm:ss", endDate);
-
         return {
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString(),
+            startDate: cruise.startDate,
+            endDate: cruise.endDate,
             managersTeam: {
                 mainCruiseManagerId: cruise.mainCruiseManagerId,
                 mainDeputyManagerId: cruise.mainDeputyManagerId,
