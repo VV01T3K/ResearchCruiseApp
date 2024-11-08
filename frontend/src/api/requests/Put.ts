@@ -1,8 +1,21 @@
 import Api from '@api/Api';
 import { Guid } from 'Guid';
+import { AxiosRequestConfig } from 'axios';
 
-export const autoAddCruises = () => Api.put('/api/Cruises/autoAdded');
+const put = (url: string, data?: any, config?: AxiosRequestConfig) =>
+  Api.put(url, data, config);
+export const autoAddCruises = () => put('/api/Cruises/autoAdded');
 
-export const refillFormB = (id: Guid) => Api.put(`/api/CruiseApplications/${id}/FormB/Refill`);
+export const refillFormB = (id: Guid) =>
+  put(`/api/CruiseApplications/${id}/FormB/Refill`);
 
-export const refillFormC = (id: Guid) => Api.put(`/api/CruiseApplications/${id}/FormC/Refill`);
+export const refillFormC = (id: Guid) =>
+  put(`/api/CruiseApplications/${id}/FormC/Refill`);
+
+export const confirmCruise = (id: Guid) =>
+  put(`/api/Cruises/${id}/confirm`, { raw: true });
+
+export const putFormB = (cruiseApplicationId: Guid, data: any) =>
+  put(`/api/CruiseApplications/${cruiseApplicationId}/FormB`, data);
+
+export const endCruise = (id: Guid) => put(`/api/Cruises/${id}/end`);

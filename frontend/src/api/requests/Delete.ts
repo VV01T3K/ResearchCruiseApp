@@ -1,3 +1,6 @@
 import Api from '@api/Api';
+import { AxiosRequestConfig } from 'axios';
 
-export const deleteCruise = (id: string) => Api.delete(`/api/Cruises/${id}`);
+const _delete = (url: string, config?: AxiosRequestConfig) =>
+  Api.delete(url, config);
+export const deleteCruise = (id: string) => _delete(`/api/Cruises/${id}`);

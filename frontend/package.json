@@ -22,6 +22,7 @@
     "framer-motion": "^10.0.0",
     "moment": "^2.30.1",
     "popper.js": "^1.16.1",
+    "prettier": "^3.3.3",
     "rc-slider": "^10.5.0",
     "react": "^18.2.0",
     "react-big-calendar": "^1.12.2",
@@ -64,7 +65,7 @@
     "build": "react-app-rewired  build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "install-bootstrap": "npm install --save cellMesurer",
+    "install-bootstrap": "prettier --check .",
     "audit": "npm update",
     "fund": "npm fund",
     "cos": "npm install typescript @types/react @types/node --save-dev"
