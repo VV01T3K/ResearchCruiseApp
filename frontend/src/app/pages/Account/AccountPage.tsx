@@ -1,12 +1,12 @@
 import React from 'react';
 import Page from '../../../ToBeMoved/Pages/Page';
 import PageTitle from '../../../components/Page/PageTitle';
-import { Content } from './AccountPageContent';
+import { AccountPageContent } from './AccountPageContent';
 
 const AccountPage = () => (
   <Page className={'common-page'}>
     <PageTitle title={'Ustawienia konta'} />
-    <Content />
+    <AccountPageContent />
   </Page>
 );
 
