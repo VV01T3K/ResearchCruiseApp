@@ -50,10 +50,12 @@ export const Interceptors = () => {
       { _retry: true }
     );
     const newAccessToken = refreshResponse?.data.accessToken;
+    const newRefreshToken = refreshResponse?.data.refreshToken;
     if (!newAccessToken) {
       ForceLogout();
     } else {
       sessionStorage.setItem('accessToken', newAccessToken);
+      sessionStorage.setItem('refreshToken', newRefreshToken);
     }
   }
 
