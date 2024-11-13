@@ -1,5 +1,5 @@
+using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;

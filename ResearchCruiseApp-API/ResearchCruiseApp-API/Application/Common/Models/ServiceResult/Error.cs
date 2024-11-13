@@ -1,3 +1,4 @@
+using ResearchCruiseApp_API.Application.Common.Enums;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 
 namespace ResearchCruiseApp_API.Application.Common.Models.ServiceResult;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp_API.Application.Common.Extensions;
 using ResearchCruiseApp_API.Application.ExternalServices;
-using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 using ResearchCruiseApp_API.Infrastructure.Persistence.Initialization.InitialData;
 

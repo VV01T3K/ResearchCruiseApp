@@ -1,7 +1,7 @@
 using System.Reflection;
 using ResearchCruiseApp_API.Domain.Common.Attributes;
 
-namespace ResearchCruiseApp_API.Domain.Common.Extensions;
+namespace ResearchCruiseApp_API.Application.Common.Extensions;
 
 
 public static class EnumExtensions

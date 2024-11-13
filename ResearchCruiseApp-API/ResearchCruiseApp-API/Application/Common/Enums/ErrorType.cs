@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Domain.Common.Enums;
+﻿namespace ResearchCruiseApp_API.Application.Common.Enums;
 
 
 public enum ErrorType

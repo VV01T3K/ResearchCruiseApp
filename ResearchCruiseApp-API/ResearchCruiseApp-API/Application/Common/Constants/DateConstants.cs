@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Domain.Common.Constants;
+﻿namespace ResearchCruiseApp_API.Application.Common.Constants;
 
 
 public static class DateConstants
