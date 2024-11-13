@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Application.UseCases.Users.AcceptUser;
 using ResearchCruiseApp_API.Application.UseCases.Users.AddUser;
@@ -8,7 +9,6 @@ using ResearchCruiseApp_API.Application.UseCases.Users.DeactivateUser;
 using ResearchCruiseApp_API.Application.UseCases.Users.GetAllUsers;
 using ResearchCruiseApp_API.Application.UseCases.Users.GetUserById;
 using ResearchCruiseApp_API.Application.UseCases.Users.ToggleUserRole;
-using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;

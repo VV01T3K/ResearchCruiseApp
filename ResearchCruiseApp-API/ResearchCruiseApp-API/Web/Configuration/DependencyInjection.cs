@@ -24,6 +24,6 @@ public static class DependencyInjection
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
-        }); 
+        });
     }
 }

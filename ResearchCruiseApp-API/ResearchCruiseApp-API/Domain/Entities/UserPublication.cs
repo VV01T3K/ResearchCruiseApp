@@ -2,7 +2,7 @@
 
 public class UserPublication : Entity
 {
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
 
-    public Publication Publication { get; set; } = null!;
+    public Publication Publication { get; init; } = null!;
 }

@@ -1,4 +1,4 @@
-﻿using ResearchCruiseApp_API.Domain.Common.Constants;
+﻿using ResearchCruiseApp_API.Application.Common.Constants;
 
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Initialization.InitialData;
 

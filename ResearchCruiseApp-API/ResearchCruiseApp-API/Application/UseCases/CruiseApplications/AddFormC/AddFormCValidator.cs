@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using ResearchCruiseApp_API.Application.Common.Constants;
+using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 
 namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddFormC;

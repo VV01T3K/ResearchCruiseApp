@@ -7,7 +7,8 @@ namespace ResearchCruiseApp_API.Domain.Entities;
 
 public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<GuestUnit>
 {
-    [StringLength(1024)] public string Name { get; init; } = null!;
+    [StringLength(1024)]
+    public string Name { get; init; } = null!;
 
     public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];
 

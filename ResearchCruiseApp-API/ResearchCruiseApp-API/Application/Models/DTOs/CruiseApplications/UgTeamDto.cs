@@ -1,6 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using AutoMapper;
-using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
@@ -14,29 +12,4 @@ public class UgTeamDto
 
     [StringLength(1024)]
     public string NoOfStudents { get; init; } = null!;
-
-
-    private class MapProfile : Profile
-    {
-        public MapProfile()
-        {
-            CreateMap<FormAUgUnit, UgTeamDto>()
-                .ForMember(
-                    dest => dest.UgUnitId,
-                    options =>
-                        options.MapFrom(src => src.UgUnit.Id));
-            
-            CreateMap<FormBUgUnit, UgTeamDto>()
-                .ForMember(
-                    dest => dest.UgUnitId,
-                    options =>
-                        options.MapFrom(src => src.UgUnit.Id));
-            
-            CreateMap<FormCUgUnit, UgTeamDto>()
-                .ForMember(
-                    dest => dest.UgUnitId,
-                    options =>
-                        options.MapFrom(src => src.UgUnit.Id));
-        }
-    }
 }

@@ -4,7 +4,7 @@ using ResearchCruiseApp_API.Domain.Common.Interfaces;
 namespace ResearchCruiseApp_API.Domain.Entities;
 
 
-public class UgUnit : Entity, IDbDictionary
+public class UgUnit : Entity, IDictionaryEntity
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;

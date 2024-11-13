@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ResearchCruiseApp_API.Application.Common.Extensions;
 using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
@@ -6,7 +7,6 @@ using ResearchCruiseApp_API.Application.Services.Effects;
 using ResearchCruiseApp_API.Application.Services.Factories.Photos;
 using ResearchCruiseApp_API.Application.Services.FormsFields;
 using ResearchCruiseApp_API.Domain.Common.Enums;
-using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.Factories.FormsC;

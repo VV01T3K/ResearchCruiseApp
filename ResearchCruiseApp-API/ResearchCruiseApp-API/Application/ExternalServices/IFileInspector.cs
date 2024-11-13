@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence;
+﻿namespace ResearchCruiseApp_API.Application.ExternalServices;
 
 
 public interface IFileInspector

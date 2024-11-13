@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AcceptCruiseApplication;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.AddCruiseApplication;
@@ -22,7 +23,6 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnEffect
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormC;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.UpdateEffects;
-using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Web.Common.Extensions;
 
 namespace ResearchCruiseApp_API.Web.Controllers;

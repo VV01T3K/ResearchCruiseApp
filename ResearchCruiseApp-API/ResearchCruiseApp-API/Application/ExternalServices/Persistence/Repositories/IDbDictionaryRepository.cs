@@ -5,7 +5,7 @@ namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Reposit
 
 
 public interface IDbDictionaryRepository<T>
-    where T : Entity, IDbDictionary
+    where T : Entity, IDictionaryEntity
 {
     Task<List<T>> GetAllActive(CancellationToken cancellationToken);
 }

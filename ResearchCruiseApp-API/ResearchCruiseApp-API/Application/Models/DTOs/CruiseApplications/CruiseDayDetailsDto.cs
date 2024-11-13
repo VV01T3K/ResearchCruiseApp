@@ -24,15 +24,4 @@ public class CruiseDayDetailsDto
 
     [StringLength(1024)]
     public string Comment { get; init; } = null!;
-
-
-    private class MapProfile : Profile
-    {
-        public MapProfile()
-        {
-            CreateMap<CruiseDayDetailsDto, CruiseDayDetails>();
-            
-            CreateMap<CruiseDayDetails, CruiseDayDetailsDto>();
-        }
-    }
 }

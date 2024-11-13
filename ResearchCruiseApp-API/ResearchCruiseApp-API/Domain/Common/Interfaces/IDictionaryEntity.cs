@@ -1,7 +1,7 @@
 ﻿namespace ResearchCruiseApp_API.Domain.Common.Interfaces;
 
 
-public interface IDbDictionary
+public interface IDictionaryEntity
 {
     public bool IsActive { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
