@@ -657,6 +657,12 @@ $top-bar-min-width: 380px;
     width: 50% !important;
   }
 }
+@media print {
+  body { margin: 0; padding: 0; }
+  @page {
+    margin: 0;
+  }
+}
 
 .field-wrapper {
   @extend .d-flex,

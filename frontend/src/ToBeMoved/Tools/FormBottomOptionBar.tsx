@@ -190,7 +190,7 @@ export const BottomOptionBar = () => {
 
   const EditableFormButtons = () => (
     <>
-      {/*{!sendMenu.enabled && <saveMenu.saveButton />}*/}
+      {!sendMenu.enabled && <saveMenu.saveButton />}
       {!saveMenu.enabled && <sendMenu.Button />}
     </>
   );

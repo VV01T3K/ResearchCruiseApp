@@ -15,7 +15,7 @@ function UserSelect(props: Props) {
   function findLabel(field: FieldValues) {
     const item = props.initValues?.find((item) => item.id === field.value);
     if (item) {
-      return item.firstName + ' ' + item.lastName + '\n\r(' + item.email + ')';
+      return item.firstName + ' ' + item.lastName + '\n(' + item.email + ')';
     }
     return '';
   }
