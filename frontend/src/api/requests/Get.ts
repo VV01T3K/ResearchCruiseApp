@@ -24,15 +24,19 @@ export const getFormC = (cruiseApplicationId: Guid) =>
 
 export const fetchCruises = () => get('/api/Cruises');
 
+// TODO : Change to /api
 export const getFormAInitValues = () => get('/Forms/InitValues/A');
 
+// TODO : Change to /api
 export const getFormBInitValues = () => get('/Forms/InitValues/B');
 
+// TODO : Change to /api
 export const getFormCInitValues = () => get('/Forms/InitValues/C');
 
 export const getApplicationDetails = (cruiseApplicationId: Guid) =>
   get(`/api/CruiseApplications/${cruiseApplicationId}/evaluation`);
 
+// TODO : Change to /api
 export const getFormAInitValuesForSupervisor = (
   cruiseApplicationId: Guid,
   supervisorCode: Guid
@@ -46,8 +50,10 @@ export const getCruiseForCruiseApplication = (id: Guid) =>
 
 export const getCruise = (id: Guid) => get(`/api/Cruises/${id}`);
 
+// TODO : Change to /api
 export const getAccountData = () => get('/account');
 
+// TODO : Change to /api
 export const getEmailConfirmation = (
   userId: Guid | null,
   code: string | null
@@ -56,6 +62,7 @@ export const getEmailConfirmation = (
     raw: true,
   });
 
+// TODO : Change to /api
 export const getUsers = () => get('/Users');
 
 export const getCruiseApplication = (id: Guid) =>
