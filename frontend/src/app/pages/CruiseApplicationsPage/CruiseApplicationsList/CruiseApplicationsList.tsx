@@ -175,7 +175,7 @@ export default function CruiseApplicationsList(props: Props) {
       )}
       <ListModeContext.Provider value={{ mode: props.mode }}>
         <ApplicationsContext.Provider value={applicationsToDisplay}>
-          <Render className={'overflow-y-scroll-override ' + props.className} />
+          <Render className={'' + props.className} />
         </ApplicationsContext.Provider>
       </ListModeContext.Provider>
       {props.mode == CruiseApplicationListMode.Add && (

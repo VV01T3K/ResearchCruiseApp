@@ -4,12 +4,12 @@ import CruiseApplicationsList from './CruiseApplicationsList/CruiseApplicationsL
 import Page from '../../../ToBeMoved/Pages/Page';
 
 function CruiseApplicationsPage() {
-    return (
-        <Page className="form-page">
-            <PageTitle title="Zgłoszenia" />
-            <CruiseApplicationsList />
-        </Page>
-    );
+  return (
+    <Page className='form-page page-content mh-100'>
+      <PageTitle title='Zgłoszenia' />
+      <CruiseApplicationsList />
+    </Page>
+  );
 }
 
 export default CruiseApplicationsPage;

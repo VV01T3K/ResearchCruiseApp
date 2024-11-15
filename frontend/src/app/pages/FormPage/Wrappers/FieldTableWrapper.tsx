@@ -14,6 +14,7 @@ import {
   CellMeasurerCache,
   List,
 } from 'react-virtualized';
+import useWindowHeight from '@hooks/useWindowHeight';
 
 // TODO: [Not important] Split to smaller parts
 
@@ -28,9 +29,10 @@ export const FieldTableWrapper = (
   reactWindow?: boolean
 ) => {
   const windowWidth = useWindowWidth();
+  const windowHeight = useWindowHeight();
 
   const rootRef = useRef<HTMLDivElement>(null);
-
+  const tableHeight = window.innerHeight < 600 ? window.innerHeight - 270 : 600;
   const ColTitle = () => (
     <div className='table-field-column-title'>
       <b>{title}</b>
@@ -59,7 +61,19 @@ export const FieldTableWrapper = (
   );
 
   const EmptyRow = () => (
-    <div className='table-field-no-content'>{emptyText}</div>
+    <>
+      {reactWindow && (
+        <div
+          style={{ height: tableHeight }}
+          className='table-field-no-content align-items-center'
+        >
+          {emptyText}
+        </div>
+      )}
+      {!reactWindow && (
+        <div className='table-field-no-content'>{emptyText}</div>
+      )}
+    </>
   );
 
   const NonEmptyRow = ({
@@ -87,52 +101,52 @@ export const FieldTableWrapper = (
     fixedWidth: true,
   });
   const TableContent = () => (
-    <div className={'overflow-y-scroll'}>
-      {reactWindow && (
-        <AutoSizer disableHeight>
-          {({ width }) => (
-            <List
-              className={'h-100'}
-              width={width}
-              height={Math.min(
-                cache.getHeight(0, 0) * (content.length + 1) ?? 0,
-                window.innerHeight
-              )}
-              rowCount={content.length}
-              rowHeight={cache.rowHeight}
-              deferredMeasurementCache={cache}
-              rowRenderer={({ index, key, parent, style }) => (
-                <CellMeasurer
-                  key={key}
-                  cache={cache}
-                  parent={parent}
-                  columnIndex={0}
-                  rowIndex={index}
-                >
-                  {({ registerChild }) => (
-                    <NonEmptyRow
-                      key={key}
-                      index={index}
-                      style={style}
-                      _ref={registerChild}
-                    />
-                  )}
-                </CellMeasurer>
-              )}
-            />
-          )}
-        </AutoSizer>
-      )}
-      {!reactWindow && (
-        <div
-          className={'flex-grow-1 overflow-scroll-override d-flex flex-column'}
-        >
-          {content.map((_: any, rowIndex: number) => (
-            <NonEmptyRow key={rowIndex} index={rowIndex} style={undefined} />
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <>
+        {reactWindow && (
+          <AutoSizer disableHeight>
+            {({ width }) => (
+              <List
+                width={width}
+                height={tableHeight}
+                rowCount={content.length}
+                rowHeight={cache.rowHeight}
+                deferredMeasurementCache={cache}
+                rowRenderer={({ index, key, parent, style }) => (
+                  <CellMeasurer
+                    key={key}
+                    cache={cache}
+                    parent={parent}
+                    columnIndex={0}
+                    rowIndex={index}
+                  >
+                    {({ registerChild }) => (
+                      <NonEmptyRow
+                        key={key}
+                        index={index}
+                        style={style}
+                        _ref={registerChild}
+                      />
+                    )}
+                  </CellMeasurer>
+                )}
+              />
+            )}
+          </AutoSizer>
+        )}
+        {!reactWindow && (
+          <div
+            className={
+              'flex-grow-1 overflow-scroll-override d-flex flex-column'
+            }
+          >
+            {content.map((_: any, rowIndex: number) => (
+              <NonEmptyRow key={rowIndex} index={rowIndex} style={undefined} />
+            ))}
+          </div>
+        )}
+      </>
+    </>
   );
 
   const CellContent = () => {
@@ -161,7 +175,9 @@ export const FieldTableWrapper = (
   }
 
   const Render = (props: { className?: string }) => (
-    <div className={'table-striped d-flex flex-column ' + props.className}>
+    <div
+      className={'table-striped mh-100 d-flex flex-column ' + props.className}
+    >
       <TableHeader />
       {!(content?.length > 0) && <EmptyRow />}
       {content && content.length > 0 && <TableContent />}
