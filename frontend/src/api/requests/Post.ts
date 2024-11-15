@@ -36,4 +36,4 @@ export const addCruiseApplication = (data: any, id?: Guid) =>
 
 // TODO : Change to /api
 export const requestEmail = (user: UserData) =>
-  Api.post('/Account/emailConfirmationRequest', { email: user.email });
+  post('/Account/emailConfirmationRequest', { email: user.email });

@@ -113,7 +113,7 @@ export const Actions = () => {
   const [emailText, setEmailText] = useState('Wyślij email');
   const emailSent = 'Wysłano email';
   return (
-    <div className='btn-group-vertical'>
+    <div className='btn-group-vertical align-items-center'>
       {!user.accepted && (
         <div
           className={'user-action-link'}
@@ -131,22 +131,23 @@ export const Actions = () => {
             deactivateUser(user).then(() => updateUser('accepted', false))
           }
         >
-          {' '}
-          Dezaktywuj{' '}
+          Dezaktywuj
         </div>
       )}
-      {!user.emailConfirmed && (
+      {!user.emailSent && !user.emailConfirmed && (
         <div
           className={!(emailText == emailSent) ? 'user-action-link' : ''}
           onClick={
             emailSent
-              ? () => requestEmail(user).then(() => setEmailText(emailSent))
+              ? () =>
+                  requestEmail(user).then(() => updateUser('emailSent', true))
               : () => {}
           }
         >
-          {emailText}
+          Wyślij potwierdzenie email
         </div>
       )}
+      {user.emailSent && <div>Wysłano</div>}
     </div>
   );
 };
@@ -243,13 +244,6 @@ function ManageUsersPage() {
                     />
                   </div>
                 ))}
-                <button
-                  className={'btn btn-danger m-1'}
-                  type='button'
-                  onClick={() => setFilterText('')}
-                >
-                  X
-                </button>
                 <button
                   className={`btn  m-1 ${notAcceptedToggle ? 'btn-danger' : 'btn-primary'}`}
                   onClick={() => {
