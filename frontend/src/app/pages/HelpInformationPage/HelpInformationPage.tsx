@@ -4,12 +4,16 @@ import CruiseApplicationsList from '@app/pages/CruiseApplicationsPage/CruiseAppl
 import React from 'react';
 
 export default function HelpInformationPage() {
-    return (
-        <Page className="form-page">
-            <PageTitle title="Pomoc" />
-            <div className={'p-4'}>
-                <h5>Tutaj powinny być informacje o pomocy</h5>
-            </div>
-        </Page>
-    );
+  return (
+    <Page className='form-page'>
+      <PageTitle title='Pomoc' />
+      <div
+        className={
+          'h5 p-4 justify-content-center align-items-center text-center align-self-center h-100'
+        }
+      >
+        <>Informacje o pomocy zostaną dodane w przyszłej aktualizacji</>
+      </div>
+    </Page>
+  );
 }

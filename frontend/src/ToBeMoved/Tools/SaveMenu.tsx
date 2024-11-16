@@ -4,7 +4,7 @@ import {
   handlePrint,
   handleSave,
 } from './FormButtonsHandlers';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ReactComponent as DownloadIcon } from '/node_modules/bootstrap-icons/icons/download.svg';
 import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
 import { FormContext } from '@contexts/FormContext';
@@ -15,6 +15,7 @@ import { extendedUseLocation } from '@hooks/extendedUseLocation';
 import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
 import { Path } from './Path';
 import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
+import { cruiseManagerNorDeputyIsCurrentUserErrName } from '@app/pages/FormPage/Forms/FormA/FormASections/CruiseManagerSectionFields';
 
 const formDownloadProps = (formContext: FormContextFields) => {
   return {
@@ -90,8 +91,11 @@ export const RefillCButton = () => {
 const ConfirmSaveButton = () => {
   const formContext = useContext(FormContext);
   const _handleSave = handleSave();
+  const cruiseManagerNorDeputyIsCurrentUserErr =
+    formContext?.formState.errors[cruiseManagerNorDeputyIsCurrentUserErrName];
   return (
-    <div
+    <button
+      disabled={cruiseManagerNorDeputyIsCurrentUserErr != undefined}
       onClick={_handleSave}
       className={
         formContext?.type == FormType.A
@@ -100,7 +104,7 @@ const ConfirmSaveButton = () => {
       }
     >
       Potwierdź
-    </div>
+    </button>
   );
 };
 
@@ -125,6 +129,18 @@ const PrintButton = () => (
 export function SaveMenu() {
   const [savingStated, setSavingStarted] = useState(false);
   const formContext = useContext(FormContext);
+  const cruiseManagerNorDeputyIsCurrentUserErr =
+    formContext?.formState.errors[cruiseManagerNorDeputyIsCurrentUserErrName];
+  const [errorText, setErrorText] = useState('');
+
+  useEffect(() => {
+    if (!cruiseManagerNorDeputyIsCurrentUserErr && errorText != '')
+      setErrorText('');
+    else if (cruiseManagerNorDeputyIsCurrentUserErr && errorText == '')
+      setErrorText(
+        'Aby zapisać zgłoszenie musisz być jego kierownikiem lub zastępcą'
+      );
+  }, [formContext]);
 
   const CancelButton = () => (
     <div
@@ -162,12 +178,17 @@ export function SaveMenu() {
 
   return {
     menu: () => (
-      <>
-        {formContext!.type === FormType.A && <NoteInput />}
-        <ConfirmSaveButton />
-        <PrintButton />
-        <CancelButton />
-      </>
+      <div className={'d-flex flex-column w-100'}>
+        {errorText && (
+          <div className={'w-100 text-danger text-center p-2'}>{errorText}</div>
+        )}
+        <div className={'w-100 d-flex flex-row'}>
+          {formContext!.type === FormType.A && <NoteInput />}
+          <ConfirmSaveButton />
+          <PrintButton />
+          <CancelButton />
+        </div>
+      </div>
     ),
     saveButton: SaveButton,
     enabled: savingStated,
