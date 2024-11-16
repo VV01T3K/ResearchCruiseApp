@@ -106,11 +106,14 @@ export const Status = () => {
         <>
           {application!.status == CruiseApplicationStatus.Draft &&
             isCurrentUserCruiseOrDeputyManager && (
-              <LinkWithState
-                to={Path.Form}
-                state={{ formType: 'A', cruiseApplication: application }}
-                label={'Kontynuuj wypełnianie'}
-              />
+              <>
+                {<div style={{ fontSize: 11 }}>{application.note}</div>}
+                <LinkWithState
+                  to={Path.Form}
+                  state={{ formType: 'A', cruiseApplication: application }}
+                  label={'Kontynuuj wypełnianie'}
+                />
+              </>
             )}
           {application!.status == CruiseApplicationStatus.FormBRequired &&
             isCurrentUserCruiseOrDeputyManager && (
