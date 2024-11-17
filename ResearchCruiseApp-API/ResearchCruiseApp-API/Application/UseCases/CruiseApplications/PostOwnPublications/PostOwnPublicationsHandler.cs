@@ -1,0 +1,60 @@
+using AutoMapper;
+using MediatR;
+using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
+using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.FormsFields;
+using ResearchCruiseApp_API.Domain.Entities;
+
+namespace ResearchCruiseApp_API.Application.UseCases.CruiseApplications.PostOwnPublications;
+
+public class PostOwnPublicationsHandler(
+    IFormsFieldsService formsFieldsService,
+    ICurrentUserService currentUserService,
+    IUserPublicationsRepository userPublicationsRepository,
+    IPublicationsRepository publicationsRepository,
+    IUnitOfWork unitOfWork,
+    IMapper mapper)
+    : IRequestHandler<PostOwnPublicationsCommand, Result<List<PublicationDto>>>
+{
+    public async Task<Result<List<PublicationDto>>> Handle(
+        PostOwnPublicationsCommand request,
+        CancellationToken cancellationToken)
+    {
+        Guid? userId = currentUserService.GetId();
+        if (userId is null)
+            return Error.ResourceNotFound();
+        
+        var alreadyAddedPublications = new HashSet<Publication>();
+        var publications = new List<Publication>();
+
+        foreach (var publicationDto in request.PublicationsDto)
+        {
+            if (publicationDto.MinisterialPoints == "0")
+            {
+                continue;
+            }
+            var publication = await formsFieldsService
+                .GetUniquePublication(publicationDto, alreadyAddedPublications, cancellationToken);
+
+            if (!alreadyAddedPublications.Contains(publication))
+            {
+                var userPublication = new UserPublication { UserId = (Guid)userId };
+                if (!await userPublicationsRepository.CheckIfExists(publication))
+                {
+                    publication.UserPublications.Add(userPublication);
+                    await publicationsRepository.UpdateOrAdd(publication, cancellationToken);
+                    publications.Add(publication);
+                }   
+            }
+            alreadyAddedPublications.Add(publication);
+        }
+        await unitOfWork.Complete(cancellationToken);
+        
+        return publications
+            .Select(mapper.Map<PublicationDto>)
+            .ToList();
+    }
+}

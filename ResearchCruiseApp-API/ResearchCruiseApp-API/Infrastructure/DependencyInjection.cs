@@ -126,6 +126,7 @@ public static class DependencyInjection
             .AddScoped<ICollectedSamplesRepository, CollectedSamplesRepository>()
             .AddScoped<IPhotosRepository, PhotosRepository>()
             .AddScoped<IResearchTaskEffectsRepository, ResearchTaskEffectsRepository>()
-            .AddScoped<IUserEffectsRepository, UserEffectsRepository>();
+            .AddScoped<IUserEffectsRepository, UserEffectsRepository>()
+            .AddScoped<IUserPublicationsRepository, UserPublicationsRepository>();
     }
 }

@@ -3,6 +3,8 @@ namespace ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 
 public class PublicationDto
 {
+    public Guid Id { get; set; }
+    
     public string Category { get; init; } = null!;
 
     public string Doi { get; init; } = null!;

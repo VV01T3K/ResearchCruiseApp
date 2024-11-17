@@ -8,6 +8,8 @@ import CruiseApplicationDetailsPage from '@app/pages/CruiseApplicationDetailsPag
 import CruisesPage from '@app/pages/CruisesPage/CruisesPage';
 import CruiseFormPage from '@app/pages/CruiseFormPage/CruiseFormPage';
 import HelpInformationPage from '@app/pages/HelpInformationPage/HelpInformationPage';
+import MyPublicationsPage from "@app/pages/MyPublications/MyPublicationsPage";
+import CruiseEffectsPage from "@app/pages/CruiseEffects/CruiseEffectsPage";
 
 export const AdministratorRoute = () => {
     return (
@@ -28,6 +30,8 @@ export const AdministratorRoute = () => {
             />
             <Route path={Path.Cruises} element={<CruisesPage />} />
             <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
+            <Route path={Path.MyPublications} element={<MyPublicationsPage/>}/>
+            <Route path={Path.CruiseEffects} element={<CruiseEffectsPage/>}/>
         </>
     );
 };
