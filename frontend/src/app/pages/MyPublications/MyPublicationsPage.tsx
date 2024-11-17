@@ -73,14 +73,12 @@ export const Actions = () => {
 export const DeleteAllButton = ({onDeletePublications}: any) => {
 
     return (
-        <div className="d-flex flex-row flex-row-reverse">
             <button
-                className="btn btn-danger fw-bold m-3"
+                className="cruises-button btn-danger "
                 onClick={() => onDeletePublications()}
             >
                 Usuń wszystkie publikacje
             </button>
-        </div>
     )
 };
 
@@ -138,7 +136,7 @@ function MyPublicationsPage() {
     return (
         <Page className={"form-page"}>
             <PageTitle title={"Moje publikacje"}/>
-            <div className={"d-flex d-table-row flex-row-reverse"}>
+            <div className={"d-flex d-table-row flex-row-reverse p-2"}>
                 <DeleteAllButton onDeletePublications={handleDeletePublications}/>
                 <PublicationImporter onSavePublications={handleSavePublications}/>
             </div>
