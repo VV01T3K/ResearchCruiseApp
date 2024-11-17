@@ -34,7 +34,6 @@ const PublicationImporter = ({onSavePublications}) => {
                         magazine: row["Nazwa czasopisma"],
                         year: row["Rok"],
                         ministerialPoints: row["Punkty"],
-                        id: row["ISSN"],
                     }));
                     onSavePublications(publications);
                 },

@@ -98,9 +98,7 @@ const getPublications = () => Api.get('/api/CruiseApplications/ownPublications')
     return response.data
 });
 
-const postPublications = (publications: PublicationData[]) => Api.post('/api/CruiseApplications/ownPublications', publications).then(response => {
-    return response.data
-});
+const postPublications = (publications: PublicationData[]) => Api.post('/api/CruiseApplications/ownPublications', publications);
 
 function MyPublicationsPage() {
     const [publicationList, setPublicationList] = useState<PublicationData[]>([])
@@ -122,8 +120,7 @@ function MyPublicationsPage() {
         await fetchData();
     };
 
-    const handleDeletePublications =  async (publications: any) => {
-        console.log("delete publications")
+    const handleDeletePublications =  async () => {
         await deleteAllPublications();
         await fetchData();
     };

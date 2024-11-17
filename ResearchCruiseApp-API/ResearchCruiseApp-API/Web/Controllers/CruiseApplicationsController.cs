@@ -261,7 +261,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new PostOwnPublicationsCommand(publicationsDto));
         return result.IsSuccess
-            ? Ok(result.Data)
+            ? NoContent()
             : this.CreateError(result);
     }
 

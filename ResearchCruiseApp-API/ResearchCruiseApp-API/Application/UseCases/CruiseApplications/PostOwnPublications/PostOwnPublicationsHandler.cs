@@ -17,9 +17,9 @@ public class PostOwnPublicationsHandler(
     IPublicationsRepository publicationsRepository,
     IUnitOfWork unitOfWork,
     IMapper mapper)
-    : IRequestHandler<PostOwnPublicationsCommand, Result<List<PublicationDto>>>
+    : IRequestHandler<PostOwnPublicationsCommand, Result>
 {
-    public async Task<Result<List<PublicationDto>>> Handle(
+    public async Task<Result> Handle(
         PostOwnPublicationsCommand request,
         CancellationToken cancellationToken)
     {
@@ -28,7 +28,6 @@ public class PostOwnPublicationsHandler(
             return Error.ResourceNotFound();
         
         var alreadyAddedPublications = new HashSet<Publication>();
-        var publications = new List<Publication>();
 
         foreach (var publicationDto in request.PublicationsDto)
         {
@@ -46,15 +45,12 @@ public class PostOwnPublicationsHandler(
                 {
                     publication.UserPublications.Add(userPublication);
                     await publicationsRepository.UpdateOrAdd(publication, cancellationToken);
-                    publications.Add(publication);
                 }   
             }
             alreadyAddedPublications.Add(publication);
         }
         await unitOfWork.Complete(cancellationToken);
         
-        return publications
-            .Select(mapper.Map<PublicationDto>)
-            .ToList();
+        return Result.Empty;
     }
 }
