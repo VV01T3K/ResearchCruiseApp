@@ -29,4 +29,5 @@ public class FormAInitValuesDto
     public List<string> HistoricalGuestInstitutions { get; set; } = [];
     
     public List<SpubTaskDto> HistoricalSpubTasks { get; set; } = [];
+    public List<PublicationDto> HistoricalPublications { get; set; } = [];
 }

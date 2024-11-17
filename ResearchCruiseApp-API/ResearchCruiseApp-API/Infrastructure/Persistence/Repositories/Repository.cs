@@ -42,6 +42,19 @@ internal class Repository<T> : IRepository<T>
         await DbContext.Set<T>().AddAsync(newEntity, cancellationToken);
     }
 
+    public async Task UpdateOrAdd(T newEntity, CancellationToken cancellationToken)
+    {
+        var oldEntity = await DbContext.Set<T>().FirstOrDefaultAsync(e => e.Id.Equals(newEntity.Id), cancellationToken);
+        if (oldEntity != null)
+        {
+            DbContext.Set<T>().Entry(oldEntity).CurrentValues.SetValues(newEntity);
+        }
+        else
+        {
+            DbContext.Set<T>().Add(newEntity);
+        }
+    }
+
     public void Delete(T entity)
     {
         DbContext.Set<T>().Remove(entity);

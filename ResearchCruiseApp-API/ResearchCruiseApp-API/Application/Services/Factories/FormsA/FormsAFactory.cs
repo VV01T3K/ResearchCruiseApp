@@ -12,6 +12,7 @@ internal class FormsAFactory(
     IFormsFieldsService formsFieldsService,
     IResearchAreasRepository researchAreasRepository,
     IUgUnitsRepository ugUnitsRepository,
+    IUserPublicationsRepository userPublicationsRepository,
     IMapper mapper)
     : IFormsAFactory
 {
@@ -134,6 +135,13 @@ internal class FormsAFactory(
         {
             var publication = await formsFieldsService
                 .GetUniquePublication(publicationDto, alreadyAddedPublications, cancellationToken);
+
+            if (!alreadyAddedPublications.Contains(publication) && !await userPublicationsRepository.CheckIfExists(publication))
+            {
+                var userPublication = new UserPublication { UserId = formA.CruiseManagerId };
+                publication.UserPublications.Add(userPublication);
+            }
+            
             alreadyAddedPublications.Add(publication);
             
             var formAPublication = new FormAPublication { Publication = publication };

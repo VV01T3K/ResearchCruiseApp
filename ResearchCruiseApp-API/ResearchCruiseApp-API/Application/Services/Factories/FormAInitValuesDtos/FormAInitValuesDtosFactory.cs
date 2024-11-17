@@ -18,6 +18,7 @@ public class FormAInitValuesDtosFactory(
     IContractDtosFactory contractDtosFactory,
     IResearchAreasRepository researchAreasRepository,
     IUgUnitsRepository ugUnitsRepository,
+    IUserPublicationsRepository userPublicationsRepository,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     ICurrentUserService currentUserService,
     IMapper mapper)
@@ -35,6 +36,7 @@ public class FormAInitValuesDtosFactory(
         result.HistoricalContracts = await GetHistoricalContracts(cruiseApplications);
         result.HistoricalGuestInstitutions = GetHistoricalInstitutions(cruiseApplications);
         result.HistoricalSpubTasks = GetHistoricalSpubTasks(cruiseApplications);
+        result.HistoricalPublications = await GetHistoricalPublications(cancellationToken);
 
         return result;
     }
@@ -186,6 +188,19 @@ public class FormAInitValuesDtosFactory(
                 ?? [])
             .Distinct()
             .Select(mapper.Map<SpubTaskDto>)
+            .ToList();
+    }
+    
+    private async Task<List<PublicationDto>> GetHistoricalPublications(CancellationToken cancellationToken)
+    {
+        var userId = currentUserService.GetId();
+        var publications = userId is null 
+            ? [] 
+            :await userPublicationsRepository
+            .GetAllByUserId((Guid)userId, cancellationToken);
+        
+        return publications
+            .Select(userPublication => mapper.Map<PublicationDto>(userPublication.Publication))
             .ToList();
     }
 }

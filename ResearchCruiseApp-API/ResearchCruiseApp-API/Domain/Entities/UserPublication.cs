@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Domain.Entities;
+namespace ResearchCruiseApp_API.Domain.Entities;
 
 public class UserPublication : Entity
 {

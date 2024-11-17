@@ -18,6 +18,8 @@ export enum Path {
     Register = "/Register",
     ForgotPassword = "/ForgotPassword",
     ResetPassword = "/ResetPassword",
+    MyPublications = "/MyPublications",
+    CruiseEffects = "/CruiseEffects",
     FormAForSupervisor = "/FormAForSupervisor",
     PriorityInformation = "/PriorityInformation",
     HelpInformation = "/HelpInformation",

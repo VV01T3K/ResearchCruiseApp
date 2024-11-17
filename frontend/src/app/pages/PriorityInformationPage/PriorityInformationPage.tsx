@@ -1,6 +1,6 @@
 import React from 'react';
 import Page from '../../../ToBeMoved/Pages/Page';
-import PageTitle from '@components/Page/PageTitle';
+import PageTitle from '../../../components/Page/PageTitle';
 
 function PriorityInformationPage() {
 
