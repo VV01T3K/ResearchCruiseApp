@@ -245,15 +245,15 @@ function CruiseEffectsPage() {
     const colTitle = "Efekty rejsu";
 
     const emptyText = "Nie ma żadnego efektu rejsu";
-    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, manageCruiseEffectsPageTableContent, null, emptyText, cruiseEffectList);
+    const {Render} = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, manageCruiseEffectsPageTableContent, null, emptyText, cruiseEffectList, true);
 
     return (
         <Page className={"form-page"}>
             <PageTitle title={"Efekty rejsów"}/>
             <SetCruiseEffectListContext.Provider value={setCruiseEffectList}>
                 <CruiseEffectsContext.Provider value={cruiseEffectList}>
-                    <div className="form-page-content d-flex flex-column align-items-center w-100">
-                        <Render className={"overflow-y-scroll w-100"}/>
+                    <div className="form-page-content d-flex flex-column align-items-center w-100 pt-4">
+                        <Render className={" w-100"}/>
                     </div>
                 </CruiseEffectsContext.Provider>
             </SetCruiseEffectListContext.Provider>

@@ -43,7 +43,7 @@ const PublicationImporter = ({onSavePublications}) => {
     };
 
     return (
-        <div className="d-flex flex-row flex-row-reverse">
+        <div className="">
             <input
                 type="file"
                 accept=".csv"
@@ -53,7 +53,7 @@ const PublicationImporter = ({onSavePublications}) => {
             />
             <label
                 htmlFor="file-input"
-                className="btn btn-primary fw-bold m-3"
+                className="cruises-button "
             >
                 Import publikacji z pliku CSV
             </label>
