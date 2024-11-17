@@ -32,7 +32,8 @@ export const FieldTableWrapper = (
   const windowHeight = useWindowHeight();
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const tableHeight = window.innerHeight < 600 ? window.innerHeight - 270 : 600;
+  const tableHeight =
+    window.innerHeight - 270 < 600 ? window.innerHeight - 270 : 600;
   const ColTitle = () => (
     <div className='table-field-column-title'>
       <b>{title}</b>
