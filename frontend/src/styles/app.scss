@@ -177,6 +177,7 @@ $top-bar-min-width: 380px;
 
 .page-title-common {
   @extend .align-items-center,
+  .justify-content-center,
   .d-none,
   .d-md-flex,
   .w-100,
@@ -496,6 +497,8 @@ $top-bar-min-width: 380px;
 
 .form-page-option-button {
   @extend .btn,
+  .align-items-center,
+  .justify-content-center,
   .btn-sm,
   .btn-primary,
   .form-page-option-element,
