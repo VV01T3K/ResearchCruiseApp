@@ -234,7 +234,10 @@ function ManageUsersPage() {
                 }
               >
                 {anyStringFilterOptions.map((anyStringFilter, index) => (
-                  <div key={index} className={`d-flex flex-column col-3 p-1`}>
+                  <div
+                    key={index}
+                    className={`d-none d-md-flex flex-column col-md-3 p-1`}
+                  >
                     <input
                       className='field-common'
                       placeholder={anyStringFilter.label}

@@ -224,7 +224,7 @@ export const BottomOptionBar = () => {
   );
 
   return (
-    <div className='form-page-option-bar'>
+    <div className='form-page-option-bar  ps-3 pe-3 ps-md-0 ps-md-0'>
       {location?.state.supervisorCode && <SupervisorMenu />}
       {!location?.state.supervisorCode && (
         <>

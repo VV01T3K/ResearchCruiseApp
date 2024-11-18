@@ -99,7 +99,7 @@ const ConfirmSaveButton = () => {
       onClick={_handleSave}
       className={
         formContext?.type == FormType.A
-          ? 'form-page-option-note-button-large'
+          ? 'form-page-option-button w-100'
           : 'form-page-option-button w-100'
       }
     >
@@ -121,7 +121,10 @@ const DownloadButton = () => {
 };
 
 const PrintButton = () => (
-  <button onClick={handlePrint} className='form-page-option-note-button-large'>
+  <button
+    onClick={handlePrint}
+    className='form-page-option-note-button-large d-none d-md-flex'
+  >
     Drukuj
   </button>
 );
@@ -170,7 +173,7 @@ export function SaveMenu() {
         maxLength={100}
         {...formContext!.register('note')}
         placeholder={'Notatka'}
-        className={'form-page-option-note-input'}
+        className={'form-page-option-note-input d-none d-md-flex'}
         type={'text'}
       />
     );

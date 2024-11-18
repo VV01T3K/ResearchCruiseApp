@@ -86,7 +86,7 @@ export default function CruisesList() {
     <div className={'table-with-filters w-100'}>
       <div className={'d-flex flex-row flex-wrap w-100'}>
         <SelectWrapper
-          className='d-flex col-12 col-md-3 p-1'
+          className='d-flex col-6 col-md-3 p-1'
           options={sortOptions}
           placeHolder={'Sortuj'}
           onChange={(selectedOption) =>
@@ -97,10 +97,10 @@ export default function CruisesList() {
         />
         <FilterMapper
           filterOptions={anyStringFilterOptions}
-          optionClassName='d-flex col-12 col-md-3 p-1'
+          optionClassName='d-none d-md-flex col-12 col-md-3 p-1'
         />
         <div></div>
-        <div className={'col-md-6 col-12'}>
+        <div className={'col-md-6 col-6'}>
           {selectStringFilterOptions.map((selectStringFilter, index) => (
             <SelectWrapper
               key={index}

@@ -177,6 +177,8 @@ $top-bar-min-width: 380px;
 
 .page-title-common {
   @extend .align-items-center,
+  .d-none,
+  .d-md-flex,
   .w-100,
   .text-white,
   .bg-primary,
@@ -193,8 +195,6 @@ $top-bar-min-width: 380px;
 .form-title-with-navigation {
   z-index: 1027;
   @extend .page-title-common,
-  .d-flex,
-  .d-lg-flex,
   .border-bottom
 }
 

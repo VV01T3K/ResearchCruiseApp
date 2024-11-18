@@ -134,7 +134,7 @@ export default function CruiseApplicationsList(props: Props) {
       {!(props.mode == CruiseApplicationListMode.Deletion) && (
         <div className={'w-100 d-flex flex-row p-2'}>
           <SelectWrapper
-            className='d-flex col-3 p-1'
+            className='d-flex col-6 col-md-3 p-1'
             options={sortOptions}
             placeHolder={'Sortuj'}
             onChange={(selectedOption) => {
@@ -144,7 +144,10 @@ export default function CruiseApplicationsList(props: Props) {
             }}
           />
           {anyStringFilterOptions.map((anyStringFilter, index) => (
-            <div key={index} className={`d-flex flex-column col-3 p-1`}>
+            <div
+              key={index}
+              className={`d-none d-md-flex flex-column col-3 p-1`}
+            >
               <input
                 className='field-common'
                 placeholder={anyStringFilter.label}
@@ -157,7 +160,7 @@ export default function CruiseApplicationsList(props: Props) {
           {selectStringFilterOptions.map((selectStringFilter, index) => (
             <SelectWrapper
               key={index}
-              className={'col-3 d-flex p-1'}
+              className={'col-6 col-md-3 d-flex p-1'}
               placeHolder={'Sortuj'}
               options={[selectStringFilterDefaultOption].concat(
                 selectStringFilter.selectValues.map((selectValue) => ({
