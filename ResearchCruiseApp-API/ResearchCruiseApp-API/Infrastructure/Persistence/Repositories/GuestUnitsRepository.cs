@@ -18,6 +18,24 @@ internal class GuestUnitsRepository : Repository<GuestUnit>, IGuestUnitsReposito
             .CountAsync(cancellationToken);
     }
 
+    public Task<int> CountUniqueFormsA(GuestUnit guestUnit, CancellationToken cancellationToken)
+    {
+        return DbContext.GuestUnits
+            .Where(g => g.Id == guestUnit.Id)
+            .SelectMany(g => g.FormAGuestUnits)
+            .Select(fg => fg.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+    }
+
+    public Task<int> CountFormBGuestUnits(GuestUnit guestUnit, CancellationToken cancellationToken)
+    {
+        return DbContext.GuestUnits
+            .Where(g => g.Id == guestUnit.Id)
+            .SelectMany(g => g.FormBGuestUnits)
+            .CountAsync(cancellationToken); 
+    }
+    
     public Task<int> CountUniqueFormsB(GuestUnit guestUnit, CancellationToken cancellationToken)
     {
         return DbContext.GuestUnits
@@ -25,6 +43,14 @@ internal class GuestUnitsRepository : Repository<GuestUnit>, IGuestUnitsReposito
             .SelectMany(g => g.FormBGuestUnits)
             .Select(fg => fg.FormB.Id)
             .Distinct()
+            .CountAsync(cancellationToken);
+    }
+
+    public Task<int> CountFormCGuestUnits(GuestUnit guestUnit, CancellationToken cancellationToken)
+    {
+        return DbContext.GuestUnits
+            .Where(g => g.Id == guestUnit.Id)
+            .SelectMany(g => g.FormCGuestUnits)
             .CountAsync(cancellationToken);
     }
     

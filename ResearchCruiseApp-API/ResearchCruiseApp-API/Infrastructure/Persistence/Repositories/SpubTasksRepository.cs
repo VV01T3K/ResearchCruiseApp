@@ -18,6 +18,16 @@ internal class SpubTasksRepository : Repository<SpubTask>, ISpubTasksRepository
             .CountAsync(cancellationToken);
     }
 
+    public Task<int> CountUniqueFormsA(SpubTask spubTask, CancellationToken cancellationToken)
+    {
+        return DbContext.SpubTasks
+            .Where(s => s.Id == spubTask.Id)
+            .SelectMany(s => s.FormASpubTasks)
+            .Select(fs => fs.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+    }
+    
     public Task<int> CountUniqueFormsC(SpubTask spubTask, CancellationToken cancellationToken)
     {
         return DbContext.SpubTasks

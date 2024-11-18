@@ -1,6 +1,6 @@
 using MediatR;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp_API.Application.UseCases.Users.DeactivateUser;

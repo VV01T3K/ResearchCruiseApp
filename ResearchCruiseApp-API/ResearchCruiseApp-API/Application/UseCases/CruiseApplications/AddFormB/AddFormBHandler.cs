@@ -2,12 +2,12 @@
 using FluentValidation;
 using MediatR;
 using ResearchCruiseApp_API.Application.Common.Extensions;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsB;
-using ResearchCruiseApp_API.Application.Services.Forms;
+using ResearchCruiseApp_API.Application.Services.FormsService;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
@@ -32,29 +32,34 @@ public class AddFormBHandler(
 
         var cruiseApplication = await cruiseApplicationsRepository
             .GetByIdWithFormAAndFormBContent(request.CruiseApplicationId, cancellationToken);
-        
         if (cruiseApplication is null)
             return Error.ResourceNotFound();
-        if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
-            return Error.ResourceNotFound(); // Forbidden may give to much information
-        if (cruiseApplication.Status != CruiseApplicationStatus.FormBRequired)
-            return Error.ForbiddenOperation("Obecnie nie można przesłać formularza B.");
+        
+        var verificationResult = await VerifyOperation(cruiseApplication);
+        if (!verificationResult.IsSuccess)
+            return verificationResult;
 
         await unitOfWork.ExecuteIsolated(
             () => AddNewFormB(request.FormBDto, cruiseApplication, cancellationToken),
             cancellationToken);
-        
-        
-        if (cruiseApplication.Cruise is not null && (cruiseApplication.Cruise?.Status == CruiseStatus.Ended))
-            cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
-        else
-            cruiseApplication.Status = CruiseApplicationStatus.FormBFilled;
+
+        UpdateStatus(cruiseApplication);
         
         await unitOfWork.Complete(cancellationToken);
         return Result.Empty;
     }
 
 
+    private async Task<Result> VerifyOperation(CruiseApplication cruiseApplication)
+    {
+        if (!await userPermissionVerifier.CanCurrentUserAddForm(cruiseApplication))
+            return Error.ResourceNotFound(); // Forbidden may give to much information
+        if (cruiseApplication.Status != CruiseApplicationStatus.FormBRequired)
+            return Error.ForbiddenOperation("Obecnie nie można przesłać formularza B.");
+
+        return Result.Empty;
+    }
+    
     private async Task AddNewFormB(
         FormBDto formBDto, CruiseApplication cruiseApplication, CancellationToken cancellationToken)
     {
@@ -66,5 +71,13 @@ public class AddFormBHandler(
 
         if (oldFormB is not null)
             await formsService.DeleteFormB(oldFormB, cancellationToken);
+    }
+
+    private static void UpdateStatus(CruiseApplication cruiseApplication)
+    {
+        if (cruiseApplication.Cruise is not null && cruiseApplication.Cruise.Status == CruiseStatus.Ended)
+            cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
+        else
+            cruiseApplication.Status = CruiseApplicationStatus.FormBFilled;
     }
 }

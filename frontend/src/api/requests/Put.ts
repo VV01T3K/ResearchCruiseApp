@@ -6,8 +6,8 @@ const put = (url: string, data?: any, config?: AxiosRequestConfig) =>
   Api.put(url, data, config);
 export const autoAddCruises = () => put('/api/Cruises/autoAdded');
 
-export const putFormADraft = (data: any, id?: Guid) =>
-  put(`/api/CruiseApplications/FormA/${id ? id + '/' : ''}SaveDraft`, data);
+export const putFormA = (data: any, id: Guid, isDraft: boolean) =>
+  put(`/api/CruiseApplications/${id}/FormA?isDraft=${isDraft}`, data);
 
 export const putFormBDraft = (cruiseApplicationId: Guid, data: any) =>
   put(`/api/CruiseApplications/${cruiseApplicationId}/FormB/Draft`, data);

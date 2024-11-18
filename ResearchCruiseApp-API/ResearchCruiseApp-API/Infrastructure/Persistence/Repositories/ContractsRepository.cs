@@ -19,6 +19,16 @@ internal class ContractsRepository : Repository<Contract>, IContractsRepository
             .CountAsync(cancellationToken);
     }
 
+    public Task<int> CountDistinctFormsA(Contract contract, CancellationToken cancellationToken)
+    {
+        return DbContext.Contracts
+            .Where(c => c.Id == contract.Id)
+            .SelectMany(c => c.FormAContracts)
+            .Select(fc => fc.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+    }
+    
     public Task<int> CountDistinctFormsC(Contract contract, CancellationToken cancellationToken)
     {
         return DbContext.Contracts

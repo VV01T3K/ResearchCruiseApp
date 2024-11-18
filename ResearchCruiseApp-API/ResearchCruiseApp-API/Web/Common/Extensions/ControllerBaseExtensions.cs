@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp_API.Application.Common.Enums;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+using ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 
 namespace ResearchCruiseApp_API.Web.Common.Extensions;

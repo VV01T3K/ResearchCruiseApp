@@ -8,19 +8,20 @@ import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/Er
 import userDataManager from '../../../../../../ToBeMoved/CommonComponents/UserDataManager';
 import { EmptyFunction } from '@consts/EmptyFunction';
 import { FormAInitValues } from 'FormAInitValues';
+import {EMPTY_GUID} from "@consts/emptyGuid";
 
 export const CruiseManagerField = () => {
-  const formContext = useContext(FormContext);
-  const user = userDataManager();
-  return (
-    <UserSelect
-      defaultValue={user.userData?.id}
-      className='three-fields-beside-md'
-      fieldName={cruiseManagerSectionFieldNames.cruiseManagerId}
-      fieldLabel='Kierownik rejsu'
-      initValues={(formContext?.initValues as FormAInitValues)?.cruiseManagers}
-    />
-  );
+    const formContext = useContext(FormContext);
+    const user = userDataManager();
+    return (
+        <UserSelect
+            defaultValue={user.userData?.id ?? EMPTY_GUID}
+            className='three-fields-beside-md'
+            fieldName={cruiseManagerSectionFieldNames.cruiseManagerId}
+            fieldLabel='Kierownik rejsu'
+            initValues={(formContext?.initValues as FormAInitValues)?.cruiseManagers}
+        />
+    );
 };
 export const DeputyManagerField = () => {
   const formContext = useContext(FormContext);

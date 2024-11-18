@@ -2,8 +2,8 @@
 using FluentValidation;
 using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.CruiseApplications;
-using ResearchCruiseApp_API.Application.Services.Cruises;
-using ResearchCruiseApp_API.Application.Services.Effects;
+using ResearchCruiseApp_API.Application.Services.CruisesService;
+using ResearchCruiseApp_API.Application.Services.EffectsService;
 using ResearchCruiseApp_API.Application.Services.Factories.ContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Contracts;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationDtos;
@@ -26,8 +26,8 @@ using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.PermissionDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.Permissions;
 using ResearchCruiseApp_API.Application.Services.Factories.Photos;
-using ResearchCruiseApp_API.Application.Services.Forms;
-using ResearchCruiseApp_API.Application.Services.FormsFields;
+using ResearchCruiseApp_API.Application.Services.FormsFieldsService;
+using ResearchCruiseApp_API.Application.Services.FormsService;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp_API.Application;

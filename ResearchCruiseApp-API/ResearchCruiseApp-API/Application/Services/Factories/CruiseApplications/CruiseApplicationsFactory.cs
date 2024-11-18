@@ -9,7 +9,7 @@ internal class CruiseApplicationsFactory(
     IRandomGenerator randomGenerator)
     : ICruiseApplicationsFactory
 {
-    public CruiseApplication Create(FormA formA)
+    public CruiseApplication Create(FormA formA, bool isDraft = false)
     {
         var newCruiseApplication = new CruiseApplication
         {
@@ -17,7 +17,7 @@ internal class CruiseApplicationsFactory(
             FormA = formA,
             FormB = null,
             FormC = null,
-            Status = CruiseApplicationStatus.WaitingForSupervisor,
+            Status = isDraft ? CruiseApplicationStatus.Draft : CruiseApplicationStatus.WaitingForSupervisor,
             SupervisorCode = randomGenerator.CreateSecureCodeBytes()
         };
 

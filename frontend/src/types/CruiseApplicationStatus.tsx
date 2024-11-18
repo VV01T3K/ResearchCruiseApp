@@ -1,5 +1,5 @@
 export enum CruiseApplicationStatus {
-  Draft = 'Robocze',
+  Draft = 'Wersja robocza',
   New = 'Nowe',
   Accepted = 'Zaakceptowane',
   WaitingForSupervisor = 'Oczekujące na przełożonego',

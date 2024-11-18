@@ -1,12 +1,13 @@
 using System.Diagnostics;
 using AutoMapper;
-using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
+using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Application.Services.Factories.ContractDtos;
 using ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
+using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.Factories.FormAInitValuesDtos;
@@ -105,15 +106,7 @@ public class FormAInitValuesDtosFactory(
 
     private static List<string> GetShipUsages()
     {
-        return
-        [
-            "całą dobę",
-            "jedynie w ciągu dnia (maks. 8–12 h)",
-            "jedynie w nocy (maks. 8–12 h)",
-            "8–12 h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia" +
-            "o różnych porach",
-            "w inny sposób"
-        ];
+        return FormAValuesConstants.ShipUsages;
     }
 
     private async Task<List<ResearchAreaDto>> GetResearchAreas(CancellationToken cancellationToken)
@@ -126,12 +119,7 @@ public class FormAInitValuesDtosFactory(
 
     private static List<string> GetCruiseGoals()
     {
-        return
-        [
-            "Naukowy",
-            "Komercyjny",
-            "Dydaktyczny"
-        ];
+        return FormAValuesConstants.CruiseGoals;
     }
 
     private List<ResearchTaskDto> GetHistoricalResearchTasks(IEnumerable<CruiseApplication> cruiseApplications)

@@ -37,10 +37,10 @@ public class FormC : Entity
     public List<CollectedSample> CollectedSamples { get; init; } = [];
 
     [StringLength(1024)]
-    public string? SpubReportData { get; init; } = null!;
+    public string? SpubReportData { get; init; }
     
     [StringLength(1024)]
-    public string? AdditionalDescription { get; init; } = null!;
+    public string? AdditionalDescription { get; init; }
 
     public List<Photo> Photos { get; set; } = [];
 

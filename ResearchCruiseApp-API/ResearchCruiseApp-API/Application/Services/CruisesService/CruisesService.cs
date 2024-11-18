@@ -4,7 +4,7 @@ using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositorie
 using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.Cruises;
+namespace ResearchCruiseApp_API.Application.Services.CruisesService;
 
 
 internal class CruisesService(

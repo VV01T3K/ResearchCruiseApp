@@ -2,7 +2,7 @@
 using ResearchCruiseApp_API.Application.Models.Interfaces;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.FormsFields;
+namespace ResearchCruiseApp_API.Application.Services.FormsFieldsService;
 
 
 public interface IFormsFieldsService

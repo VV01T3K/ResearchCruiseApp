@@ -15,7 +15,7 @@ export type GuestsTeam = {
     noOfPersons: string
 }
 
-const guestTeamDefault = { name: '', noOfPersons: 0 };
+const guestTeamDefault = { name: '', noOfPersons: "0" };
 
 
 type Props = FormField & {

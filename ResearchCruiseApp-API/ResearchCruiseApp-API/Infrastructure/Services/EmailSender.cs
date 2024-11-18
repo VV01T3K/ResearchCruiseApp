@@ -1,11 +1,12 @@
 ﻿using System.Globalization;
 using System.Resources;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using NeoSmart.Utils;
 using ResearchCruiseApp_API.App_GlobalResources;
-using ResearchCruiseApp_API.Application.Common.Models.DTOs;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Domain.Entities;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
@@ -83,11 +84,13 @@ internal class EmailSender(
     }
 
     public async Task SendRequestToSupervisorMessage(
-        Guid cruiseApplicationId, string supervisorCode, UserDto cruiseManager, string supervisorEmail)
+        Guid cruiseApplicationId, byte[] supervisorCode, UserDto cruiseManager, string supervisorEmail)
     {
+        var supervisorCodeEncoded = Base64UrlEncoder.Encode(supervisorCode);
+        
         var link =
             GetFrontEndUrl() +
-            $"/FormAForSupervisor?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCode}";
+            $"/FormAForSupervisor?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCodeEncoded}";
         
         var messageTemplate = await templateFileReader.ReadRequestToSupervisorMessageTemplate();
         var emailSubject = await templateFileReader.ReadRequestToSupervisorEmailSubject();

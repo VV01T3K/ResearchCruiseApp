@@ -8,8 +8,8 @@ import { SpubTask } from 'SpubTask';
 
 export type FormAFields = {
     id?: string;
-    cruiseManagerId: string;
-    deputyManagerId: string;
+    cruiseManagerId?: string;
+    deputyManagerId?: string;
     year: string;
     acceptablePeriod: string[];
     optimalPeriod: string[];
@@ -18,8 +18,8 @@ export type FormAFields = {
     shipUsage: string;
     differentUsage?: string;
     permissionsRequired: string;
-    permissions?: string;
-    researchArea: string;
+    permissions?: string; // TODO: Change - it's no longer a string
+    researchAreaId: string;
     researchAreaInfo?: string;
     cruiseGoal: string;
     cruiseGoalDescription?: string;

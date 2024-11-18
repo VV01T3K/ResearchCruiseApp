@@ -1,5 +1,5 @@
-﻿using ResearchCruiseApp_API.Application.Common.Models.DTOs;
-using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
+﻿using ResearchCruiseApp_API.Application.Models.DTOs.Forms;
+using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp_API.Application.Services.Factories.FormUserDtos;
 

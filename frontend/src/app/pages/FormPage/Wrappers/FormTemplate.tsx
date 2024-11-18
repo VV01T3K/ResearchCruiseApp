@@ -66,7 +66,7 @@ export type FormContextFields = {
   sections: FormSectionType[];
   initValues: FormInitValues | undefined;
   register: UseFormRegister<any>;
-  newOnCopy: boolean;
+  isCopied: boolean;
 };
 const locationToDataMapper = () => {
   const location = extendedUseLocation();
@@ -227,7 +227,7 @@ function FormTemplate(props: FormTemplateProps) {
     sections: props.sections,
     initValues: formInitValues,
     register: form.register,
-    newOnCopy: newOnCopy,
+    isCopied: newOnCopy,
   };
 
   return (

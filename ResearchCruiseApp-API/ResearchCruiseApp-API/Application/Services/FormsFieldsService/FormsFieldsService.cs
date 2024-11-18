@@ -6,7 +6,7 @@ using ResearchCruiseApp_API.Application.Services.Factories.Contracts;
 using ResearchCruiseApp_API.Application.Services.Factories.Permissions;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.FormsFields;
+namespace ResearchCruiseApp_API.Application.Services.FormsFieldsService;
 
 
 public class FormsFieldsService(

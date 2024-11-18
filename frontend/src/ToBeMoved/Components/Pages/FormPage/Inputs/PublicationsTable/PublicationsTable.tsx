@@ -36,7 +36,7 @@ const publicationDefaultValues = [
         authors: '',
         title: '',
         magazine: '',
-        year: 0,
+        year: '0',
         ministerialPoints: '0',
     },
     {
@@ -45,7 +45,7 @@ const publicationDefaultValues = [
         authors: '',
         title: '',
         magazine: '',
-        year: 0,
+        year: '0',
         ministerialPoints: '0',
     }];
 

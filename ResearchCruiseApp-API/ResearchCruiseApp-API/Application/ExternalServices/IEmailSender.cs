@@ -1,4 +1,4 @@
-﻿using ResearchCruiseApp_API.Application.Common.Models.DTOs;
+﻿using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.ExternalServices;
@@ -17,5 +17,5 @@ public interface IEmailSender
     Task SendPasswordResetMessage(UserDto userDto, string resetCode);
     
     Task SendRequestToSupervisorMessage(
-        Guid cruiseApplicationId, string supervisorCode, UserDto cruiseManager, string supervisorEmail);
+        Guid cruiseApplicationId, byte[] supervisorCode, UserDto cruiseManager, string supervisorEmail);
 }

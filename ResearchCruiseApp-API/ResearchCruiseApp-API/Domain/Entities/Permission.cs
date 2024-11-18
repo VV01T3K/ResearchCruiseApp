@@ -16,7 +16,7 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
     [StringLength(1024)]
     public string Executive { get; init; } = null!;
     
-    [MaxLength(1024)]  
+    [StringLength(1024)]  
     public string? ScanName
     {
         get => _scanName;

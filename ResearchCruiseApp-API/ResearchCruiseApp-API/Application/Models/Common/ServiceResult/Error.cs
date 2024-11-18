@@ -1,7 +1,6 @@
 using ResearchCruiseApp_API.Application.Common.Enums;
-using ResearchCruiseApp_API.Domain.Common.Enums;
 
-namespace ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
+namespace ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 
 
 public sealed record Error(ErrorType Type, string? Message = null)

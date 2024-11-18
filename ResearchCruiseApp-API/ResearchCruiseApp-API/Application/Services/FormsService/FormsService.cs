@@ -1,15 +1,22 @@
 ﻿using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp_API.Application.Services.Effects;
+using ResearchCruiseApp_API.Application.Services.EffectsService;
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.Forms;
+namespace ResearchCruiseApp_API.Application.Services.FormsService;
 
 
 public class FormsService(
     IEffectsService effectsService,
     IPermissionsRepository permissionsRepository,
+    IFormAResearchTasksRepository formAResearchTasksRepository,
+    IResearchTasksRepository researchTasksRepository,
+    IFormAContractsRepository formAContractsRepository,
+    IFormAUgUnitsRepository formAUgUnitsRepository,
+    IFormAGuestUnitsRepository formAGuestUnitsRepository,
+    IFormAPublicationsRepository formAPublicationsRepository,
+    IPublicationsRepository publicationsRepository,
+    IFormASpubTasksRepository formASpubTasksRepository,
     IFormBUgUnitsRepository formBUgUnitsRepository,
     IFormCUgUnitsRepository formCUgUnitsRepository,
     IFormBGuestUnitsRepository formBGuestUnitsRepository,
@@ -31,11 +38,26 @@ public class FormsService(
     ISpubTasksRepository spubTasksRepository,
     ICollectedSamplesRepository collectedSamplesRepository,
     IPhotosRepository photosRepository,
+    IFormsARepository formsARepository,
     IFormsBRepository formsBRepository,
     IFormsCRepository formsCRepository,
     IUnitOfWork unitOfWork)
     : IFormsService
 {
+    public async Task DeleteFormA(FormA formA, CancellationToken cancellationToken)
+    {
+        await DeletePermissions(formA, cancellationToken);
+        await DeleteFormAResearchTasks(formA, cancellationToken);
+        await DeleteFormAContracts(formA, cancellationToken);
+        DeleteFormAUgUnits(formA);
+        await DeleteFormAGuestUnits(formA, cancellationToken);
+        await DeleteFormAPublications(formA, cancellationToken);
+        await DeleteFormASpubTasks(formA, cancellationToken);
+        
+        formsARepository.Delete(formA);
+        await unitOfWork.Complete(cancellationToken);
+    }
+
     public async Task DeleteFormB(FormB formB, CancellationToken cancellationToken)
     {
         await DeletePermissions(formB, cancellationToken);
@@ -75,6 +97,105 @@ public class FormsService(
     }
     
     
+    private async Task DeletePermissions(FormA formA, CancellationToken cancellationToken)
+    {
+        foreach (var permission in formA.Permissions)
+        {
+            if (await permissionsRepository.CountFormsA(permission, cancellationToken) == 1 && // The one to be deleted
+                await permissionsRepository.CountFormsB(permission, cancellationToken) == 0 &&
+                await permissionsRepository.CountFormsC(permission, cancellationToken) == 0)
+            {
+                permissionsRepository.Delete(permission);
+            }
+        }
+        
+        formA.Permissions.Clear();
+    }
+
+    private async Task DeleteFormAResearchTasks(FormA formA, CancellationToken cancellationToken)
+    {
+        foreach (var formAResearchTask in formA.FormAResearchTasks)
+        {
+            var researchTask = formAResearchTask.ResearchTask;
+            formAResearchTasksRepository.Delete(formAResearchTask);
+
+            if (await researchTasksRepository.CountUniqueFormsA(researchTask, cancellationToken) == 1 && // The one to ne deleted
+                await researchTasksRepository.CountResearchTaskEffects(researchTask, cancellationToken) == 0)
+            {
+                researchTasksRepository.Delete(researchTask);
+            }
+        }
+    }
+    
+    private async Task DeleteFormAContracts(FormA formA, CancellationToken cancellationToken)
+    {
+        foreach (var formAContract in formA.FormAContracts)
+        {
+            var contract = formAContract.Contract;
+            formAContractsRepository.Delete(formAContract);
+            
+            if (await contractsRepository.CountDistinctFormsA(contract, cancellationToken) == 1 && // The one to be deleted
+                await contractsRepository.CountDistinctFormsC(contract, cancellationToken) == 0)
+            {
+                contractsRepository.Delete(contract);
+            }
+        }
+    }
+    
+    private void DeleteFormAUgUnits(FormA formA)
+    {
+        foreach (var formAUgUnit in formA.FormAUgUnits)
+        {
+            formAUgUnitsRepository.Delete(formAUgUnit);
+        }
+    }
+    
+    private async Task DeleteFormAGuestUnits(FormA formA, CancellationToken cancellationToken)
+    {
+        foreach (var formAGuestUnit in formA.FormAGuestUnits)
+        {
+            var guestUnit = formAGuestUnit.GuestUnit;
+            formAGuestUnitsRepository.Delete(formAGuestUnit);
+            
+            if (await guestUnitsRepository.CountUniqueFormsA(guestUnit, cancellationToken) == 1 && // The one to be deleted
+                await guestUnitsRepository.CountFormBGuestUnits(guestUnit, cancellationToken) == 0 &&
+                await guestUnitsRepository.CountFormCGuestUnits(guestUnit, cancellationToken) == 0)
+            {
+                guestUnitsRepository.Delete(guestUnit);
+            }
+        }
+    }
+
+    private async Task DeleteFormAPublications(FormA formA, CancellationToken cancellationToken)
+    {
+        foreach (var formAPublication in formA.FormAPublications)
+        {
+            var publication = formAPublication.Publication;
+            formAPublicationsRepository.Delete(formAPublication);
+
+            if (await publicationsRepository.CountUniqueFormsA(publication, cancellationToken) == 1 && // The one to be deleted
+                await publicationsRepository.CountUserPublications(publication, cancellationToken) == 0)
+            {
+                publicationsRepository.Delete(publication);
+            }
+        }
+    }
+    
+    private async Task DeleteFormASpubTasks(FormA formA, CancellationToken cancellationToken)
+    {
+        foreach (var formASpubTask in formA.FormASpubTasks)
+        {
+            var spubTask = formASpubTask.SpubTask;
+            formASpubTasksRepository.Delete(formASpubTask);
+            
+            if (await spubTasksRepository.CountUniqueFormsA(spubTask, cancellationToken) == 1 && // The one to be deleted
+                await spubTasksRepository.CountUniqueFormsC(spubTask, cancellationToken) == 0)
+            {
+                spubTasksRepository.Delete(spubTask);
+            }
+        }
+    }
+    
     private async Task DeletePermissions(FormB formB, CancellationToken cancellationToken)
     {
         foreach (var permission in formB.Permissions)
@@ -106,7 +227,8 @@ public class FormsService(
             formBGuestUnitsRepository.Delete(formBGuestUnit);
             
             if (await guestUnitsRepository.CountFormAGuestUnits(guestUnit, cancellationToken) == 0 &&
-                await guestUnitsRepository.CountUniqueFormsB(guestUnit, cancellationToken) == 1) // The one to be deleted
+                await guestUnitsRepository.CountUniqueFormsB(guestUnit, cancellationToken) == 1 && // The one to be deleted
+                await guestUnitsRepository.CountFormCGuestUnits(guestUnit, cancellationToken) == 0)
             {
                 guestUnitsRepository.Delete(guestUnit);
             }
@@ -218,9 +340,9 @@ public class FormsService(
         formC.Permissions.Clear();
     }
     
-    private void DeleteFormCUgUnits(FormC formB)
+    private void DeleteFormCUgUnits(FormC formC)
     {
-        foreach (var formCUgUnit in formB.FormCUgUnits)
+        foreach (var formCUgUnit in formC.FormCUgUnits)
         {
             formCUgUnitsRepository.Delete(formCUgUnit);
         }
@@ -234,6 +356,7 @@ public class FormsService(
             formCGuestUnitsRepository.Delete(formCGuestUnit);
             
             if (await guestUnitsRepository.CountFormAGuestUnits(guestUnit, cancellationToken) == 0 &&
+                await guestUnitsRepository.CountFormBGuestUnits(guestUnit, cancellationToken) == 0 &&
                 await guestUnitsRepository.CountUniqueFormsC(guestUnit, cancellationToken) == 1) // The one to be deleted
             {
                 guestUnitsRepository.Delete(guestUnit);

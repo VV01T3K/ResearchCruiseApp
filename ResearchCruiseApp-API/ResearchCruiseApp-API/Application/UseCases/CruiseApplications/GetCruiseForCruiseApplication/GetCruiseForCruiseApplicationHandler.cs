@@ -1,6 +1,6 @@
 using MediatR;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp_API.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp_API.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;

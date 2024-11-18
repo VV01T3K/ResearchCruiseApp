@@ -6,6 +6,8 @@ namespace ResearchCruiseApp_API.Application.ExternalServices.Persistence.Reposit
 public interface ISpubTasksRepository : IRepository<SpubTask>
 {
     Task<int> CountFormASpubTasks(SpubTask spubTask, CancellationToken cancellationToken);
+
+    Task<int> CountUniqueFormsA(SpubTask spubTask, CancellationToken cancellationToken);
     
     Task<int> CountUniqueFormsC(SpubTask spubTask, CancellationToken cancellationToken);
 }

@@ -9,7 +9,7 @@ public class FormADto
 
     public Guid CruiseManagerId { get; init; }
     
-    public Guid DeputyManagerId { get; init; }
+    public Guid? DeputyManagerId { get; init; }
     
     [StringLength(4)]
     public string Year { get; init; } = null!;
@@ -22,27 +22,27 @@ public class FormADto
     
     [StringLength(8)]
     public string CruiseHours { get; init; } = null!;
-    
-    [StringLength(1024)]
-    public string? PeriodNotes { get; init; }
+
+    [StringLength(1024)] 
+    public string PeriodNotes { get; init; } = null!;
     
     [StringLength(1)]
-    public string ShipUsage { get; init; } = null!;
-    
+    public string? ShipUsage { get; init; }
+
     [MaxLength(1024)]
-    public string? DifferentUsage { get; init; }
+    public string DifferentUsage { get; init; } = null!;
 
     public List<PermissionDto> Permissions { get; init; } = [];
     
-    public Guid ResearchAreaId { get; init; }
+    public Guid? ResearchAreaId { get; init; }
     
     [MaxLength(1024)]
     public string? ResearchAreaInfo { get; init; }
 
-    public string CruiseGoal { get; init; } = null!;
-    
+    public string? CruiseGoal { get; init; }
+
     [MaxLength(1024)]
-    public string? CruiseGoalDescription { get; init; }
+    public string CruiseGoalDescription { get; init; } = null!;
 
     public List<ResearchTaskDto> ResearchTasks { get; init; } = [];
 

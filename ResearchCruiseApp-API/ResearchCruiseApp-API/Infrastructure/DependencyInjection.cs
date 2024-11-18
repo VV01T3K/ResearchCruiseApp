@@ -100,6 +100,8 @@ public static class DependencyInjection
             .AddScoped<ISpubTasksRepository, SpubTasksRepository>()
             .AddScoped<IFormAResearchTasksRepository, FormAResearchTasksRepository>()
             .AddScoped<IFormAContractsRepository, FormAContractsRepository>()
+            .AddScoped<IFormAUgUnitsRepository, FormAUgUnitsRepository>()
+            .AddScoped<IFormAGuestUnitsRepository, FormAGuestUnitsRepository>()
             .AddScoped<IFormAPublicationsRepository, FormAPublicationsRepository>()
             .AddScoped<IFormASpubTasksRepository, FormASpubTasksRepository>()
             .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()

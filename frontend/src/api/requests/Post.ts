@@ -31,8 +31,8 @@ export const loginUser = (credentials: any) =>
 // TODO : Change to /api
 export const addUser = (userData: any) => post('/users', userData, true);
 
-export const addCruiseApplication = (data: any, id?: Guid) =>
-  post(`/api/CruiseApplications/${id ? id + '/' : ''}`, data);
+export const addCruiseApplication = (data: any, isDraft: boolean = false) =>
+  post(`/api/CruiseApplications?isDraft=${isDraft}`, data);
 
 // TODO : Change to /api
 export const requestEmail = (user: UserData) =>

@@ -7,9 +7,9 @@ public class CruiseApplication : Entity
 {
     public int Number { get; set; }
     
-    public DateOnly Date { get; init; }
+    public DateOnly Date { get; set; }
     
-    public FormA? FormA { get; init; }
+    public FormA? FormA { get; set; }
     
     public FormB? FormB { get; set; }
     

@@ -25,6 +25,7 @@ using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnEffect
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormB;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.RefillFormC;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.UpdateEffects;
+using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.UpdateFormA;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.GetOwnPublications;
 using ResearchCruiseApp_API.Application.UseCases.CruiseApplications.PostOwnPublications;
 using ResearchCruiseApp_API.Web.Common.Extensions;
@@ -45,7 +46,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             ? Ok(result.Data)
             : this.CreateError(result);
     }
-    
+
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}")]
     [HttpGet("forCruise")]
     public async Task<IActionResult> GetCruiseApplicationsForCruise()
@@ -55,7 +56,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             ? Ok(result.Data)
             : this.CreateError(result);
     }
-        
+
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCruiseApplicationById(Guid id)
@@ -68,11 +69,23 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpPost]
-    public async Task<IActionResult> AddCruiseApplication([FromBody] FormADto formADto)
+    public async Task<IActionResult> AddCruiseApplication(
+        [FromBody] FormADto formADto, [FromQuery] bool isDraft = false)
     {
-        var result = await mediator.Send(new AddCruiseApplicationCommand(formADto));
+        var result = await mediator.Send(new AddCruiseApplicationCommand(formADto, isDraft));
         return result.IsSuccess
             ? Created()
+            : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
+    [HttpPut("{cruiseApplicationId:guid}/FormA")]
+    public async Task<IActionResult> UpdateFormA(
+        Guid cruiseApplicationId, [FromBody] FormADto formADto, [FromQuery] bool isDraft)
+    {
+        var result = await mediator.Send(new UpdateFormACommand(cruiseApplicationId, formADto, isDraft));
+        return result.IsSuccess
+            ? NoContent()
             : this.CreateError(result);
     }
     

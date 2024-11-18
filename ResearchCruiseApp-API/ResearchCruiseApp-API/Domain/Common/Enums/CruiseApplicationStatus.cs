@@ -5,6 +5,9 @@ namespace ResearchCruiseApp_API.Domain.Common.Enums;
 
 public enum CruiseApplicationStatus
 {
+    [StringValue("Wersja robocza")]
+    Draft,
+    
     [StringValue("Oczekujące na przełożonego")]
     WaitingForSupervisor,
     
@@ -30,5 +33,5 @@ public enum CruiseApplicationStatus
     Undertaken,
         
     [StringValue("Rozliczone")]
-    Reported,
+    Reported
 }

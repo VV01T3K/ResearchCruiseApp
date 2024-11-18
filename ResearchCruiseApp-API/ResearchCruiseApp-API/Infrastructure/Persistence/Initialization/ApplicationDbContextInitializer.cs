@@ -21,11 +21,11 @@ internal class ApplicationDbContextInitializer(
 
         if (configuration.GetSection("SeedDatabase").Value?.ToBool() ?? false)
         {
-          await SeedRoleData();
-          await SeedUsersData();
-          await SeedUgUnits();
-          await SeedResearchAreas();
-          await SeedShipEquipments();
+            await SeedRoleData();
+            await SeedUsersData();
+            await SeedUgUnits();
+            await SeedResearchAreas();
+            await SeedShipEquipments();
         }
     }
 

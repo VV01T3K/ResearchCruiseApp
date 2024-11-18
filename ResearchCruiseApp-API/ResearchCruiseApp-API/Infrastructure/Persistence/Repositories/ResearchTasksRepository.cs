@@ -19,6 +19,24 @@ internal class ResearchTasksRepository : Repository<ResearchTask>, IResearchTask
             .CountAsync(cancellationToken);
     }
 
+    public Task<int> CountUniqueFormsA(ResearchTask researchTask, CancellationToken cancellationToken)
+    {
+        return DbContext.ResearchTasks
+            .Where(r => r.Id == researchTask.Id)
+            .SelectMany(r => r.FormAResearchTasks)
+            .Select(fr => fr.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+    }
+    
+    public Task<int> CountResearchTaskEffects(ResearchTask researchTask, CancellationToken cancellationToken)
+    {
+        return DbContext.ResearchTasks
+            .Where(r => r.Id == researchTask.Id)
+            .SelectMany(r => r.ResearchTasksEffects)
+            .CountAsync(cancellationToken);
+    }
+    
     public Task<int> CountUniqueFormsC(ResearchTask researchTask, CancellationToken cancellationToken)
     {
         return DbContext.ResearchTasks

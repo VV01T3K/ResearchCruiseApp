@@ -6,7 +6,7 @@ import {
   SaveMenu,
 } from './SaveMenu';
 import React, { useContext, useEffect, useState } from 'react';
-import { handlePrint } from './FormButtonsHandlers';
+import {handlePrint, handleSubmit} from './FormButtonsHandlers';
 import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
 import Api from '../../api/Api';
 import { useNavigate } from 'react-router-dom';
@@ -138,20 +138,13 @@ const SendMenu = () => {
     const [disable, setDisable] = useState(false);
 
     useEffect(() => {}, []);
-    const handleSubmit = () =>
-      formContext!.type === FormType.A
-        ? addCruiseApplication(formContext?.getValues()).then(() =>
-            navigate(Path.CruiseApplications)
-          )
-        : putFormB(cruiseApplication.id, formContext?.getValues()).then(() =>
-            navigate(Path.CruiseApplications)
-          );
-    const onClickAction = formContext!.handleSubmit(handleSubmit);
+    const _handleSubmit = handleSubmit();
+    const onClickAction = formContext!.handleSubmit(_handleSubmit);
     return (
       <button
         onClick={() => {
           setDisable(true);
-          handleSubmit();
+          _handleSubmit();
         }}
         disabled={disable}
         className='form-page-option-button w-100'

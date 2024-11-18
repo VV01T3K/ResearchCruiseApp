@@ -8,9 +8,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NeoSmart.Utils;
-using ResearchCruiseApp_API.Application.Common.Models.DTOs;
-using ResearchCruiseApp_API.Application.Common.Models.ServiceResult;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp_API.Application.Models.DTOs.Account;
 using ResearchCruiseApp_API.Application.Models.DTOs.Users;
 

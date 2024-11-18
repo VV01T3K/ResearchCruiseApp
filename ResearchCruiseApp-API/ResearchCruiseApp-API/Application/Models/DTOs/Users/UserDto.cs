@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp_API.Application.Common.Models.DTOs;
+﻿namespace ResearchCruiseApp_API.Application.Models.DTOs.Users;
 
 
 public class UserDto

@@ -6,7 +6,7 @@ using ResearchCruiseApp_API.Domain.Entities;
 namespace ResearchCruiseApp_API.Infrastructure.Persistence.Repositories;
 
 
-internal class Repository<T> : IRepository<T>
+internal abstract class Repository<T> : IRepository<T>
     where T : Entity
 {
     protected readonly ApplicationDbContext DbContext;

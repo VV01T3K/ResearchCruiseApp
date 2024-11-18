@@ -1,6 +1,6 @@
 using ResearchCruiseApp_API.Domain.Entities;
 
-namespace ResearchCruiseApp_API.Application.Services.Cruises;
+namespace ResearchCruiseApp_API.Application.Services.CruisesService;
 
 
 public interface ICruisesService

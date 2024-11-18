@@ -6,11 +6,9 @@ import RoleInput from './RoleInput';
 import { emailPattern } from '@consts/emailPatterns';
 
 import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
-import Api from '../../../../api/Api';
 import SuccessMessage from '../../../../ToBeMoved/Pages/CommonComponents/SuccessMessage';
 import { Role } from 'Role';
 import { NewUserFormValues } from 'NewUserFormValues';
-import { AxiosRequestConfig } from 'axios';
 import { addUser } from '@api/requests';
 
 type Props = {
