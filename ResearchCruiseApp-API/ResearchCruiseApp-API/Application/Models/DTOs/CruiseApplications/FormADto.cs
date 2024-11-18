@@ -29,19 +29,19 @@ public class FormADto
     [StringLength(1)]
     public string? ShipUsage { get; init; }
 
-    [MaxLength(1024)]
+    [StringLength(1024)]
     public string DifferentUsage { get; init; } = null!;
 
     public List<PermissionDto> Permissions { get; init; } = [];
     
     public Guid? ResearchAreaId { get; init; }
     
-    [MaxLength(1024)]
+    [StringLength(1024)]
     public string? ResearchAreaInfo { get; init; }
 
     public string? CruiseGoal { get; init; }
 
-    [MaxLength(1024)]
+    [StringLength(1024)]
     public string CruiseGoalDescription { get; init; } = null!;
 
     public List<ResearchTaskDto> ResearchTasks { get; init; } = [];
@@ -56,6 +56,9 @@ public class FormADto
     
     public List<SpubTaskDto> SpubTasks { get; init; } = [];
 
-    [MaxLength(1024)]
+    [StringLength(1024)]
     public string SupervisorEmail { get; init; } = null!;
+    
+    [StringLength(1024)]
+    public string? Note { get; set; }
 }

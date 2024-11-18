@@ -65,7 +65,7 @@ public class AddCruiseApplicationHandler(
         if (!newFormAResult.IsSuccess)
             return newFormAResult.Error!;
         
-        var newCruiseApplication = cruiseApplicationsFactory.Create(newFormAResult.Data!, isDraft);
+        var newCruiseApplication = cruiseApplicationsFactory.Create(newFormAResult.Data!, formADto.Note, isDraft);
         await cruiseApplicationsRepository.Add(newCruiseApplication, cancellationToken);
         
         return newCruiseApplication;

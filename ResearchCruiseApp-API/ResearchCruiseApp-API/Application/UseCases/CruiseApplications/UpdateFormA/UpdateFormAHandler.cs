@@ -42,7 +42,7 @@ public class UpdateFormAHandler(
             return verificationResult;
 
         var result = await unitOfWork.ExecuteIsolated(
-            () =>
+            action: () =>
                 UpdateCruiseApplication(request.FormADto, request.IsDraft, cruiseApplication, cancellationToken),
             cancellationToken);
         if (!result.IsSuccess)
@@ -74,14 +74,18 @@ public class UpdateFormAHandler(
         var newFormAResult = await formsAFactory.Create(formADto, cancellationToken);
         if (!newFormAResult.IsSuccess)
             return newFormAResult;
-
-        cruiseApplication.FormA = newFormAResult.Data!;
-        if (!isDraft)
+        
+        if (isDraft)
+        {
+            cruiseApplication.Note = formADto.Note;
+        }
+        else
         {
             cruiseApplication.Date = DateOnly.FromDateTime(DateTime.Now);
             cruiseApplication.Status = CruiseApplicationStatus.WaitingForSupervisor;
         }
-
+        cruiseApplication.FormA = newFormAResult.Data!;
+        
         await unitOfWork.Complete(cancellationToken);
 
         if (oldFormA is not null)
