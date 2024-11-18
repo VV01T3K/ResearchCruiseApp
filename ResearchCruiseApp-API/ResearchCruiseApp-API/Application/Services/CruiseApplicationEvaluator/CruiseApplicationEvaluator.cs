@@ -14,7 +14,7 @@ public class CruiseApplicationEvaluator(
     IUserEffectsRepository userEffectsRepository)
     : ICruiseApplicationEvaluator
 {
-    public async Task Evaluate(CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+    public async Task Evaluate(CruiseApplication cruiseApplication, bool isDraft, CancellationToken cancellationToken)
     {
         if (cruiseApplication.FormA is null)
             return;
@@ -24,7 +24,9 @@ public class CruiseApplicationEvaluator(
         EvaluateUgUnits(cruiseApplication);
         EvaluatePublications(cruiseApplication);
         EvaluateSpubTasks(cruiseApplication);
-        await EvaluateEffects(cruiseApplication, cancellationToken);
+        
+        if (!isDraft)
+            await EvaluateEffects(cruiseApplication, cancellationToken);
     }
 
     public int GetPointsSum(CruiseApplication cruiseApplication)

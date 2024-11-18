@@ -1,11 +1,13 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using ResearchCruiseApp_API.Application.Common.Extensions;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp_API.Application.Models.Common.Commands.CruiseApplications;
 using ResearchCruiseApp_API.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp_API.Application.Services.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.Factories.FormsA;
 using ResearchCruiseApp_API.Application.Services.FormsService;
@@ -23,7 +25,8 @@ public class UpdateFormAHandler(
     IUnitOfWork unitOfWork,
     IFormsAFactory formsAFactory,
     IFormsService formsService,
-    ICruiseApplicationsService cruiseApplicationsService)
+    ICruiseApplicationsService cruiseApplicationsService,
+    ICruiseApplicationEvaluator cruiseApplicationEvaluator)
     : IRequestHandler<UpdateFormACommand, Result>
 {
     public async Task<Result> Handle(UpdateFormACommand request, CancellationToken cancellationToken)
@@ -71,6 +74,26 @@ public class UpdateFormAHandler(
     {
         var oldFormA = cruiseApplication.FormA;
         
+        var result = await UpdateCruiseApplicationProperties(formADto, cruiseApplication, isDraft, cancellationToken);
+        if (!result.IsSuccess)
+            return result;
+
+        await cruiseApplicationEvaluator.Evaluate(cruiseApplication, isDraft, cancellationToken);
+        
+        await unitOfWork.Complete(cancellationToken);
+
+        if (oldFormA is not null)
+        {
+            await formsService.DeleteFormA(oldFormA, cancellationToken);
+            await unitOfWork.Complete(cancellationToken);
+        }
+
+        return Result.Empty;
+    }
+
+    private async Task<Result> UpdateCruiseApplicationProperties(
+        FormADto formADto, CruiseApplication cruiseApplication, bool isDraft, CancellationToken cancellationToken)
+    {
         var newFormAResult = await formsAFactory.Create(formADto, cancellationToken);
         if (!newFormAResult.IsSuccess)
             return newFormAResult;
@@ -85,13 +108,7 @@ public class UpdateFormAHandler(
             cruiseApplication.Status = CruiseApplicationStatus.WaitingForSupervisor;
         }
         cruiseApplication.FormA = newFormAResult.Data!;
-        
-        await unitOfWork.Complete(cancellationToken);
 
-        if (oldFormA is not null)
-            await formsService.DeleteFormA(oldFormA, cancellationToken);
-
-        await unitOfWork.Complete(cancellationToken);
         return Result.Empty;
     }
 }

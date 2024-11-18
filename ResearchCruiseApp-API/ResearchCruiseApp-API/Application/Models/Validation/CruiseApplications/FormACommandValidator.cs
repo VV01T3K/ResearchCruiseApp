@@ -308,8 +308,8 @@ public class FormACommandValidator: AbstractValidator<FormACommand>
         
         RuleForEach(command => command.FormADto.Contracts)
             .Must(contractDto =>
-                contractDto.Scan.Name == "" && contractDto.Scan.Content == "")// ||
-                //_fileInspector.IsFilePdf(contractDto.Scan.Content))
+                contractDto.Scan is { Name: "", Content: "" } ||
+                _fileInspector.IsFilePdf(contractDto.Scan.Content))
             .WithMessage("Skan umowy musi być plikiem PDF.");
 
         RuleForEach(command => command.FormADto.Contracts)

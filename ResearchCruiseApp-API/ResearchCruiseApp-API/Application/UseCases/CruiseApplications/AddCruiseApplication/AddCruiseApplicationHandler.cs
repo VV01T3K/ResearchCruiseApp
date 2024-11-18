@@ -52,7 +52,7 @@ public class AddCruiseApplicationHandler(
             return newCruiseApplicationResult;
         var newCruiseApplication = newCruiseApplicationResult.Data!;
         
-        await cruiseApplicationEvaluator.Evaluate(newCruiseApplication, cancellationToken);
+        await cruiseApplicationEvaluator.Evaluate(newCruiseApplication, isDraft, cancellationToken);
         
         await unitOfWork.Complete(cancellationToken);
         return newCruiseApplication;
