@@ -16,8 +16,6 @@ export const CommonAccessRoute = () => {
         element={<PriorityInformationPage />}
       />
       <Route path={Path.HelpInformation} element={<HelpInformationPage />} />
-      <Route path={Path.MyPublications} element={<MyPublicationsPage />} />
-      <Route path={Path.CruiseEffects} element={<CruiseEffectsPage />} />
     </>
   );
 };

@@ -30,6 +30,8 @@ export const AdministratorRoute = () => {
       />
       <Route path={Path.Cruises} element={<CruisesPage />} />
       <Route path={Path.CruiseForm} element={<CruiseFormPage />} />
+      <Route path={Path.MyPublications} element={<MyPublicationsPage />} />
+      <Route path={Path.CruiseEffects} element={<CruiseEffectsPage />} />
     </>
   );
 };

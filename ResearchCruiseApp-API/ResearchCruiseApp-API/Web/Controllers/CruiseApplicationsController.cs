@@ -258,7 +258,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpGet("ownPublications")]
     public async Task<IActionResult> GetOwnPublications()
     {
@@ -268,7 +268,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
     
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpPost("ownPublications")]
     public async Task<IActionResult> PostOwnPublications([FromBody] PublicationDto[] publicationsDto)
     {
@@ -278,7 +278,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpDelete("ownPublications/{publicationId:guid}")]
     public async Task<IActionResult> DeleteOwnPublication(Guid publicationId)
     {
@@ -288,7 +288,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
     
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpDelete("ownPublications")]
     public async Task<IActionResult> DeleteAllOwnPublication()
     {

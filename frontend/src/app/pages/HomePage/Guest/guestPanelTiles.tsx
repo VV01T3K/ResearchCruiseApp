@@ -8,13 +8,11 @@ import MyPublicationsTile from '@components/MainPageMenu/Tiles/MyPublicationTile
 import CruiseEffectsTile from '@components/MainPageMenu/Tiles/CruiseEffectsTile';
 
 const guestPanelTiles = () => [
-    { element: <CruisesTile />, cols: 2, rows: 2 },
-    { element: <CruiseApplicationsTile />, cols: 1, rows: 2 },
-    { element: <PriorityInformationTile />, cols: 2, rows: 1 },
-    { element: <HelpInformationTile />, cols: 2, rows: 1 },
-    { element: <AccountSettingsTile />, cols: 1, rows: 2 },
-    { element: <MyPublicationsTile />, cols: 1, rows: 1 },
-    { element: <CruiseEffectsTile/>, cols: 1, rows: 1 },
+  { element: <CruisesTile />, cols: 2, rows: 2 },
+  { element: <CruiseApplicationsTile />, cols: 1, rows: 2 },
+  { element: <PriorityInformationTile />, cols: 2, rows: 1 },
+  { element: <HelpInformationTile />, cols: 2, rows: 1 },
+  { element: <AccountSettingsTile />, cols: 1, rows: 2 },
 ];
 
 export default guestPanelTiles;
