@@ -250,6 +250,7 @@ $top-bar-min-width: 380px;
 
 .defualt-bg-logged-in {
   //filter: blur(7px);
+  filter: opacity(80%);
   @extend .default-bg
 
 }
