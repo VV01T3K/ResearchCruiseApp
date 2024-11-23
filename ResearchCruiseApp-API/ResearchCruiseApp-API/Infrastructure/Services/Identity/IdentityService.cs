@@ -322,7 +322,8 @@ public class IdentityService(
     private static User CreateUser(AddUserFormDto addUserFormDto) =>
         CreateUser(addUserFormDto.Email, addUserFormDto.FirstName, addUserFormDto.LastName, true, true);
 
-    private static User CreateUser(string email, string firstName, string lastName, bool accepted, bool emailConfirmed = false)
+    private static User CreateUser(
+        string email, string firstName, string lastName, bool accepted, bool emailConfirmed = false)
     {
         return new User
         {
@@ -350,8 +351,7 @@ public class IdentityService(
             return accessTokenResult.Error!;
         var accessToken = accessTokenResult.Data;
         
-        var refreshToken = CreateRefreshToken();
-        var refreshTokenExpiry = DateTime.Now.AddSeconds(24_000);
+        var (refreshToken, refreshTokenExpiry) = CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = refreshTokenExpiry;
@@ -364,7 +364,7 @@ public class IdentityService(
             return Error.Conflict("Wykonano wiele żądań w zbyt krótkim odstępie czasowym.");
         if (!identityResult.Succeeded)
             return Error.ServerError();
-
+        
         var loginResponseDto = new LoginResponseDto
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
@@ -420,10 +420,14 @@ public class IdentityService(
         return token;
     }
     
-    private string CreateRefreshToken()
+    private (string token, DateTime expiry) CreateRefreshToken()
     {
-        return Convert.ToBase64String(
-            randomGenerator.CreateSecureCodeBytes());
+        var lifetime = int.Parse(configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0");
+        var expiry = DateTime.Now.AddSeconds(lifetime);
+        
+        var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
+
+        return (token, expiry);
     }
 
     private Result<string> GetUserIdFromAccessToken(string accessToken)

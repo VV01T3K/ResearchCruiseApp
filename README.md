@@ -30,6 +30,12 @@ Zainstalowany Docker
 **JWT__Secret** 
 >Klucz używany do podpisywania i weryfikacji autentyczności tokenów. Najlepiej wygenerować go za pośrednictwem generatora.
 
+**JWT__AccessTokenLifetimeSeconds** 
+>Okres ważności tokenu dostępu JWT otrzymywanego podczas logowania. Wyrażony w sekundach.
+
+**JWT__RefreshTokenLifetimeSeconds** 
+>Okres ważności tokenu wykorzystywanego do odświeżenia tokenu dostępu. Wyrażony w sekundach.
+
 **SeedDatabase**
 >Informacja, czy baza danych ma zostać zasilony danymi początkowymi (`true`/`false`). Dane zostaną wstawione do bazy
 > danych:

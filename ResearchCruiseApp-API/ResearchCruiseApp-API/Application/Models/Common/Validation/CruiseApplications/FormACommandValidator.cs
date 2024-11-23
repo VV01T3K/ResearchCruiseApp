@@ -8,7 +8,7 @@ using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Domain.Common.Constants;
 using ResearchCruiseApp_API.Domain.Common.Enums;
 
-namespace ResearchCruiseApp_API.Application.Models.Validation.CruiseApplications;
+namespace ResearchCruiseApp_API.Application.Models.Common.Validation.CruiseApplications;
 
 
 public class FormACommandValidator: AbstractValidator<FormACommand>
