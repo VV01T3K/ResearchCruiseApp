@@ -240,6 +240,21 @@ $top-bar-min-width: 380px;
   background-repeat: no-repeat;
 }
 
+.version-info {
+  position: fixed; /* Pozwala przypiąć element do konkretnej pozycji na ekranie */
+  bottom: 0;       /* Ustawia element na dole ekranu */
+  right: 0;        /* Ustawia element na prawej krawędzi ekranu */
+  z-index: -1;     /* Umieszcza element za innymi (ujemny indeks warstwowy) */
+  @extend
+  .text-end,
+  .pe-3,
+  .pb-1,
+  .fs-5,
+  .text-white,
+  .opacity-25,
+
+}
+
 .default-bg-img {
   background-image: url("../resources/Oceanograf.jpg");
 }
