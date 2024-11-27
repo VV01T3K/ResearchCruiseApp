@@ -6,14 +6,15 @@ namespace ResearchCruiseApp_API.Application.Services.Factories.CruiseApplication
 
 
 internal class CruiseApplicationsFactory(
-    IRandomGenerator randomGenerator)
+    IRandomGenerator randomGenerator,
+    IGlobalizationService globalizationService)
     : ICruiseApplicationsFactory
 {
     public CruiseApplication Create(FormA formA, string? note, bool isDraft = false)
     {
         var newCruiseApplication = new CruiseApplication
         {
-            Date = DateOnly.FromDateTime(DateTime.Now),
+            Date = GetCurrentDate(),
             FormA = formA,
             FormB = null,
             FormC = null,
@@ -23,5 +24,12 @@ internal class CruiseApplicationsFactory(
         };
 
         return newCruiseApplication;
+    }
+
+
+    private DateOnly GetCurrentDate()
+    {
+        var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, globalizationService.GetTimeZoneInfo());
+        return DateOnly.FromDateTime(localDateTime);
     }
 }

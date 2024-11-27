@@ -10,7 +10,7 @@ public class GlobalizationService : IGlobalizationService
     private const string CultureInfoId = "pl-pl";
     private const string TimeZoneInfoId = "Central European Standard Time";
     
-    public CultureInfo GetCultureInfo() => new CultureInfo(CultureInfoId);
+    public CultureInfo GetCultureInfo() => new(CultureInfoId);
 
     public TimeZoneInfo GetTimeZoneInfo() => TimeZoneInfo.FindSystemTimeZoneById(TimeZoneInfoId);
 
