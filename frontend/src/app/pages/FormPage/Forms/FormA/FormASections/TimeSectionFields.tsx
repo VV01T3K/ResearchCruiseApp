@@ -7,6 +7,7 @@ import { timeSectionFieldNames } from './TimeSection';
 import { FormContext } from '@contexts/FormContext';
 import { FormAInitValues } from 'FormAInitValues';
 import { maxCruiseDays } from '@consts/maxCruiseDays';
+import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
 
 export const AcceptablePeriodField = () => (
   <MonthSlider
@@ -76,7 +77,7 @@ export const ShipUsageField = () => {
 
 export const DifferentShipUsageField = () => {
   const formContext = useContext(FormContext);
-
+  const readOnly = useContext(ReadOnlyContext);
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
@@ -114,7 +115,7 @@ export const DifferentShipUsageField = () => {
       }
       fieldLabel='Inny sposób użycia'
       fieldName={timeSectionFieldNames.differentUsage}
-      disabled={disabled}
+      disabled={readOnly ?? disabled}
       required={!disabled && 'Podaj sposób użycia'}
     />
   );

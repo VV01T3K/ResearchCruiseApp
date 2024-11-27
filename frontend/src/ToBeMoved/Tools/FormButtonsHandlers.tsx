@@ -1,14 +1,14 @@
 import { FieldValues } from 'react-hook-form';
 import { useContext } from 'react';
 import { FormContext } from '@contexts/FormContext';
-import {putFormA, putFormB, putFormBDraft} from '@api/requests/Put';
+import { putFormA, putFormB } from '@api/requests/Put';
 import { useNavigate } from 'react-router-dom';
 import { Path } from './Path';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
-import {addCruiseApplication} from "@api/requests";
-import {AxiosResponse} from "axios";
-import {FormType} from "../Pages/CommonComponents/FormTitleWithNavigation";
-import {formAToSend} from "./FormsTransform";
+import { addCruiseApplication } from '@api/requests';
+import { AxiosResponse } from 'axios';
+import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
+import { formAToSend } from './FormsTransform';
 
 export const handleSave = () => {
   const navigate = useNavigate();
@@ -21,14 +21,13 @@ export const handleSave = () => {
     if (formContext?.type === FormType.A) {
       const dataToSend = formAToSend(formContext.getValues());
 
-      response = app?.id && !formContext.isCopied
-        ? putFormA(dataToSend, app.id, true)
-        : addCruiseApplication(dataToSend, true);
-    }
-    else if (formContext?.type === FormType.B) {
-      response = putFormBDraft(app?.id, formContext!.getValues());
-    }
-    else {
+      response =
+        app?.id && !formContext.isCopied
+          ? putFormA(dataToSend, app.id, true)
+          : addCruiseApplication(dataToSend, true);
+    } else if (formContext?.type === FormType.B) {
+      response = putFormB(app?.id, formContext!.getValues(), true);
+    } else {
       return;
     }
 
@@ -49,20 +48,17 @@ export const handleSubmit = () => {
     if (formContext?.type === FormType.A) {
       const dataToSend = formAToSend(formContext.getValues());
 
-      response = app?.id && !formContext?.isCopied
-        ? putFormA(dataToSend, app.id, false)
-        : addCruiseApplication(dataToSend, false)
-    }
-    else if (formContext?.type === FormType.B) {
-      response = putFormB(app.id, formContext?.getValues())
-    }
-    else {
+      response =
+        app?.id && !formContext?.isCopied
+          ? putFormA(dataToSend, app.id, false)
+          : addCruiseApplication(dataToSend, false);
+    } else if (formContext?.type === FormType.B) {
+      response = putFormB(app.id, formContext?.getValues(), false);
+    } else {
       return;
     }
 
-    response.then(() =>
-      navigate(Path.CruiseApplications)
-    );
+    response.then(() => navigate(Path.CruiseApplications));
   };
 };
 

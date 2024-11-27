@@ -91,11 +91,16 @@ export const RefillCButton = () => {
 const ConfirmSaveButton = () => {
   const formContext = useContext(FormContext);
   const _handleSave = handleSave();
+
   const cruiseManagerNorDeputyIsCurrentUserErr =
     formContext?.formState.errors[cruiseManagerNorDeputyIsCurrentUserErrName];
   return (
     <button
-      disabled={cruiseManagerNorDeputyIsCurrentUserErr != undefined}
+      disabled={
+        cruiseManagerNorDeputyIsCurrentUserErr != undefined ||
+        (formContext?.type == FormType.B &&
+          Object.values(formContext!.formState.errors).length > 0)
+      }
       onClick={_handleSave}
       className={
         formContext?.type == FormType.A
