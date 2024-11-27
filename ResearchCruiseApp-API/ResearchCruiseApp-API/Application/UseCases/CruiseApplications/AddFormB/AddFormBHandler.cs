@@ -42,8 +42,9 @@ public class AddFormBHandler(
         await unitOfWork.ExecuteIsolated(
             () => AddNewFormB(request.FormBDto, cruiseApplication, cancellationToken),
             cancellationToken);
-
-        UpdateStatus(cruiseApplication);
+        
+        if(!request.IsDraft)
+            UpdateStatus(cruiseApplication);
         
         await unitOfWork.Complete(cancellationToken);
         return Result.Empty;

@@ -116,9 +116,9 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
     [HttpPut("{cruiseApplicationId:guid}/FormB")]
-    public async Task<IActionResult> AddFormB(Guid cruiseApplicationId, [FromBody] FormBDto formBDto)
+    public async Task<IActionResult> AddFormB(Guid cruiseApplicationId, [FromBody] FormBDto formBDto, [FromQuery] bool isDraft)
     {
-        var result = await mediator.Send(new AddFormBCommand(cruiseApplicationId, formBDto));
+        var result = await mediator.Send(new AddFormBCommand(cruiseApplicationId, formBDto , isDraft));
         return result.IsSuccess
             ? Created()
             : this.CreateError(result);
