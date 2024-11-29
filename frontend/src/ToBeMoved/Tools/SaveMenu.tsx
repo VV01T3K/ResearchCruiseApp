@@ -91,16 +91,15 @@ export const RefillCButton = () => {
 const ConfirmSaveButton = () => {
   const formContext = useContext(FormContext);
   const _handleSave = handleSave();
-
   const cruiseManagerNorDeputyIsCurrentUserErr =
     formContext?.formState.errors[cruiseManagerNorDeputyIsCurrentUserErrName];
+  const disabled =
+    cruiseManagerNorDeputyIsCurrentUserErr != undefined ||
+    (formContext?.type == FormType.B && !formContext.formState.isValid);
+  useEffect(() => {}, [formContext]);
   return (
     <button
-      disabled={
-        cruiseManagerNorDeputyIsCurrentUserErr != undefined ||
-        (formContext?.type == FormType.B &&
-          Object.values(formContext!.formState.errors).length > 0)
-      }
+      disabled={disabled}
       onClick={_handleSave}
       className={
         formContext?.type == FormType.A
@@ -160,7 +159,12 @@ export function SaveMenu() {
   );
 
   const SaveButton = () => {
-    const onClickAction = () => setSavingStarted(true);
+    const formContext = useContext(FormContext);
+    const onClickAction = () => {
+      if (formContext?.type == FormType.B)
+        formContext?.trigger().then(() => setSavingStarted(true));
+      else setSavingStarted(true);
+    };
     return (
       <button
         onClick={onClickAction}
