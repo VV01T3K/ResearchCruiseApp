@@ -1,4 +1,3 @@
-using AutoMapper;
 using MediatR;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
@@ -14,8 +13,7 @@ public class PostOwnPublicationsHandler(
     ICurrentUserService currentUserService,
     IUserPublicationsRepository userPublicationsRepository,
     IPublicationsRepository publicationsRepository,
-    IUnitOfWork unitOfWork,
-    IMapper mapper)
+    IUnitOfWork unitOfWork)
     : IRequestHandler<PostOwnPublicationsCommand, Result>
 {
     public async Task<Result> Handle(
