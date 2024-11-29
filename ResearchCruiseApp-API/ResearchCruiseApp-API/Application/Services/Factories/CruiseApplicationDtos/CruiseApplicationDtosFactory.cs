@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp_API.Application.Services.CruiseApplicationEvaluator;
+using ResearchCruiseApp_API.Domain.Common.Extensions;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.Factories.CruiseApplicationDtos;
@@ -19,7 +21,8 @@ internal class CruiseApplicationDtosFactory(
 
         await AddManagers(cruiseApplication, cruiseApplicationDto);
         AddPoints(cruiseApplication, cruiseApplicationDto);
-
+        AddEffectsDoneRate(cruiseApplication, cruiseApplicationDto);
+        
         return cruiseApplicationDto;
     }
 
@@ -49,5 +52,19 @@ internal class CruiseApplicationDtosFactory(
     private void AddPoints(CruiseApplication cruiseApplication, CruiseApplicationDto cruiseApplicationDto)
     {
         cruiseApplicationDto.Points = cruiseApplicationEvaluator.GetPointsSum(cruiseApplication);
+    }
+
+    private void AddEffectsDoneRate(CruiseApplication cruiseApplication, CruiseApplicationDto cruiseApplicationDto)
+    {
+        if (cruiseApplication.FormC is null)
+            return;
+
+        var allEffectsCount = cruiseApplication.FormC.ResearchTaskEffects.Count;
+        var doneEffectsCount = cruiseApplication.FormC.ResearchTaskEffects
+            .Count(researchTaskEffect => researchTaskEffect.Done.ToBool());
+
+        var effectsDoneRate = $"{100 * (float)doneEffectsCount / allEffectsCount :f2}";
+
+        cruiseApplicationDto.EffectsDoneRate = $"{effectsDoneRate}%";
     }
 }

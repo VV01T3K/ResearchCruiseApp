@@ -36,6 +36,8 @@ public class CruiseApplicationDto
     public int Points { get; set; }
     
     public string Status { get; init; } = null!;
+
+    public string EffectsDoneRate { get; set; } = "0";
     
     public string? Note { get; init; }
 }   

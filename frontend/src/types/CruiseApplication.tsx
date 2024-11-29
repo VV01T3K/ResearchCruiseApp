@@ -18,5 +18,6 @@ export type CruiseApplication = {
   hasFormC: boolean;
   status: CruiseApplicationStatus;
   points: string;
+  effectsDoneRate: string;
   note?: string;
 };

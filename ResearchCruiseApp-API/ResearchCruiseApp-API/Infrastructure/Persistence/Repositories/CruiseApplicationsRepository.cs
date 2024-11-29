@@ -20,6 +20,15 @@ internal class CruiseApplicationsRepository : Repository<CruiseApplication>, ICr
             .ToListAsync(cancellationToken);
     }
 
+    public Task<List<CruiseApplication>> GetAllWithFormsAndFormAContentAndEffects(CancellationToken cancellationToken)
+    {
+        return DbContext.CruiseApplications
+            .IncludeForms()
+            .IncludeFormAContent()
+            .IncludeEffects()
+            .ToListAsync(cancellationToken);
+    }
+    
     public Task<CruiseApplication?> GetByIdWithFormA(Guid id, CancellationToken cancellationToken)
     {
         return DbContext.CruiseApplications

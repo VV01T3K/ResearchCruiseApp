@@ -19,7 +19,7 @@ public class GetAllCruiseApplicationsHandler(
         CancellationToken cancellationToken)
     {
         var cruiseApplications = await cruiseApplicationsRepository
-            .GetAllWithFormsAndFormAContent(cancellationToken);
+            .GetAllWithFormsAndFormAContentAndEffects(cancellationToken);
             
         var cruiseApplicationDtos = new List<CruiseApplicationDto>();
         

@@ -103,4 +103,10 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormC!.CollectedSamples)
             .Include(cruiseApplication => cruiseApplication.FormC!.Photos);
     }
+
+    public static IQueryable<CruiseApplication> IncludeEffects(this IQueryable<CruiseApplication> query)
+    {
+        return query
+            .Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects);
+    }
 }

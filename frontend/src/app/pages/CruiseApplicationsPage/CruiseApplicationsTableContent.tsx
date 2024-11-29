@@ -122,7 +122,8 @@ export const Status = () => {
                 state={{ formType: 'B', cruiseApplication: application }}
                 label={'Wypełnij'}
               />
-            )}
+            )
+          }
           {application!.status == CruiseApplicationStatus.Undertaken &&
             isCurrentUserCruiseOrDeputyManager && (
               <LinkWithState
@@ -130,7 +131,15 @@ export const Status = () => {
                 state={{ formType: 'C' }}
                 label={'Wypełnij formularz C'}
               />
-            )}
+            )
+          }
+            {(application!.status === CruiseApplicationStatus.Undertaken || application!.status === CruiseApplicationStatus.Reported) &&
+                isCurrentUserCruiseOrDeputyManager && (
+                    <div>
+                        {application.effectsDoneRate} efektów
+                    </div>
+                )
+            }
         </>
       )}
     </div>
