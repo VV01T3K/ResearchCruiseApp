@@ -85,8 +85,8 @@ function RegisterForm() {
             <form onSubmit={handleSubmit(onSubmitWhenSuccess)}>
                 <div className="signup-link">
                     Rejestracja przebiegła pomyślnie, potwierdź rejestrację poprzez link
-                    wysłany na adres e-mail i oczekuj zatwierdzenia konta przez biuro
-                    armatora
+                    wysłany na adres e-mail i oczekuj zatwierdzenia konta przez Biuro
+                    Armatora
                 </div>
                 <ReturnToLoginLink />
             </form>

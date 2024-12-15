@@ -1,5 +1,6 @@
 using ResearchCruiseApp_API.Application.Common.Constants;
 using ResearchCruiseApp_API.Application.ExternalServices;
+using ResearchCruiseApp_API.Domain.Common.Enums;
 using ResearchCruiseApp_API.Domain.Entities;
 
 namespace ResearchCruiseApp_API.Application.Services.UserPermissionVerifier;
@@ -45,6 +46,8 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
+        var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId;
+        var deputyManagerId = cruiseApplication.FormA?.DeputyManagerId;
         
         if (currentUserId is null)
             return false;
@@ -53,6 +56,12 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
             currentUserRoles.Contains(RoleName.Shipowner) ||
             currentUserRoles.Contains(RoleName.Guest))
         {
+            if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
+            {
+                return currentUserId == cruiseManagerId ||
+                       currentUserId == deputyManagerId;
+            }
+
             return true;
         }
 
@@ -112,24 +121,29 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
     
     public async Task<bool> CanCurrentUserViewForm(CruiseApplication cruiseApplication)
     {
+        var currentUserId = currentUserService.GetId();
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
-
+        var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId;
+        var deputyManagerId = cruiseApplication.FormA?.DeputyManagerId;
+        
+        if (currentUserId is null)
+            return false;
+        
         if (currentUserRoles.Contains(RoleName.Administrator) ||
             currentUserRoles.Contains(RoleName.Shipowner) ||
             currentUserRoles.Contains(RoleName.Guest))
         {
+            if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
+            {
+                return currentUserId == cruiseManagerId ||
+                       currentUserId == deputyManagerId;
+            }
+            
             return true;
         }
-
-        if (cruiseApplication.FormA is null)
-            return false;
         
-        var currentUserId = currentUserService.GetId();
-        if (currentUserId is null)
-            return false;
-        
-        return cruiseApplication.FormA.CruiseManagerId == currentUserId ||
-               cruiseApplication.FormA.DeputyManagerId == currentUserId;
+        return cruiseApplication.FormA?.CruiseManagerId == currentUserId ||
+               cruiseApplication.FormA?.DeputyManagerId == currentUserId;
     }
 
     public Task<bool> CanCurrentUserUpdateEffects(CruiseApplication cruiseApplication) =>
@@ -138,9 +152,10 @@ public class UserPermissionVerifier(IIdentityService identityService, ICurrentUs
     public async Task<bool> CanUserDeactivate(Guid otherUserId)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserId = currentUserService.GetId();
 
         if (currentUserRoles.Contains(RoleName.Administrator))
-            return true;
+            return currentUserId != otherUserId;
         
         if (currentUserRoles.Contains(RoleName.Shipowner))
         {

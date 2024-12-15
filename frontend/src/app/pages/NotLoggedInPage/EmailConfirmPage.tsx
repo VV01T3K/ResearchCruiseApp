@@ -48,7 +48,7 @@ function EmailConfirmPage() {
         Email został potwierdzony
         <div style={{ fontSize: 17 }}>
           {' '}
-          Aby móc się zalogować Biuro Armatora musi jeszcze zaakceptować twoje
+          Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje
           konto
         </div>
       </div>

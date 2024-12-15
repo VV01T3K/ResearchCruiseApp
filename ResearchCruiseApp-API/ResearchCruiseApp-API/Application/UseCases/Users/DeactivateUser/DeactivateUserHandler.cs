@@ -14,9 +14,6 @@ public class DeactivateUserHandler(
 {
     public async Task<Result> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
     {
-        if (request.Id == currentUserService.GetId())
-            return Error.ForbiddenOperation("Nie można dezaktywować własnego konta.");
-
         if (!await userPermissionVerifier.CanUserDeactivate(request.Id))
             return Error.ForbiddenOperation();
 
