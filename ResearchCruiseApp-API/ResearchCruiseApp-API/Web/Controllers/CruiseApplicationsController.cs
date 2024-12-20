@@ -58,10 +58,10 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetCruiseApplicationById(Guid id)
+    [HttpGet("{cruiseApplicationId:guid}")]
+    public async Task<IActionResult> GetCruiseApplicationById(Guid cruiseApplicationId)
     {
-        var result = await mediator.Send(new GetCruiseApplicationByIdQuery(id));
+        var result = await mediator.Send(new GetCruiseApplicationByIdQuery(cruiseApplicationId));
         return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);
@@ -90,10 +90,10 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
     
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
-    [HttpGet("{id:guid}/evaluation")]
-    public async Task<IActionResult> GetCruiseApplicationEvaluation(Guid id)
+    [HttpGet("{cruiseApplicationId:guid}/evaluation")]
+    public async Task<IActionResult> GetCruiseApplicationEvaluation(Guid cruiseApplicationId)
     {
-        var result = await mediator.Send(new GetCruiseApplicationEvaluationQuery(id));
+        var result = await mediator.Send(new GetCruiseApplicationEvaluationQuery(cruiseApplicationId));
         return result.IsSuccess
             ? Ok(result.Data)
             : this.CreateError(result);

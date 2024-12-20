@@ -5,5 +5,7 @@ namespace ResearchCruiseApp_API.Application.Services.Factories.FileDtos;
 
 public interface IFileDtosFactory
 {
-    Task<FileDto> Create(string filename, byte[] fileContentCompressed);
+    Task<FileDto> CreateFromCompressed(string filename, byte[] fileContentCompressed);
+
+    FileDto Create(string filename, byte[] fileContent);
 }

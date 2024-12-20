@@ -9,6 +9,7 @@ using ResearchCruiseApp_API.Application.UseCases.Cruises.ConfirmCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.DeleteCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.EditCruise;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.EndCruise;
+using ResearchCruiseApp_API.Application.UseCases.Cruises.ExportToCsv;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.GetAllCruises;
 using ResearchCruiseApp_API.Application.UseCases.Cruises.GetCruise;
 using ResearchCruiseApp_API.Web.Common.Extensions;
@@ -80,7 +81,6 @@ public class CruisesController(IMediator mediator) : ControllerBase
             : this.CreateError(result);
     }
     
-    
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPut("{id:guid}/end")]
     public async Task<IActionResult> EndCruise([FromRoute] Guid id)
@@ -98,6 +98,16 @@ public class CruisesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new AutoAddCruisesCommand());
         return result.IsSuccess
             ? NoContent()
+            : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [HttpGet("csv")]
+    public async Task<IActionResult> ExportToCsv([FromQuery] string year)
+    {
+        var result = await mediator.Send(new ExportToCsvCommand(year));
+        return result.IsSuccess
+            ? Ok(result.Data!)
             : this.CreateError(result);
     }
 }

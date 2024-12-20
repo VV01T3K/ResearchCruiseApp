@@ -6,18 +6,19 @@ import ReactSwitch from 'react-switch';
 import CruisesCalendar from './CruisesCalendar';
 import UserBasedAccess from '../../../route/UserBasedAccess';
 import { Path } from '../../../ToBeMoved/Tools/Path';
-import { fetchCruises } from '@api/requests';
+import {fetchCruises, getCruisesAsCsv} from '@api/requests';
 import { autoAddCruises } from '@api/requests/Put';
 import { deleteCruise } from '@api/requests/Delete';
-import { sortCruiseApplicationsByNumber } from '@app/pages/CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsListMisc';
-import { Cruise } from 'Cruise';
 import { sortCruiseListByNumber } from '@app/pages/CruisesPage/CruiseListFilterAndSort';
+import TextArea from "@app/pages/FormPage/Inputs/TextArea";
+import TextareaAutosize from "react-textarea-autosize";
+import {ExportCruisesForm} from "@app/pages/CruisesPage/ExportCruisesForm/ExportCruisesForm";
 
 export const ModeSwitch = () => {
   const [listView, setListView] = useState(true);
   return {
     CalendarListSwitch: () => (
-      <div className='d-flex   align-items-center p-3 w-50'>
+      <div className='d-flex align-items-center px-2 py-1 w-25'>
         <div className='pe-2'>Kalendarz</div>
         <ReactSwitch
           className={'custom-switch'}
@@ -44,22 +45,35 @@ export const LoadCruises = () => {
       )
     );
 };
-export const AddCruiseButtons = () => {
+
+export const CruiseMenuButtons = () => {
   const loadCruises = LoadCruises();
+  const [showExport, setShowExport] = useState(false);
+
   return (
-    <div className='d-flex flex-row  flex-wrap justify-content-end align-items-center w-50 '>
-      <button
-        className='cruises-button'
-        onClick={() => autoAddCruises().then(() => loadCruises())}
-      >
-        Dodaj rejsy automatycznie
-      </button>
-      <ButtonWithState
-        className='cruises-button'
-        to={Path.CruiseForm}
-        label='Nowy rejs'
-      />
-    </div>
+    <>
+      <div className='d-flex flex-row flex-wrap justify-content-end align-items-center w-75'>
+        <button
+          className='cruises-button'
+          onClick={() => autoAddCruises().then(() => loadCruises())}
+        >
+          Dodaj rejsy automatycznie
+        </button>
+        <ButtonWithState
+          className='cruises-button'
+          to={Path.CruiseForm}
+          label='Nowy rejs'
+        />
+        <button
+          className='cruises-button'
+          style={{ fontSize: 'inherit' }}
+          onClick={() => setShowExport(!showExport)}
+        >
+          Eksport {showExport ? ' ▲' : ' ▼'}
+        </button>
+      </div>
+      {showExport && <ExportCruisesForm />}
+    </>
   );
 };
 
@@ -67,10 +81,10 @@ export const CruisePageContent = () => {
   const { CalendarListSwitch, listView } = ModeSwitch();
   const { UserHasShipownerAccess, UserHasAdminAccess } = UserBasedAccess();
   const OptionBar = () => (
-    <div className={'d-none d-md-flex flex-row w-100'}>
+    <div className={'d-none d-md-flex flex-wrap flex-row w-100'}>
       <CalendarListSwitch />
       {(UserHasAdminAccess() || UserHasShipownerAccess()) && (
-        <AddCruiseButtons />
+        <CruiseMenuButtons />
       )}
     </div>
   );
@@ -89,7 +103,7 @@ export const HandleDeleteCruises = () => {
   return (id: string) =>
     deleteCruise(id).then((_) => {
       const newCruises = cruiseStateContext!.cruises.filter(
-        (cruise) => cruise.id != id
+        (cruise) => cruise.id !== id
       );
       cruiseStateContext!.setCruises!(newCruises);
     });

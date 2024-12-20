@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import React, { useState } from 'react';
-import TextInput from './TextInput';
+import TextInput from '@components/Form/CommonInput/TextInput';
 import RoleInput from './RoleInput';
 
 import { emailPattern } from '@consts/emailPatterns';
@@ -10,20 +10,15 @@ import SuccessMessage from '../../../../ToBeMoved/Pages/CommonComponents/Success
 import { Role } from 'Role';
 import { NewUserFormValues } from 'NewUserFormValues';
 import { addUser } from '@api/requests';
+import {newUserFormDefaultValues} from "@helpers/addUserFormDefaultValue";
 
 type Props = {
   fetchUsers: () => void;
 };
 
 export default function AddUserForm(props: Props) {
-  const newUserFormDefaultValues: NewUserFormValues = {
-    role: Role.CruiseManager,
-    email: '',
-    firstName: '',
-    lastName: '',
-  };
   const newUserForm = useForm<NewUserFormValues>({
-    defaultValues: newUserFormDefaultValues,
+    defaultValues: newUserFormDefaultValues
   });
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -35,6 +30,7 @@ export default function AddUserForm(props: Props) {
     setSendingError('');
     setSuccess(false);
     setSending(true);
+
     addUser(newUserForm.getValues())
       .then((response) => {
         setSending(false);
@@ -48,7 +44,7 @@ export default function AddUserForm(props: Props) {
   };
 
   return (
-    <div className='d-flex flex-wrap p-3 col-12'>
+    <div className='d-flex flex-wrap p-1 col-12'>
       <a
         className='d-flex btn btn-primary mb-2'
         style={{ fontSize: 'inherit' }}
@@ -97,7 +93,7 @@ export default function AddUserForm(props: Props) {
           </div>
 
           <div className='d-flex col-12 justify-content-end'>
-            {sendingError != '' && (
+            {sendingError !== '' && (
               <ErrorMessageIfPresentNoContext
                 className='w-100'
                 message={sendingError}

@@ -13,7 +13,7 @@ public class PermissionDtosFactory(IMapper mapper, IFileDtosFactory fileDtosFact
         var permissionDto = mapper.Map<PermissionDto>(permission);
 
         if (permission.ScanName is not null && permission.ScanContent is not null)
-            permissionDto.Scan = await fileDtosFactory.Create(permission.ScanName, permission.ScanContent);
+            permissionDto.Scan = await fileDtosFactory.CreateFromCompressed(permission.ScanName, permission.ScanContent);
 
         return permissionDto;
     }

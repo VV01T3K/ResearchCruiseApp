@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using ResearchCruiseApp_API.Application.ExternalServices;
 using ResearchCruiseApp_API.Application.ExternalServices.Persistence;
+using ResearchCruiseApp_API.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp_API.Infrastructure.Services;
 
@@ -44,8 +45,7 @@ internal class FileInspector : IFileInspector
     
     private static byte[] GetPdfFileBytes(string contentAsBase64Url)
     {
-        const string pdfBase64UrlPrefix = "data:application/pdf;base64,"; 
-        var pdfBase64UrlPrefixLength = pdfBase64UrlPrefix.Length;
+        var pdfBase64UrlPrefixLength = UrlPrefixes.PdfBase64Prefix.Length;
 
         var contentAsBase64 = string.Concat(
             contentAsBase64Url.Skip(pdfBase64UrlPrefixLength)

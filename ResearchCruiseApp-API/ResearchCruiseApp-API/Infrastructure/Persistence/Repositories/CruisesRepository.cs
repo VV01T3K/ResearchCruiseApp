@@ -66,4 +66,11 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
                     .Contains(id)))
             .ToListAsync(cancellationToken);
     }
+
+    public Task<List<Cruise>> GetAllByYear(string year, CancellationToken cancellationToken)
+    {
+        return DbContext.Cruises
+            .Where(cruise => cruise.StartDate.StartsWith(year))
+            .ToListAsync(cancellationToken);
+    }
 }

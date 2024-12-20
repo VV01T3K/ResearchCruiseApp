@@ -61,7 +61,7 @@ export default function RoleInput(props: Props) {
     return (
         <>
             <div className="d-flex flex-wrap col-md-3 col-12 mb-1">
-                <label className="d-flex p-2" style={{ fontSize: 'inherit' }}>
+                <label className="d-flex pb-1" style={{ fontSize: 'inherit' }}>
                     {props.label}:
                 </label>
                 <SelectWrapper
@@ -71,10 +71,6 @@ export default function RoleInput(props: Props) {
                     options={getRoleOptions()}
                     placeHolder={'Wybierz wartość'}
                     disabled={props.disabled}
-                    // defaultValue={roleOptions
-                    //     .filter(roleOption => roleOption.value == Role.Guest)
-                    //     .at(0)
-                    // }
                     onChange={(selectedValue) => {
                         if (selectedValue) {
                             props.form.setValue(props.name, selectedValue.value as string, {

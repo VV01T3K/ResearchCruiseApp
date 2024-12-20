@@ -1,29 +1,32 @@
 import React from 'react';
-import { FieldError, UseFormReturn } from 'react-hook-form';
+import {FieldError, FieldValues, Path, UseFormReturn} from 'react-hook-form';
 
 import {
     ErrorMessageIfPresentNoContext,
 } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
-import { NewUserFormValues } from 'NewUserFormValues';
 
-type Props = {
-    form: UseFormReturn<NewUserFormValues>;
+type Props<TForm extends FieldValues> = {
+    form: UseFormReturn<TForm>;
     label: string;
-    name: keyof NewUserFormValues;
+    name: Path<TForm>;
     inputType?: string;
     validationPattern?: RegExp;
     validationPatternMessage?: string;
     disabled: boolean;
+    maxLength?: number;
 };
 
 type FormError<T> = FieldError & {
     [K in keyof T]?: FieldError;
 };
 
-export default function TextInput(props: Props) {
+export default function TextInput<TForm extends FieldValues>(props: Props<TForm>) {
     const fieldOptions = {
         required: 'Pole wymagane',
-        maxLength: { value: 256, message: 'Wprowadź maksymalnie 256 znaków' },
+        maxLength: {
+            value: props.maxLength ?? 256,
+            message: `Maksymalna liczba znaków to ${props.maxLength ?? 256}.`
+        },
         pattern: props.validationPattern && {
             value: props.validationPattern,
             message: props.validationPatternMessage ?? '',
@@ -32,8 +35,8 @@ export default function TextInput(props: Props) {
 
     return (
         <>
-            <div className="d-flex flex-wrap col-md-3 col-12  mb-1">
-                <label className="d-flex p-2" style={{ fontSize: 'inherit' }}>
+            <div className="d-flex flex-wrap col-md-3 col-12 mb-1">
+                <label className="d-flex p-1" style={{ fontSize: 'inherit' }}>
                     {props.label}:
                 </label>
                 <input
@@ -45,7 +48,7 @@ export default function TextInput(props: Props) {
                 {props.form?.formState?.errors[props.name] && (
                     <div className="d-flex col-12 justify-content-center">
                         <ErrorMessageIfPresentNoContext
-                            message={(props.form.formState.errors[props.name] as FormError<NewUserFormValues>).message}
+                            message={(props.form.formState.errors[props.name] as FormError<TForm>).message}
                         />
                     </div>
                 )}

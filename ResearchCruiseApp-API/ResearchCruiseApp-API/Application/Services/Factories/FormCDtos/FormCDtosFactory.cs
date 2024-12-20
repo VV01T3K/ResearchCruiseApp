@@ -49,7 +49,7 @@ public class FormCDtosFactory(
     {
         foreach (var photo in formC.Photos)
         {
-            var fileDto = await fileDtosFactory.Create(photo.Name, photo.Content);
+            var fileDto = await fileDtosFactory.CreateFromCompressed(photo.Name, photo.Content);
             formCDto.Photos.Add(fileDto);
         }
     }

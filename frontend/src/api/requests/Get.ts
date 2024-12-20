@@ -76,3 +76,5 @@ export const getCruiseApplicationsForCruise = (cruiseIsNew: boolean) =>
       ? '/api/CruiseApplications/forCruise'
       : '/api/CruiseApplications'
   );
+
+export const getCruisesAsCsv = (year: string) => get(`/api/Cruises/Csv?year=${year}`);
