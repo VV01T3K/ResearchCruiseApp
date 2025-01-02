@@ -1,0 +1,17 @@
+{
+  "Users": [
+    {
+      "FirstName": "Admin",
+      "LastName": "Adminowy",
+      "Email": "admin@gmail.com",
+      "Role": "Administrator"
+    },
+    {
+      "FirstName": "Kierownik",
+      "LastName": "Kierowniczy",
+      "Email": "kierownik@o2.com",
+      "Role": "CruiseManager"
+    }
+  ]
+}
+

@@ -19,5 +19,8 @@ export default defineConfig({
         silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
       }
     }
+  },
+  server: {
+    port: 8080
   }
 })

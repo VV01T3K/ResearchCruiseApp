@@ -1,0 +1,16 @@
+name: researchcruiseapp
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: researchcruiseapp-db
+    environment:
+      SA_PASSWORD: "p@ssw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - 1433:1433
+    volumes:
+      - researchcruiseapp-db:/var/opt/mssql
+
+volumes:
+  researchcruiseapp-db:
