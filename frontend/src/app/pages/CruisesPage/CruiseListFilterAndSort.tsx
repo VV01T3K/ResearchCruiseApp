@@ -1,7 +1,7 @@
-import { CruiseStateContext } from './CruisesPage';
-import React, { useContext, useState } from 'react';
-import { Cruise } from 'Cruise';
-import { AnyStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
+import {CruiseStateContext} from './CruisesPage';
+import {useContext, useState} from 'react';
+import {Cruise} from 'Cruise';
+import {AnyStringFilterOption} from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
 
 
 export const sortCruiseListByNumber = (list?: Cruise[]) => list ? [

@@ -1,15 +1,13 @@
-import { LinkWithStateProps } from '@components/Navigation/LinkWithState';
+import {LinkWithStateProps} from '@components/Navigation/LinkWithState';
 // import ReadOnlyTextInput from '../../CommonComponents/ReadOnlyTextInput';
 import ReadOnlyTextInput from '../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
-import { useNavigate } from 'react-router-dom';
-import Api from '../../../api/Api';
+import {useNavigate} from 'react-router-dom';
 import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
-import { Path } from '../../../ToBeMoved/Tools/Path';
-import { CruiseApplicationShortInfo } from 'CruiseApplicationShortInfo';
-import { Buffer } from 'buffer';
-import roleBasedRouting from '../../../route/RoleBasedRouting';
+import {Path} from '../../../ToBeMoved/Tools/Path';
+import {CruiseApplicationShortInfo} from 'CruiseApplicationShortInfo';
+import {Buffer} from 'buffer';
 import userBasedAccess from '../../../route/UserBasedAccess';
-import { getCruiseApplication } from '@api/requests';
+import {getCruiseApplication} from '@api/requests';
 
 type Props = {
   cruiseApplicationsShortInfo: CruiseApplicationShortInfo[];
@@ -38,7 +36,7 @@ export function LinkWithStateDownloadApplication(
                 'base64'
               );
               // temporary
-              let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+              const params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
                             width=900,height=1200,left=-1000,top=-1000`;
               window.open(props.to + '?data=' + param, '_blank', params);
             } else {

@@ -1,6 +1,6 @@
-import { equipmentLeaveActions, equipmentLeaveActionsPL } from './EquipmentLeaveTable';
-import { FSelectField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
-import { KeyContext } from '@contexts/KeyContext';
+import {equipmentLeaveActions, equipmentLeaveActionsPL} from './EquipmentLeaveTable';
+import {FSelectField, FTextField} from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
 
 
 export const ActionPicker = () => {

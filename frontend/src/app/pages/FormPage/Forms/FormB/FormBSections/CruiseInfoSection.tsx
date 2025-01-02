@@ -1,18 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import {useContext} from 'react';
 import CruiseBasicInfo from '../../../../CruiseFormPage/CruiseFormSections/CruiseBasicInfo';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-
-import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
-import { Cruise } from 'Cruise';
-import Api from '@api/Api';
-import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
-import { getCruiseForCruiseApplication } from '@api/requests';
-import { CruiseContext } from '@contexts/CruiseContext';
-import { CruisesContext } from '@app/pages/CruisesPage/CruisesList';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import {CruiseContext} from '@contexts/CruiseContext';
 import SimpleInfoTile from '../../../../../../ToBeMoved/CommonComponents/SimpleInfoTile';
 import ReadOnlyTextInput from '../../../../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 import LinkWithState from '@components/Navigation/LinkWithState';
-import { Path } from '../../../../../../ToBeMoved/Tools/Path';
+import {Path} from '../../../../../../ToBeMoved/Tools/Path';
 
 
 export const BasicInfo = () => {

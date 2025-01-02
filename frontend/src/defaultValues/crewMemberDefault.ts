@@ -1,4 +1,4 @@
-import { CrewMember } from 'CrewMember';
+import {CrewMember} from 'CrewMember';
 
 export const crewMemberDefault: CrewMember = {
     title: '',

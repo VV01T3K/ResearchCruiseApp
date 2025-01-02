@@ -1,52 +1,50 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {
-  FormType,
-  FormTypeKeys,
-  FormTypeValues,
+    FormType,
+    FormTypeKeys,
+    FormTypeValues,
 } from '../../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
-import Api from '@api/Api';
-import { useOnBlurForm } from '@hooks/useOnBlurForm';
-import { FormTemplateProps } from 'Form/FormTemplateProps';
+import {useOnBlurForm} from '@hooks/useOnBlurForm';
+import {FormTemplateProps} from 'Form/FormTemplateProps';
 import Page from '../../../../ToBeMoved/Pages/Page';
 import FormTitleWithNavigation from '../../../../components/Form/FormTitleWithNavigation';
 
-import { FormContent } from '@components/Form/FormContent';
-import { BottomOptionBar } from '../../../../ToBeMoved/Tools/FormBottomOptionBar';
-import { FormContext } from '@contexts/FormContext';
-import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
+import {FormContent} from '@components/Form/FormContent';
+import {BottomOptionBar} from '../../../../ToBeMoved/Tools/FormBottomOptionBar';
+import {FormContext} from '@contexts/FormContext';
+import {ReadOnlyContext} from '@contexts/ReadOnlyContext';
 import {
-  getApplicationDetails,
-  getFormA,
-  getFormAInitValues,
-  getFormAInitValuesForSupervisor,
-  getFormB,
-  getFormBInitValues,
-  getFormC,
-  getFormCInitValues,
-  getFormForSupervisor,
+    getApplicationDetails,
+    getFormA,
+    getFormAInitValues,
+    getFormAInitValuesForSupervisor,
+    getFormB,
+    getFormBInitValues,
+    getFormC,
+    getFormCInitValues,
+    getFormForSupervisor,
 } from '@api/requests';
-import { FormAInitValues } from 'FormAInitValues';
+import {FormAInitValues} from 'FormAInitValues';
 
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { Guid } from 'Guid';
-import { CruiseApplication } from 'CruiseApplication';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import {Guid} from 'Guid';
+import {CruiseApplication} from 'CruiseApplication';
 import {
-  Control,
-  DefaultValues,
-  FormState,
-  UseFormClearErrors,
-  UseFormGetValues,
-  UseFormHandleSubmit,
-  UseFormRegister,
-  UseFormReset,
-  UseFormResetField,
-  UseFormSetError,
-  UseFormSetValue,
-  UseFormTrigger,
+    Control,
+    DefaultValues,
+    FormState,
+    UseFormClearErrors,
+    UseFormGetValues,
+    UseFormHandleSubmit,
+    UseFormRegister,
+    UseFormReset,
+    UseFormResetField,
+    UseFormSetError,
+    UseFormSetValue,
+    UseFormTrigger,
 } from 'react-hook-form';
-import { FormSectionType } from 'Form/Section/FormSectionType';
-import { FormInitValues } from 'FormInitValues';
-import { type } from 'node:os';
+import {FormSectionType} from 'Form/Section/FormSectionType';
+import {FormInitValues} from 'FormInitValues';
 
 export type FormContextFields = {
   resetField: UseFormResetField<any>;

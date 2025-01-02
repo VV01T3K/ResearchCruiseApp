@@ -1,10 +1,5 @@
-import {
-    FBoolField,
-    FDateFieldDayAndHour,
-    FStandardDateField,
-    FTextField,
-} from '@app/pages/FormPage/Inputs/CellFormFields';
-import { KeyContext } from '@contexts/KeyContext';
+import {FBoolField, FDateFieldDayAndHour, FTextField,} from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
 
 export const NameField = () => {
     return (

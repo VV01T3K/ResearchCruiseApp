@@ -1,8 +1,8 @@
-import { FieldValues } from 'react-hook-form';
-import React, { useContext } from 'react';
+import {FieldValues} from 'react-hook-form';
+import {useContext} from 'react';
 import FieldWrapper from './FieldWrapper';
-import { readyFieldOptions } from '../Wrappers/ReactSelectWrapper';
-import { FormContext } from '@contexts/FormContext';
+import {readyFieldOptions} from '../Wrappers/ReactSelectWrapper';
+import {FormContext} from '@contexts/FormContext';
 
 export type FieldProps = {
     className?: string,

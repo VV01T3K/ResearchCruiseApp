@@ -1,6 +1,6 @@
-import { useContext } from 'react';
-import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
-import { FormContext } from '@contexts/FormContext';
+import {useContext} from 'react';
+import {FieldError, FieldErrorsImpl, Merge} from 'react-hook-form';
+import {FormContext} from '@contexts/FormContext';
 
 type Props = {
     fieldName: string;

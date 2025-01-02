@@ -1,13 +1,13 @@
-import React, { useContext, useEffect } from 'react';
+import {useContext, useEffect} from 'react';
 import UserSelect from '../../../Inputs/UserSelect';
 import FormYearSelect from '../../../Inputs/FormYearSelect';
-import { cruiseManagerSectionFieldNames } from './CruiseManagerSection';
-import { FormContext } from '@contexts/FormContext';
+import {cruiseManagerSectionFieldNames} from './CruiseManagerSection';
+import {FormContext} from '@contexts/FormContext';
 
-import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {ErrorMessageIfPresentNoContext} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import userDataManager from '../../../../../../ToBeMoved/CommonComponents/UserDataManager';
-import { EmptyFunction } from '@consts/EmptyFunction';
-import { FormAInitValues } from 'FormAInitValues';
+import {EmptyFunction} from '@consts/EmptyFunction';
+import {FormAInitValues} from 'FormAInitValues';
 import {EMPTY_GUID} from "@consts/emptyGuid";
 
 export const CruiseManagerField = () => {

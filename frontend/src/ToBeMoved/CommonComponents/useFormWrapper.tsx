@@ -1,10 +1,8 @@
-import { FieldValues, RegisterOptions, useForm } from 'react-hook-form';
-import ErrorMessageIfPresent from '../../components/Form/ErrorMessage/ErrorMessageIfPresent';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Path as Path } from '../Tools/Path';
-
-import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {FieldValues, RegisterOptions, useForm} from 'react-hook-form';
+import {useState} from 'react';
+import {Link} from 'react-router-dom';
+import {Path as Path} from '../Tools/Path';
+import {ErrorMessageIfPresentNoContext} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import {emailPattern} from "@consts/emailPatterns";
 
 export default function useFormWrapper() {

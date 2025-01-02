@@ -1,5 +1,5 @@
-import { KeyContext } from '@contexts/KeyContext';
-import { FIntField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
+import {FIntField, FTextField} from '@app/pages/FormPage/Inputs/CellFormFields';
 
 export const DayField = () => {
     return (

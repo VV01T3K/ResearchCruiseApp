@@ -1,14 +1,13 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { SingleValue } from 'react-select';
-import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
-import { FormField } from '../FormYearSelect';
+import React, {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {SingleValue} from 'react-select';
+import {BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
+import {FormField} from '../FormYearSelect';
 import FieldWrapper from '../FieldWrapper';
-import { notEmptyArray } from '../PublicationsTable/PublicationsTable';
-import { DescriptionField, ExecutiveField } from './PermissionsTableFields';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContext } from '@contexts/FieldContext';
+import {DescriptionField, ExecutiveField} from './PermissionsTableFields';
+import {FormContext} from '@contexts/FormContext';
+import {FieldContext} from '@contexts/FieldContext';
 
 export type ScanType = {
     name: string,

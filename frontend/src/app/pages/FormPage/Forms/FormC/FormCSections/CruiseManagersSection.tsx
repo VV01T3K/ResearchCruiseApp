@@ -1,12 +1,12 @@
-import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {cruiseFromLocation} from '@hooks/cruiseFromLocation';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import CruiseBasicInfo from '@app/pages/CruiseFormPage/CruiseFormSections/CruiseBasicInfo';
 import BoolField from '@app/pages/FormPage/Inputs/BoolField';
-import React, { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
 import userDataManager from '../../../../../../ToBeMoved/CommonComponents/UserDataManager';
 import UserSelect from '@app/pages/FormPage/Inputs/UserSelect';
-import { FormAInitValues } from 'FormAInitValues';
+import {FormAInitValues} from 'FormAInitValues';
 import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
 
 const cruiseManagerSectionFieldNames = {

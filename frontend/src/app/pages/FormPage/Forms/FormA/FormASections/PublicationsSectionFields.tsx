@@ -1,8 +1,8 @@
 import PublicationsTable from '../../../Inputs/PublicationsTable/PublicationsTable';
-import React, { useContext } from 'react';
-import { publicationsSectionFieldNames } from './PublicationsSection';
-import { FormContext } from '@contexts/FormContext';
-import { FormAInitValues } from 'FormAInitValues';
+import {useContext} from 'react';
+import {publicationsSectionFieldNames} from './PublicationsSection';
+import {FormContext} from '@contexts/FormContext';
+import {FormAInitValues} from 'FormAInitValues';
 
 export const PublicationsDescription = () => (
 

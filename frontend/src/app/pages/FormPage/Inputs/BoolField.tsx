@@ -1,11 +1,9 @@
-import { FieldValues } from 'react-hook-form';
-import React, { useContext } from 'react';
+import {FieldValues} from 'react-hook-form';
+import {useContext} from 'react';
 import FieldWrapper from './FieldWrapper';
-import { readyFieldOptions } from '../Wrappers/ReactSelectWrapper';
-import { FormContext } from '@contexts/FormContext';
-import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
+import {FieldProps} from '@app/pages/FormPage/Inputs/FormRadio';
 import CustomConverter from '../../../../ToBeMoved/Tools/CustomConverter';
-import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
+import {ReadOnlyContext} from '@contexts/ReadOnlyContext';
 
 type Props = FieldProps & {
     defaultValue?: string

@@ -1,5 +1,5 @@
-import React, { createContext } from 'react';
-import { CruiseApplication } from 'CruiseApplication';
+import React, {createContext} from 'react';
+import {CruiseApplication} from 'CruiseApplication';
 
 export const CruiseApplicationsContext = createContext<{
   cruiseApplications: CruiseApplication[];

@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 
-import { FieldTableWrapper } from '../FormPage/Wrappers/FieldTableWrapper';
+import {FieldTableWrapper} from '../FormPage/Wrappers/FieldTableWrapper';
 
-import { OrdinalNumber } from '../FormPage/Inputs/TableParts';
-import { CellContext } from '@contexts/CellContext';
+import {OrdinalNumber} from '../FormPage/Inputs/TableParts';
+import {CellContext} from '@contexts/CellContext';
 import ReadOnlyTextInput from '../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 import Api from '@api/Api';
 import Page from '../../../ToBeMoved/Pages/Page';
 import PageTitle from '../../../components/Page/PageTitle';
-import { PublicationData } from 'PublicationData';
+import {PublicationData} from 'PublicationData';
 import PublicationImporter from '@app/pages/MyPublications/PublicationImporter';
 
 export const PublicationsContext = createContext<null | PublicationData[]>(
@@ -118,7 +118,7 @@ const postPublications = (publications: PublicationData[]) =>
 function MyPublicationsPage() {
   const [publicationList, setPublicationList] = useState<PublicationData[]>([]);
   const fetchData = async () => {
-    let list: PublicationData[] = [];
+    const list: PublicationData[] = [];
     return getPublications().then((response) => {
       response.forEach((element: { publication: PublicationData }) => {
         list.push(element.publication);

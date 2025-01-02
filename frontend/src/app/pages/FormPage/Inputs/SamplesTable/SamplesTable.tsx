@@ -1,11 +1,11 @@
-import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
-import { useContext } from 'react';
-import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
-import { FieldValues } from 'react-hook-form';
-import { SingleValue } from 'react-select';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContext } from '@contexts/FieldContext';
+import {FieldProps} from '@app/pages/FormPage/Inputs/FormRadio';
+import {useContext} from 'react';
+import {BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton} from '@app/pages/FormPage/Inputs/TableParts';
+import {FieldValues} from 'react-hook-form';
+import {SingleValue} from 'react-select';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {FormContext} from '@contexts/FormContext';
+import {FieldContext} from '@contexts/FieldContext';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 import {samplesDefault} from "@helpers/samplesDeafult";
 import {CollectedSample} from "Sample";
@@ -20,8 +20,6 @@ type SamplesProps = FieldProps
 
 
 const samplesTableContent = () => {
-    const formContext = useContext(FormContext);
-
     return [
         () => (<OrdinalNumber label={'Próbka'} />),
         TypeField,

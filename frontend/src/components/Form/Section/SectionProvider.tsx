@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-import { IsSectionCompletedContext } from '@contexts/IsSectionCompletedContext';
-import { IsSectionActiveContext } from '@contexts/IsSectionActiveContext';
-import { IndexAndTitleContext } from '@contexts/IndexAndTitleContext';
+import {IsSectionCompletedContext} from '@contexts/IsSectionCompletedContext';
+import {IsSectionActiveContext} from '@contexts/IsSectionActiveContext';
+import {IndexAndTitleContext} from '@contexts/IndexAndTitleContext';
 
 export const SectionProvider = (props: { children: React.ReactNode, index?: number, title?: string }) => {
     const isActive = useState(true);

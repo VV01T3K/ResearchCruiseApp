@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
-import UserDataManager, { IsUserLoggedIn } from '../../../ToBeMoved/CommonComponents/UserDataManager';
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import {useEffect, useState} from 'react';
+import UserDataManager, {IsUserLoggedIn} from '../../../ToBeMoved/CommonComponents/UserDataManager';
 
 export const CurrentPageBackground = () => {
     const [pageBackground, _setpageBackground] = useState<string>('default-bg');
-    const { UserLoggedIn } = UserDataManager();
-    const location = extendedUseLocation();
+    UserDataManager();
 
     const setPageBackground = () => {
         let image = 'default-bg';

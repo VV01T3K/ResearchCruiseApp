@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import FormA from './Forms/FormA/FormA';
 import FormB from './Forms/FormB/FormB';
 import NotFoundPage from '../NotFoundPage';
-import { Path } from '../../../ToBeMoved/Tools/Path';
+import {Path} from '../../../ToBeMoved/Tools/Path';
 
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { FormType } from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import {FormType} from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
 export type FormPageLocationState = {
     formType: string;

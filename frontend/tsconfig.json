@@ -1,72 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "typeRoots": [
-      "../node_modules/@types",
-      "../@types"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "preserve",
-    "baseUrl": "src",
-    "paths": {
-      "*": [
-        "types/*"
-      ],
-      "@api/*": [
-        "api/*"
-      ],
-      "@app/*": [
-        "app/*"
-      ],
-      "@assets/*": [
-        "assets/*"
-      ],
-      "@components/*": [
-        "components/*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@consts/*": [
-        "consts/*"
-      ],
-      "@defaultValues/*": [
-        "defaultValues/*"
-      ],
-      "@enums/*": [
-        "enums/*"
-      ],
-      "@helpers/*": [
-        "defaultValues/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@resources/*": [
-        "resources/*"
-      ],
-      "@styles/*": [
-        "styles/*"
-      ],
-      "@contexts/*": [
-        "contexts/*"
-      ]
-    }
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
 }

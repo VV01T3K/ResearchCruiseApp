@@ -1,21 +1,17 @@
+import {fileName, handleDownload, handlePrint, handleSave,} from './FormButtonsHandlers';
+import {useContext, useEffect, useState} from 'react';
+import CancelIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import {FormContext} from '@contexts/FormContext';
+import {FormContextFields} from '@app/pages/FormPage/Wrappers/FormTemplate';
+import {refillFormB, refillFormC} from '@api/requests/Put';
+import {useNavigate} from 'react-router-dom';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import {CruiseApplicationStatus} from 'CruiseApplicationStatus';
+import {Path} from './Path';
+import {FormType} from '../Pages/CommonComponents/FormTitleWithNavigation';
 import {
-  fileName,
-  handleDownload,
-  handlePrint,
-  handleSave,
-} from './FormButtonsHandlers';
-import React, { useContext, useEffect, useState } from 'react';
-import { ReactComponent as DownloadIcon } from '/node_modules/bootstrap-icons/icons/download.svg';
-import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
-import { FormContext } from '@contexts/FormContext';
-import { FormContextFields } from '@app/pages/FormPage/Wrappers/FormTemplate';
-import { refillFormB, refillFormC } from '@api/requests/Put';
-import { useNavigate } from 'react-router-dom';
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
-import { Path } from './Path';
-import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
-import { cruiseManagerNorDeputyIsCurrentUserErrName } from '@app/pages/FormPage/Forms/FormA/FormASections/CruiseManagerSectionFields';
+    cruiseManagerNorDeputyIsCurrentUserErrName
+} from '@app/pages/FormPage/Forms/FormA/FormASections/CruiseManagerSectionFields';
 
 const formDownloadProps = (formContext: FormContextFields) => {
   return {
@@ -109,18 +105,6 @@ const ConfirmSaveButton = () => {
     >
       Potwierdź
     </button>
-  );
-};
-
-const DownloadButton = () => {
-  const formContext = useContext(FormContext);
-  return (
-    <a
-      className={'form-page-option-note-button-small'}
-      {...formDownloadProps(formContext!)}
-    >
-      <DownloadIcon />
-    </a>
   );
 };
 

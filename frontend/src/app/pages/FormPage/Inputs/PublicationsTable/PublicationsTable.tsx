@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { FieldProps } from '../FormRadio';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {BottomMenuWithHistory, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {FieldProps} from '../FormRadio';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 import FieldWrapper from '../FieldWrapper';
-import { CategoryPicker, InformationsColumn, MinisterialPointsField, YearField } from './PublicationsTableFields';
-import { FieldContextWrapper } from '../PermissionsTable/PermissionsTable';
-import { FormContext } from '@contexts/FormContext';
+import {CategoryPicker, InformationsColumn, MinisterialPointsField, YearField} from './PublicationsTableFields';
+import {FieldContextWrapper} from '../PermissionsTable/PermissionsTable';
+import {FormContext} from '@contexts/FormContext';
 
 export const notEmptyArray = <T extends object>(value: FieldValues) => {
     if (value.some((row: T) => {

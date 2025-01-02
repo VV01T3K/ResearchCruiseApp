@@ -1,15 +1,12 @@
-import { useForm } from 'react-hook-form';
-import React, { useState } from 'react';
+import {useForm} from 'react-hook-form';
+import {useState} from 'react';
 import TextInput from '@components/Form/CommonInput/TextInput';
 import RoleInput from './RoleInput';
-
-import { emailPattern } from '@consts/emailPatterns';
-
-import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {emailPattern} from '@consts/emailPatterns';
+import {ErrorMessageIfPresentNoContext} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import SuccessMessage from '../../../../ToBeMoved/Pages/CommonComponents/SuccessMessage';
-import { Role } from 'Role';
-import { NewUserFormValues } from 'NewUserFormValues';
-import { addUser } from '@api/requests';
+import {NewUserFormValues} from 'NewUserFormValues';
+import {addUser} from '@api/requests';
 import {newUserFormDefaultValues} from "@helpers/addUserFormDefaultValue";
 
 type Props = {
@@ -32,7 +29,7 @@ export default function AddUserForm(props: Props) {
     setSending(true);
 
     addUser(newUserForm.getValues())
-      .then((response) => {
+      .then(() => {
         setSending(false);
         setSuccess(true);
         props.fetchUsers();

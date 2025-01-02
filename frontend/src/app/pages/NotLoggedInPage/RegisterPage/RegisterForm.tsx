@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
+import {useState} from 'react';
+import {FieldValues} from 'react-hook-form';
 
-import {
-    ErrorMessageIfPresentNoContext,
-} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {ErrorMessageIfPresentNoContext,} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import userDataManager from '../../../../ToBeMoved/CommonComponents/UserDataManager';
 import useFormWrapper from '../../../../ToBeMoved/CommonComponents/useFormWrapper';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { Path } from '../../../../ToBeMoved/Tools/Path';
+import {Link, useNavigate} from 'react-router-dom';
+import {Path} from '../../../../ToBeMoved/Tools/Path';
 
 // TODO: [Not important] Switch to useContext(FormContext)
 function RegisterForm() {
@@ -16,7 +14,6 @@ function RegisterForm() {
     const {
         reset,
         handleSubmit,
-        formState: { errors },
         EmailTextInput,
         LastNameTextInput,
         FirstNameTextInput,

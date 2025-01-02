@@ -1,7 +1,7 @@
-import React, {Ref, useContext, useState} from 'react';
-import Select, { CSSObjectWithLabel, GroupBase, OptionsOrGroups, SingleValue } from 'react-select';
-import { FieldValues } from 'react-hook-form';
-import { FormContext } from '@contexts/FormContext';
+import {Ref, useContext, useState} from 'react';
+import Select, {CSSObjectWithLabel, GroupBase, OptionsOrGroups, SingleValue} from 'react-select';
+import {FieldValues} from 'react-hook-form';
+import {FormContext} from '@contexts/FormContext';
 
 export const readyFieldOptions = { shouldDirty: true, shouldValidate: true };
 

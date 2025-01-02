@@ -1,4 +1,4 @@
-import { FieldValues, useForm } from 'react-hook-form';
+import {FieldValues, useForm} from 'react-hook-form';
 
 export const useOnBlurForm = (defaultValues: FieldValues) => useForm({
     mode: 'onBlur',

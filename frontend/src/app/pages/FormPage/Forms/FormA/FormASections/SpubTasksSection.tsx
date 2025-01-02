@@ -1,6 +1,5 @@
-import React from 'react';
-import { SpubTaskField } from './SpubTasksSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {SpubTaskField} from './SpubTasksSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const spubTasksSectionFieldNames = {
     spubTasks: 'spubTasks',

@@ -1,5 +1,4 @@
-import React from "react";
-import {ReactComponent as Icon} from "/node_modules/bootstrap-icons/icons/award.svg"
+import Icon from "/node_modules/bootstrap-icons/icons/award.svg?react"
 import {Path} from "../../../ToBeMoved/Tools/Path";
 import {TileWrapper} from "../../MainPageMenu/Tiles/TileWrapper";
 

@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import FormTemplate from '../FormPage/Wrappers/FormTemplate';
-import { ApplicationsSection } from './CruiseFormSections/Sections/AppicationsSection';
-import { InfoSection } from './CruiseFormSections/Sections/InfoSection';
-import { CruiseManagersSection } from './CruiseFormSections/Sections/CruiseManagersSection';
-import { Cruise } from 'Cruise';
-import { DateSection } from './CruiseFormSections/Sections/DateSection';
-import { CruiseFormBottomOptionBar } from '../../../ToBeMoved/Tools/CruiseFormBottomOptionBar';
-import {
-  FormType,
-  FormTypeKeys,
-} from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
-import { CruiseApplication } from 'CruiseApplication';
-import { CruiseStatus } from '@enums/CruiseStatus';
-import { EMPTY_GUID } from '@consts/emptyGuid';
-import { ApplicationsContext } from '@contexts/ApplicationsContext';
-import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
-import { getCruiseApplicationsForCruise } from '@api/requests';
+import {ApplicationsSection} from './CruiseFormSections/Sections/AppicationsSection';
+import {InfoSection} from './CruiseFormSections/Sections/InfoSection';
+import {CruiseManagersSection} from './CruiseFormSections/Sections/CruiseManagersSection';
+import {Cruise} from 'Cruise';
+import {DateSection} from './CruiseFormSections/Sections/DateSection';
+import {CruiseFormBottomOptionBar} from '../../../ToBeMoved/Tools/CruiseFormBottomOptionBar';
+import {FormType, FormTypeKeys,} from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import {CruiseApplication} from 'CruiseApplication';
+import {CruiseStatus} from '@enums/CruiseStatus';
+import {EMPTY_GUID} from '@consts/emptyGuid';
+import {ApplicationsContext} from '@contexts/ApplicationsContext';
+import {cruiseFromLocation} from '@hooks/cruiseFromLocation';
+import {getCruiseApplicationsForCruise} from '@api/requests';
 
 const CruiseFormSections = () => [
   InfoSection(),

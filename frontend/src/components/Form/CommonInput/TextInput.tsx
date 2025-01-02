@@ -1,9 +1,6 @@
-import React from 'react';
 import {FieldError, FieldValues, Path, UseFormReturn} from 'react-hook-form';
 
-import {
-    ErrorMessageIfPresentNoContext,
-} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {ErrorMessageIfPresentNoContext,} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 
 type Props<TForm extends FieldValues> = {
     form: UseFormReturn<TForm>;

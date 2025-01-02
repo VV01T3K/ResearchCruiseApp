@@ -1,8 +1,8 @@
 import Api from '../Api';
-import { AxiosRequestConfig } from 'axios';
-import { ChangePasswordData } from 'ChangePasswordData';
-import { Guid } from 'Guid';
-import { UserData } from 'User/UserData';
+import {AxiosRequestConfig} from 'axios';
+import {ChangePasswordData} from 'ChangePasswordData';
+import {Guid} from 'Guid';
+import {UserData} from 'User/UserData';
 
 const patch = (url: string, data: any, raw?: boolean) =>
   Api.patch(url, data, { raw: raw } as AxiosRequestConfig);

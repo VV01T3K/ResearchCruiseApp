@@ -1,11 +1,8 @@
-import React from 'react';
 import FormTemplate from '../FormPage/Wrappers/FormTemplate';
-import { FormType, FormTypeKeys } from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
-import {
-    CruiseApplicationContext,
-} from '@contexts/CruiseApplicationContext';
-import { CruiseApplicationDetailsSections } from './CruiseApplicationDetailsSections';
-import { BottomOptionBar } from '../../../ToBeMoved/Tools/CruiseApplicationBottomOptionBar';
+import {FormType, FormTypeKeys} from '../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import {CruiseApplicationContext,} from '@contexts/CruiseApplicationContext';
+import {CruiseApplicationDetailsSections} from './CruiseApplicationDetailsSections';
+import {BottomOptionBar} from '../../../ToBeMoved/Tools/CruiseApplicationBottomOptionBar';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
 
 

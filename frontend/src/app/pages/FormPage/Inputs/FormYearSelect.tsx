@@ -1,8 +1,8 @@
-import React, { useContext, useEffect } from 'react';
+import {useContext, useEffect} from 'react';
 import FieldWrapper from './FieldWrapper';
-import { readyFieldOptions, SelectSingleValue, SelectWrapper } from '../Wrappers/ReactSelectWrapper';
-import { FieldValues } from 'react-hook-form';
-import { FormContext } from '@contexts/FormContext';
+import {readyFieldOptions, SelectSingleValue, SelectWrapper} from '../Wrappers/ReactSelectWrapper';
+import {FieldValues} from 'react-hook-form';
+import {FormContext} from '@contexts/FormContext';
 
 export type FormField = {
     className?: string,

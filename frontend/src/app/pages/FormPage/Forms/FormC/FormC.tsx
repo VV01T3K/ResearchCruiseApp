@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import cruiseApplicationFromLocation from "@hooks/cruiseApplicationFromLocation";
-import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
-import { CruiseContext } from '@contexts/CruiseContext';
-import { Cruise } from 'Cruise';
-import { getCruiseForCruiseApplication } from '@api/requests';
-import { EmptyFunction } from '@consts/EmptyFunction';
+import {CruiseApplicationContext} from '@contexts/CruiseApplicationContext';
+import {CruiseContext} from '@contexts/CruiseContext';
+import {Cruise} from 'Cruise';
+import {getCruiseForCruiseApplication} from '@api/requests';
+import {EmptyFunction} from '@consts/EmptyFunction';
 import FormTemplate from "@app/pages/FormPage/Wrappers/FormTemplate";
 import {FormCSections} from "@app/pages/FormPage/Forms/FormC/FormCSections";
 

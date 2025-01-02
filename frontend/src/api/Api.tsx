@@ -1,15 +1,9 @@
-import axios, {
-  AxiosError,
-  AxiosResponse,
-  InternalAxiosError,
-  InternalAxiosRequestConfig,
-} from 'axios';
-import { Path as Path } from '../ToBeMoved/Tools/Path';
+import axios, {AxiosError, AxiosResponse, InternalAxiosError, InternalAxiosRequestConfig,} from 'axios';
+import {Path as Path} from '../ToBeMoved/Tools/Path';
 import userDataManager from '../ToBeMoved/CommonComponents/UserDataManager';
-import { useNavigate } from 'react-router-dom';
-import { defaultServerAddress } from '@config/defaultServerAddress';
+import {useNavigate} from 'react-router-dom';
+import {defaultServerAddress} from '@config/defaultServerAddress';
 import BusyEvent from '../ToBeMoved/CommonComponents/BusyEvent';
-import { Simulate } from 'react-dom/test-utils';
 
 declare module 'axios' {
   export interface AxiosRequestConfig {
@@ -36,7 +30,7 @@ const setAccessToken = (config: InternalAxiosRequestConfig) => {
 };
 
 export const Interceptors = () => {
-  const { ForceLogout, UserLoggedIn } = userDataManager();
+  const { ForceLogout } = userDataManager();
   const navigate = useNavigate();
   const { SetBusyWithMessage, ResetBusyState } = BusyEvent();
 

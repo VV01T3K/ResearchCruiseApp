@@ -1,11 +1,9 @@
-import { MouseEventHandler, useEffect, useRef, useState } from 'react';
-import { ButtonProps } from 'react-bootstrap';
-import { EmptyFunction } from '@consts/EmptyFunction';
-import { Button } from 'bootstrap';
+import {useEffect, useRef, useState} from 'react';
+import {ButtonProps} from 'react-bootstrap';
 
 export const ClickableOnceButton = (props: ButtonProps) => {
 
-    const [isClicked, setIsClicked] =
+    const [isClicked] =
         useState<null | React.MouseEvent<HTMLButtonElement>>(null);
 
     useEffect(() => {
@@ -16,7 +14,7 @@ export const ClickableOnceButton = (props: ButtonProps) => {
 
     return (
         <button
-            onClick={EmptyFunction} ref={buttonRef}>
+            onClick={() => {}} ref={buttonRef}>
             {props.children}
         </button>
     );

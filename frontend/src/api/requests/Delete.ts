@@ -1,5 +1,5 @@
 import Api from '@api/Api';
-import { AxiosRequestConfig } from 'axios';
+import {AxiosRequestConfig} from 'axios';
 
 const _delete = (url: string, config?: AxiosRequestConfig) =>
   Api.delete(url, config);

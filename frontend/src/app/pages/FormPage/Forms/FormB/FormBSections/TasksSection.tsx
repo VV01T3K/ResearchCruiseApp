@@ -1,7 +1,6 @@
-import React from 'react';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
-import { TasksField } from '@app/pages/FormPage/Forms/FormA/FormASections/TasksSectionFields';
+import {TasksField} from '@app/pages/FormPage/Forms/FormA/FormASections/TasksSectionFields';
 
 export const researchTasksSectionFieldNames = {
     researchTasks: 'researchTasks',

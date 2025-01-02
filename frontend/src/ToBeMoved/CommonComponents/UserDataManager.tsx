@@ -1,19 +1,18 @@
-import Api from '../../api/Api';
-import { useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Path as Path } from '../Tools/Path';
-import { CopyResponseToSessionStorage } from '../Misc';
-import { FieldValues } from 'react-hook-form';
-import { UserContext } from '../App';
+import {useContext} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {Path as Path} from '../Tools/Path';
+import {CopyResponseToSessionStorage} from '../Misc';
+import {FieldValues} from 'react-hook-form';
+import {UserContext} from '../App';
 import {
-  registerUser,
-  forgotPassword,
-  resetPassword,
-  getAccountData,
-  getEmailConfirmation,
-  loginUser,
+    changePassword,
+    forgotPassword,
+    getAccountData,
+    getEmailConfirmation,
+    loginUser,
+    registerUser,
+    resetPassword,
 } from '@api/requests';
-import { changePassword } from '@api/requests';
 
 const Register = registerUser;
 

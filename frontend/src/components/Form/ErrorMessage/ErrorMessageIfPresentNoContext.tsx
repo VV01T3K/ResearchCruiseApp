@@ -1,4 +1,4 @@
-import { ErrorMessage } from './ErrorMessageIfPresent';
+import {ErrorMessage} from './ErrorMessageIfPresent';
 
 export const ErrorMessageIfPresentNoContext = (props: {
     message?: string;

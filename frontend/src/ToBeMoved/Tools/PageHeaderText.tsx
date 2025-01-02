@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Path as Path } from './Path';
+import {useEffect, useState} from 'react';
+import {useLocation} from 'react-router-dom';
+import {Path as Path} from './Path';
 import UserDataManager from '../CommonComponents/UserDataManager';
 import useWindowWidth from '@hooks/useWindowWidth';
-import { FormContext } from '@contexts/FormContext';
 
 const PageHeaderText = () => {
   const [pageHeaderText, _setPageHeaderText] = useState<string | null>(null);

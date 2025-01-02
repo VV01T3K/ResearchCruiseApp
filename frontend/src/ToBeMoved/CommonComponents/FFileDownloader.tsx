@@ -1,11 +1,8 @@
-import React, { useContext } from 'react';
-import { ReactComponent as FileIcon } from '/node_modules/bootstrap-icons/icons/file-earmark-text.svg';
-import { DisplayContext } from '@app/pages/FormPage/Inputs/TaskTable/EvaluatedTaskTable';
-import {
-    CellFormTools,
-    CellTools,
-} from '@app/pages/FormPage/Inputs/TableParts';
 import { FileNameField } from '@app/pages/FormPage/Inputs/ContractsTable/FilePicker';
+import { CellFormTools, CellTools, } from '@app/pages/FormPage/Inputs/TableParts';
+import { DisplayContext } from '@app/pages/FormPage/Inputs/TaskTable/EvaluatedTaskTable';
+import { useContext } from 'react';
+import FileIcon from 'bootstrap-icons/icons/file-earmark-text.svg?react';
 
 export default function FFileDownloader() {
     const displayContext = useContext(DisplayContext);

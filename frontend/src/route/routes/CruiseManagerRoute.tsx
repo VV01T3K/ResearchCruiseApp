@@ -1,5 +1,5 @@
-import { Route } from 'react-router-dom';
-import { Path } from '../../ToBeMoved/Tools/Path';
+import {Route} from 'react-router-dom';
+import {Path} from '../../ToBeMoved/Tools/Path';
 import FormPage from '@app/pages/FormPage/FormPage';
 import ManagerPanel from '@app/pages/HomePage/Manager/ManagerPanel';
 import CruiseApplicationsPage from '@app/pages/CruiseApplicationsPage/CruiseApplicationsPage';

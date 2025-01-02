@@ -1,6 +1,6 @@
 import {ExportCruisesFormValues} from "ExportCruisesFormValues";
 import {useForm} from "react-hook-form";
-import React, {useState} from "react";
+import {useState} from "react";
 import {getCruisesAsCsv} from "@api/requests";
 import TextInput from "@components/Form/CommonInput/TextInput";
 import {ErrorMessageIfPresentNoContext} from "@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext";

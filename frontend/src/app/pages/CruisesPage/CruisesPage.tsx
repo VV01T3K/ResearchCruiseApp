@@ -1,11 +1,11 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import PageTitle from '../../../components/Page/PageTitle';
-import { CruisePageContent } from './CruisesPageMisc';
-import { Cruise } from 'Cruise';
+import {CruisePageContent} from './CruisesPageMisc';
+import {Cruise} from 'Cruise';
 import Page from '../../../ToBeMoved/Pages/Page';
-import { fetchCruises } from '@api/requests';
-import { sortCruiseListByNumber } from '@app/pages/CruisesPage/CruiseListFilterAndSort';
+import {fetchCruises} from '@api/requests';
+import {sortCruiseListByNumber} from '@app/pages/CruisesPage/CruiseListFilterAndSort';
 
 export const CruiseStateContext = createContext<null | {
     cruises: Cruise[];

@@ -1,8 +1,8 @@
 import Page from '../../../ToBeMoved/Pages/Page';
 import PageTitle from '@components/Page/PageTitle';
-import CruiseApplicationsList from '@app/pages/CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsList';
-import React, { createRef, useRef } from 'react';
+import {createRef} from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+
 const HelpForm = () => {
   const titleRef = createRef<HTMLInputElement>();
   const contentRef = createRef<HTMLTextAreaElement>();

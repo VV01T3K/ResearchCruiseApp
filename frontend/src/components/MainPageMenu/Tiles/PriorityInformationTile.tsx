@@ -1,7 +1,6 @@
-import { Path } from '../../../ToBeMoved/Tools/Path';
-import { TileWrapper } from '@components/MainPageMenu/Tiles/TileWrapper';
-import React from 'react';
-import { ReactComponent as Icon } from '/node_modules/bootstrap-icons/icons/info-circle.svg';
+import {Path} from '../../../ToBeMoved/Tools/Path';
+import {TileWrapper} from '@components/MainPageMenu/Tiles/TileWrapper';
+import Icon from 'bootstrap-icons/icons/info-circle.svg?react';
 
 export const PriorityInformationTile = () =>
     <TileWrapper path={Path.PriorityInformation} label={'Informacje o priorytetyzacji'}>

@@ -1,10 +1,10 @@
-import { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
-import { CruiseApplicationDetailsFormInitValues } from 'CruiseApplicationDetailsFormInitValues';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
+import {CruiseApplicationDetailsFormInitValues} from 'CruiseApplicationDetailsFormInitValues';
 import ReadOnlyTextInput from '../../../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
-import { FieldLabel } from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
+import {FieldLabel} from '@app/pages/FormPage/Inputs/FieldWrapper';
+import {CruiseApplicationContext} from '@contexts/CruiseApplicationContext';
+import {CruiseApplicationStatus} from 'CruiseApplicationStatus';
 
 export const EffectsPointsField = () => {
   const formContext = useContext(FormContext);

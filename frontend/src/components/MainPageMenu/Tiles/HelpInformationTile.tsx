@@ -1,7 +1,6 @@
-import { Path } from '../../../ToBeMoved/Tools/Path';
-import { TileWrapper } from '@components/MainPageMenu/Tiles/TileWrapper';
-import React from 'react';
-import { ReactComponent as Icon } from '/node_modules/bootstrap-icons/icons/info-lg.svg';
+import {Path} from '../../../ToBeMoved/Tools/Path';
+import {TileWrapper} from '@components/MainPageMenu/Tiles/TileWrapper';
+import Icon from 'bootstrap-icons/icons/info-lg.svg?react';
 
 export const HelpInformationTile = () =>
     <TileWrapper path={Path.HelpInformation} label={'Pomoc'}>

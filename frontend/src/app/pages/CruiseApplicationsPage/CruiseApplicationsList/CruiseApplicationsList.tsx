@@ -1,29 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
-import Api from '@api/Api';
+import {useContext, useEffect, useState} from 'react';
 import {
-  AnyStringFilterOption,
-  SelectStringFilterOption,
+    AnyStringFilterOption,
+    SelectStringFilterOption,
 } from '../../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
-import { FieldTableWrapper } from '../../FormPage/Wrappers/FieldTableWrapper';
-import {
-  cruiseApplicationsSortOptions,
-  sortCruiseApplicationsByDate,
-  sortCruiseApplicationsByNumber,
-} from './CruiseApplicationsListMisc';
-import {
-  SelectSingleValue,
-  SelectWrapper,
-} from '../../FormPage/Wrappers/ReactSelectWrapper';
-import { CruiseApplicationsTableContent } from '../CruiseApplicationsTableContent';
-import { FieldContext } from '@contexts/FieldContext';
-import { CruiseApplicationListMode } from 'CruiseApplicationListMode';
-import { ApplicationsContext } from '@contexts/ApplicationsContext';
-import { ListModeContext } from '@contexts/ListModeContext';
-import { CruiseApplication } from 'CruiseApplication';
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
-import { CruiseStatus } from '@enums/CruiseStatus';
-import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
-import { getCruiseApplications } from '@api/requests';
+import {FieldTableWrapper} from '../../FormPage/Wrappers/FieldTableWrapper';
+import {cruiseApplicationsSortOptions, sortCruiseApplicationsByNumber,} from './CruiseApplicationsListMisc';
+import {SelectSingleValue, SelectWrapper,} from '../../FormPage/Wrappers/ReactSelectWrapper';
+import {CruiseApplicationsTableContent} from '../CruiseApplicationsTableContent';
+import {FieldContext} from '@contexts/FieldContext';
+import {CruiseApplicationListMode} from 'CruiseApplicationListMode';
+import {ApplicationsContext} from '@contexts/ApplicationsContext';
+import {ListModeContext} from '@contexts/ListModeContext';
+import {CruiseApplication} from 'CruiseApplication';
+import {CruiseApplicationStatus} from 'CruiseApplicationStatus';
+import {getCruiseApplications} from '@api/requests';
 
 export const selectStringFilterDefaultOption: SelectSingleValue = {
   label: '--- Filtr wyłączony ---',

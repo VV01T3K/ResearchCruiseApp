@@ -1,6 +1,5 @@
-import React from 'react';
-import { PermissionsField } from './PermissionsSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {PermissionsField} from './PermissionsSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const permissionsSectionFieldNames = {
     permissionsRequired: 'permissionsRequired',

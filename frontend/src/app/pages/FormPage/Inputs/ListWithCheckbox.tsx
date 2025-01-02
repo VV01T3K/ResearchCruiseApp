@@ -1,18 +1,12 @@
-import React, { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
-import { BottomMenuSingleSelect, BottomMenuWithAddButton } from '@app/pages/FormPage/Inputs/TableParts';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { FieldValues } from 'react-hook-form';
-import { FieldContext } from '@contexts/FieldContext';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {FieldContext} from '@contexts/FieldContext';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { InitContext, UgTeam, UgUnit } from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
-import { FormField } from '@app/pages/FormPage/Inputs/FormYearSelect';
-import { TechnicalElements } from '@app/pages/FormPage/Inputs/TechnicalElementsUsedInput';
-import { SingleValue } from 'react-select';
-import { FieldContextWrapper } from '@app/pages/FormPage/Inputs/TechnicalElementsTable/TechnicalElementsTable';
-import { ElementsColumn } from '@app/pages/FormPage/Inputs/TechnicalElementsTable/TechnicalElementsTableFields';
-import { CellContext } from '@contexts/CellContext';
-import { KeyContext } from '@contexts/KeyContext';
+import {InitContext} from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
+import {FormField} from '@app/pages/FormPage/Inputs/FormYearSelect';
+import {FieldContextWrapper} from '@app/pages/FormPage/Inputs/TechnicalElementsTable/TechnicalElementsTable';
+import {CellContext} from '@contexts/CellContext';
 
 export type TechnicalElement = {}
 
@@ -31,7 +25,7 @@ const TechnicalElementsTools = () => {
     }
 
     function setCellValueOnBlur(checked: boolean) {
-        var text: any[];
+        let text: any[];
         if (checked && !isChecked()) {
             const text = [...fieldContext!.value];
             text.push(rowValue.id);

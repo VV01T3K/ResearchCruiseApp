@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import { SingleValue } from 'react-select';
-import { BottomMenuWithAddButtonAndHistory, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
-import { FormField } from '../FormYearSelect';
+import {useContext} from 'react';
+import {SingleValue} from 'react-select';
+import {BottomMenuWithAddButtonAndHistory, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
+import {FormField} from '../FormYearSelect';
 import FieldWrapper from '../FieldWrapper';
-import { notEmptyArray } from '../PublicationsTable/PublicationsTable';
-import { InstitutionField, NoOfPersonsField } from './GuestTeamsTableFields';
-import { FieldContextWrapper } from '../PermissionsTable/PermissionsTable';
-import { FormContext } from '@contexts/FormContext';
+import {notEmptyArray} from '../PublicationsTable/PublicationsTable';
+import {InstitutionField, NoOfPersonsField} from './GuestTeamsTableFields';
+import {FieldContextWrapper} from '../PermissionsTable/PermissionsTable';
+import {FormContext} from '@contexts/FormContext';
 
 
 export type GuestsTeam = {

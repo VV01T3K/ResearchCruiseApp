@@ -1,8 +1,7 @@
-import React from 'react';
 import Tile from './Tile';
-import { Link } from 'react-router-dom';
-import { Path as Path } from '../../../ToBeMoved/Tools/Path';
-import { ReactComponent as Icon } from '/node_modules/bootstrap-icons/icons/plus-circle-fill.svg';
+import {Link} from 'react-router-dom';
+import {Path as Path} from '../../../ToBeMoved/Tools/Path';
+import Icon from 'bootstrap-icons/icons/plus-circle-fill.svg?react';
 
 export default function NewCruiseApplicationTile() {
   return (

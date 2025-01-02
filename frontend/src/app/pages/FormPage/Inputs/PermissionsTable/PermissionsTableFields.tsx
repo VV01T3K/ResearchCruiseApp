@@ -1,9 +1,9 @@
-import { FSelectField, FTextField } from '../CellFormFields';
+import {FSelectField, FTextField} from '../CellFormFields';
 import React from 'react';
 import FilePicker from '../ContractsTable/FilePicker';
-import { SelectOptions } from '../../Wrappers/ReactSelectWrapper';
+import {SelectOptions} from '../../Wrappers/ReactSelectWrapper';
 import FFileDownloader from '../../../../../ToBeMoved/CommonComponents/FFileDownloader';
-import { KeyContext } from '@contexts/KeyContext';
+import {KeyContext} from '@contexts/KeyContext';
 
 export type OneOrModeReactElements = React.ReactElement;
 

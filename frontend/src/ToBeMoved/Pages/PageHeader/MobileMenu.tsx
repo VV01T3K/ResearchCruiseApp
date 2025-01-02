@@ -1,5 +1,4 @@
-import React from 'react';
-import { HomeLink, LogoutLink, OutlookLink, RadioMorsLink } from './PageHeaderCommon';
+import {HomeLink, LogoutLink, OutlookLink, RadioMorsLink} from './PageHeaderCommon';
 import UserDataManager from '../../CommonComponents/UserDataManager';
 
 function MobileMenu() {

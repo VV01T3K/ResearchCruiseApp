@@ -1,5 +1,5 @@
-import { Route } from 'react-router-dom';
-import { Path } from '../../ToBeMoved/Tools/Path';
+import {Route} from 'react-router-dom';
+import {Path} from '../../ToBeMoved/Tools/Path';
 import ServerErrorPage from '@app/pages/ServerErrorPage';
 import EmailConfirmPage from '@app/pages/NotLoggedInPage/EmailConfirmPage';
 import LoginPage from '@app/pages/NotLoggedInPage/LoginPage/LoginPage';

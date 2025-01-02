@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Slider from 'rc-slider';
 import './MonthSlider.css';
-import { FieldValues } from 'react-hook-form';
+import {FieldValues} from 'react-hook-form';
 import FieldWrapper from './FieldWrapper';
-import { readyFieldOptions } from '../Wrappers/ReactSelectWrapper';
-import { FormContext } from '@contexts/FormContext';
+import {readyFieldOptions} from '../Wrappers/ReactSelectWrapper';
+import {FormContext} from '@contexts/FormContext';
 
-Array.prototype.max = function (): number {
-    return Math.max.apply(null, this);
-};
+const maxValue = (array: number[]): number => {
+    return Math.max.apply(null, array);
+}
 
-Array.prototype.min = function (): number {
-    return Math.min.apply(null, this);
-};
+const minValue = (array: number[]): number => {
+    return Math.min.apply(null, array);
+}
 
 type Props = {
     className?: string,
@@ -60,9 +60,6 @@ const MonthSlider = (props: Props) => {
     ];
 
     const [minVal, maxVal] = props.range ? props.range.map((value) => Number(value)) : [0, 24];
-
-    // const slicedMonths = months.slice((minVal + 1) / 2, (maxVal) / 2 + 1)
-
     const onChange = (selectedOption: MonthRange) => {
         if (Number(selectedOption[0]) >= minVal && Number(selectedOption[1]) <= maxVal) {
             formContext!.setValue(props.fieldName, selectedOption?.map((value) => String(value)), readyFieldOptions);
@@ -81,7 +78,7 @@ const MonthSlider = (props: Props) => {
     };
 
     // User can select every half of the month
-    const monthsMarks = months.reduce((acc: MonthsMarks, month, index) => {
+    const monthsMarks = months.reduce((acc: MonthsMarks, month) => {
         acc[2 * months.indexOf(month)] = month;
         return acc;
     }, {});
@@ -91,8 +88,8 @@ const MonthSlider = (props: Props) => {
         const MonthLabel = () => (
             <label className={` text-center`}>
                 Wybrano okres:
-                od początku {field.value && labels[field.value.min()] + ' '}
-                do końca {field.value && labels[field.value.max() - 1]}.
+                od początku {field.value && labels[minValue(field.value)] + ' '}
+                do końca {field.value && labels[maxValue(field.value) - 1]}.
             </label>
         );
 
@@ -121,19 +118,18 @@ const MonthSlider = (props: Props) => {
                 }
                 }
                     {...sliderOptions} disabled={formContext?.readOnly}
-                    value={value?.map((value: String) => Number(value))} onChangeComplete={onChange}
+                    value={value?.map((value: string) => Number(value))} onChangeComplete={onChange}
                 />
                 <MonthLabel />
             </div>
         );
     };
-    const selectedWholeYear = (val: MonthRange) => (val[0] == '0' && val[1] == '24');
     const fieldProps = {
         ...props,
         rules: {
             required: 'Wybierz jedną z opcji',
             validate: {},
-        },//differenceCheck: (val:MonthRange)=>selectedWholeYear(val) && "Ustaw krótszy okres"}},
+        },
         render: render,
         defaultValue: ['0', '24'],
     };

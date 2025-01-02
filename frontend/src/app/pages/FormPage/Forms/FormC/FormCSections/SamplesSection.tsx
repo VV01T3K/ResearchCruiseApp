@@ -1,5 +1,4 @@
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import EquipmentTable from '@app/pages/FormPage/Inputs/EquipmentTable/EquipmentTable';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import SamplesTable from "@app/pages/FormPage/Inputs/SamplesTable/SamplesTable";
 
 export const samplesSectionFieldNames = {

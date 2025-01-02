@@ -1,6 +1,5 @@
-import React from 'react';
 import UserDataManager from '../../CommonComponents/UserDataManager';
-import { HomeLink, LogoutLink, OutlookLink, RadioMorsLink } from './PageHeaderCommon';
+import {HomeLink, LogoutLink, OutlookLink, RadioMorsLink} from './PageHeaderCommon';
 
 function DesktopMenu() {
     const { UserLoggedIn } = UserDataManager();

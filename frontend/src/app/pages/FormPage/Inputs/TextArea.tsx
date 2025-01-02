@@ -1,8 +1,8 @@
-import { FieldValues } from 'react-hook-form';
-import React, { useContext } from 'react';
+import {FieldValues} from 'react-hook-form';
+import {useContext} from 'react';
 import FieldWrapper from './FieldWrapper';
 import TextareaAutosize from 'react-textarea-autosize';
-import { FormContext } from '@contexts/FormContext';
+import {FormContext} from '@contexts/FormContext';
 
 type Props = {
     className?: string,
@@ -18,15 +18,6 @@ type Props = {
 
 function TextArea(props: Props) {
     const formContext = useContext(FormContext);
-
-    // const onChange = (e: { target: { value: string; }; }) => {
-    //     var value = e.target.value
-    //     if (props.maxLength && value.length > props.maxLength) {
-    //         value = value.slice(0,props.maxLength)
-    //     }
-    //
-    //     // formContext!.setValue(props.fieldName, value, readyFieldOptions)
-    // }
 
     const render = ({ field }: FieldValues) => (
         <TextareaAutosize

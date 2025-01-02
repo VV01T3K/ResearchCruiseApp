@@ -1,11 +1,12 @@
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import React, { useContext, useEffect, useState } from 'react';
-import moment from 'moment/moment';
-import 'moment/locale/pl';
-import { CruiseStateContext } from './CruisesPage';
-import { useNavigate } from 'react-router-dom';
-import { Cruise } from 'Cruise';
-import { EMPTY_GUID } from '@consts/emptyGuid';
+import {Calendar, momentLocalizer} from 'react-big-calendar';
+import {useContext, useEffect, useState} from 'react';
+import moment from 'moment';
+// @ts-expect-error - missing types
+import 'moment/dist/locale/pl';
+import {CruiseStateContext} from './CruisesPage';
+import {useNavigate} from 'react-router-dom';
+import {Cruise} from 'Cruise';
+import {EMPTY_GUID} from '@consts/emptyGuid';
 
 type CalendarCruiseEvent = {
   start: Date;
@@ -14,11 +15,8 @@ type CalendarCruiseEvent = {
   fullCruise: Cruise;
 };
 
-type Props = {
-  cruises?: Cruise[];
-};
 
-export default function CruisesCalendar(props: Props) {
+export default function CruisesCalendar() {
   const localizer = momentLocalizer(moment);
   const navigate = useNavigate();
   const cruisesStateContext = useContext(CruiseStateContext);

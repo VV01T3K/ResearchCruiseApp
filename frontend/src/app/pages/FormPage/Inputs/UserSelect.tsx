@@ -1,9 +1,8 @@
-import { FieldValues } from 'react-hook-form';
-import React from 'react';
+import {FieldValues} from 'react-hook-form';
 import FieldWrapper from './FieldWrapper';
-import { SelectWrapper } from '../Wrappers/ReactSelectWrapper';
-import { FormField } from './FormYearSelect';
-import { FormUser } from 'FormUser';
+import {SelectWrapper} from '../Wrappers/ReactSelectWrapper';
+import {FormField} from './FormYearSelect';
+import {FormUser} from 'FormUser';
 
 type Props = FormField & {
   initValues?: FormUser[];

@@ -1,4 +1,3 @@
-import React from 'react';
 import NewCruiseApplicationTile from '@components/MainPageMenu/Tiles/NewCruiseApplicationTile';
 import ManageUserTile from '@components/MainPageMenu/Tiles/ManageUserTile';
 import AccountSettingsTile from '@components/MainPageMenu/Tiles/AccountSettingsTile';

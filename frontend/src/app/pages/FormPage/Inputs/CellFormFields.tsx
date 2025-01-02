@@ -1,20 +1,14 @@
 import DatePicker from 'react-datepicker';
-import React, { HTMLProps, useContext } from 'react';
-import {
-    datePickerCommon,
-    datePickerDayAndHour,
-    datePickerDayCommon,
-    datePickerPeriodCommon,
-} from './DatePickerCommon';
-import { ParseIntInput } from './Misc';
+import React, {HTMLProps, useContext} from 'react';
+import {datePickerCommon, datePickerDayAndHour, datePickerDayCommon, datePickerPeriodCommon,} from './DatePickerCommon';
+import {ParseIntInput} from './Misc';
 import TextareaAutosize from 'react-textarea-autosize';
-import { CellFormTools, CellTools } from './TableParts';
-import { SelectOptions, SelectSingleValue, SelectWrapper } from '../Wrappers/ReactSelectWrapper';
-import { DisplayContext } from './TaskTable/EvaluatedTaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
+import {CellFormTools, CellTools} from './TableParts';
+import {SelectOptions, SelectSingleValue, SelectWrapper} from '../Wrappers/ReactSelectWrapper';
+import {DisplayContext} from './TaskTable/EvaluatedTaskTable';
+import {ReadOnlyContext} from '@contexts/ReadOnlyContext';
 import CustomConverter from '../../../../ToBeMoved/Tools/CustomConverter';
-import { FloatInputOnBlur } from '@app/pages/FormPage/Inputs/FloatInputOnBlur';
+import {FloatInputOnBlur} from '@app/pages/FormPage/Inputs/FloatInputOnBlur';
 
 export const FStandardDateField = (props: HTMLProps<any>) => {
     const displayContext = useContext(DisplayContext);
@@ -305,7 +299,7 @@ export const TextField = (props: { className?: string }) => {
         />
     );
 };
-export const FormBoolField = (props: { className?: string }) => {
+export const FormBoolField = () => {
     const { cellValue, setCellValue, field } = CellFormTools();
     const readOnlyContext = useContext(ReadOnlyContext);
     const isTrue = CustomConverter.stringToBoolean(cellValue);
@@ -339,7 +333,7 @@ export const FormBoolField = (props: { className?: string }) => {
         </div>
     );
 };
-export const BoolField = (props: { className?: string }) => {
+export const BoolField = () => {
     const { cellValue } = CellTools();
     return (
         <div className={'d-flex flex-row w-100'}>
@@ -347,7 +341,7 @@ export const BoolField = (props: { className?: string }) => {
                 disabled
                 className={
                     ' field-common col-6 ' +
-                    (Boolean(cellValue) ? ' btn btn-primary' : '')
+                    (cellValue ? ' btn btn-primary' : '')
                 }
             >
                 Tak
@@ -355,7 +349,7 @@ export const BoolField = (props: { className?: string }) => {
             <button disabled
                 className={
                     'field-common col-6 ' +
-                    (!Boolean(cellValue) ? ' btn btn-primary' : '')
+                    (!cellValue ? ' btn btn-primary' : '')
                 }
             >
                 Nie
@@ -377,7 +371,7 @@ export const FormSelectField = (props: {
     className?: string;
     options?: SelectOptions;
 }) => {
-    const { cellValue, setCellValue, field } = CellFormTools();
+    const { cellValue, setCellValue } = CellFormTools();
     return (
         <SelectWrapper
             value={props.options!.find(
@@ -394,7 +388,6 @@ export const SelectField = (props: {
     options?: SelectOptions;
 }) => {
     const { cellValue } = CellTools();
-    const formContext = useContext(FormContext);
     return (
         <SelectWrapper
             disabled

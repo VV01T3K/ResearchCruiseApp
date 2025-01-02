@@ -1,20 +1,20 @@
-import { SingleValue } from 'react-select';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { FormContext } from '@contexts/FormContext';
-import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
-import { useContext } from 'react';
-import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
+import {SingleValue} from 'react-select';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {FormContext} from '@contexts/FormContext';
+import {FieldProps} from '@app/pages/FormPage/Inputs/FormRadio';
+import {useContext} from 'react';
+import {BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton} from '@app/pages/FormPage/Inputs/TableParts';
 import {
     EndDateField,
     NameField,
     StartDateField,
 } from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentOutsideTableFields';
-import { FieldValues } from 'react-hook-form';
-import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
+import {FieldValues} from 'react-hook-form';
+import {notEmptyArray} from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { FieldContext } from '@contexts/FieldContext';
-import { ShortResearchEquipement } from 'ShortResearchEquipement';
-import { shortResearchEquipementDefaul } from '@helpers/shortResearchEquipementDefault';
+import {FieldContext} from '@contexts/FieldContext';
+import {ShortResearchEquipement} from 'ShortResearchEquipement';
+import {shortResearchEquipementDefaul} from '@helpers/shortResearchEquipementDefault';
 
 
 type EquipmentOutsideTableProps = FieldProps &

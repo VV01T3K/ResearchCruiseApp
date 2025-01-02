@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { FieldProps } from '../FormRadio';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {BottomMenuWithHistory, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {FieldProps} from '../FormRadio';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 import FieldWrapper from '../FieldWrapper';
 import {
     CategoryPicker,
@@ -11,9 +11,9 @@ import {
     InstitutionCell,
     UploadField,
 } from './ContractTableFields';
-import { notEmptyArray } from '../PublicationsTable/PublicationsTable';
-import { FieldContextWrapper } from '../PermissionsTable/PermissionsTable';
-import { FormContext } from '@contexts/FormContext';
+import {notEmptyArray} from '../PublicationsTable/PublicationsTable';
+import {FieldContextWrapper} from '../PermissionsTable/PermissionsTable';
+import {FormContext} from '@contexts/FormContext';
 
 
 export type Contract = {

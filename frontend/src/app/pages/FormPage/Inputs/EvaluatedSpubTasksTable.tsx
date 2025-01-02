@@ -1,18 +1,12 @@
-import React from 'react';
-import { FieldValues } from 'react-hook-form';
-import { OrdinalNumber } from './TableParts';
-import { FieldProps } from './FormRadio';
+import {FieldValues} from 'react-hook-form';
+import {OrdinalNumber} from './TableParts';
+import {FieldProps} from './FormRadio';
 import FieldWrapper from './FieldWrapper';
-import {
-    DisplayValueContext,
-    DisplayWrapper,
-    pointFieldRules,
-    PointsField,
-} from './TaskTable/EvaluatedTaskTable';
-import { EndYearField, NameField, StartYearField } from './SpubTasksTable';
-import { SpubTask } from 'SpubTask';
-import { FieldTableWrapper } from '../Wrappers/FieldTableWrapper';
-import { FieldContext } from '@contexts/FieldContext';
+import {DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField,} from './TaskTable/EvaluatedTaskTable';
+import {EndYearField, NameField, StartYearField} from './SpubTasksTable';
+import {SpubTask} from 'SpubTask';
+import {FieldTableWrapper} from '../Wrappers/FieldTableWrapper';
+import {FieldContext} from '@contexts/FieldContext';
 
 export type EvaluatedSpubTask = {
     id: string;

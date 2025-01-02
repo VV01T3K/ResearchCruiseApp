@@ -1,13 +1,9 @@
-import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { SelectWrapper } from '../../FormPage/Wrappers/ReactSelectWrapper';
-
-import {
-    ErrorMessageIfPresentNoContext,
-} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {UseFormReturn} from 'react-hook-form';
+import {SelectWrapper} from '../../FormPage/Wrappers/ReactSelectWrapper';
+import {ErrorMessageIfPresentNoContext,} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import UserBasedAccess from '../../../../route/UserBasedAccess';
-import { Role } from 'Role';
-import { NewUserFormValues } from 'NewUserFormValues';
+import {Role} from 'Role';
+import {NewUserFormValues} from 'NewUserFormValues';
 
 type RoleOption = {
     label: string;

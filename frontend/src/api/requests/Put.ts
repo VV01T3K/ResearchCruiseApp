@@ -1,6 +1,6 @@
 import Api from '@api/Api';
-import { Guid } from 'Guid';
-import { AxiosRequestConfig } from 'axios';
+import {Guid} from 'Guid';
+import {AxiosRequestConfig} from 'axios';
 
 const put = (url: string, data?: any, config?: AxiosRequestConfig) =>
   Api.put(url, data, config);

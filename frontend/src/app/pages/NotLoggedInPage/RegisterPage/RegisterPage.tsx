@@ -1,4 +1,3 @@
-import React from 'react';
 import RegisterForm from './RegisterForm';
 import Page from '../../../../ToBeMoved/Pages/Page';
 

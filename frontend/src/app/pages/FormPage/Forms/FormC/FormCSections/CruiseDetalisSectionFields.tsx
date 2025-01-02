@@ -1,10 +1,10 @@
-import { cruiseDetailsSectionFieldNames } from '@app/pages/FormPage/Forms/FormB/FormBSections/CruiseDetailsSection';
+import {cruiseDetailsSectionFieldNames} from '@app/pages/FormPage/Forms/FormB/FormBSections/CruiseDetailsSection';
 import ShortResearchEquipmentTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/ShortResearchEquipmentTable';
 import EquipmentLeaveTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/EquipmentLeaveTable';
 import PortTable from '@app/pages/FormPage/Inputs/CruiseDetailsTables/PortTable';
-import { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
-import { FormBInitValues } from 'FormBInitValues';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
+import {FormBInitValues} from 'FormBInitValues';
 
 
 export const CruiseDetailsDescription = () => (

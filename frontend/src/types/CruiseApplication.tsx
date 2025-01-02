@@ -1,4 +1,4 @@
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
+import {CruiseApplicationStatus} from 'CruiseApplicationStatus';
 
 export type CruiseApplication = {
   id: string;

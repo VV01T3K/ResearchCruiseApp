@@ -1,9 +1,8 @@
 import Page from '../../ToBeMoved/Pages/Page';
 import PageTitle from '@components/Page/PageTitle';
 import image from '../../resources/Oceanograf2.jpg';
-import { useNavigate } from 'react-router-dom';
 import LinkWithState from '@components/Navigation/LinkWithState';
-import { Path } from '../../ToBeMoved/Tools/Path';
+import {Path} from '../../ToBeMoved/Tools/Path';
 
 function NotFoundPage() {
   return (

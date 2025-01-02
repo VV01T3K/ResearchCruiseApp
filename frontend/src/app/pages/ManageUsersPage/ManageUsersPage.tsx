@@ -1,28 +1,15 @@
-import Api from '../../../api/Api';
-import { UserData } from 'User/UserData';
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { AnyStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
-import { FieldTableWrapper } from '../FormPage/Wrappers/FieldTableWrapper';
+import {UserData} from 'User/UserData';
+import {createContext, Dispatch, SetStateAction, useContext, useEffect, useState,} from 'react';
+import {AnyStringFilterOption} from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
+import {FieldTableWrapper} from '../FormPage/Wrappers/FieldTableWrapper';
 import ReadOnlyTextInput from '../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 import PageTitle from '../../../components/Page/PageTitle';
 import Page from '../../../ToBeMoved/Pages/Page';
 import AddUserForm from './AddUserForm/AddUserForm';
-import { CellContext } from '@contexts/CellContext';
-import { UserRole } from '@enums/UserRole';
+import {CellContext} from '@contexts/CellContext';
+import {UserRole} from '@enums/UserRole';
 import UserDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
-import {
-  activateUser,
-  deactivateUser,
-  getUsers,
-  requestEmail,
-} from '@api/requests';
+import {activateUser, deactivateUser, getUsers, requestEmail,} from '@api/requests';
 
 export const FilteredUsersContext = createContext<null | UserData[]>(null);
 export const UsersContext = createContext<null | UserData[]>(null);
@@ -110,7 +97,7 @@ export const Roles = () => {
 export const Actions = () => {
   const { user, updateUser } = UsersTools();
   const { userData } = UserDataManager();
-  const [emailText, setEmailText] = useState('Wyślij email');
+  const [emailText] = useState('Wyślij email');
   const emailSent = 'Wysłano email';
   return (
     <div className='btn-group-vertical align-items-center'>

@@ -1,19 +1,18 @@
-import React, { createContext, useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { registerLocale } from 'react-datepicker';
+import React, {createContext, useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { pl } from 'date-fns/locale/pl';
+import {pl} from 'date-fns/locale/pl';
 import 'react-dropdown/style.css';
 import FieldWrapper from '../FieldWrapper';
-import { FieldProps } from '../FormRadio';
-import { CellTools, OrdinalNumber } from '../TableParts';
-import { FIntField } from '../CellFormFields';
-import { FieldForKey, ResearchTask, taskTypes, taskTypesDefaultValues } from './TaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContext } from '@contexts/FieldContext';
-import { Guid } from 'Guid';
-import { KeyContext } from '@contexts/KeyContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {FieldProps} from '../FormRadio';
+import {CellTools, OrdinalNumber} from '../TableParts';
+import {FIntField} from '../CellFormFields';
+import {FieldForKey, ResearchTask, taskTypes, taskTypesDefaultValues} from './TaskTable';
+import {FieldContext} from '@contexts/FieldContext';
+import {Guid} from 'Guid';
+import {KeyContext} from '@contexts/KeyContext';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 
 registerLocale('pl', pl);
 
@@ -90,9 +89,6 @@ export const pointFieldRules = {
     validate: { notEmptyArray: pointsNotEmpty },
 };
 export const EvaluatedTasksTable = (props: EvaluatedTableProps) => {
-
-    const formContext = useContext(FormContext);
-
     const mdColWidths = [5, 20, 65, 10];
     const mdColTitles = ['Lp.', 'Zadanie', 'Szczegóły', 'Punkty'];
     const colTitle = 'Zadania';

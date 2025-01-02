@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FormType } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
-import { Path } from '../../ToBeMoved/Tools/Path';
+import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {FormType} from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import {Path} from '../../ToBeMoved/Tools/Path';
 
 export default function FormAForSupervisorPage() {
     const navigate = useNavigate();

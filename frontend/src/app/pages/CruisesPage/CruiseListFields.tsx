@@ -1,14 +1,13 @@
-import { Cruise } from 'Cruise';
-import { CruisesTools } from './CruisesList';
-import { HandleDeleteCruises } from './CruisesPageMisc';
+import {Cruise} from 'Cruise';
+import {CruisesTools} from './CruisesList';
+import {HandleDeleteCruises} from './CruisesPageMisc';
 import userBasedAccess from '../../../route/UserBasedAccess';
 import ReadOnlyTextInput from '../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 import AssignedCruiseApplicationsList from './AssignedCruiseApplicationsList';
 import LinkWithState from '../../../components/Navigation/LinkWithState';
-import { Path } from '../../../ToBeMoved/Tools/Path';
-import { EMPTY_GUID } from '@consts/emptyGuid';
-import { CruiseStatus } from '@enums/CruiseStatus';
-import {parse} from "date-fns";
+import {Path} from '../../../ToBeMoved/Tools/Path';
+import {EMPTY_GUID} from '@consts/emptyGuid';
+import {CruiseStatus} from '@enums/CruiseStatus';
 import {dateFormat, localeCode} from "@consts/cultureConstants";
 
 export const TableReadOnlyField = (props: {

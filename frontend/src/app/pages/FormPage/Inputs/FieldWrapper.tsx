@@ -1,7 +1,7 @@
 import ErrorMessageIfPresent from '../../../../components/Form/ErrorMessage/ErrorMessageIfPresent';
-import React, { useContext } from 'react';
-import { Controller, FieldValues, RegisterOptions } from 'react-hook-form';
-import { FormContext } from '@contexts/FormContext';
+import React, {useContext} from 'react';
+import {Controller, FieldValues, RegisterOptions} from 'react-hook-form';
+import {FormContext} from '@contexts/FormContext';
 
 type Props = {
     className?: string;

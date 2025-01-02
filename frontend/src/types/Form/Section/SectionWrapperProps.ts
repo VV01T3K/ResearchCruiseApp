@@ -1,5 +1,5 @@
 import React from 'react';
-import { SectionFieldNames } from './SectionFieldNames';
+import {SectionFieldNames} from './SectionFieldNames';
 
 export type SectionWrapperProps = {
     shortTitle: string,

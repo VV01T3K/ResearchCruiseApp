@@ -1,4 +1,4 @@
-import { ResearchEquipment } from 'ResearchEquipment';
+import {ResearchEquipment} from 'ResearchEquipment';
 
 export const researchEquipmentDefault: ResearchEquipment = {
     insuranceStartDate: undefined,

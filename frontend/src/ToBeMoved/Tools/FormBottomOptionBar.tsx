@@ -1,29 +1,16 @@
-import {
-  DownloadButtonDefault,
-  RefillBButton,
-  RefillCButton,
-  ResendButton,
-  SaveMenu,
-} from './SaveMenu';
-import React, { useContext, useEffect, useState } from 'react';
+import {DownloadButtonDefault, RefillBButton, RefillCButton, ResendButton, SaveMenu,} from './SaveMenu';
+import {useContext, useEffect, useState} from 'react';
 import {handlePrint, handleSubmit} from './FormButtonsHandlers';
-import { ReactComponent as CancelIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
-import Api from '../../api/Api';
-import { useNavigate } from 'react-router-dom';
-import { Path } from './Path';
+import CancelIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import userBasedAccess from '../../route/UserBasedAccess';
-import { FormContext } from '@contexts/FormContext';
-
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { AxiosRequestConfig } from 'axios';
-import { cruiseApplicationIdFromLocation } from '@hooks/cruiseApplicationIdFromLocation';
-import { supervisorCodeFromLocation } from '@hooks/supervisorCodeFromLocation';
-import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
-import CruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
+import {FormContext} from '@contexts/FormContext';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import {cruiseApplicationIdFromLocation} from '@hooks/cruiseApplicationIdFromLocation';
+import {supervisorCodeFromLocation} from '@hooks/supervisorCodeFromLocation';
+import {FormType} from '../Pages/CommonComponents/FormTitleWithNavigation';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
-import { putFormB } from '@api/requests/Put';
-import { acceptBySupervisor, addCruiseApplication } from '@api/requests';
+import {CruiseApplicationStatus} from 'CruiseApplicationStatus';
+import {acceptBySupervisor} from '@api/requests';
 
 const SupervisorMenu = () => {
   const cruiseApplicationId = cruiseApplicationIdFromLocation();
@@ -38,13 +25,13 @@ const SupervisorMenu = () => {
     );
   const accept = () =>
     acceptPatch('true')
-      .then((_) => setResponse('Zgłoszenie zostało zaakceptowane'))
-      .catch((err) => {});
+      .then(() => setResponse('Zgłoszenie zostało zaakceptowane'))
+      .catch(() => {});
 
   const deny = () =>
     acceptPatch('false')
-      .then((_) => setResponse('Zgłoszenie zostało odrzucone'))
-      .catch((err) => {});
+      .then(() => setResponse('Zgłoszenie zostało odrzucone'))
+      .catch(() => {});
 
   const AcceptButton = () => {
     const [disable, setDisable] = useState(false);
@@ -126,20 +113,11 @@ const SendMenu = () => {
     </div>
   );
 
-  const Points = () => (
-    <div className='text-primary pt-2 text-center'>
-      Obliczona liczba punktów: ?
-    </div>
-  );
   const ConfirmSendButton = () => {
-    const formContext = useContext(FormContext);
-    const navigate = useNavigate();
-    const cruiseApplication = CruiseApplicationFromLocation();
     const [disable, setDisable] = useState(false);
 
     useEffect(() => {}, []);
     const _handleSubmit = handleSubmit();
-    const onClickAction = formContext!.handleSubmit(_handleSubmit);
     return (
       <button
         onClick={() => {

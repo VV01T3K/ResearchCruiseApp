@@ -1,5 +1,5 @@
-import { KeyContext } from '@contexts/KeyContext';
-import { FBoolField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
+import {FBoolField} from '@app/pages/FormPage/Inputs/CellFormFields';
 
 const TechnicalElementsWrapper = (props: { keySelector: string, label: string }) => {
     return (

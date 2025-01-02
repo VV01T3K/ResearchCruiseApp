@@ -1,5 +1,4 @@
-import React from 'react';
-import { FormSectionType } from 'Form/Section/FormSectionType';
+import {FormSectionType} from 'Form/Section/FormSectionType';
 
 export const SectionContentMapper = (sections: FormSectionType[]) =>
     sections.map((section: FormSectionType, index) => (

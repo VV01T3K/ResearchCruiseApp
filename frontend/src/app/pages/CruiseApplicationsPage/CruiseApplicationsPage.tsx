@@ -1,4 +1,3 @@
-import React from 'react';
 import PageTitle from '../../../components/Page/PageTitle';
 import CruiseApplicationsList from './CruiseApplicationsList/CruiseApplicationsList';
 import Page from '../../../ToBeMoved/Pages/Page';

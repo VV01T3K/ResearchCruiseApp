@@ -1,6 +1,5 @@
-import { KeyContext } from '@contexts/KeyContext';
-import React from 'react';
-import { FDateFieldDayAndHour, FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
+import {FDateFieldDayAndHour, FTextField} from '@app/pages/FormPage/Inputs/CellFormFields';
 
 
 export const StartDateField = () => {

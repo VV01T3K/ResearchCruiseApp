@@ -1,19 +1,17 @@
-import React, { useContext, useState } from 'react';
+import {useContext, useState} from 'react';
 import CruiseApplicationsList from '../../../CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsList';
-import { FieldValues } from 'react-hook-form';
+import {FieldValues} from 'react-hook-form';
 import FieldWrapper from '../../../FormPage/Inputs/FieldWrapper';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContext } from '@contexts/FieldContext';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {FormContext} from '@contexts/FormContext';
+import {FieldContext} from '@contexts/FieldContext';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import UserBasedAccess from '../../../../../route/UserBasedAccess';
-import {
-    CruiseApplicationListMode,
-} from 'CruiseApplicationListMode';
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
-import { CruiseStatus } from '@enums/CruiseStatus';
-import { deleteCruise } from '@api/requests/Delete';
-import { useNavigate } from 'react-router-dom';
-import { Path } from '../../../../../ToBeMoved/Tools/Path';
+import {CruiseApplicationListMode,} from 'CruiseApplicationListMode';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import {CruiseStatus} from '@enums/CruiseStatus';
+import {deleteCruise} from '@api/requests/Delete';
+import {useNavigate} from 'react-router-dom';
+import {Path} from '../../../../../ToBeMoved/Tools/Path';
 
 export const applicationsSectionFieldNames = {
     applicationsIds: 'cruiseApplicationsIds',

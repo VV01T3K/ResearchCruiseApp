@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom';
-import React from 'react';
+import {Link} from 'react-router-dom';
 import UserDataManager from '../../CommonComponents/UserDataManager';
 import Logo from '../../../resources/logo.svg';
-import { ReactComponent as BroadcastIcon } from '/node_modules/bootstrap-icons/icons/broadcast.svg';
-import { ReactComponent as EnvelopeIcon } from '/node_modules/bootstrap-icons/icons/envelope.svg';
-import { ReactComponent as HouseIcon } from '/node_modules/bootstrap-icons/icons/house.svg';
-import { ReactComponent as LogoutIcon } from '/node_modules/bootstrap-icons/icons/box-arrow-right.svg';
+import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
+import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
+import HouseIcon from 'bootstrap-icons/icons/house.svg?react';
+import LogoutIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 
 type Props = {
     className?: string

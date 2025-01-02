@@ -1,6 +1,5 @@
-import React from 'react';
-import { ResearchAreaDescriptionField, ResearchAreaField } from './ResearchAreaSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {ResearchAreaDescriptionField, ResearchAreaField} from './ResearchAreaSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const researchAreaSectionFieldNames = {
     researchArea: 'researchAreaId',

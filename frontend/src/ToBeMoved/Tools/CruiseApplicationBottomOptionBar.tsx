@@ -1,20 +1,14 @@
-import React, { useContext, useState } from 'react';
-import Api from '../../api/Api';
-import { useNavigate } from 'react-router-dom';
-import { Path } from './Path';
+import React, {useContext, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Path} from './Path';
 import userBasedAccess from '../../route/UserBasedAccess';
-import { FormContext } from '@contexts/FormContext';
-import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
+import {FormContext} from '@contexts/FormContext';
+import {CruiseApplicationContext} from '@contexts/CruiseApplicationContext';
+import {CruiseApplicationStatus} from 'CruiseApplicationStatus';
 
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
-import { AxiosRequestConfig } from 'axios';
-import {
-  acceptApplication,
-  editEvaluation,
-  getCruiseApplication,
-} from '@api/requests';
+import {acceptApplication, editEvaluation, getCruiseApplication,} from '@api/requests';
 
 export const RefreshApplicationDetailsPage = () => {
   const location = extendedUseLocation();
@@ -109,7 +103,7 @@ export const MenuWithWarning = (props: {
   </div>
 );
 
-const ToggleButton = (disabledText: string, enabledText: string) => {
+const ToggleButton = () => {
   const [toggle, setToggle] = useState(false);
   const DisabledRender = () => (
     <div
@@ -131,13 +125,9 @@ const ToggleButton = (disabledText: string, enabledText: string) => {
 };
 
 export const CancelApplicationButton = () => {
-  const [confirm, setConfirm] = useState(false);
   const [errorMessage, setError] = useState<string | null>(null);
   const acceptApplication = AcceptApplication('false');
-  const { toggle, DisabledRender, EnabledRender } = ToggleButton(
-    'Odrzuć zgłoszenie',
-    'Anuluj'
-  );
+  const { toggle, DisabledRender, EnabledRender } = ToggleButton();
   const ConfirmMenu = () => (
     <MenuWithWarning
       message={'Po odrzuceniu wymagane będzie ponowne złożenie wniosku'}

@@ -1,20 +1,16 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { FDateFieldOnlyYear, FTextField } from './CellFormFields';
-import {
-    BottomMenuWithAddButtonAndHistory,
-    OrdinalNumber,
-    RemoveRowButton,
-} from './TableParts';
-import { FieldProps } from './FormRadio';
+import {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {FDateFieldOnlyYear, FTextField} from './CellFormFields';
+import {BottomMenuWithAddButtonAndHistory, OrdinalNumber, RemoveRowButton,} from './TableParts';
+import {FieldProps} from './FormRadio';
 import FieldWrapper from './FieldWrapper';
-import { notEmptyArray } from './PublicationsTable/PublicationsTable';
-import { FieldContextWrapper } from './PermissionsTable/PermissionsTable';
-import { FormContext } from '@contexts/FormContext';
-import { SpubTask } from 'SpubTask';
-import { spubTaskDefaultValue } from '@helpers/spubTaskDefaultValue';
-import { FieldTableWrapper } from '../Wrappers/FieldTableWrapper';
-import { KeyContext } from '@contexts/KeyContext';
+import {notEmptyArray} from './PublicationsTable/PublicationsTable';
+import {FieldContextWrapper} from './PermissionsTable/PermissionsTable';
+import {FormContext} from '@contexts/FormContext';
+import {SpubTask} from 'SpubTask';
+import {spubTaskDefaultValue} from '@helpers/spubTaskDefaultValue';
+import {FieldTableWrapper} from '../Wrappers/FieldTableWrapper';
+import {KeyContext} from '@contexts/KeyContext';
 
 export const NameField = () => {
     return (

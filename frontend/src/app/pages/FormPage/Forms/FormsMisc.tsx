@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import {useContext} from 'react';
 import FormTemplate from '../Wrappers/FormTemplate';
-import { FormContext } from '@contexts/FormContext';
-import { FormSectionType } from 'Form/Section/FormSectionType';
-import { FormTypeKeys, FormTypeValues } from '../../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import {FormContext} from '@contexts/FormContext';
+import {FormSectionType} from 'Form/Section/FormSectionType';
+import {FormTypeKeys, FormTypeValues} from '../../../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
 export const FormHelpers = () => {
     const formContext = useContext(FormContext);

@@ -1,5 +1,5 @@
-import { useContext, useEffect, useRef } from 'react';
-import { FormContext } from '@contexts/FormContext';
+import {useContext, useEffect, useRef} from 'react';
+import {FormContext} from '@contexts/FormContext';
 
 // TODO Right handling focus in form
 export const GetFocusRef = <T extends HTMLSelectElement | HTMLDivElement>(

@@ -1,6 +1,5 @@
 import {Path as Path} from '../../../ToBeMoved/Tools/Path';
-import React from "react";
-import {ReactComponent as Icon} from "/node_modules/bootstrap-icons/icons/book.svg"
+import Icon from "bootstrap-icons/icons/book.svg?react"
 import {TileWrapper} from "../../MainPageMenu/Tiles/TileWrapper";
 
 function MyPublicationsTile(){

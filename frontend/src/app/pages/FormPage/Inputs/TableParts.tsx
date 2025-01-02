@@ -1,18 +1,14 @@
-import React, { useContext } from 'react';
-import {
-    SelectOptions,
-    SelectSingleValue,
-    SelectWrapper,
-} from '../Wrappers/ReactSelectWrapper';
-import { ReactComponent as RemoveIcon } from '/node_modules/bootstrap-icons/icons/x-lg.svg';
+import React, {useContext} from 'react';
+import {SelectOptions, SelectSingleValue, SelectWrapper,} from '../Wrappers/ReactSelectWrapper';
+import RemoveIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 
 import useWindowWidth from '../../../../hooks/useWindowWidth';
-import { DisplayContext } from './TaskTable/EvaluatedTaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { ReadOnlyContext } from '@contexts/ReadOnlyContext';
-import { FieldContext } from '@contexts/FieldContext';
-import { CellContext } from '@contexts/CellContext';
-import { KeyContext } from '@contexts/KeyContext';
+import {DisplayContext} from './TaskTable/EvaluatedTaskTable';
+import {FormContext} from '@contexts/FormContext';
+import {ReadOnlyContext} from '@contexts/ReadOnlyContext';
+import {FieldContext} from '@contexts/FieldContext';
+import {CellContext} from '@contexts/CellContext';
+import {KeyContext} from '@contexts/KeyContext';
 
 export const RemoveRow = () => {
     const fieldContext = useContext(FieldContext);

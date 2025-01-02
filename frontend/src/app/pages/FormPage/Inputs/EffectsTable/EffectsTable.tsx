@@ -1,34 +1,37 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { registerLocale } from 'react-datepicker';
+import {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { pl } from 'date-fns/locale/pl';
+import {pl} from 'date-fns/locale/pl';
 import 'react-dropdown/style.css';
 import FieldWrapper from '../FieldWrapper';
-import { FieldProps } from '../FormRadio';
-import { FieldContext } from '@contexts/FieldContext';
+import {FieldProps} from '../FormRadio';
+import {FieldContext} from '@contexts/FieldContext';
 import {
     AuthorField,
-    DateField, DeputyConditionMetField,
+    DateField,
+    DeputyConditionMetField,
     DidacticsDescriptionField,
     EndDateField,
     FinancingAmountField,
     FinancingApprovedField,
     InstitutionField,
-    MagazineField, ManagerConditionMetField,
+    MagazineField,
+    ManagerConditionMetField,
     MinisterialPointsField,
     ProjectDraftTitleField,
-    PublicationDraftTitleField, PublicationMinisterialPointsField,
+    PublicationDraftTitleField,
+    PublicationMinisterialPointsField,
     SecuredAmountField,
     StartDateField,
     TaskDescriptionField,
     TitleField,
 } from './EffectsTableFields';
-import { BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { DisplayContext } from '@app/pages/FormPage/Inputs/TaskTable/EvaluatedTaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { KeyContext } from '@contexts/KeyContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {DisplayContext} from '@app/pages/FormPage/Inputs/TaskTable/EvaluatedTaskTable';
+import {FormContext} from '@contexts/FormContext';
+import {KeyContext} from '@contexts/KeyContext';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 import {DoneField} from "@app/pages/FormPage/Inputs/EffectsTable/EffectsTableFields";
 
 registerLocale('pl', pl);
@@ -147,7 +150,6 @@ export const FieldForKey = () => {
 };
 
 const FieldsCell = () => {
-    const displayContext = useContext(DisplayContext);
     const { rowValue } = CellFormTools();
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center align-items-center w-100">

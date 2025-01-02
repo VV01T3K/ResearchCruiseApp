@@ -1,7 +1,9 @@
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import {
-    CruiseDetailsDescription, EquipmentLeaveField,
-    EquipmentOutsideField, PortLeaveField,
+    CruiseDetailsDescription,
+    EquipmentLeaveField,
+    EquipmentOutsideField,
+    PortLeaveField,
 } from '@app/pages/FormPage/Forms/FormB/FormBSections/CruiseDetalisSectionFields';
 
 

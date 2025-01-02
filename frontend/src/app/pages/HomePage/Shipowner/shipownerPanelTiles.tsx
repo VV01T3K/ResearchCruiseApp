@@ -1,11 +1,10 @@
-import React from 'react';
 import CruisesTile from '@components/MainPageMenu/Tiles/CruisesTile';
 import CruiseApplicationsTile from '@components/MainPageMenu/Tiles/CruiseApplicationsTile';
 import ManageUserTile from '@components/MainPageMenu/Tiles/ManageUserTile';
 import AccountSettingsTile from '@components/MainPageMenu/Tiles/AccountSettingsTile';
 import NewCruiseApplicationTile from '@components/MainPageMenu/Tiles/NewCruiseApplicationTile';
-import { HelpInformationTile } from '@components/MainPageMenu/Tiles/HelpInformationTile';
-import { PriorityInformationTile } from '@components/MainPageMenu/Tiles/PriorityInformationTile';
+import {HelpInformationTile} from '@components/MainPageMenu/Tiles/HelpInformationTile';
+import {PriorityInformationTile} from '@components/MainPageMenu/Tiles/PriorityInformationTile';
 import MyPublicationsTile from '@components/MainPageMenu/Tiles/MyPublicationTile';
 import CruiseEffectsTile from '@components/MainPageMenu/Tiles/CruiseEffectsTile';
 

@@ -1,4 +1,4 @@
-import { Context, useContext } from 'react';
+import {Context, useContext} from 'react';
 import SimpleInfoTile from '../ToBeMoved/CommonComponents/SimpleInfoTile';
 import ReadOnlyTextInput from '../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 

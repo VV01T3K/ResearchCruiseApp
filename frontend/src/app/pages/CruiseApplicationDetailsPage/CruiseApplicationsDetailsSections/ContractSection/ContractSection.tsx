@@ -1,7 +1,6 @@
-import React from 'react';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import { ContractsField } from './ContractsField';
-import { contractSectionFieldNames } from './ContractSectionFieldNames';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import {ContractsField} from './ContractsField';
+import {contractSectionFieldNames} from './ContractSectionFieldNames';
 
 
 export const ContractSection = () => SectionWrapper(

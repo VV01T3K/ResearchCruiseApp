@@ -1,20 +1,7 @@
-import React, {
-  CSSProperties,
-  Ref,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, {CSSProperties, Ref, useContext,} from 'react';
 import useWindowWidth from '../../../../hooks/useWindowWidth';
-import { CellContext } from '@contexts/CellContext';
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  List,
-} from 'react-virtualized';
-import useWindowHeight from '@hooks/useWindowHeight';
+import {CellContext} from '@contexts/CellContext';
+import {AutoSizer, CellMeasurer, CellMeasurerCache, List,} from 'react-virtualized';
 
 // TODO: [Not important] Split to smaller parts
 
@@ -29,9 +16,6 @@ export const FieldTableWrapper = (
   reactWindow?: boolean
 ) => {
   const windowWidth = useWindowWidth();
-  const windowHeight = useWindowHeight();
-
-  const rootRef = useRef<HTMLDivElement>(null);
   const tableHeight =
     window.innerHeight - 270 < 600 ? window.innerHeight - 270 : 600;
   const ColTitle = () => (

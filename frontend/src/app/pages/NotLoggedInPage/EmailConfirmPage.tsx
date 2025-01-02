@@ -1,12 +1,12 @@
-import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {ErrorMessageIfPresentNoContext} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import userDataManager from '../../../ToBeMoved/CommonComponents/UserDataManager';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import useFormWrapper from '../../../ToBeMoved/CommonComponents/useFormWrapper';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import WaitingPage from '../WaitingPage';
 import Page from '../../../ToBeMoved/Pages/Page';
-import { Path } from '../../../ToBeMoved/Tools/Path';
+import {Path} from '../../../ToBeMoved/Tools/Path';
 
 // TODO: [Not important] Switch to useContext(FormContext)
 function EmailConfirmPage() {

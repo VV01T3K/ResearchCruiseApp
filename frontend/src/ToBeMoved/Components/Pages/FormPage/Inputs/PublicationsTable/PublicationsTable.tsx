@@ -1,11 +1,11 @@
-import { CategoryPicker, InformationColumn, MinisterialPointsField, YearField } from './PublicationsTableFields';
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
-import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
-import { useContext } from 'react';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { FieldValues } from 'react-hook-form';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContextWrapper } from '@app/pages/FormPage/Inputs/CrewTable/CrewTable';
+import {CategoryPicker, InformationColumn, MinisterialPointsField, YearField} from './PublicationsTableFields';
+import {BottomMenuWithHistory, OrdinalNumber, RemoveRowButton} from '@app/pages/FormPage/Inputs/TableParts';
+import {FieldProps} from '@app/pages/FormPage/Inputs/FormRadio';
+import {useContext} from 'react';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {FieldValues} from 'react-hook-form';
+import {FormContext} from '@contexts/FormContext';
+import {FieldContextWrapper} from '@app/pages/FormPage/Inputs/CrewTable/CrewTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 
 export const notEmptyArray = <T extends object>(value: FieldValues) => {

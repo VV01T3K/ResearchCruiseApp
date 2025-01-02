@@ -1,6 +1,6 @@
-import { SimpleInfoContextWrapperSingleField } from '@components/SimpleInfoContextWrapperSingleField';
-import { CruiseApplication } from 'CruiseApplication';
-import { CruiseApplicationContext } from '@contexts/CruiseApplicationContext';
+import {SimpleInfoContextWrapperSingleField} from '@components/SimpleInfoContextWrapperSingleField';
+import {CruiseApplication} from 'CruiseApplication';
+import {CruiseApplicationContext} from '@contexts/CruiseApplicationContext';
 
 export const SimpleInfoWrapperSingleFieldCruiseApplication = (props: {
     title: string,

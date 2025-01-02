@@ -1,6 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Buffer } from 'buffer';
+import {useNavigate} from 'react-router-dom';
+import {Buffer} from 'buffer';
 
 export type LinkWithStateProps = {
     to: string,
@@ -26,7 +25,7 @@ export default function LinkWithState(props: LinkWithStateProps) {
                     if (props.useWindow) {
                         const param = Buffer.from(JSON.stringify(props.state)).toString('base64');
                         // temporary
-                        let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+                        const params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
                             width=900,height=1200,left=-1000,top=-1000`;
                         window.open(props.to + '?data=' + param, '_blank', params);
                     } else {

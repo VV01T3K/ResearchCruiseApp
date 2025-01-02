@@ -1,4 +1,4 @@
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import DetailedPlanTable from '@app/pages/FormPage/Inputs/DetailedPlanTable/DetailedPlanTable';
 
 export const cruisePlanSectionFieldNames = {

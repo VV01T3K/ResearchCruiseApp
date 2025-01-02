@@ -1,9 +1,5 @@
-import React from 'react';
-import { Controller, UseFormReturn } from 'react-hook-form';
-
-import useWindowWidth from '../../../../hooks/useWindowWidth';
-
-import { ErrorMessageIfPresentNoContext } from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {Controller, UseFormReturn} from 'react-hook-form';
+import {ErrorMessageIfPresentNoContext} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 
 export type TechnicalElements = {
     bowStarboard: boolean;
@@ -32,8 +28,6 @@ type Props = {
 };
 
 export default function TechnicalElementsUsedInput(props: Props) {
-    const windowWidth = useWindowWidth();
-
     const disabled =
         props.form!.formState.errors[props.name]?.type == 'noEmptyRowFields';
 

@@ -1,17 +1,15 @@
-import React, { useContext, useState } from 'react';
+import {useContext, useState} from 'react';
 import ButtonWithState from '../../../components/Navigation/ButtonWithState';
-import { CruiseStateContext } from './CruisesPage';
+import {CruiseStateContext} from './CruisesPage';
 import CruisesList from './CruisesList';
 import ReactSwitch from 'react-switch';
 import CruisesCalendar from './CruisesCalendar';
 import UserBasedAccess from '../../../route/UserBasedAccess';
-import { Path } from '../../../ToBeMoved/Tools/Path';
-import {fetchCruises, getCruisesAsCsv} from '@api/requests';
-import { autoAddCruises } from '@api/requests/Put';
-import { deleteCruise } from '@api/requests/Delete';
-import { sortCruiseListByNumber } from '@app/pages/CruisesPage/CruiseListFilterAndSort';
-import TextArea from "@app/pages/FormPage/Inputs/TextArea";
-import TextareaAutosize from "react-textarea-autosize";
+import {Path} from '../../../ToBeMoved/Tools/Path';
+import {fetchCruises} from '@api/requests';
+import {autoAddCruises} from '@api/requests/Put';
+import {deleteCruise} from '@api/requests/Delete';
+import {sortCruiseListByNumber} from '@app/pages/CruisesPage/CruiseListFilterAndSort';
 import {ExportCruisesForm} from "@app/pages/CruisesPage/ExportCruisesForm/ExportCruisesForm";
 
 export const ModeSwitch = () => {

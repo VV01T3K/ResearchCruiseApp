@@ -1,5 +1,5 @@
-import { useLocation } from 'react-router-dom';
-import { Buffer } from 'buffer';
+import {useLocation} from 'react-router-dom';
+import {Buffer} from 'buffer';
 
 export const extendedUseLocation = () => {
     const location = useLocation();

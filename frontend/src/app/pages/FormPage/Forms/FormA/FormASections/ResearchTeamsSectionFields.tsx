@@ -1,10 +1,10 @@
 import UgTeamsTable from '../../../Inputs/UgTeamsTable/UgTeamsTable';
 import GuestTeamsTable from '../../../Inputs/GuestTeamsTable/GuestTeamsTable';
-import React, { useContext } from 'react';
-import { researchTeamsSectionFieldNames } from './ResearchTeamsSection';
+import {useContext} from 'react';
+import {researchTeamsSectionFieldNames} from './ResearchTeamsSection';
 
-import { FormContext } from '@contexts/FormContext';
-import { FormAInitValues } from 'FormAInitValues';
+import {FormContext} from '@contexts/FormContext';
+import {FormAInitValues} from 'FormAInitValues';
 
 export const UgTeamsField = () => {
     const formContext = useContext(FormContext);

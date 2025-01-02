@@ -1,14 +1,14 @@
-import React, { createContext, useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { BottomMenuSingleSelect, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton } from '../TableParts';
+import {createContext, useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {BottomMenuSingleSelect, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton} from '../TableParts';
 import FieldWrapper from '../FieldWrapper';
-import { FormField } from '../FormYearSelect';
-import { FIntField } from '../CellFormFields';
-import { DisplayContext } from '../TaskTable/EvaluatedTaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContext } from '@contexts/FieldContext';
-import { KeyContext } from '@contexts/KeyContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {FormField} from '../FormYearSelect';
+import {FIntField} from '../CellFormFields';
+import {DisplayContext} from '../TaskTable/EvaluatedTaskTable';
+import {FormContext} from '@contexts/FormContext';
+import {FieldContext} from '@contexts/FieldContext';
+import {KeyContext} from '@contexts/KeyContext';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 
 
 export type UgTeam = {

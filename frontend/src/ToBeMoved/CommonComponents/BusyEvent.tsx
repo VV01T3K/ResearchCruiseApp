@@ -1,13 +1,10 @@
-import useCustomEvent from '../Tools/useCustomEvent';
-import { useContext, useEffect, useState } from 'react';
-
-
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
 import { BusyContext } from '@contexts/BusyContext';
+import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import { useContext } from 'react';
 
 const BusyEvent = () => {
     const [busyMessage, setBusyMessage] = useContext(BusyContext)!;
-    const location = extendedUseLocation();
+    extendedUseLocation();
 
     const ResetBusyState = () => setBusyMessage(null);
 

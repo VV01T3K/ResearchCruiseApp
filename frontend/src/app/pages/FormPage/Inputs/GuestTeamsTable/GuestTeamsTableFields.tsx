@@ -1,6 +1,5 @@
-import { FIntField, FTextField } from '../CellFormFields';
-import React from 'react';
-import { KeyContext } from '@contexts/KeyContext';
+import {FIntField, FTextField} from '../CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
 
 export const InstitutionField = () =>
     (

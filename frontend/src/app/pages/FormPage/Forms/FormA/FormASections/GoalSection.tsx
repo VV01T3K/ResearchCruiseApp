@@ -1,6 +1,5 @@
-import React from 'react';
-import { CruiseGoalDescriptionField, CruiseGoalField } from './GoalSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {CruiseGoalDescriptionField, CruiseGoalField} from './GoalSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const goalSectionFieldNames = {
     cruiseGoal: 'cruiseGoal',

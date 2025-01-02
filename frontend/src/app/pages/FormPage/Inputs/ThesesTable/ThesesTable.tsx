@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { BottomMenuWithHistory, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { FieldProps } from '../FormRadio';
+import {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {BottomMenuWithHistory, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {FieldProps} from '../FormRadio';
 import FieldWrapper from '../FieldWrapper';
-import { FDateFieldOnlyYear, FSelectField, FTextField } from '../CellFormFields';
-import { FieldContextWrapper } from '../PermissionsTable/PermissionsTable';
-import { FormContext } from '@contexts/FormContext';
-import { KeyContext } from '@contexts/KeyContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {FDateFieldOnlyYear, FSelectField, FTextField} from '../CellFormFields';
+import {FieldContextWrapper} from '../PermissionsTable/PermissionsTable';
+import {FormContext} from '@contexts/FormContext';
+import {KeyContext} from '@contexts/KeyContext';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 
 export type Publication = {
     category: string,

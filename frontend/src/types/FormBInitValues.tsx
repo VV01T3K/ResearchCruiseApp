@@ -1,13 +1,12 @@
-import { FormUser } from 'FormUser';
-import { ResearchArea } from '@app/pages/FormPage/Inputs/ResearchAreaSelect';
-import { ResearchTask } from '@app/pages/FormPage/Inputs/TaskTable/TaskTable';
-import { Contract } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
-import { UgUnit } from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
-import { SpubTask } from 'SpubTask';
-import { Crew } from '@app/pages/FormPage/Inputs/CrewInput';
-import { CrewMember } from 'CrewMember';
-import { ShortResearchEquipement } from 'ShortResearchEquipement';
-import { ShipEquipment } from '@app/pages/FormPage/Forms/FormB/FormBSections/ShipEquipmentSection';
+import {FormUser} from 'FormUser';
+import {ResearchArea} from '@app/pages/FormPage/Inputs/ResearchAreaSelect';
+import {ResearchTask} from '@app/pages/FormPage/Inputs/TaskTable/TaskTable';
+import {Contract} from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
+import {UgUnit} from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
+import {SpubTask} from 'SpubTask';
+import {CrewMember} from 'CrewMember';
+import {ShortResearchEquipement} from 'ShortResearchEquipement';
+import {ShipEquipment} from '@app/pages/FormPage/Forms/FormB/FormBSections/ShipEquipmentSection';
 
 // TODO: Change
 export type FormBInitValues = {

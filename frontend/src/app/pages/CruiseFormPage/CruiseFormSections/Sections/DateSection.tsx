@@ -1,6 +1,5 @@
-import React from 'react';
-import { EndDateField, StartDateField } from '../../../FormPage/Inputs/DateField';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {EndDateField, StartDateField} from '../../../FormPage/Inputs/DateField';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const dateSectionFieldNames = {
     startDate: 'startDate',

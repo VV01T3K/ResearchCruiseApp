@@ -1,9 +1,8 @@
 import Api from '../Api';
-import { RegisterData } from 'RegisterData';
-import { ForgotPasswordData } from 'ForgotPasswordData';
-import { ResetPasswordData } from 'ResetPasswordData';
-import { UserData } from 'User/UserData';
-import { Guid } from 'Guid';
+import {RegisterData} from 'RegisterData';
+import {ForgotPasswordData} from 'ForgotPasswordData';
+import {ResetPasswordData} from 'ResetPasswordData';
+import {UserData} from 'User/UserData';
 
 const post = (url: string, data: any, raw?: boolean) =>
   Api.post(url, data, { raw: raw });

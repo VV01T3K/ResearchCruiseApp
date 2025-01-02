@@ -1,5 +1,5 @@
-import { Route } from 'react-router-dom';
-import { Path } from '../../ToBeMoved/Tools/Path';
+import {Route} from 'react-router-dom';
+import {Path} from '../../ToBeMoved/Tools/Path';
 import FormPage from '@app/pages/FormPage/FormPage';
 import ManageUsersPage from '@app/pages/ManageUsersPage/ManageUsersPage';
 import AdminPanel from '@app/pages/HomePage/Admin/AdminPanel';
@@ -7,7 +7,6 @@ import CruiseApplicationsPage from '@app/pages/CruiseApplicationsPage/CruiseAppl
 import CruiseApplicationDetailsPage from '@app/pages/CruiseApplicationDetailsPage/CruiseApplicationDetailsPage';
 import CruisesPage from '@app/pages/CruisesPage/CruisesPage';
 import CruiseFormPage from '@app/pages/CruiseFormPage/CruiseFormPage';
-import HelpInformationPage from '@app/pages/HelpInformationPage/HelpInformationPage';
 import MyPublicationsPage from '@app/pages/MyPublications/MyPublicationsPage';
 import CruiseEffectsPage from '@app/pages/CruiseEffects/CruiseEffectsPage';
 

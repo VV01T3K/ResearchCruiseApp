@@ -1,9 +1,8 @@
-import React from 'react';
-import { OrdinalNumber } from '../TableParts';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
-import { FieldLabel } from '../FieldWrapper';
-import { DisplayValueContext, DisplayWrapper } from '../TaskTable/EvaluatedTaskTable';
-import { NoOfEmployeesField, NoOfStudentsField, UgTeam, UnitNameField } from './UgTeamsTable';
+import {OrdinalNumber} from '../TableParts';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
+import {FieldLabel} from '../FieldWrapper';
+import {DisplayValueContext, DisplayWrapper} from '../TaskTable/EvaluatedTaskTable';
+import {NoOfEmployeesField, NoOfStudentsField, UgTeam, UnitNameField} from './UgTeamsTable';
 
 
 const ugTeamsTableContent = () =>

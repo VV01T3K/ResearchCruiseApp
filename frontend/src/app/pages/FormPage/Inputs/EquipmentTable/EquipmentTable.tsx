@@ -1,27 +1,24 @@
-import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
-import { useContext } from 'react';
+import {FieldProps} from '@app/pages/FormPage/Inputs/FormRadio';
+import {useContext} from 'react';
 import {
     InsuranceColumn,
     NameField,
     PermissionField,
 } from '@app/pages/FormPage/Inputs/EquipmentTable/EquipmentTableFields';
-import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
-import { FieldValues } from 'react-hook-form';
-import { SingleValue } from 'react-select';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { FormContext } from '@contexts/FormContext';
-import { FieldContext } from '@contexts/FieldContext';
+import {BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton} from '@app/pages/FormPage/Inputs/TableParts';
+import {FieldValues} from 'react-hook-form';
+import {SingleValue} from 'react-select';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {FormContext} from '@contexts/FormContext';
+import {FieldContext} from '@contexts/FieldContext';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { ResearchEquipment } from 'ResearchEquipment';
-import { researchEquipmentDefault } from '@helpers/researchEquipmentDefault';
-import { SpubTask } from 'SpubTask';
+import {ResearchEquipment} from 'ResearchEquipment';
+import {researchEquipmentDefault} from '@helpers/researchEquipmentDefault';
 
 type EquipmentProps = FieldProps
 
 
 const equipmentTableContent = () => {
-    const formContext = useContext(FormContext);
-
     return [
         () => (<OrdinalNumber label={'Sprzęt'} />),
         NameField,

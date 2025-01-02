@@ -1,16 +1,15 @@
-import React from 'react';
-import tilesDndStyle from '/node_modules/react-tiles-dnd/esm/index.css';
-import { TilesContainer } from 'react-tiles-dnd';
-import { renderTileFunction } from './RenderTileFunction';
-import { tileSize } from './tileSize';
-import { TileType } from 'TileType';
+import 'react-tiles-dnd/esm/index.css';
+import {TilesContainer} from 'react-tiles-dnd';
+import {renderTileFunction} from './RenderTileFunction';
+import {tileSize} from './tileSize';
+import {TileType} from 'TileType';
 
 type Props = {
     tiles: TileType[];
 };
 
 const TilesMenu = (props: Props) => (
-    <div className={'tiles-container ' + tilesDndStyle}>
+    <div className={'tiles-container'}>
         <TilesContainer
             data={props.tiles}
             disabled={true}

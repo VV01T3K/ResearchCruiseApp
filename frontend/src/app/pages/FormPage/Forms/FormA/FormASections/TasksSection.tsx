@@ -1,6 +1,5 @@
-import React from 'react';
-import { TasksField } from './TasksSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {TasksField} from './TasksSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const researchTasksSectionFieldNames = {
     researchTasks: 'researchTasks',

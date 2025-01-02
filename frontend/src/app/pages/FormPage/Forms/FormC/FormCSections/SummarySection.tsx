@@ -1,5 +1,4 @@
-import React from 'react';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import TextArea from "@app/pages/FormPage/Inputs/TextArea";
 
 

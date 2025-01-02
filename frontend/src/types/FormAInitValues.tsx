@@ -1,11 +1,11 @@
-import { FormUser } from 'FormUser';
-import { ResearchArea } from '@app/pages/FormPage/Inputs/ResearchAreaSelect';
-import { ResearchTask } from '@app/pages/FormPage/Inputs/TaskTable/TaskTable';
-import { Contract } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
-import { UgUnit } from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
-import { SpubTask } from 'SpubTask';
-import { GuestsTeam } from '@app/pages/FormPage/Inputs/GuestTeamsTable/GuestTeamsTable';
-import { Publication } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
+import {FormUser} from 'FormUser';
+import {ResearchArea} from '@app/pages/FormPage/Inputs/ResearchAreaSelect';
+import {ResearchTask} from '@app/pages/FormPage/Inputs/TaskTable/TaskTable';
+import {Contract} from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
+import {UgUnit} from '@app/pages/FormPage/Inputs/UgTeamsTable/UgTeamsTable';
+import {SpubTask} from 'SpubTask';
+import {GuestsTeam} from '@app/pages/FormPage/Inputs/GuestTeamsTable/GuestTeamsTable';
+import {Publication} from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 
 export type FormAInitValues = {
     cruiseManagers: FormUser[];

@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { CellFormTools, CellTools } from '../TableParts';
-import { ReactComponent as FileIcon } from '/node_modules/bootstrap-icons/icons/file-earmark-text.svg';
-import { DisplayContext } from '../TaskTable/EvaluatedTaskTable';
+import React, {useContext} from 'react';
+import {CellFormTools, CellTools} from '../TableParts';
+import FileIcon from 'bootstrap-icons/icons/file-earmark-text.svg?react';
+import {DisplayContext} from '../TaskTable/EvaluatedTaskTable';
 
 const defaultFileValue = { name: '', content: '' };
 

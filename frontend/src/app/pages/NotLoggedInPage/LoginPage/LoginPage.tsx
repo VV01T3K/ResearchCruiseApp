@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import {useEffect} from 'react';
 import LoginForm from './LoginForm';
 import Page from '../../../../ToBeMoved/Pages/Page';
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
 import useFormWrapper from '../../../../ToBeMoved/CommonComponents/useFormWrapper';
-import { useNavigate } from 'react-router-dom';
-import { Path } from '../../../../ToBeMoved/Tools/Path';
-import UserDataManager, { IsUserLoggedIn } from '../../../../ToBeMoved/CommonComponents/UserDataManager';
+import {useNavigate} from 'react-router-dom';
+import {Path} from '../../../../ToBeMoved/Tools/Path';
+import UserDataManager, {IsUserLoggedIn} from '../../../../ToBeMoved/CommonComponents/UserDataManager';
 
 function LoginPage() {
     const location = extendedUseLocation();

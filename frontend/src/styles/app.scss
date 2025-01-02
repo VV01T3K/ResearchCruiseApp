@@ -1,3 +1,7 @@
+@use "sass:map";
+@use "bootstrap/scss/bootstrap";
+@use "bootstrap-icons/font/bootstrap-icons";
+
 $theme-colors: (
         "primary": #052d73,
         "secondary": #3d4c72,
@@ -294,7 +298,7 @@ $top-bar-min-width: 380px;
 }
 
 .login-common-text-field {
-  border-bottom: 2px solid map-get($theme-colors, "primary");
+  border-bottom: 2px solid map.get($theme-colors, "primary");
   @extend .position-relative,
   .mt-4
 }
@@ -307,7 +311,7 @@ $top-bar-min-width: 380px;
 }
 
 .login-common-text-field label {
-  color: map-get($theme-colors, "primary");
+  color: map.get($theme-colors, "primary");
   pointer-events: none;
   @extend .w-100,
   .text-start,
@@ -333,7 +337,7 @@ $top-bar-min-width: 380px;
 }
 
 .signup-link a {
-  color: map-get($theme-colors, "primary");
+  color: map.get($theme-colors, "primary");
   text-decoration: none;
 }
 
@@ -343,7 +347,7 @@ $top-bar-min-width: 380px;
 
 .login-common-submit {
   height: 50px;
-  background: map-get($theme-colors, "primary");
+  background: map.get($theme-colors, "primary");
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -549,7 +553,7 @@ $top-bar-min-width: 380px;
   border-collapse: collapse;
   font-family: 'Arial', sans-serif;
   background-color: white;
-  border: 1px solid map-get($theme-colors, "primary");
+  border: 1px solid map.get($theme-colors, "primary");
 }
 
 .priority-cell {
@@ -706,7 +710,7 @@ $top-bar-min-width: 380px;
 }
 
 .field-common:focus {
-  border: solid 2px map-get($theme-colors, "primary") !important;
+  border: solid 2px map.get($theme-colors, "primary") !important;
 }
 
 .field-common:placeholder-shown {
@@ -756,11 +760,11 @@ $top-bar-min-width: 380px;
 
   // workaround for border when focused
   &__control--is-focused {
-    box-shadow: 0 0 0 1px map-get($theme-colors, "primary") !important;
+    box-shadow: 0 0 0 1px map.get($theme-colors, "primary") !important;
   }
 
   &__option.select__option--is-selected {
-    background-color: map-get($theme-colors, "primary");
+    background-color: map.get($theme-colors, "primary");
     color: white;
   }
 
@@ -781,7 +785,7 @@ $top-bar-min-width: 380px;
   }
 
   &__menu {
-    border: solid 2px map-get($theme-colors, "primary") !important;
+    border: solid 2px map.get($theme-colors, "primary") !important;
     font-size: 0.8rem;
     @extend .text-center
   }
@@ -811,11 +815,11 @@ $top-bar-min-width: 380px;
 
   // workaround for border when focused
   &__control--is-focused {
-    box-shadow: 0 0 0 1px map-get($theme-colors, "primary") !important;
+    box-shadow: 0 0 0 1px map.get($theme-colors, "primary") !important;
   }
 
   &__option.select__option--is-selected {
-    background-color: map-get($theme-colors, "primary");
+    background-color: map.get($theme-colors, "primary");
     color: white;
   }
 
@@ -840,7 +844,7 @@ $top-bar-min-width: 380px;
   }
 
   &__menu {
-    border: solid 2px map-get($theme-colors, "primary") !important;
+    border: solid 2px map.get($theme-colors, "primary") !important;
     font-size: 0.8rem;
     @extend .text-center
   }
@@ -885,7 +889,7 @@ body > [class^="select"] {
   &-tracks {
     position: absolute;
     height: 4px;
-    background-color: map-get($theme-colors, "primary");
+    background-color: map.get($theme-colors, "primary");
     border-radius: 6px;
   }
 
@@ -903,15 +907,15 @@ body > [class^="select"] {
     width: 14px;
     height: 14px;
     margin-top: -5px;
-    background-color: map-get($theme-colors, "primary");
-    border: solid 2px map-get($theme-colors, "primary");
+    background-color: map.get($theme-colors, "primary");
+    border: solid 2px map.get($theme-colors, "primary");
     border-radius: 50%;
     cursor: grab;
     opacity: 1;
     touch-action: pan-x;
 
     &-dragging {
-      border-color: map-get($theme-colors, "primary");
+      border-color: map.get($theme-colors, "primary");
       box-shadow: none;
     }
   ;
@@ -922,20 +926,20 @@ body > [class^="select"] {
     }
 
     &:focus-visible {
-      border-color: map-get($theme-colors, "primary");
+      border-color: map.get($theme-colors, "primary");
     }
 
     &-click-focused:focus {
-      border-color: map-get($theme-colors, "primary");
+      border-color: map.get($theme-colors, "primary");
       box-shadow: unset;
     }
 
     &:hover {
-      border-color: map-get($theme-colors, "primary");
+      border-color: map.get($theme-colors, "primary");
     }
 
     &:active {
-      border-color: map-get($theme-colors, "primary");
+      border-color: map.get($theme-colors, "primary");
       cursor: grabbing;
     }
   }
@@ -982,7 +986,7 @@ body > [class^="select"] {
 
 
     &-active {
-      border-color: map-get($theme-colors, "primary");
+      border-color: map.get($theme-colors, "primary");
     }
 
     &-reverse {
@@ -1160,11 +1164,11 @@ body > [class^="select"] {
 
 .custom-switch {
   .react-switch-bg {
-    background-color: map-get($theme-colors, "primary") !important; // Kolor tła
+    background-color: map.get($theme-colors, "primary") !important; // Kolor tła
     border-radius: 20px; // Zaokrąglone rogi
 
     &.react-switch-on {
-      background-color: map-get($theme-colors, "secondary") !important; // Kolor tła, gdy przełącznik jest włączony
+      background-color: map.get($theme-colors, "secondary") !important; // Kolor tła, gdy przełącznik jest włączony
     }
   }
 
@@ -1261,12 +1265,12 @@ body > [class^="select"] {
 
 /* Zmieniamy kolor tła dla dzisiejszego dnia */
 .rbc-today {
-  background-color: map-get($theme-colors, "secondary"); /* Jasnożółte tło */
+  background-color: map.get($theme-colors, "secondary"); /* Jasnożółte tło */
 }
 
 /* Zmieniamy kolor tekstu i tło dla wydarzeń */
 .rbc-event {
-  background-color: map-get($theme-colors, "primary"); /* Niebieskie tło wydarzeń */
+  background-color: map.get($theme-colors, "primary"); /* Niebieskie tło wydarzeń */
   color: white; /* Biały tekst */
   border: none; /* Usunięcie obramowania */
   padding: 5px;
@@ -1275,13 +1279,13 @@ body > [class^="select"] {
 
 /* Zmieniamy kolor paska narzędzi (górnego) */
 .rbc-toolbar {
-  background-color: map-get($theme-colors, "primary"); /* Zielony pasek narzędzi */
+  background-color: map.get($theme-colors, "primary"); /* Zielony pasek narzędzi */
   color: white; /* Biały tekst */
 }
 
 /* Zmieniamy kolor tła dni spoza wybranego miesiąca */
 .rbc-off-range-bg {
-  background-color: map-get($theme-colors, "primary"); /* Szare tło */
+  background-color: map.get($theme-colors, "primary"); /* Szare tło */
 }
 
 .rbc-btn-group button {
@@ -1300,7 +1304,7 @@ body > [class^="select"] {
 }
 
 .rbc-time-slot {
-  border: 1px solid map-get($theme-colors, "primary"); /* Szare obramowanie */
+  border: 1px solid map.get($theme-colors, "primary"); /* Szare obramowanie */
 
 }
 
@@ -1326,7 +1330,7 @@ body > [class^="select"] {
 /* Zmieniamy kolor tła i obramowania dni w widoku miesiąca */
 .rbc-day-bg {
   background-color: white; /* Białe tło */
-  border: 1px solid map-get($theme-colors, "primary"); /* Szare obramowanie */
+  border: 1px solid map.get($theme-colors, "primary"); /* Szare obramowanie */
 }
 
 .rbc-active {
@@ -1337,6 +1341,3 @@ body > [class^="select"] {
 .rbc-btn-group {
   @extend .m-2
 }
-
-@import "node_modules/bootstrap/scss/bootstrap";
-@import "node_modules/bootstrap-icons/font/bootstrap-icons";

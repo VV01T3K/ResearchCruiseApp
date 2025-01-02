@@ -1,14 +1,12 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { OrdinalNumber } from '../TableParts';
-import { FieldProps } from '../FormRadio';
+import {FieldValues} from 'react-hook-form';
+import {OrdinalNumber} from '../TableParts';
+import {FieldProps} from '../FormRadio';
 import FieldWrapper from '../FieldWrapper';
-import { CategoryPicker, ContractDescriptionField, DownloadField, InstitutionCell } from './ContractTableFields';
-import { DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField } from '../TaskTable/EvaluatedTaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
-import { FieldContext } from '@contexts/FieldContext';
-import { EvaluatedContract } from 'EvaluatedContract';
+import {CategoryPicker, ContractDescriptionField, DownloadField, InstitutionCell} from './ContractTableFields';
+import {DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField} from '../TaskTable/EvaluatedTaskTable';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
+import {FieldContext} from '@contexts/FieldContext';
+import {EvaluatedContract} from 'EvaluatedContract';
 
 const ContractTableContent = () => {
     return [
@@ -25,9 +23,6 @@ type ContractTableProps = FieldProps &
     { evaluatedContracts?: EvaluatedContract[] }
 
 export const EvaluatedContractTable = (props: ContractTableProps) => {
-
-    const formContext = useContext(FormContext);
-
     const mdColWidths = [5, 20, 24, 26, 15, 10];
     const mdColTitles = ['Lp.', 'Kategoria', 'Instytucja', 'Opis', 'Skan', 'Punkty'];
     const colTitle = 'Umowy';

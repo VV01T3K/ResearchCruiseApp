@@ -1,5 +1,4 @@
-import React from 'react';
-import { TilesMenuWrapper } from '@components/MainPageMenu/Tiles/TilesMenu/TilesMenuWrapper';
+import {TilesMenuWrapper} from '@components/MainPageMenu/Tiles/TilesMenu/TilesMenuWrapper';
 import guestPanelTiles from './guestPanelTiles';
 
 const GuestPanel = () => <TilesMenuWrapper tiles={guestPanelTiles} />;

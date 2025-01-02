@@ -1,4 +1,3 @@
-import React from 'react';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import Page from '../../../../ToBeMoved/Pages/Page';
 

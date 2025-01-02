@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import {useState} from 'react';
 import DesktopMenu from './DesktopMenu';
 import MobileMenu from './MobileMenu';
 import PageHeaderText from '../../Tools/PageHeaderText';
-import { UgPageLink } from './PageHeaderCommon';
+import {UgPageLink} from './PageHeaderCommon';
 
 
 type Props = {

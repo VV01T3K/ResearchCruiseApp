@@ -1,6 +1,5 @@
-import React from 'react';
-import { CruiseAndDeputyManager } from './CruiseManagerSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
+import {CruiseAndDeputyManager} from './CruiseManagerSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 
 export const cruiseManagerSectionFieldNames = {
     cruiseManagerId: 'cruiseManagerId',

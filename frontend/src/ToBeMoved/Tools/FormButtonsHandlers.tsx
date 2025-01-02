@@ -1,14 +1,14 @@
-import { FieldValues } from 'react-hook-form';
-import { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
-import { putFormA, putFormB } from '@api/requests/Put';
-import { useNavigate } from 'react-router-dom';
-import { Path } from './Path';
+import {FieldValues} from 'react-hook-form';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
+import {putFormA, putFormB} from '@api/requests/Put';
+import {useNavigate} from 'react-router-dom';
+import {Path} from './Path';
 import cruiseApplicationFromLocation from '@hooks/cruiseApplicationFromLocation';
-import { addCruiseApplication } from '@api/requests';
-import { AxiosResponse } from 'axios';
-import { FormType } from '../Pages/CommonComponents/FormTitleWithNavigation';
-import { formAToSend } from './FormsTransform';
+import {addCruiseApplication} from '@api/requests';
+import {AxiosResponse} from 'axios';
+import {FormType} from '../Pages/CommonComponents/FormTitleWithNavigation';
+import {formAToSend} from './FormsTransform';
 
 export const handleSave = () => {
   const navigate = useNavigate();

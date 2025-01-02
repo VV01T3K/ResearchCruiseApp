@@ -1,7 +1,6 @@
-import React from 'react';
-import { ControllerRenderProps, FieldValues, UseFormReturn } from 'react-hook-form';
-import Select, { SingleValue } from 'react-select';
-import { Action } from './ActionInput';
+import {ControllerRenderProps, FieldValues, UseFormReturn} from 'react-hook-form';
+import Select, {SingleValue} from 'react-select';
+import {Action} from './ActionInput';
 
 
 type Props = {
@@ -22,7 +21,7 @@ export default function ActionCategoryPicker(props: Props) {
             menuPlacement="auto"
             placeholder="Wybierz"
             styles={{
-                control: (provided, state) => ({
+                control: (provided, _) => ({
                     ...provided,
                     boxShadow: 'none',
                     border: '1px solid grey',

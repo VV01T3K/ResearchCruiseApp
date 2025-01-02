@@ -1,8 +1,5 @@
-import {
-
-    FTextField,
-} from '@app/pages/FormPage/Inputs/CellFormFields';
-import { KeyContext } from '@contexts/KeyContext';
+import {FTextField,} from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
 
 export const TypeField = () => {
     return (

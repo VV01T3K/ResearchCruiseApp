@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { SectionTitle } from './SectionTitle';
-import { ExpansionMark } from './SectionExpansionMark';
-import { IsSectionActiveContext } from '@contexts/IsSectionActiveContext';
-import { IsSectionCompletedContext } from '@contexts/IsSectionCompletedContext';
+import {useContext} from 'react';
+import {SectionTitle} from './SectionTitle';
+import {ExpansionMark} from './SectionExpansionMark';
+import {IsSectionActiveContext} from '@contexts/IsSectionActiveContext';
+import {IsSectionCompletedContext} from '@contexts/IsSectionCompletedContext';
 
 export const SectionLabel = () => {
     const [isActive, setIsActive] = useContext(IsSectionActiveContext)!;
-    const [isCompleted, setIsCompleted] = useContext(IsSectionCompletedContext)!;
+    const [isCompleted] = useContext(IsSectionCompletedContext)!;
     return (
         <div onClick={() => setIsActive(!isActive)} className={'form-section-label'}>
             <SectionTitle />

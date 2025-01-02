@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import {
-    ErrorMessageIfPresentNoContext,
-} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {useState} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {Link} from 'react-router-dom';
+import {ErrorMessageIfPresentNoContext,} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
 import userDataManager from '../../../../ToBeMoved/CommonComponents/UserDataManager';
 import useFormWrapper from '../../../../ToBeMoved/CommonComponents/useFormWrapper';
 import axios from 'axios';
-import { Path } from '../../../../ToBeMoved/Tools/Path';
+import {Path} from '../../../../ToBeMoved/Tools/Path';
 
 // TODO: [Not important] Switch to useContext(FormContext)
 function LoginForm() {
@@ -16,7 +14,6 @@ function LoginForm() {
     const {
         handleSubmit,
         ClearField,
-        disabled,
         setDisabled,
         EmailTextInput,
         PasswordTextInput,

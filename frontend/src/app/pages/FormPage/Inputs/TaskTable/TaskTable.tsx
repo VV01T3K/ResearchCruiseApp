@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { registerLocale } from 'react-datepicker';
+import {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { pl } from 'date-fns/locale/pl';
+import {pl} from 'date-fns/locale/pl';
 import 'react-dropdown/style.css';
 import FieldWrapper from '../FieldWrapper';
-import { FieldProps } from '../FormRadio';
-import { FieldContext } from '@contexts/FieldContext';
+import {FieldProps} from '../FormRadio';
+import {FieldContext} from '@contexts/FieldContext';
 import {
     AuthorField,
     DateField,
@@ -24,11 +24,11 @@ import {
     TaskDescriptionField,
     TitleField,
 } from './TaskInputFields';
-import { BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton } from '../TableParts';
-import { DisplayContext } from './EvaluatedTaskTable';
-import { FormContext } from '@contexts/FormContext';
-import { KeyContext } from '@contexts/KeyContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {BottomMenuWithHistory, CellFormTools, CellTools, OrdinalNumber, RemoveRowButton} from '../TableParts';
+import {DisplayContext} from './EvaluatedTaskTable';
+import {FormContext} from '@contexts/FormContext';
+import {KeyContext} from '@contexts/KeyContext';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 
 registerLocale('pl', pl);
 
@@ -134,7 +134,6 @@ export const FieldForKey = () => {
 };
 
 const FieldsCell = () => {
-    const displayContext = useContext(DisplayContext);
     const { rowValue } = CellFormTools();
     return (
         <div className="d-flex flex-wrap flex-row justify-content-center align-items-center w-100">

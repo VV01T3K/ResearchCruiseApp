@@ -1,25 +1,16 @@
-import React, { createContext, useContext, useState } from 'react';
-import { CruiseStateContext } from './CruisesPage';
-import { SelectWrapper } from '../FormPage/Wrappers/ReactSelectWrapper';
-import { FieldTableWrapper } from '../FormPage/Wrappers/FieldTableWrapper';
+import {createContext, useContext, useState} from 'react';
+import {CruiseStateContext} from './CruisesPage';
+import {SelectWrapper} from '../FormPage/Wrappers/ReactSelectWrapper';
+import {FieldTableWrapper} from '../FormPage/Wrappers/FieldTableWrapper';
+import {Actions, Cruises, MainCruiseManagerId, Number, StartAndEndDate, Status,} from './CruiseListFields';
+import {CruisesListFilterAndSort, FilterMapper,} from './CruiseListFilterAndSort';
+import {Cruise} from 'Cruise';
+import {CellContext} from '@contexts/CellContext';
+import {SelectStringFilterOption} from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
+import {CruiseStatus} from '@enums/CruiseStatus';
 import {
-  Number,
-  Actions,
-  Cruises,
-  Status,
-  MainCruiseManagerId,
-  StartAndEndDate,
-} from './CruiseListFields';
-import {
-  CruisesListFilterAndSort,
-  FilterMapper,
-} from './CruiseListFilterAndSort';
-import { Cruise } from 'Cruise';
-import { CellContext } from '@contexts/CellContext';
-import { SelectStringFilterOption } from '../../../ToBeMoved/Pages/CommonComponents/ListFilterMenu';
-import { CruiseApplicationStatus } from 'CruiseApplicationStatus';
-import { CruiseStatus } from '@enums/CruiseStatus';
-import { selectStringFilterDefaultOption } from '@app/pages/CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsList';
+    selectStringFilterDefaultOption
+} from '@app/pages/CruiseApplicationsPage/CruiseApplicationsList/CruiseApplicationsList';
 
 export const CruisesTools = () => {
   const cellContext = useContext(CellContext);

@@ -1,4 +1,4 @@
-import { DetailedPlan } from 'DetailedPlan';
+import {DetailedPlan} from 'DetailedPlan';
 
 export const detailedPlanDefault: DetailedPlan = {
     number: '',

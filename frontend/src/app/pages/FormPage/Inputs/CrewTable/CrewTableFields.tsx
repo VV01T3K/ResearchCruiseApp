@@ -1,5 +1,5 @@
-import { FStandardDateField, FTextField } from '@app/pages/FormPage/Inputs/CellFormFields';
-import { KeyContext } from '@contexts/KeyContext';
+import {FStandardDateField, FTextField} from '@app/pages/FormPage/Inputs/CellFormFields';
+import {KeyContext} from '@contexts/KeyContext';
 
 
 export const TitleField = () => {

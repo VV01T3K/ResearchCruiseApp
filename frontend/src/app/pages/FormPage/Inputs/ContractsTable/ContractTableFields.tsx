@@ -1,5 +1,4 @@
-import React from 'react';
-import { contractCategories, contractCategoriesPL } from './ContractsTable';
+import {contractCategories, contractCategoriesPL} from './ContractsTable';
 import {
     FFileDownloaderWrapper,
     FieldLabelWrapper,

@@ -1,31 +1,20 @@
-import {
-  BottomMenuWithAddButton,
-  OrdinalNumber,
-  RemoveRowButton,
-} from '@app/pages/FormPage/Inputs/TableParts';
-import {
-  DescriptionField,
-  ExecutiveField,
-} from '@app/pages/FormPage/Inputs/PermissionsTable/PermissionsTableFields';
-import React, { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { FieldContext } from '@contexts/FieldContext';
-import { FormContext } from '@contexts/FormContext';
-import { SingleValue } from 'react-select';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
+import {BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton,} from '@app/pages/FormPage/Inputs/TableParts';
+import {DescriptionField, ExecutiveField,} from '@app/pages/FormPage/Inputs/PermissionsTable/PermissionsTableFields';
+import React, {useContext} from 'react';
+import {FieldValues} from 'react-hook-form';
+import {FieldContext} from '@contexts/FieldContext';
+import {FormContext} from '@contexts/FormContext';
+import {SingleValue} from 'react-select';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {notEmptyArray} from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
 import {
-  Permission,
-  permissionDefaultWithScan,
-  PermissionWithScan,
+    permissionDefaultWithScan,
+    PermissionWithScan,
 } from '@app/pages/FormPage/Inputs/PermissionsTable/PermissionsTable';
-import { FormField } from '@app/pages/FormPage/Inputs/FormYearSelect';
-import {
-  DownloadField,
-  UploadField,
-} from '@app/pages/FormPage/Inputs/ContractsTable/ContractTableFields';
-import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
+import {FormField} from '@app/pages/FormPage/Inputs/FormYearSelect';
+import {DownloadField, UploadField,} from '@app/pages/FormPage/Inputs/ContractsTable/ContractTableFields';
+import {fileExists} from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
 
 const guestTeamsTableContent = () => {
   const formContext = useContext(FormContext);

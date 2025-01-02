@@ -1,11 +1,9 @@
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import TechnicalElementsTable
-    from '@app/pages/FormPage/Inputs/TechnicalElementsTable/TechnicalElementsTable';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
 import ListWithCheckbox from '@app/pages/FormPage/Inputs/ListWithCheckbox';
-import { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
-import { Guid } from 'Guid';
-import { FormBInitValues } from 'FormBInitValues';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
+import {Guid} from 'Guid';
+import {FormBInitValues} from 'FormBInitValues';
 
 export const shipEquipmentSectionFieldNames = {
     shipEquipments: 'shipEquipmentsIds',

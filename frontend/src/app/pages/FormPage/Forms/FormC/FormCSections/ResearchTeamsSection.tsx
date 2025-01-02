@@ -1,10 +1,6 @@
-import React from 'react';
-import { CrewField } from './ResearchTeamsSectionFields';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import {
-    GuestTeamsField,
-    UgTeamsField,
-} from '@app/pages/FormPage/Forms/FormA/FormASections/ResearchTeamsSectionFields';
+import {CrewField} from './ResearchTeamsSectionFields';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import {GuestTeamsField, UgTeamsField,} from '@app/pages/FormPage/Forms/FormA/FormASections/ResearchTeamsSectionFields';
 
 export const researchTeamsSectionFieldNames = {
     ugTeams: 'ugTeams',

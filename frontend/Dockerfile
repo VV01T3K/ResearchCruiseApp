@@ -1,13 +1,17 @@
-FROM node:lts-alpine AS production
+# syntax=docker/dockerfile:experimental
+FROM node:22-alpine AS build
 
+ARG API_URL
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
 WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install
-
 COPY . .
 
-EXPOSE 3000
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
 
-CMD ["npm", "start"]
+
+FROM nginx:1.26-alpine
+COPY --from=build /app/dist /usr/share/nginx/html

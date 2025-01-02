@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Cruise } from 'Cruise';
+import {Cruise} from 'Cruise';
 import SimpleInfoTile from '../../../../ToBeMoved/CommonComponents/SimpleInfoTile';
 import ReadOnlyTextInput from '../../../../ToBeMoved/CommonComponents/ReadOnlyTextInput';
 

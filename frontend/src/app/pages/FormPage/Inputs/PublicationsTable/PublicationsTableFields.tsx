@@ -1,7 +1,6 @@
-import { FDateFieldOnlyYear, FIntField, FSelectField, FTextField } from '../CellFormFields';
-import React from 'react';
-import { publicationCategories, publicationCategoriesPL } from './PublicationsTable';
-import { KeyContext } from '@contexts/KeyContext';
+import {FDateFieldOnlyYear, FIntField, FSelectField, FTextField} from '../CellFormFields';
+import {publicationCategories, publicationCategoriesPL} from './PublicationsTable';
+import {KeyContext} from '@contexts/KeyContext';
 
 export const CategoryPicker = () => {
     const publicationCategoryOptions = publicationCategories.map(

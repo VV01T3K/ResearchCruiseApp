@@ -1,15 +1,14 @@
-import React, { useContext, useState } from 'react';
-import Api from '@api/Api';
-import { useNavigate } from 'react-router-dom';
-import { Path } from './Path';
+import {useContext, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Path} from './Path';
 
-import { FormContext } from '@contexts/FormContext';
+import {FormContext} from '@contexts/FormContext';
 import UserBasedAccess from '../../route/UserBasedAccess';
 
-import { CruiseStatus } from '@enums/CruiseStatus';
-import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
-import { addCruise, editCruise, getCruise } from '@api/requests';
-import { confirmCruise, endCruise } from '@api/requests/Put';
+import {CruiseStatus} from '@enums/CruiseStatus';
+import {cruiseFromLocation} from '@hooks/cruiseFromLocation';
+import {addCruise, editCruise, getCruise} from '@api/requests';
+import {confirmCruise, endCruise} from '@api/requests/Put';
 
 const Handlers = () => {
   const formContext = useContext(FormContext);

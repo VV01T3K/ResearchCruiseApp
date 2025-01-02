@@ -1,5 +1,5 @@
 import React from 'react';
-import { OpenedWithLocation } from '../App';
+import {OpenedWithLocation} from '../App';
 
 type Props = {
     className?: string,

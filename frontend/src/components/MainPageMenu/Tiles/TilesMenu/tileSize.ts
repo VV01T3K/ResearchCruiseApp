@@ -1,4 +1,4 @@
-import { TileType } from 'TileType';
+import {TileType} from 'TileType';
 
 export const tileSize = (tile: TileType) => ({
     colSpan: tile.cols,

@@ -1,8 +1,7 @@
-import { FieldValues } from 'react-hook-form';
-import React from 'react';
+import {FieldValues} from 'react-hook-form';
 import FieldWrapper from './FieldWrapper';
-import { SelectWrapper } from '../Wrappers/ReactSelectWrapper';
-import { FormField } from './FormYearSelect';
+import {SelectWrapper} from '../Wrappers/ReactSelectWrapper';
+import {FormField} from './FormYearSelect';
 
 export type ResearchArea = {
     name: string,

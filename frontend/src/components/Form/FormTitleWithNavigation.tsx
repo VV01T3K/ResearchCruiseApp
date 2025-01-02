@@ -1,10 +1,10 @@
 // TODO: Extract methods
-import React, { useContext } from 'react';
-import { FormContext } from '@contexts/FormContext';
-import { FormSectionType } from 'Form/Section/FormSectionType';
-import { FormType } from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
+import {useContext} from 'react';
+import {FormContext} from '@contexts/FormContext';
+import {FormSectionType} from 'Form/Section/FormSectionType';
+import {FormType} from '../../ToBeMoved/Pages/CommonComponents/FormTitleWithNavigation';
 
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
 
 function FormTitleWithNavigation() {
   const formContext = useContext(FormContext);

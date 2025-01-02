@@ -1,7 +1,6 @@
-import React from 'react';
 import TextArea from '../../../Inputs/TextArea';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import { emailPattern } from '@consts/emailPatterns';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import {emailPattern} from '@consts/emailPatterns';
 
 export const supervisorSectionFieldNames = {
     supervisor: 'supervisorEmail',

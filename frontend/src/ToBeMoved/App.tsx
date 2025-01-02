@@ -1,14 +1,14 @@
-import { createContext, Dispatch, SetStateAction, useState } from 'react';
-import { UserData } from 'User/UserData';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Interceptors } from '@api/Api';
+import {createContext, Dispatch, SetStateAction, useState} from 'react';
+import {UserData} from 'User/UserData';
+import {BrowserRouter, useLocation} from 'react-router-dom';
+import {Interceptors} from '@api/Api';
 import BusyEvent from './CommonComponents/BusyEvent';
 import PageBackground from '../components/Page/Background/PageBackground';
 import PageHeader from './Pages/PageHeader/PageHeader';
 import RoleBasedRouting from '../route/RoleBasedRouting';
-import WaitingPage from '../app/pages/WaitingPage';
-import { BusyContext } from '@contexts/BusyContext';
-import { VersionInfo } from '@components/VersionInfo';
+import {BusyContext} from '@contexts/BusyContext';
+import {VersionInfo} from '@components/VersionInfo';
+import './App.css';
 
 export const UserContext = createContext<null | {
   userData: UserData | null;
@@ -22,7 +22,7 @@ export const OpenedWithLocation = () => {
 };
 
 const AppContent = () => {
-  const { isBusy } = BusyEvent();
+  BusyEvent();
   const { SetInterceptors } = Interceptors();
   const OnAppStart = () => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -57,7 +57,9 @@ function App() {
     <BusyContext.Provider value={busyMessage}>
       <div style={{ cursor: isBusy ? 'progress' : 'default' }}>
         <UserContext.Provider value={{ userData, setUserData }}>
-          <AppContent />
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
           <VersionInfo />
         </UserContext.Provider>
       </div>

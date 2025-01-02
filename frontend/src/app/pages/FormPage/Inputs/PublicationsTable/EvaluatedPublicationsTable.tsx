@@ -1,13 +1,12 @@
-import React from 'react';
-import { FieldValues } from 'react-hook-form';
-import { OrdinalNumber } from '../TableParts';
-import { FieldProps } from '../FormRadio';
+import {FieldValues} from 'react-hook-form';
+import {OrdinalNumber} from '../TableParts';
+import {FieldProps} from '../FormRadio';
 import FieldWrapper from '../FieldWrapper';
-import { CategoryPicker, InformationsColumn, MinisterialPointsField, YearField } from './PublicationsTableFields';
-import { DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField } from '../TaskTable/EvaluatedTaskTable';
-import { Publication } from './PublicationsTable';
-import { FieldContext } from '@contexts/FieldContext';
-import { FieldTableWrapper } from '../../Wrappers/FieldTableWrapper';
+import {CategoryPicker, InformationsColumn, MinisterialPointsField, YearField} from './PublicationsTableFields';
+import {DisplayValueContext, DisplayWrapper, pointFieldRules, PointsField} from '../TaskTable/EvaluatedTaskTable';
+import {Publication} from './PublicationsTable';
+import {FieldContext} from '@contexts/FieldContext';
+import {FieldTableWrapper} from '../../Wrappers/FieldTableWrapper';
 
 
 export type EvaluatedPublication = {

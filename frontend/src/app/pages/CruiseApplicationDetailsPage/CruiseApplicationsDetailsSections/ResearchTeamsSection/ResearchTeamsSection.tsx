@@ -1,9 +1,8 @@
-import React from 'react';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import { researchTeamsSectionFieldNames } from './ResearchTeamsSectionFieldNames';
-import { UgTeamsField } from './UgTeamsField';
-import { GuestTeamsField } from './GuestTeamsField';
-import { CalculatedPointsField } from './CalculatedPointsField';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import {researchTeamsSectionFieldNames} from './ResearchTeamsSectionFieldNames';
+import {UgTeamsField} from './UgTeamsField';
+import {GuestTeamsField} from './GuestTeamsField';
+import {CalculatedPointsField} from './CalculatedPointsField';
 
 export const ResearchTeamsSection = () =>
     SectionWrapper({

@@ -1,12 +1,12 @@
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FieldValues, useWatch } from 'react-hook-form';
-import React, { useContext } from 'react';
+import {FieldValues, useWatch} from 'react-hook-form';
+import {useContext} from 'react';
 import FieldWrapper from './FieldWrapper';
-import { FieldProps } from './FormRadio';
-import { datePickerCommon } from './DatePickerCommon';
-import { FormContext } from '@contexts/FormContext';
-import { pl } from 'date-fns/locale';
+import {FieldProps} from './FormRadio';
+import {datePickerCommon} from './DatePickerCommon';
+import {FormContext} from '@contexts/FormContext';
+import {pl} from 'date-fns/locale';
 import {dateFormat, localeCode} from "@consts/cultureConstants";
 
 registerLocale('pl', pl);
@@ -33,7 +33,7 @@ export function StartDateField(props: StartDateFieldProps) {
             <DatePicker
                 className={'field-common w-100'}
                 disabled={formContext!.readOnly ?? false}
-                onChange={(e: Date) => {
+                onChange={(e: Date | null) => {
                     if (e != null) {
                         field.onChange(e.toISOString());
                         field.onBlur();
@@ -76,7 +76,7 @@ export function EndDateField(props: EndDateFieldProps) {
                 //  {...field}
                 className={'field-common w-100'}
                 disabled={formContext!.readOnly ?? false}
-                onChange={(e: Date) => {
+                onChange={(e: Date | null) => {
                     if (e != null) {
                         field.onChange(e.toISOString());
                         field.onBlur();

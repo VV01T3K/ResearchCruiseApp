@@ -1,19 +1,17 @@
 import UserSelect from '../../../FormPage/Inputs/UserSelect';
-import React, { useContext, useEffect } from 'react';
-import { ApplicationToCruiseManagersMapper } from '../CruiseListMisc';
-import { applicationsSectionFieldNames } from './AppicationsSection';
-import { useWatch } from 'react-hook-form';
-import { FormContext } from '@contexts/FormContext';
-import { SectionWrapper } from '@components/Form/Section/SectionWrapper';
-import { FormUser } from 'FormUser';
+import {useContext, useEffect} from 'react';
+import {ApplicationToCruiseManagersMapper} from '../CruiseListMisc';
+import {applicationsSectionFieldNames} from './AppicationsSection';
+import {useWatch} from 'react-hook-form';
+import {FormContext} from '@contexts/FormContext';
+import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import {FormUser} from 'FormUser';
 
-import {
-    ErrorMessageIfPresentNoContext,
-} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
-import { EMPTY_GUID } from '@consts/emptyGuid';
-import { ApplicationsContext } from '@contexts/ApplicationsContext';
+import {ErrorMessageIfPresentNoContext,} from '@components/Form/ErrorMessage/ErrorMessageIfPresentNoContext';
+import {EMPTY_GUID} from '@consts/emptyGuid';
+import {ApplicationsContext} from '@contexts/ApplicationsContext';
 
-import { cruiseFromLocation } from '@hooks/cruiseFromLocation';
+import {cruiseFromLocation} from '@hooks/cruiseFromLocation';
 
 export const cruiseManagerSectionFieldNames = {
     mainCruiseManagerId: 'managersTeam.mainCruiseManagerId',

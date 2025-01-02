@@ -1,16 +1,9 @@
-import { FieldProps } from '@app/pages/FormPage/Inputs/FormRadio';
-import { useContext } from 'react';
-import { ElementsColumn } from '@app/pages/FormPage/Inputs/TechnicalElementsTable/TechnicalElementsTableFields';
-import { BottomMenuWithAddButton, OrdinalNumber, RemoveRowButton } from '@app/pages/FormPage/Inputs/TableParts';
-import { FieldValues } from 'react-hook-form';
-import { SingleValue } from 'react-select';
-import { FieldTableWrapper } from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
-import { fileExists } from '@app/pages/FormPage/Inputs/ContractsTable/ContractsTable';
-import { FieldContext } from '@contexts/FieldContext';
-import { FormContext } from '@contexts/FormContext';
-import { notEmptyArray } from '@app/pages/FormPage/Inputs/PublicationsTable/PublicationsTable';
+import {FieldProps} from '@app/pages/FormPage/Inputs/FormRadio';
+import {ElementsColumn} from '@app/pages/FormPage/Inputs/TechnicalElementsTable/TechnicalElementsTableFields';
+import {FieldValues} from 'react-hook-form';
+import {FieldTableWrapper} from '@app/pages/FormPage/Wrappers/FieldTableWrapper';
+import {FieldContext} from '@contexts/FieldContext';
 import FieldWrapper from '@app/pages/FormPage/Inputs/FieldWrapper';
-import { Crew } from '@app/pages/FormPage/Inputs/CrewInput';
 
 
 export type TechnicalElements = {
@@ -68,8 +61,6 @@ function TechnicalElementsTable(props: TechnicalElementsProps) {
     const mdColWidths = [100];
     const mdColTitles = ['Elementy techniczne'];
     const colTitle = '';
-    const bottomMenu =
-        <BottomMenuWithAddButton newOption={technicalElementsDefault as SingleValue<any>} />;
     const emptyText = 'Nie dodano żadnych elementów';
     const { Render } = FieldTableWrapper(colTitle, mdColWidths, mdColTitles, technicalElementsTableContent,
         null, emptyText, [1]);

@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import {useContext} from 'react';
 import FieldWrapper from './FieldWrapper';
-import { FieldValue, FieldValues } from 'react-hook-form';
-import { textIsIntNumber } from './Misc';
-import { FormContext } from '@contexts/FormContext';
+import {FieldValue, FieldValues} from 'react-hook-form';
+import {textIsIntNumber} from './Misc';
+import {FormContext} from '@contexts/FormContext';
 
 
 type Props = {

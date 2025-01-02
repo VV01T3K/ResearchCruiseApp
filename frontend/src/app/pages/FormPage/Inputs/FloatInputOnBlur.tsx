@@ -1,6 +1,6 @@
-import { CellFormTools } from '@app/pages/FormPage/Inputs/TableParts';
+import {CellFormTools} from '@app/pages/FormPage/Inputs/TableParts';
 import React from 'react';
-import { ParseFloatInput } from '@app/pages/FormPage/Inputs/Misc';
+import {ParseFloatInput} from '@app/pages/FormPage/Inputs/Misc';
 
 export const FloatInputOnBlur = () => {
     const { setCellValue, field } = CellFormTools();

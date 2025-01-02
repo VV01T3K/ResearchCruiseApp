@@ -1,9 +1,9 @@
-import { TasksTable } from '../../../Inputs/TaskTable/TaskTable';
-import React, { useContext } from 'react';
-import { researchTasksSectionFieldNames } from './TasksSection';
+import {TasksTable} from '../../../Inputs/TaskTable/TaskTable';
+import {useContext} from 'react';
+import {researchTasksSectionFieldNames} from './TasksSection';
 
-import { FormContext } from '@contexts/FormContext';
-import { FormAInitValues } from 'FormAInitValues';
+import {FormContext} from '@contexts/FormContext';
+import {FormAInitValues} from 'FormAInitValues';
 
 export const TasksField = () => {
     const formContext = useContext(FormContext);

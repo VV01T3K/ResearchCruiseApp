@@ -1,4 +1,4 @@
-import { extendedUseLocation } from '@hooks/extendedUseLocation';
+import {extendedUseLocation} from '@hooks/extendedUseLocation';
 
 export const cruiseApplicationIdFromLocation = () => {
     const location = extendedUseLocation();

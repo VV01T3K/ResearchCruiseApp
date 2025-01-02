@@ -7,7 +7,6 @@ import {
     FStandardDateField,
     FTextField,
 } from '../CellFormFields';
-import React from 'react';
 
 export const AuthorField = () => (
     <div className={'task-field-input col-md-4'}>

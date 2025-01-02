@@ -1,4 +1,4 @@
-import { Dispatch } from 'react';
+import {Dispatch} from 'react';
 
 
 export type AnyStringFilterOption = {
@@ -11,10 +11,3 @@ export type SelectStringFilterOption = {
     selectValues: string[],
     setFilter: Dispatch<any>
 }
-
-type Props = {
-    className?: string,
-    anyStringFilters: AnyStringFilterOption[]
-    selectStringFilters: SelectStringFilterOption[]
-}
-
