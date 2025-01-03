@@ -10,8 +10,6 @@ services:
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
     ports:
       - 3000:8080
-    depends_on:
-      - db
   frontend:
     container_name: researchcruiseapp-frontend
     build:
