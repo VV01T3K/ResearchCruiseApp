@@ -3,9 +3,8 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 
-
 internal class FormCGuestUnitsRepository : Repository<FormCGuestUnit>, IFormCGuestUnitsRepository
 {
-    public FormCGuestUnitsRepository(ApplicationDbContext dbContext) : base(dbContext)
-    { }
+    public FormCGuestUnitsRepository(ApplicationDbContext dbContext)
+        : base(dbContext) { }
 }

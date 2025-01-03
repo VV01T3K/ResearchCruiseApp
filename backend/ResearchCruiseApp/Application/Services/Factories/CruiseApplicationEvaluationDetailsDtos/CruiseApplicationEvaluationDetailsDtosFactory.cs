@@ -5,14 +5,15 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.CruiseApplicationEvaluationDetailsDtos;
 
-
 internal class CruiseApplicationEvaluationDetailsDtosFactory(
     IFormAContractDtosFactory formAContractDtosFactory,
-    IMapper mapper)
-    : ICruiseApplicationEvaluationDetailsDtosFactory
+    IMapper mapper
+) : ICruiseApplicationEvaluationDetailsDtosFactory
 {
     public async Task<CruiseApplicationEvaluationDetailsDto> Create(
-        CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    )
     {
         var formA = cruiseApplication.FormA;
 
@@ -22,7 +23,7 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
         var guestTeamsDtos = CreateGuestUnitDtos(formA);
         var formAPublicationDtos = CreateFormAPublicationDtos(formA);
         var formASpubTaskDtos = CreateFormASpubTaskDtos(formA);
-        
+
         var cruiseApplicationEvaluationDetailsDto = new CruiseApplicationEvaluationDetailsDto
         {
             FormAResearchTasks = formAResearchTaskDtos,
@@ -32,20 +33,19 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
             UgUnitsPoints = formA?.UgUnitsPoints ?? "0",
             FormAPublications = formAPublicationDtos,
             FormASpubTasks = formASpubTaskDtos,
-            EffectsPoints = cruiseApplication.EffectsPoints.ToString()
+            EffectsPoints = cruiseApplication.EffectsPoints.ToString(),
         };
 
         return cruiseApplicationEvaluationDetailsDto;
     }
 
-
     private List<FormAResearchTaskDto> CreateFormAResearchTaskDtos(FormA? formA)
     {
         if (formA is null)
             return [];
-                
-        var formAResearchTaskDtos = formA.FormAResearchTasks
-            .Select(mapper.Map<FormAResearchTaskDto>)
+
+        var formAResearchTaskDtos = formA
+            .FormAResearchTasks.Select(mapper.Map<FormAResearchTaskDto>)
             .ToList();
 
         return formAResearchTaskDtos;
@@ -70,21 +70,17 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
         if (formA is null)
             return [];
 
-        var ugTeamDtos = formA.FormAUgUnits
-            .Select(mapper.Map<UgTeamWithNameDto>)
-            .ToList();
+        var ugTeamDtos = formA.FormAUgUnits.Select(mapper.Map<UgTeamWithNameDto>).ToList();
 
         return ugTeamDtos;
     }
-    
+
     private List<GuestTeamDto> CreateGuestUnitDtos(FormA? formA)
     {
         if (formA is null)
             return [];
 
-        var guestTeamsDtos = formA.FormAGuestUnits
-            .Select(mapper.Map<GuestTeamDto>)
-            .ToList();
+        var guestTeamsDtos = formA.FormAGuestUnits.Select(mapper.Map<GuestTeamDto>).ToList();
 
         return guestTeamsDtos;
     }
@@ -94,21 +90,19 @@ internal class CruiseApplicationEvaluationDetailsDtosFactory(
         if (formA is null)
             return [];
 
-        var formAPublicationDtos = formA.FormAPublications
-            .Select(mapper.Map<FormAPublicationDto>)
+        var formAPublicationDtos = formA
+            .FormAPublications.Select(mapper.Map<FormAPublicationDto>)
             .ToList();
 
         return formAPublicationDtos;
     }
-    
+
     private List<FormASpubTaskDto> CreateFormASpubTaskDtos(FormA? formA)
     {
         if (formA is null)
             return [];
 
-        var formASpubTaskDtos = formA.FormASpubTasks
-            .Select(mapper.Map<FormASpubTaskDto>)
-            .ToList();
+        var formASpubTaskDtos = formA.FormASpubTasks.Select(mapper.Map<FormASpubTaskDto>).ToList();
 
         return formASpubTaskDtos;
     }

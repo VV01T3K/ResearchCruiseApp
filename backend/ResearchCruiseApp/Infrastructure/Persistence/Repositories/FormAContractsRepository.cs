@@ -3,9 +3,8 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 
-
 internal class FormAContractsRepository : Repository<FormAContract>, IFormAContractsRepository
 {
-    public FormAContractsRepository(ApplicationDbContext dbContext) : base(dbContext)
-    { }
+    public FormAContractsRepository(ApplicationDbContext dbContext)
+        : base(dbContext) { }
 }

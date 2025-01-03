@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Application.Models.DTOs.Forms;
 
-
 public class FormBInitValuesDto
 {
     public List<ShipEquipmentDto> ShipEquipments { get; init; } = [];

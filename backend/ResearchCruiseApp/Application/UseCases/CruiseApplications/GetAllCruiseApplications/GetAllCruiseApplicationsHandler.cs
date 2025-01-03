@@ -7,26 +7,30 @@ using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 
-
 public class GetAllCruiseApplicationsHandler(
     ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
-    IUserPermissionVerifier userPermissionVerifier) 
-    : IRequestHandler<GetAllCruiseApplicationsQuery, Result<List<CruiseApplicationDto>>>
+    IUserPermissionVerifier userPermissionVerifier
+) : IRequestHandler<GetAllCruiseApplicationsQuery, Result<List<CruiseApplicationDto>>>
 {
     public async Task<Result<List<CruiseApplicationDto>>> Handle(
         GetAllCruiseApplicationsQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
-        var cruiseApplications = await cruiseApplicationsRepository
-            .GetAllWithFormsAndFormAContentAndEffects(cancellationToken);
-            
+        var cruiseApplications =
+            await cruiseApplicationsRepository.GetAllWithFormsAndFormAContentAndEffects(
+                cancellationToken
+            );
+
         var cruiseApplicationDtos = new List<CruiseApplicationDto>();
-        
+
         foreach (var cruiseApplication in cruiseApplications)
         {
-            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(cruiseApplication)) 
-                cruiseApplicationDtos.Add(await cruiseApplicationDtosFactory.Create(cruiseApplication));
+            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(cruiseApplication))
+                cruiseApplicationDtos.Add(
+                    await cruiseApplicationDtosFactory.Create(cruiseApplication)
+                );
         }
 
         return cruiseApplicationDtos;

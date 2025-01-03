@@ -2,8 +2,4 @@
 
 namespace ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 
-
-public interface IFormBPortsRepository : IRepository<FormBPort>
-{
-    
-}
+public interface IFormBPortsRepository : IRepository<FormBPort> { }

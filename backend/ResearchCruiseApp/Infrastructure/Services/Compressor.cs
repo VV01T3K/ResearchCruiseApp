@@ -4,7 +4,6 @@ using ResearchCruiseApp.Application.ExternalServices;
 
 namespace ResearchCruiseApp.Infrastructure.Services;
 
-
 internal class Compressor : ICompressor
 {
     public async Task<byte[]> Compress(string input)
@@ -13,10 +12,10 @@ internal class Compressor : ICompressor
         using var inputStream = new MemoryStream(bytes);
         using var outputStream = new MemoryStream();
         await using var gZipStream = new GZipStream(outputStream, CompressionMode.Compress);
-        
+
         await inputStream.CopyToAsync(gZipStream);
         await gZipStream.FlushAsync();
-        
+
         return outputStream.ToArray();
     }
 
@@ -28,7 +27,7 @@ internal class Compressor : ICompressor
 
         await gZipStream.CopyToAsync(outputStream);
         await gZipStream.FlushAsync();
-        
+
         return Encoding.UTF8.GetString(outputStream.ToArray());
     }
 }

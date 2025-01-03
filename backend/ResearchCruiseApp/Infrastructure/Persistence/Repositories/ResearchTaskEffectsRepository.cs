@@ -3,9 +3,10 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 
-
-internal class ResearchTaskEffectsRepository : Repository<ResearchTaskEffect>, IResearchTaskEffectsRepository
+internal class ResearchTaskEffectsRepository
+    : Repository<ResearchTaskEffect>,
+        IResearchTaskEffectsRepository
 {
-    public ResearchTaskEffectsRepository(ApplicationDbContext dbContext) : base(dbContext)
-    { }
+    public ResearchTaskEffectsRepository(ApplicationDbContext dbContext)
+        : base(dbContext) { }
 }

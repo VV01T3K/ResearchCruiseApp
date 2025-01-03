@@ -12,7 +12,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormAInitValuesDtos;
 
-
 public class FormAInitValuesDtosFactory(
     IIdentityService identityService,
     IFormUserDtosFactory formUserDtosFactory,
@@ -22,8 +21,8 @@ public class FormAInitValuesDtosFactory(
     IUserPublicationsRepository userPublicationsRepository,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     ICurrentUserService currentUserService,
-    IMapper mapper)
-    : IFormAInitValuesDtosFactory
+    IMapper mapper
+) : IFormAInitValuesDtosFactory
 {
     public async Task<FormAInitValuesDto> Create(CancellationToken cancellationToken)
     {
@@ -43,7 +42,9 @@ public class FormAInitValuesDtosFactory(
     }
 
     public async Task<FormAInitValuesDto> CreateForSupervisor(
-        CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    )
     {
         Debug.Assert(cruiseApplication.FormA is not null);
 
@@ -57,7 +58,6 @@ public class FormAInitValuesDtosFactory(
         return result;
     }
 
-
     private async Task<FormAInitValuesDto> CreatePublic(CancellationToken cancellationToken)
     {
         return new FormAInitValuesDto
@@ -66,42 +66,38 @@ public class FormAInitValuesDtosFactory(
             ShipUsages = GetShipUsages(),
             ResearchAreas = await GetResearchAreas(cancellationToken),
             CruiseGoals = GetCruiseGoals(),
-            UgUnits = await GetUgUnits(cancellationToken)
+            UgUnits = await GetUgUnits(cancellationToken),
         };
     }
-    
-    private async Task<List<CruiseApplication>> GetAllCruiseApplicationsForUser(CancellationToken cancellationToken)
+
+    private async Task<List<CruiseApplication>> GetAllCruiseApplicationsForUser(
+        CancellationToken cancellationToken
+    )
     {
         var userId = currentUserService.GetId();
         var cruiseApplications = userId is null
             ? []
-            : await cruiseApplicationsRepository
-                .GetAllByUserIdWithFormA(userId.Value, cancellationToken);
+            : await cruiseApplicationsRepository.GetAllByUserIdWithFormA(
+                userId.Value,
+                cancellationToken
+            );
 
         return cruiseApplications;
     }
-    
+
     private List<FormUserDto> GetCruiseManagers(IEnumerable<UserDto> allUserDtos)
     {
-        return allUserDtos
-            .Select(formUserDtosFactory.Create)
-            .ToList();
+        return allUserDtos.Select(formUserDtosFactory.Create).ToList();
     }
-    
+
     private List<FormUserDto> GetDeputyManagers(IEnumerable<UserDto> allUserDtos)
     {
-        return allUserDtos
-            .Select(formUserDtosFactory.Create)
-            .ToList();
+        return allUserDtos.Select(formUserDtosFactory.Create).ToList();
     }
 
     private static List<string> GetYears()
     {
-        return
-        [
-            DateTime.Now.Year.ToString(),
-            (DateTime.Now.Year + 1).ToString()
-        ];
+        return [DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString()];
     }
 
     private static List<string> GetShipUsages()
@@ -111,8 +107,7 @@ public class FormAInitValuesDtosFactory(
 
     private async Task<List<ResearchAreaDto>> GetResearchAreas(CancellationToken cancellationToken)
     {
-        return (await researchAreasRepository
-                .GetAllActive(cancellationToken))
+        return (await researchAreasRepository.GetAllActive(cancellationToken))
             .Select(mapper.Map<ResearchAreaDto>)
             .ToList();
     }
@@ -122,12 +117,16 @@ public class FormAInitValuesDtosFactory(
         return FormAValuesConstants.CruiseGoals;
     }
 
-    private List<ResearchTaskDto> GetHistoricalResearchTasks(IEnumerable<CruiseApplication> cruiseApplications)
+    private List<ResearchTaskDto> GetHistoricalResearchTasks(
+        IEnumerable<CruiseApplication> cruiseApplications
+    )
     {
         return cruiseApplications
             .SelectMany(cruiseApplication =>
-                cruiseApplication.FormA?.FormAResearchTasks.Select(formAResearchTask => formAResearchTask.ResearchTask)
-                ?? [])
+                cruiseApplication.FormA?.FormAResearchTasks.Select(formAResearchTask =>
+                    formAResearchTask.ResearchTask
+                ) ?? []
+            )
             .Distinct()
             .Select(mapper.Map<ResearchTaskDto>)
             .ToList();
@@ -135,58 +134,69 @@ public class FormAInitValuesDtosFactory(
 
     private async Task<List<UgUnitDto>> GetUgUnits(CancellationToken cancellationToken)
     {
-        return (await ugUnitsRepository
-                .GetAllActive(cancellationToken))
+        return (await ugUnitsRepository.GetAllActive(cancellationToken))
             .Select(mapper.Map<UgUnitDto>)
             .ToList();
     }
 
-    private async Task<List<ContractDto>> GetHistoricalContracts(IEnumerable<CruiseApplication> cruiseApplications)
+    private async Task<List<ContractDto>> GetHistoricalContracts(
+        IEnumerable<CruiseApplication> cruiseApplications
+    )
     {
         var historicalContractDtosTasks = cruiseApplications
             .SelectMany(cruiseApplication =>
-                cruiseApplication.FormA?.FormAContracts.Select(formAContract => formAContract.Contract)
-                ?? [])
+                cruiseApplication.FormA?.FormAContracts.Select(formAContract =>
+                    formAContract.Contract
+                ) ?? []
+            )
             .Distinct()
             .Select(contractDtosFactory.Create);
 
-        var historicalTasks = (await Task.WhenAll(historicalContractDtosTasks))
-            .ToList();
+        var historicalTasks = (await Task.WhenAll(historicalContractDtosTasks)).ToList();
 
         return historicalTasks;
     }
 
-    private static List<string> GetHistoricalInstitutions(IEnumerable<CruiseApplication> cruiseApplications)
+    private static List<string> GetHistoricalInstitutions(
+        IEnumerable<CruiseApplication> cruiseApplications
+    )
     {
         var historicalGuestTeams = cruiseApplications
             .SelectMany(cruiseApplication =>
-                cruiseApplication.FormA?.FormAGuestUnits.Select(formAGuestUnit => formAGuestUnit.GuestUnit.Name)
-                ?? [])
+                cruiseApplication.FormA?.FormAGuestUnits.Select(formAGuestUnit =>
+                    formAGuestUnit.GuestUnit.Name
+                ) ?? []
+            )
             .Distinct()
             .ToList();
 
         return historicalGuestTeams;
     }
 
-    private List<SpubTaskDto> GetHistoricalSpubTasks(IEnumerable<CruiseApplication> cruiseApplications)
+    private List<SpubTaskDto> GetHistoricalSpubTasks(
+        IEnumerable<CruiseApplication> cruiseApplications
+    )
     {
         return cruiseApplications
             .SelectMany(cruiseApplication =>
-                cruiseApplication.FormA?.FormASpubTasks.Select(formASpubTask => formASpubTask.SpubTask)
-                ?? [])
+                cruiseApplication.FormA?.FormASpubTasks.Select(formASpubTask =>
+                    formASpubTask.SpubTask
+                ) ?? []
+            )
             .Distinct()
             .Select(mapper.Map<SpubTaskDto>)
             .ToList();
     }
-    
-    private async Task<List<PublicationDto>> GetHistoricalPublications(CancellationToken cancellationToken)
+
+    private async Task<List<PublicationDto>> GetHistoricalPublications(
+        CancellationToken cancellationToken
+    )
     {
         var userId = currentUserService.GetId();
-        var publications = userId is null 
-            ? [] 
-            :await userPublicationsRepository
-            .GetAllByUserId((Guid)userId, cancellationToken);
-        
+        var publications = userId is null
+            ? []
+            : await userPublicationsRepository.GetAllByUserId((Guid)userId, cancellationToken);
+
         return publications
             .Select(userPublication => mapper.Map<PublicationDto>(userPublication.Publication))
             .ToList();

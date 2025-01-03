@@ -5,27 +5,26 @@ using ResearchCruiseApp.Application.Models.DTOs.Forms;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormBInitValuesDtos;
 
-
 public class FormBInitValuesDtosFactory(
     IShipEquipmentsRepository shipEquipmentsRepository,
-    IMapper mapper)
-    : IFormBInitValuesDtosFactory
+    IMapper mapper
+) : IFormBInitValuesDtosFactory
 {
     public async Task<FormBInitValuesDto> Create(CancellationToken cancellationToken)
     {
         var formBInitValuesDto = new FormBInitValuesDto
         {
-            ShipEquipments = await GetShipEquipments(cancellationToken)
+            ShipEquipments = await GetShipEquipments(cancellationToken),
         };
 
         return formBInitValuesDto;
     }
 
-
-    private async Task<List<ShipEquipmentDto>> GetShipEquipments(CancellationToken cancellationToken)
+    private async Task<List<ShipEquipmentDto>> GetShipEquipments(
+        CancellationToken cancellationToken
+    )
     {
-        return (await shipEquipmentsRepository
-                .GetAllActive(cancellationToken))
+        return (await shipEquipmentsRepository.GetAllActive(cancellationToken))
             .Select(mapper.Map<ShipEquipmentDto>)
             .ToList();
     }

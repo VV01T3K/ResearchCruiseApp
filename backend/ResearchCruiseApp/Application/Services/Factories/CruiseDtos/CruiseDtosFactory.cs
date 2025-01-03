@@ -6,8 +6,11 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
 
-
-internal class CruiseDtosFactory(IMapper mapper, IIdentityService identityService, ICruiseApplicationShortInfoDtosFactory cruiseApplicationShortInfoDtosFactory) : ICruiseDtosFactory
+internal class CruiseDtosFactory(
+    IMapper mapper,
+    IIdentityService identityService,
+    ICruiseApplicationShortInfoDtosFactory cruiseApplicationShortInfoDtosFactory
+) : ICruiseDtosFactory
 {
     public async Task<CruiseDto> Create(Cruise cruise)
     {
@@ -17,9 +20,9 @@ internal class CruiseDtosFactory(IMapper mapper, IIdentityService identityServic
         cruiseDto.MainCruiseManagerFirstName = mainCruiseManager?.FirstName ?? string.Empty;
         cruiseDto.MainCruiseManagerLastName = mainCruiseManager?.LastName ?? string.Empty;
 
-        cruiseDto.CruiseApplicationsShortInfo = cruise.CruiseApplications
-                .Select(cruiseApplicationShortInfoDtosFactory.Create)
-                .ToList();
+        cruiseDto.CruiseApplicationsShortInfo = cruise
+            .CruiseApplications.Select(cruiseApplicationShortInfoDtosFactory.Create)
+            .ToList();
         return cruiseDto;
     }
 }

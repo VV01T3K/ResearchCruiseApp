@@ -8,5 +8,5 @@ public enum ErrorType
     ResourceNotFound,
     Conflict,
     ServerError,
-    ServiceUnavailable
+    ServiceUnavailable,
 }

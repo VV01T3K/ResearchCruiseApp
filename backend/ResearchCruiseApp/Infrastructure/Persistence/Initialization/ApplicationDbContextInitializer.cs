@@ -7,14 +7,14 @@ using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 
-
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
     IIdentityService identityService,
     IRandomGenerator randomGenerator,
     IConfiguration configuration,
-    ILogger<ApplicationDbContextInitializer> logger)
+    ILogger<ApplicationDbContextInitializer> logger
+)
 {
     public async Task Initialize()
     {
@@ -30,7 +30,6 @@ internal class ApplicationDbContextInitializer(
         }
     }
 
-
     private Task Migrate()
     {
         return applicationDbContext.Database.MigrateAsync();
@@ -40,14 +39,17 @@ internal class ApplicationDbContextInitializer(
     {
         var users = new InitialUsersData(configuration).Users;
 
-        if(users is null)
+        if (users is null)
             return;
 
         foreach (var user in users)
         {
             var password = randomGenerator.CreateSecurePassword();
             await identityService.AddUserWithRole(user, password, user.Role!);
-            if (configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool() ?? false)
+            if (
+                configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
+                ?? false
+            )
             {
                 logger.LogWarning("Seed User Created: {email} - {password}", user.Email, password);
             }
@@ -57,7 +59,7 @@ internal class ApplicationDbContextInitializer(
     private async Task SeedRoleData()
     {
         var roleNames = InitialAdministrationData.RoleNames;
-    
+
         foreach (var roleName in roleNames)
         {
             if (!await roleManager.RoleExistsAsync(roleName))
@@ -69,35 +71,27 @@ internal class ApplicationDbContextInitializer(
     {
         if (await applicationDbContext.UgUnits.AnyAsync())
             return;
-        
+
         foreach (var ugUnitName in InitialUgUnitData.UgUnitsNames)
         {
-            var newUgUnit = new UgUnit
-            {
-                Name = ugUnitName,
-                IsActive = true
-            };
+            var newUgUnit = new UgUnit { Name = ugUnitName, IsActive = true };
             await applicationDbContext.UgUnits.AddAsync(newUgUnit);
         }
-        
+
         await applicationDbContext.SaveChangesAsync();
     }
-    
+
     private async Task SeedResearchAreas()
     {
         if (await applicationDbContext.ResearchAreas.AnyAsync())
             return;
-        
+
         foreach (var researchAreaName in InitialResearchAreaData.ResearchAreaNames)
         {
-            var newResearchArea = new ResearchArea
-            {
-                Name = researchAreaName,
-                IsActive = true
-            };
+            var newResearchArea = new ResearchArea { Name = researchAreaName, IsActive = true };
             await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
         }
-        
+
         await applicationDbContext.SaveChangesAsync();
     }
 
@@ -108,11 +102,7 @@ internal class ApplicationDbContextInitializer(
 
         foreach (var shipEquipmentName in InitialShipEquipmentData.ShipEquipmentsNames)
         {
-            var newShipEquipment = new ShipEquipment
-            {
-                Name = shipEquipmentName,
-                IsActive = true
-            };
+            var newShipEquipment = new ShipEquipment { Name = shipEquipmentName, IsActive = true };
             await applicationDbContext.ShipEquipments.AddAsync(newShipEquipment);
         }
 

@@ -13,17 +13,18 @@ public class PostOwnPublicationsHandler(
     ICurrentUserService currentUserService,
     IUserPublicationsRepository userPublicationsRepository,
     IPublicationsRepository publicationsRepository,
-    IUnitOfWork unitOfWork)
-    : IRequestHandler<PostOwnPublicationsCommand, Result>
+    IUnitOfWork unitOfWork
+) : IRequestHandler<PostOwnPublicationsCommand, Result>
 {
     public async Task<Result> Handle(
         PostOwnPublicationsCommand request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         Guid? userId = currentUserService.GetId();
         if (userId is null)
             return Error.ResourceNotFound();
-        
+
         var alreadyAddedPublications = new HashSet<Publication>();
 
         foreach (var publicationDto in request.PublicationsDto)
@@ -32,8 +33,11 @@ public class PostOwnPublicationsHandler(
             {
                 continue;
             }
-            var publication = await formsFieldsService
-                .GetUniquePublication(publicationDto, alreadyAddedPublications, cancellationToken);
+            var publication = await formsFieldsService.GetUniquePublication(
+                publicationDto,
+                alreadyAddedPublications,
+                cancellationToken
+            );
 
             if (!alreadyAddedPublications.Contains(publication))
             {
@@ -42,12 +46,12 @@ public class PostOwnPublicationsHandler(
                 {
                     publication.UserPublications.Add(userPublication);
                     await publicationsRepository.UpdateOrAdd(publication, cancellationToken);
-                }   
+                }
             }
             alreadyAddedPublications.Add(publication);
         }
         await unitOfWork.Complete(cancellationToken);
-        
+
         return Result.Empty;
     }
 }

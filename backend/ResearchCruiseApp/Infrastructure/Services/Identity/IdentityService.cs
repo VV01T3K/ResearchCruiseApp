@@ -15,7 +15,6 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Infrastructure.Services.Identity;
 
-
 public class IdentityService(
     UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager,
@@ -23,15 +22,13 @@ public class IdentityService(
     IRandomGenerator randomGenerator,
     ICurrentUserService currentUserService,
     IMapper mapper,
-    IConfiguration configuration)
-    : IIdentityService
+    IConfiguration configuration
+) : IIdentityService
 {
     public async Task<UserDto?> GetUserDtoById(Guid id)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
-        return user is null
-            ? null
-            : await CreateUserDto(user);
+        return user is null ? null : await CreateUserDto(user);
     }
 
     public async Task<List<UserDto>> GetAllUsersDtos(CancellationToken cancellationToken)
@@ -43,7 +40,7 @@ public class IdentityService(
         {
             usersDtos.Add(await CreateUserDto(user));
         }
-        
+
         return usersDtos;
     }
 
@@ -51,49 +48,47 @@ public class IdentityService(
     {
         return await userManager.FindByIdAsync(id.ToString()) is not null;
     }
-    
+
     public async Task<bool> UserWithEmailExists(string email)
     {
         return await userManager.FindByEmailAsync(email) is not null;
     }
-    
+
     public async Task<Result> AcceptUser(Guid id)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
             return Error.ResourceNotFound();
-        
+
         user.Accepted = true;
-        
+
         var identityResult = await userManager.UpdateAsync(user);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
-        
+
         await emailSender.SendAccountAcceptedMessage(await CreateUserDto(user));
-        
+
         return Result.Empty;
     }
-    
+
     public async Task<Result> DeactivateUser(Guid id)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
             return Error.ForbiddenOperation();
-        
+
         user.Accepted = false;
-        
+
         var identityResult = await userManager.UpdateAsync(user);
-        
-        return identityResult.Succeeded
-            ? Result.Empty
-            : identityResult.ToApplicationResult();
+
+        return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
     }
-    
+
     public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
     {
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
             return Error.UnknownIdentity();
-    
+
         try
         {
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
@@ -102,45 +97,50 @@ public class IdentityService(
         {
             return Error.UnknownIdentity();
         }
-    
+
         IdentityResult result;
-    
+
         if (string.IsNullOrEmpty(changedEmail))
             result = await userManager.ConfirmEmailAsync(user, code);
         else
         {
             result = await userManager.ChangeEmailAsync(user, changedEmail, code);
-            
+
             if (result.Succeeded)
                 result = await userManager.SetUserNameAsync(user, changedEmail); // Email is also the username
         }
 
-        return result.Succeeded
-            ? Result.Empty
-            : Error.UnknownIdentity();
+        return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
     }
-    
+
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
     {
         var emailAddressAttribute = new EmailAddressAttribute();
-        
+
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
-        if (string.IsNullOrEmpty(registerForm.Email) || !emailAddressAttribute.IsValid(registerForm.Email))
+        if (
+            string.IsNullOrEmpty(registerForm.Email)
+            || !emailAddressAttribute.IsValid(registerForm.Email)
+        )
             return Error.InvalidArgument("E-mail jest niepoprawny");
 
         var user = CreateUser(registerForm);
         var identityResult = await userManager.CreateAsync(user, registerForm.Password);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
-        
+
         identityResult = await userManager.AddToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
         var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
-        await emailSender.SendEmailConfirmationEmail(await CreateUserDto(user), roleName, emailConfirmationCode);
+        await emailSender.SendEmailConfirmationEmail(
+            await CreateUserDto(user),
+            roleName,
+            emailConfirmationCode
+        );
 
         return identityResult.ToApplicationResult();
     }
@@ -148,9 +148,8 @@ public class IdentityService(
     public async Task<bool> CanUserLogin(string email, string password)
     {
         var user = await userManager.FindByEmailAsync(email);
-        return
-            user is { Accepted: true, EmailConfirmed: true } &&
-            await userManager.CheckPasswordAsync(user, password);
+        return user is { Accepted: true, EmailConfirmed: true }
+            && await userManager.CheckPasswordAsync(user, password);
     }
 
     public async Task ResendEmailConfirmationEmail(string email, string roleName)
@@ -158,13 +157,13 @@ public class IdentityService(
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
             return; // According to Microsoft, responding with an error would give to much information
-        
+
         var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
         var userDto = await CreateUserDto(user);
-        
+
         await emailSender.SendEmailConfirmationEmail(userDto, roleName, emailConfirmationCode);
     }
-    
+
     public async Task<Result<LoginResponseDto>> LoginUser(string userEmail)
     {
         var user = await userManager.FindByEmailAsync(userEmail);
@@ -181,12 +180,16 @@ public class IdentityService(
             return userIdResult.Error;
 
         var user = await userManager.FindByIdAsync(userIdResult.Data!);
-        if (user is null || user.RefreshTokenExpiry < DateTime.Now || user.RefreshToken != refreshDto.RefreshToken)
+        if (
+            user is null
+            || user.RefreshTokenExpiry < DateTime.Now
+            || user.RefreshToken != refreshDto.RefreshToken
+        )
             return Error.UnknownIdentity();
 
         return await CreateLoginResponseDto(user);
     }
-    
+
     public async Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto)
     {
         var userId = currentUserService.GetId();
@@ -196,9 +199,12 @@ public class IdentityService(
         var user = await userManager.FindByIdAsync(userId.ToString()!);
         if (user is null)
             return Error.ResourceNotFound();
-        
-        var identityResult = await userManager
-            .ChangePasswordAsync(user, changePasswordFormDto.Password, changePasswordFormDto.NewPassword);
+
+        var identityResult = await userManager.ChangePasswordAsync(
+            user,
+            changePasswordFormDto.Password,
+            changePasswordFormDto.NewPassword
+        );
 
         if (!identityResult.Succeeded)
             return Error.InvalidArgument();
@@ -219,7 +225,7 @@ public class IdentityService(
         var userDto = await GetUserDtoById(Guid.Parse(user.Id));
         if (userDto is null)
             return Error.ResourceNotFound();
-        
+
         await emailSender.SendPasswordResetMessage(userDto, code);
 
         return Result.Empty;
@@ -230,7 +236,7 @@ public class IdentityService(
         var emailBytes = UrlBase64.Decode(resetPasswordFormDto.EmailBase64);
         if (emailBytes is null)
             return Error.UnknownIdentity();
-        
+
         var email = Encoding.UTF8.GetString(emailBytes);
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
@@ -239,30 +245,35 @@ public class IdentityService(
         var resetCodeBytes = UrlBase64.Decode(resetPasswordFormDto.ResetCode);
         if (resetCodeBytes is null)
             return Error.UnknownIdentity();
-        
-        var resetCode = Encoding.UTF8.GetString(resetCodeBytes);
-        var result = await userManager
-            .ResetPasswordAsync(user, resetCode, resetPasswordFormDto.Password);
 
-        return result.Succeeded
-            ? Result.Empty
-            : Error.UnknownIdentity();
+        var resetCode = Encoding.UTF8.GetString(resetCodeBytes);
+        var result = await userManager.ResetPasswordAsync(
+            user,
+            resetCode,
+            resetPasswordFormDto.Password
+        );
+
+        return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
     }
-    
-    public async Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName)
+
+    public async Task<Result> AddUserWithRole(
+        AddUserFormDto addUserFormDto,
+        string password,
+        string roleName
+    )
     {
         var user = CreateUser(addUserFormDto);
         var identityResult = await userManager.CreateAsync(user, password);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
-        
+
         identityResult = await userManager.AddToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
-        
+
         var userDto = await CreateUserDto(user);
         await emailSender.SendAccountCreatedMessage(userDto, roleName, password);
-        
+
         return Result.Empty;
     }
 
@@ -271,7 +282,7 @@ public class IdentityService(
         var user = await userManager.FindByEmailAsync(userId.ToString());
         if (user is null)
             return Error.ResourceNotFound();
-        
+
         var result = await userManager.AddToRoleAsync(user, roleName);
         return result.ToApplicationResult();
     }
@@ -281,7 +292,7 @@ public class IdentityService(
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
             return Error.ResourceNotFound();
-        
+
         var result = await userManager.RemoveFromRoleAsync(user, roleName);
         return result.ToApplicationResult();
     }
@@ -291,10 +302,10 @@ public class IdentityService(
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
             return [];
-        
+
         return await userManager.GetRolesAsync(user);
     }
-    
+
     public async Task<IList<string>> GetCurrentUserRoleNames()
     {
         var currentUserId = currentUserService.GetId();
@@ -307,23 +318,36 @@ public class IdentityService(
 
         return await userManager.GetRolesAsync(currentUser);
     }
-    
+
     public Task<List<string?>> GetAllRoleNames(CancellationToken cancellationToken)
     {
-        return roleManager.Roles
-            .Select(role => role.Name)
-            .ToListAsync(cancellationToken);
+        return roleManager.Roles.Select(role => role.Name).ToListAsync(cancellationToken);
     }
-    
 
     private static User CreateUser(RegisterFormDto registerFormDto) =>
-        CreateUser(registerFormDto.Email, registerFormDto.FirstName, registerFormDto.LastName, false);
+        CreateUser(
+            registerFormDto.Email,
+            registerFormDto.FirstName,
+            registerFormDto.LastName,
+            false
+        );
 
     private static User CreateUser(AddUserFormDto addUserFormDto) =>
-        CreateUser(addUserFormDto.Email, addUserFormDto.FirstName, addUserFormDto.LastName, true, true);
+        CreateUser(
+            addUserFormDto.Email,
+            addUserFormDto.FirstName,
+            addUserFormDto.LastName,
+            true,
+            true
+        );
 
     private static User CreateUser(
-        string email, string firstName, string lastName, bool accepted, bool emailConfirmed = false)
+        string email,
+        string firstName,
+        string lastName,
+        bool accepted,
+        bool emailConfirmed = false
+    )
     {
         return new User
         {
@@ -332,7 +356,7 @@ public class IdentityService(
             FirstName = firstName,
             LastName = lastName,
             Accepted = accepted,
-            EmailConfirmed = emailConfirmed
+            EmailConfirmed = emailConfirmed,
         };
     }
 
@@ -350,7 +374,7 @@ public class IdentityService(
         if (!accessTokenResult.IsSuccess)
             return accessTokenResult.Error!;
         var accessToken = accessTokenResult.Data;
-        
+
         var (refreshToken, refreshTokenExpiry) = CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
@@ -358,18 +382,19 @@ public class IdentityService(
 
         var identityResult = await userManager.UpdateAsync(user);
         var concurrencyError = identityResult.Errors.FirstOrDefault(error =>
-            error.Code == nameof(IdentityErrorDescriber.ConcurrencyFailure));
+            error.Code == nameof(IdentityErrorDescriber.ConcurrencyFailure)
+        );
 
         if (concurrencyError is not null)
             return Error.Conflict("Wykonano wiele żądań w zbyt krótkim odstępie czasowym.");
         if (!identityResult.Succeeded)
             return Error.ServerError();
-        
+
         var loginResponseDto = new LoginResponseDto
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
             ExpiresIn = accessToken?.ValidTo ?? DateTime.Now,
-            RefreshToken = refreshToken
+            RefreshToken = refreshToken,
         };
         return loginResponseDto;
     }
@@ -383,26 +408,24 @@ public class IdentityService(
 
         return code;
     }
-    
+
     private async Task<Result<JwtSecurityToken>> CreateAccessToken(User user)
     {
         var issuer = configuration["JWT:ValidIssuer"];
         var audience = configuration["JWT:ValidAudience"];
         var lifetime = int.Parse(configuration["JWT:AccessTokenLifetimeSeconds"] ?? "0");
-        
+
         if (issuer is null || audience is null)
             return Error.ServerError();
-        
+
         var authenticationClaims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
-        
+
         var roles = await userManager.GetRolesAsync(user);
-        authenticationClaims.AddRange(roles
-            .Select(role => new Claim(ClaimTypes.Role, role))
-        );
+        authenticationClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var securityKeyResult = CreateSecurityKey();
         if (securityKeyResult.Error is not null)
@@ -419,12 +442,12 @@ public class IdentityService(
 
         return token;
     }
-    
+
     private (string token, DateTime expiry) CreateRefreshToken()
     {
         var lifetime = int.Parse(configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0");
         var expiry = DateTime.Now.AddSeconds(lifetime);
-        
+
         var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
 
         return (token, expiry);
@@ -435,7 +458,7 @@ public class IdentityService(
         var securityKeyResult = CreateSecurityKey();
         if (securityKeyResult.Error is not null)
             return securityKeyResult.Error;
-        
+
         var validation = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -443,15 +466,19 @@ public class IdentityService(
             ValidateLifetime = false, // We want to get the user id even from an expired token
             ValidAudience = configuration["JWT:ValidAudience"],
             ValidIssuer = configuration["JWT:ValidIssuer"],
-            IssuerSigningKey = securityKeyResult.Data
+            IssuerSigningKey = securityKeyResult.Data,
         };
 
         try
         {
-            var principal = new JwtSecurityTokenHandler().ValidateToken(accessToken, validation, out _);
+            var principal = new JwtSecurityTokenHandler().ValidateToken(
+                accessToken,
+                validation,
+                out _
+            );
             if (principal is null)
                 return Error.UnknownIdentity();
-            
+
             var userName = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userName is null)
                 return Error.UnknownIdentity();
@@ -463,13 +490,13 @@ public class IdentityService(
             return Error.UnknownIdentity();
         }
     }
-    
+
     private Result<SymmetricSecurityKey> CreateSecurityKey()
     {
         var secret = configuration["JWT:Secret"];
         if (secret is null)
             return Error.ServerError();
-        
+
         return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
     }
 }

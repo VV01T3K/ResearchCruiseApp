@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class FormBGuestUnit : Entity
 {
     public FormB FormB { get; init; } = null!;

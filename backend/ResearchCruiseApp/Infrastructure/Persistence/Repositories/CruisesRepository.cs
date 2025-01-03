@@ -5,41 +5,42 @@ using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 
-
 internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
 {
-    public CruisesRepository(ApplicationDbContext dbContext) : base(dbContext)
-    { }
-
+    public CruisesRepository(ApplicationDbContext dbContext)
+        : base(dbContext) { }
 
     public Task<Cruise?> GetByIdWithCruiseApplications(Guid id, CancellationToken cancellationToken)
     {
-        return DbContext.Cruises
-            .IncludeCruiseApplications()
+        return DbContext
+            .Cruises.IncludeCruiseApplications()
             .SingleOrDefaultAsync(cruise => cruise.Id == id, cancellationToken);
     }
-    
-    public Task<Cruise?> GetByIdWithCruiseApplicationsWithForm(Guid id, CancellationToken cancellationToken)
+
+    public Task<Cruise?> GetByIdWithCruiseApplicationsWithForm(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
-        return DbContext.Cruises
-            .Include(cruise => cruise.CruiseApplications)
+        return DbContext
+            .Cruises.Include(cruise => cruise.CruiseApplications)
             .Where(cruise => cruise.Id == id)
-            .Include(cruise=>cruise.CruiseApplications)
-            .ThenInclude(cruiseApplication=>cruiseApplication.FormA)
+            .Include(cruise => cruise.CruiseApplications)
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
     public Task<List<Cruise>> GetAllWithCruiseApplications(CancellationToken cancellationToken)
     {
-        return DbContext.Cruises
-            .IncludeCruiseApplications()
-            .ToListAsync(cancellationToken);
+        return DbContext.Cruises.IncludeCruiseApplications().ToListAsync(cancellationToken);
     }
 
-    public Task<List<Cruise>> GetAllWithCruiseApplicationsWithFormAContent(CancellationToken cancellationToken)
+    public Task<List<Cruise>> GetAllWithCruiseApplicationsWithFormAContent(
+        CancellationToken cancellationToken
+    )
     {
-        return DbContext.Cruises
-            .IncludeCruiseApplications()
+        return DbContext
+            .Cruises.IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.Permissions)
             .IncludeCruiseApplications()
             .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
@@ -56,21 +57,27 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
             .ToListAsync(cancellationToken);
     }
 
-    public Task<List<Cruise>> GetByCruiseApplicationsIds(List<Guid> ids, CancellationToken cancellationToken)
+    public Task<List<Cruise>> GetByCruiseApplicationsIds(
+        List<Guid> ids,
+        CancellationToken cancellationToken
+    )
     {
-        return DbContext.Cruises
-            .IncludeCruiseApplications()
-            .Where(cruise => ids.Any(id =>
-                cruise.CruiseApplications
-                    .Select(cruiseApplication => cruiseApplication.Id)
-                    .Contains(id)))
+        return DbContext
+            .Cruises.IncludeCruiseApplications()
+            .Where(cruise =>
+                ids.Any(id =>
+                    cruise
+                        .CruiseApplications.Select(cruiseApplication => cruiseApplication.Id)
+                        .Contains(id)
+                )
+            )
             .ToListAsync(cancellationToken);
     }
 
     public Task<List<Cruise>> GetAllByYear(string year, CancellationToken cancellationToken)
     {
-        return DbContext.Cruises
-            .Where(cruise => cruise.StartDate.StartsWith(year))
+        return DbContext
+            .Cruises.Where(cruise => cruise.StartDate.StartsWith(year))
             .ToListAsync(cancellationToken);
     }
 }

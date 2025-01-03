@@ -5,7 +5,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.Permissions;
 
-
 public class PermissionsFactory(IMapper mapper, ICompressor compressor) : IPermissionsFactory
 {
     public async Task<Permission> Create(PermissionDto permissionDto)

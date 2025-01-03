@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class FormAGuestUnit : Entity
 {
     public FormA FormA { get; init; } = null!;

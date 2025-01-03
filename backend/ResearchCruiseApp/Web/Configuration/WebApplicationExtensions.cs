@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Web.Configuration;
 
-
 public static class WebApplicationExtensions
 {
     public static async Task Configure(this WebApplication app)
@@ -15,9 +14,7 @@ public static class WebApplicationExtensions
 
         app.UseHttpsRedirection();
 
-        app
-            .UseAuthentication()
-            .UseAuthorization();
+        app.UseAuthentication().UseAuthorization();
 
         app.UseCors("CustomPolicy");
 

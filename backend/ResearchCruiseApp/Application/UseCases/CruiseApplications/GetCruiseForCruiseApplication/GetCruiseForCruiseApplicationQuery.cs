@@ -5,5 +5,5 @@ using ResearchCruiseApp.Application.Models.DTOs.Cruises;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseForCruiseApplication;
 
-
-public record GetCruiseForCruiseApplicationQuery(Guid CruiseApplicationId) : IRequest<Result<CruiseDto>>;
+public record GetCruiseForCruiseApplicationQuery(Guid CruiseApplicationId)
+    : IRequest<Result<CruiseDto>>;

@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
-
 public class FormBDto
 {
     [StringLength(1024)]

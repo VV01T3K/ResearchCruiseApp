@@ -3,11 +3,10 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormUserDtos;
 
-
 public class FormUserDtosFactory : IFormUserDtosFactory
 {
     public FormUserDto Create(UserDto userDto)
-    { 
+    {
         var formUserDto = new FormUserDto
         {
             Id = userDto.Id,

@@ -2,18 +2,17 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class FormC : Entity
 {
     [StringLength(1024)]
     public string ShipUsage { get; init; } = null!;
-    
+
     public List<Permission> Permissions { get; init; } = [];
-    
+
     public ResearchArea ResearchArea { get; set; } = null!;
 
     public List<FormCUgUnit> FormCUgUnits { get; init; } = [];
-    
+
     public List<FormCGuestUnit> FormCGuestUnits { get; init; } = [];
 
     public List<ResearchTaskEffect> ResearchTaskEffects { get; init; } = [];
@@ -38,7 +37,7 @@ public class FormC : Entity
 
     [StringLength(1024)]
     public string? SpubReportData { get; init; }
-    
+
     [StringLength(1024)]
     public string? AdditionalDescription { get; init; }
 

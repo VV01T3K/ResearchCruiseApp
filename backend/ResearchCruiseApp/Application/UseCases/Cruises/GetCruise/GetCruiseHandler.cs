@@ -8,20 +8,27 @@ using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Application.UseCases.Cruises.GetCruise;
 
-
-public class GetCruiseHandler(ICruiseDtosFactory cruiseDtosFactory, ICruisesRepository cruisesRepository, 
-    IUserPermissionVerifier userPermissionVerifier)
-    : IRequestHandler<GetCruiseQuery, Result<CruiseDto>>
+public class GetCruiseHandler(
+    ICruiseDtosFactory cruiseDtosFactory,
+    ICruisesRepository cruisesRepository,
+    IUserPermissionVerifier userPermissionVerifier
+) : IRequestHandler<GetCruiseQuery, Result<CruiseDto>>
 {
-    public async Task<Result<CruiseDto>> Handle(GetCruiseQuery request, CancellationToken cancellationToken)
+    public async Task<Result<CruiseDto>> Handle(
+        GetCruiseQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(request.Id, cancellationToken);
+        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
+            request.Id,
+            cancellationToken
+        );
         if (cruise is null)
             return Error.ResourceNotFound();
-        
-        if(await userPermissionVerifier.CanCurrentUserViewCruise(cruise)) 
+
+        if (await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
             return await cruiseDtosFactory.Create(cruise);
-   
+
         return Error.ResourceNotFound();
     }
 }

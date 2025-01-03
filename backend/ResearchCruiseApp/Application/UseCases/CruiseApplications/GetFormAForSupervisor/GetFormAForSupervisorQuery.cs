@@ -4,5 +4,5 @@ using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 
-
-public record GetFormAForSupervisorQuery(Guid CruiseApplicationId, string SupervisorCode) : IRequest<Result<FormADto>>;
+public record GetFormAForSupervisorQuery(Guid CruiseApplicationId, string SupervisorCode)
+    : IRequest<Result<FormADto>>;

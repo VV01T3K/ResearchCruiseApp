@@ -5,5 +5,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialDat
 
 internal class InitialUsersData(IConfiguration configuration)
 {
-    public readonly AddUserFormDto[]? Users = configuration.GetSection("Users").Get<AddUserFormDto[]>();
+    public readonly AddUserFormDto[]? Users = configuration
+        .GetSection("Users")
+        .Get<AddUserFormDto[]>();
 }

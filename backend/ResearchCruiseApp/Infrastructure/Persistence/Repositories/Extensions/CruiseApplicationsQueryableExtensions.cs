@@ -4,38 +4,46 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
-
 internal static class CruiseApplicationsQueryableExtensions
 {
-    public static IQueryable<CruiseApplication> IncludeForms(this IQueryable<CruiseApplication> query)
+    public static IQueryable<CruiseApplication> IncludeForms(
+        this IQueryable<CruiseApplication> query
+    )
     {
-        return query
-            .IncludeFormA()
-            .IncludeFormB()
-            .IncludeFormC();
+        return query.IncludeFormA().IncludeFormB().IncludeFormC();
     }
 
-    public static IQueryable<CruiseApplication> IncludeFormA(this IQueryable<CruiseApplication> query)
+    public static IQueryable<CruiseApplication> IncludeFormA(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query.Include(cruiseApplication => cruiseApplication.FormA);
     }
-    
-    public static IQueryable<CruiseApplication> IncludeFormB(this IQueryable<CruiseApplication> query)
+
+    public static IQueryable<CruiseApplication> IncludeFormB(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query.Include(cruiseApplication => cruiseApplication.FormB);
     }
-    
-    public static IQueryable<CruiseApplication> IncludeCruise(this IQueryable<CruiseApplication> query)
+
+    public static IQueryable<CruiseApplication> IncludeCruise(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query.Include(cruiseApplication => cruiseApplication.Cruise);
     }
 
-    public static IQueryable<CruiseApplication> IncludeFormC(this IQueryable<CruiseApplication> query)
+    public static IQueryable<CruiseApplication> IncludeFormC(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query.Include(cruiseApplication => cruiseApplication.FormC);
     }
-    
-    public static IQueryable<CruiseApplication> IncludeFormAContent(this IQueryable<CruiseApplication> query)
+
+    public static IQueryable<CruiseApplication> IncludeFormAContent(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query
             .Include(cruiseApplication => cruiseApplication.FormA!.Permissions)
@@ -54,7 +62,9 @@ internal static class CruiseApplicationsQueryableExtensions
             .ThenInclude(formASpubTask => formASpubTask.SpubTask);
     }
 
-    public static IQueryable<CruiseApplication> IncludeFormBContent(this IQueryable<CruiseApplication> query)
+    public static IQueryable<CruiseApplication> IncludeFormBContent(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query
             .Include(cruiseApplication => cruiseApplication.FormB!.Permissions)
@@ -64,7 +74,9 @@ internal static class CruiseApplicationsQueryableExtensions
             .ThenInclude(formBGuestUnit => formBGuestUnit.GuestUnit)
             .Include(cruiseApplication => cruiseApplication.FormB!.CrewMembers)
             .Include(cruiseApplication => cruiseApplication.FormB!.FormBShortResearchEquipments)
-            .ThenInclude(formBShortResearchEquipment => formBShortResearchEquipment.ResearchEquipment)
+            .ThenInclude(formBShortResearchEquipment =>
+                formBShortResearchEquipment.ResearchEquipment
+            )
             .Include(cruiseApplication => cruiseApplication.FormB!.FormBLongResearchEquipments)
             .ThenInclude(formBLongResearchEquipment => formBLongResearchEquipment.ResearchEquipment)
             .Include(cruiseApplication => cruiseApplication.FormB!.FormBPorts)
@@ -75,7 +87,9 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormB!.ShipEquipments);
     }
 
-    public static IQueryable<CruiseApplication> IncludeFormCContent(this IQueryable<CruiseApplication> query)
+    public static IQueryable<CruiseApplication> IncludeFormCContent(
+        this IQueryable<CruiseApplication> query
+    )
     {
         return query
             .Include(cruiseApplication => cruiseApplication.FormC!.Permissions)
@@ -91,7 +105,9 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormC!.Contracts)
             .Include(cruiseApplication => cruiseApplication.FormC!.SpubTasks)
             .Include(cruiseApplication => cruiseApplication.FormC!.FormCShortResearchEquipments)
-            .ThenInclude(formCShortResearchEquipment => formCShortResearchEquipment.ResearchEquipment)
+            .ThenInclude(formCShortResearchEquipment =>
+                formCShortResearchEquipment.ResearchEquipment
+            )
             .Include(cruiseApplication => cruiseApplication.FormC!.FormCLongResearchEquipments)
             .ThenInclude(formCLongResearchEquipment => formCLongResearchEquipment.ResearchEquipment)
             .Include(cruiseApplication => cruiseApplication.FormC!.FormCPorts)
@@ -104,9 +120,10 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormC!.Photos);
     }
 
-    public static IQueryable<CruiseApplication> IncludeEffects(this IQueryable<CruiseApplication> query)
+    public static IQueryable<CruiseApplication> IncludeEffects(
+        this IQueryable<CruiseApplication> query
+    )
     {
-        return query
-            .Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects);
+        return query.Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects);
     }
 }

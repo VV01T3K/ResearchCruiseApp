@@ -10,21 +10,22 @@ namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetOwnPublic
 public class GetOwnPublicationsHandler(
     ICurrentUserService currentUserService,
     IUserPublicationsRepository userPublicationsRepository,
-    IMapper mapper)
-    : IRequestHandler<GetOwnPublicationsQuery, Result<List<UserPublicationDto>>>
+    IMapper mapper
+) : IRequestHandler<GetOwnPublicationsQuery, Result<List<UserPublicationDto>>>
 {
     public async Task<Result<List<UserPublicationDto>>> Handle(
-        GetOwnPublicationsQuery request, 
-        CancellationToken cancellationToken)
+        GetOwnPublicationsQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var userId = currentUserService.GetId();
         if (userId is null)
             return Error.ResourceNotFound();
-        var publications = await userPublicationsRepository
-            .GetAllByUserId((Guid)userId, cancellationToken);
-        
-        return publications
-            .Select(mapper.Map<UserPublicationDto>)
-            .ToList();
+        var publications = await userPublicationsRepository.GetAllByUserId(
+            (Guid)userId,
+            cancellationToken
+        );
+
+        return publications.Select(mapper.Map<UserPublicationDto>).ToList();
     }
 }

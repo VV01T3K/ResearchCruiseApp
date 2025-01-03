@@ -2,5 +2,6 @@
 
 namespace ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 
-
-public interface IShipEquipmentsRepository : IRepository<ShipEquipment>, IDbDictionaryRepository<ShipEquipment>;
+public interface IShipEquipmentsRepository
+    : IRepository<ShipEquipment>,
+        IDbDictionaryRepository<ShipEquipment>;

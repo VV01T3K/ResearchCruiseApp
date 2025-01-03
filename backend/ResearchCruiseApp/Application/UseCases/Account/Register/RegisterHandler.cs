@@ -5,8 +5,8 @@ using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Application.UseCases.Account.Register;
 
-
-internal class RegisterHandler(IIdentityService identityService) : IRequestHandler<RegisterCommand, Result>
+internal class RegisterHandler(IIdentityService identityService)
+    : IRequestHandler<RegisterCommand, Result>
 {
     public Task<Result> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {

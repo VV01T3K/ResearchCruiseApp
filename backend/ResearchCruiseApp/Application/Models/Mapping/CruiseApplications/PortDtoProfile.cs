@@ -4,7 +4,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Models.Mapping.CruiseApplications;
 
-
 internal class PortDtoProfile : Profile
 {
     public PortDtoProfile()
@@ -17,15 +16,9 @@ internal class PortDtoProfile : Profile
             });
 
         CreateMap<FormBPort, PortDto>()
-            .ForMember(
-                dest => dest.Name,
-                options =>
-                    options.MapFrom(src => src.Port.Name));
-            
+            .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Port.Name));
+
         CreateMap<FormCPort, PortDto>()
-            .ForMember(
-                dest => dest.Name,
-                options =>
-                    options.MapFrom(src => src.Port.Name));
+            .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Port.Name));
     }
 }

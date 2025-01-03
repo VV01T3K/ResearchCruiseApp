@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-
 internal static class InitialResearchAreaData
 {
     public static string[] ResearchAreaNames =>
@@ -13,6 +12,6 @@ internal static class InitialResearchAreaData
             "Ujście Wisły",
             "Zatoka Pomorska",
             "Zatoka Pucka",
-            "Poza Polską Wyłączną Strefą Ekonomiczną"
+            "Poza Polską Wyłączną Strefą Ekonomiczną",
         };
 }

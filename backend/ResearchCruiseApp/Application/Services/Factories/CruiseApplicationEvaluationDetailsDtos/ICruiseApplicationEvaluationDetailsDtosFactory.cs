@@ -3,9 +3,10 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.CruiseApplicationEvaluationDetailsDtos;
 
-
 public interface ICruiseApplicationEvaluationDetailsDtosFactory
 {
     Task<CruiseApplicationEvaluationDetailsDto> Create(
-        CruiseApplication cruiseApplication, CancellationToken cancellationToken);
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    );
 }

@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-
 internal class InitialUgUnitData
 {
     public static string[] UgUnitsNames =>
@@ -660,6 +659,6 @@ internal class InitialUgUnitData
             "Fundacja Rozwoju Uniwersytetu Gdańskiego",
             "Fundacja im. Johanna Gottfrieda Herdera",
             "Gdańska Fundacja Kształcenia Menedżerów",
-            "Spółka celowa Univentum Labs sp. z. o. o."
+            "Spółka celowa Univentum Labs sp. z. o. o.",
         };
 }

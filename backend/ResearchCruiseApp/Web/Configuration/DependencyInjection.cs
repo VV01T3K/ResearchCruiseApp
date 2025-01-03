@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Web.Configuration;
 
-
 public static class DependencyInjection
 {
     public static void AddWeb(this IServiceCollection services, IConfiguration configuration)
@@ -11,19 +10,22 @@ public static class DependencyInjection
             {
                 options.JsonSerializerOptions.MaxDepth = 64;
             });
-        
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        
+
         services.AddCors(options =>
         {
-            options.AddPolicy("CustomPolicy", policyBuilder =>
-            {
-                policyBuilder
-                    .WithOrigins(configuration["FrontendUrl"] ?? "")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
+            options.AddPolicy(
+                "CustomPolicy",
+                policyBuilder =>
+                {
+                    policyBuilder
+                        .WithOrigins(configuration["FrontendUrl"] ?? "")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                }
+            );
         });
     }
 }

@@ -13,7 +13,6 @@ using ResearchCruiseApp.Web.Common.Extensions;
 
 namespace ResearchCruiseApp.Web.Controllers;
 
-
 [Route("[controller]")]
 [ApiController]
 public class UsersController(IMediator mediator) : ControllerBase
@@ -23,9 +22,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await mediator.Send(new GetAllUsersQuery());
-        return result.IsSuccess
-            ? Ok(result.Data)
-            : this.CreateError(result);
+        return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 
     [Authorize(Roles = RoleName.Administrator)]
@@ -33,9 +30,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetUserById([FromRoute] Guid id)
     {
         var result = await mediator.Send(new GetUserByIdQuery(id));
-        return result.IsSuccess
-            ? Ok(result.Data)
-            : this.CreateError(result);
+        return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -43,9 +38,7 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AddUser([FromBody] AddUserFormDto registerForm)
     {
         var result = await mediator.Send(new AddUserCommand(registerForm));
-        return result.IsSuccess
-            ? Created()
-            : this.CreateError(result);
+        return result.IsSuccess ? Created() : this.CreateError(result);
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
@@ -53,30 +46,25 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AcceptUser([FromRoute] Guid id)
     {
         var result = await mediator.Send(new AcceptUserCommand(id));
-        return result.IsSuccess
-            ? NoContent()
-            : this.CreateError(result);
+        return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
-    
+
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpPatch("{id:guid}/deactivate")]
     public async Task<IActionResult> Deactivate([FromRoute] Guid id)
     {
         var result = await mediator.Send(new DeactivateUserCommand(id));
-        return result.IsSuccess
-            ? NoContent()
-            : this.CreateError(result);
+        return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
     [Authorize(Roles = RoleName.Administrator)]
     [HttpPatch("{id}/roles")]
     public async Task<IActionResult> ToggleUserRole(
         [FromRoute] Guid id,
-        [FromBody] UserRoleToggleDto userRoleToggle)
+        [FromBody] UserRoleToggleDto userRoleToggle
+    )
     {
         var result = await mediator.Send(new ToggleUserRoleCommand(id, userRoleToggle));
-        return result.IsSuccess
-            ? NoContent()
-            : this.CreateError(result);
+        return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 }

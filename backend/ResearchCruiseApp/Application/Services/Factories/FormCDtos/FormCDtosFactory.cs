@@ -7,13 +7,12 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormCDtos;
 
-
 public class FormCDtosFactory(
     IMapper mapper,
     IPermissionDtosFactory permissionDtosFactory,
     IContractDtosFactory contractDtosFactory,
-    IFileDtosFactory fileDtosFactory)
-    : IFormCDtosFactory
+    IFileDtosFactory fileDtosFactory
+) : IFormCDtosFactory
 {
     public async Task<FormCDto> Create(FormC formC)
     {
@@ -26,7 +25,6 @@ public class FormCDtosFactory(
         return formCDto;
     }
 
-
     private async Task AddPermissions(FormC formC, FormCDto formCDto)
     {
         foreach (var permission in formC.Permissions)
@@ -35,7 +33,7 @@ public class FormCDtosFactory(
             formCDto.Permissions.Add(permissionDto);
         }
     }
-    
+
     private async Task AddContracts(FormC formC, FormCDto formCDto)
     {
         foreach (var contract in formC.Contracts)

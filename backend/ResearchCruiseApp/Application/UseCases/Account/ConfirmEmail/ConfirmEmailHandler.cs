@@ -4,8 +4,8 @@ using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Application.UseCases.Account.ConfirmEmail;
 
-
-public class ConfirmEmailHandler(IIdentityService identityService) : IRequestHandler<ConfirmEmailCommand, Result>
+public class ConfirmEmailHandler(IIdentityService identityService)
+    : IRequestHandler<ConfirmEmailCommand, Result>
 {
     public Task<Result> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
     {

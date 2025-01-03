@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class UserEffect : Entity, IEvaluated
 {
     public Guid UserId { get; init; }

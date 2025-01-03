@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Domain.Common.Constants;
 
-
 public static class EvaluationConstants
 {
     public const int PointsForBachelorThesisResearchTask = 20;
@@ -21,7 +20,7 @@ public static class EvaluationConstants
     public const double MinisterialPointsRatioForSubjectPublication = 0.5;
     public const double MinisterialPointsRatioForPostscriptPublication = 1;
     public const int PointsForSpubTask = 100;
-    
+
     public const int PointsForBachelorThesisEffect = 20;
     public const int PointsForMasterThesisEffect = 50;
     public const int PointsForDoctoralThesisEffect = 200;

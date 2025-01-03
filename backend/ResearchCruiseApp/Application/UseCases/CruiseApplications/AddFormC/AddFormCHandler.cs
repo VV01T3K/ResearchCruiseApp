@@ -14,7 +14,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.AddFormC;
 
-
 public class AddFormCHandler(
     IValidator<AddFormCCommand> validator,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
@@ -22,8 +21,8 @@ public class AddFormCHandler(
     IUnitOfWork unitOfWork,
     IUserPermissionVerifier userPermissionVerifier,
     IFormsService formsService,
-    IEffectsService effectsService)
-    : IRequestHandler<AddFormCCommand, Result>
+    IEffectsService effectsService
+) : IRequestHandler<AddFormCCommand, Result>
 {
     public async Task<Result> Handle(AddFormCCommand request, CancellationToken cancellationToken)
     {
@@ -31,22 +30,24 @@ public class AddFormCHandler(
         if (!validationResult.IsValid)
             return validationResult.ToApplicationResult();
 
-        var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormAAndFormCContent(request.CruiseApplicationId, cancellationToken);
+        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithFormAAndFormCContent(
+            request.CruiseApplicationId,
+            cancellationToken
+        );
         if (cruiseApplication is null)
             return Error.ResourceNotFound();
 
         var verificationResult = await VerifyOperation(cruiseApplication);
         if (!verificationResult.IsSuccess)
             return verificationResult;
-        
+
         var result = await unitOfWork.ExecuteIsolated(
             () => AddNewFormC(request.FormCDto, cruiseApplication, cancellationToken),
-            cancellationToken);
-        
+            cancellationToken
+        );
+
         return result;
     }
-
 
     private async Task<Result> VerifyOperation(CruiseApplication cruiseApplication)
     {
@@ -54,15 +55,18 @@ public class AddFormCHandler(
             return Error.ResourceNotFound();
         if (cruiseApplication.Status != CruiseApplicationStatus.Undertaken)
             return Error.ForbiddenOperation("Obecnie nie można wysłać Formularza C.");
-        
+
         return Result.Empty;
     }
 
     private async Task<Result> AddNewFormC(
-        FormCDto formCDto, CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+        FormCDto formCDto,
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    )
     {
         var oldFormC = cruiseApplication.FormC;
-        
+
         var newFormCResult = await formsCFactory.Create(formCDto, cancellationToken);
         if (!newFormCResult.IsSuccess)
             return newFormCResult;

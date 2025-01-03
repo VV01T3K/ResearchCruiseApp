@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormBInitValuesDtos;
 
-
 public interface IFormBInitValuesDtosFactory
 {
     Task<FormBInitValuesDto> Create(CancellationToken cancellationToken);

@@ -18,7 +18,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 maxLength: 64,
                 nullable: false,
                 oldClrType: typeof(DateTime),
-                oldType: "datetime2");
+                oldType: "datetime2"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "EndDate",
@@ -27,7 +28,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 maxLength: 64,
                 nullable: false,
                 oldClrType: typeof(DateTime),
-                oldType: "datetime2");
+                oldType: "datetime2"
+            );
         }
 
         /// <inheritdoc />
@@ -40,7 +42,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(64)",
-                oldMaxLength: 64);
+                oldMaxLength: 64
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "EndDate",
@@ -49,7 +52,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(64)",
-                oldMaxLength: 64);
+                oldMaxLength: 64
+            );
         }
     }
 }

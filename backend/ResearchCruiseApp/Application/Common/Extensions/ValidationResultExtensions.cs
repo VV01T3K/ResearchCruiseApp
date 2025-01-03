@@ -3,7 +3,6 @@ using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Application.Common.Extensions;
 
-
 public static class ValidationResultExtensions
 {
     public static Result ToApplicationResult(this ValidationResult result)
@@ -11,10 +10,10 @@ public static class ValidationResultExtensions
         if (result.IsValid)
             return Result.Empty;
 
-        var errorMessage = string.Join(" ",
-            result.Errors
-                .Select(error => error.ErrorMessage)
-                .ToList());
+        var errorMessage = string.Join(
+            " ",
+            result.Errors.Select(error => error.ErrorMessage).ToList()
+        );
 
         return Error.InvalidArgument(errorMessage);
     }

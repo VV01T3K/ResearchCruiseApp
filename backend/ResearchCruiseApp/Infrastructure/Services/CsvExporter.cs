@@ -7,15 +7,15 @@ using ResearchCruiseApp.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Services;
 
-
 public class CsvExporter(
     IGlobalizationService globalizationService,
-    IIdentityService identityService)
-    : ICsvExporter
+    IIdentityService identityService
+) : ICsvExporter
 {
-    private const string GoogleCalendarCruisesHeader = "Subject,Start Date,Start Time,End Date,End Time,Description";
+    private const string GoogleCalendarCruisesHeader =
+        "Subject,Start Date,Start Time,End Date,End Time,Description";
     private const string ExportedCruisesFileName = "Rejsy.csv";
-    
+
     public async Task<FileDto> ExportCruisesToGoogleCalendar(List<Cruise> cruises)
     {
         var csvContentBuilder = GetGoogleCalendarCruisesBuilder();
@@ -31,11 +31,10 @@ public class CsvExporter(
         var file = new FileDto
         {
             Name = ExportedCruisesFileName,
-            Content = $"{UrlPrefixes.CsvBase64Prefix}{csvContentEncoded}"
+            Content = $"{UrlPrefixes.CsvBase64Prefix}{csvContentEncoded}",
         };
         return file;
     }
-
 
     private static StringBuilder GetGoogleCalendarCruisesBuilder()
     {
@@ -48,7 +47,7 @@ public class CsvExporter(
     {
         var localStartTime = globalizationService.GetLocalString(cruise.StartDate);
         var localEndTime = globalizationService.GetLocalString(cruise.EndDate);
-        
+
         var startDate = localStartTime[..10];
         var startHour = localStartTime[12..17];
         var endDate = localEndTime[..10];
@@ -58,9 +57,11 @@ public class CsvExporter(
         var cruiseManager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);
         var deputyManager = await identityService.GetUserDtoById(cruise.MainDeputyManagerId);
         var description =
-            $"Kierownik główny: {cruiseManager?.FirstName ?? "-"} {cruiseManager?.LastName ?? ""}. " +
-            $"Zastępca kierownika głównego: {deputyManager?.FirstName ?? "-"} {deputyManager?.LastName ?? ""}.";
+            $"Kierownik główny: {cruiseManager?.FirstName ?? "-"} {cruiseManager?.LastName ?? ""}. "
+            + $"Zastępca kierownika głównego: {deputyManager?.FirstName ?? "-"} {deputyManager?.LastName ?? ""}.";
 
-        csvContentBuilder.AppendLine($"{subject},{startDate},{startHour},{endDate},{endHour},{description}");
+        csvContentBuilder.AppendLine(
+            $"{subject},{startDate},{startHour},{endDate},{endHour},{description}"
+        );
     }
 }

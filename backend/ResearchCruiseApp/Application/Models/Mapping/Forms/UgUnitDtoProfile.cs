@@ -4,7 +4,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Models.Mapping.Forms;
 
-
 internal class UgUnitDtoProfile : Profile
 {
     public UgUnitDtoProfile()

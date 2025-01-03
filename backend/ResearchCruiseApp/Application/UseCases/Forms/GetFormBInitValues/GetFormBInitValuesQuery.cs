@@ -4,5 +4,4 @@ using ResearchCruiseApp.Application.Models.DTOs.Forms;
 
 namespace ResearchCruiseApp.Application.UseCases.Forms.GetFormBInitValues;
 
-
 public record GetFormBInitValuesQuery : IRequest<Result<FormBInitValuesDto>>;

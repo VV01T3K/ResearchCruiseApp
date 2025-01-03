@@ -6,13 +6,13 @@ using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
 namespace ResearchCruiseApp.Application.UseCases.Cruises.ExportToCsv;
 
-
-public class ExportToCsvHandler(
-    ICruisesRepository cruisesRepository,
-    ICsvExporter csvExporter)
+public class ExportToCsvHandler(ICruisesRepository cruisesRepository, ICsvExporter csvExporter)
     : IRequestHandler<ExportToCsvCommand, Result<FileDto>>
 {
-    public async Task<Result<FileDto>> Handle(ExportToCsvCommand request, CancellationToken cancellationToken)
+    public async Task<Result<FileDto>> Handle(
+        ExportToCsvCommand request,
+        CancellationToken cancellationToken
+    )
     {
         if (!int.TryParse(request.Year, out _))
             return Error.InvalidArgument("Rok jest niepoprawny.");

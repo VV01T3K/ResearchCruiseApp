@@ -8,17 +8,22 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.Cruises.ConfirmCruise;
 
-
 public class ConfirmCruiseHandler(
     ICruisesRepository cruisesRepository,
     IEmailSender emailSender,
     IUnitOfWork unitOfWork,
-    IIdentityService identityService)
-    : IRequestHandler<ConfirmCruiseCommand, Result>
+    IIdentityService identityService
+) : IRequestHandler<ConfirmCruiseCommand, Result>
 {
-    public async Task<Result> Handle(ConfirmCruiseCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        ConfirmCruiseCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplicationsWithForm(request.Id, cancellationToken);
+        var cruise = await cruisesRepository.GetByIdWithCruiseApplicationsWithForm(
+            request.Id,
+            cancellationToken
+        );
         if (cruise is null)
             return Error.ResourceNotFound();
 
@@ -29,25 +34,39 @@ public class ConfirmCruiseHandler(
         foreach (var cruiseApplication in cruise.CruiseApplications)
         {
             if (cruiseApplication.FormA is null)
-                return Error.ServerError($"Zgłoszenie {cruiseApplication.Id} nie zawiera Formularza A.");
-            
+                return Error.ServerError(
+                    $"Zgłoszenie {cruiseApplication.Id} nie zawiera Formularza A."
+                );
+
             cruiseApplication.Status = CruiseApplicationStatus.FormBRequired;
 
-            var deputyManager = await identityService.GetUserDtoById(cruiseApplication.FormA.DeputyManagerId);
-            var cruiseManager = await identityService.GetUserDtoById(cruiseApplication.FormA.CruiseManagerId);
-            
+            var deputyManager = await identityService.GetUserDtoById(
+                cruiseApplication.FormA.DeputyManagerId
+            );
+            var cruiseManager = await identityService.GetUserDtoById(
+                cruiseApplication.FormA.CruiseManagerId
+            );
+
             if (deputyManager is not null)
-                await emailSender.SendCruiseConfirmMessage(cruise, deputyManager, deputyManager.Email);
-            
+                await emailSender.SendCruiseConfirmMessage(
+                    cruise,
+                    deputyManager,
+                    deputyManager.Email
+                );
+
             if (cruiseManager is not null)
-                await emailSender.SendCruiseConfirmMessage(cruise, cruiseManager, cruiseManager.Email);
+                await emailSender.SendCruiseConfirmMessage(
+                    cruise,
+                    cruiseManager,
+                    cruiseManager.Email
+                );
         }
-        
+
         await unitOfWork.Complete(cancellationToken);
-        
+
         return Result.Empty;
     }
-    
+
     private static Result UpdateCruiseStatus(Cruise cruise)
     {
         if (cruise.Status != CruiseStatus.New)

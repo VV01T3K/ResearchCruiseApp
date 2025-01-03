@@ -4,7 +4,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Models.Mapping.CruiseApplications;
 
-
 internal class UserEffectDtoProfile : Profile
 {
     public UserEffectDtoProfile()
@@ -12,7 +11,7 @@ internal class UserEffectDtoProfile : Profile
         CreateMap<UserEffect, UserEffectDto>()
             .ForMember(
                 dest => dest.CruiseApplicationId,
-                options =>
-                    options.MapFrom(src => src.Effect.FormC.CruiseApplication.Id));
+                options => options.MapFrom(src => src.Effect.FormC.CruiseApplication.Id)
+            );
     }
 }

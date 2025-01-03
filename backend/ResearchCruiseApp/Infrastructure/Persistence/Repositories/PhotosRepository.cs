@@ -3,9 +3,8 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 
-
 internal class PhotosRepository : Repository<Photo>, IPhotosRepository
 {
-    public PhotosRepository(ApplicationDbContext dbContext) : base(dbContext)
-    { }
+    public PhotosRepository(ApplicationDbContext dbContext)
+        : base(dbContext) { }
 }

@@ -6,12 +6,11 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormADtos;
 
-
 internal class FormADtosFactory(
     IMapper mapper,
     IPermissionDtosFactory permissionDtosFactory,
-    IContractDtosFactory contractDtosFactory)
-    : IFormADtosFactory
+    IContractDtosFactory contractDtosFactory
+) : IFormADtosFactory
 {
     public async Task<FormADto> Create(FormA formA)
     {
@@ -19,10 +18,9 @@ internal class FormADtosFactory(
 
         await AddPermissions(formA, formADto);
         await AddContracts(formA, formADto);
-        
+
         return formADto;
     }
-
 
     private async Task AddPermissions(FormA formA, FormADto formADto)
     {
@@ -32,7 +30,7 @@ internal class FormADtosFactory(
             formADto.Permissions.Add(permissionDto);
         }
     }
-    
+
     private async Task AddContracts(FormA formA, FormADto formADto)
     {
         foreach (var formAContract in formA.FormAContracts)

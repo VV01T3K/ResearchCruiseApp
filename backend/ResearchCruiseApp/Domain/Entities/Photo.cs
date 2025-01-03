@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class Photo : Entity
 {
     [StringLength(1024)]

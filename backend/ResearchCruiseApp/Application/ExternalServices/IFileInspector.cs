@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Application.ExternalServices;
 
-
 public interface IFileInspector
 {
     bool IsFilePdf(string contentAsBase64Url);

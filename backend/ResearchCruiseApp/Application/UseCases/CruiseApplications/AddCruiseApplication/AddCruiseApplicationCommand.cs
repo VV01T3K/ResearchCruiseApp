@@ -5,6 +5,6 @@ using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.AddCruiseApplication;
 
-
 public record AddCruiseApplicationCommand(FormADto FormADto, bool IsDraft)
-    : FormACommand(FormADto, IsDraft), IRequest<Result>;
+    : FormACommand(FormADto, IsDraft),
+        IRequest<Result>;

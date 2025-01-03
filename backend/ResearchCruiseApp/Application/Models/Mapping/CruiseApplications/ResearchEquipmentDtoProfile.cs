@@ -4,7 +4,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Models.Mapping.CruiseApplications;
 
-
 internal class ResearchEquipmentDtoProfile : Profile
 {
     public ResearchEquipmentDtoProfile()
@@ -12,13 +11,13 @@ internal class ResearchEquipmentDtoProfile : Profile
         CreateMap<FormBResearchEquipment, ResearchEquipmentDto>()
             .ForMember(
                 dest => dest.Name,
-                options =>
-                    options.MapFrom(src => src.ResearchEquipment.Name));
-            
+                options => options.MapFrom(src => src.ResearchEquipment.Name)
+            );
+
         CreateMap<FormCResearchEquipment, ResearchEquipmentDto>()
             .ForMember(
                 dest => dest.Name,
-                options =>
-                    options.MapFrom(src => src.ResearchEquipment.Name));
+                options => options.MapFrom(src => src.ResearchEquipment.Name)
+            );
     }
 }

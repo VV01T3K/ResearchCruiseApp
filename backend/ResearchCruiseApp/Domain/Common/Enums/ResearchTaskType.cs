@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Domain.Common.Enums;
 
-
 public enum ResearchTaskType
 {
     BachelorThesis = 0,
@@ -14,5 +13,5 @@ public enum ResearchTaskType
     CommercialProject = 8,
     Didactics = 9,
     OwnResearchTask = 10,
-    OtherResearchTask = 11
+    OtherResearchTask = 11,
 }

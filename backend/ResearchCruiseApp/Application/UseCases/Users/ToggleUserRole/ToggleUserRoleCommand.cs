@@ -4,5 +4,5 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Application.UseCases.Users.ToggleUserRole;
 
-
-public record ToggleUserRoleCommand(Guid UserId, UserRoleToggleDto RoleToggleDto) : IRequest<Result>;
+public record ToggleUserRoleCommand(Guid UserId, UserRoleToggleDto RoleToggleDto)
+    : IRequest<Result>;

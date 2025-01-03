@@ -15,15 +15,14 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 table: "ResearchTasks",
                 type: "nvarchar(1024)",
                 maxLength: 1024,
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Magazine",
-                table: "ResearchTasks");
+            migrationBuilder.DropColumn(name: "Magazine", table: "ResearchTasks");
         }
     }
 }

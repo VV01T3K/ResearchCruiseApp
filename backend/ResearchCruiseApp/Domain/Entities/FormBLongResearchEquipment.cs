@@ -3,7 +3,6 @@ using ResearchCruiseApp.Domain.Common.Enums;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class FormBLongResearchEquipment : Entity
 {
     public FormB FormB { get; init; } = null!;

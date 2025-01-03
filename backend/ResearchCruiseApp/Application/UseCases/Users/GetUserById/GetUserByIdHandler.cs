@@ -8,13 +8,16 @@ namespace ResearchCruiseApp.Application.UseCases.Users.GetUserById;
 
 public class GetUserByIdHandler(
     IUserPermissionVerifier userPermissionVerifier,
-    IIdentityService identityService)
-    : IRequestHandler<GetUserByIdQuery, Result<UserDto>>
+    IIdentityService identityService
+) : IRequestHandler<GetUserByIdQuery, Result<UserDto>>
 {
-    public async Task<Result<UserDto>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(
+        GetUserByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var userDto = await identityService.GetUserDtoById(request.Id);
-        
+
         if (userDto is null)
             return Error.ResourceNotFound();
         if (await userPermissionVerifier.CanCurrentUserAccess(userDto.Id))

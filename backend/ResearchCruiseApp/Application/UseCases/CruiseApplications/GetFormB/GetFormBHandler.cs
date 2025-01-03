@@ -7,17 +7,21 @@ using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetFormB;
 
-
 public class GetFormBHandler(
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     IFormBDtosFactory formBDtosFactory,
-    IUserPermissionVerifier userPermissionVerifier)
-    : IRequestHandler<GetFormBQuery, Result<FormBDto>>
+    IUserPermissionVerifier userPermissionVerifier
+) : IRequestHandler<GetFormBQuery, Result<FormBDto>>
 {
-    public async Task<Result<FormBDto>> Handle(GetFormBQuery request, CancellationToken cancellationToken)
+    public async Task<Result<FormBDto>> Handle(
+        GetFormBQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormAAndFormBContent(request.CruiseApplicationId, cancellationToken);
+        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithFormAAndFormBContent(
+            request.CruiseApplicationId,
+            cancellationToken
+        );
         if (cruiseApplication?.FormB is null)
             return Error.ResourceNotFound();
 

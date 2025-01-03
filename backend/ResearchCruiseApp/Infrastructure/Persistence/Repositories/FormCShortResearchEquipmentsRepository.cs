@@ -3,10 +3,10 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 
-
 internal class FormCShortResearchEquipmentsRepository
-    : Repository<FormCShortResearchEquipment>, IFormCShortResearchEquipmentsRepository
+    : Repository<FormCShortResearchEquipment>,
+        IFormCShortResearchEquipmentsRepository
 {
-    public FormCShortResearchEquipmentsRepository(ApplicationDbContext dbContext) : base(dbContext)
-    { }
+    public FormCShortResearchEquipmentsRepository(ApplicationDbContext dbContext)
+        : base(dbContext) { }
 }

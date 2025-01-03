@@ -5,13 +5,15 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Application.UseCases.Account.GetCurrentUser;
 
-
 public class GetCurrentUserHandler(
     ICurrentUserService currentUserService,
-    IIdentityService identityService)
-    : IRequestHandler<GetCurrentUserQuery, Result<UserDto>>
+    IIdentityService identityService
+) : IRequestHandler<GetCurrentUserQuery, Result<UserDto>>
 {
-    public async Task<Result<UserDto>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(
+        GetCurrentUserQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var currentUserId = currentUserService.GetId();
         if (currentUserId is null)

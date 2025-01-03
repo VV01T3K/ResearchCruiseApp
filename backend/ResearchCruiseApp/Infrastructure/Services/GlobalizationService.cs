@@ -4,12 +4,11 @@ using ResearchCruiseApp.Application.ExternalServices;
 
 namespace ResearchCruiseApp.Infrastructure.Services;
 
-
 public class GlobalizationService : IGlobalizationService
 {
     private const string CultureInfoId = "pl-pl";
     private const string TimeZoneInfoId = "Central European Standard Time";
-    
+
     public CultureInfo GetCultureInfo() => new(CultureInfoId);
 
     public TimeZoneInfo GetTimeZoneInfo() => TimeZoneInfo.FindSystemTimeZoneById(TimeZoneInfoId);
@@ -18,7 +17,7 @@ public class GlobalizationService : IGlobalizationService
     {
         if (date.Kind != DateTimeKind.Unspecified)
             date = DateTime.SpecifyKind(date, DateTimeKind.Unspecified);
-        
+
         var timeZoneInfo = GetTimeZoneInfo();
         var dateUtc = TimeZoneInfo.ConvertTimeToUtc(date, timeZoneInfo);
         var dateString = dateUtc.ToString(DateConstants.IsoStringDateFormat);

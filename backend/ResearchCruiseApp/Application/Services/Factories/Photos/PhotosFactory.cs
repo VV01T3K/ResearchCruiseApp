@@ -5,7 +5,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.Photos;
 
-
 internal class PhotosFactory(ICompressor compressor) : IPhotosFactory
 {
     public async Task<Photo> Create(FileDto fileDto)
@@ -13,7 +12,7 @@ internal class PhotosFactory(ICompressor compressor) : IPhotosFactory
         var photo = new Photo
         {
             Name = fileDto.Name,
-            Content = await compressor.Compress(fileDto.Content)
+            Content = await compressor.Compress(fileDto.Content),
         };
 
         return photo;

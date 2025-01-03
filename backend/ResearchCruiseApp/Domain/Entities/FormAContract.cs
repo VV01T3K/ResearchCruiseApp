@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class FormAContract : Entity, IEvaluated
 {
     public FormA FormA { get; init; } = null!;

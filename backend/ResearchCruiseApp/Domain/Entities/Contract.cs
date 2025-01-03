@@ -51,43 +51,41 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
 
     public List<FormC> FormsC { get; init; } = [];
 
-
-    public override bool Equals(object? other) =>
-        Equals((Contract?)other);
+    public override bool Equals(object? other) => Equals((Contract?)other);
 
     public override int GetHashCode()
     {
-        return Category.GetHashCode() +
-               InstitutionName.GetHashCode() +
-               InstitutionUnit.GetHashCode() +
-               InstitutionLocalization.GetHashCode() +
-               Description.GetHashCode() +
-               ScanName.GetHashCode() +
-               ScanContent.GetHashCode();
+        return Category.GetHashCode()
+            + InstitutionName.GetHashCode()
+            + InstitutionUnit.GetHashCode()
+            + InstitutionLocalization.GetHashCode()
+            + Description.GetHashCode()
+            + ScanName.GetHashCode()
+            + ScanContent.GetHashCode();
     }
 
     public bool Equals(Contract? other)
     {
-        return other is not null &&
-               other.Category == Category &&
-               other.InstitutionName == InstitutionName &&
-               other.InstitutionUnit == InstitutionUnit &&
-               other.InstitutionLocalization == InstitutionLocalization &&
-               other.Description == Description &&
-               other.ScanName == ScanName &&
-               other.ScanContent.SequenceEqual(ScanContent);
+        return other is not null
+            && other.Category == Category
+            && other.InstitutionName == InstitutionName
+            && other.InstitutionUnit == InstitutionUnit
+            && other.InstitutionLocalization == InstitutionLocalization
+            && other.Description == Description
+            && other.ScanName == ScanName
+            && other.ScanContent.SequenceEqual(ScanContent);
     }
 
     public static Expression<Func<Contract, bool>> EqualsByExpression(Contract? other)
     {
         return contract =>
-            other != null &&
-            other.Category == contract.Category &&
-            other.InstitutionName == contract.InstitutionName &&
-            other.InstitutionUnit == contract.InstitutionUnit &&
-            other.InstitutionLocalization == contract.InstitutionLocalization &&
-            other.Description == contract.Description &&
-            other.ScanName == contract.ScanName &&
-            other.ScanContent.SequenceEqual(contract.ScanContent);
+            other != null
+            && other.Category == contract.Category
+            && other.InstitutionName == contract.InstitutionName
+            && other.InstitutionUnit == contract.InstitutionUnit
+            && other.InstitutionLocalization == contract.InstitutionLocalization
+            && other.Description == contract.Description
+            && other.ScanName == contract.ScanName
+            && other.ScanContent.SequenceEqual(contract.ScanContent);
     }
 }

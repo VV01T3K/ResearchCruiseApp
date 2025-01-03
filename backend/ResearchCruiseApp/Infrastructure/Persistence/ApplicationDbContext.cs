@@ -6,12 +6,12 @@ using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 
-
-internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<User>(options)
+internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<User>(options)
 {
     public DbSet<CruiseApplication> CruiseApplications { get; init; } = null!;
     public DbSet<Cruise> Cruises { get; init; } = null!;
-    
+
     public DbSet<FormA> FormsA { get; init; } = null!;
     public DbSet<FormB> FormsB { get; init; } = null!;
     public DbSet<FormC> FormsC { get; init; } = null!;
@@ -55,11 +55,10 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     public DbSet<UserEffect> UserEffects { get; init; } = null!;
     public DbSet<UserPublication> UserPublications { get; init; } = null!;
 
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         EntityConfiguration.Apply(builder);
         builder.ApplyConfiguration(new CruiseApplicationConfiguration());
     }

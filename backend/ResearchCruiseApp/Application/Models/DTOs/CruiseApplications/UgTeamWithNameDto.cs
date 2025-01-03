@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
-
 public class UgTeamWithNameDto
 {
     [StringLength(1024)]

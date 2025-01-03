@@ -4,13 +4,12 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Models.Mapping.CruiseApplications;
 
-
 internal class CollectedSampleDtoProfile : Profile
 {
     public CollectedSampleDtoProfile()
     {
         CreateMap<CollectedSampleDto, CollectedSample>();
-            
+
         CreateMap<CollectedSample, CollectedSampleDto>();
     }
 }

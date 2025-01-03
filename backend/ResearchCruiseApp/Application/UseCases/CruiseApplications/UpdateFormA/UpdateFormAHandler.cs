@@ -17,7 +17,6 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.UpdateFormA;
 
-
 public class UpdateFormAHandler(
     IValidator<FormACommand> validator,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
@@ -26,17 +25,22 @@ public class UpdateFormAHandler(
     IFormsAFactory formsAFactory,
     IFormsService formsService,
     ICruiseApplicationsService cruiseApplicationsService,
-    ICruiseApplicationEvaluator cruiseApplicationEvaluator)
-    : IRequestHandler<UpdateFormACommand, Result>
+    ICruiseApplicationEvaluator cruiseApplicationEvaluator
+) : IRequestHandler<UpdateFormACommand, Result>
 {
-    public async Task<Result> Handle(UpdateFormACommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        UpdateFormACommand request,
+        CancellationToken cancellationToken
+    )
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
             return validationResult.ToApplicationResult();
 
-        var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormAContent(request.CruiseApplicationId, cancellationToken);
+        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithFormAContent(
+            request.CruiseApplicationId,
+            cancellationToken
+        );
         if (cruiseApplication is null)
             return Error.ResourceNotFound();
 
@@ -46,18 +50,25 @@ public class UpdateFormAHandler(
 
         var result = await unitOfWork.ExecuteIsolated(
             action: () =>
-                UpdateCruiseApplication(request.FormADto, request.IsDraft, cruiseApplication, cancellationToken),
-            cancellationToken);
+                UpdateCruiseApplication(
+                    request.FormADto,
+                    request.IsDraft,
+                    cruiseApplication,
+                    cancellationToken
+                ),
+            cancellationToken
+        );
         if (!result.IsSuccess)
             return result;
-        
+
         if (!request.IsDraft)
-            await cruiseApplicationsService
-                .SendRequestToSupervisor(cruiseApplication, request.FormADto.SupervisorEmail);
-        
+            await cruiseApplicationsService.SendRequestToSupervisor(
+                cruiseApplication,
+                request.FormADto.SupervisorEmail
+            );
+
         return Result.Empty;
     }
-
 
     private async Task<Result> VerifyOperation(CruiseApplication cruiseApplication)
     {
@@ -65,21 +76,30 @@ public class UpdateFormAHandler(
             return Error.ResourceNotFound(); // Forbidden may give to much information
         if (cruiseApplication.Status != CruiseApplicationStatus.Draft)
             return Error.ForbiddenOperation("Zgłoszenie nie jest już w stanie wersji roboczej.");
-        
+
         return Result.Empty;
     }
 
     private async Task<Result> UpdateCruiseApplication(
-        FormADto formADto, bool isDraft, CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+        FormADto formADto,
+        bool isDraft,
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    )
     {
         var oldFormA = cruiseApplication.FormA;
-        
-        var result = await UpdateCruiseApplicationProperties(formADto, cruiseApplication, isDraft, cancellationToken);
+
+        var result = await UpdateCruiseApplicationProperties(
+            formADto,
+            cruiseApplication,
+            isDraft,
+            cancellationToken
+        );
         if (!result.IsSuccess)
             return result;
 
         await cruiseApplicationEvaluator.Evaluate(cruiseApplication, isDraft, cancellationToken);
-        
+
         await unitOfWork.Complete(cancellationToken);
 
         if (oldFormA is not null)
@@ -92,12 +112,16 @@ public class UpdateFormAHandler(
     }
 
     private async Task<Result> UpdateCruiseApplicationProperties(
-        FormADto formADto, CruiseApplication cruiseApplication, bool isDraft, CancellationToken cancellationToken)
+        FormADto formADto,
+        CruiseApplication cruiseApplication,
+        bool isDraft,
+        CancellationToken cancellationToken
+    )
     {
         var newFormAResult = await formsAFactory.Create(formADto, cancellationToken);
         if (!newFormAResult.IsSuccess)
             return newFormAResult;
-        
+
         if (isDraft)
         {
             cruiseApplication.Note = formADto.Note;

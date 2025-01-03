@@ -4,10 +4,13 @@ using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Application.UseCases.Users.ToggleUserRole;
 
-
-public class ToggleUserRoleHandler(IIdentityService identityService) : IRequestHandler<ToggleUserRoleCommand, Result>
+public class ToggleUserRoleHandler(IIdentityService identityService)
+    : IRequestHandler<ToggleUserRoleCommand, Result>
 {
-    public async Task<Result> Handle(ToggleUserRoleCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        ToggleUserRoleCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var rolesNames = await identityService.GetAllRoleNames(cancellationToken);
 
@@ -16,7 +19,10 @@ public class ToggleUserRoleHandler(IIdentityService identityService) : IRequestH
 
         var result = request.RoleToggleDto.AddRole
             ? await identityService.AddRoleToUser(request.UserId, request.RoleToggleDto.RoleName)
-            : await identityService.RemoveRoleFromUser(request.UserId, request.RoleToggleDto.RoleName);
+            : await identityService.RemoveRoleFromUser(
+                request.UserId,
+                request.RoleToggleDto.RoleName
+            );
 
         return result;
     }

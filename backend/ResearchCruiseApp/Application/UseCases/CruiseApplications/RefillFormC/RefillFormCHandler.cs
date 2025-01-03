@@ -8,15 +8,20 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.RefillFormC;
 
-
 public class RefillFormCHandler(
     ICruiseApplicationsRepository cruiseApplicationsRepository,
-    IUnitOfWork unitOfWork)
-    : IRequestHandler<RefillFormCCommand, Result>
+    IUnitOfWork unitOfWork
+) : IRequestHandler<RefillFormCCommand, Result>
 {
-    public async Task<Result> Handle(RefillFormCCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        RefillFormCCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithForms(request.Id, cancellationToken);
+        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithForms(
+            request.Id,
+            cancellationToken
+        );
         if (cruiseApplication is null)
             return Error.ResourceNotFound();
 
@@ -24,9 +29,9 @@ public class RefillFormCHandler(
             return Error.InvalidArgument("Obecnie nie można umożliwić edycji formularza C");
 
         cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
-        
+
         await unitOfWork.Complete(cancellationToken);
-        
+
         return Result.Empty;
     }
 }

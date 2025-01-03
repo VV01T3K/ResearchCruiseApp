@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-
 public class FormCResearchEquipment : Entity
 {
     public FormC FormC { get; init; } = null!;
@@ -11,10 +10,10 @@ public class FormCResearchEquipment : Entity
 
     [StringLength(1024)]
     public string? InsuranceStartDate { get; init; }
-    
+
     [StringLength(1024)]
     public string? InsuranceEndDate { get; init; }
-    
+
     [StringLength(1024)]
     public string Permission { get; init; } = null!;
 }

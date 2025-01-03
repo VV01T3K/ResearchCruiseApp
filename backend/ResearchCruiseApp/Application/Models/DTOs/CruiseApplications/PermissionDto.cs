@@ -2,7 +2,6 @@
 
 namespace ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
-
 public class PermissionDto
 {
     [StringLength(1024)]

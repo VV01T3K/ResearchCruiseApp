@@ -32,16 +32,16 @@ using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Application;
 
-
 public static class DependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
+        );
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        
+
         services.AddFactories();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -55,7 +55,6 @@ public static class DependencyInjection
             .AddScoped<IFormsService, FormsService>();
     }
 
-
     private static void AddFactories(this IServiceCollection services)
     {
         services
@@ -68,10 +67,16 @@ public static class DependencyInjection
             .AddScoped<IFormAContractDtosFactory, FormAContractDtosFactory>()
             .AddScoped<ICruiseApplicationsFactory, CruiseApplicationsFactory>()
             .AddScoped<ICruiseApplicationDtosFactory, CruiseApplicationDtosFactory>()
-            .AddScoped<ICruiseApplicationEvaluationDetailsDtosFactory, CruiseApplicationEvaluationDetailsDtosFactory>()
+            .AddScoped<
+                ICruiseApplicationEvaluationDetailsDtosFactory,
+                CruiseApplicationEvaluationDetailsDtosFactory
+            >()
             .AddScoped<ICruisesFactory, CruisesFactory>()
             .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>()
-            .AddScoped<ICruiseApplicationShortInfoDtosFactory, CruiseApplicationShortInfoDtosFactory>()
+            .AddScoped<
+                ICruiseApplicationShortInfoDtosFactory,
+                CruiseApplicationShortInfoDtosFactory
+            >()
             .AddScoped<IFormAInitValuesDtosFactory, FormAInitValuesDtosFactory>()
             .AddScoped<IFormUserDtosFactory, FormUserDtosFactory>()
             .AddScoped<IFormsBFactory, FormsBFactory>()

@@ -4,8 +4,8 @@ using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Application.UseCases.Users.AcceptUser;
 
-
-public class AcceptUserHandler(IIdentityService identityService) : IRequestHandler<AcceptUserCommand, Result>
+public class AcceptUserHandler(IIdentityService identityService)
+    : IRequestHandler<AcceptUserCommand, Result>
 {
     public Task<Result> Handle(AcceptUserCommand request, CancellationToken cancellationToken)
     {

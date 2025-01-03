@@ -4,8 +4,7 @@ using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
 
-
 public record EditCruiseApplicationEvaluationCommand(
     Guid Id,
-    CruiseApplicationEvaluationsEditsDto CruiseApplicationEvaluationsEditsDto)
-    : IRequest<Result>;
+    CruiseApplicationEvaluationsEditsDto CruiseApplicationEvaluationsEditsDto
+) : IRequest<Result>;

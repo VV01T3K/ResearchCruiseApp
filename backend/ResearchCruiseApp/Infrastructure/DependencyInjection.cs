@@ -14,17 +14,19 @@ using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure;
 
-
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services.AddPersistence(configuration);
-        
+
         services.AddCustomIdentity(configuration);
-        
+
         services.AddHttpContextAccessor();
-        
+
         services
             .AddScoped<IFileInspector, FileInspector>()
             .AddScoped<ICompressor, Compressor>()
@@ -36,18 +38,21 @@ public static class DependencyInjection
             .AddScoped<IGlobalizationService, GlobalizationService>()
             .AddScoped<ICsvExporter, CsvExporter>();
     }
-    
-    
-    private static void AddCustomIdentity(this IServiceCollection services, IConfiguration configuration)
+
+    private static void AddCustomIdentity(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services
             .AddIdentity<User, IdentityRole>(options =>
-                options.SignIn.RequireConfirmedAccount = true)
+                options.SignIn.RequireConfirmedAccount = true
+            )
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
         services
-            .AddAuthentication(options => 
+            .AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,10 +69,12 @@ public static class DependencyInjection
                     ClockSkew = TimeSpan.Zero,
                     ValidAudience = configuration["JWT:ValidAudience"],
                     ValidIssuer = configuration["JWT:ValidIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!))
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!)
+                    ),
                 };
             });
-        
+
         services.Configure<IdentityOptions>(options =>
         {
             options.Password.RequireDigit = true;
@@ -76,17 +83,21 @@ public static class DependencyInjection
             options.Password.RequireUppercase = true;
             options.Password.RequireNonAlphanumeric = false;
         });
-        
+
         services.AddScoped<IIdentityService, IdentityService>();
     }
 
-    private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    private static void AddPersistence(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Database")));
+            options.UseSqlServer(configuration.GetConnectionString("Database"))
+        );
 
         services.AddScoped<ApplicationDbContextInitializer>();
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services
             .AddScoped<IFormsARepository, FormsARepository>()
@@ -109,8 +120,14 @@ public static class DependencyInjection
             .AddScoped<IFormsBRepository, FormsBRepository>()
             .AddScoped<IFormBUgUnitsRepository, FormBUgUnitsRepository>()
             .AddScoped<IFormBGuestUnitsRepository, FormBGuestUnitsRepository>()
-            .AddScoped<IFormBShortResearchEquipmentsRepository, FormBShortResearchEquipmentsRepository>()
-            .AddScoped<IFormBLongResearchEquipmentsRepository, FormBLongResearchEquipmentsRepository>()
+            .AddScoped<
+                IFormBShortResearchEquipmentsRepository,
+                FormBShortResearchEquipmentsRepository
+            >()
+            .AddScoped<
+                IFormBLongResearchEquipmentsRepository,
+                FormBLongResearchEquipmentsRepository
+            >()
             .AddScoped<IFormBPortsRepository, FormBPortsRepository>()
             .AddScoped<IFormBResearchEquipmentsRepository, FormBResearchEquipmentsRepository>()
             .AddScoped<ICrewMembersRepository, CrewMembersRepository>()
@@ -121,8 +138,14 @@ public static class DependencyInjection
             .AddScoped<IFormsCRepository, FormsCRepository>()
             .AddScoped<IFormCUgUnitsRepository, FormCUgUnitsRepository>()
             .AddScoped<IFormCGuestUnitsRepository, FormCGuestUnitsRepository>()
-            .AddScoped<IFormCShortResearchEquipmentsRepository, FormCShortResearchEquipmentsRepository>()
-            .AddScoped<IFormCLongResearchEquipmentsRepository, FormCLongResearchEquipmentsRepository>()
+            .AddScoped<
+                IFormCShortResearchEquipmentsRepository,
+                FormCShortResearchEquipmentsRepository
+            >()
+            .AddScoped<
+                IFormCLongResearchEquipmentsRepository,
+                FormCLongResearchEquipmentsRepository
+            >()
             .AddScoped<IFormCPortsRepository, FormCPortsRepository>()
             .AddScoped<IFormCResearchEquipmentsRepository, FormCResearchEquipmentsRepository>()
             .AddScoped<ICollectedSamplesRepository, CollectedSamplesRepository>()

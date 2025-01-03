@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
-
 public class FormAPublicationDto
 {
     public Guid Id { get; init; }

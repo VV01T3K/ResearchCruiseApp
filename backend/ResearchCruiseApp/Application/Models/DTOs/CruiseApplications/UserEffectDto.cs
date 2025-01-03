@@ -1,6 +1,5 @@
 ﻿namespace ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 
-
 public class UserEffectDto
 {
     public Guid Id { get; init; }

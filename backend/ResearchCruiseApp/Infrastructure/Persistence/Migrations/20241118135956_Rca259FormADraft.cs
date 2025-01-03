@@ -13,7 +13,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_FormsA_ResearchAreas_ResearchAreaId",
-                table: "FormsA");
+                table: "FormsA"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "ShipUsage",
@@ -23,7 +24,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
-                oldMaxLength: 1024);
+                oldMaxLength: 1024
+            );
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "ResearchAreaId",
@@ -31,7 +33,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 type: "uniqueidentifier",
                 nullable: true,
                 oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier");
+                oldType: "uniqueidentifier"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "PeriodNotes",
@@ -43,7 +46,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
                 oldMaxLength: 1024,
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "DifferentUsage",
@@ -55,7 +59,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
                 oldMaxLength: 1024,
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "CruiseGoalDescription",
@@ -67,7 +72,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
                 oldMaxLength: 1024,
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "CruiseGoal",
@@ -77,14 +83,16 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
-                oldMaxLength: 1024);
+                oldMaxLength: 1024
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_FormsA_ResearchAreas_ResearchAreaId",
                 table: "FormsA",
                 column: "ResearchAreaId",
                 principalTable: "ResearchAreas",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -92,7 +100,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_FormsA_ResearchAreas_ResearchAreaId",
-                table: "FormsA");
+                table: "FormsA"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "ShipUsage",
@@ -104,7 +113,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
                 oldMaxLength: 1024,
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "ResearchAreaId",
@@ -114,7 +124,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
                 oldClrType: typeof(Guid),
                 oldType: "uniqueidentifier",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "PeriodNotes",
@@ -124,7 +135,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
-                oldMaxLength: 1024);
+                oldMaxLength: 1024
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "DifferentUsage",
@@ -134,7 +146,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
-                oldMaxLength: 1024);
+                oldMaxLength: 1024
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "CruiseGoalDescription",
@@ -144,7 +157,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
-                oldMaxLength: 1024);
+                oldMaxLength: 1024
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "CruiseGoal",
@@ -156,7 +170,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
                 oldMaxLength: 1024,
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_FormsA_ResearchAreas_ResearchAreaId",
@@ -164,7 +179,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 column: "ResearchAreaId",
                 principalTable: "ResearchAreas",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
     }
 }

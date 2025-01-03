@@ -10,35 +10,45 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.UpdateEffects;
 
-
 public class UpdateEffectsHandler(
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     IUserPermissionVerifier userPermissionVerifier,
     IEffectsService effectsService,
-    IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateEffectsCommand, Result>
+    IUnitOfWork unitOfWork
+) : IRequestHandler<UpdateEffectsCommand, Result>
 {
-    public async Task<Result> Handle(UpdateEffectsCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        UpdateEffectsCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var cruiseApplicationResult = await GetCruiseApplication(request.CruiseApplicationId, cancellationToken);
+        var cruiseApplicationResult = await GetCruiseApplication(
+            request.CruiseApplicationId,
+            cancellationToken
+        );
         if (!cruiseApplicationResult.IsSuccess)
             return cruiseApplicationResult;
-        
+
         var cruiseApplication = cruiseApplicationResult.Data!;
-        
+
         await unitOfWork.ExecuteIsolated(
             () => UpdateEffects(request.EffectsUpdatesDto, cruiseApplication, cancellationToken),
-            cancellationToken);
-        
+            cancellationToken
+        );
+
         return Result.Empty;
     }
-    
-    
-    private async Task<Result<CruiseApplication>> GetCruiseApplication(Guid id, CancellationToken cancellationToken)
+
+    private async Task<Result<CruiseApplication>> GetCruiseApplication(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
-        var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormAAndFormCContent(id, cancellationToken);
-        
+        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithFormAAndFormCContent(
+            id,
+            cancellationToken
+        );
+
         if (cruiseApplication is not { FormA: not null, FormC: not null })
             return Error.ResourceNotFound();
         if (!await userPermissionVerifier.CanCurrentUserUpdateEffects(cruiseApplication))
@@ -50,18 +60,23 @@ public class UpdateEffectsHandler(
     }
 
     private async Task UpdateEffects(
-        EffectsUpdatesDto effectsUpdatesDto, CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+        EffectsUpdatesDto effectsUpdatesDto,
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    )
     {
-        await effectsService.DeleteResearchTasksEffects(cruiseApplication.FormC!, cancellationToken);
+        await effectsService.DeleteResearchTasksEffects(
+            cruiseApplication.FormC!,
+            cancellationToken
+        );
         await unitOfWork.Complete(cancellationToken);
-        
+
         await effectsService.AddResearchTasksEffects(
             cruiseApplication.FormC!,
             effectsUpdatesDto.ResearchTasksEffects,
-            cancellationToken);
-        await effectsService.EvaluateEffects(
-            cruiseApplication,
-            cancellationToken);
+            cancellationToken
+        );
+        await effectsService.EvaluateEffects(cruiseApplication, cancellationToken);
         await unitOfWork.Complete(cancellationToken);
     }
 }

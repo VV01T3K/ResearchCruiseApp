@@ -5,15 +5,18 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.Factories.ContractDtos;
 
-
-internal class ContractDtosFactory(IMapper mapper, IFileDtosFactory fileDtosFactory) : IContractDtosFactory
+internal class ContractDtosFactory(IMapper mapper, IFileDtosFactory fileDtosFactory)
+    : IContractDtosFactory
 {
     public async Task<ContractDto> Create(Contract contract)
     {
         var contractDto = mapper.Map<ContractDto>(contract);
 
-        contractDto.Scan = await fileDtosFactory.CreateFromCompressed(contract.ScanName, contract.ScanContent);
-        
+        contractDto.Scan = await fileDtosFactory.CreateFromCompressed(
+            contract.ScanName,
+            contract.ScanContent
+        );
+
         return contractDto;
     }
 }

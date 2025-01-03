@@ -2,5 +2,4 @@
 
 namespace ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 
-
 public interface IFormBLongResearchEquipmentsRepository : IRepository<FormBLongResearchEquipment>;

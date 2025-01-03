@@ -5,7 +5,6 @@ using ResearchCruiseApp.Domain.Common.Enums;
 
 namespace ResearchCruiseApp.Web.Common.Extensions;
 
-
 public static class ControllerBaseExtensions
 {
     public static IActionResult CreateError(this ControllerBase controller, Result errorResult)
@@ -19,10 +18,10 @@ public static class ControllerBaseExtensions
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.ServerError => StatusCodes.Status500InternalServerError,
             ErrorType.ServiceUnavailable => StatusCodes.Status503ServiceUnavailable,
-            
-            _ => throw new ArgumentOutOfRangeException(nameof(errorResult))
+
+            _ => throw new ArgumentOutOfRangeException(nameof(errorResult)),
         };
-        
+
         return controller.StatusCode(statusCode, errorResult.Error!.Message);
     }
 }

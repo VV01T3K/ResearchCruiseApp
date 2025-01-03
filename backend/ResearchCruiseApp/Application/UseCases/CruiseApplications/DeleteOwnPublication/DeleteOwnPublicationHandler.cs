@@ -10,23 +10,32 @@ public class DeleteOwnPublicationHandler(
     ICurrentUserService currentUserService,
     IUserPublicationsRepository userPublicationsRepository,
     IPublicationsRepository publicationsRepository,
-    IUnitOfWork unitOfWork) 
-    : IRequestHandler<DeleteOwnPublicationCommand, Result>
+    IUnitOfWork unitOfWork
+) : IRequestHandler<DeleteOwnPublicationCommand, Result>
 {
     public async Task<Result> Handle(
-        DeleteOwnPublicationCommand request, 
-        CancellationToken cancellationToken)
+        DeleteOwnPublicationCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var userId = currentUserService.GetId().GetValueOrDefault();
-        var userPublication = await userPublicationsRepository.GetPublicationByUserIdAndPublicationId(userId, request.publicationId, cancellationToken);
+        var userPublication =
+            await userPublicationsRepository.GetPublicationByUserIdAndPublicationId(
+                userId,
+                request.publicationId,
+                cancellationToken
+            );
         if (userPublication is null)
             return Error.ResourceNotFound();
-        
+
         var publication = userPublication.Publication;
         userPublicationsRepository.Delete(userPublication);
 
-        if (await publicationsRepository.CountFormAPublications(publication, cancellationToken) == 0 &&
-            await publicationsRepository.CountUserPublications(publication, cancellationToken) == 1)
+        if (
+            await publicationsRepository.CountFormAPublications(publication, cancellationToken) == 0
+            && await publicationsRepository.CountUserPublications(publication, cancellationToken)
+                == 1
+        )
         {
             publicationsRepository.Delete(publication);
         }

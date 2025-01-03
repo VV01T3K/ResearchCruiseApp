@@ -14,15 +14,14 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.AddFormB;
 
-
 public class AddFormBHandler(
     IValidator<AddFormBCommand> validator,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     IUserPermissionVerifier userPermissionVerifier,
     IFormsBFactory formsBFactory,
     IUnitOfWork unitOfWork,
-    IFormsService formsService)
-    : IRequestHandler<AddFormBCommand, Result>
+    IFormsService formsService
+) : IRequestHandler<AddFormBCommand, Result>
 {
     public async Task<Result> Handle(AddFormBCommand request, CancellationToken cancellationToken)
     {
@@ -30,26 +29,28 @@ public class AddFormBHandler(
         if (!validationResult.IsValid)
             return validationResult.ToApplicationResult();
 
-        var cruiseApplication = await cruiseApplicationsRepository
-            .GetByIdWithFormAAndFormBContent(request.CruiseApplicationId, cancellationToken);
+        var cruiseApplication = await cruiseApplicationsRepository.GetByIdWithFormAAndFormBContent(
+            request.CruiseApplicationId,
+            cancellationToken
+        );
         if (cruiseApplication is null)
             return Error.ResourceNotFound();
-        
+
         var verificationResult = await VerifyOperation(cruiseApplication);
         if (!verificationResult.IsSuccess)
             return verificationResult;
 
         await unitOfWork.ExecuteIsolated(
             () => AddNewFormB(request.FormBDto, cruiseApplication, cancellationToken),
-            cancellationToken);
-        
-        if(!request.IsDraft)
+            cancellationToken
+        );
+
+        if (!request.IsDraft)
             UpdateStatus(cruiseApplication);
-        
+
         await unitOfWork.Complete(cancellationToken);
         return Result.Empty;
     }
-
 
     private async Task<Result> VerifyOperation(CruiseApplication cruiseApplication)
     {
@@ -60,13 +61,16 @@ public class AddFormBHandler(
 
         return Result.Empty;
     }
-    
+
     private async Task AddNewFormB(
-        FormBDto formBDto, CruiseApplication cruiseApplication, CancellationToken cancellationToken)
+        FormBDto formBDto,
+        CruiseApplication cruiseApplication,
+        CancellationToken cancellationToken
+    )
     {
         var oldFormB = cruiseApplication.FormB;
         var newFormB = await formsBFactory.Create(formBDto, cancellationToken);
-        
+
         cruiseApplication.FormB = newFormB;
         await unitOfWork.Complete(cancellationToken);
 
@@ -76,7 +80,10 @@ public class AddFormBHandler(
 
     private static void UpdateStatus(CruiseApplication cruiseApplication)
     {
-        if (cruiseApplication.Cruise is not null && cruiseApplication.Cruise.Status == CruiseStatus.Ended)
+        if (
+            cruiseApplication.Cruise is not null
+            && cruiseApplication.Cruise.Status == CruiseStatus.Ended
+        )
             cruiseApplication.Status = CruiseApplicationStatus.Undertaken;
         else
             cruiseApplication.Status = CruiseApplicationStatus.FormBFilled;

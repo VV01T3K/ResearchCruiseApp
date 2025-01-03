@@ -4,13 +4,12 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Models.Mapping.CruiseApplications;
 
-
 internal class CruiseDayDetailsDtoProfile : Profile
 {
     public CruiseDayDetailsDtoProfile()
     {
         CreateMap<CruiseDayDetailsDto, CruiseDayDetails>();
-            
+
         CreateMap<CruiseDayDetails, CruiseDayDetailsDto>();
     }
 }
