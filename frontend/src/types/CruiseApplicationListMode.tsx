@@ -1,4 +1,4 @@
 export enum CruiseApplicationListMode {
-    Deletion = 'deletion',
-    Add = 'add',
+  Deletion = "deletion",
+  Add = "add",
 }

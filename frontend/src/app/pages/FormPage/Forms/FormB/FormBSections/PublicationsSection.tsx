@@ -1,23 +1,23 @@
-import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
+import { SectionWrapper } from "@components/Form/Section/SectionWrapper"
 import {
-    PublicationsDescription,
-    PublicationsField,
-} from '@app/pages/FormPage/Forms/FormA/FormASections/PublicationsSectionFields';
-import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
+  PublicationsDescription,
+  PublicationsField,
+} from "@app/pages/FormPage/Forms/FormA/FormASections/PublicationsSectionFields"
+import ReadonlyOverrideWrapper from "@components/Form/ReadonlyOverrideWrapper"
 
 export const publicationsSectionFieldNames = {
-    publications: 'publications',
-};
+  publications: "publications",
+}
 
-export const PublicationsSection = () => SectionWrapper(
-    {
-        shortTitle: 'Publikacje',
-        longTitle: 'Publikacje',
-        sectionFieldNames: publicationsSectionFieldNames,
-        children:
-            <ReadonlyOverrideWrapper>
-                <PublicationsDescription />
-                <PublicationsField />
-            </ReadonlyOverrideWrapper>,
-    },
-);
+export const PublicationsSection = () =>
+  SectionWrapper({
+    shortTitle: "Publikacje",
+    longTitle: "Publikacje",
+    sectionFieldNames: publicationsSectionFieldNames,
+    children: (
+      <ReadonlyOverrideWrapper>
+        <PublicationsDescription />
+        <PublicationsField />
+      </ReadonlyOverrideWrapper>
+    ),
+  })

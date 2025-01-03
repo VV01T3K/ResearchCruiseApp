@@ -1,19 +1,19 @@
-import {SectionWrapper} from '@components/Form/Section/SectionWrapper';
-import ReadonlyOverrideWrapper from '@components/Form/ReadonlyOverrideWrapper';
-import {SpubTaskField} from '@app/pages/FormPage/Forms/FormA/FormASections/SpubTasksSectionFields';
+import { SectionWrapper } from "@components/Form/Section/SectionWrapper"
+import ReadonlyOverrideWrapper from "@components/Form/ReadonlyOverrideWrapper"
+import { SpubTaskField } from "@app/pages/FormPage/Forms/FormA/FormASections/SpubTasksSectionFields"
 
 export const spubTasksSectionFieldNames = {
-    spubTasks: 'spubTasks',
-};
+  spubTasks: "spubTasks",
+}
 
-export const SpubTasksSection = () => SectionWrapper(
-    {
-        shortTitle: 'SPUB',
-        longTitle: 'Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie',
-        sectionFieldNames: spubTasksSectionFieldNames,
-        children:
-            <ReadonlyOverrideWrapper>
-                <SpubTaskField />,
-            </ReadonlyOverrideWrapper>,
-    },
-);
+export const SpubTasksSection = () =>
+  SectionWrapper({
+    shortTitle: "SPUB",
+    longTitle: "Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie",
+    sectionFieldNames: spubTasksSectionFieldNames,
+    children: (
+      <ReadonlyOverrideWrapper>
+        <SpubTaskField />,
+      </ReadonlyOverrideWrapper>
+    ),
+  })

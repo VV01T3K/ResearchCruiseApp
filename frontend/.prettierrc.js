@@ -1,15 +1,8 @@
-module.exports = {
+const config = {
   printWidth: 100,
-  useTabs: false,
+  trailingComma: "es5",
   tabWidth: 2,
-  trailingComma: 'es5',
-  semi: true,
-  proseWrap: 'always',
-  singleQuote: true,
-  bracketSpacing: true,
-  arrowParens: 'always',
-  jsxSingleQuote: true,
-  jsxBracketSameLine: false,
-  bracketSameLine: false,
-  endOfLine: 'lf',
-};
+  semi: false,
+}
+
+export default config

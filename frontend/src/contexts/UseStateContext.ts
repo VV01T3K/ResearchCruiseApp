@@ -1,4 +1,4 @@
-import {ContextUseStateType} from 'ContextUseStateType';
-import {createContext} from 'react';
+import { ContextUseStateType } from "ContextUseStateType"
+import { createContext } from "react"
 
-export const UseStateContext = <T, >() => createContext<ContextUseStateType<T> | null>(null);
+export const UseStateContext = <T>() => createContext<ContextUseStateType<T> | null>(null)

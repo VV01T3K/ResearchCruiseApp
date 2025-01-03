@@ -1,2 +1,2 @@
-export * from './CredentialsColumn';
-export * from './ChangePasswordColumn';
+export * from "./CredentialsColumn"
+export * from "./ChangePasswordColumn"

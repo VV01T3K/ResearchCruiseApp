@@ -1,4 +1,4 @@
 export type ChangePasswordData = {
-    password: string,
-    newPassword: string
+  password: string
+  newPassword: string
 }

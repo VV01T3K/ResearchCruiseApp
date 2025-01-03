@@ -1,1 +1,1 @@
-export type ForgotPasswordData = {};
+export type ForgotPasswordData = {}

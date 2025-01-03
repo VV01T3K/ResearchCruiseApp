@@ -1,3 +1,3 @@
 export const spubTasksSectionFieldNames = {
-    spubTasks: 'spubTaskEvaluationsEdits',
-};
+  spubTasks: "spubTaskEvaluationsEdits",
+}

@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
-import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import fixReactVirtualized from 'esbuild-plugin-react-virtualized';
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react-swc"
+import svgr from "vite-plugin-svgr"
+import tsconfigPaths from "vite-tsconfig-paths"
+import fixReactVirtualized from "esbuild-plugin-react-virtualized"
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,12 +15,12 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
-        silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
+        api: "modern-compiler",
+        silenceDeprecations: ["mixed-decls", "color-functions", "global-builtin", "import"],
       },
     },
   },
   server: {
     port: 8080,
   },
-});
+})

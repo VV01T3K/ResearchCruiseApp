@@ -1,5 +1,5 @@
-import {ExportCruisesFormValues} from "ExportCruisesFormValues";
+import { ExportCruisesFormValues } from "ExportCruisesFormValues"
 
-export const exportCruisesFormDefaultValues : ExportCruisesFormValues = {
-  year: new Date().getFullYear().toString()
-};
+export const exportCruisesFormDefaultValues: ExportCruisesFormValues = {
+  year: new Date().getFullYear().toString(),
+}

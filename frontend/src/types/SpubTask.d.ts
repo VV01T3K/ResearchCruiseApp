@@ -1,5 +1,5 @@
 export type SpubTask = {
-  yearFrom: string;
-  yearTo: string;
-  name: string;
-};
+  yearFrom: string
+  yearTo: string
+  name: string
+}

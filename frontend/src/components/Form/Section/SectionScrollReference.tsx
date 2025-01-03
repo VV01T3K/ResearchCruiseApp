@@ -1,1 +1,1 @@
-export const SectionScrollReference = (props: { id?: string }) => (<div id={props.id} />);
+export const SectionScrollReference = (props: { id?: string }) => <div id={props.id} />

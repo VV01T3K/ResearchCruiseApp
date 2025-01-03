@@ -1,39 +1,34 @@
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef } from "react"
 
+const useCustomEvent = (eventName: string) => {
+  const ref = useRef<CustomEvent | null>(null)
 
-const useCustomEvent = (eventName:string)=> {
-    const ref = useRef<CustomEvent|null>(null);
+  useEffect(() => {
+    ref.current = new CustomEvent(eventName)
+    return () => {
+      ref.current = null
+    }
+  }, [eventName])
 
-    useEffect(
-        () => {
-            ref.current = new CustomEvent(eventName);
-            return () => {
-                ref.current = null;
-            };
-        },
-        [eventName]
-    );
+  const dispatchEvent = (data: any) => {
+    if (ref.current) {
+      document.dispatchEvent(new CustomEvent(eventName, { detail: data }))
+    }
+  }
 
-    const dispatchEvent = (data: any)=> {
-        if (ref.current) {
-            document.dispatchEvent(new CustomEvent(eventName, { detail: data }));
-        }
-    };
+  const addEventListener = (callback: (arg0: any) => void) => {
+    const eventHandler = (event: any) => {
+      callback(event.detail)
+    }
 
-    const addEventListener = (callback: (arg0: any) => void) => {
-        const eventHandler = (event:any)=> {
-            callback(event.detail);
-        };
+    document.addEventListener(eventName, eventHandler)
 
-        document.addEventListener(eventName, eventHandler);
+    return () => {
+      document.removeEventListener(eventName, eventHandler)
+    }
+  }
 
-        return () => {
-            document.removeEventListener(eventName, eventHandler);
-        };
-    };
+  return { dispatchEvent, addEventListener }
+}
 
-    return { dispatchEvent, addEventListener };
-};
-
-
-export default useCustomEvent;
+export default useCustomEvent

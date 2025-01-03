@@ -1,6 +1,6 @@
-import {TilesMenuWrapper} from '@components/MainPageMenu/Tiles/TilesMenu/TilesMenuWrapper';
-import managerPanelTiles from './managerPanelTiles';
+import { TilesMenuWrapper } from "@components/MainPageMenu/Tiles/TilesMenu/TilesMenuWrapper"
+import managerPanelTiles from "./managerPanelTiles"
 
-const ManagerPanel = () => <TilesMenuWrapper tiles={managerPanelTiles} />;
+const ManagerPanel = () => <TilesMenuWrapper tiles={managerPanelTiles} />
 
-export default ManagerPanel;
+export default ManagerPanel

@@ -1,7 +1,5 @@
-import {
-    SimpleInfoWrapperSingleFieldCruiseApplication,
-} from '../SimpleInfoWrapper/SimpleInfoWrapperSingleFieldCruiseApplication';
+import { SimpleInfoWrapperSingleFieldCruiseApplication } from "../SimpleInfoWrapper/SimpleInfoWrapperSingleFieldCruiseApplication"
 
 export const CruiseApplicationPoints = () => (
-    <SimpleInfoWrapperSingleFieldCruiseApplication title={'Punkty'} selector={'points'} />
-);
+  <SimpleInfoWrapperSingleFieldCruiseApplication title={"Punkty"} selector={"points"} />
+)

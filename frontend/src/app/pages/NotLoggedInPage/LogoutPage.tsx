@@ -1,12 +1,7 @@
-import Page from '../../../ToBeMoved/Pages/Page';
+import Page from "../../../ToBeMoved/Pages/Page"
 
 function LogoutPage() {
-
-    return (
-        <Page className={'login-common'}>
-            {/*<LogoutForm />*/}
-        </Page>
-    );
+  return <Page className={"login-common"}>{/*<LogoutForm />*/}</Page>
 }
 
-export default LogoutPage;
+export default LogoutPage

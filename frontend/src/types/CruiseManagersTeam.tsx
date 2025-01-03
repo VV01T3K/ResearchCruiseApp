@@ -1,4 +1,4 @@
 export type CruiseManagersTeam = {
-  mainCruiseManagerId: string;
-  mainDeputyManagerId: string;
-};
+  mainCruiseManagerId: string
+  mainDeputyManagerId: string
+}

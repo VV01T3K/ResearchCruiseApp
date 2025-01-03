@@ -1,3 +1,3 @@
 export type SectionContentProps = {
-    index?: number
+  index?: number
 }

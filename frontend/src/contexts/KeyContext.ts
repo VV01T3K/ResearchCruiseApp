@@ -1,4 +1,3 @@
-import {createContext} from 'react';
+import { createContext } from "react"
 
-export const KeyContext =
-    createContext<null | string>(null);
+export const KeyContext = createContext<null | string>(null)

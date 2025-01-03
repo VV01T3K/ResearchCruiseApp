@@ -1,5 +1,5 @@
 export enum CruiseStatus {
-    New = 'Nowy',
-    Confirmed = 'Potwierdzony',
-    Ended = 'Zakończony',
+  New = "Nowy",
+  Confirmed = "Potwierdzony",
+  Ended = "Zakończony",
 }

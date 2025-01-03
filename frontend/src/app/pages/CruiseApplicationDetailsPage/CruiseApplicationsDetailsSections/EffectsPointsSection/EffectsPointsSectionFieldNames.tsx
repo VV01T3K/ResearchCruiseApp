@@ -1,3 +1,3 @@
 export const effectsPointsSectionFieldNames = {
-    effectsPoints: 'effectsPoints',
-};
+  effectsPoints: "effectsPoints",
+}

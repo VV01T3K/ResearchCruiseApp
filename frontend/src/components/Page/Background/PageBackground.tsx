@@ -1,6 +1,6 @@
-import {CurrentPageBackground} from './CurrentPageBackground';
+import { CurrentPageBackground } from "./CurrentPageBackground"
 
 export default function PageBackground() {
-  const { pageBackgroundImage } = CurrentPageBackground();
-  return <div className={pageBackgroundImage} />;
+  const { pageBackgroundImage } = CurrentPageBackground()
+  return <div className={pageBackgroundImage} />
 }

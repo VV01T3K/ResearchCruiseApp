@@ -1,15 +1,9 @@
 type Props = {
-    title: string,
+  title: string
 }
-
 
 function PageTitle(props: Props) {
-    return (
-        <div className="page-title-default">
-            {props.title}
-        </div>
-    );
+  return <div className="page-title-default">{props.title}</div>
 }
 
-
-export default PageTitle;
+export default PageTitle

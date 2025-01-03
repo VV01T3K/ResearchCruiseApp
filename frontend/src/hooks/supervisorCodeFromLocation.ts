@@ -1,6 +1,6 @@
-import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import { extendedUseLocation } from "@hooks/extendedUseLocation"
 
 export const supervisorCodeFromLocation = () => {
-    const location = extendedUseLocation();
-    return location?.state?.supervisorCode;
-};
+  const location = extendedUseLocation()
+  return location?.state?.supervisorCode
+}

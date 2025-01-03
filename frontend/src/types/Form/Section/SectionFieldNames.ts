@@ -1,3 +1,3 @@
 export type SectionFieldNames = {
-    [key: string]: string;
-};
+  [key: string]: string
+}

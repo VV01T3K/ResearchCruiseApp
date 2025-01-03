@@ -1,3 +1,3 @@
 export const researchTasksSectionFieldNames = {
-    researchTasks: 'researchTasksEvaluationsEdits',
-};
+  researchTasks: "researchTasksEvaluationsEdits",
+}

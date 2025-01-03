@@ -1,3 +1,3 @@
 export const PublicationsSectionFieldNames = {
-    publications: 'publicationsEvaluationsEdits',
-};
+  publications: "publicationsEvaluationsEdits",
+}

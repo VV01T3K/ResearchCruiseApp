@@ -1,3 +1,3 @@
 export const contractSectionFieldNames = {
-    contracts: 'contractsEvaluationsEdits',
-};
+  contracts: "contractsEvaluationsEdits",
+}

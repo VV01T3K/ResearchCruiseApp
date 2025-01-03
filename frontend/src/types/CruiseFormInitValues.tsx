@@ -1,1 +1,1 @@
-export type CruiseFormInitValues = {};
+export type CruiseFormInitValues = {}

@@ -1,3 +1,3 @@
-import {createContext} from 'react';
+import { createContext } from "react"
 
-export const ReadOnlyContext = createContext<boolean>(false);
+export const ReadOnlyContext = createContext<boolean>(false)

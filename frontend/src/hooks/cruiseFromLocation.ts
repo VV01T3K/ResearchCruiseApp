@@ -1,3 +1,3 @@
-import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import { extendedUseLocation } from "@hooks/extendedUseLocation"
 
-export const cruiseFromLocation = () => extendedUseLocation()?.state?.cruise;
+export const cruiseFromLocation = () => extendedUseLocation()?.state?.cruise

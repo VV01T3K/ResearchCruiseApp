@@ -1,40 +1,38 @@
-import userDataManager from '../ToBeMoved/CommonComponents/UserDataManager';
-import {useEffect} from 'react';
+import userDataManager from "../ToBeMoved/CommonComponents/UserDataManager"
+import { useEffect } from "react"
 
 const UserBasedAccess = () => {
-    const { UserLoggedIn, userData, GetUserData } = userDataManager();
+  const { UserLoggedIn, userData, GetUserData } = userDataManager()
 
-    useEffect(() => {
-        (GetUserData)();
-    }, []);
+  useEffect(() => {
+    GetUserData()
+  }, [])
 
-    const UserRoleIncludes = (role: string) =>
-        UserLoggedIn() && !!userData && userData['roles'].includes(role);
+  const UserRoleIncludes = (role: string) =>
+    UserLoggedIn() && !!userData && userData["roles"].includes(role)
 
-    const UserHasShipownerAccess = () =>
-        UserRoleIncludes('Shipowner');
+  const UserHasShipownerAccess = () => UserRoleIncludes("Shipowner")
 
-    const UserHasGuestAccess = () =>
-        UserRoleIncludes('Guest');
+  const UserHasGuestAccess = () => UserRoleIncludes("Guest")
 
-    const UserHasAdminAccess = () =>
-        UserRoleIncludes('Administrator');
+  const UserHasAdminAccess = () => UserRoleIncludes("Administrator")
 
-    const UserHasCruiseManagerAccess = () =>
-        UserRoleIncludes('CruiseManager');
+  const UserHasCruiseManagerAccess = () => UserRoleIncludes("CruiseManager")
 
-    const CommonAccess = () =>
-        UserLoggedIn();
+  const CommonAccess = () => UserLoggedIn()
 
-    const NotLoggedInAccess = () =>
-        !UserLoggedIn();
+  const NotLoggedInAccess = () => !UserLoggedIn()
 
-    const WaitingForUserData = () =>
-        UserLoggedIn() && !userData;
+  const WaitingForUserData = () => UserLoggedIn() && !userData
 
-    return {
-        UserHasAdminAccess, UserHasShipownerAccess, UserHasCruiseManagerAccess,
-        CommonAccess, NotLoggedInAccess, WaitingForUserData, UserHasGuestAccess,
-    };
-};
-export default UserBasedAccess;
+  return {
+    UserHasAdminAccess,
+    UserHasShipownerAccess,
+    UserHasCruiseManagerAccess,
+    CommonAccess,
+    NotLoggedInAccess,
+    WaitingForUserData,
+    UserHasGuestAccess,
+  }
+}
+export default UserBasedAccess

@@ -1,16 +1,15 @@
 ::placeholder {
-    opacity: 0.2; /* Firefox */
+  opacity: 0.2; /* Firefox */
 }
 
 * {
-    font-family: "Poppins", sans-serif;
-
+  font-family: Poppins, sans-serif;
 }
 
 .grow-wrap > textarea {
-    /* You could leave this, but after a user resizes, then it ruins the auto sizing */
-    resize: none;
+  /* You could leave this, but after a user resizes, then it ruins the auto sizing */
+  resize: none;
 
-    /* Firefox shows scrollbar on growth, you can hide like this. */
-    overflow: hidden;
+  /* Firefox shows scrollbar on growth, you can hide like this. */
+  overflow: hidden;
 }

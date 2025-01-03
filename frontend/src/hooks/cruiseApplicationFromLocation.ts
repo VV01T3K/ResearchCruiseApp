@@ -1,9 +1,9 @@
-import {extendedUseLocation} from '@hooks/extendedUseLocation';
-import {CruiseApplication} from 'CruiseApplication';
+import { extendedUseLocation } from "@hooks/extendedUseLocation"
+import { CruiseApplication } from "CruiseApplication"
 
 const cruiseApplicationFromLocation = () => {
-    const location = extendedUseLocation();
-    return location?.state?.cruiseApplication as CruiseApplication;
-};
+  const location = extendedUseLocation()
+  return location?.state?.cruiseApplication as CruiseApplication
+}
 
-export default cruiseApplicationFromLocation;
+export default cruiseApplicationFromLocation

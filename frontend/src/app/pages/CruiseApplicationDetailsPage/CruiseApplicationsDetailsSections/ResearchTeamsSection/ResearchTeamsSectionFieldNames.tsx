@@ -1,3 +1,3 @@
 export const researchTeamsSectionFieldNames = {
-    newPoints: 'newUgUnitsPoints',
-};
+  newPoints: "newUgUnitsPoints",
+}

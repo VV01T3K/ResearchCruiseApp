@@ -1,6 +1,6 @@
-import {extendedUseLocation} from '@hooks/extendedUseLocation';
+import { extendedUseLocation } from "@hooks/extendedUseLocation"
 
 export const cruiseApplicationIdFromLocation = () => {
-    const location = extendedUseLocation();
-    return location?.state?.cruiseApplicationId;
-};
+  const location = extendedUseLocation()
+  return location?.state?.cruiseApplicationId
+}

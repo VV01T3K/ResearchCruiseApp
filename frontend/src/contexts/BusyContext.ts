@@ -1,3 +1,3 @@
-import {UseStateContext} from '@contexts/UseStateContext';
+import { UseStateContext } from "@contexts/UseStateContext"
 
-export const BusyContext = UseStateContext<string | null>();
+export const BusyContext = UseStateContext<string | null>()

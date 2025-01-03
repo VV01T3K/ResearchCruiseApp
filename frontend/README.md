@@ -2,12 +2,14 @@
 
 ## Project Setup
 
-Instead of using `pnpm`, you can use `npm` to install dependencies (but it's [not recommended](https://pnpm.io/pnpm-vs-npm)).
+Instead of using `pnpm`, you can use `npm` to install dependencies (but it's
+[not recommended](https://pnpm.io/pnpm-vs-npm)).
 
 ```bash
 $ pnpm install      # Install dependencies
 $ pnpm dev --open   # Run the development server and open the browser (skip --open to not open the browser)
 ```
+
 ## Docker Image
 
 You can build a production image using the following command:

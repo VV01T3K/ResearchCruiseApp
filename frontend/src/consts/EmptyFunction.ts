@@ -1,2 +1,1 @@
-export const EmptyFunction = () => {
-};
+export const EmptyFunction = () => {}

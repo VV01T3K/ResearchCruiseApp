@@ -1,3 +1,3 @@
-import {UseStateContext} from './UseStateContext';
+import { UseStateContext } from "./UseStateContext"
 
-export const IsSectionCompletedContext = UseStateContext<boolean>();
+export const IsSectionCompletedContext = UseStateContext<boolean>()
