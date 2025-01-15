@@ -1,5 +1,4 @@
 import { UserContextType } from '@contexts/UserContext';
-import AppBackground from '@core/components/AppBackground';
 import { AppHeader } from '@core/components/AppHeader';
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
@@ -15,7 +14,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function Root() {
   return (
     <>
-      <AppBackground />
       <AppHeader />
       <main>
         <Outlet />
