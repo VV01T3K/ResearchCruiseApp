@@ -1,11 +1,22 @@
-import { StrictMode } from "react"
-import { createRoot } from "react-dom/client"
-import "./index.css"
-import "@styles/app.scss"
-import App from "./ToBeMoved/App"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { UserContextProvider } from '@providers/UserContextProvider';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import './index.css';
+import RouterWithUserContextProvider from "@providers/RouterWithUserContextProvider";
+
+
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-  </StrictMode>
-)
+    <QueryClientProvider client={queryClient}>
+      <UserContextProvider>
+        <RouterWithUserContextProvider />
+      </UserContextProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </StrictMode>,
+);

@@ -1,23 +1,50 @@
-# frontend
+# React + TypeScript + Vite
 
-## Project Setup
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Instead of using `pnpm`, you can use `npm` to install dependencies (but it's
-[not recommended](https://pnpm.io/pnpm-vs-npm)).
+Currently, two official plugins are available:
 
-```bash
-$ pnpm install      # Install dependencies
-$ pnpm dev --open   # Run the development server and open the browser (skip --open to not open the browser)
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+});
 ```
 
-## Docker Image
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-You can build a production image using the following command:
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react';
 
-```bash
-$ docker build -t <tag> --build-arg API_URL=<api_url> .  # Build the image (run this command in the frontend directory)
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+});
 ```
-
-Replace `<tag>` with the desired tag for the image and `<api_url>` with the URL of the API server.
-
-For example: `docker build -t frontend:latest --build-arg API_URL=http://localhost:3000 .`

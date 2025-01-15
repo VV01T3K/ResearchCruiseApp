@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "ES2021",
+    "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -22,24 +22,16 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* Custom */
-    "typeRoots": ["../node_modules/@types", "../@types"],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "*": ["types/*"],
-      "@api/*": ["api/*"],
-      "@app/*": ["app/*"],
-      "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"],
-      "@config/*": ["config/*"],
-      "@consts/*": ["consts/*"],
-      "@defaultValues/*": ["defaultValues/*"],
-      "@enums/*": ["enums/*"],
-      "@helpers/*": ["defaultValues/*"],
-      "@hooks/*": ["hooks/*"],
-      "@resources/*": ["resources/*"],
-      "@styles/*": ["styles/*"],
-      "@contexts/*": ["contexts/*"]
+      "@public/*": ["public/"],
+      "@config": ["src/config.ts"],
+      "@core/*": ["src/core/*"],
+      "@models/*": ["src/models/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@lib/*": ["src/lib/*"],
+      "@assets/*": ["src/assets/*"],
+      "@providers/*": ["src/providers/*"],
     }
   },
   "include": ["src"]
