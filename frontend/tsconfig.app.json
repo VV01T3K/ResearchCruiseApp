@@ -26,12 +26,9 @@
     "paths": {
       "@public/*": ["public/"],
       "@config": ["src/config.ts"],
-      "@core/*": ["src/core/*"],
-      "@models/*": ["src/models/*"],
-      "@contexts/*": ["src/contexts/*"],
       "@lib/*": ["src/lib/*"],
-      "@assets/*": ["src/assets/*"],
-      "@providers/*": ["src/providers/*"],
+      "@core/*": ["src/features/core/*"],
+      "@assets/*": ["src/assets/*"]
     }
   },
   "include": ["src"]

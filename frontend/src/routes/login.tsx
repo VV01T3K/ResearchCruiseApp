@@ -1,9 +1,159 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { SignInResult } from '@core/auth';
+import { UserContext } from '@core/contexts/UserContext';
+import { guardAgainstAuthenticated } from '@core/guards';
+import { useForm } from '@tanstack/react-form';
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router';
+import { useContext, useState } from 'react';
+import { AuthInput } from 'src/features/auth/components/AuthInput';
+import { AppButton } from 'src/features/core/components/AppButton';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/login')({
-  component: RouteComponent,
-})
+  component: Login,
+  beforeLoad: guardAgainstAuthenticated,
+  validateSearch: z.object({ redirect: z.string().optional() }),
+});
 
-function RouteComponent() {
-  return <div>Hello "/login"!</div>
+const loginSchema = z.object({
+  email: z.string().email('Niepoprawny adres e-mail').or(z.literal('')),
+  password: z.string().min(1).or(z.literal('')),
+});
+
+const loginErrorMessages: Record<SignInResult, string> = {
+  success: '',
+  error: 'Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.',
+  invalid_credentials: 'Podano błędne hasło lub użytkownik nie istnieje',
+};
+
+function Login() {
+  const navigate = useNavigate();
+  const router = useRouter();
+  const { redirect } = Route.useSearch();
+  const userContext = useContext(UserContext);
+  const [signInResult, setSignInResult] = useState<SignInResult | undefined>(
+    undefined
+  );
+  const form = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+    validators: {
+      onChange: loginSchema,
+    },
+    onSubmit: async ({ value }) => {
+      if (!value.email || !value.password) {
+        throw new Error('Not all fields are filled despite validation');
+      }
+
+      setSignInResult(undefined);
+      const result = await userContext?.signIn(value.email, value.password);
+      await router.invalidate();
+
+      if (result !== 'success') {
+        setSignInResult(result);
+        return;
+      }
+
+      if (redirect) {
+        await navigate({ to: redirect });
+      } else {
+        await navigate({ to: '/' });
+      }
+    },
+  });
+
+  return (
+    <div className="p-4 w-full h-full backdrop-blur-md relative">
+      <form
+        className="max-w-2xl mx-auto p-16 bg-gray-50 rounded-xl mt-[25vh]"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <h1 className="text-3xl font-bold mb-12">Logowanie</h1>
+
+        <div className="space-y-4">
+          <form.Field
+            name="email"
+            children={(field) => (
+              <AuthInput
+                name={field.name}
+                value={field.state.value}
+                type="email"
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                error={field.state.meta.errors.join(', ')}
+              >
+                E-mail
+              </AuthInput>
+            )}
+          />
+
+          <form.Field
+            name="password"
+            children={(field) => (
+              <AuthInput
+                name={field.name}
+                value={field.state.value}
+                type="password"
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+              >
+                Hasło
+              </AuthInput>
+            )}
+          />
+
+          <div className="flex flex-wrap items-center justify-end !mt-8">
+            <Link
+              to="/forgot-password"
+              className="text-blue-500 hover:underline"
+            >
+              Zapomniałeś hasła?
+            </Link>
+          </div>
+
+          <div className="mt-8">
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <AppButton
+                  type="submit"
+                  className="w-full"
+                  variant="blue"
+                  disabled={!canSubmit || isSubmitting}
+                >
+                  Zaloguj
+                </AppButton>
+              )}
+            />
+
+            {signInResult ? (
+              <p className="mt-2 text-red-500 text-sm text-center font-semibold">
+                {loginErrorMessages[signInResult]}
+              </p>
+            ) : null}
+          </div>
+
+          <p className="!mt-8">
+            Brak konta?{' '}
+            <Link
+              to="/register"
+              className="text-blue-500 font-semibold hover:underline"
+            >
+              Zarejestruj się
+            </Link>
+          </p>
+        </div>
+      </form>
+    </div>
+  );
 }
