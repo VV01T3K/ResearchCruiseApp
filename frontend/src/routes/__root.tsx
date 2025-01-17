@@ -6,6 +6,7 @@ import {
   Outlet,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import AppBackground from '@core/components/AppBackground';
 
 type RouterContext = {
   userContext?: UserContextType;
@@ -20,6 +21,7 @@ function Root() {
   return (
     <>
       <AppHeader />
+      <AppBackground />
       <main className="flex-1">
         <Outlet />
       </main>

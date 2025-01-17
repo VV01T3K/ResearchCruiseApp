@@ -1,16 +1,14 @@
-import { UserContext } from '@core/contexts/UserContext';
 import { cn } from '@lib/utils';
-import { useContext } from 'react';
 import ImageUrl from '@assets/background.jpg';
 
+/**
+ * Component showing the background image of the app.
+ */
 export default function AppBackground() {
-  const userContext = useContext(UserContext);
-
   return (
     <div
       className={cn(
-        'absolute h-full w-full bg-[image:var(--bg)] -z-50 bg-center',
-        userContext?.currentUser ? 'opacity-50' : ''
+        'absolute h-full w-full bg-[image:var(--bg)] bg-repeat -z-50 bg-center'
       )}
       style={{ '--bg': `url('${ImageUrl}')` } as React.CSSProperties}
     />

@@ -2,7 +2,7 @@ import { UserContext, UserContextType } from '@core/contexts/UserContext';
 import { client } from '@core/api';
 import { hasAccessToken, signIn, SignInResult, signOut } from '@core/auth';
 import { AppLoader } from '@core/components/AppLoader';
-import { User } from '@core/models/User';
+import { Role, User } from '@core/models/User';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function UserContextProvider({
@@ -30,6 +30,19 @@ export function UserContextProvider({
 
   const context: UserContextType = {
     currentUser: userProfileQuery.data?.data as User,
+    isInRole: (allowedRoles: Role[] | Role) => {
+      if (!userProfileQuery.data) {
+        return false;
+      }
+
+      const userRoles = userProfileQuery.data.data.roles as Role[];
+
+      if (!Array.isArray(allowedRoles)) {
+        return userRoles.includes(allowedRoles);
+      }
+
+      return allowedRoles.some((role) => userRoles.includes(role));
+    },
     signIn: async (email: string, password: string): Promise<SignInResult> => {
       const result = await signIn(email, password);
 

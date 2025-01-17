@@ -1,21 +1,33 @@
 import { cn } from '@lib/utils';
 
-export function AuthInput({
+/**
+ * Input label that floats above the input when the input is focused or has a value.
+ * @param name The name of the input.
+ * @param value Default value of the input.
+ * @param type The type of the input.
+ * @param onBlur The onBlur event handler.
+ * @param onChange The onChange event handler.
+ * @param error The error message to display.
+ * @param label The label to display.
+ */
+export function AppFloatingLabelInput({
   name,
   value,
   type,
   onBlur,
   onChange,
   error,
-  children,
+  label,
+  required = undefined,
 }: {
   name: string;
   value: string;
   type: React.HTMLInputTypeAttribute;
   error?: string;
-  onBlur: React.FocusEventHandler<HTMLInputElement>;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-  children: React.ReactNode;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  label: React.ReactNode;
+  required?: boolean;
 }) {
   return (
     <div className="relative z-0 w-full mb-5 group">
@@ -28,7 +40,7 @@ export function AuthInput({
           error ? 'border-red-500 text-red-500 focus:border-red-500' : ''
         )}
         placeholder=" "
-        required
+        required={required}
         value={value}
         onBlur={onBlur}
         onChange={onChange}
@@ -40,7 +52,7 @@ export function AuthInput({
           error ? 'text-red-500 peer-focus:text-red-500' : ''
         )}
       >
-        {children}
+        {label}
       </label>
       {error ? <p className="mt-2 text-red-500 text-sm">{error}</p> : null}
     </div>

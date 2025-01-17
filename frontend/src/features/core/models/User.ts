@@ -8,7 +8,14 @@ export type User = {
   //Only for frontend purposes not exists in backend
   emailSent?: boolean;
 
-  roles: string[];
+  roles: Role[];
 
   accepted: boolean;
 };
+
+export enum Role {
+  Administrator = 'Administrator',
+  Shipowner = 'Shipowner',
+  CruiseManager = 'CruiseManager',
+  Guest = 'Guest',
+}

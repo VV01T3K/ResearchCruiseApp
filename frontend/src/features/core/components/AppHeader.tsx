@@ -1,12 +1,16 @@
 import { UserContext } from '@core/contexts/UserContext';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import { useContext } from 'react';
 import UGLogoIcon from '@assets/uglogo.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
 import HouseIcon from 'bootstrap-icons/icons/house.svg?react';
 import LogoutIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
+import { AppLink } from './AppLink';
 
+/**
+ * Application header component.
+ */
 export function AppHeader() {
   const userContext = useContext(UserContext);
   const router = useRouter();
@@ -27,15 +31,14 @@ export function AppHeader() {
   return (
     <header className="bg-blue-600 px-8 py-4 flex justify-between items-center">
       <div>
-        <a
-          href="https://ug.edu.pl/"
-          target="_blank"
+        <AppLink
+          to="https://ug.edu.pl/"
           title="Strona Główna"
           rel="home"
           className="block w-24 text-white"
         >
           <UGLogoIcon />
-        </a>
+        </AppLink>
       </div>
       <div className="flex items-center space-x-4">
         <a
@@ -46,17 +49,16 @@ export function AppHeader() {
         >
           <BroadcastIcon />
         </a>
-        <a
-          href="https://outlook.com/ug.edu.pl"
-          target="_blank"
+        <AppLink
+          to="https://outlook.com/ug.edu.pl"
           title="Poczta Uniwersytecka"
           className="block w-6 text-white"
         >
           <EnvelopeIcon />
-        </a>
-        <Link to="/" title="Strona Domowa" className="block w-6 text-white">
+        </AppLink>
+        <AppLink to="/" title="Strona Domowa" className="block w-6 text-white">
           <HouseIcon />
-        </Link>
+        </AppLink>
         {userContext?.currentUser ? (
           <a
             href="#"

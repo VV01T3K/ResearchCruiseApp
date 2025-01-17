@@ -1,9 +1,11 @@
 import { SignInResult } from '@core/auth';
-import { User } from '@core/models/User';
+import { Role, User } from '@core/models/User';
 import { createContext } from 'react';
 
 export type UserContextType = {
   currentUser?: User | undefined;
+
+  isInRole: (allowedRoles: Role[] | Role) => boolean;
 
   signIn: (email: string, password: string) => Promise<SignInResult>;
   signOut: () => Promise<void>;

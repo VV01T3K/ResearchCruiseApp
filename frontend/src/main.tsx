@@ -5,13 +5,11 @@ import { UserContextProvider } from '@core/providers/UserContextProvider';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './index.css';
 import RouterWithUserContextProvider from '@core/providers/RouterWithUserContextProvider';
-import AppBackground from '@core/components/AppBackground';
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppBackground />
     <QueryClientProvider client={queryClient}>
       <UserContextProvider>
         <RouterWithUserContextProvider />

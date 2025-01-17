@@ -4,14 +4,14 @@ import { guardAgainstAuthenticated } from '@core/guards';
 import { useForm } from '@tanstack/react-form';
 import {
   createFileRoute,
-  Link,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router';
 import { useContext, useState } from 'react';
-import { AuthInput } from 'src/features/auth/components/AuthInput';
+import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppButton } from 'src/features/core/components/AppButton';
 import { z } from 'zod';
+import { AppLink } from '@core/components/AppLink';
 
 export const Route = createFileRoute('/login')({
   component: Login,
@@ -27,7 +27,7 @@ const loginSchema = z.object({
 const loginErrorMessages: Record<SignInResult, string> = {
   success: '',
   error: 'Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.',
-  invalid_credentials: 'Podano błędne hasło lub użytkownik nie istnieje',
+  invalid_credentials: 'Podano błędne hasło lub użytkownik nie istnieje.',
 };
 
 function Login() {
@@ -69,7 +69,7 @@ function Login() {
   });
 
   return (
-    <div className="p-4 w-full h-full backdrop-blur-md relative">
+    <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
       <form
         className="max-w-2xl mx-auto p-16 bg-gray-50 rounded-xl mt-[25vh]"
         onSubmit={(e) => {
@@ -84,41 +84,36 @@ function Login() {
           <form.Field
             name="email"
             children={(field) => (
-              <AuthInput
+              <AppFloatingLabelInput
                 name={field.name}
                 value={field.state.value}
                 type="email"
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 error={field.state.meta.errors.join(', ')}
-              >
-                E-mail
-              </AuthInput>
+                label="E-mail"
+                required
+              />
             )}
           />
 
           <form.Field
             name="password"
             children={(field) => (
-              <AuthInput
+              <AppFloatingLabelInput
                 name={field.name}
                 value={field.state.value}
                 type="password"
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-              >
-                Hasło
-              </AuthInput>
+                label="Hasło"
+                required
+              />
             )}
           />
 
           <div className="flex flex-wrap items-center justify-end !mt-8">
-            <Link
-              to="/forgot-password"
-              className="text-blue-500 hover:underline"
-            >
-              Zapomniałeś hasła?
-            </Link>
+            <AppLink to="/forgot-password">Zapomniałeś hasła?</AppLink>
           </div>
 
           <div className="mt-8">
@@ -144,13 +139,7 @@ function Login() {
           </div>
 
           <p className="!mt-8">
-            Brak konta?{' '}
-            <Link
-              to="/register"
-              className="text-blue-500 font-semibold hover:underline"
-            >
-              Zarejestruj się
-            </Link>
+            Brak konta? <AppLink to="/register">Zarejestruj się</AppLink>
           </p>
         </div>
       </form>

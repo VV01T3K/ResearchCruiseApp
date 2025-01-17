@@ -1,4 +1,6 @@
 import { cn } from '@lib/utils';
+import { AppLink, AppLinkProps } from './AppLink';
+import ExternalIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 
 const variants = {
   default: 'bg-[#333] hover:bg-[#222] active:bg-[#333] disabled:bg-[#555]',
@@ -12,20 +14,36 @@ const variants = {
     'bg-green-700 hover:bg-green-800 active:bg-green-700 disabled:bg-green-500',
 };
 
+/**
+ * Application button component
+ * @param children - Button content
+ * @param variant - Button color (`default`, `blue`, `purple`, `red`, `orange`, `green`)
+ * @param type - Button type (`submit`, `button`, `reset`)
+ * @param disabled - Button disabled state
+ * @param className - Additional class name
+ * @param link - Should the button behave as an AppLink (set to `external` to add an external link icon)
+ *
+ * @example
+ * ```tsx
+ * <AppButton variant="blue" type="submit" disabled link to="/login">Login</AppButton>
+ */
 export function AppButton({
   children,
   variant = 'default',
   type = 'button',
-  disabled = false,
+  disabled = undefined,
   className,
+  link,
+  ...linkProps
 }: {
   children: React.ReactNode;
   variant?: keyof typeof variants;
   type?: 'submit' | 'button' | 'reset';
   className?: React.CSSProperties | string;
   disabled?: boolean;
-}) {
-  return (
+  link?: 'internal' | 'external' | boolean;
+} & AppLinkProps) {
+  const button = (
     <button
       type={type}
       className={cn(
@@ -35,7 +53,15 @@ export function AppButton({
       )}
       disabled={disabled}
     >
-      {children}
+      <div className={cn('flex items-center justify-center')}>
+        {children}
+        {link === 'external' && <ExternalIcon className={cn('w-3 h-3 ml-2')} />}
+      </div>
     </button>
   );
+
+  if (link) {
+    return <AppLink {...linkProps}>{button}</AppLink>;
+  }
+  return button;
 }

@@ -6,10 +6,10 @@
   html,
   body,
   #root {
-    @apply h-full;
+    @apply min-h-screen;
   }
 
   #root {
-    @apply flex flex-col;
+    @apply flex flex-col relative;
   }
 }
