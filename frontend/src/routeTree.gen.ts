@@ -15,6 +15,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as PriorityinformationImport } from './routes/priorityinformation'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
+import { Route as ForgotPasswordImport } from './routes/forgot-password'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
 
@@ -41,6 +42,12 @@ const LoginRoute = LoginImport.update({
 const HelpRoute = HelpImport.update({
   id: '/help',
   path: '/help',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ForgotPasswordRoute = ForgotPasswordImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -72,6 +79,13 @@ declare module '@tanstack/react-router' {
       path: '/accountsettings'
       fullPath: '/accountsettings'
       preLoaderRoute: typeof AccountsettingsImport
+      parentRoute: typeof rootRoute
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordImport
       parentRoute: typeof rootRoute
     }
     '/help': {
@@ -110,6 +124,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/priorityinformation': typeof PriorityinformationRoute
@@ -119,6 +134,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/priorityinformation': typeof PriorityinformationRoute
@@ -129,6 +145,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/priorityinformation': typeof PriorityinformationRoute
@@ -140,6 +157,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accountsettings'
+    | '/forgot-password'
     | '/help'
     | '/login'
     | '/priorityinformation'
@@ -148,6 +166,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/accountsettings'
+    | '/forgot-password'
     | '/help'
     | '/login'
     | '/priorityinformation'
@@ -156,6 +175,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/accountsettings'
+    | '/forgot-password'
     | '/help'
     | '/login'
     | '/priorityinformation'
@@ -166,6 +186,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountsettingsRoute: typeof AccountsettingsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   PriorityinformationRoute: typeof PriorityinformationRoute
@@ -175,6 +196,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountsettingsRoute: AccountsettingsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   PriorityinformationRoute: PriorityinformationRoute,
@@ -193,6 +215,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/accountsettings",
+        "/forgot-password",
         "/help",
         "/login",
         "/priorityinformation",
@@ -204,6 +227,9 @@ export const routeTree = rootRoute
     },
     "/accountsettings": {
       "filePath": "accountsettings.tsx"
+    },
+    "/forgot-password": {
+      "filePath": "forgot-password.tsx"
     },
     "/help": {
       "filePath": "help.tsx"
