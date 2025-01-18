@@ -17,8 +17,9 @@ public static class WebApplicationExtensions
         app.UseAuthentication().UseAuthorization();
 
         app.UseCors("CustomPolicy");
-
+        
         app.MapControllers();
+        app.MapHealthChecks("/health");
 
         await app.InitializeDatabase();
     }

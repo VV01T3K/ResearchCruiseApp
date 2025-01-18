@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import AppBackground from '@core/components/AppBackground';
+import { AppNetworkStatus } from '@core/components/AppNetworkStatus';
 
 type RouterContext = {
   userContext?: UserContextType;
@@ -22,6 +23,7 @@ function Root() {
     <>
       <AppHeader />
       <AppBackground />
+      <AppNetworkStatus />
       <main className="flex-1">
         <Outlet />
       </main>
