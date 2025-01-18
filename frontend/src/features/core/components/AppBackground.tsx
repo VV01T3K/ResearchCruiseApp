@@ -1,9 +1,6 @@
 import { cn } from '@lib/utils';
 import ImageUrl from '@assets/background.jpg';
 
-/**
- * Component showing the background image of the app.
- */
 export default function AppBackground() {
   return (
     <div

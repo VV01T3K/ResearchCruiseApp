@@ -14,19 +14,6 @@ const variants = {
     'bg-green-700 hover:bg-green-800 active:bg-green-700 disabled:bg-green-500',
 };
 
-/**
- * Application button component
- * @param children - Button content
- * @param variant - Button color (`default`, `blue`, `purple`, `red`, `orange`, `green`)
- * @param type - Button type (`submit`, `button`, `reset`)
- * @param disabled - Button disabled state
- * @param className - Additional class name
- * @param link - Should the button behave as an AppLink (set to `external` to add an external link icon)
- *
- * @example
- * ```tsx
- * <AppButton variant="blue" type="submit" disabled link to="/login">Login</AppButton>
- */
 export function AppButton({
   children,
   variant = 'default',

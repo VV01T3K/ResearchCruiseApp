@@ -6,7 +6,7 @@ import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import { AppLink } from '@core/components/AppLink';
 import { AppLabelInput } from '@core/components/AppLabelInput';
 import { useForm } from '@tanstack/react-form';
-import { AppLabelTextArea } from '@core/components/AppLabelTextarea';
+import { AppLabelTextArea } from '@core/components/AppLabelTextArea';
 import { z } from 'zod';
 import { AppButton } from '@core/components/AppButton';
 import { guardAgainstUnauthenticated } from '@core/guards';

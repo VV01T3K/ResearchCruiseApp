@@ -435,7 +435,7 @@ public class IdentityService(
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
-            expires: DateTime.Now.AddSeconds(lifetime),
+            expires: DateTime.UtcNow.AddSeconds(lifetime),
             claims: authenticationClaims,
             signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
         );

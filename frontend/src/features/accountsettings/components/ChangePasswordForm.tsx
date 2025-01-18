@@ -176,7 +176,7 @@ export function ChangePasswordForm() {
             variant="error"
             onClose={() => setChangePasswordResult(undefined)}
           >
-            Wystąpił błąd podczas zmiany hasła (sprawdź czy podałeś poprawne
+            Wystąpił błąd podczas zmiany hasła (sprawdź, czy podałeś poprawne
             hasło).
           </AppAlert>
         )}

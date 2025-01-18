@@ -3,7 +3,8 @@ import { SignInResult } from '@core/auth';
 import { AppLoader } from '@core/components/AppLoader';
 import { UserContext, UserContextType } from '@core/contexts/UserContext';
 import { Role, User } from '@core/models/User';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import React from 'react';
 
@@ -24,8 +25,10 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     getStoredAuthDetails()
   );
 
+  const queryClient = useQueryClient();
   const profileQuery = useQuery({
-    queryKey: ['userProfile', authDetails?.accessToken],
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: ['userProfile'],
     enabled: () => !!authDetails?.accessToken,
     queryFn: () => {
       return client.get('/account', {
@@ -51,18 +54,12 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   });
   const refreshTokenMutation = useMutation({
     mutationFn: ({ accessToken, refreshToken }: AuthDetails) => {
-      return client.post(
-        '/account/refresh',
-        {
-          accessToken,
-          refreshToken,
-        },
-        {
-          headers: {
-            Authorization: '',
-          },
-        }
-      );
+      // We create a new client here since the main one is paused while refreshing
+      const refreshClient = axios.create(client.defaults);
+      return refreshClient.post('/account/refresh', {
+        accessToken,
+        refreshToken,
+      });
     },
     onSuccess: ({ data }) => {
       if (data) {
@@ -110,6 +107,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         setAuthDetails(undefined);
         setStoredAuthDetails(undefined);
         setUserProfile(undefined);
+        queryClient.removeQueries();
       },
       refreshUser: async () => {
         if (authDetails) {
@@ -120,6 +118,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         setAuthDetails(undefined);
         setStoredAuthDetails(undefined);
         setUserProfile(undefined);
+        queryClient.removeQueries();
       },
       isInRole: (allowedRoles: Role | Role[]) => {
         if (!userProfile) {
@@ -133,14 +132,18 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         return allowedRoles.some((role) => userProfile.roles.includes(role));
       },
     }),
-    [authDetails, loginMutation, refreshTokenMutation, userProfile]
+    [authDetails, loginMutation, queryClient, refreshTokenMutation, userProfile]
   );
 
   React.useEffect(() => {
-    // TODO: Make interceptor try to refresh token (it wasn't working during first implementation tests)
     const interceptorId = createAuthRefreshInterceptor(
       client,
-      context.signOut,
+      async (failedRequest) => {
+        await context.refreshUser();
+        failedRequest.response.config.headers['Authorization'] =
+          `Bearer ${getStoredAuthDetails()?.accessToken}`;
+        return failedRequest;
+      },
       {
         statusCodes: [401],
         pauseInstanceWhileRefreshing: true,
@@ -150,7 +153,8 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     return () => {
       client.interceptors.response.eject(interceptorId);
     };
-  }, [context.signOut]);
+  }, [context]);
+
   React.useEffect(() => {
     const timeoutId = setInterval(
       async () => {

@@ -10,14 +10,6 @@ export type AppLinkProps = Omit<LinkProps, 'to'> & {
   addStyles?: boolean;
 } & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-/**
- * A universal link component that can handle both internal and external links.
- * If the link is internal, it will use the react-router's Link component.
- * If the link is external, it will use the anchor tag with target="_blank".
- * @param to The URL to link to - both internal and external URLs are supported.
- * @param children The content of the link.
- * @param props Additional props to pass to the anchor tag - `@tanstack/react-router/LinkProps` and `React.AnchorHTMLAttributes<HTMLAnchorElement>`.
- */
 export function AppLink({
   to,
   children,

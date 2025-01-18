@@ -1,15 +1,5 @@
 import { cn } from '@lib/utils';
 
-/**
- * Input label that floats above the input when the input is focused or has a value.
- * @param name The name of the input.
- * @param value Default value of the input.
- * @param type The type of the input.
- * @param onBlur The onBlur event handler.
- * @param onChange The onChange event handler.
- * @param error The error message to display.
- * @param label The label to display.
- */
 export function AppFloatingLabelInput({
   name,
   value,

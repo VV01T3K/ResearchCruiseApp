@@ -14,10 +14,10 @@ public static class WebApplicationExtensions
 
         app.UseHttpsRedirection();
 
+        app.UseCors("CustomPolicy");
+
         app.UseAuthentication().UseAuthorization();
 
-        app.UseCors("CustomPolicy");
-        
         app.MapControllers();
         app.MapHealthChecks("/health");
 

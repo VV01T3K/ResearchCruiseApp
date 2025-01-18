@@ -25,6 +25,7 @@ export function AppNetworkStatus() {
       await statusMutation.mutateAsync();
     }, 1000);
     return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (networkStatus != 'lose_connection') {

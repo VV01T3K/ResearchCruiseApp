@@ -1,6 +1,3 @@
-/**
- * Display a loading spinner in the center of the screen.
- */
 export function AppLoader() {
   return (
     <div className="absolute top-0 h-full w-full flex items-center justify-center backdrop-blur-sm">

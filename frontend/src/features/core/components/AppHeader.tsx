@@ -8,9 +8,6 @@ import HouseIcon from 'bootstrap-icons/icons/house.svg?react';
 import LogoutIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import { AppLink } from './AppLink';
 
-/**
- * Application header component.
- */
 export function AppHeader() {
   const userContext = useContext(UserContext);
   const router = useRouter();
