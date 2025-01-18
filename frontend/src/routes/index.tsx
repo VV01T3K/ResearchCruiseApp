@@ -217,7 +217,7 @@ function Index() {
   return (
     <p className="text-red-500 font-bold text-center">
       Brak dashboarda przypisanego do ról:{' '}
-      {userContext.currentUser!.roles.join(', ')}. Zgłoś ten fakt
+      {userContext.currentUser?.roles.join(', ')}. Zgłoś ten fakt
       administratorom strony.
     </p>
   );

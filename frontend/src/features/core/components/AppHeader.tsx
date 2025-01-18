@@ -25,7 +25,7 @@ export function AppHeader() {
 
   async function signOut() {
     await userContext?.signOut();
-    await router.navigate({ to: '/login', reloadDocument: true });
+    await router.navigate({ to: '/login' });
   }
 
   return (
