@@ -1,5 +1,5 @@
 import { client, setAuthToken, clearAuthToken } from '@core/api';
-import { SignInResult } from '@core/auth';
+import { SignInResult } from '@core/models/Auth';
 import { AppLoader } from '@core/components/AppLoader';
 import { UserContext, UserContextType } from '@core/contexts/UserContext';
 import { Role, User } from '@core/models/User';

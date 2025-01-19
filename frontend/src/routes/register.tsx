@@ -2,6 +2,7 @@ import { client } from '@core/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppLink } from '@core/components/AppLink';
+import { AppPage } from '@core/components/AppPage';
 import { guardAgainstAuthenticated } from '@core/guards';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
@@ -107,17 +108,15 @@ function Register() {
   });
 
   return (
-    <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
+    <AppPage title="Rejestracja" variant="narrow">
       <form
-        className="max-w-2xl mx-auto p-16 bg-gray-50 rounded-xl mt-[25vh]"
+        className="px-4"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
       >
-        <h1 className="text-3xl font-bold mb-12">Rejestracja</h1>
-
         <div className="space-y-4">
           <form.Field
             name="email"
@@ -197,7 +196,7 @@ function Register() {
             )}
           />
 
-          <div className="mt-8">
+          <div className="!mt-12">
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
@@ -224,6 +223,6 @@ function Register() {
           </p>
         </div>
       </form>
-    </div>
+    </AppPage>
   );
 }

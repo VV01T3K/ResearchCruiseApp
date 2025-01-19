@@ -5,7 +5,7 @@ export default function AppBackground() {
   return (
     <div
       className={cn(
-        'absolute h-full w-full bg-[image:var(--bg)] bg-repeat -z-50 bg-center'
+        'absolute h-full w-full bg-[image:var(--bg)] bg-no-repeat bg-cover -z-50 bg-center'
       )}
       style={{ '--bg': `url('${ImageUrl}')` } as React.CSSProperties}
     />

@@ -12,6 +12,7 @@ import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppButton } from 'src/features/core/components/AppButton';
 import { z } from 'zod';
 import { AppLink } from '@core/components/AppLink';
+import { AppPage } from '@core/components/AppPage';
 
 export const Route = createFileRoute('/login')({
   component: Login,
@@ -69,17 +70,15 @@ function Login() {
   });
 
   return (
-    <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
+    <AppPage title="Logowanie" variant="narrow">
       <form
-        className="max-w-2xl mx-auto p-16 bg-gray-50 rounded-xl mt-[25vh]"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
+        className="px-4"
       >
-        <h1 className="text-3xl font-bold mb-12">Logowanie</h1>
-
         <div className="space-y-4">
           <form.Field
             name="email"
@@ -143,6 +142,6 @@ function Login() {
           </p>
         </div>
       </form>
-    </div>
+    </AppPage>
   );
 }

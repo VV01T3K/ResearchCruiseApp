@@ -3,10 +3,14 @@ import { useMutation } from '@tanstack/react-query';
 import { AppAlert } from './AppAlert';
 import { useEffect, useState } from 'react';
 
+type NetworkConnectionStatus =
+  | 'before_connection'
+  | 'connected'
+  | 'lose_connection';
+
 export function AppNetworkStatus() {
-  const [networkStatus, setNetworkStatus] = useState<
-    'before_connection' | 'connected' | 'lose_connection'
-  >('before_connection');
+  const [networkStatus, setNetworkStatus] =
+    useState<NetworkConnectionStatus>('before_connection');
 
   const statusMutation = useMutation({
     mutationFn: () => client.get('/health', { headers: { Authorization: '' } }),
@@ -28,12 +32,8 @@ export function AppNetworkStatus() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (networkStatus != 'lose_connection') {
-    return null;
-  }
-
   return (
-    <AppAlert variant="error">
+    <AppAlert variant="error" hidden={networkStatus !== 'lose_connection'}>
       Brak połączenia z serwerem. Upewnij się że masz dostęp do internetu i
       spróbuj ponownie.
     </AppAlert>

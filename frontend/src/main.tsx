@@ -6,15 +6,13 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './index.css';
 import RouterWithUserContextProvider from '@core/providers/RouterWithUserContextProvider';
 
-const queryClient = new QueryClient();
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={new QueryClient()}>
       <UserContextProvider>
         <RouterWithUserContextProvider />
       </UserContextProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools />
     </QueryClientProvider>
   </StrictMode>
 );

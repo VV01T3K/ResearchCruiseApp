@@ -2,6 +2,7 @@ import { client } from '@core/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppLink } from '@core/components/AppLink';
+import { AppPage } from '@core/components/AppPage';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -59,33 +60,28 @@ function ForgotPassword() {
 
   if (resetPasswordStatus === 'success') {
     return (
-      <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
-        <div className="max-w-2xl mx-auto p-16 bg-gray-50 rounded-xl mt-[25vh]">
-          <h1 className="text-3xl font-bold mb-12">Resetowanie hasła</h1>
-          <p className="text-lg">
-            Link do resetowania hasła został wysłany na adres{' '}
-            <span className="font-bold text-blue-500">{email}</span>
-            <AppButton link to="/login" variant="blue" className="w-full mt-8">
-              Wróć do logowania
-            </AppButton>
-          </p>
-        </div>
-      </div>
+      <AppPage title="Przywracanie hasła" variant="narrow">
+        <p className="text-lg">
+          Link do resetowania hasła został wysłany na adres:{' '}
+          <span className="font-bold text-blue-500">{email}</span>
+          <AppButton link to="/login" variant="blue" className="w-full mt-8">
+            Wróć do logowania
+          </AppButton>
+        </p>
+      </AppPage>
     );
   }
 
   return (
-    <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
+    <AppPage title="Przywracanie hasła" variant="narrow">
       <form
-        className="max-w-2xl mx-auto p-16 bg-gray-50 rounded-xl mt-[25vh]"
+        className="px-4"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
       >
-        <h1 className="text-3xl font-bold mb-12">Resetowanie hasła</h1>
-
         <div className="space-y-4">
           <form.Field
             name="email"
@@ -124,6 +120,6 @@ function ForgotPassword() {
           <AppLink to="/login">Powrót do logowania</AppLink>
         </div>
       </form>
-    </div>
+    </AppPage>
   );
 }

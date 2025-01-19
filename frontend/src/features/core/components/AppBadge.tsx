@@ -14,12 +14,7 @@ export function AppBadge({
   variant: keyof typeof variants;
 }) {
   return (
-    <span
-      className={cn(
-        'text-xs font-medium me-2 px-2.5 py-0.5 rounded',
-        variants[variant]
-      )}
-    >
+    <span className={cn('text-xs me-2 px-2.5 py-1 rounded', variants[variant])}>
       {children}
     </span>
   );
