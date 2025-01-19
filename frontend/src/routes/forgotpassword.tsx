@@ -8,7 +8,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { z } from 'zod';
 
-export const Route = createFileRoute('/forgot-password')({
+export const Route = createFileRoute('/forgotpassword')({
   component: ForgotPassword,
 });
 

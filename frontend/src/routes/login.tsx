@@ -113,7 +113,7 @@ function Login() {
           />
 
           <div className="flex flex-wrap items-center justify-end !mt-8">
-            <AppLink to="/forgot-password">Zapomniałeś hasła?</AppLink>
+            <AppLink to="/forgotpassword">Zapomniałeś hasła?</AppLink>
           </div>
 
           <div className="mt-8">

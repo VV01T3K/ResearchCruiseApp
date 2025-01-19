@@ -12,6 +12,18 @@ const variants = {
     'bg-orange-700 hover:bg-orange-800 active:bg-orange-700 disabled:bg-orange-500',
   green:
     'bg-green-700 hover:bg-green-800 active:bg-green-700 disabled:bg-green-500',
+  defaultOutline:
+    'bg-white hover:bg-[#333] active:bg-[#333] disabled:bg-[#333] text-[#333] border border-[#333] transition-all duration-300',
+  blueOutline:
+    'bg-white hover:bg-blue-700 active:bg-blue-700 disabled:bg-gray-300 text-blue-700 hover:text-white border border-blue-700 transition-all duration-300',
+  purpleOutline:
+    'bg-white hover:bg-purple-700 active:bg-purple-700 disabled:bg-gray-300 text-purple-700 hover:text-white border border-purple-700 transition-all duration-300',
+  redOutline:
+    'bg-white hover:bg-red-700 active:bg-red-700 disabled:bg-gray-300 text-red-700 hover:text-white border border-red-700 transition-all duration-300',
+  orangeOutline:
+    'bg-white hover:bg-orange-700 active:bg-orange-700 disabled:bg-gray-300 text-orange-700 hover:text-white border border-orange-700 transition-all duration-300',
+  greenOutline:
+    'bg-white hover:bg-green-700 active:bg-green-700 disabled:bg-gray-300 text-green-700 hover:text-white border border-green-700 transition-all duration-300',
 };
 
 export function AppButton({
@@ -21,7 +33,7 @@ export function AppButton({
   disabled = undefined,
   className,
   link,
-  ...linkProps
+  ...otherProps
 }: {
   children: React.ReactNode;
   variant?: keyof typeof variants;
@@ -29,7 +41,8 @@ export function AppButton({
   className?: React.CSSProperties | string;
   disabled?: boolean;
   link?: 'internal' | 'external' | boolean;
-} & AppLinkProps) {
+} & React.ButtonHTMLAttributes<HTMLButtonElement> &
+  AppLinkProps) {
   const button = (
     <button
       type={type}
@@ -39,6 +52,7 @@ export function AppButton({
         className
       )}
       disabled={disabled}
+      {...otherProps}
     >
       <div className={cn('flex items-center justify-center')}>
         {children}
@@ -48,7 +62,7 @@ export function AppButton({
   );
 
   if (link) {
-    return <AppLink {...linkProps}>{button}</AppLink>;
+    return <AppLink {...otherProps}>{button}</AppLink>;
   }
   return button;
 }

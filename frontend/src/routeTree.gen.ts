@@ -13,9 +13,10 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
 import { Route as PriorityinformationImport } from './routes/priorityinformation'
+import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
-import { Route as ForgotPasswordImport } from './routes/forgot-password'
+import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
 
@@ -33,6 +34,12 @@ const PriorityinformationRoute = PriorityinformationImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const MypublicationsRoute = MypublicationsImport.update({
+  id: '/mypublications',
+  path: '/mypublications',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
@@ -45,9 +52,9 @@ const HelpRoute = HelpImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ForgotPasswordRoute = ForgotPasswordImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+const ForgotpasswordRoute = ForgotpasswordImport.update({
+  id: '/forgotpassword',
+  path: '/forgotpassword',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -81,11 +88,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsettingsImport
       parentRoute: typeof rootRoute
     }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordImport
+    '/forgotpassword': {
+      id: '/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
+      preLoaderRoute: typeof ForgotpasswordImport
       parentRoute: typeof rootRoute
     }
     '/help': {
@@ -100,6 +107,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/mypublications': {
+      id: '/mypublications'
+      path: '/mypublications'
+      fullPath: '/mypublications'
+      preLoaderRoute: typeof MypublicationsImport
       parentRoute: typeof rootRoute
     }
     '/priorityinformation': {
@@ -124,9 +138,10 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
-  '/forgot-password': typeof ForgotPasswordRoute
+  '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
+  '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
 }
@@ -134,9 +149,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
-  '/forgot-password': typeof ForgotPasswordRoute
+  '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
+  '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
 }
@@ -145,9 +161,10 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
-  '/forgot-password': typeof ForgotPasswordRoute
+  '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
+  '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
 }
@@ -157,27 +174,30 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accountsettings'
-    | '/forgot-password'
+    | '/forgotpassword'
     | '/help'
     | '/login'
+    | '/mypublications'
     | '/priorityinformation'
     | '/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/accountsettings'
-    | '/forgot-password'
+    | '/forgotpassword'
     | '/help'
     | '/login'
+    | '/mypublications'
     | '/priorityinformation'
     | '/register'
   id:
     | '__root__'
     | '/'
     | '/accountsettings'
-    | '/forgot-password'
+    | '/forgotpassword'
     | '/help'
     | '/login'
+    | '/mypublications'
     | '/priorityinformation'
     | '/register'
   fileRoutesById: FileRoutesById
@@ -186,9 +206,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountsettingsRoute: typeof AccountsettingsRoute
-  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  ForgotpasswordRoute: typeof ForgotpasswordRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
+  MypublicationsRoute: typeof MypublicationsRoute
   PriorityinformationRoute: typeof PriorityinformationRoute
   RegisterRoute: typeof RegisterRoute
 }
@@ -196,9 +217,10 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountsettingsRoute: AccountsettingsRoute,
-  ForgotPasswordRoute: ForgotPasswordRoute,
+  ForgotpasswordRoute: ForgotpasswordRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
+  MypublicationsRoute: MypublicationsRoute,
   PriorityinformationRoute: PriorityinformationRoute,
   RegisterRoute: RegisterRoute,
 }
@@ -215,9 +237,10 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/accountsettings",
-        "/forgot-password",
+        "/forgotpassword",
         "/help",
         "/login",
+        "/mypublications",
         "/priorityinformation",
         "/register"
       ]
@@ -228,14 +251,17 @@ export const routeTree = rootRoute
     "/accountsettings": {
       "filePath": "accountsettings.tsx"
     },
-    "/forgot-password": {
-      "filePath": "forgot-password.tsx"
+    "/forgotpassword": {
+      "filePath": "forgotpassword.tsx"
     },
     "/help": {
       "filePath": "help.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/mypublications": {
+      "filePath": "mypublications.tsx"
     },
     "/priorityinformation": {
       "filePath": "priorityinformation.tsx"
