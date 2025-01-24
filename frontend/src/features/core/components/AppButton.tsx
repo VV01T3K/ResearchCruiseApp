@@ -2,6 +2,50 @@ import { cn } from '@lib/utils';
 import { AppLink, AppLinkProps } from './AppLink';
 import ExternalIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 
+type AppButtonProps = {
+  children: React.ReactNode;
+  variant?: keyof typeof variants;
+  type?: 'submit' | 'button' | 'reset';
+  className?: React.CSSProperties | string;
+  disabled?: boolean;
+  link?: 'internal' | 'external' | boolean;
+} & React.ButtonHTMLAttributes<HTMLButtonElement> &
+  AppLinkProps;
+
+export function AppButton({
+  children,
+  variant = 'default',
+  type = 'button',
+  disabled = undefined,
+  className,
+  link,
+  ...otherProps
+}: AppButtonProps) {
+  const button = (
+    <button
+      type={type}
+      className={cn(
+        'px-5 py-2.5 rounded-lg text-white font-medium outline-none hover:cursor-pointer disabled:cursor-not-allowed',
+        variants[variant],
+        className
+      )}
+      disabled={disabled}
+      {...otherProps}
+    >
+      <div className={cn('flex items-center justify-center')}>
+        {children}
+        {link === 'external' && <ExternalIcon className={cn('w-3 h-3 ml-2')} />}
+      </div>
+    </button>
+  );
+
+  if (link) {
+    return <AppLink {...otherProps}>{button}</AppLink>;
+  }
+
+  return button;
+}
+
 const variants = {
   default: 'bg-[#333] hover:bg-[#222] active:bg-[#333] disabled:bg-[#555]',
   blue: 'bg-blue-700 hover:bg-blue-800 active:bg-blue-700 disabled:bg-blue-500',
@@ -25,44 +69,3 @@ const variants = {
   greenOutline:
     'bg-white hover:bg-green-700 active:bg-green-700 disabled:bg-gray-300 text-green-700 hover:text-white border border-green-700 transition-all duration-300',
 };
-
-export function AppButton({
-  children,
-  variant = 'default',
-  type = 'button',
-  disabled = undefined,
-  className,
-  link,
-  ...otherProps
-}: {
-  children: React.ReactNode;
-  variant?: keyof typeof variants;
-  type?: 'submit' | 'button' | 'reset';
-  className?: React.CSSProperties | string;
-  disabled?: boolean;
-  link?: 'internal' | 'external' | boolean;
-} & React.ButtonHTMLAttributes<HTMLButtonElement> &
-  AppLinkProps) {
-  const button = (
-    <button
-      type={type}
-      className={cn(
-        'px-5 py-2.5 rounded-lg text-white font-medium outline-none disabled:cursor-not-allowed',
-        variants[variant],
-        className
-      )}
-      disabled={disabled}
-      {...otherProps}
-    >
-      <div className={cn('flex items-center justify-center')}>
-        {children}
-        {link === 'external' && <ExternalIcon className={cn('w-3 h-3 ml-2')} />}
-      </div>
-    </button>
-  );
-
-  if (link) {
-    return <AppLink {...otherProps}>{button}</AppLink>;
-  }
-  return button;
-}

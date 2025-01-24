@@ -1,5 +1,4 @@
-import { SignInResult } from '@core/models/Auth';
-import { Role, User } from '@core/models/User';
+import { Role, SignInResult, User } from '@core/models';
 import { createContext } from 'react';
 
 export type UserContextType = {

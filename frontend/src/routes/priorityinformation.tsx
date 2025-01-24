@@ -1,11 +1,11 @@
 import { AppPage } from '@core/components/AppPage';
-import { guardAgainstUnauthenticated } from '@core/guards';
+import { allowOnly } from '@core/helpers';
 import { cn } from '@lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/priorityinformation')({
   component: RouteComponent,
-  beforeLoad: guardAgainstUnauthenticated,
+  beforeLoad: allowOnly.authenticated(),
 });
 
 function RouteComponent() {

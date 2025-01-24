@@ -1,8 +1,9 @@
-import { client } from '@core/api';
+import { client } from '@core/helpers/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppLink } from '@core/components/AppLink';
 import { AppPage } from '@core/components/AppPage';
+import { ResetPasswordResult } from '@core/models';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -16,8 +17,6 @@ export const Route = createFileRoute('/forgotpassword')({
 const forgotPasswordSchema = z.object({
   email: z.string().email('Niepoprawny adres e-mail').or(z.literal('')),
 });
-
-type ResetPasswordResult = 'success' | 'error';
 
 function ForgotPassword() {
   const [resetPasswordStatus, setResetPasswordStatus] = useState<

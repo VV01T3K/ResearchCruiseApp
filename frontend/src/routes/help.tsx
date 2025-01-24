@@ -9,12 +9,12 @@ import { useForm } from '@tanstack/react-form';
 import { AppLabelTextArea } from '@core/components/AppLabelTextArea';
 import { z } from 'zod';
 import { AppButton } from '@core/components/AppButton';
-import { guardAgainstUnauthenticated } from '@core/guards';
 import { AppPage } from '@core/components/AppPage';
+import { allowOnly } from '@core/helpers';
 
 export const Route = createFileRoute('/help')({
   component: RouteComponent,
-  beforeLoad: guardAgainstUnauthenticated,
+  beforeLoad: allowOnly.authenticated(),
 });
 
 const emailSchema = z.object({

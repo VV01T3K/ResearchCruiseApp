@@ -1,6 +1,5 @@
-import { SignInResult } from '@core/models/Auth';
+import { SignInResult } from '@core/models';
 import { UserContext } from '@core/contexts/UserContext';
-import { guardAgainstAuthenticated } from '@core/guards';
 import { useForm } from '@tanstack/react-form';
 import {
   createFileRoute,
@@ -13,10 +12,11 @@ import { AppButton } from 'src/features/core/components/AppButton';
 import { z } from 'zod';
 import { AppLink } from '@core/components/AppLink';
 import { AppPage } from '@core/components/AppPage';
+import { allowOnly } from '@core/helpers';
 
 export const Route = createFileRoute('/login')({
   component: Login,
-  beforeLoad: guardAgainstAuthenticated,
+  beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({ redirect: z.string().optional() }),
 });
 

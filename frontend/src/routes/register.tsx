@@ -1,9 +1,10 @@
-import { client } from '@core/api';
+import { client } from '@core/helpers/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppLink } from '@core/components/AppLink';
 import { AppPage } from '@core/components/AppPage';
-import { guardAgainstAuthenticated } from '@core/guards';
+import { allowOnly } from '@core/helpers';
+import { RegistrationResult } from '@core/models';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -13,7 +14,7 @@ import { z } from 'zod';
 
 export const Route = createFileRoute('/register')({
   component: Register,
-  beforeLoad: guardAgainstAuthenticated,
+  beforeLoad: allowOnly.unauthenticated(),
 });
 
 const registerSchema = z
@@ -39,8 +40,6 @@ const registerSchema = z
       });
     }
   });
-
-type RegistrationResult = 'success' | 'username-taken' | 'error';
 
 const registerErrorMessages: Record<RegistrationResult, string> = {
   success: '',

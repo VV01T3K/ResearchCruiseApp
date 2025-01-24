@@ -26,7 +26,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className="bg-blue-600 px-8 py-4 flex justify-between items-center">
+    <header className="bg-blue-600 px-8 py-4 flex justify-between items-center z-50">
       <div>
         <AppLink
           to="https://ug.edu.pl/"

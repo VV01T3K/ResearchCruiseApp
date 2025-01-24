@@ -1,12 +1,11 @@
-import { client, setAuthToken, clearAuthToken } from '@core/api';
-import { SignInResult } from '@core/models/Auth';
-import { AppLoader } from '@core/components/AppLoader';
-import { UserContext, UserContextType } from '@core/contexts/UserContext';
-import { Role, User } from '@core/models/User';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { client, setAuthToken, clearAuthToken } from '@core/helpers/api';
+import { UserContextType, UserContext } from '@core/contexts/UserContext';
+import { User, SignInResult, Role } from '@core/models';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import axios from 'axios';
 import React from 'react';
+import { AppLoader } from '@core/components/AppLoader';
 
 type UserContextProviderProps = {
   children: React.ReactNode;

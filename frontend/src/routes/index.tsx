@@ -1,4 +1,3 @@
-import { guardAgainstUnauthenticated } from '@core/guards';
 import { createFileRoute } from '@tanstack/react-router';
 import {
   DashboardGrid,
@@ -15,11 +14,12 @@ import BookIcon from 'bootstrap-icons/icons/book.svg?react';
 import AwardFillIcon from 'bootstrap-icons/icons/award-fill.svg?react';
 import { useContext } from 'react';
 import { UserContext } from '@core/contexts/UserContext';
-import { Role } from '@core/models/User';
+import { Role } from '@core/models';
+import { allowOnly } from '@core/helpers';
 
 export const Route = createFileRoute('/')({
   component: Index,
-  beforeLoad: guardAgainstUnauthenticated,
+  beforeLoad: allowOnly.authenticated(),
 });
 
 function Index() {

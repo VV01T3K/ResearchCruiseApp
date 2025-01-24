@@ -2,14 +2,14 @@ import { AppBadge } from '@core/components/AppBadge';
 import { AppInitialsAvatar } from '@core/components/AppInitialsAvatar';
 import { AppPage } from '@core/components/AppPage';
 import { UserContext } from '@core/contexts/UserContext';
-import { guardAgainstUnauthenticated } from '@core/guards';
+import { allowOnly } from '@core/helpers';
 import { createFileRoute } from '@tanstack/react-router';
 import { useContext } from 'react';
 import { ChangePasswordForm } from 'src/features/accountsettings/components/ChangePasswordForm';
 
 export const Route = createFileRoute('/accountsettings')({
   component: RouteComponent,
-  beforeLoad: guardAgainstUnauthenticated,
+  beforeLoad: allowOnly.authenticated(),
 });
 
 function RouteComponent() {

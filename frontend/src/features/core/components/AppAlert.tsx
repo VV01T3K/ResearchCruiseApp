@@ -5,27 +5,19 @@ import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle.svg?
 import { cn } from '@lib/utils';
 import React from 'react';
 
-export function AppAlert({
-  variant,
-  children,
-  hidden = false,
-  onClose,
-}: {
+type AppAlertProps = {
   variant: keyof typeof variants;
   children: React.ReactNode;
-  hidden?: boolean;
   onClose?: () => void;
-}) {
-  const Icon = variants[variant].icon;
+};
 
-  if (hidden) {
-    return null;
-  }
+export function AppAlert({ variant, children, onClose }: AppAlertProps) {
+  const Icon = variants[variant].icon;
 
   return (
     <div
       className={cn(
-        'flex items-center p-4 mb-4 rounded-lg duration-700 -z-10',
+        'flex items-center p-4 rounded-lg',
         variants[variant].containerClassName
       )}
       role="alert"

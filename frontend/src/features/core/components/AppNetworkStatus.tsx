@@ -1,7 +1,8 @@
-import { client } from '@core/api';
+import { client } from '@core/helpers/api';
 import { useMutation } from '@tanstack/react-query';
 import { AppAlert } from './AppAlert';
 import { useEffect, useState } from 'react';
+import { cn } from '@lib/utils';
 
 type NetworkConnectionStatus =
   | 'before_connection'
@@ -26,16 +27,23 @@ export function AppNetworkStatus() {
   useEffect(() => {
     statusMutation.mutate();
     const intervalId = setInterval(async () => {
-      await statusMutation.mutateAsync();
+      await statusMutation.mutateAsync().catch(() => {});
     }, 1000);
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <AppAlert variant="error" hidden={networkStatus !== 'lose_connection'}>
-      Brak połączenia z serwerem. Upewnij się że masz dostęp do internetu i
-      spróbuj ponownie.
-    </AppAlert>
+    <div
+      className={cn(
+        'duration-700',
+        networkStatus !== 'lose_connection' ? '-translate-y-full' : ''
+      )}
+    >
+      <AppAlert variant="error">
+        Brak połączenia z serwerem. Upewnij się że masz dostęp do internetu i
+        spróbuj ponownie.
+      </AppAlert>
+    </div>
   );
 }

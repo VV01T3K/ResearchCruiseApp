@@ -1,5 +1,5 @@
 import { AppButton } from '@core/components/AppButton';
-import { UserPublication } from '@core/models/Publication';
+import { UserPublication } from '@core/models';
 import { cn } from '@lib/utils';
 import {
   createColumnHelper,

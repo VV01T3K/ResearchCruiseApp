@@ -1,4 +1,4 @@
-import { client } from '@core/api';
+import { client } from '@core/helpers/api';
 import { AppAlert } from '@core/components/AppAlert';
 import { AppButton } from '@core/components/AppButton';
 import { AppLabelInput } from '@core/components/AppLabelInput';

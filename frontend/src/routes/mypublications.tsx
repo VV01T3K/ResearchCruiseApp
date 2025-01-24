@@ -1,17 +1,21 @@
-import { client } from '@core/api';
+import { client } from '@core/helpers/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppModal } from '@core/components/AppModal';
-import { guardAgainstUnauthenticated } from '@core/guards';
-import { Publication } from '@core/models/Publication';
+import { Publication, Role } from '@core/models';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
 import { UserPublicationTable } from 'src/features/mypublications/compontents/UserPublicationTable';
 import Papa from 'papaparse';
+import { allowOnly } from '@core/helpers';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublications,
-  beforeLoad: guardAgainstUnauthenticated,
+  beforeLoad: allowOnly.withRoles(
+    Role.Administrator,
+    Role.CruiseManager,
+    Role.Shipowner
+  ),
 });
 
 function MyPublications() {
