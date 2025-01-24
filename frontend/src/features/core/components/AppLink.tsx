@@ -10,35 +10,20 @@ export type AppLinkProps = Omit<LinkProps, 'to'> & {
   addStyles?: boolean;
 } & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-export function AppLink({
-  to,
-  children,
-  addStyles = true,
-  ...props
-}: AppLinkProps) {
-  const isInternal =
-    (to as string).startsWith('/') || (to as string).startsWith('.');
+export function AppLink({ to, children, addStyles = true, ...props }: AppLinkProps) {
+  const isInternal = (to as string).startsWith('/') || (to as string).startsWith('.');
 
-  const className = addStyles ? 'text-blue-500 hover:underline' : '';
+  const className = addStyles ? 'text-primary hover:underline' : '';
 
   if (isInternal) {
     return (
-      <Link
-        to={to as RouterUrl}
-        {...props}
-        className={cn(className, props.className)}
-      >
+      <Link to={to as RouterUrl} {...props} className={cn(className, props.className)}>
         {children}
       </Link>
     );
   } else {
     return (
-      <a
-        href={to as string}
-        {...props}
-        className={cn(className, props.className)}
-        target="_blank"
-      >
+      <a href={to as string} {...props} className={cn(className, props.className)} target="_blank">
         {children}
       </a>
     );

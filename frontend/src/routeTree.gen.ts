@@ -11,16 +11,24 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TabletestImport } from './routes/tabletest'
 import { Route as RegisterImport } from './routes/register'
 import { Route as PriorityinformationImport } from './routes/priorityinformation'
 import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
+import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const TabletestRoute = TabletestImport.update({
+  id: '/tabletest',
+  path: '/tabletest',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const RegisterRoute = RegisterImport.update({
   id: '/register',
@@ -58,6 +66,12 @@ const ForgotpasswordRoute = ForgotpasswordImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ConfirmemailRoute = ConfirmemailImport.update({
+  id: '/confirmemail',
+  path: '/confirmemail',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AccountsettingsRoute = AccountsettingsImport.update({
   id: '/accountsettings',
   path: '/accountsettings',
@@ -86,6 +100,13 @@ declare module '@tanstack/react-router' {
       path: '/accountsettings'
       fullPath: '/accountsettings'
       preLoaderRoute: typeof AccountsettingsImport
+      parentRoute: typeof rootRoute
+    }
+    '/confirmemail': {
+      id: '/confirmemail'
+      path: '/confirmemail'
+      fullPath: '/confirmemail'
+      preLoaderRoute: typeof ConfirmemailImport
       parentRoute: typeof rootRoute
     }
     '/forgotpassword': {
@@ -130,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/tabletest': {
+      id: '/tabletest'
+      path: '/tabletest'
+      fullPath: '/tabletest'
+      preLoaderRoute: typeof TabletestImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -138,35 +166,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
+  '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
+  '/tabletest': typeof TabletestRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
+  '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
+  '/tabletest': typeof TabletestRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
+  '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
+  '/tabletest': typeof TabletestRoute
 }
 
 export interface FileRouteTypes {
@@ -174,55 +208,65 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accountsettings'
+    | '/confirmemail'
     | '/forgotpassword'
     | '/help'
     | '/login'
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
+    | '/tabletest'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/accountsettings'
+    | '/confirmemail'
     | '/forgotpassword'
     | '/help'
     | '/login'
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
+    | '/tabletest'
   id:
     | '__root__'
     | '/'
     | '/accountsettings'
+    | '/confirmemail'
     | '/forgotpassword'
     | '/help'
     | '/login'
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
+    | '/tabletest'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountsettingsRoute: typeof AccountsettingsRoute
+  ConfirmemailRoute: typeof ConfirmemailRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   MypublicationsRoute: typeof MypublicationsRoute
   PriorityinformationRoute: typeof PriorityinformationRoute
   RegisterRoute: typeof RegisterRoute
+  TabletestRoute: typeof TabletestRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountsettingsRoute: AccountsettingsRoute,
+  ConfirmemailRoute: ConfirmemailRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   MypublicationsRoute: MypublicationsRoute,
   PriorityinformationRoute: PriorityinformationRoute,
   RegisterRoute: RegisterRoute,
+  TabletestRoute: TabletestRoute,
 }
 
 export const routeTree = rootRoute
@@ -237,12 +281,14 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/accountsettings",
+        "/confirmemail",
         "/forgotpassword",
         "/help",
         "/login",
         "/mypublications",
         "/priorityinformation",
-        "/register"
+        "/register",
+        "/tabletest"
       ]
     },
     "/": {
@@ -250,6 +296,9 @@ export const routeTree = rootRoute
     },
     "/accountsettings": {
       "filePath": "accountsettings.tsx"
+    },
+    "/confirmemail": {
+      "filePath": "confirmemail.tsx"
     },
     "/forgotpassword": {
       "filePath": "forgotpassword.tsx"
@@ -268,6 +317,9 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/tabletest": {
+      "filePath": "tabletest.tsx"
     }
   }
 }

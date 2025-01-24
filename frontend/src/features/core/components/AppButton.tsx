@@ -14,7 +14,7 @@ type AppButtonProps = {
 
 export function AppButton({
   children,
-  variant = 'default',
+  variant = 'primary',
   type = 'button',
   disabled = undefined,
   className,
@@ -47,25 +47,21 @@ export function AppButton({
 }
 
 const variants = {
-  default: 'bg-[#333] hover:bg-[#222] active:bg-[#333] disabled:bg-[#555]',
-  blue: 'bg-blue-700 hover:bg-blue-800 active:bg-blue-700 disabled:bg-blue-500',
-  purple:
-    'bg-purple-700 hover:bg-purple-800 active:bg-purple-700 disabled:bg-purple-500',
-  red: 'bg-red-700 hover:bg-red-800 active:bg-red-700 disabled:bg-red-500',
-  orange:
-    'bg-orange-700 hover:bg-orange-800 active:bg-orange-700 disabled:bg-orange-500',
-  green:
-    'bg-green-700 hover:bg-green-800 active:bg-green-700 disabled:bg-green-500',
-  defaultOutline:
-    'bg-white hover:bg-[#333] active:bg-[#333] disabled:bg-[#333] text-[#333] border border-[#333] transition-all duration-300',
-  blueOutline:
-    'bg-white hover:bg-blue-700 active:bg-blue-700 disabled:bg-gray-300 text-blue-700 hover:text-white border border-blue-700 transition-all duration-300',
-  purpleOutline:
-    'bg-white hover:bg-purple-700 active:bg-purple-700 disabled:bg-gray-300 text-purple-700 hover:text-white border border-purple-700 transition-all duration-300',
-  redOutline:
-    'bg-white hover:bg-red-700 active:bg-red-700 disabled:bg-gray-300 text-red-700 hover:text-white border border-red-700 transition-all duration-300',
-  orangeOutline:
-    'bg-white hover:bg-orange-700 active:bg-orange-700 disabled:bg-gray-300 text-orange-700 hover:text-white border border-orange-700 transition-all duration-300',
-  greenOutline:
-    'bg-white hover:bg-green-700 active:bg-green-700 disabled:bg-gray-300 text-green-700 hover:text-white border border-green-700 transition-all duration-300',
+  primary: 'bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
+  success: 'bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
+  danger: 'bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
+  warning:
+    'bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-black disabled:text-warning-800',
+  info: 'bg-info hover:bg-info-400 active:bg-info disabled:bg-info-200',
+
+  primaryOutline:
+    'bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-white',
+  successOutline:
+    'bg-white hover:bg-success active:bg-success text-success hover:text-white border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-white',
+  dangerOutline:
+    'bg-white hover:bg-danger active:bg-danger text-danger hover:text-white border border-danger transition-all duration-300 disabled:border-danger-300 disabled:text-danger-400 disabled:hover:bg-white',
+  warningOutline:
+    'bg-white hover:bg-warning active:bg-warning text-warning hover:text-white border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-400 disabled:hover:bg-white',
+  infoOutline:
+    'bg-white hover:bg-info active:bg-info text-info hover:text-white border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-white',
 };

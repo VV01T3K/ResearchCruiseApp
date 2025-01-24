@@ -1,21 +1,19 @@
 import { cn } from '@lib/utils';
 
 const variants = {
-  default: 'bg-blue-100 text-blue-800',
-  green: 'bg-green-100 text-green-800',
-  red: 'bg-red-100 text-red-800',
+  primary: 'bg-primary-light text-primary-dark',
+  success: 'bg-success-light text-success-dark',
+  danger: 'bg-danger-light text-danger-dark',
+  warning: 'bg-warning-light text-warning-dark',
+  info: 'bg-info-light text-info-dark',
 };
 
 export function AppBadge({
   children,
-  variant = 'default',
+  variant = 'primary',
 }: {
   children: React.ReactNode;
   variant: keyof typeof variants;
 }) {
-  return (
-    <span className={cn('text-xs me-2 px-2.5 py-1 rounded', variants[variant])}>
-      {children}
-    </span>
-  );
+  return <span className={cn('text-xs me-2 px-2.5 py-1 rounded', variants[variant])}>{children}</span>;
 }

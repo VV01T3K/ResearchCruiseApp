@@ -58,10 +58,8 @@ export function DashboardGridCard({
       >
         <div>{background}</div>
         <div className="h-full z-10 flex transform-gpu flex-col gap-1 p-4 transition-all duration-300 group-hover:-translate-y-10">
-          <Icon className="w-16 aspect-square flex-1 origin-left transform-gpu self-center text-blue-600 transition-all duration-300 ease-in-out group-hover:scale-75" />
-          <h3 className="text-md md:text-lg xl:text-xl font-semibold text-blue-600 self-center md:self-auto">
-            {name}
-          </h3>
+          <Icon className="w-16 aspect-square flex-1 origin-left transform-gpu self-center text-primary transition-all duration-300 ease-in-out group-hover:scale-75" />
+          <h3 className="text-md md:text-lg xl:text-xl font-semibold text-primary self-center md:self-auto">{name}</h3>
         </div>
 
         <div

@@ -1,8 +1,4 @@
-import {
-  createBrowserHistory,
-  createRouter,
-  RouterProvider,
-} from '@tanstack/react-router';
+import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import { routeTree } from '../../../routeTree.gen';
 import { useContext } from 'react';
 import { UserContext } from '@core/contexts/UserContext';

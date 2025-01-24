@@ -3,7 +3,7 @@ import { AppButton } from '@core/components/AppButton';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppLink } from '@core/components/AppLink';
 import { AppPage } from '@core/components/AppPage';
-import { ResetPasswordResult } from '@core/models';
+import { Result } from '@core/models';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -19,9 +19,7 @@ const forgotPasswordSchema = z.object({
 });
 
 function ForgotPassword() {
-  const [resetPasswordStatus, setResetPasswordStatus] = useState<
-    ResetPasswordResult | undefined
-  >(undefined);
+  const [resetPasswordStatus, setResetPasswordStatus] = useState<Result | undefined>(undefined);
   const [email, setEmail] = useState<string | undefined>(undefined);
   const resetPasswordMutation = useMutation({
     mutationFn: async (email: string) => {
@@ -61,9 +59,8 @@ function ForgotPassword() {
     return (
       <AppPage title="Przywracanie hasła" variant="narrow">
         <p className="text-lg">
-          Link do resetowania hasła został wysłany na adres:{' '}
-          <span className="font-bold text-blue-500">{email}</span>
-          <AppButton link to="/login" variant="blue" className="w-full mt-8">
+          Link do resetowania hasła został wysłany na adres: <span className="font-bold text-primary">{email}</span>
+          <AppButton link to="/login" className="w-full mt-8">
             Wróć do logowania
           </AppButton>
         </p>
@@ -103,12 +100,7 @@ function ForgotPassword() {
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
-              <AppButton
-                type="submit"
-                className="w-full"
-                variant="blue"
-                disabled={!canSubmit || isSubmitting}
-              >
+              <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
                 Przypomnij hasło
               </AppButton>
             )}

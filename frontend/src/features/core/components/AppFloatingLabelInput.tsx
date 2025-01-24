@@ -26,8 +26,8 @@ export function AppFloatingLabelInput({
         name={name}
         id={name}
         className={cn(
-          'block py-2.5 px-0 w-full bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer',
-          error ? 'border-red-500 text-red-500 focus:border-red-500' : ''
+          'block py-2.5 px-0 w-full bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-primary focus:outline-none focus:ring-0 peer',
+          error ? 'border-danger text-danger focus:border-danger' : ''
         )}
         placeholder=" "
         required={required}
@@ -38,13 +38,13 @@ export function AppFloatingLabelInput({
       <label
         htmlFor={name}
         className={cn(
-          'peer-focus:font-medium absolute text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6',
-          error ? 'text-red-500 peer-focus:text-red-500' : ''
+          'peer-focus:font-medium absolute text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6',
+          error ? 'text-danger peer-focus:text-danger' : ''
         )}
       >
         {label}
       </label>
-      {error ? <p className="mt-2 text-red-500 text-sm">{error}</p> : null}
+      {error ? <p className="mt-2 text-danger text-sm">{error}</p> : null}
     </div>
   );
 }

@@ -4,14 +4,7 @@ export default {
     'at-rule-no-unknown': [
       true,
       {
-        ignoreAtRules: [
-          'apply',
-          'layer',
-          'responsive',
-          'screen',
-          'tailwind',
-          'variants',
-        ],
+        ignoreAtRules: ['apply', 'layer', 'responsive', 'screen', 'tailwind', 'variants'],
       },
     ],
     'no-descending-specificity': null,

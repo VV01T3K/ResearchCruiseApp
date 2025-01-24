@@ -3,9 +3,7 @@ import { ParsedLocation, redirect } from '@tanstack/react-router';
 import { Role } from '../models';
 
 export const allowOnly: GlobalGuardType = {
-  withRoles: (
-    ...roles: Role[]
-  ): ((context: GuardContextType) => Promise<void>) => {
+  withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
       if (!context.userContext?.currentUser) {
         throw redirect({
@@ -16,9 +14,7 @@ export const allowOnly: GlobalGuardType = {
         });
       }
 
-      if (
-        !roles.some((r) => context.userContext!.currentUser!.roles.includes(r))
-      ) {
+      if (!roles.some((r) => context.userContext!.currentUser!.roles.includes(r))) {
         throw redirect({
           to: '/',
         });

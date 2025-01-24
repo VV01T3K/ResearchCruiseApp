@@ -1,11 +1,7 @@
 import { SignInResult } from '@core/models';
 import { UserContext } from '@core/contexts/UserContext';
 import { useForm } from '@tanstack/react-form';
-import {
-  createFileRoute,
-  useNavigate,
-  useRouter,
-} from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router';
 import { useContext, useState } from 'react';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppButton } from 'src/features/core/components/AppButton';
@@ -36,9 +32,7 @@ function Login() {
   const router = useRouter();
   const { redirect } = Route.useSearch();
   const userContext = useContext(UserContext);
-  const [signInResult, setSignInResult] = useState<SignInResult | undefined>(
-    undefined
-  );
+  const [signInResult, setSignInResult] = useState<SignInResult | undefined>(undefined);
   const form = useForm({
     defaultValues: {
       email: '',
@@ -119,21 +113,14 @@ function Login() {
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <AppButton
-                  type="submit"
-                  className="w-full"
-                  variant="blue"
-                  disabled={!canSubmit || isSubmitting}
-                >
+                <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
                   Zaloguj
                 </AppButton>
               )}
             />
 
             {signInResult ? (
-              <p className="mt-2 text-red-500 text-sm text-center font-semibold">
-                {loginErrorMessages[signInResult]}
-              </p>
+              <p className="mt-2 text-danger text-sm text-center font-semibold">{loginErrorMessages[signInResult]}</p>
             ) : null}
           </div>
 

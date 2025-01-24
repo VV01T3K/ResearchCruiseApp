@@ -11,11 +11,7 @@ import { allowOnly } from '@core/helpers';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublications,
-  beforeLoad: allowOnly.withRoles(
-    Role.Administrator,
-    Role.CruiseManager,
-    Role.Shipowner
-  ),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.CruiseManager, Role.Shipowner),
 });
 
 function MyPublications() {
@@ -47,10 +43,7 @@ function MyPublications() {
 
   const uploadPublicationsMutation = useMutation({
     mutationFn: (publications: Publication[]) => {
-      return client.post(
-        'api/cruiseApplications/ownPublications',
-        publications
-      );
+      return client.post('api/cruiseApplications/ownPublications', publications);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ownPublications'] });
@@ -97,7 +90,7 @@ function MyPublications() {
           Usunięcie publikacji jest nieodwracalne.
           <div className="flex flex-row gap-4 mt-4">
             <AppButton
-              variant="red"
+              variant="dangerOutline"
               className="basis-2/3"
               onClick={() => {
                 deleteAllOwnPublicationsMutation.mutate();
@@ -107,7 +100,7 @@ function MyPublications() {
               Usuń wszystkie publikacje
             </AppButton>
             <AppButton
-              variant="blueOutline"
+              variant="primaryOutline"
               className="basis-1/3"
               onClick={() => {
                 setIsDeleteAllModalOpen(false);
@@ -122,27 +115,13 @@ function MyPublications() {
       <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
         <div className="max-w-screen-2xl mx-auto px-4 py-8 bg-gray-50 rounded-xl">
           <header className="mb-4 flex flex-col sm:flex-row justify-between items-center">
-            <h1 className="text-3xl font-bold text-center mb-2 basis-3/4">
-              Moje publikacje
-            </h1>
+            <h1 className="text-3xl font-bold text-center mb-2 basis-3/4">Moje publikacje</h1>
             <div className="flex flex-col gap-1 text-sm">
-              <AppButton
-                variant="blue"
-                onClick={() => fileUploadRef.current?.click()}
-              >
-                Import publikacji z pliku CSV
-              </AppButton>
-              <AppButton
-                link="external"
-                variant="blueOutline"
-                to="https://repozytorium.bg.ug.edu.pl/search.seam"
-              >
+              <AppButton onClick={() => fileUploadRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
+              <AppButton link="external" variant="primaryOutline" to="https://repozytorium.bg.ug.edu.pl/search.seam">
                 Przejdź do repozytorium BG
               </AppButton>
-              <AppButton
-                variant="red"
-                onClick={() => setIsDeleteAllModalOpen(true)}
-              >
+              <AppButton variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
                 Usuń wszystkie publikacje
               </AppButton>
             </div>
@@ -155,20 +134,13 @@ function MyPublications() {
           {ownPublicationsQuery.data?.data.length > 0 && (
             <UserPublicationTable
               userPublications={ownPublicationsQuery.data?.data}
-              handleDeletePublication={(id) =>
-                deleteOwnPublicationMutation.mutate(id)
-              }
+              handleDeletePublication={(id) => deleteOwnPublicationMutation.mutate(id)}
             />
           )}
         </div>
       </div>
 
-      <input
-        className="hidden"
-        ref={fileUploadRef}
-        type="file"
-        onChange={() => handleFileChange()}
-      />
+      <input className="hidden" ref={fileUploadRef} type="file" onChange={() => handleFileChange()} />
     </>
   );
 }

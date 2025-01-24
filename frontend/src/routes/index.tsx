@@ -1,8 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import {
-  DashboardGrid,
-  DashboardGridCard,
-} from 'src/features/dashboard/components/DashboardGrid';
+import { DashboardGrid, DashboardGridCard } from 'src/features/dashboard/components/DashboardGrid';
 import InfoIcon from 'bootstrap-icons/icons/info.svg?react';
 import InfoCircleIcon from 'bootstrap-icons/icons/info-circle.svg?react';
 import PlusCircleFillIcon from 'bootstrap-icons/icons/plus-circle.svg?react';
@@ -25,9 +22,7 @@ export const Route = createFileRoute('/')({
 function Index() {
   const userContext = useContext(UserContext)!;
 
-  const commonBackground = (
-    <div className="w-full h-full absolute opacity-50"></div>
-  );
+  const commonBackground = <div className="w-full h-full absolute opacity-50"></div>;
 
   function NewFormCard({ className }: { className?: string }) {
     return (
@@ -215,10 +210,9 @@ function Index() {
   }
 
   return (
-    <p className="text-red-500 font-bold text-center">
-      Brak dashboarda przypisanego do ról:{' '}
-      {userContext.currentUser?.roles.join(', ')}. Zgłoś ten fakt
-      administratorom strony.
+    <p className="text-danger font-bold text-center">
+      Brak dashboarda przypisanego do ról: {userContext.currentUser?.roles.join(', ')}. Zgłoś ten fakt administratorom
+      strony.
     </p>
   );
 }

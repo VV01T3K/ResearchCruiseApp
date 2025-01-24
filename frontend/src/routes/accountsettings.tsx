@@ -17,10 +17,10 @@ function RouteComponent() {
 
   function getEmailConfirmationBadge() {
     if (userContext.currentUser?.emailConfirmed) {
-      return <AppBadge variant="green">Potwierdzony adres e-mail</AppBadge>;
+      return <AppBadge variant="success">Potwierdzony adres e-mail</AppBadge>;
     }
 
-    return <AppBadge variant="red">Niepotwierdzony adres e-mail</AppBadge>;
+    return <AppBadge variant="danger">Niepotwierdzony adres e-mail</AppBadge>;
   }
 
   return (
@@ -30,8 +30,7 @@ function RouteComponent() {
           <AppInitialsAvatar />
           <div>
             <p className="title text-xl font-semibold">
-              {userContext.currentUser?.firstName}{' '}
-              {userContext.currentUser?.lastName}
+              {userContext.currentUser?.firstName} {userContext.currentUser?.lastName}
             </p>
             <p>
               {userContext.currentUser?.email} {getEmailConfirmationBadge()}

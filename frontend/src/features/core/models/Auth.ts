@@ -1,3 +1,3 @@
-export type SignInResult = 'error' | 'invalid_credentials' | 'success';
-export type ResetPasswordResult = 'success' | 'error';
-export type RegistrationResult = 'success' | 'username-taken' | 'error';
+export type Result = 'success' | 'error';
+export type SignInResult = Result | 'invalid_credentials';
+export type RegistrationResult = Result | 'username-taken';

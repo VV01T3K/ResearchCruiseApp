@@ -50,12 +50,7 @@ const registerErrorMessages: Record<RegistrationResult, string> = {
 function Register() {
   const navigate = useNavigate();
   const mutation = useMutation({
-    mutationFn: async (data: {
-      email: string;
-      firstname: string;
-      lastname: string;
-      password: string;
-    }) => {
+    mutationFn: async (data: { email: string; firstname: string; lastname: string; password: string }) => {
       return await client.post('/account/register', data);
     },
     onSuccess: async () => {
@@ -71,9 +66,7 @@ function Register() {
       setRegistrationResult('error');
     },
   });
-  const [registrationResult, setRegistrationResult] = useState<
-    RegistrationResult | undefined
-  >(undefined);
+  const [registrationResult, setRegistrationResult] = useState<RegistrationResult | undefined>(undefined);
 
   const form = useForm({
     defaultValues: {
@@ -87,12 +80,7 @@ function Register() {
       onChange: registerSchema,
     },
     onSubmit: async ({ value }) => {
-      if (
-        !value.email ||
-        !value.firstname ||
-        !value.lastname ||
-        !value.password
-      ) {
+      if (!value.email || !value.firstname || !value.lastname || !value.password) {
         throw new Error('Not all fields are filled despite validation');
       }
 
@@ -199,19 +187,14 @@ function Register() {
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <AppButton
-                  type="submit"
-                  className="w-full"
-                  variant="blue"
-                  disabled={!canSubmit || isSubmitting}
-                >
+                <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
                   Zarejestruj się
                 </AppButton>
               )}
             />
 
             {registrationResult ? (
-              <p className="mt-2 text-red-500 text-sm text-center font-semibold">
+              <p className="mt-2 text-danger text-sm text-center font-semibold">
                 {registerErrorMessages[registrationResult]}
               </p>
             ) : null}

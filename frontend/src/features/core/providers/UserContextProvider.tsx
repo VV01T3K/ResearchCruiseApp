@@ -17,12 +17,8 @@ type AuthDetails = {
 };
 
 export function UserContextProvider({ children }: UserContextProviderProps) {
-  const [userProfile, setUserProfile] = React.useState<User | undefined>(
-    undefined
-  );
-  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(
-    getStoredAuthDetails()
-  );
+  const [userProfile, setUserProfile] = React.useState<User | undefined>(undefined);
+  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(getStoredAuthDetails());
 
   const queryClient = useQueryClient();
   const profileQuery = useQuery({
@@ -86,10 +82,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const context: UserContextType = React.useMemo(
     () => ({
       currentUser: userProfile,
-      signIn: async (
-        email: string,
-        password: string
-      ): Promise<SignInResult> => {
+      signIn: async (email: string, password: string): Promise<SignInResult> => {
         const res = await loginMutation.mutateAsync({ email, password });
 
         if (res.status === 200) {
@@ -139,8 +132,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       client,
       async (failedRequest) => {
         await context.refreshUser();
-        failedRequest.response.config.headers['Authorization'] =
-          `Bearer ${getStoredAuthDetails()?.accessToken}`;
+        failedRequest.response.config.headers['Authorization'] = `Bearer ${getStoredAuthDetails()?.accessToken}`;
         return failedRequest;
       },
       {
@@ -173,9 +165,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     return <AppLoader />;
   }
 
-  return (
-    <UserContext.Provider value={context}>{children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={context}>{children}</UserContext.Provider>;
 }
 
 function getStoredAuthDetails(): AuthDetails | undefined {

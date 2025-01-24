@@ -15,10 +15,7 @@ type PasswordChangeResult = 'success' | 'error';
 
 const validationSchema = z
   .object({
-    password: z
-      .string()
-      .nonempty('To pole nie może być puste')
-      .or(z.literal('')),
+    password: z.string().nonempty('To pole nie może być puste').or(z.literal('')),
     newPassword: z
       .string()
       .min(8, 'Hasło powinno mieć conajmniej 8 znaków')
@@ -47,8 +44,7 @@ const validationSchema = z
   });
 
 export function ChangePasswordForm() {
-  const [changePasswordResult, setChangePasswordResult] =
-    useState<PasswordChangeResult>();
+  const [changePasswordResult, setChangePasswordResult] = useState<PasswordChangeResult>();
   const changePasswordForm = useForm({
     defaultValues: {
       password: '',
@@ -150,12 +146,7 @@ export function ChangePasswordForm() {
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             key={changePasswordResult}
             children={([canSubmit, isSubmitting]) => (
-              <AppButton
-                type="submit"
-                className="w-full"
-                variant="blue"
-                disabled={!canSubmit || isSubmitting}
-              >
+              <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
                 Zmień hasło
               </AppButton>
             )}
@@ -163,21 +154,14 @@ export function ChangePasswordForm() {
         </div>
 
         {changePasswordResult === 'success' && (
-          <AppAlert
-            variant="success"
-            onClose={() => setChangePasswordResult(undefined)}
-          >
+          <AppAlert variant="success" onClose={() => setChangePasswordResult(undefined)}>
             Hasło zostało zmienione
           </AppAlert>
         )}
 
         {changePasswordResult === 'error' && (
-          <AppAlert
-            variant="error"
-            onClose={() => setChangePasswordResult(undefined)}
-          >
-            Wystąpił błąd podczas zmiany hasła (sprawdź, czy podałeś poprawne
-            hasło).
+          <AppAlert variant="error" onClose={() => setChangePasswordResult(undefined)}>
+            Wystąpił błąd podczas zmiany hasła (sprawdź, czy podałeś poprawne hasło).
           </AppAlert>
         )}
       </div>

@@ -26,43 +26,24 @@ export function AppHeader() {
   }
 
   return (
-    <header className="bg-blue-600 px-8 py-4 flex justify-between items-center z-50">
+    <header className="bg-primary px-8 py-4 flex justify-between items-center z-50">
       <div>
-        <AppLink
-          to="https://ug.edu.pl/"
-          title="Strona Główna"
-          rel="home"
-          className="block w-24 text-white"
-        >
+        <AppLink to="https://ug.edu.pl/" title="Strona Główna" rel="home" className="block w-24 text-white">
           <UGLogoIcon />
         </AppLink>
       </div>
       <div className="flex items-center space-x-4">
-        <a
-          href="#"
-          onClick={openRadio}
-          title="Radio MORS"
-          className="block w-6 text-white"
-        >
+        <a href="#" onClick={openRadio} title="Radio MORS" className="block w-6 text-white">
           <BroadcastIcon />
         </a>
-        <AppLink
-          to="https://outlook.com/ug.edu.pl"
-          title="Poczta Uniwersytecka"
-          className="block w-6 text-white"
-        >
+        <AppLink to="https://outlook.com/ug.edu.pl" title="Poczta Uniwersytecka" className="block w-6 text-white">
           <EnvelopeIcon />
         </AppLink>
         <AppLink to="/" title="Strona Domowa" className="block w-6 text-white">
           <HouseIcon />
         </AppLink>
         {userContext?.currentUser ? (
-          <a
-            href="#"
-            onClick={signOut}
-            title="Wyloguj"
-            className="block w-6 text-white"
-          >
+          <a href="#" onClick={signOut} title="Wyloguj" className="block w-6 text-white">
             <LogoutIcon />
           </a>
         ) : null}

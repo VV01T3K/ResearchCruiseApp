@@ -1,0 +1,76 @@
+@theme {
+  --color-primary: #0041d2;
+  --color-primary-light: #f3f2ff;
+  --color-primary-dark: #00199d;
+  --color-primary-50: #ecf7ff;
+  --color-primary-100: #d4ecff;
+  --color-primary-200: #b2e0ff;
+  --color-primary-300: #7dceff;
+  --color-primary-400: #40b0ff;
+  --color-primary-500: #148bff;
+  --color-primary-600: #0067ff;
+  --color-primary-700: #004fff;
+  --color-primary-800: #0041d2;
+  --color-primary-900: #083aa0;
+  --color-primary-950: #0a2561;
+
+  --color-success: #00a26c;
+  --color-success-light: #f1f5ef;
+  --color-success-dark: #394b41;
+  --color-success-50: #ebfef5;
+  --color-success-100: #d0fbe4;
+  --color-success-200: #a4f6ce;
+  --color-success-300: #6aebb5;
+  --color-success-400: #2fd896;
+  --color-success-500: #0abf7f;
+  --color-success-600: #00a26c;
+  --color-success-700: #007c56;
+  --color-success-800: #036245;
+  --color-success-900: #04503a;
+  --color-success-950: #012d22;
+
+  --color-danger: #ff2141;
+  --color-danger-light: #fcedec;
+  --color-danger-dark: #a10000;
+  --color-danger-50: #fff1f3;
+  --color-danger-100: #ffdfe4;
+  --color-danger-200: #ffc5cd;
+  --color-danger-300: #ff9dab;
+  --color-danger-400: #ff647a;
+  --color-danger-500: #ff2141;
+  --color-danger-600: #ed1534;
+  --color-danger-700: #c80d28;
+  --color-danger-800: #a50f25;
+  --color-danger-900: #881425;
+  --color-danger-950: #4b040e;
+
+  --color-warning: #f9f871;
+  --color-warning-light: #f8feed;
+  --color-warning-dark: #686704;
+  --color-warning-50: #fdfde9;
+  --color-warning-100: #fbfcc5;
+  --color-warning-200: #f9f871;
+  --color-warning-300: #f7ef4d;
+  --color-warning-400: #f3e01c;
+  --color-warning-500: #e3c70f;
+  --color-warning-600: #c49d0a;
+  --color-warning-700: #9c710c;
+  --color-warning-800: #815a12;
+  --color-warning-900: #6e4915;
+  --color-warning-950: #402608;
+
+  --color-info: #9998ff;
+  --color-info-light: #f0f0ff;
+  --color-info-dark: #474555;
+  --color-info-50: #edefff;
+  --color-info-100: #dfe0ff;
+  --color-info-200: #c5c6ff;
+  --color-info-300: #9998ff;
+  --color-info-400: #887dfc;
+  --color-info-500: #775ef6;
+  --color-info-600: #6941ea;
+  --color-info-700: #5b33cf;
+  --color-info-800: #4a2ca7;
+  --color-info-900: #3e2b84;
+  --color-info-950: #26194d;
+}

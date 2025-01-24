@@ -4,14 +4,10 @@ import { AppAlert } from './AppAlert';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 
-type NetworkConnectionStatus =
-  | 'before_connection'
-  | 'connected'
-  | 'lose_connection';
+type NetworkConnectionStatus = 'before_connection' | 'connected' | 'lose_connection';
 
 export function AppNetworkStatus() {
-  const [networkStatus, setNetworkStatus] =
-    useState<NetworkConnectionStatus>('before_connection');
+  const [networkStatus, setNetworkStatus] = useState<NetworkConnectionStatus>('before_connection');
 
   const statusMutation = useMutation({
     mutationFn: () => client.get('/health', { headers: { Authorization: '' } }),
@@ -34,15 +30,9 @@ export function AppNetworkStatus() {
   }, []);
 
   return (
-    <div
-      className={cn(
-        'duration-700',
-        networkStatus !== 'lose_connection' ? '-translate-y-full' : ''
-      )}
-    >
-      <AppAlert variant="error">
-        Brak połączenia z serwerem. Upewnij się że masz dostęp do internetu i
-        spróbuj ponownie.
+    <div className={cn('duration-700', networkStatus !== 'lose_connection' ? '-translate-y-full' : '')}>
+      <AppAlert variant="danger">
+        Brak połączenia z serwerem. Upewnij się że masz dostęp do internetu i spróbuj ponownie.
       </AppAlert>
     </div>
   );

@@ -28,7 +28,7 @@ export function AppLabelTextArea({
         name={name}
         id={name}
         className={cn(
-          'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 resize-none',
+          'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary resize-none',
           className
         )}
         placeholder=" "
@@ -37,7 +37,7 @@ export function AppLabelTextArea({
         onBlur={onBlur}
         onChange={onChange}
       />
-      {error ? <p className="mt-2 text-red-500 text-sm">{error}</p> : null}
+      {error ? <p className="mt-2 text-danger text-sm">{error}</p> : null}
     </div>
   );
 }

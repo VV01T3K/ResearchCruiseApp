@@ -29,7 +29,7 @@ export function AppLabelInput({
         name={name}
         id={name}
         className={cn(
-          'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+          'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5'
         )}
         placeholder=" "
         required={required}
@@ -37,7 +37,7 @@ export function AppLabelInput({
         onBlur={onBlur}
         onChange={onChange}
       />
-      {error ? <p className="mt-2 text-red-500 text-sm">{error}</p> : null}
+      {error ? <p className="mt-2 text-danger text-sm">{error}</p> : null}
     </div>
   );
 }

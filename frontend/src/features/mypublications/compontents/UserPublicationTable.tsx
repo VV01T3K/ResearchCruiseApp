@@ -1,12 +1,7 @@
 import { AppButton } from '@core/components/AppButton';
 import { UserPublication } from '@core/models';
 import { cn } from '@lib/utils';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import Trash from 'bootstrap-icons/icons/trash.svg?react';
 
 const columnHelper = createColumnHelper<UserPublication>();
@@ -53,12 +48,7 @@ export function UserPublicationTable({
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th className="px-6 py-3" key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
               <th className="px-6 py-3">Akcje</th>
@@ -67,28 +57,17 @@ export function UserPublicationTable({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="odd:bg-white even:bg-gray-50 border-b hover:bg-gray-100"
-            >
+            <tr key={row.id} className="odd:bg-white even:bg-gray-50 border-b hover:bg-gray-100">
               {row.getVisibleCells().map((cell) => (
-                <td
-                  className={cn(
-                    'px-6 py-3',
-                    cell.column.getIndex() == 0 ? 'font-bold' : ''
-                  )}
-                  key={cell.id}
-                >
+                <td className={cn('px-6 py-3', cell.column.getIndex() == 0 ? 'font-bold' : '')} key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
               <td>
                 <AppButton
-                  variant="redOutline"
+                  variant="dangerOutline"
                   className="mr-2 text-xs"
-                  onClick={() =>
-                    handleDeletePublication(row.original.publication.id)
-                  }
+                  onClick={() => handleDeletePublication(row.original.publication.id)}
                 >
                   Usuń <Trash className="w-3 h-3 ml-1" />
                 </AppButton>
