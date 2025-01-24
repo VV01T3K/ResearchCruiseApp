@@ -1,4 +1,4 @@
-import { SignInResult } from '@core/auth';
+import { SignInResult } from '@core/models/Auth';
 import { UserContext } from '@core/contexts/UserContext';
 import { guardAgainstAuthenticated } from '@core/guards';
 import { useForm } from '@tanstack/react-form';

@@ -1,4 +1,4 @@
-import { SignInResult } from '@core/auth';
+import { SignInResult } from '@core/models/Auth';
 import { Role, User } from '@core/models/User';
 import { createContext } from 'react';
 
