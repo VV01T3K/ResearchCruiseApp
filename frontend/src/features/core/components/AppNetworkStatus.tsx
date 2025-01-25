@@ -2,7 +2,7 @@ import { client } from '@core/helpers/api';
 import { useMutation } from '@tanstack/react-query';
 import { AppAlert } from './AppAlert';
 import { useEffect, useState } from 'react';
-import { cn } from '@lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
 
 type NetworkConnectionStatus = 'before_connection' | 'connected' | 'lose_connection';
 
@@ -28,12 +28,15 @@ export function AppNetworkStatus() {
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
-    <div className={cn('duration-700', networkStatus !== 'lose_connection' ? '-translate-y-full' : '')}>
-      <AppAlert variant="danger">
-        Brak połączenia z serwerem. Upewnij się że masz dostęp do internetu i spróbuj ponownie.
-      </AppAlert>
-    </div>
+    <AnimatePresence>
+      {networkStatus === 'lose_connection' && (
+        <motion.div initial={{ y: '-100%' }} animate={{ y: 0 }} exit={{ y: '-100%' }}>
+          <AppAlert variant="danger">
+            Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.
+          </AppAlert>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

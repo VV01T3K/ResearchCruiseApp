@@ -9,8 +9,8 @@ type AppPageProps = {
 };
 
 const variants = {
-  default: 'max-w-screen-2xl mt-[25vh]',
-  narrow: 'max-w-2xl mt-[25vh]',
+  default: 'max-w-screen-2xl mt-[10vh] md:mt-[25vh]',
+  narrow: 'max-w-2xl mt-[10vh]  md:mt-[25vh]',
   defaultWithoutCentering: 'max-w-screen-2xl',
 };
 
