@@ -2,7 +2,7 @@ import { AppButton } from '@core/components/AppButton';
 import { AppPage } from '@core/components/AppPage';
 import { Publication } from '@core/models';
 import { createFileRoute } from '@tanstack/react-router';
-import { createColumnHelper } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import React from 'react';
 import { AppTable } from 'src/features/table/components/AppTable';
 
@@ -53,44 +53,50 @@ const initialData: Publication[] = [
   },
 ];
 
-const columnHelper = createColumnHelper<Publication>();
-const defaultColumns = [
-  columnHelper.accessor('category', {
+const defaultColumns: ColumnDef<Publication>[] = [
+  {
+    accessorFn: (row) => row.category,
     header: 'Category',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.accessor('doi', {
+  },
+  {
+    accessorFn: (row) => row.doi,
     header: 'DOI',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.accessor('authors', {
+  },
+  {
+    accessorFn: (row) => row.authors,
     header: 'Authors',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.accessor('title', {
+  },
+  {
+    accessorFn: (row) => row.title,
     header: 'Title',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.accessor('magazine', {
+  },
+  {
+    accessorFn: (row) => row.magazine,
     header: 'Magazine',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.accessor('year', {
+  },
+  {
+    accessorFn: (row) => row.year,
     header: 'Year',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.accessor('ministerialPoints', {
+  },
+  {
+    accessorFn: (row) => row.ministerialPoints,
     header: 'Ministerial Points',
     cell: (cell) => cell.getValue(),
-  }),
-  columnHelper.display({
+  },
+  {
     header: 'Actions',
     cell: (cell) => (
       <AppButton onClick={() => alert(cell.row.id)} variant="primaryOutline">
         Click me
       </AppButton>
     ),
-  }),
+  },
 ];
 
 function TableTest() {

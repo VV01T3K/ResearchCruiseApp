@@ -1,10 +1,15 @@
-import { RowData } from '@tanstack/react-table'; //or vue, svelte, solid, qwik, etc.
+import { Header } from '@tanstack/react-table';
 
-declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData extends RowData, TValue> {
-    filterType?: 'select' | undefined;
-  }
-}
-
-export type AppTableHeaderDropdownStatus = 'default' | 'open' | 'closed';
+export type AppTableHeaderDropdownStatus = 'open' | 'closed';
+export type AppTableHeaderProps<TData, TValue> = {
+  header: Header<TData, TValue>;
+  children: React.ReactNode;
+};
+export type DropdownMenuProps<TData, TValue> = {
+  header: Header<TData, TValue>;
+  supportsDropdown: boolean;
+  supportsFilter: boolean;
+  supportsSort: boolean;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
+  status: AppTableHeaderDropdownStatus;
+};

@@ -9,19 +9,17 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { AppTableHeader } from './AppTableHeader';
-import React from 'react';
-import { AppTableHeaderDropdownStatus } from '../types';
 import { AppButton } from '@core/components/AppButton';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import { cn } from '@lib/utils';
 
-type AppTableProps<TRow> = {
-  data: TRow[];
-  columns: ColumnDef<TRow, unknown>[];
+type AppTableProps<TData> = {
+  data: TData[];
+  columns: ColumnDef<TData>[];
 };
 
-export function AppTable<TRow>({ data, columns }: AppTableProps<TRow>) {
-  const table = useReactTable<TRow>({
+export function AppTable<TData>({ data, columns }: AppTableProps<TData>) {
+  const table = useReactTable<TData>({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
@@ -33,29 +31,6 @@ export function AppTable<TRow>({ data, columns }: AppTableProps<TRow>) {
       filterFn: 'arrIncludesSome',
     },
   });
-
-  const [columnHeaderDropdownStatuses, setColumnHeaderDropdownStatuses] = React.useState<
-    Record<string, AppTableHeaderDropdownStatus>
-  >(
-    table
-      .getHeaderGroups()
-      .flatMap((headerGroup) => headerGroup.headers.map((header) => header.id))
-      .reduce((acc, id) => ({ ...acc, [id]: 'default' }), {})
-  );
-
-  function updateStatus(headerGroupId: string, status: AppTableHeaderDropdownStatus) {
-    setColumnHeaderDropdownStatuses((prev) => {
-      const newStatuses = { ...prev, [headerGroupId]: status };
-      if (status === 'open') {
-        Object.keys(newStatuses).forEach((key) => {
-          if (key !== headerGroupId) {
-            newStatuses[key] = 'default';
-          }
-        });
-      }
-      return newStatuses;
-    });
-  }
 
   function isAnyFilterActive() {
     return table.getAllColumns().some((column) => column.getIsFiltered());
@@ -80,12 +55,9 @@ export function AppTable<TRow>({ data, columns }: AppTableProps<TRow>) {
             return (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <AppTableHeader
-                    key={header.id}
-                    header={header}
-                    status={columnHeaderDropdownStatuses[header.id]}
-                    setStatus={(status) => updateStatus(header.id, status)}
-                  />
+                  <AppTableHeader key={header.id} header={header}>
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </AppTableHeader>
                 ))}
               </tr>
             );
