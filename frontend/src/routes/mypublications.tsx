@@ -16,6 +16,7 @@ export const Route = createFileRoute('/mypublications')({
 
 function MyPublications() {
   const queryClient = useQueryClient();
+
   const ownPublicationsQuery = useQuery({
     queryKey: ['ownPublications'],
     queryFn: () => {
@@ -51,6 +52,7 @@ function MyPublications() {
   });
 
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+
   const fileUploadRef = useRef<HTMLInputElement>(null);
 
   function handleFileChange() {
@@ -76,41 +78,39 @@ function MyPublications() {
     };
     reader.readAsArrayBuffer(file);
 
-    fileUploadRef.current.value = '';
+    fileUploadRef.current!.value = '';
   }
 
   return (
     <>
-      {isDeleteAllModalOpen && (
-        <AppModal
-          isOpen={isDeleteAllModalOpen}
-          onClose={() => setIsDeleteAllModalOpen(false)}
-          title="Czy na pewno chcesz usunąć wszystkie publikacje?"
-        >
-          Usunięcie publikacji jest nieodwracalne.
-          <div className="flex flex-row gap-4 mt-4">
-            <AppButton
-              variant="dangerOutline"
-              className="basis-2/3"
-              onClick={() => {
-                deleteAllOwnPublicationsMutation.mutate();
-                setIsDeleteAllModalOpen(false);
-              }}
-            >
-              Usuń wszystkie publikacje
-            </AppButton>
-            <AppButton
-              variant="primaryOutline"
-              className="basis-1/3"
-              onClick={() => {
-                setIsDeleteAllModalOpen(false);
-              }}
-            >
-              Anuluj
-            </AppButton>
-          </div>
-        </AppModal>
-      )}
+      <AppModal
+        isOpen={isDeleteAllModalOpen}
+        onClose={() => setIsDeleteAllModalOpen(false)}
+        title="Czy na pewno chcesz usunąć wszystkie publikacje?"
+      >
+        Usunięcie publikacji jest nieodwracalne.
+        <div className="flex flex-row gap-4 mt-4">
+          <AppButton
+            variant="dangerOutline"
+            className="basis-2/3"
+            onClick={() => {
+              deleteAllOwnPublicationsMutation.mutate();
+              setIsDeleteAllModalOpen(false);
+            }}
+          >
+            Usuń wszystkie publikacje
+          </AppButton>
+          <AppButton
+            variant="primaryOutline"
+            className="basis-1/3"
+            onClick={() => {
+              setIsDeleteAllModalOpen(false);
+            }}
+          >
+            Anuluj
+          </AppButton>
+        </div>
+      </AppModal>
 
       <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
         <div className="max-w-screen-2xl mx-auto px-4 py-8 bg-gray-50 rounded-xl">
