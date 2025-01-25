@@ -9,8 +9,9 @@ export function AppFloatingLabelInput({
   error,
   label,
   required = undefined,
+  className = undefined,
 }: {
-  name: string;
+  name?: string;
   value: string;
   type: React.HTMLInputTypeAttribute;
   error?: string;
@@ -18,9 +19,10 @@ export function AppFloatingLabelInput({
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   label: React.ReactNode;
   required?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="relative z-0 w-full mb-5 group">
+    <div className={cn('relative z-0 w-full mb-5 group', className)}>
       <input
         type={type}
         name={name}
