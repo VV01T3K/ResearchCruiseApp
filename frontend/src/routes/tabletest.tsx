@@ -82,9 +82,6 @@ const defaultColumns = [
   columnHelper.accessor('ministerialPoints', {
     header: 'Ministerial Points',
     cell: (cell) => cell.getValue(),
-    meta: {
-      filterType: 'select',
-    },
   }),
   columnHelper.display({
     header: 'Actions',

@@ -32,7 +32,7 @@ export function AppButton({
       disabled={disabled}
       {...otherProps}
     >
-      <div className={cn('flex items-center justify-center')}>
+      <div className={cn('flex items-center justify-center gap-2')}>
         {children}
         {link === 'external' && <ExternalIcon className={cn('w-3 h-3 ml-2')} />}
       </div>
@@ -47,6 +47,8 @@ export function AppButton({
 }
 
 const variants = {
+  text: 'text-default',
+
   primary: 'bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
   success: 'bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
   danger: 'bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',

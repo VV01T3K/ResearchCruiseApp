@@ -81,6 +81,7 @@ export function AppTable<TRow>({ data, columns }: AppTableProps<TRow>) {
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <AppTableHeader
+                    key={header.id}
                     header={header}
                     status={columnHeaderDropdownStatuses[header.id]}
                     setStatus={(status) => updateStatus(header.id, status)}
