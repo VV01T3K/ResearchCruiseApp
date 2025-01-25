@@ -26,7 +26,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className="bg-primary px-8 py-4 flex justify-between items-center z-50">
+    <header className="bg-primary px-8 py-4 flex justify-between items-center z-50 h-[var(--header-height)]">
       <div>
         <AppLink to="https://ug.edu.pl/" title="Strona Główna" rel="home" className="block w-24 text-white">
           <UGLogoIcon />

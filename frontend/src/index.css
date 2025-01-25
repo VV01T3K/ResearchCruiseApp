@@ -11,4 +11,8 @@
   #root {
     @apply flex flex-col relative;
   }
+
+  :root {
+    --header-height: 4.5rem;
+  }
 }

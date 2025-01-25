@@ -32,6 +32,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         },
       });
     },
+    refetchOnWindowFocus: false,
   });
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) => {

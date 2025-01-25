@@ -1,11 +1,11 @@
 import { cn } from '@lib/utils';
 
 const variants = {
-  primary: 'bg-primary-light text-primary-dark',
-  success: 'bg-success-light text-success-dark',
-  danger: 'bg-danger-light text-danger-dark',
-  warning: 'bg-warning-light text-warning-dark',
-  info: 'bg-info-light text-info-dark',
+  primary: 'bg-primary-100 text-primary-dark',
+  success: 'bg-success-200 text-success-dark',
+  danger: 'bg-danger-200 text-danger-dark',
+  warning: 'bg-warning-100 text-warning-dark',
+  info: 'bg-info-100 text-info-dark',
 };
 
 export function AppBadge({
