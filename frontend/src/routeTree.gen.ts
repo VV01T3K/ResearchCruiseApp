@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as TabletestImport } from './routes/tabletest'
+import { Route as ResetpasswordImport } from './routes/resetpassword'
 import { Route as RegisterImport } from './routes/register'
 import { Route as PriorityinformationImport } from './routes/priorityinformation'
 import { Route as MypublicationsImport } from './routes/mypublications'
@@ -27,6 +28,12 @@ import { Route as IndexImport } from './routes/index'
 const TabletestRoute = TabletestImport.update({
   id: '/tabletest',
   path: '/tabletest',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ResetpasswordRoute = ResetpasswordImport.update({
+  id: '/resetpassword',
+  path: '/resetpassword',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -151,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/resetpassword': {
+      id: '/resetpassword'
+      path: '/resetpassword'
+      fullPath: '/resetpassword'
+      preLoaderRoute: typeof ResetpasswordImport
+      parentRoute: typeof rootRoute
+    }
     '/tabletest': {
       id: '/tabletest'
       path: '/tabletest'
@@ -173,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
+  '/resetpassword': typeof ResetpasswordRoute
   '/tabletest': typeof TabletestRoute
 }
 
@@ -186,6 +201,7 @@ export interface FileRoutesByTo {
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
+  '/resetpassword': typeof ResetpasswordRoute
   '/tabletest': typeof TabletestRoute
 }
 
@@ -200,6 +216,7 @@ export interface FileRoutesById {
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
+  '/resetpassword': typeof ResetpasswordRoute
   '/tabletest': typeof TabletestRoute
 }
 
@@ -215,6 +232,7 @@ export interface FileRouteTypes {
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
+    | '/resetpassword'
     | '/tabletest'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -227,6 +245,7 @@ export interface FileRouteTypes {
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
+    | '/resetpassword'
     | '/tabletest'
   id:
     | '__root__'
@@ -239,6 +258,7 @@ export interface FileRouteTypes {
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
+    | '/resetpassword'
     | '/tabletest'
   fileRoutesById: FileRoutesById
 }
@@ -253,6 +273,7 @@ export interface RootRouteChildren {
   MypublicationsRoute: typeof MypublicationsRoute
   PriorityinformationRoute: typeof PriorityinformationRoute
   RegisterRoute: typeof RegisterRoute
+  ResetpasswordRoute: typeof ResetpasswordRoute
   TabletestRoute: typeof TabletestRoute
 }
 
@@ -266,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   MypublicationsRoute: MypublicationsRoute,
   PriorityinformationRoute: PriorityinformationRoute,
   RegisterRoute: RegisterRoute,
+  ResetpasswordRoute: ResetpasswordRoute,
   TabletestRoute: TabletestRoute,
 }
 
@@ -288,6 +310,7 @@ export const routeTree = rootRoute
         "/mypublications",
         "/priorityinformation",
         "/register",
+        "/resetpassword",
         "/tabletest"
       ]
     },
@@ -317,6 +340,9 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/resetpassword": {
+      "filePath": "resetpassword.tsx"
     },
     "/tabletest": {
       "filePath": "tabletest.tsx"

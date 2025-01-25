@@ -6,30 +6,30 @@ import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { z } from 'zod';
+import { Result } from '@core/models';
 
 type ChangePasswordDto = {
   password: string;
   newPassword: string;
 };
-type PasswordChangeResult = 'success' | 'error';
 
 const validationSchema = z
   .object({
     password: z.string().nonempty('To pole nie może być puste').or(z.literal('')),
     newPassword: z
       .string()
-      .min(8, 'Hasło powinno mieć conajmniej 8 znaków')
+      .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
       .regex(
         /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-        'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra'
+        'Hasło powinno zawierać jedną dużą literę, jedną małą literę oraz cyfrę'
       )
       .or(z.literal('')),
     repeatedNewPassword: z
       .string()
-      .min(8, 'Hasło powinno mieć conajmniej 8 znaków')
+      .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
       .regex(
         /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-        'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra'
+        'Hasło powinno zawierać jedną dużą literę, jedną małą literę oraz cyfrę'
       )
       .or(z.literal('')),
   })
@@ -44,7 +44,7 @@ const validationSchema = z
   });
 
 export function ChangePasswordForm() {
-  const [changePasswordResult, setChangePasswordResult] = useState<PasswordChangeResult>();
+  const [changePasswordResult, setChangePasswordResult] = useState<Result>();
   const changePasswordForm = useForm({
     defaultValues: {
       password: '',

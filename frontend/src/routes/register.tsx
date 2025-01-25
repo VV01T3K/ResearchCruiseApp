@@ -17,6 +17,13 @@ export const Route = createFileRoute('/register')({
   beforeLoad: allowOnly.unauthenticated(),
 });
 
+type RegisterDto = {
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+};
+
 const registerSchema = z
   .object({
     email: z.string().email('Niepoprawny adres e-mail'),
@@ -24,10 +31,10 @@ const registerSchema = z
     lastname: z.string().min(2),
     password: z
       .string()
-      .min(8, 'Hasło powinno mieć conajmniej 8 znaków')
+      .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
       .regex(
         /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-        'Co najmniej 8 znaków w tym przynajmniej jedna duża litera, mała litera oraz cyfra'
+        'Hasło powinno zawierać jedną dużą literę, jedną małą literę oraz cyfrę'
       ),
     confirmPassword: z.string(),
   })
@@ -50,7 +57,7 @@ const registerErrorMessages: Record<RegistrationResult, string> = {
 function Register() {
   const navigate = useNavigate();
   const mutation = useMutation({
-    mutationFn: async (data: { email: string; firstname: string; lastname: string; password: string }) => {
+    mutationFn: async (data: RegisterDto) => {
       return await client.post('/account/register', data);
     },
     onSuccess: async () => {

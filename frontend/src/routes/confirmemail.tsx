@@ -25,7 +25,7 @@ function ConfirmEmail() {
   const [result, setResult] = React.useState<Result | undefined>(undefined);
 
   const confirmEmailMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ userId, code }: { userId: string; code: string }) => {
       return await client.get('/account/emailConfirmation', {
         params: {
           userId,
@@ -43,7 +43,7 @@ function ConfirmEmail() {
 
   React.useEffect(() => {
     if (userId && code) {
-      confirmEmailMutation.mutate();
+      confirmEmailMutation.mutate({ userId, code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, code]);
