@@ -1,6 +1,6 @@
 import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import { routeTree } from '../../../routeTree.gen';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { UserContext } from '@core/contexts/UserContext';
 
 const router = createRouter({
@@ -19,6 +19,10 @@ declare module '@tanstack/react-router' {
 
 export default function RouterWithUserContextProvider() {
   const userContext = useContext(UserContext);
+
+  useEffect(() => {
+    router.invalidate();
+  }, [userContext]);
 
   return <RouterProvider router={router} context={{ userContext }} />;
 }

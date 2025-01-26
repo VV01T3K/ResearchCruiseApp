@@ -84,7 +84,13 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     () => ({
       currentUser: userProfile,
       signIn: async (email: string, password: string): Promise<SignInResult> => {
-        const res = await loginMutation.mutateAsync({ email, password });
+        const res = await loginMutation.mutateAsync({ email, password }).catch((error) => {
+          return error.response;
+        });
+
+        if (!res) {
+          return 'error';
+        }
 
         if (res.status === 200) {
           return 'success';
@@ -133,6 +139,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       client,
       async (failedRequest) => {
         await context.refreshUser();
+
         failedRequest.response.config.headers['Authorization'] = `Bearer ${getStoredAuthDetails()?.accessToken}`;
         return failedRequest;
       },
@@ -162,7 +169,12 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     return () => clearInterval(timeoutId);
   }, [context, authDetails]);
 
-  if (profileQuery.isFetching || loginMutation.isPending) {
+  const expirationDate = authDetails?.expirationDate;
+  if (expirationDate && expirationDate < new Date()) {
+    context.signOut();
+  }
+
+  if (profileQuery.isFetching) {
     return <AppLoader />;
   }
 
@@ -176,7 +188,13 @@ function getStoredAuthDetails(): AuthDetails | undefined {
     return undefined;
   }
 
-  return JSON.parse(authDetails) as AuthDetails;
+  return JSON.parse(authDetails, (key: string, value: unknown) => {
+    if (key === 'expirationDate') {
+      return new Date(value as string);
+    }
+
+    return value;
+  }) as AuthDetails;
 }
 
 function setStoredAuthDetails(authDetails?: AuthDetails) {

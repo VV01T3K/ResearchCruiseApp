@@ -182,7 +182,7 @@ public class IdentityService(
         var user = await userManager.FindByIdAsync(userIdResult.Data!);
         if (
             user is null
-            || user.RefreshTokenExpiry < DateTime.Now
+            || user.RefreshTokenExpiry < DateTime.UtcNow
             || user.RefreshToken != refreshDto.RefreshToken
         )
             return Error.UnknownIdentity();
@@ -439,8 +439,9 @@ public class IdentityService(
         var loginResponseDto = new LoginResponseDto
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
-            ExpiresIn = accessToken?.ValidTo ?? DateTime.Now,
+            ExpiresIn = accessToken?.ValidTo ?? DateTime.UtcNow,
             RefreshToken = refreshToken,
+            ExpirationDate = refreshTokenExpiry.ToUniversalTime(),
         };
         return loginResponseDto;
     }
@@ -492,7 +493,7 @@ public class IdentityService(
     private (string token, DateTime expiry) CreateRefreshToken()
     {
         var lifetime = int.Parse(configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0");
-        var expiry = DateTime.Now.AddSeconds(lifetime);
+        var expiry = DateTime.UtcNow.AddSeconds(lifetime);
 
         var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
 
