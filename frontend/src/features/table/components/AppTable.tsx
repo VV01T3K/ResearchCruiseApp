@@ -43,8 +43,8 @@ export function AppTable<TData>({ data, columns, extraButtonsUpdater }: AppTable
       className={cn(isAnyFilterActive() ? '' : 'opacity-50')}
       variant="danger"
       disabled={!isAnyFilterActive()}
+      leftIcon={TrashIcon}
     >
-      <TrashIcon className="w-4 h-4 mr-2" />
       Wyczyść filtry
     </AppButton>,
   ];
@@ -69,10 +69,10 @@ export function AppTable<TData>({ data, columns, extraButtonsUpdater }: AppTable
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr key={row.id} className=" odd:bg-gray-100 text-gray-800">
               {row.getVisibleCells().map((cell) => {
                 return (
-                  <td key={cell.id} className="text-center pt-4">
+                  <td key={cell.id} className="text-center pt-2 pb-2 last:pr-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 );

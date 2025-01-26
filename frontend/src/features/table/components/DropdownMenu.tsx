@@ -17,7 +17,7 @@ export function DropdownMenu<TData, TValue>({
   status,
 }: DropdownMenuProps<TData, TValue>) {
   const uniqueValues = React.useMemo(() => {
-    return Array.from(header.column.getFacetedUniqueValues().entries());
+    return Array.from(header.column.getFacetedUniqueValues().entries()).sort();
   }, [header.column]);
 
   const [filterValue, setFilterValue] = React.useState<TData[] | undefined>(
@@ -35,8 +35,8 @@ export function DropdownMenu<TData, TValue>({
     const dropdownRect = dropdownRef.current.getBoundingClientRect();
 
     setDropdownPosition({
-      top: headerRect.top - headerRect.height / 2,
-      left: headerRect.left + headerRect.width / 2 - dropdownRect.width / 2,
+      top: headerRect.top - headerRect.height / 2 + window.scrollY,
+      left: headerRect.left + headerRect.width / 2 - dropdownRect.width / 2 + window.scrollX,
     });
   }, [headerRef, dropdownRef]);
 

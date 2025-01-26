@@ -1,14 +1,21 @@
-import { client } from '@core/helpers/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppModal } from '@core/components/AppModal';
 import { Publication, Role } from '@core/models';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { useRef, useState } from 'react';
-import { UserPublicationTable } from 'src/features/mypublications/compontents/UserPublicationTable';
-import Papa from 'papaparse';
+import { Suspense, useState } from 'react';
 import { allowOnly } from '@core/helpers';
-import { AppPage } from '@core/components';
+import { AppLoader, AppPage } from '@core/components';
+import { ColumnDef } from '@tanstack/react-table';
+import { AppTable } from 'src/features/table/components/AppTable';
+import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
+import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import {
+  useDeleteAllOwnPublicationsMutation,
+  useDeleteOwnPublicationMutation,
+  useOwnPublicationQuery,
+  useUploadPublicationsMutation,
+} from 'src/features/mypublications/hooks/MyPublicationsHooks';
+import { UploadFileButton } from 'src/features/mypublications/components/UploadFileButton';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublications,
@@ -16,95 +23,130 @@ export const Route = createFileRoute('/mypublications')({
 });
 
 function MyPublications() {
-  const queryClient = useQueryClient();
-
-  const ownPublicationsQuery = useQuery({
-    queryKey: ['ownPublications'],
-    queryFn: () => {
-      return client.get('api/cruiseApplications/ownPublications');
-    },
-  });
-
-  const deleteOwnPublicationMutation = useMutation({
-    mutationFn: (id: string) => {
-      return client.delete(`api/cruiseApplications/ownPublications/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ownPublications'] });
-    },
-  });
-
-  const deleteAllOwnPublicationsMutation = useMutation({
-    mutationFn: () => {
-      return client.delete('api/cruiseApplications/ownPublications');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ownPublications'] });
-    },
-  });
-
-  const uploadPublicationsMutation = useMutation({
-    mutationFn: (publications: Publication[]) => {
-      return client.post('api/cruiseApplications/ownPublications', publications);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ownPublications'] });
-    },
-  });
-
+  const [selectedPublications, setSelectedPublications] = useState<string[]>([]);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
 
-  const fileUploadRef = useRef<HTMLInputElement>(null);
+  const ownPublicationsQuery = useOwnPublicationQuery();
+  const deleteOwnPublicationMutation = useDeleteOwnPublicationMutation();
+  const deleteAllOwnPublicationsMutation = useDeleteAllOwnPublicationsMutation();
+  const uploadPublicationsMutation = useUploadPublicationsMutation();
 
-  function handleFileChange() {
-    const file = fileUploadRef.current?.files?.[0];
-    if (!file) {
-      return;
-    }
+  function togglePublicationSelection(publicationId: string) {
+    setSelectedPublications((selectedPublications) => {
+      if (selectedPublications.includes(publicationId)) {
+        return selectedPublications.filter((id) => id !== publicationId);
+      }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const decoder = new TextDecoder('windows-1250');
-      const csvText = decoder.decode(event.target?.result as ArrayBuffer);
-
-      Papa.parse(csvText, {
-        delimiter: ';',
-        header: true,
-        skipEmptyLines: true,
-        complete: (results: { data: Record<string, string>[] }) => {
-          const publications = results.data.map(parseRow);
-          uploadPublicationsMutation.mutate(publications as Publication[]);
-        },
-      });
-    };
-    reader.readAsArrayBuffer(file);
-
-    fileUploadRef.current!.value = '';
+      return [...selectedPublications, publicationId];
+    });
   }
+
+  function isPublicationSelected(publicationId: string) {
+    return selectedPublications.includes(publicationId);
+  }
+
+  function toggleSelectAllPublications() {
+    setSelectedPublications((selectedPublications) => {
+      if (selectedPublications.length === ownPublicationsQuery.data?.length) {
+        return [];
+      }
+
+      return ownPublicationsQuery.data?.map((publication) => publication.id) ?? [];
+    });
+  }
+
+  function areAllPublicationsSelected() {
+    return selectedPublications.length === ownPublicationsQuery.data?.length;
+  }
+
+  const columns: ColumnDef<Publication>[] = [
+    {
+      id: 'selector',
+      header: () => (
+        <input
+          type="checkbox"
+          onChange={() => toggleSelectAllPublications()}
+          checked={areAllPublicationsSelected()}
+          className="mx-4"
+        />
+      ),
+      cell: (cell) => (
+        <input
+          type="checkbox"
+          onChange={() => togglePublicationSelection(cell.row.original.id)}
+          checked={isPublicationSelected(cell.row.original.id)}
+        />
+      ),
+      enableSorting: false,
+      enableColumnFilter: false,
+    },
+    {
+      accessorFn: (row) => row.title,
+      header: 'Tytuł',
+      cell: (cell) => <p className="font-bold pr-4">{cell.getValue() as string}</p>,
+    },
+    {
+      accessorFn: (row) => row.authors,
+      header: 'Autorzy',
+    },
+    {
+      accessorFn: (row) => row.doi,
+      header: 'DOI',
+    },
+    {
+      accessorFn: (row) => row.magazine,
+      header: 'Czasopismo',
+    },
+    {
+      accessorFn: (row) => row.year,
+      header: 'Rok',
+    },
+    {
+      accessorFn: (row) => row.ministerialPoints,
+      header: 'Punkty ministerialne',
+    },
+    {
+      id: 'actions',
+      header: undefined,
+      cell: (cell) => (
+        <AppButton
+          variant="dangerOutline"
+          leftIcon={TrashIcon}
+          size="xs"
+          onClick={() => {
+            deleteOwnPublicationMutation.mutate(cell.row.original.id);
+          }}
+        >
+          Usuń
+        </AppButton>
+      ),
+    },
+  ];
 
   return (
     <>
       <AppPage title="Moje publikacje" variant="defaultWithoutCentering">
-        <div className="flex flex-col gap-1 text-sm">
-          <AppButton onClick={() => fileUploadRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
-          <AppButton variant="primaryOutline" to="https://repozytorium.bg.ug.edu.pl/search.seam">
-            Przejdź do repozytorium BG
-          </AppButton>
-          <AppButton variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
-            Usuń wszystkie publikacje
-          </AppButton>
-        </div>
-
-        {ownPublicationsQuery.data?.data.length === 0 && (
-          <div className="text-center text-gray-500">Brak publikacji</div>
-        )}
-
-        {ownPublicationsQuery.data?.data.length > 0 && (
-          <UserPublicationTable
-            userPublications={ownPublicationsQuery.data?.data}
-            handleDeletePublication={(id) => deleteOwnPublicationMutation.mutate(id)}
+        <Suspense fallback={<AppLoader />}>
+          <AppTable
+            data={ownPublicationsQuery.data}
+            columns={columns}
+            extraButtonsUpdater={(predefinedButtons) => [
+              <UploadFileButton onUpload={(publications) => uploadPublicationsMutation.mutate(publications)} />,
+              <AppButton
+                rightIcon={ExternalLinkIcon}
+                variant="primaryOutline"
+                link
+                to="https://repozytorium.bg.ug.edu.pl/search.seam"
+              >
+                Przejdź do repozytorium BG
+              </AppButton>,
+              <AppButton leftIcon={TrashIcon} variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
+                Usuń wszystkie publikacje
+              </AppButton>,
+              ...predefinedButtons,
+            ]}
           />
-        )}
+        </Suspense>
       </AppPage>
 
       <AppModal
@@ -135,18 +177,6 @@ function MyPublications() {
           </AppButton>
         </div>
       </AppModal>
-
-      <input className="hidden" ref={fileUploadRef} type="file" onChange={() => handleFileChange()} />
     </>
   );
 }
-
-const parseRow = (row: Record<string, string>) => ({
-  category: 'subject',
-  doi: row['Numer DOI'] !== '' ? row['Numer DOI'] : '-',
-  authors: row['Autorzy'] !== '' ? row['Autorzy'] : '-',
-  title: row['Tytuł publikacji'] !== '' ? row['Tytuł publikacji'] : '-',
-  magazine: row['Nazwa czasopisma'] !== '' ? row['Nazwa czasopisma'] : '-',
-  year: row['Rok'] !== '' ? row['Rok'] : '-',
-  ministerialPoints: row['Punkty'] !== '' ? row['Punkty'] : '-',
-});

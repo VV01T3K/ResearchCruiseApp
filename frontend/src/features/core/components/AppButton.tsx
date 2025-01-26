@@ -69,11 +69,11 @@ const sizes = {
 };
 
 const iconSizes = {
-  xs: 'h-4 w-4',
-  sm: 'h-6 w-6',
-  md: 'h-8 w-8',
-  lg: 'h-10 w-10',
-  xl: 'h-12 w-12',
+  xs: 'h-3 w-3',
+  sm: 'h-3 w-3',
+  md: 'h-4 w-4',
+  lg: 'h-5 w-5',
+  xl: 'h-6 w-6',
 };
 
 const roundedTypes = {
