@@ -10,6 +10,7 @@ type AppButtonProps = {
   rounded?: keyof typeof roundedTypes;
   type?: 'submit' | 'button' | 'reset';
   className?: React.CSSProperties | string;
+  childrenClassName?: React.CSSProperties | string;
   disabled?: boolean;
   link?: boolean;
   leftIcon?: Icon;
@@ -25,6 +26,7 @@ export function AppButton({
   type = 'button',
   disabled = undefined,
   className,
+  childrenClassName,
   link,
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
@@ -43,7 +45,7 @@ export function AppButton({
       disabled={disabled}
       {...otherProps}
     >
-      <div className={cn('flex items-center justify-center gap-2')}>
+      <div className={cn('flex items-center justify-center gap-2', childrenClassName)}>
         {LeftIcon && <LeftIcon className={iconSizes[size]} />}
         {children}
         {RightIcon && <RightIcon className={iconSizes[size]} />}

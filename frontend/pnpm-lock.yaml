@@ -26,6 +26,9 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.64.2
         version: 5.64.2(@tanstack/react-query@5.64.2(react@19.0.0))(react@19.0.0)
+      '@tanstack/react-ranger':
+        specifier: ^0.0.4
+        version: 0.0.4(react@19.0.0)
       '@tanstack/react-router':
         specifier: ^1.97.14
         version: 1.97.14(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -999,6 +1002,10 @@ packages:
   '@tanstack/query-devtools@5.64.2':
     resolution: {integrity: sha512-3DautR5UpVZdk/qNIhioZVF7g8fdQZ1U98sBEEk4Tzz3tihSBNMPgwlP40nzgbPEDBIrn/j/oyyvNBVSo083Vw==}
 
+  '@tanstack/ranger@0.0.3':
+    resolution: {integrity: sha512-RYpW7MnEMxKLuskfadeyBfxpU8cUTGrtp5TnCV9PKEgMfrR6vwlk9/1/eU2EvJfYZbDAr1inphL4TGWCcRLAXQ==}
+    engines: {node: '>=12'}
+
   '@tanstack/react-form@0.41.3':
     resolution: {integrity: sha512-GZUiapJnQoWRvIFjXwC7IrTileAgLKG9AwQTk+EhZsJi5vXJcaiy9xQy2c6l9SQOv4ue+MNUIrIGNEhgukTBHA==}
     peerDependencies:
@@ -1018,6 +1025,11 @@ packages:
     resolution: {integrity: sha512-3pakNscZNm8KJkxmovvtZ4RaXLyiYYobwleTMvpIGUoKRa8j8VlrQKNl5W8VUEfVfZKkikvXVddLuWMbcSCA1Q==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@tanstack/react-ranger@0.0.4':
+    resolution: {integrity: sha512-3re8xKJ6t3j8eKp6pdKi92FQegsxHipTgsvg7k0DP+SRWt/iJ2F8GSm8DuQVLHiE3R7kX1Q42fQhmku1PdcWOA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   '@tanstack/react-router@1.97.14':
     resolution: {integrity: sha512-FQi/Mg8dmpPeLH0Tu7mwoIHhea2WY9DAp5retATxf++y1nv8H6eL0P11RMpL/fMDpr8eoX4OHNY59Zph74q1bA==}
@@ -3145,6 +3157,8 @@ snapshots:
 
   '@tanstack/query-devtools@5.64.2': {}
 
+  '@tanstack/ranger@0.0.3': {}
+
   '@tanstack/react-form@0.41.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)':
     dependencies:
       '@remix-run/node': 2.15.2(typescript@5.7.3)
@@ -3165,6 +3179,11 @@ snapshots:
   '@tanstack/react-query@5.64.2(react@19.0.0)':
     dependencies:
       '@tanstack/query-core': 5.64.2
+      react: 19.0.0
+
+  '@tanstack/react-ranger@0.0.4(react@19.0.0)':
+    dependencies:
+      '@tanstack/ranger': 0.0.3
       react: 19.0.0
 
   '@tanstack/react-router@1.97.14(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':

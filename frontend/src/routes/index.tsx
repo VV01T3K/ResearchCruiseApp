@@ -30,7 +30,7 @@ function Index() {
         key="new_form"
         name="Nowe zgłoszenie"
         description="Zgłoś nowy rejs"
-        to="/form"
+        to="/newcruise"
         background={commonBackground}
         Icon={PlusCircleFillIcon}
         className={className}

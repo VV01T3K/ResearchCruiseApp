@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@lib/utils';
 import { AppTableHeaderDropdownStatus, AppTableHeaderProps } from '../types';
-import { useOutsideClickDetection } from '../hooks/UseOutsideClickDetection';
+import { useOutsideClickDetection } from '../../core/hooks/UseOutsideClickDetection';
 import { AppButton } from '@core/components/AppButton';
 import { FilterIcon } from './FilterIcon';
 import { SortingIcon } from './SortingIcon';

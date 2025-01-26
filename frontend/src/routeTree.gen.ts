@@ -15,6 +15,7 @@ import { Route as UsermanagementImport } from './routes/usermanagement'
 import { Route as ResetpasswordImport } from './routes/resetpassword'
 import { Route as RegisterImport } from './routes/register'
 import { Route as PriorityinformationImport } from './routes/priorityinformation'
+import { Route as NewcruiseImport } from './routes/newcruise'
 import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
@@ -48,6 +49,12 @@ const RegisterRoute = RegisterImport.update({
 const PriorityinformationRoute = PriorityinformationImport.update({
   id: '/priorityinformation',
   path: '/priorityinformation',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NewcruiseRoute = NewcruiseImport.update({
+  id: '/newcruise',
+  path: '/newcruise',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -158,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MypublicationsImport
       parentRoute: typeof rootRoute
     }
+    '/newcruise': {
+      id: '/newcruise'
+      path: '/newcruise'
+      fullPath: '/newcruise'
+      preLoaderRoute: typeof NewcruiseImport
+      parentRoute: typeof rootRoute
+    }
     '/priorityinformation': {
       id: '/priorityinformation'
       path: '/priorityinformation'
@@ -213,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
+  '/newcruise': typeof NewcruiseRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
@@ -229,6 +244,7 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
+  '/newcruise': typeof NewcruiseRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
@@ -246,6 +262,7 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
+  '/newcruise': typeof NewcruiseRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
@@ -264,6 +281,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/mypublications'
+    | '/newcruise'
     | '/priorityinformation'
     | '/register'
     | '/resetpassword'
@@ -279,6 +297,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/mypublications'
+    | '/newcruise'
     | '/priorityinformation'
     | '/register'
     | '/resetpassword'
@@ -294,6 +313,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/mypublications'
+    | '/newcruise'
     | '/priorityinformation'
     | '/register'
     | '/resetpassword'
@@ -311,6 +331,7 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   MypublicationsRoute: typeof MypublicationsRoute
+  NewcruiseRoute: typeof NewcruiseRoute
   PriorityinformationRoute: typeof PriorityinformationRoute
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
@@ -327,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   MypublicationsRoute: MypublicationsRoute,
+  NewcruiseRoute: NewcruiseRoute,
   PriorityinformationRoute: PriorityinformationRoute,
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
@@ -352,6 +374,7 @@ export const routeTree = rootRoute
         "/help",
         "/login",
         "/mypublications",
+        "/newcruise",
         "/priorityinformation",
         "/register",
         "/resetpassword",
@@ -380,6 +403,9 @@ export const routeTree = rootRoute
     },
     "/mypublications": {
       "filePath": "mypublications.tsx"
+    },
+    "/newcruise": {
+      "filePath": "newcruise.tsx"
     },
     "/priorityinformation": {
       "filePath": "priorityinformation.tsx"
