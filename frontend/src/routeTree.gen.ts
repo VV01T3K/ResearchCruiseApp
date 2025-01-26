@@ -18,6 +18,7 @@ import { Route as PriorityinformationImport } from './routes/priorityinformation
 import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
+import { Route as FormtestImport } from './routes/formtest'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
@@ -64,6 +65,12 @@ const LoginRoute = LoginImport.update({
 const HelpRoute = HelpImport.update({
   id: '/help',
   path: '/help',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FormtestRoute = FormtestImport.update({
+  id: '/formtest',
+  path: '/formtest',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -121,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/forgotpassword'
       fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordImport
+      parentRoute: typeof rootRoute
+    }
+    '/formtest': {
+      id: '/formtest'
+      path: '/formtest'
+      fullPath: '/formtest'
+      preLoaderRoute: typeof FormtestImport
       parentRoute: typeof rootRoute
     }
     '/help': {
@@ -182,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
+  '/formtest': typeof FormtestRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
@@ -196,6 +211,7 @@ export interface FileRoutesByTo {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
+  '/formtest': typeof FormtestRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
@@ -211,6 +227,7 @@ export interface FileRoutesById {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
+  '/formtest': typeof FormtestRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
@@ -227,6 +244,7 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/forgotpassword'
+    | '/formtest'
     | '/help'
     | '/login'
     | '/mypublications'
@@ -240,6 +258,7 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/forgotpassword'
+    | '/formtest'
     | '/help'
     | '/login'
     | '/mypublications'
@@ -253,6 +272,7 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/forgotpassword'
+    | '/formtest'
     | '/help'
     | '/login'
     | '/mypublications'
@@ -268,6 +288,7 @@ export interface RootRouteChildren {
   AccountsettingsRoute: typeof AccountsettingsRoute
   ConfirmemailRoute: typeof ConfirmemailRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
+  FormtestRoute: typeof FormtestRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   MypublicationsRoute: typeof MypublicationsRoute
@@ -282,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountsettingsRoute: AccountsettingsRoute,
   ConfirmemailRoute: ConfirmemailRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
+  FormtestRoute: FormtestRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   MypublicationsRoute: MypublicationsRoute,
@@ -305,6 +327,7 @@ export const routeTree = rootRoute
         "/accountsettings",
         "/confirmemail",
         "/forgotpassword",
+        "/formtest",
         "/help",
         "/login",
         "/mypublications",
@@ -325,6 +348,9 @@ export const routeTree = rootRoute
     },
     "/forgotpassword": {
       "filePath": "forgotpassword.tsx"
+    },
+    "/formtest": {
+      "filePath": "formtest.tsx"
     },
     "/help": {
       "filePath": "help.tsx"

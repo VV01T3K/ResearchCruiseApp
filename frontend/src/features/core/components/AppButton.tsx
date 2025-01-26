@@ -1,40 +1,52 @@
 import { cn } from '@lib/utils';
 import { AppLink, AppLinkProps } from './AppLink';
-import ExternalIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
+
+type Icon = React.FC<React.SVGProps<SVGSVGElement>>;
 
 type AppButtonProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   variant?: keyof typeof variants;
+  size?: keyof typeof sizes;
+  rounded?: keyof typeof roundedTypes;
   type?: 'submit' | 'button' | 'reset';
   className?: React.CSSProperties | string;
   disabled?: boolean;
-  link?: 'internal' | 'external' | boolean;
+  link?: boolean;
+  leftIcon?: Icon;
+  rightIcon?: Icon;
 } & React.ButtonHTMLAttributes<HTMLButtonElement> &
   AppLinkProps;
 
 export function AppButton({
   children,
   variant = 'primary',
+  size = 'md',
+  rounded = 'default',
   type = 'button',
   disabled = undefined,
   className,
   link,
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
   ...otherProps
 }: AppButtonProps) {
   const button = (
     <button
       type={type}
       className={cn(
-        'px-5 py-2.5 rounded-lg text-white font-medium outline-none hover:cursor-pointer disabled:cursor-not-allowed',
+        'text-white font-medium outline-none hover:cursor-pointer disabled:cursor-not-allowed',
         variants[variant],
+        sizes[size],
+        roundedTypes[rounded],
         className
       )}
       disabled={disabled}
       {...otherProps}
     >
       <div className={cn('flex items-center justify-center gap-2')}>
+        {LeftIcon && <LeftIcon className={iconSizes[size]} />}
         {children}
-        {link === 'external' && <ExternalIcon className={cn('w-3 h-3 ml-2')} />}
+        {RightIcon && <RightIcon className={iconSizes[size]} />}
       </div>
     </button>
   );
@@ -45,6 +57,28 @@ export function AppButton({
 
   return button;
 }
+
+const sizes = {
+  xs: 'px-3 py-2 text-xs',
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-5 py-2.5 text-md',
+  lg: 'px-5 py-3 text-lg',
+  xl: 'px-6 py-3.5 text-xl',
+};
+
+const iconSizes = {
+  xs: 'h-4 w-4',
+  sm: 'h-6 w-6',
+  md: 'h-8 w-8',
+  lg: 'h-10 w-10',
+  xl: 'h-12 w-12',
+};
+
+const roundedTypes = {
+  none: 'rounded-none',
+  default: 'rounded-lg',
+  pill: 'rounded-full',
+};
 
 const variants = {
   text: 'text-default',

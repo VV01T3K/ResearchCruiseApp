@@ -118,7 +118,7 @@ function MyPublications() {
             <h1 className="text-3xl font-bold text-center mb-2 basis-3/4">Moje publikacje</h1>
             <div className="flex flex-col gap-1 text-sm">
               <AppButton onClick={() => fileUploadRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
-              <AppButton link="external" variant="primaryOutline" to="https://repozytorium.bg.ug.edu.pl/search.seam">
+              <AppButton variant="primaryOutline" to="https://repozytorium.bg.ug.edu.pl/search.seam">
                 Przejdź do repozytorium BG
               </AppButton>
               <AppButton variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
