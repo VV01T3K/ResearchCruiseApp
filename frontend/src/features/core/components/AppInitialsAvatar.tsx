@@ -1,5 +1,51 @@
-import { UserContext } from '@core/contexts/UserContext';
-import { useContext, useMemo } from 'react';
+import { cn } from '@lib/utils';
+
+type Props = {
+  fullName?: string;
+  variant?: keyof typeof variants;
+  className?: string;
+};
+
+export function AppInitialsAvatar({ fullName, variant = 'default', className }: Props) {
+  if (!fullName || fullName.split(' ').filter((x) => !!x).length === 0) {
+    return null;
+  }
+
+  const color = `hsl(${map(
+    fullName
+      .split(' ')
+      .filter((x) => !!x)
+      .map((name) => getByteLength(name.charAt(0).toLowerCase()))
+      .reduce((a, b) => a / b),
+    minRange,
+    maxRange,
+    0,
+    360
+  )},50%,50%)`;
+
+  return (
+    <div
+      className={cn(
+        'relative inline-flex items-center justify-center  overflow-hidden bg-[var(--color)] rounded-full',
+        variants[variant],
+        className
+      )}
+      style={{ '--color': color } as React.CSSProperties}
+    >
+      <span className="text-gray-50 font-bold">
+        {fullName
+          .split(' ')
+          .map((name) => name.charAt(0).toUpperCase())
+          .join('')}
+      </span>
+    </div>
+  );
+}
+
+const variants = {
+  default: 'w-16 h-16 text-2xl',
+  small: 'w-10 h-10 text-md',
+};
 
 function getByteLength(string: string) {
   return new TextEncoder().encode(string[0])[0];
@@ -14,34 +60,3 @@ const maxCharByteValue: number = getByteLength('z');
 
 const minRange: number = minCharByteValue / maxCharByteValue;
 const maxRange: number = 1;
-
-export function AppInitialsAvatar() {
-  const userContext = useContext(UserContext)!;
-  const color = useMemo(() => {
-    if (!userContext.currentUser) {
-      return undefined;
-    }
-
-    const userValue =
-      getByteLength(userContext.currentUser.firstName.charAt(0).toLowerCase()) /
-      getByteLength(userContext.currentUser.lastName.charAt(0).toLowerCase());
-
-    return `hsl(${map(userValue, minRange, maxRange, 0, 360)},50%,50%)`;
-  }, [userContext.currentUser]);
-
-  if (!userContext.currentUser) {
-    return null;
-  }
-
-  return (
-    <div
-      className="relative inline-flex items-center justify-center w-16 h-16 overflow-hidden bg-[var(--color)] rounded-full"
-      style={{ '--color': color } as React.CSSProperties}
-    >
-      <span className="text-gray-50 font-bold text-2xl">
-        {userContext.currentUser.firstName.charAt(0)}
-        {userContext.currentUser.lastName.charAt(0)}
-      </span>
-    </div>
-  );
-}

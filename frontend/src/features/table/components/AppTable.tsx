@@ -16,9 +16,10 @@ import { cn } from '@lib/utils';
 type AppTableProps<TData> = {
   data: TData[];
   columns: ColumnDef<TData>[];
+  extraButtonsUpdater?: (predifinedButtons: React.ReactNode[]) => React.ReactNode[];
 };
 
-export function AppTable<TData>({ data, columns }: AppTableProps<TData>) {
+export function AppTable<TData>({ data, columns, extraButtonsUpdater }: AppTableProps<TData>) {
   const table = useReactTable<TData>({
     columns,
     data,
@@ -36,19 +37,22 @@ export function AppTable<TData>({ data, columns }: AppTableProps<TData>) {
     return table.getAllColumns().some((column) => column.getIsFiltered());
   }
 
+  const predifnedButtons = [
+    <AppButton
+      onClick={() => table.resetColumnFilters()}
+      className={cn(isAnyFilterActive() ? '' : 'opacity-50')}
+      variant="danger"
+      disabled={!isAnyFilterActive()}
+    >
+      <TrashIcon className="w-4 h-4 mr-2" />
+      Wyczyść filtry
+    </AppButton>,
+  ];
+  const extraButtons = extraButtonsUpdater ?? ((buttons) => buttons);
+
   return (
     <div>
-      <div className="flex justify-end gap-4 my-4">
-        <AppButton
-          onClick={() => table.resetColumnFilters()}
-          className={cn(isAnyFilterActive() ? '' : 'opacity-50')}
-          variant="danger"
-          disabled={!isAnyFilterActive()}
-        >
-          <TrashIcon className="w-4 h-4 mr-2" />
-          Wyczyść filtry
-        </AppButton>
-      </div>
+      <div className="flex justify-end gap-4 my-4">{...extraButtons(predifnedButtons)}</div>
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => {

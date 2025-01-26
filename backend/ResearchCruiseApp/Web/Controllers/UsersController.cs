@@ -6,9 +6,11 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 using ResearchCruiseApp.Application.UseCases.Users.AcceptUser;
 using ResearchCruiseApp.Application.UseCases.Users.AddUser;
 using ResearchCruiseApp.Application.UseCases.Users.DeactivateUser;
+using ResearchCruiseApp.Application.UseCases.Users.DeleteUser;
 using ResearchCruiseApp.Application.UseCases.Users.GetAllUsers;
 using ResearchCruiseApp.Application.UseCases.Users.GetUserById;
 using ResearchCruiseApp.Application.UseCases.Users.ToggleUserRole;
+using ResearchCruiseApp.Application.UseCases.Users.UpdateUser;
 using ResearchCruiseApp.Web.Common.Extensions;
 
 namespace ResearchCruiseApp.Web.Controllers;
@@ -65,6 +67,22 @@ public class UsersController(IMediator mediator) : ControllerBase
     )
     {
         var result = await mediator.Send(new ToggleUserRoleCommand(id, userRoleToggle));
+        return result.IsSuccess ? NoContent() : this.CreateError(result);
+    }
+
+    [Authorize(Roles = RoleName.Administrator)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new DeleteUserCommand(id));
+        return result.IsSuccess ? NoContent() : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateUser([FromRoute] Guid id, UpdateUserFormDto updateForm)
+    {
+        var result = await mediator.Send(new UpdateUserCommand(id, updateForm));
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 }

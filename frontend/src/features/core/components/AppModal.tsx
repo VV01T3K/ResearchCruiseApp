@@ -33,7 +33,10 @@ export function AppModal({
           >
             <header className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">{title}</h2>
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 hover:cursor-pointer hover:bg-black/5 p-2 rounded-md"
+              >
                 <CloseInfo className="w-5 h-5" />
               </button>
             </header>

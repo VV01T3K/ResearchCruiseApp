@@ -34,15 +34,19 @@ export function AppTableHeader<TData, TValue>({ header, children }: AppTableHead
   return (
     <th colSpan={header.colSpan}>
       <div className="relative inline-block" ref={headerRef}>
-        <AppButton
-          variant="text"
-          onClick={() => handleHeaderClick()}
-          className={cn(supportsDropdown ? 'cursor-pointer' : '')}
-        >
-          <FilterIcon header={header} />
-          <span>{children}</span>
-          <SortingIcon header={header} />
-        </AppButton>
+        {supportsDropdown && (
+          <AppButton
+            variant="text"
+            onClick={() => handleHeaderClick()}
+            className={cn(supportsDropdown ? 'cursor-pointer' : '')}
+          >
+            <FilterIcon header={header} />
+            <span>{children}</span>
+            <SortingIcon header={header} />
+          </AppButton>
+        )}
+
+        {!supportsDropdown && <span>{children}</span>}
 
         <AnimatePresence>
           {status === 'open' && (

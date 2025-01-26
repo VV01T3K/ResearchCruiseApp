@@ -180,4 +180,10 @@ public class UserPermissionVerifier(
 
         return false;
     }
+
+    public async Task<bool> CanUserDeleteOtherUsers(Guid otherUserId)
+    {
+        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        return currentUserRoles.Contains(RoleName.Administrator);
+    }
 }

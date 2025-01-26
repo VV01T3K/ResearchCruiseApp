@@ -27,7 +27,7 @@ function RouteComponent() {
     <AppPage title="Ustawienia konta">
       <div className="space-y-8">
         <header className="flex items-center gap-4">
-          <AppInitialsAvatar />
+          <AppInitialsAvatar fullName={`${userContext.currentUser?.firstName} ${userContext.currentUser?.lastName}`} />
           <div>
             <p className="title text-xl font-semibold">
               {userContext.currentUser?.firstName} {userContext.currentUser?.lastName}

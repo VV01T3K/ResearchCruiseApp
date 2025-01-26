@@ -24,7 +24,7 @@ export function AppAlert({ variant, children, onClose }: AppAlertProps) {
         <button
           type="button"
           className={cn(
-            'ms-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2  inline-flex items-center justify-center h-8 w-8',
+            'ms-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2  inline-flex items-center justify-center h-8 w-8 hover:cursor-pointer',
             variants[variant].closeButtonClassName
           )}
           aria-label="Close"

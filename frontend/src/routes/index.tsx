@@ -166,7 +166,7 @@ function Index() {
     );
   }
 
-  if (userContext.isInRole(Role.Shipowner)) {
+  if (userContext.isInRole(Role.ShipOwner)) {
     return (
       <DashboardGrid>
         <CruisesCard className="col-span-2 row-span-2" />

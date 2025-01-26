@@ -324,6 +324,52 @@ public class IdentityService(
         return roleManager.Roles.Select(role => role.Name).ToListAsync(cancellationToken);
     }
 
+    public async Task<Result> DeleteUser(Guid userId)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ForbiddenOperation();
+
+        var identityResult = await userManager.DeleteAsync(user);
+
+        return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
+    }
+
+    public async Task<Result> UpdateUser(Guid userId, UpdateUserFormDto updateUserFormDto)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ForbiddenOperation();
+
+        user.Email = updateUserFormDto.Email ?? user.Email;
+        user.EmailConfirmed = updateUserFormDto.Email is null && user.EmailConfirmed;
+        user.FirstName = updateUserFormDto.FirstName ?? user.FirstName;
+        user.LastName = updateUserFormDto.LastName ?? user.LastName;
+
+        var identityResult = await userManager.UpdateAsync(user);
+        if (!identityResult.Succeeded)
+            return identityResult.ToApplicationResult();
+
+        var userRoles = await userManager.GetRolesAsync(user);
+        
+        if (updateUserFormDto.Role is not null)
+        {
+            identityResult = await userManager.RemoveFromRolesAsync(user, userRoles);
+            if (!identityResult.Succeeded)
+                return identityResult.ToApplicationResult();
+            identityResult = await userManager.AddToRoleAsync(user, updateUserFormDto.Role);
+            if (!identityResult.Succeeded)
+                return identityResult.ToApplicationResult();
+        }
+        
+        if (user is { EmailConfirmed: false, Email: not null })
+        {
+            await ResendEmailConfirmationEmail(user.Email, updateUserFormDto.Role ?? userRoles.First());
+        }
+
+        return Result.Empty;
+    }
+
     private static User CreateUser(RegisterFormDto registerFormDto) =>
         CreateUser(
             registerFormDto.Email,

@@ -15,7 +15,7 @@ export type User = {
 
 export enum Role {
   Administrator = 'Administrator',
-  Shipowner = 'Shipowner',
+  ShipOwner = 'Shipowner',
   CruiseManager = 'CruiseManager',
   Guest = 'Guest',
 }

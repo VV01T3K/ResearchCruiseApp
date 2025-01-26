@@ -1,13 +1,13 @@
 import { cn } from '@lib/utils';
 import ExclamationTraingleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
 
-type AppInputProps = {
+type AppSelectInputProps = {
   name: string;
   value: string;
-  placeholder?: string;
-  type?: React.HTMLInputTypeAttribute;
-  onBlur?: React.FocusEventHandler<HTMLInputElement>;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  possibleValues: { value?: string; label: string }[];
+  promptForSelection?: boolean;
+  onBlur?: React.FocusEventHandler<HTMLSelectElement>;
+  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
   error?: string;
   label?: React.ReactNode;
   required?: boolean;
@@ -16,11 +16,11 @@ type AppInputProps = {
   helper?: React.ReactNode;
 };
 
-export function AppInput({
+export function AppSelectInput({
   name,
   value,
-  placeholder,
-  type = 'text',
+  possibleValues,
+  promptForSelection = false,
   onBlur,
   onChange,
   error,
@@ -29,7 +29,7 @@ export function AppInput({
   className = undefined,
   disabled = undefined,
   helper,
-}: AppInputProps) {
+}: AppSelectInputProps) {
   return (
     <div className="flex flex-col">
       {label && (
@@ -38,11 +38,9 @@ export function AppInput({
         </label>
       )}
       <div className="flex flex-center relative">
-        <input
+        <select
           name={name}
           value={value}
-          placeholder={placeholder || ''}
-          type={type}
           onBlur={onBlur}
           onChange={onChange}
           required={required}
@@ -55,7 +53,14 @@ export function AppInput({
             disabled ? 'bg-gray-200' : '',
             error ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
           )}
-        />
+        >
+          {promptForSelection && <option value="">Wybierz...</option>}
+          {possibleValues.map((pv) => (
+            <option key={pv.value ?? pv.label} value={pv.value ?? pv.label}>
+              {pv.label}
+            </option>
+          ))}
+        </select>
         {error && <ExclamationTraingleIcon className="w-5 h-5 text-danger absolute right-5 top-2.5" />}
       </div>
       <div className="flex flex-row justify-between mt-2 text-sm">

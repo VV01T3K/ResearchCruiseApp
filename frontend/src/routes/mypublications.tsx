@@ -11,7 +11,7 @@ import { allowOnly } from '@core/helpers';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublications,
-  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.CruiseManager, Role.Shipowner),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.CruiseManager, Role.ShipOwner),
 });
 
 function MyPublications() {

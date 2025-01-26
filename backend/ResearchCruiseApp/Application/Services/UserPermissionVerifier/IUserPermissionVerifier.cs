@@ -19,4 +19,5 @@ public interface IUserPermissionVerifier
     Task<bool> CanCurrentUserUpdateEffects(CruiseApplication cruiseApplication);
 
     Task<bool> CanUserDeactivate(Guid otherUserId);
+    Task<bool> CanUserDeleteOtherUsers(Guid otherUserId);
 }

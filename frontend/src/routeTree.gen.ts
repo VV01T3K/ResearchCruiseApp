@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UsermanagementImport } from './routes/usermanagement'
 import { Route as TabletestImport } from './routes/tabletest'
 import { Route as ResetpasswordImport } from './routes/resetpassword'
 import { Route as RegisterImport } from './routes/register'
@@ -25,6 +26,12 @@ import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const UsermanagementRoute = UsermanagementImport.update({
+  id: '/usermanagement',
+  path: '/usermanagement',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TabletestRoute = TabletestImport.update({
   id: '/tabletest',
@@ -186,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabletestImport
       parentRoute: typeof rootRoute
     }
+    '/usermanagement': {
+      id: '/usermanagement'
+      path: '/usermanagement'
+      fullPath: '/usermanagement'
+      preLoaderRoute: typeof UsermanagementImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -204,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/tabletest': typeof TabletestRoute
+  '/usermanagement': typeof UsermanagementRoute
 }
 
 export interface FileRoutesByTo {
@@ -219,6 +234,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/tabletest': typeof TabletestRoute
+  '/usermanagement': typeof UsermanagementRoute
 }
 
 export interface FileRoutesById {
@@ -235,6 +251,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/tabletest': typeof TabletestRoute
+  '/usermanagement': typeof UsermanagementRoute
 }
 
 export interface FileRouteTypes {
@@ -252,6 +269,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/tabletest'
+    | '/usermanagement'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -266,6 +284,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/tabletest'
+    | '/usermanagement'
   id:
     | '__root__'
     | '/'
@@ -280,6 +299,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/tabletest'
+    | '/usermanagement'
   fileRoutesById: FileRoutesById
 }
 
@@ -296,6 +316,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
   TabletestRoute: typeof TabletestRoute
+  UsermanagementRoute: typeof UsermanagementRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -311,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
   TabletestRoute: TabletestRoute,
+  UsermanagementRoute: UsermanagementRoute,
 }
 
 export const routeTree = rootRoute
@@ -334,7 +356,8 @@ export const routeTree = rootRoute
         "/priorityinformation",
         "/register",
         "/resetpassword",
-        "/tabletest"
+        "/tabletest",
+        "/usermanagement"
       ]
     },
     "/": {
@@ -372,6 +395,9 @@ export const routeTree = rootRoute
     },
     "/tabletest": {
       "filePath": "tabletest.tsx"
+    },
+    "/usermanagement": {
+      "filePath": "usermanagement.tsx"
     }
   }
 }
