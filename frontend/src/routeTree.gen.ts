@@ -12,30 +12,24 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UsermanagementImport } from './routes/usermanagement'
-import { Route as TabletestImport } from './routes/tabletest'
 import { Route as ResetpasswordImport } from './routes/resetpassword'
 import { Route as RegisterImport } from './routes/register'
 import { Route as PriorityinformationImport } from './routes/priorityinformation'
 import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
-import { Route as FormtestImport } from './routes/formtest'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
+import { Route as testTabletestImport } from './routes/(test)/tabletest'
+import { Route as testFormtestImport } from './routes/(test)/formtest'
 
 // Create/Update Routes
 
 const UsermanagementRoute = UsermanagementImport.update({
   id: '/usermanagement',
   path: '/usermanagement',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const TabletestRoute = TabletestImport.update({
-  id: '/tabletest',
-  path: '/tabletest',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -75,12 +69,6 @@ const HelpRoute = HelpImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const FormtestRoute = FormtestImport.update({
-  id: '/formtest',
-  path: '/formtest',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const ForgotpasswordRoute = ForgotpasswordImport.update({
   id: '/forgotpassword',
   path: '/forgotpassword',
@@ -102,6 +90,18 @@ const AccountsettingsRoute = AccountsettingsImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const testTabletestRoute = testTabletestImport.update({
+  id: '/(test)/tabletest',
+  path: '/tabletest',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const testFormtestRoute = testFormtestImport.update({
+  id: '/(test)/formtest',
+  path: '/formtest',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -135,13 +135,6 @@ declare module '@tanstack/react-router' {
       path: '/forgotpassword'
       fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordImport
-      parentRoute: typeof rootRoute
-    }
-    '/formtest': {
-      id: '/formtest'
-      path: '/formtest'
-      fullPath: '/formtest'
-      preLoaderRoute: typeof FormtestImport
       parentRoute: typeof rootRoute
     }
     '/help': {
@@ -186,18 +179,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetpasswordImport
       parentRoute: typeof rootRoute
     }
-    '/tabletest': {
-      id: '/tabletest'
-      path: '/tabletest'
-      fullPath: '/tabletest'
-      preLoaderRoute: typeof TabletestImport
-      parentRoute: typeof rootRoute
-    }
     '/usermanagement': {
       id: '/usermanagement'
       path: '/usermanagement'
       fullPath: '/usermanagement'
       preLoaderRoute: typeof UsermanagementImport
+      parentRoute: typeof rootRoute
+    }
+    '/(test)/formtest': {
+      id: '/(test)/formtest'
+      path: '/formtest'
+      fullPath: '/formtest'
+      preLoaderRoute: typeof testFormtestImport
+      parentRoute: typeof rootRoute
+    }
+    '/(test)/tabletest': {
+      id: '/(test)/tabletest'
+      path: '/tabletest'
+      fullPath: '/tabletest'
+      preLoaderRoute: typeof testTabletestImport
       parentRoute: typeof rootRoute
     }
   }
@@ -210,15 +210,15 @@ export interface FileRoutesByFullPath {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
-  '/formtest': typeof FormtestRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
-  '/tabletest': typeof TabletestRoute
   '/usermanagement': typeof UsermanagementRoute
+  '/formtest': typeof testFormtestRoute
+  '/tabletest': typeof testTabletestRoute
 }
 
 export interface FileRoutesByTo {
@@ -226,15 +226,15 @@ export interface FileRoutesByTo {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
-  '/formtest': typeof FormtestRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
-  '/tabletest': typeof TabletestRoute
   '/usermanagement': typeof UsermanagementRoute
+  '/formtest': typeof testFormtestRoute
+  '/tabletest': typeof testTabletestRoute
 }
 
 export interface FileRoutesById {
@@ -243,15 +243,15 @@ export interface FileRoutesById {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
-  '/formtest': typeof FormtestRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/mypublications': typeof MypublicationsRoute
   '/priorityinformation': typeof PriorityinformationRoute
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
-  '/tabletest': typeof TabletestRoute
   '/usermanagement': typeof UsermanagementRoute
+  '/(test)/formtest': typeof testFormtestRoute
+  '/(test)/tabletest': typeof testTabletestRoute
 }
 
 export interface FileRouteTypes {
@@ -261,45 +261,45 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/forgotpassword'
-    | '/formtest'
     | '/help'
     | '/login'
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
     | '/resetpassword'
-    | '/tabletest'
     | '/usermanagement'
+    | '/formtest'
+    | '/tabletest'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/accountsettings'
     | '/confirmemail'
     | '/forgotpassword'
-    | '/formtest'
     | '/help'
     | '/login'
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
     | '/resetpassword'
-    | '/tabletest'
     | '/usermanagement'
+    | '/formtest'
+    | '/tabletest'
   id:
     | '__root__'
     | '/'
     | '/accountsettings'
     | '/confirmemail'
     | '/forgotpassword'
-    | '/formtest'
     | '/help'
     | '/login'
     | '/mypublications'
     | '/priorityinformation'
     | '/register'
     | '/resetpassword'
-    | '/tabletest'
     | '/usermanagement'
+    | '/(test)/formtest'
+    | '/(test)/tabletest'
   fileRoutesById: FileRoutesById
 }
 
@@ -308,15 +308,15 @@ export interface RootRouteChildren {
   AccountsettingsRoute: typeof AccountsettingsRoute
   ConfirmemailRoute: typeof ConfirmemailRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
-  FormtestRoute: typeof FormtestRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   MypublicationsRoute: typeof MypublicationsRoute
   PriorityinformationRoute: typeof PriorityinformationRoute
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
-  TabletestRoute: typeof TabletestRoute
   UsermanagementRoute: typeof UsermanagementRoute
+  testFormtestRoute: typeof testFormtestRoute
+  testTabletestRoute: typeof testTabletestRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -324,15 +324,15 @@ const rootRouteChildren: RootRouteChildren = {
   AccountsettingsRoute: AccountsettingsRoute,
   ConfirmemailRoute: ConfirmemailRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
-  FormtestRoute: FormtestRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   MypublicationsRoute: MypublicationsRoute,
   PriorityinformationRoute: PriorityinformationRoute,
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
-  TabletestRoute: TabletestRoute,
   UsermanagementRoute: UsermanagementRoute,
+  testFormtestRoute: testFormtestRoute,
+  testTabletestRoute: testTabletestRoute,
 }
 
 export const routeTree = rootRoute
@@ -349,15 +349,15 @@ export const routeTree = rootRoute
         "/accountsettings",
         "/confirmemail",
         "/forgotpassword",
-        "/formtest",
         "/help",
         "/login",
         "/mypublications",
         "/priorityinformation",
         "/register",
         "/resetpassword",
-        "/tabletest",
-        "/usermanagement"
+        "/usermanagement",
+        "/(test)/formtest",
+        "/(test)/tabletest"
       ]
     },
     "/": {
@@ -371,9 +371,6 @@ export const routeTree = rootRoute
     },
     "/forgotpassword": {
       "filePath": "forgotpassword.tsx"
-    },
-    "/formtest": {
-      "filePath": "formtest.tsx"
     },
     "/help": {
       "filePath": "help.tsx"
@@ -393,11 +390,14 @@ export const routeTree = rootRoute
     "/resetpassword": {
       "filePath": "resetpassword.tsx"
     },
-    "/tabletest": {
-      "filePath": "tabletest.tsx"
-    },
     "/usermanagement": {
       "filePath": "usermanagement.tsx"
+    },
+    "/(test)/formtest": {
+      "filePath": "(test)/formtest.tsx"
+    },
+    "/(test)/tabletest": {
+      "filePath": "(test)/tabletest.tsx"
     }
   }
 }

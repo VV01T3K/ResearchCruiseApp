@@ -25,7 +25,7 @@ export function AppModal({
           {...otherProps}
         >
           <motion.div
-            className="bg-white rounded-lg shadow-lg w-full max-w-screen-sm p-4"
+            className="bg-white rounded-lg shadow-lg w-full max-w-screen-sm p-4 max-h-[calc(100vh-var(--header-height))] mt-[var(--header-height)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

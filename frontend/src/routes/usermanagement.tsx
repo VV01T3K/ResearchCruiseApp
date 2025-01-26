@@ -152,63 +152,66 @@ function RouteComponent() {
   ];
 
   return (
-    <AppPage title="Zarządzanie użytkownikami">
-      <React.Suspense fallback={<AppLoader />}>
-        <AppTable
-          data={usersQuery.data}
-          columns={columns}
-          extraButtonsUpdater={(predifinedButtons) => [
-            <AppButton variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
-              Dodaj użytkownika
-            </AppButton>,
-            <AppButton
-              variant="warning"
-              disabled={selectedUsers.length === 0}
-              className={cn(selectedUsers.length === 0 && 'opacity-50')}
-              onClick={() => setModalState({ state: 'groupActionsModal' })}
-            >
-              Akcje Grupowe
-            </AppButton>,
-            ...predifinedButtons,
-          ]}
+    <>
+      <AppPage title="Zarządzanie użytkownikami">
+        <React.Suspense fallback={<AppLoader />}>
+          <AppTable
+            data={usersQuery.data}
+            columns={columns}
+            extraButtonsUpdater={(predefinedButtons) => [
+              <AppButton variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
+                Dodaj użytkownika
+              </AppButton>,
+              <AppButton
+                variant="warning"
+                disabled={selectedUsers.length === 0}
+                className={cn(selectedUsers.length === 0 && 'opacity-50')}
+                onClick={() => setModalState({ state: 'groupActionsModal' })}
+              >
+                Akcje Grupowe
+              </AppButton>,
+              ...predefinedButtons,
+            ]}
+          />
+        </React.Suspense>
+      </AppPage>
+
+      <AppModal
+        isOpen={modalState.state === 'newUserModal'}
+        onClose={() => handleModalClose()}
+        title="Dodaj użytkownika"
+      >
+        <EditUserForm
+          users={usersQuery.data}
+          allowedRoles={getAllowedRoles(userContext?.currentUser?.roles[0])}
+          close={() => handleModalClose()}
+          canRemoveUsers={false}
         />
-        <AppModal
-          isOpen={modalState.state === 'newUserModal'}
-          onClose={() => handleModalClose()}
-          title="Dodaj użytkownika"
-        >
-          <EditUserForm
-            users={usersQuery.data}
-            allowedRoles={getAllowedRoles(userContext?.currentUser?.roles[0])}
-            close={() => handleModalClose()}
-            canRemoveUsers={false}
-          />
-        </AppModal>
-        <AppModal
-          isOpen={modalState.state === 'groupActionsModal' && selectedUsers.length > 0}
-          onClose={() => handleModalClose()}
-          title="Akcje grupowe"
-        >
-          <GroupActionSection
-            selectedUsers={usersQuery.data.filter((user) => selectedUsers.some((userId) => user.id === userId))}
-            canRemoveUsers={userContext?.currentUser?.roles[0] === Role.Administrator}
-            close={() => handleModalClose()}
-          />
-        </AppModal>
-        <AppModal
-          isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
-          onClose={() => handleModalClose()}
-          title="Edytuj użytkownika"
-        >
-          <EditUserForm
-            user={(modalState as { state: 'editUserModal'; user: User }).user}
-            users={usersQuery.data}
-            allowedRoles={getAllowedRoles(userContext?.currentUser?.roles[0])}
-            close={() => handleModalClose()}
-            canRemoveUsers={userContext?.currentUser?.roles[0] === Role.Administrator}
-          />
-        </AppModal>
-      </React.Suspense>
-    </AppPage>
+      </AppModal>
+      <AppModal
+        isOpen={modalState.state === 'groupActionsModal' && selectedUsers.length > 0}
+        onClose={() => handleModalClose()}
+        title="Akcje grupowe"
+      >
+        <GroupActionSection
+          selectedUsers={usersQuery.data.filter((user) => selectedUsers.some((userId) => user.id === userId))}
+          canRemoveUsers={userContext?.currentUser?.roles[0] === Role.Administrator}
+          close={() => handleModalClose()}
+        />
+      </AppModal>
+      <AppModal
+        isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
+        onClose={() => handleModalClose()}
+        title="Edytuj użytkownika"
+      >
+        <EditUserForm
+          user={(modalState as { state: 'editUserModal'; user: User }).user}
+          users={usersQuery.data}
+          allowedRoles={getAllowedRoles(userContext?.currentUser?.roles[0])}
+          close={() => handleModalClose()}
+          canRemoveUsers={userContext?.currentUser?.roles[0] === Role.Administrator}
+        />
+      </AppModal>
+    </>
   );
 }

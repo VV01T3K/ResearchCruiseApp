@@ -16,7 +16,7 @@ import { cn } from '@lib/utils';
 type AppTableProps<TData> = {
   data: TData[];
   columns: ColumnDef<TData>[];
-  extraButtonsUpdater?: (predifinedButtons: React.ReactNode[]) => React.ReactNode[];
+  extraButtonsUpdater?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
 };
 
 export function AppTable<TData>({ data, columns, extraButtonsUpdater }: AppTableProps<TData>) {
@@ -51,8 +51,8 @@ export function AppTable<TData>({ data, columns, extraButtonsUpdater }: AppTable
   const extraButtons = extraButtonsUpdater ?? ((buttons) => buttons);
 
   return (
-    <div>
-      <div className="flex justify-end gap-4 my-4">{...extraButtons(predifnedButtons)}</div>
+    <div className="overflow-x-auto">
+      <div className="flex justify-end flex-wrap w-full gap-4 my-4">{...extraButtons(predifnedButtons)}</div>
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => {

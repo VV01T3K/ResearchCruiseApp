@@ -8,6 +8,7 @@ import { useRef, useState } from 'react';
 import { UserPublicationTable } from 'src/features/mypublications/compontents/UserPublicationTable';
 import Papa from 'papaparse';
 import { allowOnly } from '@core/helpers';
+import { AppPage } from '@core/components';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublications,
@@ -83,6 +84,29 @@ function MyPublications() {
 
   return (
     <>
+      <AppPage title="Moje publikacje" variant="defaultWithoutCentering">
+        <div className="flex flex-col gap-1 text-sm">
+          <AppButton onClick={() => fileUploadRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
+          <AppButton variant="primaryOutline" to="https://repozytorium.bg.ug.edu.pl/search.seam">
+            Przejdź do repozytorium BG
+          </AppButton>
+          <AppButton variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
+            Usuń wszystkie publikacje
+          </AppButton>
+        </div>
+
+        {ownPublicationsQuery.data?.data.length === 0 && (
+          <div className="text-center text-gray-500">Brak publikacji</div>
+        )}
+
+        {ownPublicationsQuery.data?.data.length > 0 && (
+          <UserPublicationTable
+            userPublications={ownPublicationsQuery.data?.data}
+            handleDeletePublication={(id) => deleteOwnPublicationMutation.mutate(id)}
+          />
+        )}
+      </AppPage>
+
       <AppModal
         isOpen={isDeleteAllModalOpen}
         onClose={() => setIsDeleteAllModalOpen(false)}
@@ -111,34 +135,6 @@ function MyPublications() {
           </AppButton>
         </div>
       </AppModal>
-
-      <div className="p-4 w-full min-h-screen backdrop-blur-md relative">
-        <div className="max-w-screen-2xl mx-auto px-4 py-8 bg-gray-50 rounded-xl">
-          <header className="mb-4 flex flex-col sm:flex-row justify-between items-center">
-            <h1 className="text-3xl font-bold text-center mb-2 basis-3/4">Moje publikacje</h1>
-            <div className="flex flex-col gap-1 text-sm">
-              <AppButton onClick={() => fileUploadRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
-              <AppButton variant="primaryOutline" to="https://repozytorium.bg.ug.edu.pl/search.seam">
-                Przejdź do repozytorium BG
-              </AppButton>
-              <AppButton variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
-                Usuń wszystkie publikacje
-              </AppButton>
-            </div>
-          </header>
-
-          {ownPublicationsQuery.data?.data.length === 0 && (
-            <div className="text-center text-gray-500">Brak publikacji</div>
-          )}
-
-          {ownPublicationsQuery.data?.data.length > 0 && (
-            <UserPublicationTable
-              userPublications={ownPublicationsQuery.data?.data}
-              handleDeletePublication={(id) => deleteOwnPublicationMutation.mutate(id)}
-            />
-          )}
-        </div>
-      </div>
 
       <input className="hidden" ref={fileUploadRef} type="file" onChange={() => handleFileChange()} />
     </>
