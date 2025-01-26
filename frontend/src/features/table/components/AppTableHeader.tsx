@@ -53,6 +53,7 @@ export function AppTableHeader<TData, TValue>({ header, children }: AppTableHead
             <DropdownMenu
               header={header}
               dropdownRef={dropdownRef}
+              headerRef={headerRef}
               supportsDropdown={supportsDropdown}
               supportsFilter={supportsFilter}
               supportsSort={supportsSort}

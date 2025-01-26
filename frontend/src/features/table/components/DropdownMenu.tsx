@@ -13,6 +13,7 @@ export function DropdownMenu<TData, TValue>({
   supportsFilter,
   supportsSort,
   dropdownRef,
+  headerRef,
   status,
 }: DropdownMenuProps<TData, TValue>) {
   const uniqueValues = React.useMemo(() => {
@@ -23,6 +24,30 @@ export function DropdownMenu<TData, TValue>({
     header.column.getFilterValue() as TData[] | undefined
   );
   const [searchValue, setSearchValue] = React.useState<string>('');
+  const [dropdownPosition, setDropdownPosition] = React.useState({ top: 0, left: 0 });
+
+  const updateDropdownPosition = React.useCallback(() => {
+    if (!headerRef.current || !dropdownRef.current) {
+      return;
+    }
+
+    const headerRect = headerRef.current.getBoundingClientRect();
+    const dropdownRect = dropdownRef.current.getBoundingClientRect();
+
+    setDropdownPosition({
+      top: headerRect.top - headerRect.height / 2,
+      left: headerRect.left + headerRect.width / 2 - dropdownRect.width / 2,
+    });
+  }, [headerRef, dropdownRef]);
+
+  React.useEffect(() => {
+    updateDropdownPosition();
+    window.addEventListener('resize', updateDropdownPosition);
+
+    return () => {
+      window.removeEventListener('resize', updateDropdownPosition);
+    };
+  }, [updateDropdownPosition]);
 
   function toggleFilter(filter: TData) {
     if ((filterValue ?? []).includes(filter)) {
@@ -63,7 +88,7 @@ export function DropdownMenu<TData, TValue>({
   return (
     <motion.div
       className={cn(
-        'absolute right-0 origin-top-right w-56 rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden'
+        'fixed origin-top-right w-56 rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
       )}
       initial={{ opacity: 0, translateY: '-10%' }}
       animate={{ opacity: 1, translateY: '0' }}
@@ -74,6 +99,7 @@ export function DropdownMenu<TData, TValue>({
       aria-labelledby="menu-button"
       tabIndex={-1}
       ref={dropdownRef}
+      style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
     >
       <div className="py-1" role="none">
         {supportsSort && <p>Sortowanie</p>}

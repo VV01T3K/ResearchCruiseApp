@@ -11,5 +11,6 @@ export type DropdownMenuProps<TData, TValue> = {
   supportsFilter: boolean;
   supportsSort: boolean;
   dropdownRef: React.RefObject<HTMLDivElement | null>;
+  headerRef: React.RefObject<HTMLDivElement | null>;
   status: AppTableHeaderDropdownStatus;
 };
