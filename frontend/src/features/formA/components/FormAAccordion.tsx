@@ -27,10 +27,10 @@ export function FormAAccordion({ title, children, expandedByDefault = undefined 
       <AnimatePresence>
         {expanded ? (
           <motion.div
-            initial={{ opacity: 0, y: '-100%', z: -50 }}
+            initial={{ opacity: 0, y: '-10%', z: -50 }}
             animate={{ opacity: 1, y: 0, z: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ ease: 'easeOut', y: '-100%', z: -50 }}
+            transition={{ ease: 'easeOut', y: '-10%', z: -50 }}
             className="px-4 py-4"
           >
             {children}

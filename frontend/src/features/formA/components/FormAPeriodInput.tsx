@@ -3,9 +3,9 @@ import { useRanger, Ranger } from '@tanstack/react-ranger';
 import { cn } from '@lib/utils';
 
 type Props = {
-  value: string[];
-  maxValues?: string[];
-  onChange: (value: string[]) => void;
+  value: number[];
+  maxValues?: number[];
+  onChange: (value: number[]) => void;
   onBlur: () => void;
   error: string;
   label: string;
@@ -15,11 +15,11 @@ export function FormAPeriodInput({ value, label, onChange, onBlur, error, maxVal
   const rangerRef = React.useRef<HTMLDivElement>(null);
   const [values, setValues] = React.useState<ReadonlyArray<number>>(() => {
     if (value.length === 2) {
-      return value.map((v) => parseInt(v));
+      return value;
     }
 
     if (maxValues?.length === 2) {
-      return maxValues.map((v) => parseInt(v));
+      return maxValues;
     }
 
     return [0, 23];
@@ -29,9 +29,8 @@ export function FormAPeriodInput({ value, label, onChange, onBlur, error, maxVal
     if (!maxValues) {
       return;
     }
-    console.log(maxValues, values);
 
-    const intMaxValues = maxValues.map((v) => parseInt(v)).sort((a, b) => a - b);
+    const intMaxValues = maxValues.sort((a, b) => a - b);
     const tmpValues = [...values].sort((a, b) => a - b);
     let changed = false;
 
@@ -61,16 +60,15 @@ export function FormAPeriodInput({ value, label, onChange, onBlur, error, maxVal
         return;
       }
       if (maxValues) {
-        const intMaxValues = maxValues.map((v) => parseInt(v));
-        if (values[0] < intMaxValues[0]) {
-          values[0] = intMaxValues[0];
+        if (values[0] < maxValues[0]) {
+          values[0] = maxValues[0];
         }
-        if (values[1] > intMaxValues[1]) {
-          values[1] = intMaxValues[1];
+        if (values[1] > maxValues[1]) {
+          values[1] = maxValues[1];
         }
       }
       setValues(values);
-      onChange(values.map((v) => v.toString()));
+      onChange(values);
     },
   });
 

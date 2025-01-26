@@ -23,7 +23,14 @@ type AppDropdownInputOption = {
   richLabel?: React.ReactNode | undefined;
 };
 
-export function AppDropdownInput({ possibleValues, includeEmptyValue = true, disabled, error, label }: Props) {
+export function AppDropdownInput({
+  possibleValues,
+  includeEmptyValue = true,
+  disabled,
+  error,
+  label,
+  onChange,
+}: Props) {
   const inputRef = React.useRef(null);
   const dropdownRef = React.useRef(null);
   const [expanded, setExpanded] = React.useState(false);
@@ -35,7 +42,7 @@ export function AppDropdownInput({ possibleValues, includeEmptyValue = true, dis
         {
           value: '',
           textLabel: selectedValue.value ? 'Wybierz...' : undefined,
-          richLabel: selectedValue.value ? 'Usuń aktualny wybór' : undefined,
+          richLabel: selectedValue.value ? <span className="text-red-500">Usuń aktualny wybór</span> : undefined,
         },
         ...possibleValues,
       ]
@@ -48,6 +55,7 @@ export function AppDropdownInput({ possibleValues, includeEmptyValue = true, dis
   function selectOption(value: AppDropdownInputOption) {
     setSelectedValue(value);
     setExpanded(false);
+    onChange(value.value);
   }
 
   return (
@@ -81,7 +89,7 @@ export function AppDropdownInput({ possibleValues, includeEmptyValue = true, dis
         <AnimatePresence>
           {expanded && (
             <motion.div
-              className="absolute left-0 origin-top-right w-full rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
+              className="absolute left-0 origin-top-right w-full rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50"
               initial={{ opacity: 0, translateY: '-10%' }}
               animate={{ opacity: 1, translateY: '0' }}
               exit={{ opacity: 0, translateY: '-10%' }}
@@ -95,6 +103,7 @@ export function AppDropdownInput({ possibleValues, includeEmptyValue = true, dis
                 .filter((pv) => pv.textLabel)
                 .map((pv) => (
                   <AppButton
+                    key={pv.value}
                     variant="text"
                     className={cn(
                       'inline-flex gap-4 items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900',

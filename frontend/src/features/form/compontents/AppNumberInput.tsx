@@ -87,7 +87,7 @@ function AppNumberInputButton({
       type="button"
       className={cn(
         side === 'left' ? 'rounded-l-lg' : 'rounded-r-lg',
-        'bg-gray-100  border border-gray-300 p-3 h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none',
+        'bg-gray-100  border border-gray-300 p-3 h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none cursor-pointer',
         'transition duration-300 ease-in-out',
         disabled ? 'disabled:cursor-not-allowed' : 'hover:bg-gray-200'
       )}
