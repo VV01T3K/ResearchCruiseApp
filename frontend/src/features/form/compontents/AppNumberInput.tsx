@@ -1,7 +1,7 @@
 import { cn } from '@lib/utils';
 import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
-import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import ExclamationTraingleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
+import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import React from 'react';
 
 type AppNumberInputProps = {
@@ -36,7 +36,7 @@ export function AppNumberInput({
   const inputRef = React.useRef<HTMLInputElement>(null);
   return (
     <div className="flex flex-col">
-      {label && (
+      {!!label && (
         <label htmlFor={name} className={cn('block mb-2 text-sm font-medium text-gray-900')}>
           {label}
         </label>
@@ -64,8 +64,8 @@ export function AppNumberInput({
         {error && <ExclamationTraingleIcon className="w-5 h-5 text-danger absolute right-12.5 top-2.5" />}
       </div>
       <div className="flex flex-row justify-between mt-2 text-sm">
-        {helper && <div className="text-gray-500">{helper}</div>}
-        {error && <p className="text-danger">{error}</p>}
+        {!!helper && <div className="text-gray-500">{helper}</div>}
+        {!!error && <p className="text-danger">{error}</p>}
       </div>
     </div>
   );

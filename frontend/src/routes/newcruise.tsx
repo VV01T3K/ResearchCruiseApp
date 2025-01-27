@@ -1,16 +1,16 @@
 import { AppInitialsAvatar, AppLoader, AppPage } from '@core/components';
-import { FormAAccordion } from 'src/features/formA/components/FormAAccordion';
 import { allowOnly, client } from '@core/helpers';
 import { Role } from '@core/models';
+import { useForm } from '@tanstack/react-form';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import React from 'react';
-import { FormAInitialState, FormAPerson } from 'src/features/formA/types';
-import { useForm } from '@tanstack/react-form';
-import { AppDropdownInput } from 'src/features/form/compontents/AppDropdownInput';
-import { FormAPeriodInput } from 'src/features/formA/components/FormAPeriodInput';
-import { AppInput, AppNumberInput } from 'src/features/form/compontents';
 import { AnimatePresence, motion } from 'motion/react';
+import React from 'react';
+import { AppInput, AppNumberInput } from 'src/features/form/compontents';
+import { AppDropdownInput } from 'src/features/form/compontents/AppDropdownInput';
+import { FormAAccordion } from 'src/features/formA/components/FormAAccordion';
+import { FormAPeriodInput } from 'src/features/formA/components/FormAPeriodInput';
+import { FormAInitialState, FormAPerson } from 'src/features/formA/types';
 
 export const Route = createFileRoute('/newcruise')({
   component: RouteComponent,

@@ -1,21 +1,21 @@
+import { AppLoader, AppPage } from '@core/components';
 import { AppButton } from '@core/components/AppButton';
 import { AppModal } from '@core/components/AppModal';
+import { allowOnly } from '@core/helpers';
 import { Publication, Role } from '@core/models';
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense, useState } from 'react';
-import { allowOnly } from '@core/helpers';
-import { AppLoader, AppPage } from '@core/components';
 import { ColumnDef } from '@tanstack/react-table';
-import { AppTable } from 'src/features/table/components/AppTable';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { Suspense, useState } from 'react';
+import { UploadFileButton } from 'src/features/mypublications/components/UploadFileButton';
 import {
   useDeleteAllOwnPublicationsMutation,
   useDeleteOwnPublicationMutation,
   useOwnPublicationQuery,
   useUploadPublicationsMutation,
 } from 'src/features/mypublications/hooks/MyPublicationsHooks';
-import { UploadFileButton } from 'src/features/mypublications/components/UploadFileButton';
+import { AppTable } from 'src/features/table/components/AppTable';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublications,
@@ -131,8 +131,12 @@ function MyPublications() {
             data={ownPublicationsQuery.data}
             columns={columns}
             extraButtonsUpdater={(predefinedButtons) => [
-              <UploadFileButton onUpload={(publications) => uploadPublicationsMutation.mutate(publications)} />,
+              <UploadFileButton
+                key="uploadFile"
+                onUpload={(publications) => uploadPublicationsMutation.mutate(publications)}
+              />,
               <AppButton
+                key="goToRepository"
                 rightIcon={ExternalLinkIcon}
                 variant="primaryOutline"
                 link
@@ -140,7 +144,12 @@ function MyPublications() {
               >
                 Przejdź do repozytorium BG
               </AppButton>,
-              <AppButton leftIcon={TrashIcon} variant="dangerOutline" onClick={() => setIsDeleteAllModalOpen(true)}>
+              <AppButton
+                key="removeAllPublications"
+                leftIcon={TrashIcon}
+                variant="dangerOutline"
+                onClick={() => setIsDeleteAllModalOpen(true)}
+              >
                 Usuń wszystkie publikacje
               </AppButton>,
               ...predefinedButtons,

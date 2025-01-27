@@ -1,8 +1,9 @@
 import { client } from '@core/helpers/api';
 import { useMutation } from '@tanstack/react-query';
-import { AppAlert } from './AppAlert';
-import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useState } from 'react';
+
+import { AppAlert } from './AppAlert';
 
 type NetworkConnectionStatus = 'before_connection' | 'connected' | 'lose_connection';
 

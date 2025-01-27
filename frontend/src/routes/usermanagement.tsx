@@ -159,10 +159,11 @@ function RouteComponent() {
             data={usersQuery.data}
             columns={columns}
             extraButtonsUpdater={(predefinedButtons) => [
-              <AppButton variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
+              <AppButton key="addUser" variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
                 Dodaj użytkownika
               </AppButton>,
               <AppButton
+                key="groupActions"
                 variant="warning"
                 disabled={selectedUsers.length === 0}
                 className={cn(selectedUsers.length === 0 && 'opacity-50')}

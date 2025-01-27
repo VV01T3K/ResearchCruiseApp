@@ -1,14 +1,14 @@
-import { AppButton } from '@core/components/AppButton'
-import { AppPage } from '@core/components/AppPage'
-import { Publication } from '@core/models'
-import { createFileRoute } from '@tanstack/react-router'
-import { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
-import { AppTable } from 'src/features/table/components/AppTable'
+import { AppButton } from '@core/components/AppButton';
+import { AppPage } from '@core/components/AppPage';
+import { Publication } from '@core/models';
+import { createFileRoute } from '@tanstack/react-router';
+import { ColumnDef } from '@tanstack/react-table';
+import React from 'react';
+import { AppTable } from 'src/features/table/components/AppTable';
 
 export const Route = createFileRoute('/(test)/tabletest')({
   component: TableTest,
-})
+});
 
 const initialData: Publication[] = [
   {
@@ -211,7 +211,7 @@ const initialData: Publication[] = [
     year: '2034',
     ministerialPoints: '310',
   },
-]
+];
 
 const defaultColumns: ColumnDef<Publication>[] = [
   {
@@ -257,14 +257,14 @@ const defaultColumns: ColumnDef<Publication>[] = [
       </AppButton>
     ),
   },
-]
+];
 
 function TableTest() {
-  const [data] = React.useState(initialData)
+  const [data] = React.useState(initialData);
 
   return (
     <AppPage title="Table Test">
       <AppTable data={data} columns={defaultColumns}></AppTable>
     </AppPage>
-  )
+  );
 }

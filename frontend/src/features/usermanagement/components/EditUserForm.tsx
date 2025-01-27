@@ -1,24 +1,25 @@
+import { AppAlert, AppBadge, AppButton, AppInitialsAvatar } from '@core/components';
 import { Role, User } from '@core/models';
 import { useForm } from '@tanstack/react-form';
+import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
+import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
+import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
+import PersonAddIcon from 'bootstrap-icons/icons/person-plus.svg?react';
+import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { AnimatePresence, motion } from 'motion/react';
+import React from 'react';
 import { AppInput } from 'src/features/form/compontents/AppInput';
 import { AppSelectInput } from 'src/features/form/compontents/AppSelectInput';
 import { z } from 'zod';
+
 import { getRoleName, UserDto } from '../helpers';
-import { AppAlert, AppBadge, AppButton, AppInitialsAvatar } from '@core/components';
-import React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import PersonAddIcon from 'bootstrap-icons/icons/person-plus.svg?react';
-import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
-import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
 import {
-  useNewUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
   useAcceptUserMutation,
+  useDeleteUserMutation,
+  useNewUserMutation,
   useUnAcceptUserMutation,
+  useUpdateUserMutation,
 } from '../hooks/UserManagementHooks';
 
 type Props = {

@@ -1,6 +1,6 @@
-import React from 'react';
-import { useRanger, Ranger } from '@tanstack/react-ranger';
 import { cn } from '@lib/utils';
+import { Ranger, useRanger } from '@tanstack/react-ranger';
+import React from 'react';
 
 type Props = {
   value: number[];
@@ -125,9 +125,9 @@ export function FormAPeriodInput({ value, label, onChange, onBlur, error, maxVal
             width: `${getWidth()}%`,
           }}
         />
-        {rangerInstance.handles().map(({ value, onKeyDownHandler, onMouseDownHandler, onTouchStart, isActive }, i) => (
+        {rangerInstance.handles().map(({ value, onKeyDownHandler, onMouseDownHandler, onTouchStart, isActive }) => (
           <button
-            key={i}
+            key={value}
             type="button"
             onKeyDown={onKeyDownHandler}
             onMouseDown={onMouseDownHandler}
@@ -147,9 +147,9 @@ export function FormAPeriodInput({ value, label, onChange, onBlur, error, maxVal
         ))}
         {stepPositions
           .filter((_, i) => i % 2 == 0)
-          .map((position, i) => (
+          .map((position) => (
             <span
-              key={`step-${i}`}
+              key={`step-${position}`}
               className="absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-2.5 h-2.5 outline-none rounded-full bg-white border border-primary-800"
               style={{ left: `${position}%` }}
             />
@@ -158,7 +158,7 @@ export function FormAPeriodInput({ value, label, onChange, onBlur, error, maxVal
           .filter((_, i) => i % 2 == 0)
           .map((position, i) => (
             <span
-              key={`step-${i}-text`}
+              key={`step-${position}-text`}
               className="absolute top-1/2 transform -translate-x-1/2 translate-y-8 rotate-60 z-0 text-sm text-gray-800"
               style={{ left: `${position}%` }}
             >

@@ -1,16 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router';
-import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
-import TelephoneFillIcon from 'bootstrap-icons/icons/telephone-fill.svg?react';
-import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
-import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
-import { AppLink } from '@core/components/AppLink';
-import { AppLabelInput } from '@core/components/AppLabelInput';
-import { useForm } from '@tanstack/react-form';
-import { AppLabelTextArea } from '@core/components/AppLabelTextArea';
-import { z } from 'zod';
 import { AppButton } from '@core/components/AppButton';
+import { AppLabelInput } from '@core/components/AppLabelInput';
+import { AppLabelTextArea } from '@core/components/AppLabelTextArea';
+import { AppLink } from '@core/components/AppLink';
 import { AppPage } from '@core/components/AppPage';
 import { allowOnly } from '@core/helpers';
+import { useForm } from '@tanstack/react-form';
+import { createFileRoute } from '@tanstack/react-router';
+import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
+import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
+import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
+import TelephoneFillIcon from 'bootstrap-icons/icons/telephone-fill.svg?react';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/help')({
   component: RouteComponent,
@@ -37,28 +37,6 @@ function RouteComponent() {
       );
     },
   });
-
-  function CompanyInfoCard({
-    title,
-    icon,
-    children,
-  }: {
-    title: string;
-    icon: React.ReactNode;
-    children?: React.ReactNode;
-  }) {
-    return (
-      <div className="flex gap-4">
-        <div className="grid place-items-center">
-          <div className="bg-gray-200 rounded-xl grid place-items-center p-4 aspect-square w-16">{icon}</div>
-        </div>
-        <div>
-          <p className="font-bold text-lg">{title}</p>
-          {children ? <div className="mt-2">{children}</div> : null}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <AppPage
@@ -135,5 +113,27 @@ function RouteComponent() {
         </div>
       </div>
     </AppPage>
+  );
+}
+
+function CompanyInfoCard({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="flex gap-4">
+      <div className="grid place-items-center">
+        <div className="bg-gray-200 rounded-xl grid place-items-center p-4 aspect-square w-16">{icon}</div>
+      </div>
+      <div>
+        <p className="font-bold text-lg">{title}</p>
+        {children ? <div className="mt-2">{children}</div> : null}
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,5 @@
 import { cn } from '@lib/utils';
+
 import { AppLink, AppLinkProps } from './AppLink';
 
 type Icon = React.FC<React.SVGProps<SVGSVGElement>>;

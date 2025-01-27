@@ -1,10 +1,10 @@
 import { AppButton } from '@core/components';
+import { useOutsideClickDetection } from '@core/hooks/UseOutsideClickDetection';
 import { cn } from '@lib/utils';
-import { AnimatePresence, motion } from 'motion/react';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
+import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
-import { useOutsideClickDetection } from '@core/hooks/UseOutsideClickDetection';
 
 type Props = {
   value: string;

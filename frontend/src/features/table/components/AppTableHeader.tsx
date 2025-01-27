@@ -1,12 +1,13 @@
-import React from 'react';
-import { cn } from '@lib/utils';
-import { AppTableHeaderDropdownStatus, AppTableHeaderProps } from '../types';
-import { useOutsideClickDetection } from '../../core/hooks/UseOutsideClickDetection';
 import { AppButton } from '@core/components/AppButton';
+import { cn } from '@lib/utils';
+import { AnimatePresence } from 'motion/react';
+import React from 'react';
+
+import { useOutsideClickDetection } from '../../core/hooks/UseOutsideClickDetection';
+import { AppTableHeaderDropdownStatus, AppTableHeaderProps } from '../types';
+import { DropdownMenu } from './DropdownMenu';
 import { FilterIcon } from './FilterIcon';
 import { SortingIcon } from './SortingIcon';
-import { AnimatePresence } from 'motion/react';
-import { DropdownMenu } from './DropdownMenu';
 
 export function AppTableHeader<TData, TValue>({ header, children }: AppTableHeaderProps<TData, TValue>) {
   const headerRef = React.useRef<HTMLDivElement>(null);

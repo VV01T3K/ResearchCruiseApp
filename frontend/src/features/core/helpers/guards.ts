@@ -1,5 +1,6 @@
 import { UserContextType } from '@core/contexts/UserContext';
 import { ParsedLocation, redirect } from '@tanstack/react-router';
+
 import { Role } from '../models';
 
 export const allowOnly: GlobalGuardType = {

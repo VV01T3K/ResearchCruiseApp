@@ -1,9 +1,9 @@
-import { client } from '@core/helpers/api';
 import { AppButton } from '@core/components/AppButton';
 import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { AppLink } from '@core/components/AppLink';
 import { AppPage } from '@core/components/AppPage';
 import { allowOnly } from '@core/helpers';
+import { client } from '@core/helpers/api';
 import { RegistrationResult } from '@core/models';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';

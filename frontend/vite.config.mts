@@ -5,7 +5,6 @@ import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
@@ -18,4 +17,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  define: {
+    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    API_URL: JSON.stringify(process.env.API_URL),
+  },
 });

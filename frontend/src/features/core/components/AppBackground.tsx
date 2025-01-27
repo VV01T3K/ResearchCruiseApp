@@ -1,5 +1,5 @@
-import { cn } from '@lib/utils';
 import ImageUrl from '@assets/background.jpg';
+import { cn } from '@lib/utils';
 
 export default function AppBackground() {
   return (

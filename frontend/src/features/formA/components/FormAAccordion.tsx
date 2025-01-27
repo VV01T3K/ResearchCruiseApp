@@ -1,7 +1,7 @@
-import React from 'react';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
+import React from 'react';
 
 type Props = {
   title: string;

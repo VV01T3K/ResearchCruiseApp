@@ -1,7 +1,8 @@
-import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
-import { routeTree } from '../../../routeTree.gen';
-import { useContext, useEffect } from 'react';
 import { UserContext } from '@core/contexts/UserContext';
+import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
+import { useContext, useEffect } from 'react';
+
+import { routeTree } from '../../../routeTree.gen';
 
 const router = createRouter({
   routeTree,

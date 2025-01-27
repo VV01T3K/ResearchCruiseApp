@@ -1,11 +1,12 @@
+import UGLogoIcon from '@assets/uglogo.svg?react';
 import { UserContext } from '@core/contexts/UserContext';
 import { useRouter } from '@tanstack/react-router';
-import { useContext } from 'react';
-import UGLogoIcon from '@assets/uglogo.svg?react';
+import LogoutIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
 import HouseIcon from 'bootstrap-icons/icons/house.svg?react';
-import LogoutIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
+import { useContext } from 'react';
+
 import { AppLink } from './AppLink';
 
 export function AppHeader() {

@@ -1,6 +1,6 @@
 import { Header } from '@tanstack/react-table';
-import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
 import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
+import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
 import XIcon from 'bootstrap-icons/icons/x.svg?react';
 
 export function SortingToggle<TData>({ header }: { header: Header<TData, unknown> }) {

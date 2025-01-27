@@ -1,11 +1,12 @@
-import { DropdownMenuProps } from '../types';
+import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
 import { cn } from '@lib/utils';
+import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import { motion } from 'motion/react';
 import React from 'react';
-import { SortingToggle } from './SortingToggle';
+
+import { DropdownMenuProps } from '../types';
 import { DropdownMenuElement } from './DropdownMenuElement';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
-import { AppFloatingLabelInput } from '@core/components/AppFloatingLabelInput';
+import { SortingToggle } from './SortingToggle';
 
 export function DropdownMenu<TData, TValue>({
   header,
@@ -34,6 +35,7 @@ export function DropdownMenu<TData, TValue>({
     const headerRect = headerRef.current.getBoundingClientRect();
     const dropdownRect = dropdownRef.current.getBoundingClientRect();
 
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setDropdownPosition({
       top: headerRect.top - headerRect.height / 2 + window.scrollY,
       left: headerRect.left + headerRect.width / 2 - dropdownRect.width / 2 + window.scrollX,

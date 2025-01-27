@@ -32,7 +32,7 @@ export function AppSelectInput({
 }: AppSelectInputProps) {
   return (
     <div className="flex flex-col">
-      {label && (
+      {!!label && (
         <label htmlFor={name} className={cn('block mb-2 text-sm font-medium text-gray-900')}>
           {label}
         </label>
@@ -64,8 +64,8 @@ export function AppSelectInput({
         {error && <ExclamationTraingleIcon className="w-5 h-5 text-danger absolute right-5 top-2.5" />}
       </div>
       <div className="flex flex-row justify-between mt-2 text-sm">
-        {helper && <div className="text-gray-500">{helper}</div>}
-        {error && <p className="text-danger">{error}</p>}
+        {!!helper && <div className="text-gray-500">{helper}</div>}
+        {!!error && <p className="text-danger">{error}</p>}
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import { AppButton } from '@core/components/AppButton';
+import { cn } from '@lib/utils';
 import {
   ColumnDef,
   flexRender,
@@ -8,10 +10,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { AppTableHeader } from './AppTableHeader';
-import { AppButton } from '@core/components/AppButton';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
-import { cn } from '@lib/utils';
+
+import { AppTableHeader } from './AppTableHeader';
 
 type AppTableProps<TData> = {
   data: TData[];
@@ -39,6 +40,7 @@ export function AppTable<TData>({ data, columns, extraButtonsUpdater }: AppTable
 
   const predifnedButtons = [
     <AppButton
+      key="clearFilters"
       onClick={() => table.resetColumnFilters()}
       className={cn(isAnyFilterActive() ? '' : 'opacity-50')}
       variant="danger"

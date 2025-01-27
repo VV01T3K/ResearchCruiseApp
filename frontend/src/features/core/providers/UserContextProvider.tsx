@@ -1,11 +1,11 @@
-import { client, setAuthToken, clearAuthToken } from '@core/helpers/api';
-import { UserContextType, UserContext } from '@core/contexts/UserContext';
-import { User, SignInResult, Role } from '@core/models';
-import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
-import axios from 'axios';
-import React from 'react';
 import { AppLoader } from '@core/components/AppLoader';
+import { UserContext, UserContextType } from '@core/contexts/UserContext';
+import { clearAuthToken, client, setAuthToken } from '@core/helpers/api';
+import { Role, SignInResult, User } from '@core/models';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import React from 'react';
 
 type UserContextProviderProps = {
   children: React.ReactNode;
@@ -18,7 +18,7 @@ type AuthDetails = {
 
 export function UserContextProvider({ children }: UserContextProviderProps) {
   const [userProfile, setUserProfile] = React.useState<User | undefined>(undefined);
-  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(getStoredAuthDetails());
+  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(() => getStoredAuthDetails());
 
   const queryClient = useQueryClient();
   const profileQuery = useQuery({
@@ -34,7 +34,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     },
     refetchOnWindowFocus: false,
   });
-  const loginMutation = useMutation({
+  const { mutateAsync: loginMutateAsync } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) => {
       return client.post('/account/login', { email, password });
     },
@@ -48,7 +48,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       setAuthDetails(undefined);
     },
   });
-  const refreshTokenMutation = useMutation({
+  const { mutateAsync: refreshTokenMutateAsync } = useMutation({
     mutationFn: ({ accessToken, refreshToken }: AuthDetails) => {
       // We create a new client here since the main one is paused while refreshing
       const refreshClient = axios.create(client.defaults);
@@ -84,7 +84,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     () => ({
       currentUser: userProfile,
       signIn: async (email: string, password: string): Promise<SignInResult> => {
-        const res = await loginMutation.mutateAsync({ email, password }).catch((error) => {
+        const res = await loginMutateAsync({ email, password }).catch((error) => {
           return error.response;
         });
 
@@ -110,7 +110,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       },
       refreshUser: async () => {
         if (authDetails) {
-          await refreshTokenMutation.mutateAsync(authDetails);
+          await refreshTokenMutateAsync(authDetails);
           return;
         }
 
@@ -131,7 +131,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         return allowedRoles.some((role) => userProfile.roles.includes(role));
       },
     }),
-    [authDetails, loginMutation, queryClient, refreshTokenMutation, userProfile]
+    [authDetails, loginMutateAsync, queryClient, refreshTokenMutateAsync, userProfile]
   );
 
   React.useEffect(() => {
@@ -178,7 +178,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     return <AppLoader />;
   }
 
-  return <UserContext.Provider value={context}>{children}</UserContext.Provider>;
+  return <UserContext value={context}>{children}</UserContext>;
 }
 
 function getStoredAuthDetails(): AuthDetails | undefined {

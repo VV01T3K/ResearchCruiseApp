@@ -1,5 +1,6 @@
 import { AppBadge } from '@core/components/AppBadge';
 import { Role } from '@core/models';
+
 import { getRoleName } from '../helpers';
 
 export function RoleBadge({ role }: { role: Role }) {

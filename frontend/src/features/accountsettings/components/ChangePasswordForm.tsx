@@ -1,12 +1,12 @@
-import { client } from '@core/helpers/api';
 import { AppAlert } from '@core/components/AppAlert';
 import { AppButton } from '@core/components/AppButton';
 import { AppLabelInput } from '@core/components/AppLabelInput';
+import { client } from '@core/helpers/api';
+import { Result } from '@core/models';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { z } from 'zod';
-import { Result } from '@core/models';
 
 type ChangePasswordDto = {
   password: string;

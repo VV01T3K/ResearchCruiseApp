@@ -1,9 +1,9 @@
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
-import InfoCircleFillIcon from 'bootstrap-icons/icons/info-circle-fill.svg?react';
+import { cn } from '@lib/utils';
 import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
 import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle.svg?react';
 import ExclamationTraingleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
-import { cn } from '@lib/utils';
+import InfoCircleFillIcon from 'bootstrap-icons/icons/info-circle-fill.svg?react';
+import XIcon from 'bootstrap-icons/icons/x.svg?react';
 import React from 'react';
 
 type AppAlertProps = {

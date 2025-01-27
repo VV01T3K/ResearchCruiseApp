@@ -1,7 +1,8 @@
 import { client } from '@core/helpers';
 import { useMutation } from '@tanstack/react-query';
-import { UserDto } from '../helpers';
 import { isAxiosError } from 'axios';
+
+import { UserDto } from '../helpers';
 
 type Props = {
   isEditingExistingUser: boolean;

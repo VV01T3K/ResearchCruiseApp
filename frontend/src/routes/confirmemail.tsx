@@ -6,10 +6,10 @@ import { allowOnly, client } from '@core/helpers';
 import { Result } from '@core/models';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
-import React from 'react';
-import { z } from 'zod';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import React from 'react';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/confirmemail')({
   component: ConfirmEmail,

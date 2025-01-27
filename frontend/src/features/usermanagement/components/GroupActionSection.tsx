@@ -1,12 +1,13 @@
 import { AppAlert, AppButton } from '@core/components';
 import { User } from '@core/models';
-import { motion } from 'motion/react';
-import React from 'react';
 import ExclamationTriangleFillIcon from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
-import { useAcceptUserMutation, useDeleteUserMutation, useUnAcceptUserMutation } from '../hooks/UserManagementHooks';
 import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
 import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
+import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { motion } from 'motion/react';
+import React from 'react';
+
+import { useAcceptUserMutation, useDeleteUserMutation, useUnAcceptUserMutation } from '../hooks/UserManagementHooks';
 
 type Props = {
   selectedUsers: User[];

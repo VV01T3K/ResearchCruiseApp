@@ -1,7 +1,7 @@
 import { Header } from '@tanstack/react-table';
+import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import ChevronExpandIcon from 'bootstrap-icons/icons/chevron-expand.svg?react';
 import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 
 export function SortingIcon<TData>({ header }: { header: Header<TData, unknown> }) {
   if (!header.column.getCanSort()) {

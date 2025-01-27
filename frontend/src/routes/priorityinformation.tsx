@@ -9,18 +9,6 @@ export const Route = createFileRoute('/priorityinformation')({
 });
 
 function RouteComponent() {
-  function Row({ children }: { children: React.ReactNode }) {
-    return <tr className="hover:bg-slate-100">{children}</tr>;
-  }
-
-  function Cell({ children, colSpan, className }: { children: React.ReactNode; colSpan?: number; className?: string }) {
-    return (
-      <td className={cn('p-4 border-b border-r first:border-l border-slate-600', className)} colSpan={colSpan}>
-        <p className="block text-sm text-slate-800">{children}</p>
-      </td>
-    );
-  }
-
   return (
     <AppPage title="Informacje o priorytetyzacji" variant="defaultWithoutCentering">
       <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-clip-border">
@@ -306,5 +294,17 @@ function RouteComponent() {
         </table>
       </div>
     </AppPage>
+  );
+}
+
+function Row({ children }: { children: React.ReactNode }) {
+  return <tr className="hover:bg-slate-100">{children}</tr>;
+}
+
+function Cell({ children, colSpan, className }: { children: React.ReactNode; colSpan?: number; className?: string }) {
+  return (
+    <td className={cn('p-4 border-b border-r first:border-l border-slate-600', className)} colSpan={colSpan}>
+      <p className="block text-sm text-slate-800">{children}</p>
+    </td>
   );
 }

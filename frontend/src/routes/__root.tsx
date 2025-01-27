@@ -1,9 +1,9 @@
-import { UserContextType } from '@core/contexts/UserContext';
+import AppBackground from '@core/components/AppBackground';
 import { AppHeader } from '@core/components/AppHeader';
+import { AppNetworkStatus } from '@core/components/AppNetworkStatus';
+import { UserContextType } from '@core/contexts/UserContext';
 import { createRootRouteWithContext, Navigate, Outlet, ScrollRestoration } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
-import AppBackground from '@core/components/AppBackground';
-import { AppNetworkStatus } from '@core/components/AppNetworkStatus';
 
 type RouterContext = {
   userContext?: UserContextType;
