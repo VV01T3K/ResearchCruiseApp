@@ -1,45 +1,9 @@
-import { AppBadge } from '@core/components/AppBadge';
-import { AppInitialsAvatar } from '@core/components/AppInitialsAvatar';
-import { AppPage } from '@core/components/AppPage';
-import { UserContext } from '@core/contexts/UserContext';
-import { allowOnly } from '@core/helpers';
 import { createFileRoute } from '@tanstack/react-router';
-import { useContext } from 'react';
-import { ChangePasswordForm } from 'src/features/accountsettings/components/ChangePasswordForm';
+
+import { allowOnly } from '@/core/lib/guards';
+import { AccountSettingsPage } from '@/user/pages/AccountSettingsPage';
 
 export const Route = createFileRoute('/accountsettings')({
-  component: RouteComponent,
+  component: AccountSettingsPage,
   beforeLoad: allowOnly.authenticated(),
 });
-
-function RouteComponent() {
-  const userContext = useContext(UserContext)!;
-
-  function getEmailConfirmationBadge() {
-    if (userContext.currentUser?.emailConfirmed) {
-      return <AppBadge variant="success">Potwierdzony adres e-mail</AppBadge>;
-    }
-
-    return <AppBadge variant="danger">Niepotwierdzony adres e-mail</AppBadge>;
-  }
-
-  return (
-    <AppPage title="Ustawienia konta">
-      <div className="space-y-8">
-        <header className="flex items-center gap-4">
-          <AppInitialsAvatar fullName={`${userContext.currentUser?.firstName} ${userContext.currentUser?.lastName}`} />
-          <div>
-            <p className="title text-xl font-semibold">
-              {userContext.currentUser?.firstName} {userContext.currentUser?.lastName}
-            </p>
-            <p>
-              {userContext.currentUser?.email} {getEmailConfirmationBadge()}
-            </p>
-          </div>
-        </header>
-        <hr />
-        <ChangePasswordForm />
-      </div>
-    </AppPage>
-  );
-}

@@ -1,0 +1,212 @@
+import { ColumnDef } from '@tanstack/react-table';
+import React, { Suspense } from 'react';
+
+import { AppAvatar } from '@/core/components/AppAvatar';
+import { AppBadge } from '@/core/components/AppBadge';
+import { AppButton } from '@/core/components/AppButton';
+import { AppLayout } from '@/core/components/AppLayout';
+import { AppLoader } from '@/core/components/AppLoader';
+import { AppModal } from '@/core/components/AppModal';
+import { AppTable } from '@/core/components/table/AppTable';
+import { cn } from '@/core/lib/utils';
+import { getRoleLabel, Role } from '@/core/models/Role';
+import { User } from '@/core/models/User';
+import { useUserContext } from '@/user/hooks/UserContextHook';
+import { GroupActionSection } from '@/usermanagement/components/GroupActionSection';
+import { RoleBadge } from '@/usermanagement/components/RoleBadge';
+import { UserEditForm } from '@/usermanagement/components/UserEditForm';
+import { useUsersQuery } from '@/usermanagement/hooks/UserManagementApiHooks';
+
+type ModalStates =
+  | { state: 'none' }
+  | { state: 'newUserModal' }
+  | { state: 'groupActionsModal' }
+  | { state: 'editUserModal'; user: User };
+
+const allowedRoles: Record<Role, Role[]> = {
+  [Role.Administrator]: [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.Guest],
+  [Role.ShipOwner]: [Role.ShipOwner, Role.CruiseManager, Role.Guest],
+  [Role.CruiseManager]: [],
+  [Role.Guest]: [],
+};
+
+export function UserManagementPage() {
+  const userContext = useUserContext();
+  const [selectedUsers, setSelectedUsers] = React.useState<string[]>([]);
+  const [modalState, setModalState] = React.useState<ModalStates>({ state: 'none' });
+  const usersQuery = useUsersQuery();
+  const currentUserRole = userContext.currentUser?.roles[0] as Role;
+
+  function toggleUserSelection(userId: string) {
+    setSelectedUsers((selectedUser) => {
+      if (selectedUser.includes(userId)) {
+        return selectedUser.filter((id) => id !== userId);
+      }
+
+      return [...selectedUser, userId];
+    });
+  }
+
+  function isUserSelected(userId: string) {
+    return selectedUsers.includes(userId);
+  }
+
+  function toggleSelectAllUsers() {
+    if (areAllUsersSelected()) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(usersQuery.data?.map((user) => user.id) ?? []);
+    }
+  }
+
+  function areAllUsersSelected() {
+    return usersQuery.data?.length === selectedUsers.length;
+  }
+
+  async function handleModalClose() {
+    setModalState({ state: 'none' });
+    await usersQuery.refetch();
+  }
+
+  const columns: ColumnDef<User>[] = [
+    {
+      id: 'selector',
+      header: () => (
+        <input
+          type="checkbox"
+          onChange={() => toggleSelectAllUsers()}
+          checked={areAllUsersSelected()}
+          className="mx-4"
+        />
+      ),
+      cell: (cell) => (
+        <input
+          type="checkbox"
+          onChange={() => toggleUserSelection(cell.row.original.id)}
+          checked={isUserSelected(cell.row.original.id)}
+        />
+      ),
+      enableSorting: false,
+      enableColumnFilter: false,
+    },
+    {
+      id: 'avatar',
+      header: undefined,
+      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+      cell: (cell) => <AppAvatar fullName={cell.getValue() as string} variant="small" />,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+      header: 'Imię i nazwisko',
+    },
+    {
+      accessorFn: (row) => row.email,
+      header: 'Email',
+    },
+    {
+      id: 'accountStatus',
+      accessorFn: (row) => (row.accepted ? 'Zaakceptowane' : 'Niezaakceptowane'),
+      header: 'Stan Konta',
+      cell: (cell) => {
+        const value = cell.getValue() as 'Zaakceptowane' | 'Niezaakceptowane';
+        return <AppBadge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</AppBadge>;
+      },
+    },
+    {
+      id: 'emailStatus',
+      accessorFn: (row) => (row.emailConfirmed ? 'Zweryfikowany' : 'Niezweryfikowany'),
+      header: 'Stan Emaila',
+      cell: (cell) => {
+        const value = cell.getValue() as 'Zweryfikowany' | 'Niezweryfikowany';
+        return <AppBadge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</AppBadge>;
+      },
+    },
+    {
+      id: 'role',
+      accessorFn: (row) => getRoleLabel(row.roles[0]),
+      header: 'Rola',
+      cell: ({ row }) => <RoleBadge role={row.original.roles[0]} />,
+    },
+    {
+      id: 'actions',
+      header: undefined,
+      cell: (cell) => (
+        <div className="flex items-center justify-around">
+          <AppButton
+            variant="primary"
+            onClick={() => setModalState({ state: 'editUserModal', user: cell.row.original })}
+          >
+            Edytuj
+          </AppButton>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <AppLayout title="Zarządzanie użytkownikami">
+        <Suspense fallback={<AppLoader />}>
+          <AppTable
+            data={usersQuery.data}
+            columns={columns}
+            buttons={(defaultButtons) => [
+              <AppButton key="addUser" variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
+                Dodaj użytkownika
+              </AppButton>,
+              <AppButton
+                key="groupActions"
+                variant="warning"
+                disabled={selectedUsers.length === 0}
+                className={cn(selectedUsers.length === 0 && 'opacity-50')}
+                onClick={() => setModalState({ state: 'groupActionsModal' })}
+              >
+                Akcje Grupowe
+              </AppButton>,
+              ...defaultButtons,
+            ]}
+          />
+        </Suspense>
+      </AppLayout>
+
+      <AppModal
+        isOpen={modalState.state === 'newUserModal'}
+        onClose={() => handleModalClose()}
+        title="Dodaj użytkownika"
+      >
+        <UserEditForm
+          allUsers={usersQuery.data}
+          allowedRoles={allowedRoles[currentUserRole]}
+          close={() => handleModalClose()}
+          allowToRemoveUsers={false}
+        />
+      </AppModal>
+      <AppModal
+        isOpen={modalState.state === 'groupActionsModal' && selectedUsers.length > 0}
+        onClose={() => handleModalClose()}
+        title="Akcje grupowe"
+      >
+        <GroupActionSection
+          selectedUsers={usersQuery.data.filter((user) => selectedUsers.some((userId) => user.id === userId))}
+          allowToRemoveUsers={currentUserRole === Role.Administrator}
+          close={() => handleModalClose()}
+        />
+      </AppModal>
+      <AppModal
+        isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
+        onClose={() => handleModalClose()}
+        title="Edytuj użytkownika"
+      >
+        <UserEditForm
+          user={(modalState as { state: 'editUserModal'; user: User }).user}
+          allUsers={usersQuery.data}
+          allowedRoles={allowedRoles[currentUserRole]}
+          close={() => handleModalClose()}
+          allowToRemoveUsers={currentUserRole === Role.Administrator}
+        />
+      </AppModal>
+    </>
+  );
+}

@@ -23,8 +23,6 @@ import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
-import { Route as testTabletestImport } from './routes/(test)/tabletest'
-import { Route as testFormtestImport } from './routes/(test)/formtest'
 
 // Create/Update Routes
 
@@ -97,18 +95,6 @@ const AccountsettingsRoute = AccountsettingsImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const testTabletestRoute = testTabletestImport.update({
-  id: '/(test)/tabletest',
-  path: '/tabletest',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const testFormtestRoute = testFormtestImport.update({
-  id: '/(test)/formtest',
-  path: '/formtest',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -200,20 +186,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsermanagementImport
       parentRoute: typeof rootRoute
     }
-    '/(test)/formtest': {
-      id: '/(test)/formtest'
-      path: '/formtest'
-      fullPath: '/formtest'
-      preLoaderRoute: typeof testFormtestImport
-      parentRoute: typeof rootRoute
-    }
-    '/(test)/tabletest': {
-      id: '/(test)/tabletest'
-      path: '/tabletest'
-      fullPath: '/tabletest'
-      preLoaderRoute: typeof testTabletestImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -232,8 +204,6 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
-  '/formtest': typeof testFormtestRoute
-  '/tabletest': typeof testTabletestRoute
 }
 
 export interface FileRoutesByTo {
@@ -249,8 +219,6 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
-  '/formtest': typeof testFormtestRoute
-  '/tabletest': typeof testTabletestRoute
 }
 
 export interface FileRoutesById {
@@ -267,8 +235,6 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
-  '/(test)/formtest': typeof testFormtestRoute
-  '/(test)/tabletest': typeof testTabletestRoute
 }
 
 export interface FileRouteTypes {
@@ -286,8 +252,6 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/usermanagement'
-    | '/formtest'
-    | '/tabletest'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -302,8 +266,6 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/usermanagement'
-    | '/formtest'
-    | '/tabletest'
   id:
     | '__root__'
     | '/'
@@ -318,8 +280,6 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/usermanagement'
-    | '/(test)/formtest'
-    | '/(test)/tabletest'
   fileRoutesById: FileRoutesById
 }
 
@@ -336,8 +296,6 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
   UsermanagementRoute: typeof UsermanagementRoute
-  testFormtestRoute: typeof testFormtestRoute
-  testTabletestRoute: typeof testTabletestRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -353,8 +311,6 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
   UsermanagementRoute: UsermanagementRoute,
-  testFormtestRoute: testFormtestRoute,
-  testTabletestRoute: testTabletestRoute,
 }
 
 export const routeTree = rootRoute
@@ -378,9 +334,7 @@ export const routeTree = rootRoute
         "/priorityinformation",
         "/register",
         "/resetpassword",
-        "/usermanagement",
-        "/(test)/formtest",
-        "/(test)/tabletest"
+        "/usermanagement"
       ]
     },
     "/": {
@@ -418,12 +372,6 @@ export const routeTree = rootRoute
     },
     "/usermanagement": {
       "filePath": "usermanagement.tsx"
-    },
-    "/(test)/formtest": {
-      "filePath": "(test)/formtest.tsx"
-    },
-    "/(test)/tabletest": {
-      "filePath": "(test)/tabletest.tsx"
     }
   }
 }

@@ -24,11 +24,11 @@
 
     "baseUrl": ".",
     "paths": {
-      "@public/*": ["public/"],
+      "@/*": ["src/modules/*"],
       "@config": ["src/config.ts"],
-      "@lib/*": ["src/lib/*"],
-      "@core/*": ["src/features/core/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@public/*": ["public/*"],
+      "@routeTree": ["src/routeTree.gen.ts"]
     }
   },
   "include": ["src"]

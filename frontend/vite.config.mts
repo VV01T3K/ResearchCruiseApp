@@ -21,4 +21,5 @@ export default defineConfig({
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
     API_URL: JSON.stringify(process.env.API_URL),
   },
+  build: { chunkSizeWarningLimit: 1000 },
 });
