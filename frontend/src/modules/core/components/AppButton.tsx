@@ -51,6 +51,7 @@ export function AppButton(props: Props) {
 }
 
 const sizes = {
+  plain: '',
   xs: 'px-3 py-2 text-xs',
   sm: 'px-3 py-2 text-sm',
   md: 'px-5 py-2.5 text-md',

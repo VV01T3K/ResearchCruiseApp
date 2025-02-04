@@ -8,7 +8,7 @@ import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputError
 import { AppInputErrorTriangle } from '@/core/components/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/core/components/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/core/components/inputs/parts/AppInputLabel';
-import { useDropdownPosition } from '@/core/hooks/DropdownPositionHook';
+import { useDropdown } from '@/core/hooks/DropdownHook';
 import { useOutsideClickDetection } from '@/core/hooks/OutsideClickDetectionHook';
 import { cn } from '@/core/lib/utils';
 
@@ -98,7 +98,7 @@ export function AppDropdownInput<T extends string | number>({
           onClick={() => setExpanded(!expanded)}
           className={cn(
             'cursor-pointer w-full text-sm',
-            'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:shadow focus:outline-none',
+            'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
             'w-full flex justify-between items-center'
           )}
         >
@@ -146,13 +146,13 @@ function Modal<T extends string | number>({
   disabled,
   selectOption,
 }: ModalProps<T>) {
-  const dropdownPosition = useDropdownPosition({ openingItemRef: inputRef, dropdownRef });
+  const { top, left, width } = useDropdown({ openingItemRef: inputRef, dropdownRef, dropdownPosition: 'left' });
 
   return (
     <motion.div
-      style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+      style={{ top: top, left: left, width: width }}
       className={cn(
-        'fixed origin-top-right w-56 rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
+        'fixed origin-top-right w-(--width) rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
       )}
       initial={{ opacity: 0, translateY: '-10%' }}
       animate={{ opacity: 1, translateY: '0' }}
@@ -171,7 +171,7 @@ function Modal<T extends string | number>({
             variant="plain"
             className={cn(
               'inline-flex gap-4 items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-              'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:shadow focus:outline-none',
+              'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
               'w-full',
               disabled ? 'opacity-50' : ''
             )}

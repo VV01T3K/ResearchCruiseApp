@@ -8,7 +8,7 @@ import React from 'react';
 
 import { AppFloatingLabelInput } from '@/core/components/inputs/AppFloatingLabelInput';
 import { AppTableHeaderDropdownItem } from '@/core/components/table/AppTableHeaderDropdownItem';
-import { useDropdownPosition } from '@/core/hooks/DropdownPositionHook';
+import { useDropdown } from '@/core/hooks/DropdownHook';
 
 function SortingToggle<TData>({ header }: { header: Header<TData, unknown> }) {
   if (!header.column.getCanSort()) {
@@ -64,7 +64,7 @@ export function AppTableHeaderDropdown<TData, TValue>({
   const uniqueValues = React.useMemo(() => {
     return Array.from(header.column.getFacetedUniqueValues().entries()).sort();
   }, [header.column]);
-  const dropdownPosition = useDropdownPosition({ openingItemRef: headerRef, dropdownRef });
+  const { top, left } = useDropdown({ openingItemRef: headerRef, dropdownRef });
 
   function toggleFilter(filter: TData) {
     if ((filterValue ?? []).includes(filter)) {
@@ -115,7 +115,7 @@ export function AppTableHeaderDropdown<TData, TValue>({
       aria-orientation="vertical"
       aria-labelledby="menu-button"
       ref={dropdownRef}
-      style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+      style={{ top: top, left: left }}
     >
       <div className="py-1" role="none">
         {supportsSort && <p>Sortowanie</p>}

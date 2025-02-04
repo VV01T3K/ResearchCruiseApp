@@ -92,14 +92,16 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
       disabled={disabled}
       className={cn(
         'h-11 w-11 flex items-center justify-center',
-        'text-gray-500 hover:text-gray-900',
+        'text-gray-500',
         'transition duration-300 ease-in-out',
         'focus:ring-primary focus:border-primary focus:shadow focus:outline-none',
         'disabled:opacity-50 disabled:cursor-not-allowed',
+        'px-2 border border-collapse border-gray-300',
         side === 'left' ? 'rounded-l' : 'rounded-r',
-        disabled ? 'bg-gray-200' : 'bg-gray-50'
+        disabled ? 'bg-gray-300' : 'bg-gray-100 hover:text-gray-900'
       )}
       variant="plain"
+      size="plain"
     >
       {side === 'left' ? <DashLgIcon /> : <PlusLgIcon />}
     </AppButton>
