@@ -1,18 +1,12 @@
 import { useForm } from '@tanstack/react-form';
-import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { z } from 'zod';
 
 import { AppAlert } from '@/core/components/AppAlert';
 import { AppButton } from '@/core/components/AppButton';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { client } from '@/core/lib/api';
 import { mapValidationErrors } from '@/core/lib/utils';
-
-type RequestDto = {
-  password: string;
-  newPassword: string;
-};
+import { useChangePasswordMutation } from '@/user/hooks/UserApiHooks';
 
 const validationSchema = z
   .object({
@@ -39,17 +33,7 @@ const validationSchema = z
 
 export function ChangePasswordForm() {
   const [result, setResult] = React.useState<'success' | 'error'>();
-  const { mutateAsync } = useMutation({
-    mutationFn: (data: RequestDto) => {
-      return client.patch('/account/password', data);
-    },
-    onSuccess: () => {
-      setResult('success');
-    },
-    onError: () => {
-      setResult('error');
-    },
-  });
+  const { mutateAsync } = useChangePasswordMutation({ setResult });
   const form = useForm({
     defaultValues: {
       password: '',

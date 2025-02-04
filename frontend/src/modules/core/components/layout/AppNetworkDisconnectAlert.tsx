@@ -1,23 +1,13 @@
-import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { AppAlert } from '@/core/components/AppAlert';
-import { client } from '@/core/lib/api';
+import { useNetworkStatusMutation } from '@/core/hooks/NetworkStatusApiHook';
 
 export function AppNetworkDisconnectAlert() {
   const [networkConnectionStatus, setNetworkConnectionStatus] = React.useState<boolean | undefined>(undefined);
 
-  const { mutate, mutateAsync } = useMutation({
-    mutationFn: async () => client.get('/health', { headers: { Authorization: '' } }),
-    onSuccess: () => {
-      setNetworkConnectionStatus(true);
-    },
-    onError: () => {
-      setNetworkConnectionStatus(false);
-    },
-    retry: false,
-  });
+  const { mutate, mutateAsync } = useNetworkStatusMutation({ setNetworkConnectionStatus });
 
   React.useEffect(() => {
     mutate();

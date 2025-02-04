@@ -92,3 +92,22 @@ export function useResetPasswordMutation({ setResult }: Props) {
     },
   });
 }
+
+type PasswordChangeDto = {
+  password: string;
+  newPassword: string;
+};
+
+export function useChangePasswordMutation({ setResult }: Props) {
+  return useMutation({
+    mutationFn: async (data: PasswordChangeDto) => {
+      return await client.patch('/account/password', data);
+    },
+    onSuccess: () => {
+      setResult('success');
+    },
+    onError: () => {
+      setResult('error');
+    },
+  });
+}
