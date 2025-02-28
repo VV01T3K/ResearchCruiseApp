@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { AppAlert } from '@/core/components/AppAlert';
 import { AppButton } from '@/core/components/AppButton';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { mapValidationErrors } from '@/core/lib/utils';
+import { getErrors } from '@/core/lib/utils';
 import { useChangePasswordMutation } from '@/user/hooks/UserApiHooks';
 
 const validationSchema = z
@@ -76,7 +76,7 @@ export function ChangePasswordForm() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={mapValidationErrors(field.state.meta.errors)}
+              errors={getErrors(field.state.meta)}
               label="Aktualne hasło"
               required
             />
@@ -92,7 +92,7 @@ export function ChangePasswordForm() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={mapValidationErrors(field.state.meta.errors)}
+              errors={getErrors(field.state.meta)}
               label="Nowe hasło"
               required
             />
@@ -108,7 +108,7 @@ export function ChangePasswordForm() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={mapValidationErrors(field.state.meta.errors)}
+              errors={getErrors(field.state.meta)}
               label="Powtórz nowe hasło"
               required
             />

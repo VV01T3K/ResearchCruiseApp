@@ -1,12 +1,10 @@
 import { AppLink, Props as AppLinkProps } from '@/core/components/AppLink';
 import { cn } from '@/core/lib/utils';
 
-// TODO: Add focus: state
-
 type Props = {
   children: React.ReactNode;
 
-  variant?: keyof typeof variants;
+  variant?: AppButtonVariant;
   size?: keyof typeof sizes;
   className?: string;
   disabled?: boolean;
@@ -15,6 +13,7 @@ type Props = {
   | { type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type']; onClick?: (evt: React.MouseEvent) => void }
   | ({ type: 'link' } & Omit<AppLinkProps, 'variant'>)
 );
+export type AppButtonVariant = keyof typeof variants;
 export function AppButton(props: Props) {
   const { children, className, disabled, role, variant = 'primary', size = 'md' } = props;
 
@@ -26,7 +25,7 @@ export function AppButton(props: Props) {
         variants[variant],
         sizes[size],
         props.type === 'link' ? 'w-full h-full' : className,
-        variant != 'plain' ? 'flex items-center justify-center ' : ''
+        variant != 'plain' ? 'flex items-center justify-around ' : ''
       )}
       onClick={props.type === 'link' ? undefined : props.onClick}
       disabled={disabled}
@@ -57,6 +56,7 @@ const sizes = {
   md: 'px-5 py-2.5 text-md',
   lg: 'px-5 py-3 text-lg',
   xl: 'px-6 py-3.5 text-xl',
+  square: 'p-2.5',
 };
 
 const variants = {
@@ -76,7 +76,7 @@ const variants = {
   dangerOutline:
     'rounded-lg bg-white hover:bg-danger active:bg-danger text-danger hover:text-white border border-danger transition-all duration-300 disabled:border-danger-300 disabled:text-danger-400 disabled:hover:bg-white',
   warningOutline:
-    'rounded-lg bg-white hover:bg-warning active:bg-warning text-warning hover:text-white border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-400 disabled:hover:bg-white',
+    'rounded-lg bg-white hover:bg-warning active:bg-warning text-warning-600 hover:text-black border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-500 disabled:hover:bg-white',
   infoOutline:
     'rounded-lg bg-white hover:bg-info active:bg-info text-info hover:text-white border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-white',
 };

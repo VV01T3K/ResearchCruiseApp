@@ -13,6 +13,6 @@ services:
   frontend:
     container_name: researchcruiseapp-frontend
     build:
-      context: ../frontend
+      context: ../old_frontend
     ports:
       - 8080:80

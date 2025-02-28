@@ -29,9 +29,9 @@ export function UploadPublicationsButton({ onUpload }: Props) {
     }
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = (evt) => {
       const decoder = new TextDecoder('windows-1250');
-      const csvText = decoder.decode(event.target?.result as ArrayBuffer);
+      const csvText = decoder.decode(evt.target?.result as ArrayBuffer);
 
       Papa.parse(csvText, {
         delimiter: ';',
@@ -50,7 +50,14 @@ export function UploadPublicationsButton({ onUpload }: Props) {
 
   return (
     <>
-      <input type="file" ref={inputRef} multiple={true} className="hidden" onChange={handleFileChange} />
+      <input
+        type="file"
+        ref={inputRef}
+        multiple={true}
+        className="hidden"
+        onChange={handleFileChange}
+        accept="text/csv"
+      />
       <AppButton onClick={() => inputRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
     </>
   );

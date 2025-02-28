@@ -2,9 +2,9 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { allowOnly } from '@/core/lib/guards';
 import { Role } from '@/core/models/Role';
-import { FormAPage } from '@/formA/pages/FormAPage';
+import { NewCruisePage } from '@/cruise-applications/pages/NewCruise';
 
 export const Route = createFileRoute('/newcruise')({
-  component: FormAPage,
+  component: NewCruisePage,
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager),
 });

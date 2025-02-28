@@ -28,7 +28,8 @@
       "@config": ["src/config.ts"],
       "@assets/*": ["src/assets/*"],
       "@public/*": ["public/*"],
-      "@routeTree": ["src/routeTree.gen.ts"]
+      "@routeTree": ["src/routeTree.gen.ts"],
+      "@stories/*": ["src/stories/*"]
     }
   },
   "include": ["src"]

@@ -9,7 +9,7 @@ import pluginQuery from '@tanstack/eslint-plugin-query';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default tseslint.config(
-  { ignores: ['dist', 'src/routeTree.gen.ts'] },
+  { ignores: ['dist', 'src/routeTree.gen.ts', '.storybook'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

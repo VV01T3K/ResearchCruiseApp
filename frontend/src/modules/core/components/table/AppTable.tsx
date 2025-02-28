@@ -1,23 +1,42 @@
 import {
   ColumnDef,
-  flexRender,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  Row,
+  RowSelectionState,
   useReactTable,
 } from '@tanstack/react-table';
 
-import { AppButton } from '@/core/components/AppButton';
-import { AppTableHeader } from '@/core/components/table/AppTableHeader';
+import { AppDesktopTable } from '@/core/components/table/desktop/AppDesktopTable';
+import { AppMobileTable } from '@/core/components/table/mobile/AppMobileTable';
+import { useWindowSize } from '@/core/hooks/WindowSizeHook';
 
 type Props<T> = {
   data: T[];
   columns: ColumnDef<T>[];
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
+  emptyTableMessage?: string;
+  rowSelectionState?: RowSelectionState;
+  setRowSelectionState?: OnChangeFn<RowSelectionState>;
+  getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
+  variant?: 'form' | 'table';
 };
-export function AppTable<T>({ data, columns, buttons }: Props<T>) {
+
+export function AppTable<T>({
+  data,
+  columns,
+  buttons,
+  emptyTableMessage,
+  rowSelectionState,
+  setRowSelectionState,
+  getRowId,
+  variant = 'table',
+}: Props<T>) {
+  const { width } = useWindowSize();
   const table = useReactTable<T>({
     columns,
     data,
@@ -29,56 +48,15 @@ export function AppTable<T>({ data, columns, buttons }: Props<T>) {
     defaultColumn: {
       filterFn: 'arrIncludesSome',
     },
+    onRowSelectionChange: setRowSelectionState,
+    state: {
+      rowSelection: rowSelectionState,
+    },
+    getRowId: getRowId,
   });
 
-  function isAnyFilterActive() {
-    return table.getAllColumns().some((column) => column.getIsFiltered());
-  }
+  const isMobile = width < 768;
+  const TableComponent = isMobile ? AppMobileTable : AppDesktopTable;
 
-  const defaultButtons: React.ReactNode[] = [
-    <AppButton
-      key="clearFiltersBtn"
-      onClick={() => table.resetColumnFilters()}
-      className={isAnyFilterActive() ? '' : 'opacity-50'}
-      variant="danger"
-      disabled={!isAnyFilterActive()}
-    >
-      Wyczyść filtry
-    </AppButton>,
-  ];
-  const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
-
-  return (
-    <div className="overflow-x-auto">
-      <div className="flex justify-end flex-wrap w-full gap-4 my-4">{...allButtons}</div>
-      <table className="w-full">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => {
-            return (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <AppTableHeader key={header.id} header={header}>
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </AppTableHeader>
-                ))}
-              </tr>
-            );
-          })}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className=" odd:bg-gray-100 text-gray-800">
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id} className="text-center pt-2 pb-2 last:pr-4">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  return <TableComponent table={table} buttons={buttons} emptyTableMessage={emptyTableMessage} variant={variant} />;
 }

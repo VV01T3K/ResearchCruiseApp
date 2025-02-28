@@ -18,7 +18,7 @@ export function AppAlert({ children, onClose, variant = 'primary' }: Props) {
 
   return (
     <div className={cn('flex items-center p-4 rounded-lg', variants[variant].containerClassName)} role="alert">
-      <Icon className="h-6 w-6 mr-2" />
+      <Icon className="h-6 w-6 mr-4" />
       <span className="sr-only">{variants[variant].screenReaderMessage}</span>
       {children}
       {onClose && (

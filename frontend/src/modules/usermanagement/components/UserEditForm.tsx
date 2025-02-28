@@ -15,7 +15,7 @@ import { AppBadge } from '@/core/components/AppBadge';
 import { AppButton } from '@/core/components/AppButton';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { mapValidationErrors } from '@/core/lib/utils';
+import { getErrors } from '@/core/lib/utils';
 import { getRoleLabel, Role } from '@/core/models/Role';
 import { User } from '@/core/models/User';
 import {
@@ -257,7 +257,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               label="Rola"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={mapValidationErrors(field.state.meta.errors)}
+              errors={getErrors(field.state.meta)}
               required
             />
           )}

@@ -1,7 +1,9 @@
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
+import React from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
+import { useOutsideClickDetection } from '@/core/hooks/OutsideClickDetectionHook';
 import { cn } from '@/core/lib/utils';
 
 type Props = {
@@ -13,16 +15,25 @@ type Props = {
   className?: string;
 };
 export function AppModal({ title, children, isOpen, onClose, className }: Props) {
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+  useOutsideClickDetection({
+    refs: [anchorRef],
+    onOutsideClick: onClose,
+  });
+
   return (
     <AnimatePresence>
       {isOpen && (
         <div
-          onClick={() => onClose()}
-          className={cn('fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md', className)}
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md"
+          onClick={(e) => e.stopPropagation()}
         >
           <motion.div
-            className="bg-white rounded-lg shadow-lg w-full max-w-screen-sm p-4 max-h-[calc(100vh-var(--header-height))] mt-[var(--header-height)] overflow-y-auto"
-            onClick={(evt) => evt.stopPropagation()}
+            className={cn(
+              className,
+              'bg-white rounded-lg shadow-lg w-full max-w-screen-sm p-4 max-h-[calc(100vh-var(--header-height))] mt-[var(--header-height)] overflow-y-auto'
+            )}
+            ref={anchorRef}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}

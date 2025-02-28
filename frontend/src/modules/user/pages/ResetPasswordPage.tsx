@@ -9,7 +9,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppFloatingLabelInput } from '@/core/components/inputs/AppFloatingLabelInput';
-import { mapValidationErrors } from '@/core/lib/utils';
+import { getErrors } from '@/core/lib/utils';
 import { useResetPasswordMutation } from '@/user/hooks/UserApiHooks';
 import { Result } from '@/user/models/Results';
 
@@ -110,7 +110,7 @@ export function ResetPasswordPage() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={mapValidationErrors(field.state.meta.errors)}
+              errors={getErrors(field.state.meta)}
               label="Hasło"
               required
             />
@@ -126,7 +126,7 @@ export function ResetPasswordPage() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={mapValidationErrors(field.state.meta.errors)}
+              errors={getErrors(field.state.meta)}
               label="Potwierdź hasło"
               required
             />

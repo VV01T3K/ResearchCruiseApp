@@ -7,7 +7,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppFloatingLabelInput } from '@/core/components/inputs/AppFloatingLabelInput';
-import { mapValidationErrors } from '@/core/lib/utils';
+import { getErrors } from '@/core/lib/utils';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 import { SignInResult } from '@/user/models/Results';
 
@@ -76,7 +76,7 @@ export function LoginPage() {
                 value={field.state.value}
                 type="email"
                 onChange={field.handleChange}
-                errors={mapValidationErrors(field.state.meta.errors)}
+                errors={getErrors(field.state.meta)}
                 label="E-mail"
                 required
               />
@@ -91,7 +91,7 @@ export function LoginPage() {
                 value={field.state.value}
                 type="password"
                 onChange={field.handleChange}
-                errors={mapValidationErrors(field.state.meta.errors)}
+                errors={getErrors(field.state.meta)}
                 label="Hasło"
                 required
               />

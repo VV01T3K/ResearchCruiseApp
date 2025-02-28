@@ -5,6 +5,7 @@ ARG API_URL
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+RUN npm i -g corepack@latest
 RUN corepack enable
 WORKDIR /app
 COPY . .
