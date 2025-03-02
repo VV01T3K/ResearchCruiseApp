@@ -1,22 +1,38 @@
 import { useForm } from '@tanstack/react-form';
-import { getRouteApi } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { Suspense, useState } from 'react';
 
+import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLoader } from '@/core/components/AppLoader';
+import { AppModal } from '@/core/components/AppModal';
+import { AppInput } from '@/core/components/inputs/AppInput';
+import { useAppContext } from '@/core/hooks/AppContextHook';
+import { getErrors, removeEmptyValues } from '@/core/lib/utils';
 import { FormA } from '@/cruise-applications/components/formA/FormA';
 import { getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
-import { useFormAInitValuesQuery, useFormAQuery } from '@/cruise-applications/hooks/FormAApiHooks';
+import {
+  useFormAInitValuesQuery,
+  useFormAQuery,
+  useSaveFormAMutation,
+} from '@/cruise-applications/hooks/FormAApiHooks';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 
 export function FormAPage() {
+  const { cruiseId } = getRouteApi('/cruises/$cruiseId/formA').useParams();
+
+  const navigate = useNavigate();
+  const appContext = useAppContext();
   const userContext = useUserContext();
+  const initialStateQuery = useFormAInitValuesQuery();
+  const saveMutation = useSaveFormAMutation();
+  const formA = useFormAQuery(cruiseId);
+
   const [editMode] = useState(false);
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
-  const { cruiseId } = getRouteApi('/cruises/$cruiseId/formA').useParams();
-  const initialStateQuery = useFormAInitValuesQuery();
-  const formA = useFormAQuery(cruiseId);
+  const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
   const form = useForm<FormADto>({
     defaultValues: formA.data ?? {
@@ -47,25 +63,139 @@ export function FormAPage() {
     validators: {
       onChange: getFormAValidationSchema(initialStateQuery.data),
     },
-    onSubmit: (values) => {
-      console.log(values);
-    },
   });
 
-  function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmitting(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
-    evt.stopPropagation();
+
     setHasFormBeenSubmitted(true);
-    form.handleSubmit();
+    const dto = removeEmptyValues(form.state.values, [
+      'year',
+      'periodNotes',
+      'differentUsage',
+      'supervisorEmail',
+      'cruiseGoalDescription',
+      'researchAreaInfo',
+    ]);
+
+    if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
+      setIsSaveDraftModalOpen(false);
+      appContext.showAlert({
+        title: 'Wykryto błąd w formularzu',
+        message: 'Jedynie kierownik lub jego zastępca mogą zapisać formularz',
+        variant: 'danger',
+      });
+      return;
+    }
+
+    saveMutation.mutate(
+      { form: dto, draft: false },
+      {
+        onSuccess: () => {
+          navigate({ to: '/' });
+          appContext.showAlert({
+            title: 'Formularz przyjęty',
+            message: 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego',
+            variant: 'success',
+          });
+        },
+        onError: (err) => {
+          console.error(err);
+          appContext.showAlert({
+            title: 'Wystąpił błąd',
+            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
+            variant: 'danger',
+          });
+        },
+        onSettled: () => setIsSaveDraftModalOpen(false),
+      }
+    );
+  }
+
+  function handleSavingDraft() {
+    const dto = removeEmptyValues(form.state.values, [
+      'year',
+      'periodNotes',
+      'differentUsage',
+      'supervisorEmail',
+      'cruiseGoalDescription',
+      'researchAreaInfo',
+    ]);
+
+    if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
+      setIsSaveDraftModalOpen(false);
+      appContext.showAlert({
+        title: 'Wykryto błąd w formularzu',
+        message: 'Jedynie kierownik lub jego zastępca mogą zapisać formularz',
+        variant: 'danger',
+      });
+      return;
+    }
+
+    saveMutation.mutate(
+      { form: dto, draft: true },
+      {
+        onSuccess: () => {
+          navigate({ to: '/' });
+          appContext.showAlert({
+            title: 'Zapisano formularz',
+            message: 'Formularz został zapisany w wersji roboczej',
+            variant: 'success',
+          });
+        },
+        onError: (err) => {
+          console.error(err);
+          appContext.showAlert({
+            title: 'Wystąpił błąd',
+            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
+            variant: 'danger',
+          });
+        },
+        onSettled: () => setIsSaveDraftModalOpen(false),
+      }
+    );
   }
 
   return (
-    <AppLayout title="Formularz A" variant="defaultWithoutCentering">
-      <Suspense fallback={<AppLoader />}>
-        <form className="space-y-8" onSubmit={handleSubmit}>
-          <FormA context={{ form, initValues: initialStateQuery.data, isReadonly: !editMode, hasFormBeenSubmitted }} />
-        </form>
-      </Suspense>
-    </AppLayout>
+    <>
+      <AppLayout title="Formularz A" variant="defaultWithoutCentering">
+        <Suspense fallback={<AppLoader />}>
+          <form className="space-y-8" onSubmit={handleSubmitting}>
+            <FormA
+              context={{ form, initValues: initialStateQuery.data, isReadonly: !editMode, hasFormBeenSubmitted }}
+              onSaveDraft={() => setIsSaveDraftModalOpen(true)}
+            />
+          </form>
+        </Suspense>
+      </AppLayout>
+
+      <AppModal title="Zapisz Formularz A" isOpen={isSaveDraftModalOpen} onClose={() => setIsSaveDraftModalOpen(false)}>
+        <div className="space-y-4">
+          <form.Field
+            name="note"
+            children={(field) => (
+              <AppInput
+                name={field.name}
+                value={field.state.value ?? ''}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                label="Notatka aktualnej wersji roboczej"
+                placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
+                errors={getErrors(field.state.meta)}
+                autoFocus
+                required
+              />
+            )}
+          />
+
+          <div className="flex justify-center gap-4">
+            <AppButton className="gap-4" disabled={saveMutation.isPending} onClick={handleSavingDraft}>
+              <FloppyFillIcon className="h-4 w-4" />
+              Zapisz
+            </AppButton>
+          </div>
+        </div>
+      </AppModal>
+    </>
   );
 }

@@ -9,7 +9,6 @@ const meta = {
   component: DashboardGridCard,
   args: {
     name: 'Grid card',
-    background: undefined,
     Icon: GlobeAmericasIcon,
     description: 'Grid card description',
     href: '#',
@@ -54,6 +53,5 @@ export const WithLink: Story = {
 export const WithBackground: Story = {
   args: {
     name: 'Grid card with background',
-    background: <div className="w-full h-full absolute bg-primary-200"></div>,
   },
 };

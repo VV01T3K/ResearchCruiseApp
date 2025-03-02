@@ -22,6 +22,7 @@ export function NewCruisePage() {
   const userContext = useUserContext();
   const initialStateQuery = useFormAInitValuesQuery();
   const saveMutation = useSaveFormAMutation();
+
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
@@ -66,6 +67,7 @@ export function NewCruisePage() {
       'differentUsage',
       'supervisorEmail',
       'cruiseGoalDescription',
+      'researchAreaInfo',
     ]);
 
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
@@ -93,7 +95,7 @@ export function NewCruisePage() {
           console.error(err);
           appContext.showAlert({
             title: 'Wystąpił błąd',
-            message: 'Nie udało się zapisać formularza',
+            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
             variant: 'danger',
           });
         },
@@ -109,6 +111,7 @@ export function NewCruisePage() {
       'differentUsage',
       'supervisorEmail',
       'cruiseGoalDescription',
+      'researchAreaInfo',
     ]);
 
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
@@ -136,7 +139,7 @@ export function NewCruisePage() {
           console.error(err);
           appContext.showAlert({
             title: 'Wystąpił błąd',
-            message: 'Nie udało się zapisać formularza',
+            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
             variant: 'danger',
           });
         },
@@ -147,18 +150,16 @@ export function NewCruisePage() {
 
   return (
     <>
-      <div>
-        <AppLayout title="Formularz A" variant="defaultWithoutCentering">
-          <Suspense fallback={<AppLoader />}>
-            <form className="space-y-8" onSubmit={handleSubmitting}>
-              <FormA
-                context={{ form, initValues: initialStateQuery.data, isReadonly: false, hasFormBeenSubmitted }}
-                onSaveDraft={() => setIsSaveDraftModalOpen(true)}
-              />
-            </form>
-          </Suspense>
-        </AppLayout>
-      </div>
+      <AppLayout title="Formularz A" variant="defaultWithoutCentering">
+        <Suspense fallback={<AppLoader />}>
+          <form className="space-y-8" onSubmit={handleSubmitting}>
+            <FormA
+              context={{ form, initValues: initialStateQuery.data, isReadonly: false, hasFormBeenSubmitted }}
+              onSaveDraft={() => setIsSaveDraftModalOpen(true)}
+            />
+          </form>
+        </Suspense>
+      </AppLayout>
 
       <AppModal title="Zapisz Formularz A" isOpen={isSaveDraftModalOpen} onClose={() => setIsSaveDraftModalOpen(false)}>
         <div className="space-y-4">

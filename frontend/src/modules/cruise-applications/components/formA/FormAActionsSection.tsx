@@ -5,13 +5,19 @@ import React from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
 import { cn } from '@/core/lib/utils';
+import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 
 type Props = {
   onSaveDraft?: () => void;
 };
 export function FormAActionsSection({ onSaveDraft }: Props) {
+  const { isReadonly } = useFormA();
   const [isSticky, setIsSticky] = React.useState(false);
   const { scrollYProgress } = useScroll();
+
+  if (isReadonly) {
+    return null;
+  }
 
   scrollYProgress.on('change', (latestValue) => {
     setIsSticky(latestValue < 1);

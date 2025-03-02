@@ -20,7 +20,11 @@ export function useFormAQuery(cruiseId: string) {
     queryFn: async () => {
       return client.get(`/api/CruiseApplications/${cruiseId}/formA`);
     },
-    select: (res) => res.data as FormADto,
+    select: (res) => {
+      const dto = res.data as FormADto;
+      dto.note ??= '';
+      return dto;
+    },
   });
 }
 

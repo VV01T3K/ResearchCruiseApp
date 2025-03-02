@@ -9,10 +9,21 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage }: TableP
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
   return (
-    <div className="overflow-x-auto w-full">
-      <div className="flex justify-end flex-wrap gap-4 my-4">{...allButtons}</div>
-      <table className="table-fixed">
+    <div className="w-full overflow-x-auto">
+      <table className="min-w-full table-fixed">
         <thead>
+          <tr key="header-buttons">
+            <th
+              colSpan={Math.max(
+                table
+                  .getHeaderGroups()
+                  .flatMap((x) => x.headers.map((y) => y.colSpan))
+                  .reduce((a, b) => a + b, 0)
+              )}
+            >
+              <div className="flex justify-end flex-wrap gap-4 my-4">{allButtons}</div>
+            </th>
+          </tr>
           {table.getHeaderGroups().map((headerGroup) => {
             return (
               <tr key={headerGroup.id}>

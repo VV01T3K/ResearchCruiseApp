@@ -188,12 +188,12 @@ export function FormAMembersSection() {
 
   return (
     <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"
           mode="array"
           children={(field) => (
-            <div>
+            <div className="mt-auto">
               <AppTable
                 columns={getUgTeamsColumns(field)}
                 data={field.state.value}

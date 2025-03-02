@@ -10,8 +10,6 @@ import UIRadiosIcon from 'bootstrap-icons/icons/ui-radios.svg?react';
 
 import { DashboardGridCard } from '@/dashboard/components/DashboardGridCard';
 
-const commonBackground = <div className="w-full h-full absolute opacity-50"></div>;
-
 export function NewFormCard({ className }: { className?: string }) {
   return (
     <DashboardGridCard
@@ -19,7 +17,6 @@ export function NewFormCard({ className }: { className?: string }) {
       name="Nowe zgłoszenie"
       description="Zgłoś nowy rejs"
       href="/newcruise"
-      background={commonBackground}
       Icon={PlusCircleFillIcon}
       className={className}
     />
@@ -33,7 +30,6 @@ export function PrioritizationInfoCard({ className }: { className?: string }) {
       name="Informacje o priorytetyzacji"
       description="Dowiedz się więcej o zasadach priorytetyzacji"
       href="/priorityinformation"
-      background={commonBackground}
       Icon={InfoIcon}
       className={className}
     />
@@ -47,7 +43,6 @@ export function UserManagementCard({ className }: { className?: string }) {
       name="Zarządzanie użytkownikami"
       description="Dodaj, edytuj lub usuń użytkowników"
       href="/usermanagement"
-      background={commonBackground}
       Icon={PeopleFillIcon}
       className={className}
     />
@@ -61,7 +56,6 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       name="Ustawienia konta"
       description="Zmień ustawienia swojego konta"
       href="/accountsettings"
-      background={commonBackground}
       Icon={GearFillIcon}
       className={className}
     />
@@ -75,7 +69,6 @@ export function ApplicationsCard({ className }: { className?: string }) {
       name="Zgłoszenia"
       description="Przeglądaj aktualne i historyczne zgłoszenia"
       href="/applications"
-      background={commonBackground}
       Icon={UIRadiosIcon}
       className={className}
     />
@@ -89,7 +82,6 @@ export function HelpCard({ className }: { className?: string }) {
       name="Pomoc"
       description="Uzyskaj pomoc"
       href="/help"
-      background={commonBackground}
       Icon={InfoCircleIcon}
       className={className}
     />
@@ -103,7 +95,6 @@ export function CruisesCard({ className }: { className?: string }) {
       name="Harmonogram rejsów"
       description="Przeglądaj oraz planuj rejsy"
       href="/cruises"
-      background={commonBackground}
       Icon={CalendarCheckIcon}
       className={className}
     />
@@ -117,7 +108,6 @@ export function PublicationsCard({ className }: { className?: string }) {
       name="Moje publikacje"
       description="Zarządzaj moimi publikacjami"
       href="/mypublications"
-      background={commonBackground}
       Icon={BookIcon}
       className={className}
     />
@@ -131,7 +121,6 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       name="Efekty rejsów"
       description="Przeglądaj efekty rejsów"
       href="/cruiseeffects"
-      background={commonBackground}
       Icon={AwardFillIcon}
       className={className}
     />
