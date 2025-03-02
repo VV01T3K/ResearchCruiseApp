@@ -205,7 +205,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               placeholder="Jan"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={field.state.meta.errors.map((x) => x!.toString())}
+              errors={getErrors(field.state.meta)}
               required
             />
           )}
@@ -221,7 +221,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               placeholder="Kowalski"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={field.state.meta.errors.map((x) => x!.toString())}
+              errors={getErrors(field.state.meta)}
               required
             />
           )}
@@ -238,7 +238,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               type="email"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={field.state.meta.errors.map((x) => x!.toString())}
+              errors={getErrors(field.state.meta)}
               required
             />
           )}

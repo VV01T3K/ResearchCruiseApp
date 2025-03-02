@@ -73,7 +73,7 @@ export function ApplicationsCard({ className }: { className?: string }) {
     <DashboardGridCard
       key="applications"
       name="Zgłoszenia"
-      description="Przeglądaj aktualne i hishrefryczne zgłoszenia"
+      description="Przeglądaj aktualne i historyczne zgłoszenia"
       href="/applications"
       background={commonBackground}
       Icon={UIRadiosIcon}
