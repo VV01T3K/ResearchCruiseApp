@@ -49,7 +49,7 @@ export function DashboardGridCard({ name, className, Icon, description, href }: 
             style={{
               height: 'calc(100% - 24px)',
               justifyContent: isHovered ? 'flex-start' : 'space-between',
-              transition: 'all 0.3s',
+              transition: 'all 1s',
             }}
           >
             <motion.div

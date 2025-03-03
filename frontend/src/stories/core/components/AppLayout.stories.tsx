@@ -36,9 +36,9 @@ export const Narrow: Story = {
   },
 };
 
-export const DefaultWithoutCentering: Story = {
+export const DefaultWithCentering: Story = {
   args: {
-    variant: 'defaultWithoutCentering',
+    variant: 'defaultWithCentering',
     title: 'Default without centering',
   },
 };

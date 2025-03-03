@@ -158,7 +158,7 @@ export function FormAPage() {
 
   return (
     <>
-      <AppLayout title="Formularz A" variant="defaultWithoutCentering">
+      <AppLayout title="Formularz A">
         <Suspense fallback={<AppLoader />}>
           <form className="space-y-8" onSubmit={handleSubmitting}>
             <FormA

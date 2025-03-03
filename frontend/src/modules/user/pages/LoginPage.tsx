@@ -65,7 +65,7 @@ export function LoginPage() {
   }
 
   return (
-    <AppLayout title="Logowanie" variant="narrow">
+    <AppLayout title="Logowanie" variant="narrow" disableBackButton>
       <form onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.Field

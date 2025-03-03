@@ -99,7 +99,7 @@ export function MyPublicationsPage() {
 
   return (
     <>
-      <AppLayout title="Moje publikacje" variant="defaultWithoutCentering">
+      <AppLayout title="Moje publikacje">
         <Suspense fallback={<AppLoader />}>
           <AppTable
             data={ownPublicationsQuery.data}
