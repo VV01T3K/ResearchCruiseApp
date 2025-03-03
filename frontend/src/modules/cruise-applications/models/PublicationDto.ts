@@ -1,8 +1,22 @@
 import { z } from 'zod';
 
+export enum PublicationCategory {
+  Subject = 'subject',
+  Postscript = 'postscript',
+}
+
+export function getPublicationCategoryLabel(category: PublicationCategory) {
+  switch (category) {
+    case PublicationCategory.Subject:
+      return 'Temat';
+    case PublicationCategory.Postscript:
+      return 'Dopisek';
+  }
+}
+
 export type PublicationDto = {
   id: string;
-  category: 'subject' | 'postscript';
+  category: PublicationCategory;
   doi: string;
   authors: string;
   title: string;
@@ -13,7 +27,7 @@ export type PublicationDto = {
 
 export const PublicationDtoValidationSchema = z.object({
   id: z.string().uuid(),
-  category: z.enum(['subject', 'postscript']),
+  category: z.nativeEnum(PublicationCategory),
   doi: z.string().nonempty('DOI jest wymagane'),
   authors: z.string().nonempty('Autorzy są wymagani'),
   title: z.string().nonempty('Tytuł jest wymagany'),

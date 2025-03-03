@@ -9,12 +9,6 @@ const stringOptions = [
   { value: 'third', inlineLabel: 'Third string' },
 ];
 
-const numberOptions = [
-  { value: 1, inlineLabel: 'First number' },
-  { value: 2, inlineLabel: 'Second number' },
-  { value: 3, inlineLabel: 'Third number' },
-];
-
 const meta = {
   component: AppDropdownInput,
   args: {
@@ -22,7 +16,7 @@ const meta = {
     value: '',
     allOptions: stringOptions,
     label: 'Dropdown input',
-    showEmptyOption: false,
+    allowEmptyOption: false,
     onChange: fn(),
     onBlur: fn(),
   },
@@ -38,17 +32,10 @@ export const String: Story = {
   },
 };
 
-export const Number: Story = {
-  args: {
-    allOptions: numberOptions,
-    label: 'Dropdown number input',
-  },
-};
-
 export const EmptyOption: Story = {
   args: {
     label: 'Dropdown input with empty option',
-    showEmptyOption: true,
+    allowEmptyOption: true,
   },
 };
 
@@ -84,6 +71,6 @@ export const WithPlaceholder: Story = {
   args: {
     label: 'Dropdown input with placeholder',
     placeholder: 'Select an option (placeholder)',
-    showEmptyOption: true,
+    allowEmptyOption: true,
   },
 };

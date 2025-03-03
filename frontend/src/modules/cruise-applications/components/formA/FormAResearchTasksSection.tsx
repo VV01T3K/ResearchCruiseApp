@@ -15,7 +15,7 @@ import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteR
 import { useDropdown } from '@/core/hooks/DropdownHook';
 import { useOutsideClickDetection } from '@/core/hooks/OutsideClickDetectionHook';
 import { cn, getErrors, groupBy } from '@/core/lib/utils';
-import { ResearchTaskDetails } from '@/cruise-applications/components/research-task-details/ResearchTaskDetails';
+import { ResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/ResearchTaskDetails';
 import { ResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/ResearchTaskThumbnail';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 import { FormADto } from '@/cruise-applications/models/FormADto';

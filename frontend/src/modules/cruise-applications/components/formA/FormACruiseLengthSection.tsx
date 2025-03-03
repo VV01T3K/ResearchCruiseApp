@@ -127,7 +127,7 @@ export function FormACruiseLengthSection() {
             <div className="lg:col-span-2">
               <AppDropdownInput
                 name="shipUsage"
-                value={field.state.value as string | number}
+                value={field.state.value as string}
                 onChange={(e) => field.handleChange(e as string)}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}

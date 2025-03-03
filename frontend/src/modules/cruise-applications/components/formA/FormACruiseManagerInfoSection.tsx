@@ -5,7 +5,7 @@ import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 import { FormUserDto } from '@/cruise-applications/models/FormUserDto';
 
-function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption<string> {
+function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption {
   return {
     value: person.id,
     inlineLabel: `${person.firstName} ${person.lastName} (${person.email})`,

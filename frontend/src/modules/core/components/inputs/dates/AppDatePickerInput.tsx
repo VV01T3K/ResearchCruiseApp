@@ -22,8 +22,8 @@ type Props = {
   name: string;
   value: string | undefined;
 
-  onChange: (value: string | undefined) => void;
-  onBlur: () => void;
+  onChange?: (value: string | undefined) => void;
+  onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
   required?: boolean;
@@ -58,7 +58,7 @@ export function AppDatePickerInput({
     refs: [inputRef, dropdownRef],
     onOutsideClick: () => {
       setExpanded(false);
-      onBlur();
+      onBlur?.();
     },
   });
 
@@ -72,7 +72,7 @@ export function AppDatePickerInput({
 
   function handleResetSelection(evt: React.MouseEvent) {
     setSelectedDate(undefined);
-    onChange(undefined);
+    onChange?.(undefined);
     setExpanded(false);
     evt.stopPropagation();
     evt.preventDefault();
@@ -99,7 +99,7 @@ export function AppDatePickerInput({
     }
 
     setSelectedDate(newDate);
-    onChange(getValueFromDate(newDate));
+    onChange?.(getValueFromDate(newDate));
     setExpanded(false);
   }
 

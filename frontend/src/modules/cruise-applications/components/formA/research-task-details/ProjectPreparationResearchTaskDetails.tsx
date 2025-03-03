@@ -65,7 +65,6 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             ]}
             label="Otrzymano decyzję o finansowaniu?"
             required
-            showEmptyOption={false}
             disabled={disabled}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
           />

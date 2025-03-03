@@ -1,12 +1,12 @@
 import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { Row } from '@tanstack/react-table';
 
-import { DidacticsResearchTaskDetails } from '@/cruise-applications/components/research-task-details/DidacticsResearchTaskDetails';
-import { OtherResearchTaskDetails } from '@/cruise-applications/components/research-task-details/OtherResearchTaskDetails';
-import { OwnResearchTaskDetails } from '@/cruise-applications/components/research-task-details/OwnResearchTaskDetails';
-import { ProjectPreparationResearchTaskDetails } from '@/cruise-applications/components/research-task-details/ProjectPreparationResearchTaskDetails';
-import { ProjectResearchTaskDetails } from '@/cruise-applications/components/research-task-details/ProjectResearchTaskDetails';
-import { ThesisResearchTaskDetails } from '@/cruise-applications/components/research-task-details/ThesisResearchTaskDetails';
+import { DidacticsResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/DidacticsResearchTaskDetails';
+import { OtherResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/OtherResearchTaskDetails';
+import { OwnResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/OwnResearchTaskDetails';
+import { ProjectPreparationResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
+import { ProjectResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/ProjectResearchTaskDetails';
+import { ThesisResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/ThesisResearchTaskDetails';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import {
   DidacticsResearchTaskDto,

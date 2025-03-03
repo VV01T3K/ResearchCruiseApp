@@ -21,12 +21,7 @@ import { cn, getErrors, groupBy } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
-import { PublicationDto } from '@/cruise-applications/models/PublicationDto';
-
-const name = {
-  subject: 'Temat',
-  postscript: 'Dopisek',
-};
+import { getPublicationCategoryLabel, PublicationCategory, PublicationDto } from '@/cruise-applications/models/PublicationDto';
 
 export function FormAPublicationsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
@@ -52,15 +47,14 @@ export function FormAPublicationsSection() {
               <AppDropdownInput
                 name={field.name}
                 value={field.state.value}
-                onChange={field.handleChange}
+                onChange={field.handleChange as (value: string) => void}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                allOptions={[
-                  { value: 'subject', inlineLabel: name.subject },
-                  { value: 'postscript', inlineLabel: name.postscript },
-                ]}
+                allOptions={Object.values(PublicationCategory).map((role) => ({
+                  value: role,
+                  inlineLabel: getPublicationCategoryLabel(role),
+                }))}
                 required
-                showEmptyOption={false}
                 disabled={isReadonly}
               />
             )}
@@ -400,10 +394,10 @@ function AddNewPublicationButton({ field, disabled }: AddNewPublicationButtonPro
       <AnimatePresence>
         {expanded && (
           <Modal dropdownRef={dropdownRef} elementRef={elementRef}>
-            {[
-              { name: name.subject, category: 'subject' },
-              { name: name.postscript, category: 'postscript' },
-            ].map(({ name, category }) => (
+            {Object.values(PublicationCategory).map((role) => ({
+              category: role,
+              name: getPublicationCategoryLabel(role),
+            })).map(({ name, category }) => (
               <AppButton
                 key={`publications.add-new-btn.${category}`}
                 onClick={() => {

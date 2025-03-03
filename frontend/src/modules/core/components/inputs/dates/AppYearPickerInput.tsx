@@ -21,8 +21,8 @@ type Props = {
   name: string;
   value: number | undefined;
 
-  onChange: (value: number | undefined) => void;
-  onBlur: () => void;
+  onChange?: (value: number | undefined) => void;
+  onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
   required?: boolean;
@@ -59,7 +59,7 @@ export function AppYearPickerInput({
     refs: [elementRef, dropdownRef],
     onOutsideClick: () => {
       setExpanded(false);
-      onBlur();
+      onBlur?.();
     },
   });
 
@@ -73,8 +73,8 @@ export function AppYearPickerInput({
 
   function handleResetSelection(evt: React.MouseEvent) {
     setSelectedYear(undefined);
-    onChange(undefined);
-    onBlur();
+    onChange?.(undefined);
+    onBlur?.();
     setExpanded(false);
     evt.preventDefault();
     evt.stopPropagation();
@@ -82,8 +82,8 @@ export function AppYearPickerInput({
 
   function handleSelectYear(newYear: number): void {
     setSelectedYear(newYear);
-    onChange(newYear);
-    onBlur();
+    onChange?.(newYear);
+    onBlur?.();
     setExpanded(false);
   }
 
