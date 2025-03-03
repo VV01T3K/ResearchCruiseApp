@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import React from 'react';
 
-import { AppLoader } from '@/core/components/AppLoader';
 import { clearAuthToken, client, setAuthToken } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
 import { User } from '@/core/models/User';
@@ -129,10 +128,6 @@ export function UserContextProvider({ children }: Props) {
   const expirationDate = authDetails?.expirationDate;
   if (expirationDate && expirationDate < new Date()) {
     context.signOut();
-  }
-
-  if (profileQuery.isFetching) {
-    return <AppLoader />;
   }
 
   return <UserContext value={context}>{children}</UserContext>;

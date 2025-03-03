@@ -1,12 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
-import { AppTable } from '@/core/components/table/AppTable';
-import { EvaluationFormAPublication } from '@/cruise-applications/models/EvaluationDto';
-import { AppYearPickerInput } from '@/core/components/inputs/dates/AppYearPickerInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
+import { AppYearPickerInput } from '@/core/components/inputs/dates/AppYearPickerInput';
+import { AppTable } from '@/core/components/table/AppTable';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
+import { EvaluationFormAPublication } from '@/cruise-applications/models/EvaluationDto';
 import { getPublicationCategoryLabel } from '@/cruise-applications/models/PublicationDto';
 
 export function ApplicationDetailsPublicationsSection() {
@@ -23,14 +23,13 @@ export function ApplicationDetailsPublicationsSection() {
       accessorFn: (row) => row.publication.category,
       enableColumnFilter: false,
       enableSorting: false,
-      cell: ({ row }) => (
-        <div>{getPublicationCategoryLabel(row.original.publication.category)}</div>
-      ),
+      cell: ({ row }) => <div>{getPublicationCategoryLabel(row.original.publication.category)}</div>,
       size: 100,
     },
     {
       header: 'Informacje',
-      accessorFn: (row) => `${row.publication.doi}, ${row.publication.authors}, ${row.publication.title}, ${row.publication.magazine}`,
+      accessorFn: (row) =>
+        `${row.publication.doi}, ${row.publication.authors}, ${row.publication.title}, ${row.publication.magazine}`,
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
@@ -104,7 +103,7 @@ export function ApplicationDetailsPublicationsSection() {
       enableSorting: false,
       cell: ({ row }) => <div>{row.original.points}</div>,
       size: 40,
-    }
+    },
   ];
 
   return (

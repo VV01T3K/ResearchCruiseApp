@@ -27,7 +27,12 @@ export function AppNavbar() {
   }
 
   return (
-    <header className="bg-primary px-2 sm:px-4 md:px-6 lg:px-8 py-4 flex justify-between items-center z-50 h-[var(--header-height)]">
+    <motion.header
+      className="bg-primary px-2 sm:px-4 md:px-6 lg:px-8 py-4 flex justify-between items-center z-50 h-[var(--header-height)]"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div>
         <motion.div whileHover={{ scale: 1.1, translateX: '5%' }}>
           <AppLink
@@ -81,6 +86,6 @@ export function AppNavbar() {
           )}
         </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 }

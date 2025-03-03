@@ -24,14 +24,28 @@ export function AppLink({ children, href, className, title, rel, variant, target
 
   if (isInternalLink) {
     return (
-      <Link to={href as RouterUrl} target={target} className={cn(variants[variant], className)} title={title} rel={rel} disabled={disabled}>
+      <Link
+        to={href as RouterUrl}
+        target={target}
+        className={cn(variants[variant], className)}
+        title={title}
+        rel={rel}
+        disabled={disabled}
+      >
         {children}
       </Link>
     );
   }
 
   return (
-    <a href={disabled ? undefined : href} target={target} className={cn(variants[variant], className)} title={title} rel={rel} aria-disabled={disabled}>
+    <a
+      href={disabled ? undefined : href}
+      target={target}
+      className={cn(variants[variant], className)}
+      title={title}
+      rel={rel}
+      aria-disabled={disabled}
+    >
       {children}
     </a>
   );

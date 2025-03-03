@@ -21,7 +21,11 @@ import { cn, getErrors, groupBy } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
-import { getPublicationCategoryLabel, PublicationCategory, PublicationDto } from '@/cruise-applications/models/PublicationDto';
+import {
+  getPublicationCategoryLabel,
+  PublicationCategory,
+  PublicationDto,
+} from '@/cruise-applications/models/PublicationDto';
 
 export function FormAPublicationsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
@@ -394,35 +398,37 @@ function AddNewPublicationButton({ field, disabled }: AddNewPublicationButtonPro
       <AnimatePresence>
         {expanded && (
           <Modal dropdownRef={dropdownRef} elementRef={elementRef}>
-            {Object.values(PublicationCategory).map((role) => ({
-              category: role,
-              name: getPublicationCategoryLabel(role),
-            })).map(({ name, category }) => (
-              <AppButton
-                key={`publications.add-new-btn.${category}`}
-                onClick={() => {
-                  field.pushValue({
-                    id: '',
-                    category: category as PublicationDto['category'],
-                    doi: '',
-                    authors: '',
-                    title: '',
-                    magazine: '',
-                    year: '',
-                    ministerialPoints: '0',
-                  });
-                  field.handleChange((prev) => prev);
-                  field.handleBlur();
-                  field.form.validateAllFields('blur');
-                  field.form.validateAllFields('change');
-                  setExpanded(false);
-                }}
-                variant="plain"
-                className="w-full rounded-lg hover:bg-gray-100 focus:inset-ring-2 inset-ring-blue-500 px-2"
-              >
-                {name}
-              </AppButton>
-            ))}
+            {Object.values(PublicationCategory)
+              .map((role) => ({
+                category: role,
+                name: getPublicationCategoryLabel(role),
+              }))
+              .map(({ name, category }) => (
+                <AppButton
+                  key={`publications.add-new-btn.${category}`}
+                  onClick={() => {
+                    field.pushValue({
+                      id: '',
+                      category: category as PublicationDto['category'],
+                      doi: '',
+                      authors: '',
+                      title: '',
+                      magazine: '',
+                      year: '',
+                      ministerialPoints: '0',
+                    });
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                    field.form.validateAllFields('blur');
+                    field.form.validateAllFields('change');
+                    setExpanded(false);
+                  }}
+                  variant="plain"
+                  className="w-full rounded-lg hover:bg-gray-100 focus:inset-ring-2 inset-ring-blue-500 px-2"
+                >
+                  {name}
+                </AppButton>
+              ))}
           </Modal>
         )}
       </AnimatePresence>

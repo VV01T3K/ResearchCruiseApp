@@ -4,8 +4,8 @@ import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppYearPickerInput } from '@/core/components/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/core/components/table/AppTable';
-import { EvaluationFormASpubTask } from '@/cruise-applications/models/EvaluationDto';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
+import { EvaluationFormASpubTask } from '@/cruise-applications/models/EvaluationDto';
 
 export function ApplicationDetailsSPUBTasksSection() {
   const { evaluation } = useApplicationDetails();
@@ -52,19 +52,14 @@ export function ApplicationDetailsSPUBTasksSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppInput
-          name={`spubTasks[${row.index}].name`}
-          value={row.original.spubTask.name}
-          required
-          disabled
-        />
+        <AppInput name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} required disabled />
       ),
     },
     {
       header: 'Punkty',
       cell: ({ row }) => row.original.points,
       size: 10,
-    }
+    },
   ];
 
   return (
@@ -73,11 +68,7 @@ export function ApplicationDetailsSPUBTasksSection() {
       expandedByDefault
     >
       <div>
-        <AppTable
-          data={evaluation.formASpubTasks}
-          columns={columns}
-          emptyTableMessage="Nie dodano żadnego zadania."
-        />
+        <AppTable data={evaluation.formASpubTasks} columns={columns} emptyTableMessage="Nie dodano żadnego zadania." />
       </div>
     </AppAccordion>
   );

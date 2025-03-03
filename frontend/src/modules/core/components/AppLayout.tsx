@@ -1,3 +1,5 @@
+import { motion } from 'motion/react';
+
 import { AppPreviousPageButton } from '@/core/components/AppPreviousPageButton';
 import { cn } from '@/core/lib/utils';
 
@@ -12,7 +14,12 @@ type Props = {
 
 export function AppLayout({ title, children, description, variant = 'default', disableBackButton = false }: Props) {
   return (
-    <div className="md:p-8 w-full min-h-[calc(100vh-var(--header-height))] relative">
+    <motion.div
+      className="md:p-8 w-full min-h-[calc(100vh-var(--header-height))] relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className={cn('mx-auto pb-4 md:p-8 bg-gray-50 rounded-xl', variants[variant])}>
         <header className="mb-8">
           {!disableBackButton && (
@@ -25,7 +32,7 @@ export function AppLayout({ title, children, description, variant = 'default', d
         </header>
         {children}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -4,9 +4,9 @@ import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppFileInput } from '@/core/components/inputs/AppFileInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppTable } from '@/core/components/table/AppTable';
+import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
 import { getContractCategoryName } from '@/cruise-applications/models/ContractDto';
 import { EvaluationFormAContract } from '@/cruise-applications/models/EvaluationDto';
-import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
 
 export function ApplicationDetailsContractsSection() {
   const { evaluation } = useApplicationDetails();
@@ -79,7 +79,7 @@ export function ApplicationDetailsContractsSection() {
       header: 'Punkty',
       cell: ({ row }) => row.original.points,
       size: 10,
-    }
+    },
   ];
 
   return (
@@ -88,11 +88,7 @@ export function ApplicationDetailsContractsSection() {
       expandedByDefault
     >
       <div>
-        <AppTable
-          data={evaluation.formAContracts}
-          columns={columns}
-          emptyTableMessage="Nie dodano żadnej umowy."
-        />
+        <AppTable data={evaluation.formAContracts} columns={columns} emptyTableMessage="Nie dodano żadnej umowy." />
       </div>
     </AppAccordion>
   );

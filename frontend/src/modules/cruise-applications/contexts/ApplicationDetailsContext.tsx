@@ -1,7 +1,7 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
-import { CruiseApplicationDto } from "@/cruise-applications/models/CruiseApplicationDto";
-import { EvaluationDto } from "@/cruise-applications/models/EvaluationDto";
+import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
+import { EvaluationDto } from '@/cruise-applications/models/EvaluationDto';
 
 export type ApplicationDetailsContextType = {
   application: CruiseApplicationDto;
@@ -15,6 +15,12 @@ export function useApplicationDetails() {
   return useContext(ApplicationDetailsContext)!;
 }
 
-export function ApplicationDetailsProvider({ value, children }: { value: ApplicationDetailsContextType; children: React.ReactNode }) {
+export function ApplicationDetailsProvider({
+  value,
+  children,
+}: {
+  value: ApplicationDetailsContextType;
+  children: React.ReactNode;
+}) {
   return <ApplicationDetailsContext value={value}>{children}</ApplicationDetailsContext>;
 }

@@ -6,6 +6,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppFloatingLabelInput } from '@/core/components/inputs/AppFloatingLabelInput';
+import { getErrors } from '@/core/lib/utils';
 import { useForgotPasswordMutation } from '@/user/hooks/UserApiHooks';
 import { Result } from '@/user/models/Results';
 
@@ -70,7 +71,7 @@ export function ForgotPasswordPage() {
                 type="email"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={field.state.meta.errors.map((e) => e!.toString())}
+                errors={getErrors(field.state.meta)}
                 label="E-mail"
                 required
               />

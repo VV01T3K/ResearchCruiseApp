@@ -1,12 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
+import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppTable } from '@/core/components/table/AppTable';
-import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
-import { EvaluationUGTeamDto } from '@/cruise-applications/models/EvaluationDto';
-import { AppInput } from '@/core/components/inputs/AppInput';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
+import { EvaluationUGTeamDto } from '@/cruise-applications/models/EvaluationDto';
+import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
 
 export function ApplicationDetailsMembersSection() {
   const { evaluation } = useApplicationDetails();
@@ -82,12 +82,8 @@ export function ApplicationDetailsMembersSection() {
   return (
     <AppAccordion title="5. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16">
-        <AppTable
-          columns={ugTeamsColumns}
-          data={evaluation.ugTeams}
-          emptyTableMessage="Nie dodano żadnego zespołu."
-        />
-        
+        <AppTable columns={ugTeamsColumns} data={evaluation.ugTeams} emptyTableMessage="Nie dodano żadnego zespołu." />
+
         <AppTable
           columns={guestTeamsColumns}
           data={evaluation.guestTeams}
@@ -95,13 +91,7 @@ export function ApplicationDetailsMembersSection() {
         />
 
         <div className="col-span-2">
-          <AppInput
-            name="Punkty"
-            value={evaluation.ugUnitsPoints}
-            label="Punkty"
-            required
-            disabled
-          />
+          <AppInput name="Punkty" value={evaluation.ugUnitsPoints} label="Punkty" required disabled />
         </div>
       </div>
     </AppAccordion>

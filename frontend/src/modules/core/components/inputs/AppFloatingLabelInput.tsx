@@ -47,7 +47,7 @@ export function AppFloatingLabelInput({
         onChange={(evt) => onChange?.(evt.target.value)}
         disabled={disabled}
       />
-      <AppInputErrorTriangle errors={errors} />
+      <AppInputErrorTriangle errors={errors} mode="absolute" />
       <label
         htmlFor={name}
         className={cn(

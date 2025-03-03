@@ -54,14 +54,17 @@ export function AppDropdownInput({
   const [expanded, setExpanded] = React.useState(false);
   const selectedOptionIndex = allOptions.findIndex((option) => option.value === value);
   const [selectedValue, setSelectedValue] = React.useState<AppDropdownInputOption>(() =>
-    (selectedOptionIndex < 0) ? { value: defaultValue, inlineLabel: placeholder } : allOptions[selectedOptionIndex]
+    selectedOptionIndex < 0 ? { value: defaultValue, inlineLabel: placeholder } : allOptions[selectedOptionIndex]
   );
   const allPossibleOptions = allowEmptyOption
     ? [
         {
           value: defaultValue,
-          inlineLabel: (selectedValue.value !== defaultValue) ? placeholder : undefined,
-          richLabel: (selectedValue.value !== defaultValue) ? <span className="text-red-500">Usuń aktualny wybór</span> : undefined,
+          inlineLabel: selectedValue.value !== defaultValue ? placeholder : undefined,
+          richLabel:
+            selectedValue.value !== defaultValue ? (
+              <span className="text-red-500">Usuń aktualny wybór</span>
+            ) : undefined,
         },
         ...allOptions,
       ]
@@ -91,7 +94,7 @@ export function AppDropdownInput({
           'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full',
           'transition duration-300 ease-in-out',
           disabled ? 'bg-gray-200' : '',
-          (errors && errors.length > 0) ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+          errors && errors.length > 0 ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
         )}
         ref={inputRef}
       >

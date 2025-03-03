@@ -1,8 +1,8 @@
 import { ContractDto } from '@/cruise-applications/models/ContractDto';
-import { GuestTeamDto } from "@/cruise-applications/models/GuestTeamDto";
-import { PublicationDto } from "@/cruise-applications/models/PublicationDto";
-import { ResearchTaskDto } from "@/cruise-applications/models/ResearchTaskDto";
-import { SpubTaskDto } from "@/cruise-applications/models/SpubTaskDto";
+import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
+import { PublicationDto } from '@/cruise-applications/models/PublicationDto';
+import { ResearchTaskDto } from '@/cruise-applications/models/ResearchTaskDto';
+import { SpubTaskDto } from '@/cruise-applications/models/SpubTaskDto';
 
 export type EvaluationDto = {
   formAResearchTasks: EvaluationFormAResearchTask[];
