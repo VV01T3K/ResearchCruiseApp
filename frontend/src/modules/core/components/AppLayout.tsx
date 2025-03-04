@@ -15,7 +15,7 @@ type Props = {
 export function AppLayout({ title, children, description, variant = 'default', disableBackButton = false }: Props) {
   return (
     <motion.div
-      className="md:p-8 w-full min-h-[calc(100vh-var(--header-height))] relative"
+      className="md:p-8 w-full min-h-[calc(100vh-var(--header-height))] relative will-change-transform"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
