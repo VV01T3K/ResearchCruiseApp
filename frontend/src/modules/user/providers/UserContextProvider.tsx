@@ -2,9 +2,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import React from 'react';
 
-import { clearAuthToken, client, setAuthToken } from '@/core/lib/api';
+import { client, setAuthToken } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
-import { User } from '@/core/models/User';
 import { UserContext, UserContextType } from '@/user/contexts/UserContext';
 import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/user/hooks/UserContextApiHooks';
 import { AuthDetails } from '@/user/models/AuthDetails';
@@ -14,80 +13,93 @@ import { getStoredAuthDetails, setStoredAuthDetails } from '@/user/services/Stor
 type Props = {
   children: React.ReactNode;
 };
-
 export function UserContextProvider({ children }: Props) {
-  const [userProfile, setUserProfile] = React.useState<User | undefined>(undefined);
-  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(() => getStoredAuthDetails());
-
   const queryClient = useQueryClient();
-  const profileQuery = useProfileQuery({ authDetails });
-  const { mutateAsync: loginMutateAsync } = useLoginMutation({ setAuthDetails, setStoredAuthDetails });
-  const { mutateAsync: refreshTokenMutateAsync } = useRefreshTokenMutation({ setAuthDetails, setStoredAuthDetails });
 
-  React.useMemo(() => {
-    if (authDetails) {
-      setAuthToken(authDetails.accessToken);
-    } else {
-      clearAuthToken();
-    }
-  }, [authDetails]);
+  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(() => getStoredAuthDetails());
+  setAuthToken(authDetails);
+  const profileQuery = useProfileQuery();
 
-  React.useMemo(() => {
-    setUserProfile(profileQuery.data?.data);
-  }, [profileQuery.data?.data]);
+  const updateAuthDetails = React.useCallback(
+    async (newAuthDetails: AuthDetails | undefined) => {
+      if (newAuthDetails) {
+        setAuthDetails(newAuthDetails);
+        setStoredAuthDetails(newAuthDetails);
+        setAuthToken(newAuthDetails);
+        await queryClient.fetchQuery({ queryKey: ['userProfile'] });
+      } else {
+        setAuthDetails(undefined);
+        setStoredAuthDetails(undefined);
+        setAuthToken(undefined);
+        queryClient.removeQueries({ queryKey: ['userProfile'] });
+      }
+    },
+    [queryClient]
+  );
 
-  const context: UserContextType = React.useMemo(
-    () => ({
-      currentUser: userProfile,
-      signIn: async (email: string, password: string): Promise<SignInResult> => {
-        const res = await loginMutateAsync({ email, password }).catch((error) => {
-          return error.response;
-        });
+  const { mutateAsync: loginMutateAsync } = useLoginMutation({ updateAuthDetails });
+  const { mutateAsync: refreshTokenMutateAsync } = useRefreshTokenMutation({ updateAuthDetails });
 
-        if (!res) {
-          return 'error';
-        }
+  const signIn = React.useCallback(
+    async (email: string, password: string): Promise<SignInResult> => {
+      const res = await loginMutateAsync({ email, password }).catch((error) => {
+        return error.response;
+      });
 
-        if (res.status === 200) {
-          return 'success';
-        }
-
-        if (res.status === 401) {
-          return 'invalid_credentials';
-        }
-
+      if (!res) {
         return 'error';
-      },
-      signOut: async () => {
-        setAuthDetails(undefined);
-        setStoredAuthDetails(undefined);
-        setUserProfile(undefined);
-        queryClient.removeQueries();
-      },
-      refreshUser: async () => {
-        if (authDetails) {
-          await refreshTokenMutateAsync(authDetails);
-          return;
-        }
+      }
 
-        setAuthDetails(undefined);
-        setStoredAuthDetails(undefined);
-        setUserProfile(undefined);
-        queryClient.removeQueries();
-      },
-      isInRole: (allowedRoles: Role | Role[]) => {
-        if (!userProfile) {
-          return false;
-        }
+      if (res.status === 200) {
+        return 'success';
+      }
 
-        if (!Array.isArray(allowedRoles)) {
-          return userProfile.roles.includes(allowedRoles);
-        }
+      if (res.status === 401) {
+        return 'invalid_credentials';
+      }
 
-        return allowedRoles.some((role) => userProfile.roles.includes(role));
-      },
+      return 'error';
+    },
+    [loginMutateAsync]
+  );
+
+  const signOut = React.useCallback(async () => {
+    await updateAuthDetails(undefined);
+  }, [updateAuthDetails]);
+
+  const refreshUser = React.useCallback(async () => {
+    if (authDetails) {
+      await refreshTokenMutateAsync(authDetails);
+      return;
+    }
+
+    await signOut();
+  }, [authDetails, signOut, refreshTokenMutateAsync]);
+
+  const isInRole = React.useCallback(
+    (allowedRoles: Role | Role[]) => {
+      if (!profileQuery.data) {
+        return false;
+      }
+
+      if (!Array.isArray(allowedRoles)) {
+        return profileQuery.data.roles.includes(allowedRoles);
+      }
+
+      return allowedRoles.some((role) => profileQuery.data!.roles.includes(role));
+    },
+    [profileQuery.data]
+  );
+
+  const context = React.useMemo<UserContextType>(
+    () => ({
+      currentUser: profileQuery.data,
+      signIn,
+      signOut,
+      refreshUser,
+      isInRole,
     }),
-    [authDetails, loginMutateAsync, queryClient, refreshTokenMutateAsync, userProfile]
+    [isInRole, profileQuery.data, refreshUser, signIn, signOut]
   );
 
   React.useEffect(() => {
@@ -124,11 +136,6 @@ export function UserContextProvider({ children }: Props) {
 
     return () => clearInterval(timeoutId);
   }, [context, authDetails]);
-
-  const expirationDate = authDetails?.expirationDate;
-  if (expirationDate && expirationDate < new Date()) {
-    context.signOut();
-  }
 
   return <UserContext value={context}>{children}</UserContext>;
 }

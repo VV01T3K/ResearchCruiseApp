@@ -1,54 +1,45 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { client, setAuthToken } from '@/core/lib/api';
+import { client } from '@/core/lib/api';
+import { User } from '@/core/models/User';
 import { AuthDetails } from '@/user/models/AuthDetails';
 
-type UseProfileQueryProps = {
-  authDetails?: AuthDetails;
+type Props = {
+  updateAuthDetails: (newAuthDetails: AuthDetails | undefined) => Promise<void>;
 };
-export function useProfileQuery({ authDetails }: UseProfileQueryProps) {
-  return useQuery({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+
+/* Returns NULL when no access token has been set or profile couldn't be fetched  */
+export function useProfileQuery() {
+  return useSuspenseQuery({
     queryKey: ['userProfile'],
-    enabled: () => !!authDetails?.accessToken,
     queryFn: () => {
-      return client.get('/account', {
-        headers: {
-          Authorization: `Bearer ${authDetails?.accessToken}`,
-        },
-      });
+      if (!client.defaults.headers.Authorization) {
+        return null;
+      }
+
+      return client.get('/account').catch(() => null);
     },
+    select: (res) => res?.data as User | undefined,
     refetchOnWindowFocus: false,
   });
 }
 
-type UseLoginMutationProps = {
-  setAuthDetails: (authDetails: AuthDetails | undefined) => void;
-  setStoredAuthDetails: (authDetails: AuthDetails | undefined) => void;
-};
-export function useLoginMutation({ setAuthDetails, setStoredAuthDetails }: UseLoginMutationProps) {
+export function useLoginMutation({ updateAuthDetails }: Props) {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) => {
       return client.post('/account/login', { email, password });
     },
-    onSuccess: ({ data }) => {
-      if (data) {
-        setAuthDetails(data as AuthDetails);
-        setStoredAuthDetails(data as AuthDetails);
-      }
+    onSuccess: async ({ data }) => {
+      updateAuthDetails(data as AuthDetails);
     },
     onError: () => {
-      setAuthDetails(undefined);
+      updateAuthDetails(undefined);
     },
   });
 }
 
-type UseRefreshTokenMutationProps = {
-  setAuthDetails: (authDetails: AuthDetails | undefined) => void;
-  setStoredAuthDetails: (authDetails: AuthDetails | undefined) => void;
-};
-export function useRefreshTokenMutation({ setAuthDetails, setStoredAuthDetails }: UseRefreshTokenMutationProps) {
+export function useRefreshTokenMutation({ updateAuthDetails }: Props) {
   return useMutation({
     mutationFn: ({ accessToken, refreshToken }: AuthDetails) => {
       // We create a new client here since the main one is paused while refreshing
@@ -58,15 +49,11 @@ export function useRefreshTokenMutation({ setAuthDetails, setStoredAuthDetails }
         refreshToken,
       });
     },
-    onSuccess: ({ data }) => {
-      if (data) {
-        setAuthDetails(data as AuthDetails);
-        setStoredAuthDetails(data as AuthDetails);
-        setAuthToken(data.accessToken);
-      }
+    onSuccess: async ({ data }) => {
+      updateAuthDetails(data as AuthDetails);
     },
     onError: () => {
-      setAuthDetails(undefined);
+      updateAuthDetails(undefined);
     },
   });
 }

@@ -1,19 +1,26 @@
 import { AuthDetails } from '@/user/models/AuthDetails';
 
 export function getStoredAuthDetails(): AuthDetails | undefined {
-  const authDetails = localStorage.getItem('authDetails');
+  const data = localStorage.getItem('authDetails');
 
-  if (!authDetails) {
+  if (!data) {
     return undefined;
   }
 
-  return JSON.parse(authDetails, (key: string, value: unknown) => {
+  const authDetails = JSON.parse(data, (key: string, value: unknown) => {
     if (key === 'expirationDate') {
       return new Date(value as string);
     }
 
     return value;
   }) as AuthDetails;
+
+  if (authDetails.expirationDate < new Date()) {
+    setStoredAuthDetails(undefined);
+    return undefined;
+  }
+
+  return authDetails;
 }
 
 export function setStoredAuthDetails(authDetails?: AuthDetails) {
