@@ -20,6 +20,7 @@ import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
+import { Route as CruiseapprovalImport } from './routes/cruiseapproval'
 import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
@@ -83,6 +84,12 @@ const ForgotpasswordRoute = ForgotpasswordImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CruiseapprovalRoute = CruiseapprovalImport.update({
+  id: '/cruiseapproval',
+  path: '/cruiseapproval',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const ConfirmemailRoute = ConfirmemailImport.update({
   id: '/confirmemail',
   path: '/confirmemail',
@@ -143,6 +150,13 @@ declare module '@tanstack/react-router' {
       path: '/confirmemail'
       fullPath: '/confirmemail'
       preLoaderRoute: typeof ConfirmemailImport
+      parentRoute: typeof rootRoute
+    }
+    '/cruiseapproval': {
+      id: '/cruiseapproval'
+      path: '/cruiseapproval'
+      fullPath: '/cruiseapproval'
+      preLoaderRoute: typeof CruiseapprovalImport
       parentRoute: typeof rootRoute
     }
     '/forgotpassword': {
@@ -238,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
+  '/cruiseapproval': typeof CruiseapprovalRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -256,6 +271,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
+  '/cruiseapproval': typeof CruiseapprovalRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -275,6 +291,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
+  '/cruiseapproval': typeof CruiseapprovalRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -295,6 +312,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accountsettings'
     | '/confirmemail'
+    | '/cruiseapproval'
     | '/forgotpassword'
     | '/help'
     | '/login'
@@ -312,6 +330,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accountsettings'
     | '/confirmemail'
+    | '/cruiseapproval'
     | '/forgotpassword'
     | '/help'
     | '/login'
@@ -329,6 +348,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accountsettings'
     | '/confirmemail'
+    | '/cruiseapproval'
     | '/forgotpassword'
     | '/help'
     | '/login'
@@ -348,6 +368,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountsettingsRoute: typeof AccountsettingsRoute
   ConfirmemailRoute: typeof ConfirmemailRoute
+  CruiseapprovalRoute: typeof CruiseapprovalRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
@@ -366,6 +387,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountsettingsRoute: AccountsettingsRoute,
   ConfirmemailRoute: ConfirmemailRoute,
+  CruiseapprovalRoute: CruiseapprovalRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
@@ -393,6 +415,7 @@ export const routeTree = rootRoute
         "/",
         "/accountsettings",
         "/confirmemail",
+        "/cruiseapproval",
         "/forgotpassword",
         "/help",
         "/login",
@@ -415,6 +438,9 @@ export const routeTree = rootRoute
     },
     "/confirmemail": {
       "filePath": "confirmemail.tsx"
+    },
+    "/cruiseapproval": {
+      "filePath": "cruiseapproval.tsx"
     },
     "/forgotpassword": {
       "filePath": "forgotpassword.tsx"

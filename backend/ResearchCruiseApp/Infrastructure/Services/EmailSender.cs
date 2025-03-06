@@ -102,7 +102,7 @@ internal class EmailSender(
 
         var link =
             GetFrontEndUrl()
-            + $"/FormAForSupervisor?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCodeEncoded}";
+            + $"/cruiseapproval?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCodeEncoded}";
 
         var messageTemplate = await templateFileReader.ReadRequestToSupervisorMessageTemplate();
         var emailSubject = await templateFileReader.ReadRequestToSupervisorEmailSubject();
