@@ -20,6 +20,7 @@ import { Route as MypublicationsImport } from './routes/mypublications'
 import { Route as LoginImport } from './routes/login'
 import { Route as HelpImport } from './routes/help'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
+import { Route as CruiseeffectsImport } from './routes/cruiseeffects'
 import { Route as CruiseapprovalImport } from './routes/cruiseapproval'
 import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
@@ -81,6 +82,12 @@ const HelpRoute = HelpImport.update({
 const ForgotpasswordRoute = ForgotpasswordImport.update({
   id: '/forgotpassword',
   path: '/forgotpassword',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CruiseeffectsRoute = CruiseeffectsImport.update({
+  id: '/cruiseeffects',
+  path: '/cruiseeffects',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -157,6 +164,13 @@ declare module '@tanstack/react-router' {
       path: '/cruiseapproval'
       fullPath: '/cruiseapproval'
       preLoaderRoute: typeof CruiseapprovalImport
+      parentRoute: typeof rootRoute
+    }
+    '/cruiseeffects': {
+      id: '/cruiseeffects'
+      path: '/cruiseeffects'
+      fullPath: '/cruiseeffects'
+      preLoaderRoute: typeof CruiseeffectsImport
       parentRoute: typeof rootRoute
     }
     '/forgotpassword': {
@@ -253,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/cruiseapproval': typeof CruiseapprovalRoute
+  '/cruiseeffects': typeof CruiseeffectsRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -272,6 +287,7 @@ export interface FileRoutesByTo {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/cruiseapproval': typeof CruiseapprovalRoute
+  '/cruiseeffects': typeof CruiseeffectsRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -292,6 +308,7 @@ export interface FileRoutesById {
   '/accountsettings': typeof AccountsettingsRoute
   '/confirmemail': typeof ConfirmemailRoute
   '/cruiseapproval': typeof CruiseapprovalRoute
+  '/cruiseeffects': typeof CruiseeffectsRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -313,6 +330,7 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/cruiseapproval'
+    | '/cruiseeffects'
     | '/forgotpassword'
     | '/help'
     | '/login'
@@ -331,6 +349,7 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/cruiseapproval'
+    | '/cruiseeffects'
     | '/forgotpassword'
     | '/help'
     | '/login'
@@ -349,6 +368,7 @@ export interface FileRouteTypes {
     | '/accountsettings'
     | '/confirmemail'
     | '/cruiseapproval'
+    | '/cruiseeffects'
     | '/forgotpassword'
     | '/help'
     | '/login'
@@ -369,6 +389,7 @@ export interface RootRouteChildren {
   AccountsettingsRoute: typeof AccountsettingsRoute
   ConfirmemailRoute: typeof ConfirmemailRoute
   CruiseapprovalRoute: typeof CruiseapprovalRoute
+  CruiseeffectsRoute: typeof CruiseeffectsRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
@@ -388,6 +409,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountsettingsRoute: AccountsettingsRoute,
   ConfirmemailRoute: ConfirmemailRoute,
   CruiseapprovalRoute: CruiseapprovalRoute,
+  CruiseeffectsRoute: CruiseeffectsRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
@@ -416,6 +438,7 @@ export const routeTree = rootRoute
         "/accountsettings",
         "/confirmemail",
         "/cruiseapproval",
+        "/cruiseeffects",
         "/forgotpassword",
         "/help",
         "/login",
@@ -441,6 +464,9 @@ export const routeTree = rootRoute
     },
     "/cruiseapproval": {
       "filePath": "cruiseapproval.tsx"
+    },
+    "/cruiseeffects": {
+      "filePath": "cruiseeffects.tsx"
     },
     "/forgotpassword": {
       "filePath": "forgotpassword.tsx"
