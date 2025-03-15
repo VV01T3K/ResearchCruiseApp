@@ -25,8 +25,11 @@ import { Route as CruiseapprovalImport } from './routes/cruiseapproval'
 import { Route as ConfirmemailImport } from './routes/confirmemail'
 import { Route as AccountsettingsImport } from './routes/accountsettings'
 import { Route as IndexImport } from './routes/index'
+import { Route as CruisesIndexImport } from './routes/cruises/index'
 import { Route as ApplicationsIndexImport } from './routes/applications/index'
-import { Route as CruisesCruiseIdFormAImport } from './routes/cruises.$cruiseId/formA'
+import { Route as CruisesNewImport } from './routes/cruises/new'
+import { Route as CruisesCruiseIdIndexImport } from './routes/cruises/$cruiseId/index'
+import { Route as ApplicationsApplicationIdFormAImport } from './routes/applications/$applicationId/formA'
 import { Route as ApplicationsApplicationIdDetailsImport } from './routes/applications/$applicationId/details'
 
 // Create/Update Routes
@@ -115,17 +118,36 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CruisesIndexRoute = CruisesIndexImport.update({
+  id: '/cruises/',
+  path: '/cruises/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const ApplicationsIndexRoute = ApplicationsIndexImport.update({
   id: '/applications/',
   path: '/applications/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const CruisesCruiseIdFormARoute = CruisesCruiseIdFormAImport.update({
-  id: '/cruises/$cruiseId/formA',
-  path: '/cruises/$cruiseId/formA',
+const CruisesNewRoute = CruisesNewImport.update({
+  id: '/cruises/new',
+  path: '/cruises/new',
   getParentRoute: () => rootRoute,
 } as any)
+
+const CruisesCruiseIdIndexRoute = CruisesCruiseIdIndexImport.update({
+  id: '/cruises/$cruiseId/',
+  path: '/cruises/$cruiseId/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ApplicationsApplicationIdFormARoute =
+  ApplicationsApplicationIdFormAImport.update({
+    id: '/applications/$applicationId/formA',
+    path: '/applications/$applicationId/formA',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 const ApplicationsApplicationIdDetailsRoute =
   ApplicationsApplicationIdDetailsImport.update({
@@ -236,11 +258,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsermanagementImport
       parentRoute: typeof rootRoute
     }
+    '/cruises/new': {
+      id: '/cruises/new'
+      path: '/cruises/new'
+      fullPath: '/cruises/new'
+      preLoaderRoute: typeof CruisesNewImport
+      parentRoute: typeof rootRoute
+    }
     '/applications/': {
       id: '/applications/'
       path: '/applications'
       fullPath: '/applications'
       preLoaderRoute: typeof ApplicationsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cruises/': {
+      id: '/cruises/'
+      path: '/cruises'
+      fullPath: '/cruises'
+      preLoaderRoute: typeof CruisesIndexImport
       parentRoute: typeof rootRoute
     }
     '/applications/$applicationId/details': {
@@ -250,11 +286,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsApplicationIdDetailsImport
       parentRoute: typeof rootRoute
     }
-    '/cruises/$cruiseId/formA': {
-      id: '/cruises/$cruiseId/formA'
-      path: '/cruises/$cruiseId/formA'
-      fullPath: '/cruises/$cruiseId/formA'
-      preLoaderRoute: typeof CruisesCruiseIdFormAImport
+    '/applications/$applicationId/formA': {
+      id: '/applications/$applicationId/formA'
+      path: '/applications/$applicationId/formA'
+      fullPath: '/applications/$applicationId/formA'
+      preLoaderRoute: typeof ApplicationsApplicationIdFormAImport
+      parentRoute: typeof rootRoute
+    }
+    '/cruises/$cruiseId/': {
+      id: '/cruises/$cruiseId/'
+      path: '/cruises/$cruiseId'
+      fullPath: '/cruises/$cruiseId'
+      preLoaderRoute: typeof CruisesCruiseIdIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -277,9 +320,12 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
+  '/cruises/new': typeof CruisesNewRoute
   '/applications': typeof ApplicationsIndexRoute
+  '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
-  '/cruises/$cruiseId/formA': typeof CruisesCruiseIdFormARoute
+  '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
+  '/cruises/$cruiseId': typeof CruisesCruiseIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -297,9 +343,12 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
+  '/cruises/new': typeof CruisesNewRoute
   '/applications': typeof ApplicationsIndexRoute
+  '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
-  '/cruises/$cruiseId/formA': typeof CruisesCruiseIdFormARoute
+  '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
+  '/cruises/$cruiseId': typeof CruisesCruiseIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -318,9 +367,12 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
+  '/cruises/new': typeof CruisesNewRoute
   '/applications/': typeof ApplicationsIndexRoute
+  '/cruises/': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
-  '/cruises/$cruiseId/formA': typeof CruisesCruiseIdFormARoute
+  '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
+  '/cruises/$cruiseId/': typeof CruisesCruiseIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -340,9 +392,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/usermanagement'
+    | '/cruises/new'
     | '/applications'
+    | '/cruises'
     | '/applications/$applicationId/details'
-    | '/cruises/$cruiseId/formA'
+    | '/applications/$applicationId/formA'
+    | '/cruises/$cruiseId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -359,9 +414,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/usermanagement'
+    | '/cruises/new'
     | '/applications'
+    | '/cruises'
     | '/applications/$applicationId/details'
-    | '/cruises/$cruiseId/formA'
+    | '/applications/$applicationId/formA'
+    | '/cruises/$cruiseId'
   id:
     | '__root__'
     | '/'
@@ -378,9 +436,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/resetpassword'
     | '/usermanagement'
+    | '/cruises/new'
     | '/applications/'
+    | '/cruises/'
     | '/applications/$applicationId/details'
-    | '/cruises/$cruiseId/formA'
+    | '/applications/$applicationId/formA'
+    | '/cruises/$cruiseId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -399,9 +460,12 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ResetpasswordRoute: typeof ResetpasswordRoute
   UsermanagementRoute: typeof UsermanagementRoute
+  CruisesNewRoute: typeof CruisesNewRoute
   ApplicationsIndexRoute: typeof ApplicationsIndexRoute
+  CruisesIndexRoute: typeof CruisesIndexRoute
   ApplicationsApplicationIdDetailsRoute: typeof ApplicationsApplicationIdDetailsRoute
-  CruisesCruiseIdFormARoute: typeof CruisesCruiseIdFormARoute
+  ApplicationsApplicationIdFormARoute: typeof ApplicationsApplicationIdFormARoute
+  CruisesCruiseIdIndexRoute: typeof CruisesCruiseIdIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -419,9 +483,12 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ResetpasswordRoute: ResetpasswordRoute,
   UsermanagementRoute: UsermanagementRoute,
+  CruisesNewRoute: CruisesNewRoute,
   ApplicationsIndexRoute: ApplicationsIndexRoute,
+  CruisesIndexRoute: CruisesIndexRoute,
   ApplicationsApplicationIdDetailsRoute: ApplicationsApplicationIdDetailsRoute,
-  CruisesCruiseIdFormARoute: CruisesCruiseIdFormARoute,
+  ApplicationsApplicationIdFormARoute: ApplicationsApplicationIdFormARoute,
+  CruisesCruiseIdIndexRoute: CruisesCruiseIdIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -448,9 +515,12 @@ export const routeTree = rootRoute
         "/register",
         "/resetpassword",
         "/usermanagement",
+        "/cruises/new",
         "/applications/",
+        "/cruises/",
         "/applications/$applicationId/details",
-        "/cruises/$cruiseId/formA"
+        "/applications/$applicationId/formA",
+        "/cruises/$cruiseId/"
       ]
     },
     "/": {
@@ -495,14 +565,23 @@ export const routeTree = rootRoute
     "/usermanagement": {
       "filePath": "usermanagement.tsx"
     },
+    "/cruises/new": {
+      "filePath": "cruises/new.tsx"
+    },
     "/applications/": {
       "filePath": "applications/index.tsx"
+    },
+    "/cruises/": {
+      "filePath": "cruises/index.tsx"
     },
     "/applications/$applicationId/details": {
       "filePath": "applications/$applicationId/details.tsx"
     },
-    "/cruises/$cruiseId/formA": {
-      "filePath": "cruises.$cruiseId/formA.tsx"
+    "/applications/$applicationId/formA": {
+      "filePath": "applications/$applicationId/formA.tsx"
+    },
+    "/cruises/$cruiseId/": {
+      "filePath": "cruises/$cruiseId/index.tsx"
     }
   }
 }

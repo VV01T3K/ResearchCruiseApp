@@ -8,15 +8,15 @@ import { createPortal } from 'react-dom';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppMonthPickerPopover } from '@/core/components/inputs/dates/AppMonthPickerPopover';
+import { AppDatePickerTimeInput } from '@/core/components/inputs/dates/AppTimePickerInput';
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/core/components/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/core/components/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/core/components/inputs/parts/AppInputLabel';
 import { useDropdown } from '@/core/hooks/DropdownHook';
 import { useOutsideClickDetection } from '@/core/hooks/OutsideClickDetectionHook';
+import { dateToUtcDay, getDaysInMonth, shortWeekDays } from '@/core/lib/calendarUtils';
 import { cn } from '@/core/lib/utils';
-
-const weekDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'];
 
 type Props = {
   name: string;
@@ -30,7 +30,19 @@ type Props = {
   disabled?: boolean;
   helper?: React.ReactNode;
   placeholder?: string;
-};
+  minimalDate?: Date;
+  maximalDate?: Date;
+  selectionStartDate?: Date;
+} & (
+  | {
+      type?: 'date';
+      minuteStep?: never;
+    }
+  | {
+      type: 'datetime';
+      minuteStep?: number;
+    }
+);
 export function AppDatePickerInput({
   name,
   value,
@@ -42,8 +54,14 @@ export function AppDatePickerInput({
   disabled,
   helper,
   placeholder = 'Wybierz datę',
+  type = 'date',
+  minuteStep,
+  minimalDate,
+  maximalDate,
+  selectionStartDate,
 }: Props) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(() => getDateFromValue(value));
+  const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
   const [visibleMonth, setVisibleMonth] = React.useState({
     month: new Date().getMonth(),
@@ -53,6 +71,11 @@ export function AppDatePickerInput({
   const inputRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const removeSelectedDatePortalRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    setSelectedDate(getDateFromValue(value));
+  }, [value]);
 
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],
@@ -100,14 +123,16 @@ export function AppDatePickerInput({
 
     setSelectedDate(newDate);
     onChange?.(getValueFromDate(newDate));
-    setExpanded(false);
+    if (type === 'date') {
+      setExpanded(false);
+    }
   }
 
   return (
     <>
       <div className="flex flex-col">
         <AppInputLabel name={name} label={label} />
-        <div className={cn()} ref={inputRef}>
+        <div ref={inputRef}>
           <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
           <AppButton
             variant="plain"
@@ -119,7 +144,13 @@ export function AppDatePickerInput({
             )}
           >
             {selectedDate
-              ? selectedDate.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+              ? selectedDate.toLocaleDateString('pl-PL', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: type === 'datetime' ? '2-digit' : undefined,
+                  minute: type === 'datetime' ? '2-digit' : undefined,
+                })
               : placeholder}
             <span className="flex gap-2 items-center">
               <AppInputErrorTriangle errors={errors} />
@@ -165,27 +196,50 @@ export function AppDatePickerInput({
                 <ChevronRightIcon className="h-5 w-5" />
               </AppButton>
             </div>
-            <div className="grid grid-cols-7 p-2">
-              {weekDays.map((day) => (
-                <div key={day} className="font-semibold pb-2">
+            <div className="grid grid-cols-7 p-2" onMouseLeave={() => setHoveredDate(undefined)}>
+              {shortWeekDays.map((day) => (
+                <div key={day} className="font-semibold pb-2 text-center">
                   {day}
                 </div>
               ))}
               {getDaysInMonth(visibleMonth).map((date) => (
-                <AppButton
+                <CalendarDateTile
                   key={date.getTime()}
-                  variant="plain"
-                  onClick={() => handleDateSelection(date)}
-                  className={cn(
-                    selectedDate?.getTime() === date.getTime() ? 'bg-primary-500 text-white' : '',
-                    'w-full text-center py-2 hover:bg-gray-100',
-                    date.getMonth() !== visibleMonth.month ? 'text-gray-400' : ''
-                  )}
-                >
-                  {date.getDate()}
-                </AppButton>
+                  date={date}
+                  selectedDate={selectedDate}
+                  selectionStartDate={selectionStartDate}
+                  hoveredDate={hoveredDate}
+                  minimalDate={minimalDate}
+                  maximalDate={maximalDate}
+                  visibleMonth={visibleMonth}
+                  setHoveredDate={setHoveredDate}
+                  handleDateSelection={handleDateSelection}
+                />
               ))}
             </div>
+            {type === 'datetime' && (
+              <div className="p-2">
+                <AppDatePickerTimeInput
+                  name={name}
+                  value={
+                    selectedDate && {
+                      hours: selectedDate?.getHours(),
+                      minutes: selectedDate?.getMinutes(),
+                    }
+                  }
+                  placeholder="Wybierz godzinę"
+                  onChange={(x) => {
+                    const newDate = new Date(selectedDate ?? new Date());
+                    newDate.setHours(x?.hours ?? 0);
+                    newDate.setMinutes(x?.minutes ?? 0);
+                    setSelectedDate(newDate);
+                    onChange?.(getValueFromDate(newDate));
+                  }}
+                  onBlur={onBlur}
+                  minuteStep={minuteStep}
+                />
+              </div>
+            )}
           </Modal>
         )}
       </AnimatePresence>
@@ -209,28 +263,74 @@ function getValueFromDate(date: Date | undefined): string | undefined {
   return date.toISOString();
 }
 
-function getDaysInMonth({ month, year }: { month: number; year: number }): Date[] {
-  const date = findClosestMondayBefore(new Date(year, month, 1));
-  const days = [];
-  while (
-    month > 0
-      ? date.getFullYear() <= year && date.getMonth() <= month
-      : date.getFullYear() < year || date.getMonth() < 1
-  ) {
-    days.push(new Date(date));
-    date.setDate(date.getDate() + 1);
+type CalendarDateTileProps = {
+  date: Date;
+  selectedDate?: Date;
+  selectionStartDate?: Date;
+  hoveredDate?: Date;
+  minimalDate?: Date;
+  maximalDate?: Date;
+  visibleMonth: { month: number; year: number };
+  setHoveredDate: (date: Date | undefined) => void;
+  handleDateSelection: (date: Date) => void;
+};
+function CalendarDateTile({
+  date,
+  selectedDate,
+  selectionStartDate,
+  hoveredDate,
+  minimalDate,
+  maximalDate,
+  visibleMonth,
+  setHoveredDate,
+  handleDateSelection,
+}: CalendarDateTileProps) {
+  if (selectedDate) {
+    date.setHours(selectedDate.getHours());
+    date.setMinutes(selectedDate.getMinutes());
   }
-  while (date.getDay() > 1 || date.getDay() < 1) {
-    days.push(new Date(date));
-    date.setDate(date.getDate() + 1);
-  }
-  return days;
-}
 
-function findClosestMondayBefore(date: Date): Date {
-  const day = date.getDay();
-  const diff = day === 0 ? 6 : day - 1;
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() - diff);
+  const dateUtc = dateToUtcDay(date),
+    selectedDateUtc = selectedDate && dateToUtcDay(selectedDate),
+    selectionStartDateUtc = selectionStartDate && dateToUtcDay(selectionStartDate),
+    hoveredDateUtc = hoveredDate && dateToUtcDay(hoveredDate);
+
+  const isFirstDayOfSelection = selectionStartDate && selectionStartDateUtc === dateUtc,
+    isSelected = selectedDateUtc === dateUtc,
+    isHovered = hoveredDate && dateUtc === hoveredDateUtc,
+    isHoveredBetweenSelection =
+      selectionStartDateUtc && hoveredDateUtc && dateUtc >= selectionStartDateUtc && dateUtc <= hoveredDateUtc,
+    isInSelectedRange =
+      selectionStartDateUtc && selectedDateUtc && dateUtc >= selectionStartDateUtc && dateUtc <= selectedDateUtc,
+    isAllowed = (!minimalDate || date >= minimalDate) && (!maximalDate || date <= maximalDate),
+    isVisibleMonth = date.getMonth() === visibleMonth.month;
+  return (
+    <div
+      key={date.getTime()}
+      className={cn(
+        isFirstDayOfSelection ? 'rounded-l-full' : '',
+        (isHovered && !selectedDate) || isSelected ? 'rounded-r-full' : '',
+        (!selectedDate && isHoveredBetweenSelection) || isInSelectedRange ? 'bg-gray-100' : '',
+        'mt-1'
+      )}
+      onMouseEnter={() => setHoveredDate(date)}
+      onClick={() => handleDateSelection(date)}
+    >
+      <AppButton
+        variant="plain"
+        className={cn(
+          isSelected ? 'bg-primary-500 !text-white' : 'hover:bg-gray-300',
+          isFirstDayOfSelection ? '!bg-primary-200 !text-inherit' : '',
+          'w-full text-center py-2 rounded-full',
+          !isVisibleMonth || !isAllowed ? 'text-gray-400' : '',
+          !isAllowed ? 'hover:bg-gray-100' : ''
+        )}
+        disabled={!isAllowed}
+      >
+        {date.getDate()}
+      </AppButton>
+    </div>
+  );
 }
 
 type ModalProps = {

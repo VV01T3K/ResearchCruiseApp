@@ -55,6 +55,11 @@ export function AppYearPickerInput({
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const removeSelectedYearPortalRef = React.useRef<HTMLDivElement>(null);
 
+  React.useEffect(() => {
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    setSelectedYear(value);
+  }, [value]);
+
   useOutsideClickDetection({
     refs: [elementRef, dropdownRef],
     onOutsideClick: () => {

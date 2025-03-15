@@ -21,14 +21,14 @@ import { FormADto } from '@/cruise-applications/models/FormADto';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 
 export function FormAPage() {
-  const { cruiseId } = getRouteApi('/cruises/$cruiseId/formA').useParams();
+  const { applicationId } = getRouteApi('/applications/$applicationId/formA').useParams();
 
   const navigate = useNavigate();
   const appContext = useAppContext();
   const userContext = useUserContext();
   const initialStateQuery = useFormAInitValuesQuery();
   const saveMutation = useSaveFormAMutation();
-  const formA = useFormAQuery(cruiseId);
+  const formA = useFormAQuery(applicationId);
 
   const [editMode] = useState(false);
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
@@ -147,7 +147,7 @@ export function FormAPage() {
           console.error(err);
           appContext.showAlert({
             title: 'Wystąpił błąd',
-            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
+            message: 'Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.',
             variant: 'danger',
           });
         },

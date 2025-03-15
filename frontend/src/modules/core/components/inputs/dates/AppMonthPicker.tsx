@@ -3,22 +3,8 @@ import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
 import React from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
+import { months } from '@/core/lib/calendarUtils';
 import { cn } from '@/core/lib/utils';
-
-const months = [
-  'Styczeń',
-  'Luty',
-  'Marzec',
-  'Kwiecień',
-  'Maj',
-  'Czerwiec',
-  'Lipiec',
-  'Sierpień',
-  'Wrzesień',
-  'Październik',
-  'Listopad',
-  'Grudzień',
-];
 
 type Props = {
   selectedDate: Date | undefined;

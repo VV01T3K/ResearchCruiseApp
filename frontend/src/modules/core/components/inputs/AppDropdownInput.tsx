@@ -70,6 +70,14 @@ export function AppDropdownInput({
       ]
     : allOptions;
 
+  React.useEffect(() => {
+    if (value !== selectedValue.value) {
+      const selectedOption = allOptions.find((option) => option.value === value);
+      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+      setSelectedValue(selectedOption ?? { value: defaultValue, inlineLabel: placeholder });
+    }
+  }, [allOptions, defaultValue, placeholder, selectedValue.value, value]);
+
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],
     onOutsideClick: () => {

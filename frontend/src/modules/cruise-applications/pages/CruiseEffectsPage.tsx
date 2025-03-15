@@ -50,7 +50,11 @@ export function CruiseEffectsPage() {
     <>
       <AppLayout title="Efekty rejsów">
         <Suspense fallback={<AppLoader />}>
-          <AppTable data={effectsQuery.data} columns={columns} />
+          <AppTable
+            data={effectsQuery.data}
+            columns={columns}
+            emptyTableMessage="Nie znaleziono żadnego efektu rejsu"
+          />
         </Suspense>
       </AppLayout>
     </>

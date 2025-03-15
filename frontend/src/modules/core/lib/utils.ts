@@ -44,7 +44,7 @@ export function createFABPortal(fab: React.ReactNode): React.ReactPortal {
   return createPortal(fab, document.getElementById('fab-root') ?? document.body);
 }
 
-export function removeEmptyValues<T extends object>(obj: T, excludeKeys: (keyof T)[] = []): T {
+export function removeEmptyValues<T extends object>(obj: T, excludeKeys: (keyof T | (string & {}))[] = []): T {
   return Object.fromEntries(
     Object.entries(obj)
       .filter(([key, value]) => {

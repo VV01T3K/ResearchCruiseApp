@@ -1,3 +1,4 @@
+import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { AppLayout } from '@/core/components/AppLayout';
@@ -10,10 +11,10 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <>
+      <MockRouterProvider>
         <AppBackground />
         <Story />
-      </>
+      </MockRouterProvider>
     ),
   ],
 } satisfies Meta<typeof AppLayout>;

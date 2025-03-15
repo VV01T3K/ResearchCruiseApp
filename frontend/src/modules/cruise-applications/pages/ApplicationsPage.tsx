@@ -28,13 +28,13 @@ export function ApplicationsPage() {
       header: 'Formularze',
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
-          <AppLink disabled={!row.original.hasFormA} href={`/cruises/${row.original.id}/formA`}>
+          <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
             Formularz A
           </AppLink>
-          <AppLink disabled={!row.original.hasFormB} href={`/cruises/${row.original.id}/formB`}>
+          <AppLink disabled={!row.original.hasFormB} href={`/applications/${row.original.id}/formB`}>
             Formularz B
           </AppLink>
-          <AppLink disabled={!row.original.hasFormC} href={`/cruises/${row.original.id}/formC`}>
+          <AppLink disabled={!row.original.hasFormC} href={`/applications/${row.original.id}/formC`}>
             Formularz C
           </AppLink>
         </div>

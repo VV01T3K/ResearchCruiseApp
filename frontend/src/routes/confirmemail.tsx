@@ -6,7 +6,7 @@ import { ConfirmEmailPage } from '@/user/pages/ConfirmEmailPage';
 
 export const Route = createFileRoute('/confirmemail')({
   component: ConfirmEmailPage,
-  beforeLoad: allowOnly.unauthenticated,
+  beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({
     userId: z.string().uuid().optional(),
     code: z.string().optional(),

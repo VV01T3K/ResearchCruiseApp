@@ -1,9 +1,8 @@
 import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
-import { useScroll } from 'motion/react';
 import React from 'react';
 
+import { AppActionsSection } from '@/core/components/AppActionsSection';
 import { AppButton } from '@/core/components/AppButton';
-import { cn } from '@/core/lib/utils';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
 import { CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
 
@@ -11,27 +10,16 @@ type Props = {
   onReject: () => void;
 };
 export function ApplicationDetailsActionsSection({ onReject }: Props) {
-  const [isSticky, setIsSticky] = React.useState(false);
-  const { scrollYProgress } = useScroll();
   const [confirmationMode, setConfirmationMode] = React.useState(false);
 
   const { application } = useApplicationDetails();
-
-  scrollYProgress.on('change', (latestValue) => {
-    setIsSticky(latestValue < 1);
-  });
 
   if (application.status !== CruiseApplicationStatus.WaitingForSupervisor) {
     return null;
   }
 
   return (
-    <div
-      className={cn(
-        'sticky bottom-4 flex gap-4 w-fit mx-auto rounded-2xl py-4 px-6',
-        isSticky ? 'backdrop-blur-xs bg-white/30 shadow-2xl' : ''
-      )}
-    >
+    <AppActionsSection>
       {confirmationMode ? (
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2 text-center text-sm font-semibold">
@@ -62,6 +50,6 @@ export function ApplicationDetailsActionsSection({ onReject }: Props) {
           </AppButton>
         </>
       )}
-    </div>
+    </AppActionsSection>
   );
 }

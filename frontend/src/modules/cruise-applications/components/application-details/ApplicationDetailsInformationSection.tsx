@@ -28,13 +28,13 @@ export function ApplicationDetailsInformationSection() {
         />
         <div className="grid grid-cols-1 gap-1">
           <strong>Formularze:</strong>
-          <AppLink href={`/cruises/${application.id}/formA`} disabled={!application.hasFormA}>
+          <AppLink href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>
             Formularz A
           </AppLink>
-          <AppLink href={`/cruises/${application.id}/formB`} disabled={!application.hasFormB}>
+          <AppLink href={`/applications/${application.id}/formB`} disabled={!application.hasFormB}>
             Formularz B
           </AppLink>
-          <AppLink href={`/cruises/${application.id}/formC`} disabled={!application.hasFormC}>
+          <AppLink href={`/applications/${application.id}/formC`} disabled={!application.hasFormC}>
             Formularz C
           </AppLink>
         </div>

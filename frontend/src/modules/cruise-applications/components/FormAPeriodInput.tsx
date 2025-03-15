@@ -4,23 +4,9 @@ import React from 'react';
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
 import { AppInputHelper } from '@/core/components/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/core/components/inputs/parts/AppInputLabel';
+import { months } from '@/core/lib/calendarUtils';
 import { cn } from '@/core/lib/utils';
 import { CruisePeriodType } from '@/cruise-applications/models/FormADto';
-
-const months = [
-  'Styczeń',
-  'Luty',
-  'Marzec',
-  'Kwiecień',
-  'Maj',
-  'Czerwiec',
-  'Lipiec',
-  'Sierpień',
-  'Wrzesień',
-  'Październik',
-  'Listopad',
-  'Grudzień',
-];
 
 function getPointAtTime(position: number): string {
   const pointAtTimeMonths = [

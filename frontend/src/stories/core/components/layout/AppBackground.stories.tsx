@@ -1,3 +1,4 @@
+import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import AppBackground from '@/core/components/layout/AppBackground';
@@ -6,9 +7,11 @@ const meta = {
   component: AppBackground,
   decorators: [
     (Story) => (
-      <div className="h-screen">
-        <Story />
-      </div>
+      <MockRouterProvider>
+        <div className="h-screen">
+          <Story />
+        </div>
+      </MockRouterProvider>
     ),
   ],
 } satisfies Meta<typeof AppBackground>;

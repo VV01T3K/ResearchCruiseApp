@@ -46,6 +46,11 @@ export function AppMonthPickerInput({
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const removeSelectedDatePortalRef = React.useRef<HTMLDivElement>(null);
 
+  React.useEffect(() => {
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    setSelectedDate(getDateFromValue(value));
+  }, [value]);
+
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],
     onOutsideClick: () => {

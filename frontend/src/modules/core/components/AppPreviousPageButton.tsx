@@ -1,14 +1,14 @@
+import { useRouter } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { AppLink } from '@/core/components/AppLink';
-
 export function AppPreviousPageButton() {
+  const router = useRouter();
   const [isHovered, setIsHovered] = React.useState(false);
 
   return (
     <motion.div onHoverStart={() => setIsHovered(true)} onHoverEnd={() => setIsHovered(false)} className="w-8" layout>
-      <AppLink href=".." title="Cofnij się">
+      <a title="Cofnij się" onClick={() => router.history.back()}>
         <motion.svg
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
@@ -31,7 +31,7 @@ export function AppPreviousPageButton() {
             transition={{ duration: 0.2 }}
           />
         </motion.svg>
-      </AppLink>
+      </a>
     </motion.div>
   );
 }

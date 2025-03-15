@@ -8,6 +8,7 @@ import {
   OnChangeFn,
   Row,
   RowSelectionState,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -22,6 +23,7 @@ type Props<T> = {
   emptyTableMessage?: string;
   rowSelectionState?: RowSelectionState;
   setRowSelectionState?: OnChangeFn<RowSelectionState>;
+  initialSortingState?: SortingState;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   variant?: 'form' | 'table';
 };
@@ -33,6 +35,7 @@ export function AppTable<T>({
   emptyTableMessage,
   rowSelectionState,
   setRowSelectionState,
+  initialSortingState,
   getRowId,
   variant = 'table',
 }: Props<T>) {
@@ -51,6 +54,9 @@ export function AppTable<T>({
     onRowSelectionChange: setRowSelectionState,
     state: {
       rowSelection: rowSelectionState,
+    },
+    initialState: {
+      sorting: initialSortingState,
     },
     getRowId: getRowId,
   });

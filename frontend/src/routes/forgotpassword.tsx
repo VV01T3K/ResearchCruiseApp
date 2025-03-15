@@ -5,5 +5,5 @@ import { ForgotPasswordPage } from '@/user/pages/ForgotPasswordPage';
 
 export const Route = createFileRoute('/forgotpassword')({
   component: ForgotPasswordPage,
-  beforeLoad: allowOnly.unauthenticated,
+  beforeLoad: allowOnly.unauthenticated(),
 });

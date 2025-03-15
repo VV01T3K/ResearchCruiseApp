@@ -11,10 +11,11 @@ import { cn } from '@/core/lib/utils';
 
 type Props = {
   value: { month: number; year: number };
-
   onChange: ({ month, year }: { month: number; year: number }) => void;
+
+  renderDate?: ({ month, year }: { month: number; year: number }) => React.ReactNode;
 };
-export function AppMonthPickerPopover({ value, onChange }: Props) {
+export function AppMonthPickerPopover({ value, onChange, renderDate }: Props) {
   const [expanded, setExpanded] = React.useState(false);
 
   const inputRef = React.useRef<HTMLDivElement>(null);
@@ -44,7 +45,9 @@ export function AppMonthPickerPopover({ value, onChange }: Props) {
           onClick={handleInputClick}
           className={cn('relative inline-flex gap-4 justify-between items-center text-sm rounded-lg w-full')}
         >
-          {new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}
+          {renderDate
+            ? renderDate(value)
+            : new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}
           <span className="flex gap-2">
             <span>{expanded ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}</span>
           </span>
