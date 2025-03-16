@@ -108,28 +108,28 @@ export function AppCalendar({ events, buttons }: Props) {
       <div className="flex justify-end flex-wrap gap-4 my-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
-          className="grid grid-cols-7 gap-1"
-          ref={calendarRef}
           key={currentMonth.month + currentMonth.year * 12}
           initial={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
           animate={{ opacity: 1, scaleX: 1 }}
           exit={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          {weekDays.map((day) => (
-            <div key={day} className="text-center truncate">
-              {day}
-            </div>
-          ))}
-          {getDaysInMonth(currentMonth).map((date) => (
-            <AppCalendarTile
-              date={date}
-              eventsWithRows={eventsWithRows}
-              currentMonth={currentMonth}
-              tileWidth={tileWidth}
-              key={date.toString()}
-            />
-          ))}
+          <div ref={calendarRef} className="grid grid-cols-7 gap-1">
+            {weekDays.map((day) => (
+              <div key={day} className="text-center truncate">
+                {day}
+              </div>
+            ))}
+            {getDaysInMonth(currentMonth).map((date) => (
+              <AppCalendarTile
+                date={date}
+                eventsWithRows={eventsWithRows}
+                currentMonth={currentMonth}
+                tileWidth={tileWidth}
+                key={date.toString()}
+              />
+            ))}
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>
