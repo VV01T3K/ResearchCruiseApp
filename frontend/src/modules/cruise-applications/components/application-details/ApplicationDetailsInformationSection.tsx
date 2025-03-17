@@ -1,6 +1,8 @@
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppLink } from '@/core/components/AppLink';
 import { AppInput } from '@/core/components/inputs/AppInput';
+import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
+import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
 
 export function ApplicationDetailsInformationSection() {
@@ -10,7 +12,7 @@ export function ApplicationDetailsInformationSection() {
     <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <AppInput name="number" value={application.number} label="Numer zgłoszenia:" required disabled />
-        <AppInput name="date" value={application.date} label="Data wysłania:" required disabled />
+        <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" required disabled />
         <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" required disabled />
         <AppInput
           name="cruiseLeader"
@@ -39,7 +41,7 @@ export function ApplicationDetailsInformationSection() {
           </AppLink>
         </div>
         <AppInput name="status" value={application.status} label="Status zgłoszenia:" required disabled />
-        <AppInput name="points" value={`${application.points}`} label="Punkty:" required disabled />
+        <AppNumberInput name="points" value={application.points} label="Punkty:" required disabled />
       </div>
     </AppAccordion>
   );

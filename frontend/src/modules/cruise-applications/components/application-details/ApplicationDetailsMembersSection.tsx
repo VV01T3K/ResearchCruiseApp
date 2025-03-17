@@ -1,7 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
-import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppTable } from '@/core/components/table/AppTable';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
@@ -91,7 +90,7 @@ export function ApplicationDetailsMembersSection() {
         />
 
         <div className="col-span-2">
-          <AppInput name="Punkty" value={evaluation.ugUnitsPoints} label="Punkty" required disabled />
+          <AppNumberInput name="Punkty" value={parseInt(evaluation.ugUnitsPoints)} label="Punkty" required disabled />
         </div>
       </div>
     </AppAccordion>

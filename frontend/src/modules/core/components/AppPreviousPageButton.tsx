@@ -8,7 +8,7 @@ export function AppPreviousPageButton() {
 
   return (
     <motion.div onHoverStart={() => setIsHovered(true)} onHoverEnd={() => setIsHovered(false)} className="w-8" layout>
-      <a title="Cofnij się" onClick={() => router.history.back()}>
+      <a className="hover:cursor-pointer" title="Cofnij się" onClick={() => router.history.back()}>
         <motion.svg
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"

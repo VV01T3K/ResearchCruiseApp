@@ -7,7 +7,7 @@ export function ApplicationDetailsEffectPointsSection() {
 
   return (
     <AppAccordion title="3. Efekty osiągnięte po poprzednich rejsach" expandedByDefault>
-      <div>
+      <div className="p-2">
         <AppInput
           name="effectPoints"
           value={evaluation.effectsPoints}

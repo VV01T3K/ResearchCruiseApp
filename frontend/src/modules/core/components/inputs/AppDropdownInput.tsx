@@ -53,16 +53,16 @@ export function AppDropdownInput({
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = React.useState(false);
   const selectedOptionIndex = allOptions.findIndex((option) => option.value === value);
-  const [selectedValue, setSelectedValue] = React.useState<AppDropdownInputOption>(() =>
+  const [selectedOption, setSelectedOption] = React.useState<AppDropdownInputOption>(() =>
     selectedOptionIndex < 0 ? { value: defaultValue, inlineLabel: placeholder } : allOptions[selectedOptionIndex]
   );
   const allPossibleOptions = allowEmptyOption
     ? [
         {
           value: defaultValue,
-          inlineLabel: selectedValue.value !== defaultValue ? placeholder : undefined,
+          inlineLabel: selectedOption.value !== defaultValue ? placeholder : undefined,
           richLabel:
-            selectedValue.value !== defaultValue ? (
+            selectedOption.value !== defaultValue ? (
               <span className="text-red-500">Usuń aktualny wybór</span>
             ) : undefined,
         },
@@ -71,12 +71,12 @@ export function AppDropdownInput({
     : allOptions;
 
   React.useEffect(() => {
-    if (value !== selectedValue.value) {
+    if (value !== selectedOption.value) {
       const selectedOption = allOptions.find((option) => option.value === value);
       // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-      setSelectedValue(selectedOption ?? { value: defaultValue, inlineLabel: placeholder });
+      setSelectedOption(selectedOption ?? { value: defaultValue, inlineLabel: placeholder });
     }
-  }, [allOptions, defaultValue, placeholder, selectedValue.value, value]);
+  }, [allOptions, defaultValue, placeholder, selectedOption.value, value]);
 
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],
@@ -87,7 +87,7 @@ export function AppDropdownInput({
   });
 
   function selectOption(option: AppDropdownInputOption) {
-    setSelectedValue(option);
+    setSelectedOption(option);
     setExpanded(false);
     onChange?.(option.value);
     onBlur?.();
@@ -106,7 +106,7 @@ export function AppDropdownInput({
         )}
         ref={inputRef}
       >
-        <input type="hidden" name={name} value={selectedValue.value} required={required} disabled={disabled} />
+        <input type="hidden" name={name} value={selectedOption.value} required={required} disabled={disabled} />
         <AppButton
           variant="plain"
           onClick={() => {
@@ -119,7 +119,7 @@ export function AppDropdownInput({
             'flex justify-between items-center'
           )}
         >
-          {selectedValue.inlineLabel}
+          {selectedOption.inlineLabel}
           <span className="flex gap-2">
             <AppInputErrorTriangle errors={errors} />
             <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>

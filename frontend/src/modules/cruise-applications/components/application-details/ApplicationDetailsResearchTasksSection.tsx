@@ -36,7 +36,7 @@ export function ApplicationDetailsResearchTasksSection() {
 
   return (
     <AppAccordion title="2. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
-      <div>
+      <div className="pb-2">
         <AppTable
           data={evaluation.formAResearchTasks}
           columns={columns}

@@ -2,7 +2,10 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { useAppContext } from '@/core/hooks/AppContextHook';
 import { ApplicationDetailsProvider } from '@/cruise-applications/contexts/ApplicationDetailsContext';
-import { useRejectApplicationMutation } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
+import {
+  useAcceptApplicationMutation,
+  useRejectApplicationMutation,
+} from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
 import { EvaluationDto } from '@/cruise-applications/models/EvaluationDto';
 
@@ -23,14 +26,36 @@ export function ApplicationDetails({ application, evaluation }: Props) {
   const appContext = useAppContext();
   const queryClient = useQueryClient();
 
+  const acceptMutation = useAcceptApplicationMutation();
   const rejectMutation = useRejectApplicationMutation();
+
+  function acceptApplication() {
+    acceptMutation.mutate(application.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['cruiseApplications', application.id] });
+        appContext.showAlert({
+          title: 'Formularz został pomyślnie zaakceptowany',
+          message: 'Formularz został zaakceptowany.',
+          variant: 'success',
+        });
+      },
+      onError: (err) => {
+        console.error(err);
+        appContext.showAlert({
+          title: 'Wystąpił błąd',
+          message: 'Nie udało się zaakceptować formularza.',
+          variant: 'danger',
+        });
+      },
+    });
+  }
 
   function rejectApplication() {
     rejectMutation.mutate(application.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['cruiseApplications', application.id] });
         appContext.showAlert({
-          title: 'Formularz pomyślnie odrzucony',
+          title: 'Formularz został pomyślnie odrzucony',
           message: 'Formularz został odrzucony.',
           variant: 'success',
         });
@@ -55,7 +80,7 @@ export function ApplicationDetails({ application, evaluation }: Props) {
       <ApplicationDetailsMembersSection />
       <ApplicationDetailsPublicationsSection />
       <ApplicationDetailsSPUBTasksSection />
-      <ApplicationDetailsActionsSection onReject={rejectApplication} />
+      <ApplicationDetailsActionsSection onAccept={acceptApplication} onReject={rejectApplication} />
     </ApplicationDetailsProvider>
   );
 }

@@ -108,7 +108,7 @@ export function ApplicationDetailsPublicationsSection() {
 
   return (
     <AppAccordion title="6. Publikacje" expandedByDefault>
-      <div>
+      <div className="pb-2">
         <AppTable
           data={evaluation.formAPublications}
           columns={columns}

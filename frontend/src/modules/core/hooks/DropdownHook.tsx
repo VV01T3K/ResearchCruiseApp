@@ -21,7 +21,7 @@ const positionModifier: Record<Exclude<Props['dropdownPosition'], undefined>, nu
 };
 
 function isOverflowingDownwards(headerRect: DOMRect, dropdownRect: DOMRect) {
-  return headerRect.top - headerRect.height / 2 + window.scrollY + dropdownRect.height < document.body.scrollHeight;
+  return headerRect.top + headerRect.height + dropdownRect.height < window.innerHeight;
 }
 
 export function useDropdown({
@@ -44,6 +44,7 @@ export function useDropdown({
 
     const headerRect = openingItemRef.current.getBoundingClientRect();
     const dropdownRect = dropdownRef.current.getBoundingClientRect();
+    const rootHeaderHeight = document.querySelector('#header')?.clientHeight ?? 0;
 
     const direction = isOverflowingDownwards(headerRect, dropdownRect) ? 'down' : 'up';
 
@@ -59,8 +60,8 @@ export function useDropdown({
     setDropdownProperties({
       top:
         direction === 'down'
-          ? headerRect.top - headerRect.height / 2 + window.scrollY
-          : headerRect.top - headerRect.height * 1.75 - dropdownRect.height + window.scrollY,
+          ? headerRect.top + headerRect.height + window.scrollY - rootHeaderHeight
+          : headerRect.top - dropdownRect.height + window.scrollY - rootHeaderHeight,
       left:
         headerRect.left +
         headerRect.width * positionModifier[dropdownPosition] -

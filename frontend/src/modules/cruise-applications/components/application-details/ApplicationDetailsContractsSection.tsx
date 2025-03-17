@@ -87,7 +87,7 @@ export function ApplicationDetailsContractsSection() {
       title="4. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
       expandedByDefault
     >
-      <div>
+      <div className="pb-2">
         <AppTable data={evaluation.formAContracts} columns={columns} emptyTableMessage="Nie dodano żadnej umowy." />
       </div>
     </AppAccordion>
