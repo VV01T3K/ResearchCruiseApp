@@ -21,14 +21,16 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }
   return (
     <>
       <div className="flex flex-wrap flex-col">
-        <div className="flex flex-col gap-4 m-4">
-          {allButtons.map((x, id) => (
-            // eslint-disable-next-line @eslint-react/no-array-index-key
-            <div key={id} className="flex justify-end">
-              {x}
-            </div>
-          ))}
-        </div>
+        {allButtons.length > 0 && (
+          <div className="flex flex-col gap-4 m-4">
+            {allButtons.map((x, id) => (
+              // eslint-disable-next-line @eslint-react/no-array-index-key
+              <div key={id} className="flex justify-end">
+                {x}
+              </div>
+            ))}
+          </div>
+        )}
         <table className="w-full table-fixed">
           <tbody>
             {table.getRowModel().rows.map((row) => (

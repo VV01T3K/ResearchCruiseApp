@@ -12,18 +12,20 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage }: TableP
     <div className="w-full overflow-x-auto">
       <table className="min-w-full table-fixed">
         <thead>
-          <tr key="header-buttons">
-            <th
-              colSpan={Math.max(
-                table
-                  .getHeaderGroups()
-                  .flatMap((x) => x.headers.map((y) => y.colSpan))
-                  .reduce((a, b) => a + b, 0)
-              )}
-            >
-              <div className="flex justify-end flex-wrap gap-4 my-4">{allButtons}</div>
-            </th>
-          </tr>
+          {allButtons.length > 0 && (
+            <tr key="header-buttons">
+              <th
+                colSpan={Math.max(
+                  table
+                    .getHeaderGroups()
+                    .flatMap((x) => x.headers.map((y) => y.colSpan))
+                    .reduce((a, b) => a + b, 0)
+                )}
+              >
+                <div className="flex justify-end flex-wrap gap-4 my-4">{allButtons}</div>
+              </th>
+            </tr>
+          )}
           {table.getHeaderGroups().map((headerGroup) => {
             return (
               <tr key={headerGroup.id}>

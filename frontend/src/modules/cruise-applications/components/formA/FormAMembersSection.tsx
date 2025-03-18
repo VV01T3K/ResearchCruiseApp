@@ -207,6 +207,7 @@ export function FormAMembersSection() {
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
+                disabled={isReadonly}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </div>
@@ -245,6 +246,7 @@ export function FormAMembersSection() {
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
+                disabled={isReadonly}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </div>

@@ -166,7 +166,10 @@ export function FormAPeriodInput({
         onBlur={onBlur}
       >
         <span
-          className="absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 z-0 bg-primary-800"
+          className={cn(
+            'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 z-0',
+            !disabled ? 'bg-primary-800' : 'bg-gray-400'
+          )}
           style={{
             left: `${getLeft() + getWidth() / 2}%`,
             width: `${getWidth()}%`,
@@ -193,7 +196,8 @@ export function FormAPeriodInput({
               aria-valuemax={rangerInstance.options.max}
               aria-valuenow={value}
               className={cn(
-                `absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 outline-none rounded-full bg-primary-800 duration-75 cursor-pointer z-10`,
+                `absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 outline-none rounded-full duration-75 z-10`,
+                !disabled ? 'cursor-pointer bg-primary-800' : 'bg-gray-400',
                 isActive ? 'scale-125' : ''
               )}
               style={{
@@ -207,7 +211,10 @@ export function FormAPeriodInput({
           .map((position) => (
             <span
               key={`step-${position}`}
-              className="absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-2.5 h-2.5 outline-none rounded-full bg-white border border-primary-800"
+              className={cn(
+                'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-2.5 h-2.5 outline-none rounded-full bg-white border',
+                !disabled ? 'border-primary-800' : 'border-gray-500'
+              )}
               style={{ left: `${position}%` }}
             />
           ))}

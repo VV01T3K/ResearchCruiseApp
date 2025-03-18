@@ -26,6 +26,7 @@ type Props<T> = {
   initialSortingState?: SortingState;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   variant?: 'form' | 'table';
+  disabled?: boolean;
 };
 
 export function AppTable<T>({
@@ -38,6 +39,7 @@ export function AppTable<T>({
   initialSortingState,
   getRowId,
   variant = 'table',
+  disabled = false,
 }: Props<T>) {
   const { width } = useWindowSize();
   const table = useReactTable<T>({
@@ -50,10 +52,14 @@ export function AppTable<T>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
     defaultColumn: {
       filterFn: 'arrIncludesSome',
+      sortingFn: 'alphanumeric',
     },
     onRowSelectionChange: setRowSelectionState,
     state: {
       rowSelection: rowSelectionState,
+      columnVisibility: {
+        actions: !disabled,
+      },
     },
     initialState: {
       sorting: initialSortingState,
@@ -64,5 +70,12 @@ export function AppTable<T>({
   const isMobile = width < 768;
   const TableComponent = isMobile ? AppMobileTable : AppDesktopTable;
 
-  return <TableComponent table={table} buttons={buttons} emptyTableMessage={emptyTableMessage} variant={variant} />;
+  return (
+    <TableComponent
+      table={table}
+      buttons={!disabled ? buttons : () => []}
+      emptyTableMessage={emptyTableMessage}
+      variant={variant}
+    />
+  );
 }

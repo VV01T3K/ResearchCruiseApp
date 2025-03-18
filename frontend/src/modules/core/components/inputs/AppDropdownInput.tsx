@@ -114,15 +114,19 @@ export function AppDropdownInput({
             setExpanded(!expanded);
           }}
           className={cn(
-            'cursor-pointer w-full text-sm',
-            'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
+            'ring-2 ring-transparent w-full text-sm p-2.5',
+            !disabled &&
+              'cursor-pointer focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
             'flex justify-between items-center'
           )}
+          disabled={disabled}
         >
           {selectedOption.inlineLabel}
           <span className="flex gap-2">
             <AppInputErrorTriangle errors={errors} />
-            <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
+            {!disabled && (
+              <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
+            )}
           </span>
         </AppButton>
       </div>

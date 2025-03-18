@@ -156,6 +156,7 @@ export function FormASPUBTasksSection() {
                 ]}
                 emptyTableMessage="Brak zadań SPUB"
                 variant="form"
+                disabled={isReadonly}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </>

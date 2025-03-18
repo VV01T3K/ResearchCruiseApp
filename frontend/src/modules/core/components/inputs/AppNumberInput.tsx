@@ -115,12 +115,14 @@ export function AppNumberInput({
     <div className={cn(className, 'flex flex-col')}>
       <AppInputLabel name={name} label={label} />
       <div className="flex items-center">
-        <AppNumberInputButton
-          onClick={() => updateValue(value - step)}
-          side="left"
-          disabled={disabled}
-          inputToFocus={inputRef}
-        />
+        {!disabled && (
+          <AppNumberInputButton
+            onClick={() => updateValue(value - step)}
+            side="left"
+            disabled={false}
+            inputToFocus={inputRef}
+          />
+        )}
         <div className="relative w-full">
           <input
             name={name}
@@ -133,19 +135,21 @@ export function AppNumberInput({
               'bg-gray-50 border border-gray-300 h-11 text-center text-gray-900 text-sm block w-full py-2.5',
               'transition duration-300 ease-in-out',
               'focus:ring-primary focus:border-primary focus:shadow focus:outline-none transform:scale-105',
-              disabled ? 'bg-gray-200' : '',
+              disabled ? 'rounded-lg bg-gray-200' : '',
               errors?.length ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
             ref={inputRef}
           />
           <AppInputErrorTriangle errors={errors} mode={'absolute'} />
         </div>
-        <AppNumberInputButton
-          onClick={() => updateValue(value + step)}
-          side="right"
-          disabled={disabled}
-          inputToFocus={inputRef}
-        />
+        {!disabled && (
+          <AppNumberInputButton
+            onClick={() => updateValue(value + step)}
+            side="right"
+            disabled={false}
+            inputToFocus={inputRef}
+          />
+        )}
       </div>
       <div className="flex flex-col justify-between mt-2 text-sm">
         <AppInputHelper helper={helper} />

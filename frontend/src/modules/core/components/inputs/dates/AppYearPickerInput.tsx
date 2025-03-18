@@ -102,8 +102,8 @@ export function AppYearPickerInput({
             variant="plain"
             onClick={() => handleInputClick()}
             className={cn(
-              'relative inline-flex gap-4 justify-between items-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full',
-              disabled ? 'bg-gray-200' : '',
+              'relative inline-flex gap-4 p-2.5 justify-between items-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full',
+              disabled ? 'bg-gray-200 hover:cursor-default' : '',
               errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
           >
@@ -116,6 +116,7 @@ export function AppYearPickerInput({
           </AppButton>
           {!!selectedYear &&
             removeSelectedYearPortalRef.current &&
+            !disabled &&
             createPortal(
               <AppButton
                 variant="plain"

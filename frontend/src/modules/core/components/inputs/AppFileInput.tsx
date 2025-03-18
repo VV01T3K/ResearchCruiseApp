@@ -128,7 +128,7 @@ export function AppFileInput({
             'flex flex-col items-center justify-center w-full border-2 border-gray-300 text-gray-500',
             'border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 overflow-x-auto',
             'duration-200 ease-in-out transition-all min-h-10',
-            disabled ? 'bg-gray-200 hover:bg-gray-200 cursor-default' : '',
+            disabled ? 'bg-gray-200 hover:bg-gray-200 cursor-pointer' : '',
             errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : '',
             className
           )}
