@@ -11,13 +11,24 @@ services:
       - Database__MigrateAutomatically=true
       - Database__LogUserPasswordsWhenSeeding=true
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
+      - FrontendUrl=http://localhost:8081
     ports:
       - 3000:8080
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   frontend:
     container_name: researchcruiseapp-frontend
     build:
+      context: ../frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+  old-frontend:
+    container_name: researchcruiseapp-old-frontend
+    build:
       context: ../old_frontend
     ports:
-      - 8080:80
+      - 8081:80

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: research-cruise-app-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: research-cruise-app-backend
+  template:
+    metadata:
+      labels:
+        app: research-cruise-app-backend
+    spec:
+      containers:
+        - name: research-cruise-app-backend
+          image: research-cruise-app-backend
+          envFrom:
+            - configMapRef:
+                name: research-cruise-app-backend-config
+            - secretRef:
+                name: research-cruise-app-backend-secret
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 200Mi

@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: research-cruise-app-frontend
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: rca.nasus.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: research-cruise-app-frontend
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - rca.nasus.dev
+      secretName: research-cruise-app-frontend-tls

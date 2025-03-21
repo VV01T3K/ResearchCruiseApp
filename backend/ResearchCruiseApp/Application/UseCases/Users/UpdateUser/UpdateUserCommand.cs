@@ -4,4 +4,5 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Application.UseCases.Users.UpdateUser;
 
-public record UpdateUserCommand(Guid UserId, UpdateUserFormDto UpdateUserFormDto) : IRequest<Result>;
+public record UpdateUserCommand(Guid UserId, UpdateUserFormDto UpdateUserFormDto)
+    : IRequest<Result>;

@@ -7,7 +7,8 @@ namespace ResearchCruiseApp.Application.UseCases.Users.DeleteUser;
 
 public class DeleteUserCommandHandler(
     IIdentityService identityService,
-    IUserPermissionVerifier userPermissionVerifier) : IRequestHandler<DeleteUserCommand, Result>
+    IUserPermissionVerifier userPermissionVerifier
+) : IRequestHandler<DeleteUserCommand, Result>
 {
     public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {

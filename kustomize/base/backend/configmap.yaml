@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: research-cruise-app-backend-config
+data:
+  Database__LogUserPasswordsWhenSeeding: "true"
+  Database__MigrateAutomatically: "true"
+  Database__SeedAutomatically: "true"

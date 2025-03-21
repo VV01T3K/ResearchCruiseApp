@@ -351,7 +351,7 @@ public class IdentityService(
             return identityResult.ToApplicationResult();
 
         var userRoles = await userManager.GetRolesAsync(user);
-        
+
         if (updateUserFormDto.Role is not null)
         {
             identityResult = await userManager.RemoveFromRolesAsync(user, userRoles);
@@ -361,10 +361,13 @@ public class IdentityService(
             if (!identityResult.Succeeded)
                 return identityResult.ToApplicationResult();
         }
-        
+
         if (user is { EmailConfirmed: false, Email: not null })
         {
-            await ResendEmailConfirmationEmail(user.Email, updateUserFormDto.Role ?? userRoles.First());
+            await ResendEmailConfirmationEmail(
+                user.Email,
+                updateUserFormDto.Role ?? userRoles.First()
+            );
         }
 
         return Result.Empty;
