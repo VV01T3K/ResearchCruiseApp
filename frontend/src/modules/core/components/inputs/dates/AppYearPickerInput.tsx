@@ -95,7 +95,7 @@ export function AppYearPickerInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={name} label={label} />
+        <AppInputLabel name={name} value={label} />
         <div className={cn()} ref={elementRef}>
           <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
           <AppButton

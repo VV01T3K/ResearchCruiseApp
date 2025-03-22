@@ -55,31 +55,38 @@ export function MyPublicationsPage() {
       ),
       enableSorting: false,
       enableColumnFilter: false,
+      size: 5,
     },
     {
       accessorFn: (row) => row.title,
       header: 'Tytuł',
       cell: (cell) => <p className="font-bold pr-4">{cell.getValue() as string}</p>,
+      size: 25,
     },
     {
       accessorFn: (row) => row.authors,
       header: 'Autorzy',
+      size: 15,
     },
     {
       accessorFn: (row) => row.doi,
       header: 'DOI',
+      size: 15,
     },
     {
       accessorFn: (row) => row.magazine,
       header: 'Czasopismo',
+      size: 15,
     },
     {
       accessorFn: (row) => row.year,
       header: 'Rok',
+      size: 10,
     },
     {
       accessorFn: (row) => row.ministerialPoints,
       header: 'Punkty ministerialne',
+      size: 10,
     },
     {
       id: 'actions',
@@ -94,6 +101,7 @@ export function MyPublicationsPage() {
           Usuń
         </AppButton>
       ),
+      size: 5,
     },
   ];
 

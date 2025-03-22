@@ -29,6 +29,7 @@ import { Route as CruisesIndexImport } from './routes/cruises/index'
 import { Route as ApplicationsIndexImport } from './routes/applications/index'
 import { Route as CruisesNewImport } from './routes/cruises/new'
 import { Route as CruisesCruiseIdIndexImport } from './routes/cruises/$cruiseId/index'
+import { Route as ApplicationsApplicationIdFormBImport } from './routes/applications/$applicationId/formB'
 import { Route as ApplicationsApplicationIdFormAImport } from './routes/applications/$applicationId/formA'
 import { Route as ApplicationsApplicationIdDetailsImport } from './routes/applications/$applicationId/details'
 
@@ -141,6 +142,13 @@ const CruisesCruiseIdIndexRoute = CruisesCruiseIdIndexImport.update({
   path: '/cruises/$cruiseId/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const ApplicationsApplicationIdFormBRoute =
+  ApplicationsApplicationIdFormBImport.update({
+    id: '/applications/$applicationId/formB',
+    path: '/applications/$applicationId/formB',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 const ApplicationsApplicationIdFormARoute =
   ApplicationsApplicationIdFormAImport.update({
@@ -293,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsApplicationIdFormAImport
       parentRoute: typeof rootRoute
     }
+    '/applications/$applicationId/formB': {
+      id: '/applications/$applicationId/formB'
+      path: '/applications/$applicationId/formB'
+      fullPath: '/applications/$applicationId/formB'
+      preLoaderRoute: typeof ApplicationsApplicationIdFormBImport
+      parentRoute: typeof rootRoute
+    }
     '/cruises/$cruiseId/': {
       id: '/cruises/$cruiseId/'
       path: '/cruises/$cruiseId'
@@ -325,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
   '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
+  '/applications/$applicationId/formB': typeof ApplicationsApplicationIdFormBRoute
   '/cruises/$cruiseId': typeof CruisesCruiseIdIndexRoute
 }
 
@@ -348,6 +364,7 @@ export interface FileRoutesByTo {
   '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
   '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
+  '/applications/$applicationId/formB': typeof ApplicationsApplicationIdFormBRoute
   '/cruises/$cruiseId': typeof CruisesCruiseIdIndexRoute
 }
 
@@ -372,6 +389,7 @@ export interface FileRoutesById {
   '/cruises/': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
   '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
+  '/applications/$applicationId/formB': typeof ApplicationsApplicationIdFormBRoute
   '/cruises/$cruiseId/': typeof CruisesCruiseIdIndexRoute
 }
 
@@ -397,6 +415,7 @@ export interface FileRouteTypes {
     | '/cruises'
     | '/applications/$applicationId/details'
     | '/applications/$applicationId/formA'
+    | '/applications/$applicationId/formB'
     | '/cruises/$cruiseId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -419,6 +438,7 @@ export interface FileRouteTypes {
     | '/cruises'
     | '/applications/$applicationId/details'
     | '/applications/$applicationId/formA'
+    | '/applications/$applicationId/formB'
     | '/cruises/$cruiseId'
   id:
     | '__root__'
@@ -441,6 +461,7 @@ export interface FileRouteTypes {
     | '/cruises/'
     | '/applications/$applicationId/details'
     | '/applications/$applicationId/formA'
+    | '/applications/$applicationId/formB'
     | '/cruises/$cruiseId/'
   fileRoutesById: FileRoutesById
 }
@@ -465,6 +486,7 @@ export interface RootRouteChildren {
   CruisesIndexRoute: typeof CruisesIndexRoute
   ApplicationsApplicationIdDetailsRoute: typeof ApplicationsApplicationIdDetailsRoute
   ApplicationsApplicationIdFormARoute: typeof ApplicationsApplicationIdFormARoute
+  ApplicationsApplicationIdFormBRoute: typeof ApplicationsApplicationIdFormBRoute
   CruisesCruiseIdIndexRoute: typeof CruisesCruiseIdIndexRoute
 }
 
@@ -488,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   CruisesIndexRoute: CruisesIndexRoute,
   ApplicationsApplicationIdDetailsRoute: ApplicationsApplicationIdDetailsRoute,
   ApplicationsApplicationIdFormARoute: ApplicationsApplicationIdFormARoute,
+  ApplicationsApplicationIdFormBRoute: ApplicationsApplicationIdFormBRoute,
   CruisesCruiseIdIndexRoute: CruisesCruiseIdIndexRoute,
 }
 
@@ -520,6 +543,7 @@ export const routeTree = rootRoute
         "/cruises/",
         "/applications/$applicationId/details",
         "/applications/$applicationId/formA",
+        "/applications/$applicationId/formB",
         "/cruises/$cruiseId/"
       ]
     },
@@ -579,6 +603,9 @@ export const routeTree = rootRoute
     },
     "/applications/$applicationId/formA": {
       "filePath": "applications/$applicationId/formA.tsx"
+    },
+    "/applications/$applicationId/formB": {
+      "filePath": "applications/$applicationId/formB.tsx"
     },
     "/cruises/$cruiseId/": {
       "filePath": "cruises/$cruiseId/index.tsx"

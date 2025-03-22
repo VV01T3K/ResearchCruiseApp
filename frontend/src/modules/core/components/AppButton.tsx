@@ -24,7 +24,7 @@ export function AppButton(props: Props) {
         'text-white outline-none hover:cursor-pointer disabled:cursor-default',
         variants[variant],
         sizes[size],
-        props.type === 'link' ? 'w-full h-full' : className,
+        className,
         variant != 'plain' ? 'flex items-center justify-around ' : ''
       )}
       onClick={props.type === 'link' ? undefined : props.onClick}

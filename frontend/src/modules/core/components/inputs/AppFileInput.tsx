@@ -59,14 +59,18 @@ export function AppFileInput({
   const [notifications, setNotifications] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  function updateFiles(newFiles: FileDto[]) {
+    setFiles(newFiles);
     if (allowMultiple) {
-      onChange?.(files);
+      onChange?.(newFiles);
+      console.log('newFiles', newFiles);
     } else {
-      onChange?.(files[0]);
+      onChange?.(newFiles[0]);
+      console.log('newFiles', newFiles[0]);
     }
+
     onBlur?.();
-  }, [allowMultiple, files, onBlur, onChange]);
+  }
 
   async function handleDrop(evt: React.DragEvent<HTMLDivElement>) {
     evt.preventDefault();
@@ -74,14 +78,14 @@ export function AppFileInput({
 
     const filesList = evt.dataTransfer.files;
     if (!disabled && filesList) {
-      setFiles(await loadFileList(filesList));
+      updateFiles(await loadFileList(filesList));
     }
   }
 
   async function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const filesList = evt.target.files;
     if (filesList) {
-      setFiles(await loadFileList(filesList));
+      updateFiles(await loadFileList(filesList));
     }
   }
 
@@ -110,13 +114,12 @@ export function AppFileInput({
   }
 
   function removeFile(file: FileDto) {
-    setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+    updateFiles(files.filter((f) => f !== file));
   }
 
   return (
     <div>
-      <AppInputLabel name={name} label={label} />
-
+      <AppInputLabel name={name} value={label} />
       <div
         className="flex items-center justify-center w-full"
         onClick={() => inputRef.current?.click()}

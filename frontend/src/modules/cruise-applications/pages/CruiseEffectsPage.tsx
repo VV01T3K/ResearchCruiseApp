@@ -6,7 +6,7 @@ import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppLoader } from '@/core/components/AppLoader';
 import { AppTable } from '@/core/components/table/AppTable';
-import { ReadOnlyResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyResearchTaskDetails';
+import { ReadOnlyResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyResearchTaskDetails';
 import { useEffectsEvaluationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { getTaskName } from '@/cruise-applications/models/ResearchTaskDto';
 import { UserEffectDto } from '@/cruise-applications/models/UserEffectDto';

@@ -62,3 +62,15 @@ export const WithMinuteStep: Story = {
     minuteStep: 10,
   },
 };
+
+export const WithMinimalTime: Story = {
+  args: {
+    minimalTime: { hours: 10, minutes: 0 },
+  },
+};
+
+export const WithMaximalTime: Story = {
+  args: {
+    maximalTime: { hours: 20, minutes: 0 },
+  },
+};

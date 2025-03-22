@@ -121,6 +121,12 @@ export function AppDatePickerInput({
       return;
     }
 
+    if (minimalDate && newDate < minimalDate) {
+      newDate = minimalDate;
+    } else if (maximalDate && newDate > maximalDate) {
+      newDate = maximalDate;
+    }
+
     setSelectedDate(newDate);
     onChange?.(getValueFromDate(newDate));
     if (type === 'date') {
@@ -131,7 +137,7 @@ export function AppDatePickerInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={name} label={label} />
+        <AppInputLabel name={name} value={label} />
         <div ref={inputRef}>
           <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
           <AppButton
@@ -238,6 +244,22 @@ export function AppDatePickerInput({
                   }}
                   onBlur={onBlur}
                   minuteStep={minuteStep}
+                  minimalTime={
+                    minimalDate && selectedDate && dateToUtcDay(minimalDate) === dateToUtcDay(selectedDate)
+                      ? {
+                          hours: minimalDate?.getHours(),
+                          minutes: minimalDate?.getMinutes(),
+                        }
+                      : undefined
+                  }
+                  maximalTime={
+                    maximalDate && selectedDate && dateToUtcDay(maximalDate) === dateToUtcDay(selectedDate)
+                      ? {
+                          hours: maximalDate?.getHours(),
+                          minutes: maximalDate?.getMinutes(),
+                        }
+                      : undefined
+                  }
                 />
               </div>
             )}
@@ -303,7 +325,8 @@ function CalendarDateTile({
       selectionStartDateUtc && hoveredDateUtc && dateUtc >= selectionStartDateUtc && dateUtc <= hoveredDateUtc,
     isInSelectedRange =
       selectionStartDateUtc && selectedDateUtc && dateUtc >= selectionStartDateUtc && dateUtc <= selectedDateUtc,
-    isAllowed = (!minimalDate || date >= minimalDate) && (!maximalDate || date <= maximalDate),
+    isAllowed =
+      (!minimalDate || dateUtc >= dateToUtcDay(minimalDate)) && (!maximalDate || dateUtc <= dateToUtcDay(maximalDate)),
     isVisibleMonth = date.getMonth() === visibleMonth.month;
   return (
     <div

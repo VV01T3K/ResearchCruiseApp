@@ -8,16 +8,26 @@ import { CruiseFormProvider, CruiseFromContextType } from '@/cruise-schedule/con
 type Props = {
   context: CruiseFromContextType;
   buttons: React.ReactNode;
+
+  onSubmit?: () => void;
 };
 
-export function CruiseFrom({ context, buttons }: Props) {
+export function CruiseFrom({ context, buttons, onSubmit }: Props) {
   return (
     <CruiseFormProvider value={context}>
-      <CruiseFormBasicInformationSection />
-      <CruiseFormDateSelectionSection />
-      <CruiseFormManagerSelectionSection />
-      <CruiseFormApplicationsSection />
-      <AppActionsSection children={buttons} />
+      <form
+        className="space-y-8"
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          onSubmit?.();
+        }}
+      >
+        <CruiseFormBasicInformationSection />
+        <CruiseFormDateSelectionSection />
+        <CruiseFormManagerSelectionSection />
+        <CruiseFormApplicationsSection />
+        <AppActionsSection children={buttons} />
+      </form>
     </CruiseFormProvider>
   );
 }

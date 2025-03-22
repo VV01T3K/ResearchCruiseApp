@@ -7,9 +7,9 @@ import { AppInputLabel } from '@/core/components/inputs/parts/AppInputLabel';
 import { cn } from '@/core/lib/utils';
 
 type Props = {
-  name: string;
   value: string;
 
+  name?: string;
   type?: 'text' | 'password' | 'email' | 'textarea';
   placeholder?: string;
   onBlur?: () => void;
@@ -52,7 +52,7 @@ export function AppInput({
 
   return (
     <div className={cn('flex flex-col', containerClassName)}>
-      <AppInputLabel name={name} label={label} />
+      <AppInputLabel name={name} value={label} />
 
       <div className="flex relative">
         <InputElement

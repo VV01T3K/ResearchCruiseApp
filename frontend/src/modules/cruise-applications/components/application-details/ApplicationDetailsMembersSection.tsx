@@ -20,6 +20,8 @@ export function ApplicationDetailsMembersSection() {
       header: 'Jednostka',
       accessorFn: (row) => row.ugUnitName,
       cell: ({ row }) => row.original.ugUnitName,
+      enableColumnFilter: false,
+      enableSorting: false,
     },
     {
       header: 'Liczba pracowników',
@@ -34,6 +36,14 @@ export function ApplicationDetailsMembersSection() {
           disabled
         />
       ),
+      size: 10,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      id: 'padding',
+      cell: () => null,
+      size: 10,
     },
     {
       header: 'Liczba studentów',
@@ -48,6 +58,9 @@ export function ApplicationDetailsMembersSection() {
           disabled
         />
       ),
+      size: 10,
+      enableColumnFilter: false,
+      enableSorting: false,
     },
   ];
 
@@ -61,6 +74,9 @@ export function ApplicationDetailsMembersSection() {
       header: 'Instytucja',
       accessorFn: (row) => row.name,
       cell: ({ row }) => row.original.name,
+      size: 70,
+      enableColumnFilter: false,
+      enableSorting: false,
     },
     {
       header: 'Liczba osób',
@@ -75,18 +91,27 @@ export function ApplicationDetailsMembersSection() {
           disabled
         />
       ),
+      size: 10,
+      enableColumnFilter: false,
+      enableSorting: false,
     },
   ];
 
   return (
     <AppAccordion title="5. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16">
-        <AppTable columns={ugTeamsColumns} data={evaluation.ugTeams} emptyTableMessage="Nie dodano żadnego zespołu." />
+        <AppTable
+          columns={ugTeamsColumns}
+          data={evaluation.ugTeams}
+          emptyTableMessage="Nie dodano żadnego zespołu."
+          disabled
+        />
 
         <AppTable
           columns={guestTeamsColumns}
           data={evaluation.guestTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
+          disabled
         />
 
         <div className="col-span-2">

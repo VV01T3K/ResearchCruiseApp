@@ -4,9 +4,13 @@ import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
+import { CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
 
 export function ApplicationDetailsInformationSection() {
   const { application } = useApplicationDetails();
+  const isFormBReadOnly =
+    application.status !== CruiseApplicationStatus.FormBFilled &&
+    application.status !== CruiseApplicationStatus.Undertaken;
 
   return (
     <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>
@@ -33,7 +37,10 @@ export function ApplicationDetailsInformationSection() {
           <AppLink href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>
             Formularz A
           </AppLink>
-          <AppLink href={`/applications/${application.id}/formB`} disabled={!application.hasFormB}>
+          <AppLink
+            disabled={!application.hasFormB}
+            href={`/applications/${application.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
+          >
             Formularz B
           </AppLink>
           <AppLink href={`/applications/${application.id}/formC`} disabled={!application.hasFormC}>

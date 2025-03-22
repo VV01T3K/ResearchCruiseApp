@@ -21,14 +21,17 @@ export function ApplicationsPage() {
       header: 'Numer',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
+      size: 5,
     },
     {
       header: 'Data',
       accessorFn: (row) => row.date,
+      size: 10,
     },
     {
       header: 'Rok rejsu',
       accessorFn: (row) => row.year,
+      size: 10,
     },
     {
       id: 'avatar',
@@ -37,16 +40,19 @@ export function ApplicationsPage() {
       cell: (cell) => <AppAvatar fullName={cell.getValue() as string} variant="small" />,
       enableColumnFilter: false,
       enableSorting: false,
-      size: 40,
+      size: 5,
     },
     {
       header: 'Kierownik',
       accessorFn: (row) => `${row.cruiseManagerFirstName} ${row.cruiseManagerLastName}`,
+      size: 15,
     },
     {
       header: 'Formularze',
       cell: ({ row }) => {
-        const isFormBReadOnly = row.original.status === CruiseApplicationStatus.Accepted;
+        const isFormBReadOnly =
+          row.original.status !== CruiseApplicationStatus.FormBFilled &&
+          row.original.status !== CruiseApplicationStatus.Undertaken;
         return (
           <div className="flex flex-col gap-1">
             <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
@@ -64,11 +70,13 @@ export function ApplicationsPage() {
           </div>
         );
       },
+      size: 10,
     },
     {
       header: 'Punkty',
       accessorFn: (row) => `${row.points} pkt.`,
       cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      size: 5,
     },
     {
       header: 'Status',
@@ -76,14 +84,37 @@ export function ApplicationsPage() {
       cell: ({ row }) => (
         <>
           <p className="italic">{row.original.status}</p>
+          {row.original.status === CruiseApplicationStatus.Draft && (
+            <div className="flex flex-col">
+              <p className="text-sm">{row.original.note}</p>
+              <AppButton
+                className="inline-block mx-auto px-4 py-0.5 mt-1"
+                size="plain"
+                type="link"
+                href={`/applications/${row.original.id}/formA?mode=edit`}
+              >
+                Kontynuuj wypełnianie
+              </AppButton>
+            </div>
+          )}
           {row.original.status === CruiseApplicationStatus.FormBRequired && (
-            <AppButton size="plain" type="link" href={`/cruises/${row.original.id}/formB?mode=edit`}>
+            <AppButton
+              className="inline-block mx-auto px-5 py-1"
+              size="plain"
+              type="link"
+              href={`/applications/${row.original.id}/formB?mode=edit`}
+            >
               Wypełnij
             </AppButton>
           )}
           {row.original.status === CruiseApplicationStatus.Undertaken && (
-            <div className="gird grid-cols-1 gap-2">
-              <AppButton size="plain" type="link" href={`/cruises/${row.original.id}/formC?mode=edit`}>
+            <div className="flex flex-col gap-2 items-center">
+              <AppButton
+                className="inline-block mx-auto px-4 py-0.5 mt-1"
+                size="plain"
+                type="link"
+                href={`/applications/${row.original.id}/formC?mode=edit`}
+              >
                 Wypełnij formularz C
               </AppButton>
               <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
@@ -91,18 +122,19 @@ export function ApplicationsPage() {
           )}
         </>
       ),
-      size: 165,
+      size: 20,
     },
     {
       header: 'Akcje',
       cell: ({ row }) => (
         <>
-          <AppButton type="link" href={`/applications/${row.original.id}/details`}>
+          <AppButton type="link" href={`/applications/${row.original.id}/details`} className="flex gap-2">
             Szczegóły
             <ZoomInIcon className="w-4 h-4" />
           </AppButton>
         </>
       ),
+      size: 5,
     },
   ];
 

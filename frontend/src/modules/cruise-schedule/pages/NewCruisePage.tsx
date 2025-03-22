@@ -38,9 +38,7 @@ export function NewCruisePage() {
     },
   });
 
-  async function handleSubmitting(evt: React.FormEvent<HTMLFormElement>) {
-    evt.preventDefault();
-
+  async function handleSubmitting() {
     setHasFormBeenSubmitted(true);
     form.validateAllFields('change');
     if (!form.state.isValid) {
@@ -93,17 +91,16 @@ export function NewCruisePage() {
     <>
       <AppLayout title="Nowy rejs">
         <Suspense fallback={<AppLoader />}>
-          <form onSubmit={handleSubmitting}>
-            <CruiseFrom
-              context={{
-                form,
-                cruiseApplications: cruiseApplicationsQuery.data,
-                isReadonly: false,
-                hasFormBeenSubmitted,
-              }}
-              buttons={buttons}
-            />
-          </form>
+          <CruiseFrom
+            context={{
+              form,
+              cruiseApplications: cruiseApplicationsQuery.data,
+              isReadonly: false,
+              hasFormBeenSubmitted,
+            }}
+            buttons={buttons}
+            onSubmit={handleSubmitting}
+          />
         </Suspense>
       </AppLayout>
     </>

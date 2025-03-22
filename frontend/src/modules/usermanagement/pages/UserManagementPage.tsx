@@ -66,6 +66,7 @@ export function UserManagementPage() {
       ),
       enableSorting: false,
       enableColumnFilter: false,
+      size: 5,
     },
     {
       id: 'avatar',
@@ -74,14 +75,17 @@ export function UserManagementPage() {
       cell: (cell) => <AppAvatar fullName={cell.getValue() as string} variant="small" />,
       enableColumnFilter: false,
       enableSorting: false,
+      size: 5,
     },
     {
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       header: 'Imię i nazwisko',
+      size: 30,
     },
     {
       accessorFn: (row) => row.email,
       header: 'Email',
+      size: 25,
     },
     {
       id: 'accountStatus',
@@ -91,6 +95,7 @@ export function UserManagementPage() {
         const value = cell.getValue() as 'Zaakceptowane' | 'Niezaakceptowane';
         return <AppBadge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</AppBadge>;
       },
+      size: 10,
     },
     {
       id: 'emailStatus',
@@ -100,12 +105,14 @@ export function UserManagementPage() {
         const value = cell.getValue() as 'Zweryfikowany' | 'Niezweryfikowany';
         return <AppBadge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</AppBadge>;
       },
+      size: 10,
     },
     {
       id: 'role',
       accessorFn: (row) => getRoleLabel(row.roles[0]),
       header: 'Rola',
       cell: ({ row }) => <RoleBadge role={row.original.roles[0]} />,
+      size: 10,
     },
     {
       id: 'actions',

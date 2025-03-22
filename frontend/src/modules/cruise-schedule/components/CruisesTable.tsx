@@ -26,18 +26,21 @@ export function CruisesTable({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.number,
       sortingFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
+      size: 15,
     },
     {
       header: 'Data rozpoczęcia',
       accessorFn: (row) => row.startDate,
       cell: (cell) => dayjs(cell.getValue() as string).format(dateFormat),
       enableColumnFilter: false,
+      size: 10,
     },
     {
       header: 'Data zakończenia',
       accessorFn: (row) => row.endDate,
       cell: (cell) => dayjs(cell.getValue() as string).format(dateFormat),
       enableColumnFilter: false,
+      size: 10,
     },
     {
       header: 'Status',
@@ -54,7 +57,7 @@ export function CruisesTable({ cruises, deleteCruise, buttons }: Props) {
             variant="small"
           />
         ) : null,
-      size: 40,
+      size: 5,
     },
     {
       header: 'Kierownik główny',
@@ -62,16 +65,17 @@ export function CruisesTable({ cruises, deleteCruise, buttons }: Props) {
         row.mainCruiseManagerId !== emptyGuid
           ? `${row.mainCruiseManagerFirstName} ${row.mainCruiseManagerLastName}`
           : 'Nie przypisano',
+      size: 15,
     },
     {
       header: 'Zgłoszenia',
       cell: ({ row }) => <ApplicationsCell applications={row.original.cruiseApplicationsShortInfo} />,
-      size: 200,
+      size: 30,
     },
     {
       id: 'actions',
       cell: ({ row }) => <ActionsCell cruise={row.original} deleteCruise={deleteCruise} />,
-      size: 100,
+      size: 5,
     },
   ];
   return (
@@ -97,7 +101,7 @@ function ApplicationsCell({ applications }: ApplicationsCellProps) {
     return <AppBadge variant="info">Brak zgłoszeń</AppBadge>;
   }
   return (
-    <div className="flex flex-col gap-4  text-balance">
+    <div className="flex flex-col gap-4 items-center text-balance">
       {applications.map((application) => (
         <div className="flex flex-col gap-2" key={application.id}>
           <AppButton type="link" href={`/applications/${application.id}/details`} variant="primaryOutline" size="sm">

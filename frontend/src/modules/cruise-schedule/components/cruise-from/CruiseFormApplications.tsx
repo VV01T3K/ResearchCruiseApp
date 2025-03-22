@@ -46,11 +46,13 @@ export function CruiseFormApplicationsSection() {
         header: 'Numer',
         accessorFn: (row) => row.number,
         enableColumnFilter: !attached,
+        size: 5,
       },
       {
         header: 'Rok rejsu',
         accessorFn: (row) => row.year,
         enableColumnFilter: !attached,
+        size: 20,
       },
       {
         id: 'cruiseManagerAvatar',
@@ -60,12 +62,13 @@ export function CruiseFormApplicationsSection() {
             variant="small"
           />
         ),
-        size: 40,
+        size: 5,
       },
       {
         header: 'Kierownik',
         accessorFn: (row) => `${row.cruiseManagerFirstName} ${row.cruiseManagerLastName}`,
         enableColumnFilter: !attached,
+        size: 15,
       },
       {
         header: 'Formularze',
@@ -92,6 +95,7 @@ export function CruiseFormApplicationsSection() {
         header: 'Punkty',
         accessorFn: (row) => row.points,
         enableColumnFilter: false,
+        size: 10,
       },
       ...(!isReadonly
         ? ([
@@ -112,6 +116,7 @@ export function CruiseFormApplicationsSection() {
                   {attached ? 'Usuń' : 'Dodaj'}
                 </AppButton>
               ),
+              size: 5,
             },
           ] as ColumnDef<CruiseApplicationDto>[])
         : []),
@@ -124,7 +129,7 @@ export function CruiseFormApplicationsSection() {
         name="cruiseApplicationsIds"
         mode="array"
         children={(field) => (
-          <div className="my-4">
+          <div>
             <AppTable
               columns={getColumns(field, true)}
               data={cruiseApplications.filter((application) => field.state.value.includes(application.id))}

@@ -1,17 +1,17 @@
 import { cn } from '@/core/lib/utils';
 
 type Props = {
-  name: string;
+  value: React.ReactNode | undefined;
 
-  label: React.ReactNode | undefined;
+  name?: string;
   className?: string;
 };
-export function AppInputLabel({ name, label, className }: Props) {
-  if (!label) return null;
+export function AppInputLabel({ name, value, className }: Props) {
+  if (!value) return null;
 
   return (
     <label htmlFor={name} className={cn('block mb-2 text-sm font-medium text-gray-900', className)}>
-      {label}
+      {value}
     </label>
   );
 }

@@ -8,23 +8,21 @@ export function CruiseFormBasicInformationSection() {
 
   return (
     <AppAccordion title="1. Podstawowe informacje o rejsie" expandedByDefault>
-      <div className="my-4">
-        {cruise && (
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex gap-4">
-              <div className="font-bold">Numer rejsu:</div>
-              <div>{cruise.number}</div>
-            </div>
-            <div className="flex gap-4">
-              <div className="font-bold">Status:</div>
-              <div>
-                <CruiseStatusBadge status={cruise.status} />
-              </div>
+      {cruise && (
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex gap-4">
+            <div className="font-bold">Numer rejsu:</div>
+            <div>{cruise.number}</div>
+          </div>
+          <div className="flex gap-4">
+            <div className="font-bold">Status:</div>
+            <div>
+              <CruiseStatusBadge status={cruise.status} />
             </div>
           </div>
-        )}
-        {!cruise && <AppAlert>Numer i status rejsu będą dostępne po jego utworzeniu</AppAlert>}
-      </div>
+        </div>
+      )}
+      {!cruise && <AppAlert>Numer i status rejsu będą dostępne po jego utworzeniu</AppAlert>}
     </AppAccordion>
   );
 }

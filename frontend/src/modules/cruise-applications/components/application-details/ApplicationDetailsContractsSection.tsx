@@ -15,12 +15,12 @@ export function ApplicationDetailsContractsSection() {
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
-      size: 10,
+      size: 5,
     },
     {
       header: 'Kategoria',
       cell: ({ row }) => getContractCategoryName(row.original.contract.category) ?? 'Nieznany typ',
-      size: 40,
+      size: 10,
     },
     {
       header: 'Instytucja',
@@ -46,7 +46,7 @@ export function ApplicationDetailsContractsSection() {
           />
         </>
       ),
-      size: 80,
+      size: 30,
     },
     {
       header: 'Opis',
@@ -58,7 +58,7 @@ export function ApplicationDetailsContractsSection() {
           disabled
         />
       ),
-      size: 80,
+      size: 30,
     },
     {
       header: 'Skan',
@@ -73,12 +73,12 @@ export function ApplicationDetailsContractsSection() {
           disabled
         />
       ),
-      size: 80,
+      size: 20,
     },
     {
       header: 'Punkty',
       cell: ({ row }) => row.original.points,
-      size: 10,
+      size: 5,
     },
   ];
 
@@ -88,7 +88,12 @@ export function ApplicationDetailsContractsSection() {
       expandedByDefault
     >
       <div className="pb-2">
-        <AppTable data={evaluation.formAContracts} columns={columns} emptyTableMessage="Nie dodano żadnej umowy." />
+        <AppTable
+          data={evaluation.formAContracts}
+          columns={columns}
+          emptyTableMessage="Nie dodano żadnej umowy."
+          disabled
+        />
       </div>
     </AppAccordion>
   );

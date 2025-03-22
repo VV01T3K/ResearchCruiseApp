@@ -113,7 +113,7 @@ export function AppNumberInput({
 
   return (
     <div className={cn(className, 'flex flex-col')}>
-      <AppInputLabel name={name} label={label} />
+      <AppInputLabel name={name} value={label} />
       <div className="flex items-center">
         {!disabled && (
           <AppNumberInputButton

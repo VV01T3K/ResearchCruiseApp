@@ -2,11 +2,10 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppTable } from '@/core/components/table/AppTable';
+import { ReadOnlyResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyResearchTaskDetails';
 import { useApplicationDetails } from '@/cruise-applications/contexts/ApplicationDetailsContext';
 import { EvaluationFormAResearchTask } from '@/cruise-applications/models/EvaluationDto';
 import { getTaskName } from '@/cruise-applications/models/ResearchTaskDto';
-
-import { ReadOnlyResearchTaskDetails } from './research-task-details/ReadOnlyResearchTaskDetails';
 
 export function ApplicationDetailsResearchTasksSection() {
   const { evaluation } = useApplicationDetails();
@@ -15,13 +14,13 @@ export function ApplicationDetailsResearchTasksSection() {
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
-      size: 10,
+      size: 5,
     },
     {
       header: 'Zadanie',
       accessorFn: (row) => getTaskName(row.researchTask.type),
       cell: ({ row }) => getTaskName(row.original.researchTask.type) ?? 'Nieznany typ',
-      size: 25,
+      size: 20,
     },
     {
       header: 'Szczegóły',
@@ -42,6 +41,7 @@ export function ApplicationDetailsResearchTasksSection() {
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           emptyTableMessage="Nie dodano żadnego zadania."
+          disabled
         />
       </div>
     </AppAccordion>

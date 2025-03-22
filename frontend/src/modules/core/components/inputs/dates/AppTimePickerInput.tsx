@@ -14,6 +14,10 @@ type Time = {
   minutes: number;
 };
 
+function timeToMinutes(time: Time) {
+  return time.hours * 60 + time.minutes;
+}
+
 type Props = {
   name: string;
   value: Time | undefined;
@@ -26,6 +30,8 @@ type Props = {
   disabled?: boolean;
   helper?: React.ReactNode;
   placeholder?: string;
+  minimalTime?: Time;
+  maximalTime?: Time;
   minuteStep?: number;
 };
 export function AppDatePickerTimeInput({
@@ -39,6 +45,8 @@ export function AppDatePickerTimeInput({
   disabled,
   helper,
   placeholder,
+  minimalTime,
+  maximalTime,
   minuteStep = 1,
 }: Props) {
   const [time, setTime] = React.useState<Time | undefined>(value);
@@ -78,7 +86,7 @@ export function AppDatePickerTimeInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={name} label={label} />
+        <AppInputLabel name={name} value={label} />
         <div ref={inputRef}>
           <input
             type="hidden"
@@ -110,26 +118,43 @@ export function AppDatePickerTimeInput({
             <div className="flex flex-col gap-2 p-2">
               <div className="flex gap-2 pb-2">
                 <div className="h-40 overflow-y-auto flex flex-col rounded-4xl mx-2 bg-gray-100 pt-1 pb-1">
-                  {Array.from({ length: 24 }).map((_, i) => (
-                    <AppButton
-                      // eslint-disable-next-line @eslint-react/no-array-index-key
-                      key={i}
-                      variant="plain"
-                      onClick={() => {
-                        onChange({ hours: i, minutes: time?.minutes || 0 });
-                      }}
-                      className={cn(
-                        i === time?.hours ? 'bg-blue-500 text-white' : 'hover:bg-gray-200',
-                        'rounded-4xl transition'
-                      )}
-                    >
-                      {i.toString().padStart(2, '0')}
-                    </AppButton>
-                  ))}
+                  {Array.from({ length: 24 }).map((_, i) => {
+                    const isAllowed = i >= (minimalTime?.hours ?? 0) && i <= (maximalTime?.hours ?? 23);
+                    if (!isAllowed) {
+                      return null;
+                    }
+                    return (
+                      <AppButton
+                        // eslint-disable-next-line @eslint-react/no-array-index-key
+                        key={i}
+                        variant="plain"
+                        onClick={() => {
+                          onChange({
+                            hours: i,
+                            minutes: i === minimalTime?.hours ? (minimalTime?.minutes ?? 0) : 0,
+                          });
+                        }}
+                        className={cn(
+                          i === time?.hours ? 'bg-blue-500 text-white' : 'hover:bg-gray-200',
+                          'rounded-4xl transition'
+                        )}
+                      >
+                        {i.toString().padStart(2, '0')}
+                      </AppButton>
+                    );
+                  })}
                 </div>
                 <div className="h-40 overflow-y-auto flex flex-col rounded-4xl mx-2 bg-gray-100 pt-1 pb-1">
                   {Array.from({ length: 60 / minuteStep }).map((_, i) => {
                     const minutes = i * minuteStep;
+                    const totalMinutes = timeToMinutes({ hours: (time?.hours || minimalTime?.hours) ?? 0, minutes });
+                    const isAllowed =
+                      totalMinutes >= timeToMinutes(minimalTime ?? { hours: 0, minutes: 0 }) &&
+                      totalMinutes <= timeToMinutes(maximalTime ?? { hours: 23, minutes: 59 });
+                    if (!isAllowed) {
+                      return null;
+                    }
+
                     return (
                       <AppButton
                         // eslint-disable-next-line @eslint-react/no-array-index-key

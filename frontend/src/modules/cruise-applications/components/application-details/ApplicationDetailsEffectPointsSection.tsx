@@ -12,7 +12,7 @@ export function ApplicationDetailsEffectPointsSection() {
           name="effectPoints"
           value={evaluation.effectsPoints}
           label="Liczba punktów przyznanych za zrealizowane efekty rejsów zgłoszone do momentu wysłania Formularza A:"
-          disabled={true}
+          disabled
         />
       </div>
     </AppAccordion>

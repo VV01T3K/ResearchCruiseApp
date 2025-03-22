@@ -7,7 +7,7 @@ import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 
-import { FormAPeriodInput } from '../FormAPeriodInput';
+import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodInput';
 
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
@@ -18,7 +18,7 @@ export function FormACruiseLengthSection() {
         <form.Field
           name="acceptablePeriod"
           children={(field) => (
-            <FormAPeriodInput
+            <CruiseApplicationPeriodInput
               name={field.name}
               value={field.state.value}
               onChange={field.handleChange}
@@ -37,7 +37,7 @@ export function FormACruiseLengthSection() {
             <form.Field
               name="optimalPeriod"
               children={(field) => (
-                <FormAPeriodInput
+                <CruiseApplicationPeriodInput
                   name={field.name}
                   value={field.state.value}
                   onChange={field.handleChange}

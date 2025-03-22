@@ -13,7 +13,7 @@ export function CruiseFormDateSelectionSection() {
 
   return (
     <AppAccordion title="2. Termin rejsu" expandedByDefault>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <form.Field
           name="startDate"
           children={(field) => (

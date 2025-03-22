@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import { FormAPeriodInput } from '@/cruise-applications/components/FormAPeriodInput';
+import { CruiseApplicationPeriodInput } from '@/cruise-applications/components/common/CruiseApplicationPeriodInput';
 
 const meta = {
-  component: FormAPeriodInput,
+  component: CruiseApplicationPeriodInput,
   args: {
     name: 'Period input',
     value: ['5', '12'],
@@ -15,7 +15,7 @@ const meta = {
     label: undefined,
     helper: undefined,
   },
-} satisfies Meta<typeof FormAPeriodInput>;
+} satisfies Meta<typeof CruiseApplicationPeriodInput>;
 
 export default meta;
 

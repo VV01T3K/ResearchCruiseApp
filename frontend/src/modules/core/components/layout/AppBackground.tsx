@@ -18,11 +18,11 @@ export default function AppBackground() {
   return (
     <>
       <div
-        className={'fixed h-full w-full bg-[image:var(--bg)] bg-no-repeat bg-cover -z-50 bg-center'}
+        className={'fixed h-screen w-full bg-[image:var(--bg)] bg-no-repeat bg-cover -z-50 bg-center'}
         style={{ '--bg': `url('${BackgroundImageUrl}')` } as React.CSSProperties}
       />
       <motion.div
-        className={'fixed h-full w-full -z-50'}
+        className={'fixed h-screen w-full -z-50'}
         variants={variants}
         initial="transparent"
         animate={isHomepage ? 'transparent' : 'blur'}

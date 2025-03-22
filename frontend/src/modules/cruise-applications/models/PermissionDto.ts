@@ -13,3 +13,9 @@ export const PermissionDtoValidationSchema = z.object({
   executive: z.string().nonempty('Organ wydający jest wymagany'),
   scan: FileDtoValidationSchema.optional(),
 });
+
+export const PermissionDtoWithFileValidationSchema = PermissionDtoValidationSchema.extend({
+  scan: FileDtoValidationSchema.extend({
+    name: z.string().endsWith('.pdf', 'Plik musi być w formacie PDF'),
+  }),
+});

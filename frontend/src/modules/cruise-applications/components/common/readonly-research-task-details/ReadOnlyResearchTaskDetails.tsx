@@ -1,9 +1,9 @@
-import { ReadOnlyDidacticsResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyDidacticsResearchTaskDetails';
-import { ReadOnlyOtherResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyOtherResearchTaskDetails';
-import { ReadOnlyOwnResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyOwnResearchTaskDetails';
-import { ReadOnlyProjectPreparationResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyProjectPreparationResearchTaskDetails';
-import { ReadOnlyProjectResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyProjectResearchTaskDetails';
-import { ReadOnlyThesisResearchTaskDetails } from '@/cruise-applications/components/application-details/research-task-details/ReadOnlyThesisResearchTaskDetails';
+import { ReadOnlyDidacticsResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyDidacticsResearchTaskDetails';
+import { ReadOnlyOtherResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyOtherResearchTaskDetails';
+import { ReadOnlyOwnResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyOwnResearchTaskDetails';
+import { ReadOnlyProjectPreparationResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyProjectPreparationResearchTaskDetails';
+import { ReadOnlyProjectResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyProjectResearchTaskDetails';
+import { ReadOnlyThesisResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyThesisResearchTaskDetails';
 import {
   DidacticsResearchTaskDto,
   OtherResearchTaskDto,

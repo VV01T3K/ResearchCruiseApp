@@ -16,7 +16,7 @@ export function ApplicationDetailsPublicationsSection() {
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
-      size: 20,
+      size: 5,
     },
     {
       header: 'Kategoria',
@@ -24,7 +24,7 @@ export function ApplicationDetailsPublicationsSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => <div>{getPublicationCategoryLabel(row.original.publication.category)}</div>,
-      size: 100,
+      size: 10,
     },
     {
       header: 'Informacje',
@@ -64,6 +64,7 @@ export function ApplicationDetailsPublicationsSection() {
           />
         </div>
       ),
+      size: 50,
     },
     {
       header: 'Rok wydania',
@@ -78,7 +79,7 @@ export function ApplicationDetailsPublicationsSection() {
           disabled
         />
       ),
-      size: 80,
+      size: 10,
     },
     {
       header: 'Punkty ministerialne',
@@ -94,7 +95,7 @@ export function ApplicationDetailsPublicationsSection() {
           disabled
         />
       ),
-      size: 80,
+      size: 10,
     },
     {
       header: 'Punkty',
@@ -102,7 +103,7 @@ export function ApplicationDetailsPublicationsSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => <div>{row.original.points}</div>,
-      size: 40,
+      size: 5,
     },
   ];
 
@@ -113,6 +114,7 @@ export function ApplicationDetailsPublicationsSection() {
           data={evaluation.formAPublications}
           columns={columns}
           emptyTableMessage="Nie dodano żadnej publikacji."
+          disabled
         />
       </div>
     </AppAccordion>

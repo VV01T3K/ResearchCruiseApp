@@ -51,7 +51,7 @@ type Props = {
   helper?: React.ReactNode;
 };
 
-export function FormAPeriodInput({
+export function CruiseApplicationPeriodInput({
   name,
   value,
   maxValues,
@@ -157,7 +157,7 @@ export function FormAPeriodInput({
 
   return (
     <div className="flex flex-col">
-      <AppInputLabel name={name} label={label} />
+      <AppInputLabel name={name} value={label} />
       <input type="hidden" name={name} value={values.join(',')} required={required} disabled={disabled} />
 
       <div

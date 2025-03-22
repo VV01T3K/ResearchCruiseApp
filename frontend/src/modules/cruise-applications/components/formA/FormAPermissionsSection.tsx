@@ -22,7 +22,7 @@ export function FormAPermissionsSection() {
       {
         header: 'Lp.',
         cell: ({ row }) => `${row.index + 1}. `,
-        size: 10,
+        size: 5,
       },
       {
         header: 'Treść pozwolenia',
@@ -45,6 +45,7 @@ export function FormAPermissionsSection() {
             )}
           />
         ),
+        size: 45,
       },
       {
         header: 'Organ wydający',
@@ -67,6 +68,7 @@ export function FormAPermissionsSection() {
             )}
           />
         ),
+        size: 45,
       },
       {
         id: 'actions',
@@ -82,7 +84,7 @@ export function FormAPermissionsSection() {
             />
           </div>
         ),
-        size: 10,
+        size: 5,
       },
     ];
   }
@@ -105,8 +107,6 @@ export function FormAPermissionsSection() {
                       field.pushValue({ description: '', executive: '' });
                       field.handleChange((prev) => prev);
                       field.handleBlur();
-                      field.form.validateAllFields('blur');
-                      field.form.validateAllFields('change');
                     }}
                     disabled={isReadonly}
                   >

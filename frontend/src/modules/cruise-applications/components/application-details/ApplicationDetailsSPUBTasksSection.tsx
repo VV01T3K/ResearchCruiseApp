@@ -14,7 +14,7 @@ export function ApplicationDetailsSPUBTasksSection() {
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
-      size: 10,
+      size: 5,
     },
     {
       header: 'Rok rozpoczęcia',
@@ -29,7 +29,7 @@ export function ApplicationDetailsSPUBTasksSection() {
           disabled
         />
       ),
-      size: 80,
+      size: 20,
     },
     {
       header: 'Rok zakończenia',
@@ -44,7 +44,7 @@ export function ApplicationDetailsSPUBTasksSection() {
           disabled
         />
       ),
-      size: 80,
+      size: 20,
     },
     {
       header: 'Nazwa zadania',
@@ -54,11 +54,12 @@ export function ApplicationDetailsSPUBTasksSection() {
       cell: ({ row }) => (
         <AppInput name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} required disabled />
       ),
+      size: 50,
     },
     {
       header: 'Punkty',
       cell: ({ row }) => row.original.points,
-      size: 10,
+      size: 5,
     },
   ];
 
@@ -68,7 +69,12 @@ export function ApplicationDetailsSPUBTasksSection() {
       expandedByDefault
     >
       <div>
-        <AppTable data={evaluation.formASpubTasks} columns={columns} emptyTableMessage="Nie dodano żadnego zadania." />
+        <AppTable
+          data={evaluation.formASpubTasks}
+          columns={columns}
+          emptyTableMessage="Nie dodano żadnego zadania."
+          disabled
+        />
       </div>
     </AppAccordion>
   );

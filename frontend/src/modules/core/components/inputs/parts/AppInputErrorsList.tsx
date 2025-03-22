@@ -6,6 +6,10 @@ export function AppInputErrorsList({ errors }: Props) {
     return null;
   }
 
+  if (errors.length === 1) {
+    return <p className="text-danger">{errors[0]}</p>;
+  }
+
   return (
     <ul className="text-danger list-disc ps-4">
       {errors.map((error) => (

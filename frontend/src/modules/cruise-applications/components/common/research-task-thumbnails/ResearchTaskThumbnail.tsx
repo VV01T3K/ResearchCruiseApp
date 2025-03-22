@@ -1,9 +1,9 @@
-import { DidacticsResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/DidacticsResearchTaskThumbnail';
-import { OtherResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/OtherResearchTaskThumbnail';
-import { OwnResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/OwnResearchTaskThumbnail';
-import { ProjectPreparationResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
-import { ProjectResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/ProjectResearchTaskThumbnail';
-import { ThesisResearchTaskThumbnail } from '@/cruise-applications/components/research-task-thumbnails/ThesisResearchTaskThumbnail';
+import { DidacticsResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/DidacticsResearchTaskThumbnail';
+import { OtherResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/OtherResearchTaskThumbnail';
+import { OwnResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/OwnResearchTaskThumbnail';
+import { ProjectPreparationResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
+import { ProjectResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/ProjectResearchTaskThumbnail';
+import { ThesisResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/ThesisResearchTaskThumbnail';
 import { ResearchTaskDto, ResearchTaskType } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {

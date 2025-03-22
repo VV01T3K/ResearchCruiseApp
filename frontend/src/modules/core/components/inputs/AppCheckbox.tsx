@@ -50,7 +50,7 @@ export function AppCheckbox({
       />
       <div className={cn('flex flex-col', className)}>
         <div className="flex items-center gap-2">
-          <AppInputLabel name={name} label={label} className="mb-0" />
+          <AppInputLabel name={name} value={label} className="mb-0" />
 
           <div onClick={() => elementRef.current?.click()}>
             <div

@@ -15,22 +15,24 @@ import { getFormAValidationSchema } from '@/cruise-applications/helpers/FormAVal
 import {
   useFormAInitValuesQuery,
   useFormAQuery,
-  useSaveFormAMutation,
+  useUpdateFormAMutation,
 } from '@/cruise-applications/hooks/FormAApiHooks';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 
 export function FormAPage() {
-  const { applicationId } = getRouteApi('/applications/$applicationId/formA').useParams();
+  const routeApi = getRouteApi('/applications/$applicationId/formA');
+  const { applicationId } = routeApi.useParams();
+  const mode = routeApi.useSearch().mode ?? 'view';
 
   const navigate = useNavigate();
   const appContext = useAppContext();
   const userContext = useUserContext();
   const initialStateQuery = useFormAInitValuesQuery();
-  const saveMutation = useSaveFormAMutation();
+  const saveMutation = useUpdateFormAMutation();
   const formA = useFormAQuery(applicationId);
 
-  const [editMode] = useState(false);
+  const [editMode] = useState(mode === 'edit');
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
@@ -69,6 +71,18 @@ export function FormAPage() {
     evt.preventDefault();
 
     setHasFormBeenSubmitted(true);
+
+    await form.validate('change');
+    if (!form.state.isValid) {
+      setIsSaveDraftModalOpen(false);
+      appContext.showAlert({
+        title: 'Wykryto błąd w formularzu',
+        message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
+        variant: 'danger',
+      });
+      return;
+    }
+
     const dto = removeEmptyValues(form.state.values, [
       'year',
       'periodNotes',
@@ -89,7 +103,7 @@ export function FormAPage() {
     }
 
     saveMutation.mutate(
-      { form: dto, draft: false },
+      { id: applicationId, form: dto, draft: false },
       {
         onSuccess: () => {
           navigate({ to: '/' });
@@ -133,7 +147,7 @@ export function FormAPage() {
     }
 
     saveMutation.mutate(
-      { form: dto, draft: true },
+      { id: applicationId, form: dto, draft: true },
       {
         onSuccess: () => {
           navigate({ to: '/' });

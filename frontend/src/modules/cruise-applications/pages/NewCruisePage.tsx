@@ -61,6 +61,18 @@ export function NewCruisePage() {
     evt.preventDefault();
 
     setHasFormBeenSubmitted(true);
+
+    await form.validate('change');
+    if (!form.state.isValid) {
+      setIsSaveDraftModalOpen(false);
+      appContext.showAlert({
+        title: 'Wykryto błąd w formularzu',
+        message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
+        variant: 'danger',
+      });
+      return;
+    }
+
     const dto = removeEmptyValues(form.state.values, [
       'year',
       'periodNotes',

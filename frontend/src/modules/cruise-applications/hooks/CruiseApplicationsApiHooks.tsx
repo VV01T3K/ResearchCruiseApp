@@ -2,6 +2,7 @@ import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/core/lib/api';
 import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
+import { CruiseDto } from '@/cruise-applications/models/CruiseDto';
 import { EvaluationDto } from '@/cruise-applications/models/EvaluationDto';
 import { UserEffectDto } from '@/cruise-applications/models/UserEffectDto';
 
@@ -22,6 +23,16 @@ export function useCruiseApplicationQuery(id: string) {
       return client.get(`/api/CruiseApplications/${id}`);
     },
     select: (res) => res.data as CruiseApplicationDto,
+  });
+}
+
+export function useCruiseForCruiseApplicationQuery(id: string) {
+  return useSuspenseQuery({
+    queryKey: ['cruiseApplication', id, 'cruise'],
+    queryFn: async () => {
+      return client.get(`/api/CruiseApplications/${id}/cruise`);
+    },
+    select: (res) => res.data as CruiseDto,
   });
 }
 
