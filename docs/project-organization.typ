@@ -1,5 +1,5 @@
 #import "template.typ": template
-#show: template.with("Organizacja i infrastruktura projektu")
+#show: template.with("Organizacja i infrastruktura projektu", "1.0.1", datetime(day: 18, month: 3, year: 2025))
 
 = 1. Opis projektu i produktu
 

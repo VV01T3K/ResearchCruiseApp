@@ -1,4 +1,4 @@
-#let template(name, doc) = {
+#let template(name, version, created_at, doc) = {
   set text(
     font: "New Computer Modern",
     size: 12pt,
@@ -15,11 +15,19 @@
       #text(size: 20pt)[
         #name
       ]
-
-      #datetime.today().display()
     ]
 
-    #v(10cm)
+    #v(1cm)
+
+    #grid(
+      columns: (1fr, 1fr),
+      gutter: 1em,
+      [Wersja], [#version],
+      [Data utworzenia obecnej wersji], [#datetime.today().display()],
+      [Data utworzenia dokumentu], [#created_at.display()],
+    )
+
+    #v(2cm)
 
     #grid(
       columns: (auto, 1fr, auto),
@@ -42,6 +50,18 @@
         [*ResearchCruiseApp* - #name], [], datetime.today().display(),
       )
       #line(length: 100%)
+    ],
+    footer: context [
+      #line(length: 100%)
+      #grid(
+        columns: (auto, 1fr, auto),
+        [Wersja #version utworzona #datetime.today().display().],
+        [],
+        [#counter(page).display(
+            "1/1",
+            both: true,
+          )],
+      )
     ],
   )
 
