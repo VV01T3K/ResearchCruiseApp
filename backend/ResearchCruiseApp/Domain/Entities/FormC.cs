@@ -7,6 +7,9 @@ public class FormC : Entity
     [StringLength(1024)]
     public string ShipUsage { get; init; } = null!;
 
+    [StringLength(1024)]
+    public string DifferentUsage { get; init; } = null!;
+
     public List<Permission> Permissions { get; init; } = [];
 
     public ResearchArea ResearchArea { get; set; } = null!;

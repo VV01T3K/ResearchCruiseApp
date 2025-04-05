@@ -7,6 +7,9 @@ public class FormCDto
     [StringLength(1)]
     public string ShipUsage { get; init; } = null!;
 
+    [StringLength(1024)]
+    public string DifferentUsage { get; init; } = null!;
+
     public List<PermissionDto> Permissions { get; init; } = [];
 
     public Guid ResearchAreaId { get; init; }

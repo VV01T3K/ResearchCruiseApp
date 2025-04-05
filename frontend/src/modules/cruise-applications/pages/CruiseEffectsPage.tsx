@@ -39,7 +39,7 @@ export function CruiseEffectsPage() {
       header: 'Formularz',
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
-          <AppLink href={`/cruises/${row.original.id}/formC`}>Formularz C</AppLink>
+          <AppLink href={`/applications/${row.original.cruiseApplicationId}/formC`}>Formularz C</AppLink>
         </div>
       ),
       size: 10,

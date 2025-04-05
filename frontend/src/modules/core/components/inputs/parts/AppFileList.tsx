@@ -45,7 +45,12 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
           onClose={() => setFileInPreview(undefined)}
           title={fileInPreview?.name || ''}
         >
-          <div className="flex flex-col items-center justify-center p-4 h-220 relative">
+          <div
+            className={cn(
+              'flex flex-col items-center justify-center p-4 relative',
+              fileInPreview?.content.startsWith('data:application/pdf') ? 'h-220' : ''
+            )}
+          >
             <object data={fileInPreview?.content} className="h-full w-full flex items-center justify-center">
               Nie można wyświetlić podglądu pliku
             </object>

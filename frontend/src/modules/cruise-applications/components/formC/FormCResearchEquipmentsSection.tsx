@@ -9,13 +9,13 @@ import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePicker
 import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
-import { useFormB } from '@/cruise-applications/contexts/FormBContext';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
+import { useFormC } from '@/cruise-applications/contexts/FormCContext';
+import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { ResearchEquipmentDto } from '@/cruise-applications/models/ResearchEquipmentDto';
 
 const researchEquipmentsColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'researchEquipments', undefined, undefined, ResearchEquipmentDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined>,
+  field: FieldApi<FormCDto, 'researchEquipments', undefined, undefined, ResearchEquipmentDto[]>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ResearchEquipmentDto>[] => [
@@ -132,11 +132,11 @@ const researchEquipmentsColumns = (
   },
 ];
 
-export function FormBResearchEquipmentsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
+export function FormCResearchEquipmentsSection() {
+  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
-    <AppAccordion title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu" expandedByDefault>
+    <AppAccordion title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu" expandedByDefault>
       <form.Field
         name="researchEquipments"
         mode="array"

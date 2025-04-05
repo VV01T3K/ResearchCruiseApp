@@ -11,17 +11,17 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
-import { useFormB } from '@/cruise-applications/contexts/FormBContext';
+import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 import { CrewMemberDto } from '@/cruise-applications/models/CrewMemberDto';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
+import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
 import { UGTeamDto } from '@/cruise-applications/models/UGTeamDto';
 
-export function FormBMembersSection() {
-  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormB();
+export function FormCMembersSection() {
+  const { form, formB, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getUgTeamsColumns(
-    field: FieldApi<FormBDto, 'ugTeams', undefined, undefined, UGTeamDto[]>
+    field: FieldApi<FormCDto, 'ugTeams', undefined, undefined, UGTeamDto[]>
   ): ColumnDef<UGTeamDto>[] {
     const tableField = field;
     return [
@@ -116,7 +116,7 @@ export function FormBMembersSection() {
   }
 
   function getGuestTeams(
-    field: FieldApi<FormBDto, 'guestTeams', undefined, undefined, GuestTeamDto[]>
+    field: FieldApi<FormCDto, 'guestTeams', undefined, undefined, GuestTeamDto[]>
   ): ColumnDef<GuestTeamDto>[] {
     const tableField = field;
     return [
@@ -199,196 +199,77 @@ export function FormBMembersSection() {
     ];
   }
 
-  function getCrewMembersColumns(
-    field: FieldApi<FormBDto, 'crewMembers', undefined, undefined, CrewMemberDto[]>
-  ): ColumnDef<CrewMemberDto>[] {
-    return [
-      {
-        header: 'Lp.',
-        enableColumnFilter: false,
-        enableSorting: false,
-        cell: ({ row }) => `${row.index + 1}. `,
-        size: 5,
-      },
-      {
-        header: 'Dane osobowe',
-        enableColumnFilter: false,
-        enableSorting: false,
-        accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
-        cell: ({ row }) => (
-          <div className="grid grid-cols-5 gap-2">
-            <form.Field
-              name={`crewMembers[${row.index}].title`}
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Tytuł"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-
-            <form.Field
-              name={`crewMembers[${row.index}].firstName`}
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Imiona"
-                  containerClassName="col-span-2"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-
-            <form.Field
-              name={`crewMembers[${row.index}].lastName`}
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Nazwisko"
-                  containerClassName="col-span-2"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-          </div>
-        ),
-        size: 35,
-      },
-      {
-        header: 'Dokument tożsamości',
-        enableColumnFilter: false,
-        enableSorting: false,
-        cell: ({ row }) => (
-          <div className="grid grid-cols-2 gap-2">
-            <form.Field
-              name={`crewMembers[${row.index}].birthPlace`}
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Miejsce urodzenia"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-
-            <form.Field
-              name={`crewMembers[${row.index}].birthDate`}
-              children={(field) => (
-                <AppDatePickerInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={(e) => field.handleChange(e ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Data urodzenia"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-
-            <form.Field
-              name={`crewMembers[${row.index}].documentNumber`}
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Numer ID dokumentu"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-
-            <form.Field
-              name={`crewMembers[${row.index}].documentExpiryDate`}
-              children={(field) => (
-                <AppDatePickerInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={(e) => field.handleChange(e ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Data ważności dokumentu"
-                  required
-                  disabled={isReadonly}
-                />
-              )}
-            />
-          </div>
-        ),
-        size: 35,
-      },
-      {
-        header: 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej',
-        enableColumnFilter: false,
-        enableSorting: false,
-        accessorFn: (row) => row.institution,
-        cell: ({ row }) => (
-          <form.Field
-            name={`crewMembers[${row.index}].institution`}
-            children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value as string}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                placeholder="Wprowadź nazwę jednostki"
-                required
-                disabled={isReadonly}
-              />
-            )}
+  const crewMembersColumns: ColumnDef<CrewMemberDto>[] = [
+    {
+      header: 'Lp.',
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => `${row.index + 1}. `,
+      size: 5,
+    },
+    {
+      header: 'Dane osobowe',
+      enableColumnFilter: false,
+      enableSorting: false,
+      accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
+      cell: ({ row }) => (
+        <div className="grid grid-cols-5 gap-2">
+          <AppInput value={formB.crewMembers[row.index].title} label="Tytuł" disabled />
+          <AppInput
+            value={formB.crewMembers[row.index].firstName}
+            label="Imiona"
+            containerClassName="col-span-2"
+            disabled
           />
-        ),
-        size: 20,
-      },
-      {
-        id: 'actions',
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <AppTableDeleteRowButton
-              onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev) => prev);
-                field.handleBlur();
-              }}
-              disabled={isReadonly}
-            />
-            ,
-          </div>
-        ),
-        size: 5,
-      },
-    ];
-  }
+          <AppInput
+            value={formB.crewMembers[row.index].lastName}
+            label="Nazwisko"
+            containerClassName="col-span-2"
+            disabled
+          />
+        </div>
+      ),
+      size: 35,
+    },
+    {
+      header: 'Dokument tożsamości',
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="grid grid-cols-2 gap-2">
+          <AppInput value={formB.crewMembers[row.index].birthPlace} label="Miejsce urodzenia" disabled />
+          <AppDatePickerInput
+            name="birthPlace"
+            value={formB.crewMembers[row.index].birthDate}
+            label="Data urodzenia"
+            disabled
+          />
+          <AppInput value={formB.crewMembers[row.index].documentNumber} label="Numer ID dokumentu" disabled />
+
+          <AppDatePickerInput
+            name="documentExpiryDate"
+            value={formB.crewMembers[row.index].documentExpiryDate}
+            label="Data ważności dokumentu"
+            disabled
+          />
+        </div>
+      ),
+      size: 35,
+    },
+    {
+      header: 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej',
+      enableColumnFilter: false,
+      enableSorting: false,
+      accessorFn: (row) => row.institution,
+      cell: ({ row }) => (
+        <AppInput value={formB.crewMembers[row.index].institution} placeholder="Wprowadź nazwę jednostki" disabled />
+      ),
+      size: 20,
+    },
+  ];
 
   return (
-    <AppAccordion title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+    <AppAccordion title="9. Zespoły badawcze, które uczestniczyły w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"
@@ -471,43 +352,13 @@ export function FormBMembersSection() {
           )}
         />
       </div>
-      <form.Field
-        name="crewMembers"
-        mode="array"
-        children={(field) => (
-          <>
-            <AppTable
-              columns={getCrewMembersColumns(field)}
-              data={field.state.value}
-              buttons={() => [
-                <AppButton
-                  key="crewMembers.add-btn"
-                  onClick={() => {
-                    field.pushValue({
-                      title: '',
-                      firstName: '',
-                      lastName: '',
-                      birthPlace: '',
-                      birthDate: '',
-                      documentNumber: '',
-                      documentExpiryDate: '',
-                      institution: '',
-                    });
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }}
-                  disabled={isReadonly}
-                >
-                  Dodaj pozwolenie
-                </AppButton>,
-              ]}
-              emptyTableMessage="Nie dodano żadnego członka załogi."
-              variant="form"
-              disabled={isReadonly}
-            />
-            <AppInputErrorsList errors={getErrors(field.state.meta)} />
-          </>
-        )}
+      <AppTable
+        columns={crewMembersColumns}
+        data={formB.crewMembers}
+        buttons={() => []}
+        emptyTableMessage="Nie dodano żadnego członka załogi."
+        variant="form"
+        disabled
       />
     </AppAccordion>
   );

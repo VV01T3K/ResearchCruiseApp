@@ -197,10 +197,13 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     [HttpPut("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> AddFormC(
         Guid cruiseApplicationId,
-        [FromBody] FormCDto formCDto
+        [FromBody] FormCDto formCDto,
+        [FromQuery] bool isDraft
     )
     {
-        var result = await mediator.Send(new AddFormCCommand(cruiseApplicationId, formCDto));
+        var result = await mediator.Send(
+            new AddFormCCommand(cruiseApplicationId, formCDto, isDraft)
+        );
         return result.IsSuccess ? Created() : this.CreateError(result);
     }
 

@@ -10,15 +10,15 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
-import { useFormB } from '@/cruise-applications/contexts/FormBContext';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
+import { useFormC } from '@/cruise-applications/contexts/FormCContext';
+import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { LongResearchEquipmentDto } from '@/cruise-applications/models/LongResearchEquipmentDto';
 import { PortDto } from '@/cruise-applications/models/PortDto';
 import { ShortResearchEquipmentDto } from '@/cruise-applications/models/ShortResearchEquipmentDto';
 
 const shortResearchEquipmentColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'shortResearchEquipments', undefined, undefined, ShortResearchEquipmentDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined>,
+  field: FieldApi<FormCDto, 'shortResearchEquipments', undefined, undefined, ShortResearchEquipmentDto[]>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentDto>[] => [
@@ -127,8 +127,8 @@ const shortResearchEquipmentColumns = (
 ];
 
 const longResearchEquipmentColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'longResearchEquipments', undefined, undefined, LongResearchEquipmentDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined>,
+  field: FieldApi<FormCDto, 'longResearchEquipments', undefined, undefined, LongResearchEquipmentDto[]>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentDto>[] => [
@@ -229,8 +229,8 @@ const longResearchEquipmentColumns = (
 ];
 
 const portColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'ports', undefined, undefined, PortDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined>,
+  field: FieldApi<FormCDto, 'ports', undefined, undefined, PortDto[]>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<PortDto>[] => [
@@ -340,8 +340,8 @@ const portColumns = (
   },
 ];
 
-export function FormBCruiseDetailsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
+export function FormCCruiseDetailsSection() {
+  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
     <AppAccordion title="12. Szczegóły rejsu" expandedByDefault>

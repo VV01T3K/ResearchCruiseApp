@@ -15,6 +15,7 @@ internal class FormCDtoProfile : Profile
                 var mappedPropsNames = new List<string>
                 {
                     nameof(FormC.ShipUsage),
+                    nameof(FormC.DifferentUsage),
                     nameof(FormC.CollectedSamples),
                     nameof(FormC.SpubReportData),
                     nameof(FormC.AdditionalDescription),

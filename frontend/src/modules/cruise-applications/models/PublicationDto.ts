@@ -26,7 +26,7 @@ export type PublicationDto = {
 };
 
 export const PublicationDtoValidationSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid().or(z.literal('')),
   category: z.nativeEnum(PublicationCategory),
   doi: z.string().nonempty('DOI jest wymagane'),
   authors: z.string().nonempty('Autorzy są wymagani'),

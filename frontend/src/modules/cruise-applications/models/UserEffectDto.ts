@@ -1,15 +1,9 @@
-import { ResearchTaskDto } from '@/cruise-applications/models/ResearchTaskDto';
-
-type TaskEffect = {
-  done: boolean;
-  managerConditionMet: boolean;
-  deputyConditionMet: boolean;
-};
+import { ResearchTaskEffectDto } from '@/cruise-applications/models/ResearchTaskEffectDto';
 
 export type UserEffectDto = {
   id: string;
   userId: string;
-  effect: ResearchTaskDto & TaskEffect;
+  effect: ResearchTaskEffectDto;
   points: string;
   cruiseApplicationId: string;
 };

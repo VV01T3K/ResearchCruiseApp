@@ -3,20 +3,21 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppButton } from '@/core/components/AppButton';
+import { AppFileInput } from '@/core/components/inputs/AppFileInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
-import { useFormA } from '@/cruise-applications/contexts/FormAContext';
-import { FormADto } from '@/cruise-applications/models/FormADto';
+import { useFormC } from '@/cruise-applications/contexts/FormCContext';
+import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { PermissionDto } from '@/cruise-applications/models/PermissionDto';
 
-export function FormAPermissionsSection() {
-  const { form, isReadonly, hasFormBeenSubmitted } = useFormA();
+export function FormCAdditionalPermissionsSection() {
+  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   function getColumns(
-    field: FieldApi<FormADto, 'permissions', undefined, undefined, PermissionDto[]>
+    field: FieldApi<FormCDto, 'permissions', undefined, undefined, PermissionDto[]>
   ): ColumnDef<PermissionDto>[] {
     return [
       {
@@ -45,7 +46,7 @@ export function FormAPermissionsSection() {
             )}
           />
         ),
-        size: 45,
+        size: 20,
       },
       {
         header: 'Organ wydający',
@@ -68,7 +69,30 @@ export function FormAPermissionsSection() {
             )}
           />
         ),
-        size: 45,
+        size: 20,
+      },
+      {
+        header: 'Skan',
+        accessorFn: (row) => row.scan,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <form.Field
+            name={`permissions[${row.index}].scan`}
+            children={(field) => (
+              <AppFileInput
+                name={field.name}
+                value={field.state.value}
+                acceptedMimeTypes={['application/pdf']}
+                onChange={field.handleChange}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+              />
+            )}
+          />
+        ),
+        size: 10,
       },
       {
         id: 'actions',
@@ -90,38 +114,36 @@ export function FormAPermissionsSection() {
   }
 
   return (
-    <AppAccordion title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
-      <div>
-        <form.Field
-          name="permissions"
-          mode="array"
-          children={(field) => (
-            <>
-              <AppTable
-                columns={getColumns(field)}
-                data={field.state.value}
-                buttons={() => [
-                  <AppButton
-                    key="permissions.add-btn"
-                    onClick={() => {
-                      field.pushValue({ description: '', executive: '', scan: undefined } as PermissionDto);
-                      field.handleChange((prev) => prev);
-                      field.handleBlur();
-                    }}
-                    disabled={isReadonly}
-                  >
-                    Dodaj pozwolenie
-                  </AppButton>,
-                ]}
-                emptyTableMessage="Nie dodano żadnego pozwolenia."
-                variant="form"
-                disabled={isReadonly}
-              />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} />
-            </>
-          )}
-        />
-      </div>
+    <AppAccordion title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań" expandedByDefault>
+      <form.Field
+        name="permissions"
+        mode="array"
+        children={(field) => (
+          <>
+            <AppTable
+              columns={getColumns(field)}
+              data={field.state.value}
+              buttons={() => [
+                <AppButton
+                  key="permissions.add-btn"
+                  onClick={() => {
+                    field.pushValue({ description: '', executive: '' });
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  }}
+                  disabled={isReadonly}
+                >
+                  Dodaj pozwolenie
+                </AppButton>,
+              ]}
+              emptyTableMessage="Nie dodano żadnego pozwolenia."
+              variant="form"
+              disabled={isReadonly}
+            />
+            <AppInputErrorsList errors={getErrors(field.state.meta)} />
+          </>
+        )}
+      />
     </AppAccordion>
   );
 }

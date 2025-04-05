@@ -63,10 +63,8 @@ export function AppFileInput({
     setFiles(newFiles);
     if (allowMultiple) {
       onChange?.(newFiles);
-      console.log('newFiles', newFiles);
     } else {
-      onChange?.(newFiles[0]);
-      console.log('newFiles', newFiles[0]);
+      onChange?.(newFiles[0] ?? null);
     }
 
     onBlur?.();
@@ -78,7 +76,12 @@ export function AppFileInput({
 
     const filesList = evt.dataTransfer.files;
     if (!disabled && filesList) {
-      updateFiles(await loadFileList(filesList));
+      if (allowMultiple) {
+        const newFiles = await loadFileList(filesList);
+        updateFiles([...files, ...newFiles]);
+      } else {
+        updateFiles(await loadFileList(filesList));
+      }
     }
   }
 
