@@ -3,6 +3,8 @@ import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
 
 import { AppActionsSection } from '@/core/components/AppActionsSection';
 import { AppButton } from '@/core/components/AppButton';
+import { AppGuard } from '@/core/components/AppGuard';
+import { Role } from '@/core/models/Role';
 import { useFormB } from '@/cruise-applications/contexts/FormBContext';
 
 type Props = {
@@ -18,11 +20,13 @@ export function FormBActionsSection({ onSaveDraft, onRevertToEdit }: Props) {
 
   return (
     <AppActionsSection>
-      {isReadonly && !!onRevertToEdit && (
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="primaryOutline" onClick={onRevertToEdit}>
-          Cofnij do edycji
-        </AppButton>
-      )}
+      <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+        {isReadonly && !!onRevertToEdit && (
+          <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="primaryOutline" onClick={onRevertToEdit}>
+            Cofnij do edycji
+          </AppButton>
+        )}
+      </AppGuard>
       {!isReadonly && (
         <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="primaryOutline" onClick={onSaveDraft}>
           <FloppyFillIcon className="h-4 w-4" />

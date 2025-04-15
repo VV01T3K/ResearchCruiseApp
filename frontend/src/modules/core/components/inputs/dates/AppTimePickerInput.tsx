@@ -91,7 +91,7 @@ export function AppDatePickerTimeInput({
           <input
             type="hidden"
             name={name}
-            value={time ? formatTime(time) : undefined}
+            value={time ? formatTime(time) : ''}
             required={required}
             disabled={disabled}
           />

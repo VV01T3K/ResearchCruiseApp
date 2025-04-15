@@ -1,11 +1,10 @@
 import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { useAppContext } from '@/core/hooks/AppContextHook';
@@ -173,14 +172,12 @@ export function FormAPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <Suspense fallback={<AppLoader />}>
-          <form className="space-y-8" onSubmit={handleSubmitting}>
-            <FormA
-              context={{ form, initValues: initialStateQuery.data, isReadonly: !editMode, hasFormBeenSubmitted }}
-              onSaveDraft={() => setIsSaveDraftModalOpen(true)}
-            />
-          </form>
-        </Suspense>
+        <form className="space-y-8" onSubmit={handleSubmitting}>
+          <FormA
+            context={{ form, initValues: initialStateQuery.data, isReadonly: !editMode, hasFormBeenSubmitted }}
+            onSaveDraft={() => setIsSaveDraftModalOpen(true)}
+          />
+        </form>
       </AppLayout>
 
       <AppModal title="Zapisz Formularz A" isOpen={isSaveDraftModalOpen} onClose={() => setIsSaveDraftModalOpen(false)}>

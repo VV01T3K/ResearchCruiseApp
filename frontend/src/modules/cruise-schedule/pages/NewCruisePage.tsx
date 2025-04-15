@@ -2,11 +2,10 @@ import { useForm } from '@tanstack/react-form';
 import { useNavigate } from '@tanstack/react-router';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { useAppContext } from '@/core/hooks/AppContextHook';
 import { removeEmptyValues } from '@/core/lib/utils';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseFrom';
@@ -90,18 +89,16 @@ export function NewCruisePage() {
   return (
     <>
       <AppLayout title="Nowy rejs">
-        <Suspense fallback={<AppLoader />}>
-          <CruiseFrom
-            context={{
-              form,
-              cruiseApplications: cruiseApplicationsQuery.data,
-              isReadonly: false,
-              hasFormBeenSubmitted,
-            }}
-            buttons={buttons}
-            onSubmit={handleSubmitting}
-          />
-        </Suspense>
+        <CruiseFrom
+          context={{
+            form,
+            cruiseApplications: cruiseApplicationsQuery.data,
+            isReadonly: false,
+            hasFormBeenSubmitted,
+          }}
+          buttons={buttons}
+          onSubmit={handleSubmitting}
+        />
       </AppLayout>
     </>
   );

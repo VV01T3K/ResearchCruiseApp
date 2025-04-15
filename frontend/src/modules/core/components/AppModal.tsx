@@ -21,6 +21,18 @@ export function AppModal({ title, children, isOpen, onClose, className }: Props)
     onOutsideClick: onClose,
   });
 
+  React.useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  });
+
   return (
     <AnimatePresence>
       {isOpen && (

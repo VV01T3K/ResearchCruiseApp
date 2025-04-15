@@ -6,7 +6,7 @@ import React from 'react';
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
-import { AppLoader } from '@/core/components/AppLoader';
+import { AppLoader } from '@/core/components/layout/AppLoader';
 import { useConfirmEmailMutation } from '@/user/hooks/UserApiHooks';
 import { Result } from '@/user/models/Results';
 
@@ -44,12 +44,12 @@ export function ConfirmEmailPage() {
           {result === 'error' && (
             <>
               Wystąpił błąd podczas potwierdzania emaila. Proszę skontaktować się z pomocą{' '}
-              <AppLink href="mailto:help@rejsy.ug.edu.pl">help@rejsy.ug.edu.pl</AppLink>
+              <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>
             </>
           )}
         </div>
       </div>
-      <AppButton href="/" className="w-full mt-6">
+      <AppButton type="link" href="/login" className="w-full mt-6">
         Wróć do logowania
       </AppButton>
     </AppLayout>

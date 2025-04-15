@@ -1,10 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Suspense } from 'react';
 
 import { AppBadge } from '@/core/components/AppBadge';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppTable } from '@/core/components/table/AppTable';
 import { ReadOnlyResearchTaskDetails } from '@/cruise-applications/components/common/readonly-research-task-details/ReadOnlyResearchTaskDetails';
 import { useEffectsEvaluationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
@@ -49,13 +47,7 @@ export function CruiseEffectsPage() {
   return (
     <>
       <AppLayout title="Efekty rejsów">
-        <Suspense fallback={<AppLoader />}>
-          <AppTable
-            data={effectsQuery.data}
-            columns={columns}
-            emptyTableMessage="Nie znaleziono żadnego efektu rejsu"
-          />
-        </Suspense>
+        <AppTable data={effectsQuery.data} columns={columns} emptyTableMessage="Nie znaleziono żadnego efektu rejsu" />
       </AppLayout>
     </>
   );

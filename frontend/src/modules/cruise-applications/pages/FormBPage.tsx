@@ -1,10 +1,9 @@
 import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { useAppContext } from '@/core/hooks/AppContextHook';
 import { FormB } from '@/cruise-applications/components/formB/FormB';
 import { getFormBValidationSchema } from '@/cruise-applications/helpers/FormBValidationSchema';
@@ -175,9 +174,7 @@ export function FormBPage() {
   return (
     <>
       <AppLayout title="Formularz B">
-        <Suspense fallback={<AppLoader />}>
-          <FormB context={context} />
-        </Suspense>
+        <FormB context={context} />
       </AppLayout>
     </>
   );

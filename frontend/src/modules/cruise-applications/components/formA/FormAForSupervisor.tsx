@@ -1,8 +1,6 @@
 import { ReactFormExtendedApi } from '@tanstack/react-form';
-import { Suspense } from 'react';
 
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { FormAContractsSection } from '@/cruise-applications/components/formA/FormAContractsSection';
 import { FormACruiseGoalSection } from '@/cruise-applications/components/formA/FormACruiseGoalSection';
 import { FormACruiseLengthSection } from '@/cruise-applications/components/formA/FormACruiseLengthSection';
@@ -32,24 +30,22 @@ export function FormAForSupervisor({
 }) {
   return (
     <AppLayout title="Formularz A">
-      <Suspense fallback={<AppLoader />}>
-        <div className="space-y-8">
-          <FormAProvider value={{ form, initValues: formInitValues, isReadonly: true, hasFormBeenSubmitted: false }}>
-            <FormACruiseManagerInfoSection />
-            <FormACruiseLengthSection />
-            <FormAPermissionsSection />
-            <FormAResearchAreaSection />
-            <FormACruiseGoalSection />
-            <FormAResearchTasksSection />
-            <FormAContractsSection />
-            <FormAMembersSection />
-            <FormAPublicationsSection />
-            <FormASPUBTasksSection />
-            <FormASupervisorInfoSection />
-            <FormAForSupervisorActionsSection onAccept={handleAcceptForm} onDeny={handleDenyForm} />
-          </FormAProvider>
-        </div>
-      </Suspense>
+      <div className="space-y-8">
+        <FormAProvider value={{ form, initValues: formInitValues, isReadonly: true, hasFormBeenSubmitted: false }}>
+          <FormACruiseManagerInfoSection />
+          <FormACruiseLengthSection />
+          <FormAPermissionsSection />
+          <FormAResearchAreaSection />
+          <FormACruiseGoalSection />
+          <FormAResearchTasksSection />
+          <FormAContractsSection />
+          <FormAMembersSection />
+          <FormAPublicationsSection />
+          <FormASPUBTasksSection />
+          <FormASupervisorInfoSection />
+          <FormAForSupervisorActionsSection onAccept={handleAcceptForm} onDeny={handleDenyForm} />
+        </FormAProvider>
+      </div>
     </AppLayout>
   );
 }

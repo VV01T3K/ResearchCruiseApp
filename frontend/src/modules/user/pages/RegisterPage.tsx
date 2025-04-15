@@ -14,8 +14,8 @@ import { Result } from '@/user/models/Results';
 const validationSchema = z
   .object({
     email: z.string().email('Niepoprawny adres e-mail'),
-    firstname: z.string().min(2),
-    lastname: z.string().min(2),
+    firstname: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
+    lastname: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
     password: z
       .string()
       .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
@@ -44,6 +44,7 @@ const errorMessages: Record<Result | 'username-taken', string> = {
 export function RegisterPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
+  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
   const { mutateAsync } = useRegisterMutation({ setResult });
   const form = useForm({
     defaultValues: {
@@ -57,6 +58,12 @@ export function RegisterPage() {
       onChange: validationSchema,
     },
     onSubmit: async ({ value }) => {
+      setHasFormBeenSubmitted(true);
+      await form.validate('change');
+      if (!form.state.isValid) {
+        return;
+      }
+
       if (!value.email || !value.firstname || !value.lastname || !value.password) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -88,7 +95,7 @@ export function RegisterPage() {
                 type="email"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="E-mail"
                 required
               />
@@ -104,7 +111,7 @@ export function RegisterPage() {
                 type="text"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Imię"
                 required
               />
@@ -120,7 +127,7 @@ export function RegisterPage() {
                 type="text"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Nazwisko"
                 required
               />
@@ -136,7 +143,7 @@ export function RegisterPage() {
                 type="password"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Hasło"
                 required
               />
@@ -152,7 +159,7 @@ export function RegisterPage() {
                 type="password"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Potwierdź hasło"
                 required
               />

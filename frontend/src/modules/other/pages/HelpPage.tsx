@@ -27,7 +27,7 @@ export function HelpPage() {
     },
     onSubmit: ({ value }) => {
       window.open(
-        `mailto:help@rejsy.ug.edu.pl?subject=${encodeURIComponent(value.title)}&body=${encodeURIComponent(value.content)}`
+        `mailto:rejsy.help@ug.edu.pl?subject=${encodeURIComponent(value.title)}&body=${encodeURIComponent(value.content)}`
       );
     },
   });
@@ -48,7 +48,7 @@ export function HelpPage() {
           <h2 className="text-2xl text-center font-semibold">Obsługa problemów związanych z aplikacją</h2>
           <p className="mt-4 text-center">
             W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
-            <AppLink href="mailto:help@rejsy.ug.edu.pl">help@rejsy.ug.edu.pl</AppLink>.
+            <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.
           </p>
           <form className="space-y-4 p-4 flex flex-col" onSubmit={handleSubmit}>
             <form.Field

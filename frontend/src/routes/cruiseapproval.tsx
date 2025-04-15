@@ -5,8 +5,13 @@ import { FormAForSupervisorPage } from '@/cruise-applications/pages/FormAForSupe
 
 export const Route = createFileRoute('/cruiseapproval')({
   component: FormAForSupervisorPage,
-  validateSearch: z.object({
-    cruiseApplicationId: z.string().uuid(),
-    supervisorCode: z.string(),
-  }),
+  validateSearch: z
+    .object({
+      cruiseApplicationId: z.string().uuid(),
+      supervisorCode: z.string(),
+    })
+    .catch({
+      cruiseApplicationId: '',
+      supervisorCode: '',
+    }),
 });

@@ -1,11 +1,10 @@
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 import { AppAvatar } from '@/core/components/AppAvatar';
 import { AppBadge } from '@/core/components/AppBadge';
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppModal } from '@/core/components/AppModal';
 import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppTable } from '@/core/components/table/AppTable';
@@ -133,30 +132,28 @@ export function UserManagementPage() {
   return (
     <>
       <AppLayout title="Zarządzanie użytkownikami">
-        <Suspense fallback={<AppLoader />}>
-          <AppTable
-            data={usersQuery.data}
-            columns={columns}
-            rowSelectionState={selectedUsers}
-            setRowSelectionState={setSelectedUsers}
-            getRowId={(row) => row.id}
-            buttons={(defaultButtons) => [
-              <AppButton key="addUser" variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
-                Dodaj użytkownika
-              </AppButton>,
-              <AppButton
-                key="groupActions"
-                variant="warning"
-                disabled={!Object.keys(selectedUsers).length}
-                className={cn(!Object.keys(selectedUsers).length && 'opacity-50')}
-                onClick={() => setModalState({ state: 'groupActionsModal' })}
-              >
-                Akcje Grupowe
-              </AppButton>,
-              ...defaultButtons,
-            ]}
-          />
-        </Suspense>
+        <AppTable
+          data={usersQuery.data}
+          columns={columns}
+          rowSelectionState={selectedUsers}
+          setRowSelectionState={setSelectedUsers}
+          getRowId={(row) => row.id}
+          buttons={(defaultButtons) => [
+            <AppButton key="addUser" variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
+              Dodaj użytkownika
+            </AppButton>,
+            <AppButton
+              key="groupActions"
+              variant="warning"
+              disabled={!Object.keys(selectedUsers).length}
+              className={cn(!Object.keys(selectedUsers).length && 'opacity-50')}
+              onClick={() => setModalState({ state: 'groupActionsModal' })}
+            >
+              Akcje Grupowe
+            </AppButton>,
+            ...defaultButtons,
+          ]}
+        />
       </AppLayout>
 
       <AppModal

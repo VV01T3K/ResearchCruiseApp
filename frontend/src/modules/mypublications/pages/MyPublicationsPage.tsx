@@ -1,11 +1,10 @@
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppModal } from '@/core/components/AppModal';
 import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppTable } from '@/core/components/table/AppTable';
@@ -108,48 +107,46 @@ export function MyPublicationsPage() {
   return (
     <>
       <AppLayout title="Moje publikacje">
-        <Suspense fallback={<AppLoader />}>
-          <AppTable
-            data={ownPublicationsQuery.data}
-            columns={columns}
-            rowSelectionState={selectedPublications}
-            setRowSelectionState={setSelectedPublications}
-            getRowId={(row) => row.id}
-            emptyTableMessage="Nie dodano żadnej publikacji"
-            buttons={(defaultButtons) => [
-              <UploadPublicationsButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
-              <AppButton
-                key="goToRepository"
-                type="link"
-                variant="primaryOutline"
-                href="https://repozytorium.bg.ug.edu.pl/search.seam"
-                target="_blank"
-              >
-                Przejdź do repozytorium BG
-                <ExternalLinkIcon className="h-4 w-4 ml-2" />
-              </AppButton>,
-              <AppButton
-                key="removeAllPublications"
-                variant="dangerOutline"
-                onClick={() => setIsDeleteAllModalOpen(true)}
-                disabled={!ownPublicationsQuery.data?.length || deleteAllOwnPublicationsMutation.isPending}
-              >
-                <TrashIcon className="h-4 w-4 mr-2" />
-                Usuń wszystkie publikacje
-              </AppButton>,
-              <AppButton
-                key="removeSelectedPublications"
-                variant="dangerOutline"
-                onClick={() => deleteSelectedPublications()}
-                disabled={!Object.keys(selectedPublications).length || deleteOwnPublicationMutation.isPending}
-              >
-                <TrashIcon className="h-4 w-4 mr-2" />
-                Usuń zaznaczone publikacje
-              </AppButton>,
-              ...defaultButtons,
-            ]}
-          ></AppTable>
-        </Suspense>
+        <AppTable
+          data={ownPublicationsQuery.data}
+          columns={columns}
+          rowSelectionState={selectedPublications}
+          setRowSelectionState={setSelectedPublications}
+          getRowId={(row) => row.id}
+          emptyTableMessage="Nie dodano żadnej publikacji"
+          buttons={(defaultButtons) => [
+            <UploadPublicationsButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
+            <AppButton
+              key="goToRepository"
+              type="link"
+              variant="primaryOutline"
+              href="https://repozytorium.bg.ug.edu.pl/search.seam"
+              target="_blank"
+            >
+              Przejdź do repozytorium BG
+              <ExternalLinkIcon className="h-4 w-4 ml-2" />
+            </AppButton>,
+            <AppButton
+              key="removeAllPublications"
+              variant="dangerOutline"
+              onClick={() => setIsDeleteAllModalOpen(true)}
+              disabled={!ownPublicationsQuery.data?.length || deleteAllOwnPublicationsMutation.isPending}
+            >
+              <TrashIcon className="h-4 w-4 mr-2" />
+              Usuń wszystkie publikacje
+            </AppButton>,
+            <AppButton
+              key="removeSelectedPublications"
+              variant="dangerOutline"
+              onClick={() => deleteSelectedPublications()}
+              disabled={!Object.keys(selectedPublications).length || deleteOwnPublicationMutation.isPending}
+            >
+              <TrashIcon className="h-4 w-4 mr-2" />
+              Usuń zaznaczone publikacje
+            </AppButton>,
+            ...defaultButtons,
+          ]}
+        ></AppTable>
       </AppLayout>
       <AppModal
         isOpen={isDeleteAllModalOpen}

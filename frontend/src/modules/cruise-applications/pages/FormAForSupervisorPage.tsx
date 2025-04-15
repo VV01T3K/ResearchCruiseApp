@@ -13,7 +13,6 @@ import { FormADto } from '@/cruise-applications/models/FormADto';
 
 export function FormAForSupervisorPage() {
   const { cruiseApplicationId, supervisorCode } = getRouteApi('/cruiseapproval').useSearch();
-  // TODO: Add validation for cruiseApplicationId and supervisorCode here (and preferably show an alert to user)
   const navigate = useNavigate();
   const appContext = useAppContext();
   const initialStateQuery = useFormAForSupervisorInitValuesQuery({ cruiseId: cruiseApplicationId, supervisorCode });

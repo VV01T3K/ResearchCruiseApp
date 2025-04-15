@@ -1,13 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
-import { Suspense } from 'react';
 
 import { AppAvatar } from '@/core/components/AppAvatar';
 import { AppBadge } from '@/core/components/AppBadge';
 import { AppButton } from '@/core/components/AppButton';
+import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppTable } from '@/core/components/table/AppTable';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
@@ -98,25 +97,29 @@ export function ApplicationsPage() {
             </div>
           )}
           {row.original.status === CruiseApplicationStatus.FormBRequired && (
-            <AppButton
-              className="inline-block mx-auto px-5 py-1"
-              size="plain"
-              type="link"
-              href={`/applications/${row.original.id}/formB?mode=edit`}
-            >
-              Wypełnij
-            </AppButton>
+            <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
+              <AppButton
+                className="inline-block mx-auto px-5 py-1"
+                size="plain"
+                type="link"
+                href={`/applications/${row.original.id}/formB?mode=edit`}
+              >
+                Wypełnij
+              </AppButton>
+            </AppGuard>
           )}
           {row.original.status === CruiseApplicationStatus.Undertaken && (
             <div className="flex flex-col gap-2 items-center">
-              <AppButton
-                className="inline-block mx-auto px-4 py-0.5 mt-1"
-                size="plain"
-                type="link"
-                href={`/applications/${row.original.id}/formC?mode=edit`}
-              >
-                Wypełnij formularz C
-              </AppButton>
+              <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
+                <AppButton
+                  className="inline-block mx-auto px-4 py-0.5 mt-1"
+                  size="plain"
+                  type="link"
+                  href={`/applications/${row.original.id}/formC?mode=edit`}
+                >
+                  Wypełnij formularz C
+                </AppButton>
+              </AppGuard>
               <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
             </div>
           )}
@@ -148,14 +151,12 @@ export function ApplicationsPage() {
   return (
     <>
       <AppLayout title="Zgłoszenia">
-        <Suspense fallback={<AppLoader />}>
-          <AppTable
-            data={applicationsQuery.data}
-            columns={columns}
-            buttons={(defaultButtons) => [...defaultButtons]}
-            initialSortingState={initialSortingState}
-          />
-        </Suspense>
+        <AppTable
+          data={applicationsQuery.data}
+          columns={columns}
+          buttons={(defaultButtons) => [...defaultButtons]}
+          initialSortingState={initialSortingState}
+        />
       </AppLayout>
     </>
   );

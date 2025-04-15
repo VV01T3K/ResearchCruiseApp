@@ -52,36 +52,33 @@ export function CruiseApplicationDropdownElementSelectorButton({ variant, option
       <AnimatePresence>
         {expanded && (
           <Modal dropdownRef={dropdownRef} elementRef={elementRef}>
+            <div className="sticky top-0">
+              <SearchIcon className="w-5 h-5 absolute z-10 right-5 top-2.5" />
+              <AppInput value={searchValue} onChange={setSearchValue} placeholder="Wyszukaj..." autoFocus />
+            </div>
             {filteredOptions.length === 0 && <div className="text-center text-gray-500 py-4">Brak wyników</div>}
-            {filteredOptions.length > 0 && (
-              <>
-                <div className="sticky top-0">
-                  <SearchIcon className="w-5 h-5 absolute z-10 right-5 top-2.5" />
-                  <AppInput value={searchValue} onChange={setSearchValue} placeholder="Wyszukaj..." autoFocus />
-                </div>
-                {filteredOptions.map((option) => (
-                  <AppButton
-                    key={option.value}
-                    onClick={
-                      option.onClick
-                        ? () => {
-                            option.onClick!();
-                            setExpanded(false);
-                          }
-                        : undefined
-                    }
-                    variant="plain"
-                    className={cn(
-                      'w-full rounded-lg focus:inset-ring-2 inset-ring-blue-500 px-2',
-                      option.onClick && 'hover:bg-gray-100'
-                    )}
-                    disabled={!option.onClick}
-                  >
-                    {option.content ?? <span>{option.value}</span>}
-                  </AppButton>
-                ))}
-              </>
-            )}
+            {filteredOptions.length > 0 &&
+              filteredOptions.map((option) => (
+                <AppButton
+                  key={option.value}
+                  onClick={
+                    option.onClick
+                      ? () => {
+                          option.onClick!();
+                          setExpanded(false);
+                        }
+                      : undefined
+                  }
+                  variant="plain"
+                  className={cn(
+                    'w-full rounded-lg focus:inset-ring-2 inset-ring-blue-500 px-2',
+                    option.onClick && 'hover:bg-gray-100'
+                  )}
+                  disabled={!option.onClick}
+                >
+                  {option.content ?? <span>{option.value}</span>}
+                </AppButton>
+              ))}
           </Modal>
         )}
       </AnimatePresence>

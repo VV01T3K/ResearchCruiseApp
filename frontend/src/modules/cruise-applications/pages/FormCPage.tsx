@@ -1,10 +1,9 @@
 import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { useAppContext } from '@/core/hooks/AppContextHook';
 import { FormC } from '@/cruise-applications/components/formC/FormC';
 import { getFormCValidationSchema } from '@/cruise-applications/helpers/FormCValidationSchema';
@@ -177,9 +176,7 @@ export function FormCPage() {
   return (
     <>
       <AppLayout title="Formularz C">
-        <Suspense fallback={<AppLoader />}>
-          <FormC context={context} />
-        </Suspense>
+        <FormC context={context} />
       </AppLayout>
     </>
   );

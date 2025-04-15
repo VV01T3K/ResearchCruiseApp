@@ -6,11 +6,10 @@ import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import PencilIcon from 'bootstrap-icons/icons/pencil.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppModal } from '@/core/components/AppModal';
 import { useAppContext } from '@/core/hooks/AppContextHook';
 import { removeEmptyValues } from '@/core/lib/utils';
@@ -161,17 +160,15 @@ export function CruiseDetailsPage() {
   return (
     <>
       <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
-        <Suspense fallback={<AppLoader />}>
-          <CruiseFrom
-            context={{
-              form,
-              cruise: cruiseQuery.data,
-              cruiseApplications: applicationQuery.data,
-              isReadonly: !editMode,
-            }}
-            buttons={getButtons()}
-          />
-        </Suspense>
+        <CruiseFrom
+          context={{
+            form,
+            cruise: cruiseQuery.data,
+            cruiseApplications: applicationQuery.data,
+            isReadonly: !editMode,
+          }}
+          buttons={getButtons()}
+        />
       </AppLayout>
 
       <AppModal

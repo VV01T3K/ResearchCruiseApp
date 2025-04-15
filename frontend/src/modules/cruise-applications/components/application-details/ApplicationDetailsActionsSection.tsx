@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { AppActionsSection } from '@/core/components/AppActionsSection';
+import { AppGuard } from '@/core/components/AppGuard';
+import { Role } from '@/core/models/Role';
 import { ApplicationDetailsActionAccept } from '@/cruise-applications/components/application-details/actions-section-buttons/ApplicationDetailsActionAccept';
 import { ApplicationDetailsActionCancel } from '@/cruise-applications/components/application-details/actions-section-buttons/ApplicationDetailsActionCancel';
 import { ApplicationDetailsActionCancelConfirmation } from '@/cruise-applications/components/application-details/actions-section-buttons/ApplicationDetailsActionCancelConfirmation';
@@ -32,10 +34,12 @@ export function ApplicationDetailsActionsSection({ onAccept, onReject }: Props) 
       );
     case CruiseApplicationStatus.AcceptedBySupervisor:
       return (
-        <AppActionsSection>
-          <ApplicationDetailsActionCancel setConfirmationMode={setConfirmationMode} />
-          <ApplicationDetailsActionAccept onAccept={onAccept} />
-        </AppActionsSection>
+        <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+          <AppActionsSection>
+            <ApplicationDetailsActionCancel setConfirmationMode={setConfirmationMode} />
+            <ApplicationDetailsActionAccept onAccept={onAccept} />
+          </AppActionsSection>
+        </AppGuard>
       );
     default:
       return null;

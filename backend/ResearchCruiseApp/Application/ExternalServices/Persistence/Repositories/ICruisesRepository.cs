@@ -6,6 +6,11 @@ public interface ICruisesRepository : IRepository<Cruise>
 {
     Task<Cruise?> GetByIdWithCruiseApplications(Guid id, CancellationToken cancellationToken);
 
+    Task<Cruise?> GetByIdWithCruiseApplicationsWithFormAContent(
+        Guid id,
+        CancellationToken cancellationToken
+    );
+
     Task<List<Cruise>> GetAllWithCruiseApplications(CancellationToken cancellationToken);
 
     Task<List<Cruise>> GetAllWithCruiseApplicationsWithFormAContent(

@@ -341,8 +341,10 @@ public class IdentityService(
         if (user is null)
             return Error.ForbiddenOperation();
 
+        user.EmailConfirmed =
+            (updateUserFormDto.Email == user.Email || updateUserFormDto.Email is null)
+            && user.EmailConfirmed;
         user.Email = updateUserFormDto.Email ?? user.Email;
-        user.EmailConfirmed = updateUserFormDto.Email is null && user.EmailConfirmed;
         user.FirstName = updateUserFormDto.FirstName ?? user.FirstName;
         user.LastName = updateUserFormDto.LastName ?? user.LastName;
 

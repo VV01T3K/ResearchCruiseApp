@@ -1,13 +1,14 @@
 import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
+import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
-import { AppLoader } from '@/core/components/AppLoader';
 import { AppModal } from '@/core/components/AppModal';
 import { AppTabs } from '@/core/components/AppTabs';
 import { useAppContext } from '@/core/hooks/AppContextHook';
+import { Role } from '@/core/models/Role';
 import { CruiseCalendar } from '@/cruise-schedule/components/CruiseCalendar';
 import { CruiseExportForm } from '@/cruise-schedule/components/CruiseExportForm';
 import { CruisesTable } from '@/cruise-schedule/components/CruisesTable';
@@ -47,28 +48,32 @@ export function CruisesPage() {
   }
 
   const buttons = [
-    <AppButton key="autoAddCruises" onClick={autoAddCruises} variant="primaryOutline">
-      Dodaj rejsy automatycznie
-    </AppButton>,
-    <AppButton key="newCruise" type="link" href="/cruises/new">
-      Nowy rejs
-      <PlusLgIcon className="ml-2 w-6 h-6" />
-    </AppButton>,
-    <AppButton key="exportCruises" onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
-      Eksport
-      <BoxArrowUpRightIcon className="ml-2 w-4 h-4" />
-    </AppButton>,
+    <AppGuard key="autoAddCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <AppButton onClick={autoAddCruises} variant="primaryOutline">
+        Dodaj rejsy automatycznie
+      </AppButton>
+    </AppGuard>,
+    <AppGuard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <AppButton type="link" href="/cruises/new">
+        Nowy rejs
+        <PlusLgIcon className="ml-2 w-6 h-6" />
+      </AppButton>
+    </AppGuard>,
+    <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
+        Eksport
+        <BoxArrowUpRightIcon className="ml-2 w-4 h-4" />
+      </AppButton>
+    </AppGuard>,
   ];
 
   return (
     <>
       <AppLayout title="Rejsy">
-        <Suspense fallback={<AppLoader />}>
-          <AppTabs tabNames={['Lista rejsów', 'Kalendarz']}>
-            <CruisesTable cruises={cruisesQuery.data} buttons={buttons} deleteCruise={setCruiseSelectedForDeletion} />
-            <CruiseCalendar cruises={cruisesQuery.data} buttons={buttons} />
-          </AppTabs>
-        </Suspense>
+        <AppTabs tabNames={['Lista rejsów', 'Kalendarz']}>
+          <CruisesTable cruises={cruisesQuery.data} buttons={buttons} deleteCruise={setCruiseSelectedForDeletion} />
+          <CruiseCalendar cruises={cruisesQuery.data} buttons={buttons} />
+        </AppTabs>
       </AppLayout>
 
       <AppModal

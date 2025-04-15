@@ -17,6 +17,30 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
             .SingleOrDefaultAsync(cruise => cruise.Id == id, cancellationToken);
     }
 
+    public Task<Cruise?> GetByIdWithCruiseApplicationsWithFormAContent(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        return DbContext
+            .Cruises.IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.Permissions)
+            .IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
+            .IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
+            .IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAUgUnits)
+            .IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAGuestUnits)
+            .IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
+            .IncludeCruiseApplications()
+            .ThenInclude(cruiseApplication => cruiseApplication.FormA!.FormASpubTasks)
+            .Where(cruise => cruise.Id == id)
+            .SingleOrDefaultAsync();
+    }
+
     public Task<Cruise?> GetByIdWithCruiseApplicationsWithForm(
         Guid id,
         CancellationToken cancellationToken

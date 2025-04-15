@@ -19,7 +19,7 @@ public class GetCruiseHandler(
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
+        var cruise = await cruisesRepository.GetByIdWithCruiseApplicationsWithFormAContent(
             request.Id,
             cancellationToken
         );
