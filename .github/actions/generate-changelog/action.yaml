@@ -1,0 +1,43 @@
+name: Generate Changelog
+description: Generates a changelog based on the commit history since the last release.
+inputs:
+  previous-version:
+    description: Previous version
+    required: true
+  current-version:
+    description: Current version
+    required: true
+  changelog-file:
+    description: Path to the changelog file
+    default: CHANGELOG.md
+outputs:
+  new-changelog-content:
+    description: Generated changelog content
+    value: ${{ steps.generate_changelog.outputs.new-changelog-content }}
+runs:
+  using: composite
+  steps:
+    - name: Generate changelog
+      shell: bash
+      id: generate_changelog
+      run: |
+        PREVIOUS_VERSION=${{ inputs.previous-version }}
+        CURRENT_VERSION=${{ inputs.current-version }}
+        CHANGELOG_FILE=${{ inputs.changelog-file }}
+        DATE=$(date +%Y-%m-%d)
+
+        echo "Previous version: $PREVIOUS_VERSION"
+        echo "Current version: $CURRENT_VERSION"
+        echo "Changelog file: $CHANGELOG_FILE"
+
+        NEW_CHANGELOG_CONTENT="## $CURRENT_VERSION - $DATE
+        #### Changes since *$PREVIOUS_VERSION*:
+        $(git log --pretty=format:"* %s" v$PREVIOUS_VERSION..HEAD)
+        "
+
+        touch $CHANGELOG_FILE
+        echo "$NEW_CHANGELOG_CONTENT
+        $(cat $CHANGELOG_FILE)" > $CHANGELOG_FILE
+        echo "new-changelog-content<<EOF" >> $GITHUB_OUTPUT
+        echo "$NEW_CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT

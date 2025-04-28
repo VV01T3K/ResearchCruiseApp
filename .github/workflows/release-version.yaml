@@ -1,0 +1,84 @@
+name: Release version
+run-name: Release version (${{ github.event.inputs.increment }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      increment:
+        type: choice
+        description: Semantic versioning increment type
+        options:
+          - major
+          - minor
+          - patch
+        required: true
+        default: patch
+
+jobs:
+  release:
+    name: Release version (${{ github.event.inputs.increment }})
+    runs-on: ubuntu-latest
+
+    if: github.ref_name == 'main'
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ssh-key: "${{ secrets.VERSION_RELEASE_DEPLOYMENT_KEY }}"
+
+      - name: Get current version
+        id: get_version
+        run: |
+          VERSION=$(cat .version)
+          echo "current-version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Generate new ${{ github.event.inputs.increment }} version from ${{ steps.get_version.outputs.current-version }}
+        id: increment_version
+        uses: ./.github/actions/increment-version
+        with:
+          current-version: ${{ steps.get_version.outputs.current-version }}
+          increment-type: ${{ github.event.inputs.increment }}
+
+      - name: Update version in files to ${{ steps.increment_version.outputs.new-version }}
+        run: |
+          # Update version in .version file
+          echo ${{ steps.increment_version.outputs.new-version }} > .version
+
+          # Update version in frontend/package.json
+          PACKAGE_JSON_CONTENT=$(jq '.version = "${{ steps.increment_version.outputs.new-version }}"' frontend/package.json)
+          echo "$PACKAGE_JSON_CONTENT" > frontend/package.json
+
+          # Update version in backend/ResearchCruiseApp/ResearchCruiseApp.csproj
+          sed -i "s/<Version>.*<\/Version>/<Version>${{ steps.increment_version.outputs.new-version }}<\/Version>/" backend/ResearchCruiseApp/ResearchCruiseApp.csproj
+
+      - name: Generate changelog
+        uses: ./.github/actions/generate-changelog
+        id: generate_changelog
+        with:
+          previous-version: ${{ steps.get_version.outputs.current-version }}
+          current-version: ${{ steps.increment_version.outputs.new-version }}
+
+      - name: Commit changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add -A
+          git commit -a -m "ci: release version ${{ steps.increment_version.outputs.new-version }}"
+          git tag -a "v${{ steps.increment_version.outputs.new-version }}" -m "Release version ${{ steps.increment_version.outputs.new-version }}"
+          git push --follow-tags
+
+      - name: Publish ${{ steps.increment_version.outputs.new-version }} release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.increment_version.outputs.new-version }}" \
+            --title "Version ${{ steps.increment_version.outputs.new-version }}" \
+            --notes "${{ steps.generate_changelog.outputs.new-changelog-content }}"

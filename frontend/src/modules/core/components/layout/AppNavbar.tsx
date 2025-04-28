@@ -4,6 +4,7 @@ import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
+import packageJson from 'package.json';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLink } from '@/core/components/AppLink';
@@ -35,13 +36,15 @@ export function AppNavbar() {
       transition={{ duration: 0.3 }}
     >
       <div>
-        <motion.div whileHover={{ scale: 1.1, translateX: '5%' }}>
-          <AppLink
-            href="/"
-            title="Strona Główna"
-            className="text-white pr-4 sm:text-2xl sm:font-thin hover:no-underline"
-          >
+        <motion.div
+          whileHover={{ scale: 1.1, translateX: '5%' }}
+          className="flex-col sm:flex-row sm:flex items-end sm:font-thin"
+        >
+          <AppLink href="/" title="Strona Główna" className="text-white pr-4 sm:text-2xl hover:no-underline">
             Portal rejsów badawczych R/V Oceanograf
+          </AppLink>
+          <AppLink href={`${packageJson.repository}/releases/latest`} variant="white" className="text-xs">
+            {packageJson.version}
           </AppLink>
         </motion.div>
       </div>

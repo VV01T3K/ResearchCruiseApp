@@ -1,0 +1,49 @@
+name: Increment Semantic Version
+description: Increments the semantic version with the specified type (major, minor, patch).
+inputs:
+  current-version:
+    description: Current version
+    required: true
+  increment-type:
+    description: Type of increment (major, minor, patch)
+    required: true
+outputs:
+  new-version:
+    description: New semantic version
+    value: ${{ steps.increment.outputs.new-version }}
+runs:
+  using: composite
+  steps:
+    - name: Increment version
+      shell: bash
+      id: increment
+      run: |
+        CURRENT_VERSION=${{ inputs.current-version }}
+        INCREMENT_TYPE=${{ inputs.increment-type }}
+
+        echo "Current version: $CURRENT_VERSION, Increment type: $INCREMENT_TYPE"
+
+        IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+        MAJOR=${VERSION_PARTS[0]}
+        MINOR=${VERSION_PARTS[1]}
+        PATCH=${VERSION_PARTS[2]}
+
+        case $INCREMENT_TYPE in
+          major)
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            ;;
+          minor)
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            ;;
+          patch)
+            PATCH=$((PATCH + 1))
+            ;;
+        esac
+
+        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+        echo "New version: $NEW_VERSION"
+        echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT

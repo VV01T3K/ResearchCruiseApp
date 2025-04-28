@@ -7,8 +7,9 @@
         <InvariantGlobalization>false</InvariantGlobalization>
         <RootNamespace>ResearchCruiseApp</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-      <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
+        <Version>1.1.0</Version>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />

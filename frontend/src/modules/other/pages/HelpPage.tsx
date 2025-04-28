@@ -3,6 +3,7 @@ import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
 import TelephoneFillIcon from 'bootstrap-icons/icons/telephone-fill.svg?react';
+import WindowStackIcon from 'bootstrap-icons/icons/window-stack.svg?react';
 import { z } from 'zod';
 
 import { AppButton } from '@/core/components/AppButton';
@@ -10,6 +11,8 @@ import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { CompanyInfoCard } from '@/other/components/CompanyInfoCard';
+
+import { useBackendVersionQuery } from '../hooks/BackendVersionApiHook';
 
 const validationSchema = z.object({
   title: z.string().nonempty('Tytuł nie może być pusty'),
@@ -31,6 +34,7 @@ export function HelpPage() {
       );
     },
   });
+  const backendVersion = useBackendVersionQuery();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -103,6 +107,14 @@ export function HelpPage() {
           </CompanyInfoCard>
           <CompanyInfoCard icon={<EnvelopeFillIcon />} title="Email">
             <AppLink href="mail:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</AppLink>
+          </CompanyInfoCard>
+          <CompanyInfoCard icon={<WindowStackIcon />} title="Wersja aplikacji">
+            <div className="text-sm text-gray-500 grid grid-cols-2 gap-1">
+              <div>Wersja frontendu:</div>
+              <div className="font-bold text-black">{APP_VERSION}</div>
+              <div>Wersja backendu:</div>
+              <div className="font-bold text-black">{backendVersion.data}</div>
+            </div>
           </CompanyInfoCard>
         </div>
       </div>
