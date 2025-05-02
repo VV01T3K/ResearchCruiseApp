@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using AutoMapper;
+using ResearchCruiseApp.App_GlobalResources;
+using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
@@ -92,7 +94,10 @@ public class FormAInitValuesDtosFactory(
 
     private List<FormUserDto> GetDeputyManagers(IEnumerable<UserDto> allUserDtos)
     {
-        return allUserDtos.Select(formUserDtosFactory.Create).ToList();
+        return allUserDtos
+            .Where(u => u.Roles.Contains(RoleName.CruiseManager))
+            .Select(formUserDtosFactory.Create)
+            .ToList();
     }
 
     private static List<string> GetYears()
