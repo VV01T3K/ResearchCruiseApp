@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> ToDo
+
+    ToDo --> InProgress: Rozpoczęcie pracy
+    ToDo --> Blocked: Zidentyfikowano przeszkodę (przed rozpoczęciem)
+
+    Blocked --> ToDo: Usunięto przeszkodę (nie było w InProgress)
+    Blocked --> InProgress: Usunięto przeszkodę (było w InProgress lub można rozpocząć)
+    Blocked --> Test: Usunięto przeszkodę (było w Test)
+    Blocked --> InReview: Usunięto przeszkodę (było w InReview)
+
+    InProgress --> Test: Gotowe do testów
+    InProgress --> Blocked: Zidentyfikowano przeszkodę (w trakcie realizacji)
+    InProgress --> ToDo: Cofnięcie do puli (rzadziej)
+
+    Test --> InReview: Testy pomyślne
+    Test --> InProgress: Testy wykazały błędy
+    Test --> Blocked: Zidentyfikowano przeszkodę (w trakcie testów)
+
+    InReview --> Done: Zaakceptowane
+    InReview --> InProgress: Konieczne zmiany deweloperskie
+    InReview --> Blocked: Zidentyfikowano przeszkodę (w trakcie przeglądu)
+
+    Done --> [*]
