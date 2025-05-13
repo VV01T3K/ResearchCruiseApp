@@ -93,7 +93,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: kustomize/overlays/staging
+        working-directory: kubernetes/overlays/staging
 
     steps:
       - name: Checkout repository
