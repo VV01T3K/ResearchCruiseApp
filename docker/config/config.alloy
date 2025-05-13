@@ -1,0 +1,75 @@
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.processor.batch.default.input]
+    logs = [otelcol.processor.batch.default.input]
+    metrics = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  output {
+    traces = [otelcol.exporter.otlp.tempo.input]
+    logs = [otelcol.exporter.loki.loki.input]
+    metrics = [otelcol.exporter.prometheus.prometheus.input]
+  }
+}
+
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "http://tempo:4317"
+    tls {
+			insecure = true
+		}
+  }
+}
+
+otelcol.exporter.loki "loki" {
+  forward_to = [loki.write.loki.receiver]
+}
+
+otelcol.exporter.prometheus "prometheus" {
+  add_metric_suffixes = true
+  forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+loki.write "loki" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+    tls_config {
+      insecure_skip_verify = false
+    }
+  }
+}
+
+prometheus.remote_write "prometheus" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+    tls_config {
+      insecure_skip_verify = false
+    }
+  }
+}
+
+faro.receiver "default" {
+  server {
+      listen_port = 12347
+      listen_address = "0.0.0.0"
+  }
+  output {
+    traces = [otelcol.exporter.otlp.tempo.input]
+    logs = [loki.write.loki.receiver]
+  }
+  extra_log_labels = {
+    app_name = "",
+    app_environment = "",
+    kind = "",
+    source = "faro-sdk",
+  }
+}

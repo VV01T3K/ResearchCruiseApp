@@ -20,6 +20,9 @@ export default defineConfig({
   define: {
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
     API_URL: JSON.stringify(process.env.API_URL),
+    APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
+    OTEL_SERVICE_NAME: JSON.stringify(process.env.OTEL_SERVICE_NAME),
+    GRAFANA_FARO_URL: JSON.stringify(process.env.GRAFANA_FARO_URL),
   },
   build: { chunkSizeWarningLimit: 1000 },
 });

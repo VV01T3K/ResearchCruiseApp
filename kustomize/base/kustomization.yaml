@@ -6,6 +6,7 @@ resources:
   - backend/configmap.yaml
   - backend/deployment.yaml
   - backend/service.yaml
+  - frontend/configmap.yaml
   - frontend/deployment.yaml
   - frontend/service.yaml
 secretGenerator:

@@ -15,9 +15,9 @@ spec:
       containers:
         - name: research-cruise-app-frontend
           image: research-cruise-app-frontend
-          env:
-            - name: API_URL
-              value: http://research-cruise-app-backend:8080/
+          envFrom:
+            - configMapRef:
+                name: research-cruise-app-frontend-config
           ports:
             - containerPort: 8080
               name: http

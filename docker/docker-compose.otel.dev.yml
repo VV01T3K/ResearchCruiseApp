@@ -1,0 +1,92 @@
+include:
+  - docker-compose.infra.yml
+
+services:
+  backend:
+    container_name: researchcruiseapp-backend
+    build:
+      context: ../backend
+    environment:
+      - Database__SeedAutomatically=true
+      - Database__MigrateAutomatically=true
+      - Database__LogUserPasswordsWhenSeeding=true
+      - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
+      - FrontendUrl=http://localhost:8080
+      - UseOtlpExporter=true
+      - OtlpExporterEndpoint=http://alloy:4318
+    depends_on:
+      db:
+        condition: service_healthy
+      alloy:
+        condition: service_started
+
+  frontend:
+    container_name: researchcruiseapp-frontend
+    build:
+      context: ../frontend
+    ports:
+      - 8080:8080
+    environment:
+      - GRAFANA_FARO_URL=http://alloy:12347/
+    depends_on:
+      backend:
+        condition: service_healthy
+      alloy:
+        condition: service_started
+
+  alloy:
+    container_name: researchcruiseapp-alloy
+    image: grafana/alloy:v1.8.3
+    volumes:
+      - ./config/config.alloy:/etc/alloy/config.alloy:ro
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_started
+
+  loki:
+    container_name: researchcruiseapp-loki
+    image: grafana/loki:3.4.2
+
+  tempo:
+    container_name: researchcruiseapp-tempo
+    image: grafana/tempo:2.7.1
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo.yaml:ro
+    command:
+      - --config.file=/etc/tempo.yaml
+    depends_on:
+      prometheus:
+        condition: service_started
+
+  prometheus:
+    container_name: researchcruiseapp-prometheus
+    image: prom/prometheus:v3.3.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+
+  grafana:
+    container_name: researchcruiseapp-grafana
+    image: grafana/grafana:12.0.0
+    volumes:
+      - ./config/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+      - ./config/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./config/grafana-dashboards:/etc/dashboards:ro
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    ports:
+      - "3000:3000"
+    depends_on:
+      loki:
+        condition: service_started
+      tempo:
+        condition: service_started
+      alloy:
+        condition: service_started
+      prometheus:
+        condition: service_started

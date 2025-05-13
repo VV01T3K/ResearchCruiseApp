@@ -1,18 +1,17 @@
 services:
   backend:
     container_name: researchcruiseapp-backend
-    build:
-      context: ../backend
+    image: ghcr.io/kanareklife/researchcruiseapp/backend
     environment:
       - Database__SeedAutomatically=false
       - Database__MigrateAutomatically=false
       - Database__LogUserPasswordsWhenSeeding=false
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
+      - FrontendUrl=http://localhost:8080
     ports:
       - 3000:8080
   frontend:
     container_name: researchcruiseapp-frontend
-    build:
-      context: ../old_frontend
+    image: ghcr.io/kanareklife/researchcruiseapp/frontend
     ports:
       - 8080:80
