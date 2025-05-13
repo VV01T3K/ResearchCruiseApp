@@ -6,7 +6,7 @@ import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppAlert } from '@/core/components/AppAlert';
 import { AppDropdownInput, AppDropdownInputOption } from '@/core/components/inputs/AppDropdownInput';
 import { getErrors } from '@/core/lib/utils';
-import { mapPersonToLabel } from '@/cruise-applications/helpers/mapPersonToLabel';
+import { mapPersonToLabel } from '@/cruise-applications/helpers/PersonMappers';
 import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
 import { FormUserDto } from '@/cruise-applications/models/FormUserDto';
 import { useCruiseForm } from '@/cruise-schedule/contexts/CruiseFormContext';

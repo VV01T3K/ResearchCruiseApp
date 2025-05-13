@@ -29,87 +29,79 @@ export function FormCResearchTasksSection() {
       size: 45,
     },
     {
-      header: 'Zrealizowane',
+      id: 'done-and-conditions',
       cell: ({ row }) => {
         return (
-          <div className="flex justify-center">
-            <form.Field
-              name={`researchTasksEffects[${row.index}].done`}
-              children={(field) => (
-                <AppCheckbox
-                  size="md"
-                  name={field.name}
-                  checked={field.state.value === 'true'}
-                  onChange={(value) => {
-                    field.handleChange(value ? 'true' : 'false');
-                  }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  disabled={isReadonly}
+          <form.Subscribe
+            selector={(state) => state.values.researchTasksEffects[row.index].done}
+            children={(taskDone) => (
+              <div className="flex justify-center items-center gap-4">
+                <form.Field
+                  name={`researchTasksEffects[${row.index}].done`}
+                  children={(field) => (
+                    <AppCheckbox
+                      size="md"
+                      name={field.name}
+                      checked={field.state.value === 'true'}
+                      onChange={(value) => {
+                        field.handleChange(value ? 'true' : 'false');
+                      }}
+                      onBlur={field.handleBlur}
+                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      label="Zrealizowane"
+                      labelPosition="top"
+                      disabled={isReadonly}
+                    />
+                  )}
                 />
-              )}
-            />
-          </div>
+                <form.Field
+                  name={`researchTasksEffects[${row.index}].managerConditionMet`}
+                  children={(field) => {
+                    if (field.state.value !== 'false' && taskDone === 'false') {
+                      field.handleChange('false');
+                    }
+                    return (
+                      <AppCheckbox
+                        size="md"
+                        name={field.name}
+                        checked={field.state.value === 'true'}
+                        onChange={(value) => field.handleChange(value ? 'true' : 'false')}
+                        onBlur={field.handleBlur}
+                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                        label="Czy naliczyć punkty kierownikowi?"
+                        labelPosition="top"
+                        disabled={isReadonly || taskDone === 'false'}
+                      />
+                    );
+                  }}
+                />
+                <form.Field
+                  name={`researchTasksEffects[${row.index}].deputyConditionMet`}
+                  children={(field) => {
+                    if (field.state.value !== 'false' && taskDone === 'false') {
+                      field.handleChange('false');
+                    }
+                    return (
+                      <AppCheckbox
+                        size="md"
+                        name={field.name}
+                        checked={field.state.value === 'true'}
+                        onChange={(value) => field.handleChange(value ? 'true' : 'false')}
+                        onBlur={field.handleBlur}
+                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                        label="Czy naliczyć punkty zastępcy?"
+                        labelPosition="top"
+                        disabled={isReadonly || taskDone === 'false'}
+                      />
+                    );
+                  }}
+                />
+              </div>
+            )}
+          />
         );
       },
-      size: 5,
-    },
-    {
-      header: 'Naliczanie punktów',
-      cell: ({ row }) => {
-        return (
-          <div className="grid grid-cols-2 gap-3">
-            <form.Subscribe
-              selector={(state) => state.values.researchTasksEffects[row.index].done}
-              children={(taskDone) => (
-                <>
-                  <form.Field
-                    name={`researchTasksEffects[${row.index}].managerConditionMet`}
-                    children={(field) => {
-                      if (field.state.value !== 'false' && taskDone === 'false') {
-                        field.handleChange('false');
-                      }
-                      return (
-                        <AppCheckbox
-                          size="md"
-                          name={field.name}
-                          checked={field.state.value === 'true'}
-                          onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-                          onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                          label="Czy naliczyć punkty kierownikowi?"
-                          disabled={isReadonly || taskDone === 'false'}
-                        />
-                      );
-                    }}
-                  />
-                  <form.Field
-                    name={`researchTasksEffects[${row.index}].deputyConditionMet`}
-                    children={(field) => {
-                      if (field.state.value !== 'false' && taskDone === 'false') {
-                        field.handleChange('false');
-                      }
-                      return (
-                        <AppCheckbox
-                          size="md"
-                          name={field.name}
-                          checked={field.state.value === 'true'}
-                          onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-                          onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                          label="Czy naliczyć punkty zastępcy?"
-                          disabled={isReadonly || taskDone === 'false'}
-                        />
-                      );
-                    }}
-                  />
-                </>
-              )}
-            />
-          </div>
-        );
-      },
-      size: 30,
+      size: 35,
     },
   ];
 

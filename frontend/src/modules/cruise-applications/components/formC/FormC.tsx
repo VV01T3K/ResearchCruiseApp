@@ -1,3 +1,6 @@
+import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+
 import { FormCActionsSection } from '@/cruise-applications/components/formC/FormCActionsSection';
 import { FormCAdditionalDescriptionSection } from '@/cruise-applications/components/formC/FormCAdditionalDescriptionSection';
 import { FormCAdditionalPermissionsSection } from '@/cruise-applications/components/formC/FormCAdditionalPermissionsSection';
@@ -9,6 +12,7 @@ import { FormCCruiseGoalSection } from '@/cruise-applications/components/formC/F
 import { FormCCruiseInfoSection } from '@/cruise-applications/components/formC/FormCCruiseInfoSection';
 import { FormCCruiseManagerInfoSection } from '@/cruise-applications/components/formC/FormCCruiseManagerInfoSection';
 import { FormCMembersSection } from '@/cruise-applications/components/formC/FormCMembersSection';
+import { FormCPrintTemplate } from '@/cruise-applications/components/formC/FormCPrintTemplate';
 import { FormCPublicationsSection } from '@/cruise-applications/components/formC/FormCPublicationsSection';
 import { FormCResearchAreaSection } from '@/cruise-applications/components/formC/FormCResearchAreaSection';
 import { FormCResearchEquipmentsSection } from '@/cruise-applications/components/formC/FormCResearchEquipmentsSection';
@@ -31,6 +35,14 @@ export function FormC({ context }: Props) {
     context.onSubmit();
   }
 
+  const componentRef = useRef(null);
+
+  const reactToPrintContent = () => {
+    return componentRef.current;
+  };
+
+  const handlePrint = useReactToPrint({});
+
   return (
     <FormCProvider value={context}>
       <form className="space-y-8" onSubmit={onSubmit}>
@@ -52,8 +64,9 @@ export function FormC({ context }: Props) {
         <FormCCollectedSamplesSection />
         <FormCSPUBReportDataSection />
         <FormCAdditionalDescriptionSection />
-        <FormCActionsSection onSaveDraft={context.onSaveDraft} />
+        <FormCActionsSection onSaveDraft={context.onSaveDraft} onPrint={() => handlePrint(reactToPrintContent)} />
       </form>
+      <FormCPrintTemplate ref={componentRef} />
     </FormCProvider>
   );
 }

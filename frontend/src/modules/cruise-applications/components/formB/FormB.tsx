@@ -1,3 +1,6 @@
+import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+
 import { FormBActionsSection } from '@/cruise-applications/components/formB/FormBActionsSection';
 import { FormBAdditionalPermissionsSection } from '@/cruise-applications/components/formB/FormBAdditionalPermissionsSection';
 import { FormBContractsSection } from '@/cruise-applications/components/formB/FormBContractsSection';
@@ -7,6 +10,7 @@ import { FormBCruiseGoalSection } from '@/cruise-applications/components/formB/F
 import { FormBCruiseInfoSection } from '@/cruise-applications/components/formB/FormBCruiseInfoSection';
 import { FormBCruiseManagerInfoSection } from '@/cruise-applications/components/formB/FormBCruiseManagerInfoSection';
 import { FormBMembersSection } from '@/cruise-applications/components/formB/FormBMembersSection';
+import { FormBPrintTemplate } from '@/cruise-applications/components/formB/FormBPrintTemplate';
 import { FormBPublicationsSection } from '@/cruise-applications/components/formB/FormBPublicationsSection';
 import { FormBResearchAreaSection } from '@/cruise-applications/components/formB/FormBResearchAreaSection';
 import { FormBResearchEquipmentsSection } from '@/cruise-applications/components/formB/FormBResearchEquipmentsSection';
@@ -24,31 +28,46 @@ type Props = {
   };
 };
 export function FormB({ context }: Props) {
+  const componentRef = useRef(null);
+
+  const reactToPrintContent = () => {
+    return componentRef.current;
+  };
+
+  const handlePrint = useReactToPrint({});
+
   function onSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
     context.onSubmit();
   }
 
   return (
-    <FormBProvider value={context}>
-      <form className="space-y-8" onSubmit={onSubmit}>
-        <FormBCruiseInfoSection />
-        <FormBCruiseManagerInfoSection />
-        <FormBShipUsageSection />
-        <FormBAdditionalPermissionsSection />
-        <FormBResearchAreaSection />
-        <FormBCruiseGoalSection />
-        <FormBResearchTasksSection />
-        <FormBContractsSection />
-        <FormBMembersSection />
-        <FormBPublicationsSection />
-        <FormBSPUBTasksSection />
-        <FormBCruiseDetailsSection />
-        <FormBCruiseDayDetailsSection />
-        <FormBResearchEquipmentsSection />
-        <FormBShipEquipmentsSection />
-        <FormBActionsSection onSaveDraft={context.onSaveDraft} onRevertToEdit={context.onRevertToEdit} />
-      </form>
-    </FormBProvider>
+    <>
+      <FormBProvider value={context}>
+        <form className="space-y-8" onSubmit={onSubmit}>
+          <FormBCruiseInfoSection />
+          <FormBCruiseManagerInfoSection />
+          <FormBShipUsageSection />
+          <FormBAdditionalPermissionsSection />
+          <FormBResearchAreaSection />
+          <FormBCruiseGoalSection />
+          <FormBResearchTasksSection />
+          <FormBContractsSection />
+          <FormBMembersSection />
+          <FormBPublicationsSection />
+          <FormBSPUBTasksSection />
+          <FormBCruiseDetailsSection />
+          <FormBCruiseDayDetailsSection />
+          <FormBResearchEquipmentsSection />
+          <FormBShipEquipmentsSection />
+          <FormBActionsSection
+            onSaveDraft={context.onSaveDraft}
+            onRevertToEdit={context.onRevertToEdit}
+            onPrint={() => handlePrint(reactToPrintContent)}
+          />
+        </form>
+        <FormBPrintTemplate ref={componentRef} />
+      </FormBProvider>
+    </>
   );
 }

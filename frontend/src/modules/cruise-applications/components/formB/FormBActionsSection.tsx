@@ -1,4 +1,5 @@
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import PrinterFillIcon from 'bootstrap-icons/icons/printer-fill.svg?react';
 import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
 
 import { AppActionsSection } from '@/core/components/AppActionsSection';
@@ -10,13 +11,10 @@ import { useFormB } from '@/cruise-applications/contexts/FormBContext';
 type Props = {
   onSaveDraft: () => void;
   onRevertToEdit?: () => void;
+  onPrint?: () => void;
 };
-export function FormBActionsSection({ onSaveDraft, onRevertToEdit }: Props) {
+export function FormBActionsSection({ onSaveDraft, onRevertToEdit, onPrint }: Props) {
   const { isReadonly } = useFormB();
-
-  if (isReadonly && !onRevertToEdit) {
-    return null;
-  }
 
   return (
     <AppActionsSection>
@@ -37,6 +35,12 @@ export function FormBActionsSection({ onSaveDraft, onRevertToEdit }: Props) {
         <AppButton type="submit" className="gap-4 !justify-center w-36 lg:w-48">
           <SendFillIcon className="h-4 w-4" />
           Wyślij
+        </AppButton>
+      )}
+      {isReadonly && (
+        <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={onPrint}>
+          <PrinterFillIcon className="h-4 w-4" />
+          Wydrukuj
         </AppButton>
       )}
     </AppActionsSection>

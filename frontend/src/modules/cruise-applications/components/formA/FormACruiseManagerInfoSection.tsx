@@ -2,7 +2,7 @@ import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
-import { mapPersonToLabel } from '@/cruise-applications/helpers/mapPersonToLabel';
+import { mapPersonToLabel } from '@/cruise-applications/helpers/PersonMappers';
 
 export function FormACruiseManagerInfoSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

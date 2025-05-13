@@ -11,6 +11,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      react-to-print:
+        specifier: ^3.1.0
+        version: 3.1.0(react@19.0.0)
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^3.2.4
@@ -2864,6 +2867,11 @@ packages:
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
+
+  react-to-print@3.1.0:
+    resolution: {integrity: sha512-hiJZVmJtaRm9EHoUTG2bordyeRxVSGy9oFVV7fSvzOWwctPp6jbz2R6NFkaokaTYBxC7wTM/fMV5eCXsNpEwsA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ~19
 
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
@@ -6096,6 +6104,10 @@ snapshots:
       scheduler: 0.25.0
 
   react-is@17.0.2: {}
+
+  react-to-print@3.1.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
 
   react@18.3.1:
     dependencies:
