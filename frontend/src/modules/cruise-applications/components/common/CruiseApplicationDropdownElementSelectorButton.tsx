@@ -1,3 +1,4 @@
+/* eslint-disable @eslint-react/no-array-index-key */
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
 import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
@@ -58,9 +59,9 @@ export function CruiseApplicationDropdownElementSelectorButton({ variant, option
             </div>
             {filteredOptions.length === 0 && <div className="text-center text-gray-500 py-4">Brak wyników</div>}
             {filteredOptions.length > 0 &&
-              filteredOptions.map((option) => (
+              filteredOptions.map((option, i) => (
                 <AppButton
-                  key={option.value}
+                  key={`${option.value}${i}`}
                   onClick={
                     option.onClick
                       ? () => {

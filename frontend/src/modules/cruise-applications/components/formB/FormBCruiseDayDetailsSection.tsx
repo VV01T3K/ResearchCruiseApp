@@ -215,6 +215,7 @@ export function FormBCruiseDayDetailsSection() {
               </AppButton>,
             ]}
             variant="form"
+            disabled={isReadonly}
           />
         )}
       />

@@ -34,6 +34,7 @@ export function FormBResearchTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
+        variant="form"
         disabled={isReadonly}
       />
     </AppAccordion>

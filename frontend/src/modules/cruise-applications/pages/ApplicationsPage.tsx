@@ -82,25 +82,25 @@ export function ApplicationsPage() {
       accessorFn: (row) => row.status,
       cell: ({ row }) => (
         <>
-          <p className="italic">{row.original.status}</p>
+          <p className="italic text-right sm:text-center mb-2">
+            {row.original.status}
+            {row.original.status === CruiseApplicationStatus.Draft ? ` (${row.original.note})` : null}
+          </p>
           {row.original.status === CruiseApplicationStatus.Draft && (
-            <div className="flex flex-col">
-              <p className="text-sm">{row.original.note}</p>
-              <AppButton
-                className="inline-block mx-auto px-4 py-0.5 mt-1"
-                size="plain"
-                type="link"
-                href={`/applications/${row.original.id}/formA?mode=edit`}
-              >
-                Kontynuuj wypełnianie
-              </AppButton>
-            </div>
+            <AppButton
+              className="ml-auto sm:mx-auto"
+              size="sm"
+              type="link"
+              href={`/applications/${row.original.id}/formA?mode=edit`}
+            >
+              Kontynuuj wypełnianie
+            </AppButton>
           )}
           {row.original.status === CruiseApplicationStatus.FormBRequired && (
             <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
               <AppButton
-                className="inline-block mx-auto px-5 py-1"
-                size="plain"
+                className="ml-auto sm:mx-auto"
+                size="sm"
                 type="link"
                 href={`/applications/${row.original.id}/formB?mode=edit`}
               >
@@ -112,15 +112,17 @@ export function ApplicationsPage() {
             <div className="flex flex-col gap-2 items-center">
               <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
                 <AppButton
-                  className="inline-block mx-auto px-4 py-0.5 mt-1"
-                  size="plain"
+                  className="ml-auto sm:mx-auto"
+                  size="sm"
                   type="link"
                   href={`/applications/${row.original.id}/formC?mode=edit`}
                 >
                   Wypełnij formularz C
                 </AppButton>
               </AppGuard>
-              <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
+              <div>
+                <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
+              </div>
             </div>
           )}
         </>

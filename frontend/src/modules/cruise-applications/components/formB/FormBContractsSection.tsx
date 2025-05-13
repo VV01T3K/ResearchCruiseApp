@@ -81,6 +81,7 @@ export function FormBContractsSection() {
         buttons={() => []}
         columns={columns}
         emptyTableMessage="Nie dodano żadnej umowy."
+        variant="form"
         disabled={isReadonly}
       />
     </AppAccordion>

@@ -37,7 +37,7 @@ export function AppModal({ title, children, isOpen, onClose, className }: Props)
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md px-5"
           onClick={(e) => e.stopPropagation()}
         >
           <motion.div

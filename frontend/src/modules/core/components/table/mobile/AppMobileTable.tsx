@@ -6,7 +6,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppModal } from '@/core/components/AppModal';
 import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
-import { createModalPortal } from '@/core/lib/utils';
+import { cn, createModalPortal } from '@/core/lib/utils';
 
 export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
@@ -20,7 +20,7 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }
 
   return (
     <>
-      <div className="flex flex-wrap flex-col">
+      <div className={cn('flex flex-wrap flex-col', variant === 'form' ? 'text-center' : '')}>
         {allButtons.length > 0 && (
           <div className="flex flex-col gap-4 m-4">
             {allButtons.map((x, id) => (

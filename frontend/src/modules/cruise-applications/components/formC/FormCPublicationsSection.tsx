@@ -98,6 +98,7 @@ export function FormCPublicationsSection() {
           data={formA.publications}
           buttons={() => []}
           columns={columns}
+          variant="form"
           emptyTableMessage="Nie dodano żadnej publikacji."
         />
       </div>

@@ -103,7 +103,11 @@ const collectedSamplesColumns = (
   },
   {
     id: 'actions',
-    cell: ({ row }) => <AppTableDeleteRowButton onClick={() => field.removeValue(row.index)} disabled={isReadonly} />,
+    cell: ({ row }) => (
+      <div className="flex justify-end">
+        <AppTableDeleteRowButton onClick={() => field.removeValue(row.index)} disabled={isReadonly} />
+      </div>
+    ),
     size: 5,
   },
 ];

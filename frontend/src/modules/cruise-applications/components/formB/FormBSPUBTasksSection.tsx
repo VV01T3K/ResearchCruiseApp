@@ -46,6 +46,7 @@ export function FormBSPUBTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
+        variant="table"
         disabled={isReadonly}
       />
     </AppAccordion>

@@ -5,7 +5,7 @@ import { PriorityInformationRow } from '@/other/components/PriorityInformationRo
 export function PriorityInformationPage() {
   return (
     <AppLayout title="Informacje o priorytetyzacji">
-      <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-clip-border">
+      <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-clip-border px-5">
         <table className="w-full text-left table-auto">
           <thead>
             <tr>

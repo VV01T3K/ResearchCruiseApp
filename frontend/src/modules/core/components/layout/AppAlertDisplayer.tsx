@@ -8,7 +8,7 @@ export function AppAlertDisplayer() {
   const { alert, hideAlert } = useAppContext();
 
   return (
-    <AppModal title={alert?.title ?? ''} isOpen={!!alert} onClose={() => hideAlert(alert!.id)}>
+    <AppModal title={alert?.title ?? ''} isOpen={!!alert} onClose={() => alert && hideAlert(alert!.id)}>
       <div className="flex items-center gap-8">
         {alert?.variant === 'danger' && <ExclamationTriangleFillIcon className="h-12 w-12 text-red-500" />}
         {alert?.variant === 'success' && <CheckCircleFillIcon className="h-12 w-12 text-green-500" />}
