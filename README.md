@@ -1,72 +1,40 @@
-# Wymagania początkowe
+# ResearchCruiseApp
 
-Zainstalowany Docker
+The ResearchCruiseApp project is designed to manage research cruises aboard the research vessel Oceanograf, owned by the Institute of Oceanography at the University of Gdańsk.
+The application aims to streamline processes related to the booking, management, and organization of research cruises, and enable efficient communication between various stakeholders.
 
-# Pliki konfiguracyjne
+## Configuration
 
-## **./app.env**
+### Frontend
 
-### Plik ten zawiera całą konfigurację potrzebną do podczas działania aplikacji.
-*Przed uruchomieniem należy ustawić poprawne adresy:*
+| Environment Variable | Description                             | Example               | Required |
+| -------------------- | --------------------------------------- | --------------------- | -------- |
+| `API_URL`            | The address of the backend service      | `http://backend:8000` | Yes      |
+| `GRAFANA_FARO_URL`   | The address of the Grafana Faro service | `http://alloy:12347`  | No       |
 
-**FrontendUrl**, **JWT__ValidAudience** 
->Adres URL, który będzie zawierany w wiadomości email jako link, np. do potwierdzenia rejestracji.
+### Backend
 
-**REACT_APP_API_URL**, **JWT__ValidIssuer**
->Adres IP i port API, na który aplikacja frontendowa wysyłać będzie żądania (adres widoczny dla użytkownika z zewnątrz).
+| Environment Variable                    | Description                                        | Example                                                                         | Required |
+| --------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
+| `Database__SeedAutomatically`           | Seed the database with test data                   | `true`                                                                          | No       |
+| `Database__MigrateAutomatically`        | Migrate the database automatically                 | `true`                                                                          | No       |
+| `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                    | `true`                                                                          | No       |
+| `ConnectionStrings__Database`           | Database connection string                         | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
+| `FrontendUrl`                           | Frontend URL - for CORS and email verification     | `http://localhost:3000`                                                         | Yes      |
+| `UseOtlpExporter`                       | Whether to use the OTLP exporter for OpenTelemetry | `true`                                                                          | No       |
+| `OtlpExporterEndpoint`                  | OTLP exporter endpoint                             | `http://alloy:4318` or `grpc://alloy:4317`                                      | No       |
 
-**ConnectionStrings__ResearchCruiseApp-DB** 
->Adres oraz dane potrzebne do połączenia z zewnętrzną bazą danych.
+## Deployment
 
-<br>
+### Docker
 
-*Dodatkowo należy ustawić*
+The application can be run using Docker compose. Multiple configuration files are provided in the [`docker` directory](./docker/).
 
-**SmtpSettings__SmtpServer**, **SmtpSettings__SmtpPort**,
-**SmtpSettings__SmtpUsername**, **SmtpSettings__SmtpPassword**, 
-**SmtpSettings__SenderName** 
->Ustawienia Smtp niezbędne do poprawnego wysyłania maili za pomocą aplikacji.
+- `docker-compose.dev.yml` - Development configuration
+- `docker-compose.infra.yml` - MS SQL Database configuration
+- `docker-compose.otel.dev.yml` - Development configuration with OpenTelemetry enabled - contains Grafana, Loki, Tempo, Prometheus and Alloy
+- `docker-compose.prod.yml` - Production configuration
 
-**JWT__Secret** 
->Klucz używany do podpisywania i weryfikacji autentyczności tokenów. Najlepiej wygenerować go za pośrednictwem generatora.
+### Kubernetes
 
-**JWT__AccessTokenLifetimeSeconds** 
->Okres ważności tokenu dostępu JWT otrzymywanego podczas logowania. Wyrażony w sekundach.
-
-**JWT__RefreshTokenLifetimeSeconds** 
->Okres ważności tokenu wykorzystywanego do odświeżenia tokenu dostępu. Wyrażony w sekundach.
-
-**SeedDatabase**
->Informacja, czy baza danych ma zostać zasilony danymi początkowymi (`true`/`false`). Dane zostaną wstawione do bazy
-> danych:
-> - w przypadku ról i użytkowników – tylko jeżeli takiego wiersza nie ma jeszcze w tabeli,
-> - w pozostałych przypadkach – tylko jeżeli tabela, do której ma być wstawiony wiersz, jest pusta.
-
-## **./ResearchCruiseApp-API/ResearchCruiseApp-API/users.json**
-
-### Jest to plik zawierający listę użytkowników, którzy zostaną dodani do serwera przy pierwszym uruchomieniu aplikacji.
-
-*Należy w nim uwzględnić przede wszystkim administratora, choć jest także możliwość dodania innych użytkowników.*
-
-Dostępne role w systemie to:
-
-**Administrator**
->Administrator, ma dostęp do wszystkich danych oraz posiada dostęp do wszystkich możliwych akcji dostępnych w aplikacji.
-
-**Shipowner**
->Konto pracownika Biura Armatora, względem administratora konto posiada ograniczenia co do dodawania nowych użytkowników oraz dezaktywacji kont.
-
-**CruiseManager**
->Konto kierownika, posiada dostęp tylko do swoich danych oraz do danych zgłoszeń i rejsów, na których jest zastępcą, nie ma dostępu m.in. do zarządzania 
-użytkownikami czy też do zmieniania danych rejsowych.
-
-**Guest**
->Konto gościa, może zobaczyć wszystkie dane w aplikacji, lecz nic nie może zmienić.
-
-# Pierwsze uruchomienie aplikacji
-
-Aby uruchomić aplikację, należy poprawnie skonfigurować powyższe pliki, a następnie z poziomu terminala wykonać komendę<br>
-`sudo docker-compose up -d --build` (Linux)<br>
-`docker-compose up -d --build` (Windows)
-
-*Na adresy email podane w pliku users.json zostaną wysłane automatycznie wygenerowane hasła, które następnie można zmienić po zalogowaniu się do konta*
+You can also deploy the application using Kubernetes. The [`kubernetes` directory](./kubernetes/) contains the necessary configuration files, both a default and staging `kustomize` configuration.
