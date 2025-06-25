@@ -12,16 +12,19 @@ public class FormA : Entity
     public string Year { get; init; } = null!;
 
     [StringLength(1024)]
-    public string AcceptablePeriodBeg { get; init; } = null!;
+    public string? AcceptablePeriodBeg { get; init; }
 
     [StringLength(1024)]
-    public string AcceptablePeriodEnd { get; init; } = null!;
+    public string? AcceptablePeriodEnd { get; init; }
 
     [StringLength(1024)]
-    public string OptimalPeriodBeg { get; init; } = null!;
+    public string? OptimalPeriodBeg { get; init; }
 
     [StringLength(1024)]
-    public string OptimalPeriodEnd { get; init; } = null!;
+    public string? OptimalPeriodEnd { get; init; }
+
+    public DateTime? PrecisePeriodStart { get; init; }
+    public DateTime? PrecisePeriodEnd { get; init; }
 
     [StringLength(1024)]
     public string CruiseHours { get; init; } = null!;

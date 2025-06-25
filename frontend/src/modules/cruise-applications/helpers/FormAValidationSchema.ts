@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { literal, z } from 'zod';
 
 import { groupBy } from '@/core/lib/utils';
 import { ContractDtoValidationSchema } from '@/cruise-applications/models/ContractDto';
@@ -87,8 +87,10 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
           (val) => initValues.years.includes(val),
           'Rok musi być jednym z dostępnych lat: ' + initValues.years.join(', ')
         ),
-      acceptablePeriod: CruisePeriodValidationSchema,
-      optimalPeriod: CruisePeriodValidationSchema,
+      acceptablePeriod: CruisePeriodValidationSchema.or(literal('')),
+      optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
+      precisePeriodStart: z.string().or(literal('')),
+      precisePeriodEnd: z.string().or(literal('')),
       cruiseHours: z.string().refine((val) => {
         const parsed = parseInt(val, 10);
         return !isNaN(parsed) && parsed > 0 && parsed < 1440;
@@ -127,8 +129,29 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
       const acceptablePeriod = val.acceptablePeriod;
       const optimalPeriod = val.optimalPeriod;
 
-      return optimalPeriod[0] >= acceptablePeriod[0] && optimalPeriod[1] <= acceptablePeriod[1];
-    }, 'Okres optymalny musi zawierać się w okresie akceptowalnym');
+      return (
+        !acceptablePeriod ||
+        !optimalPeriod ||
+        (optimalPeriod[0] >= acceptablePeriod[0] && optimalPeriod[1] <= acceptablePeriod[1])
+      );
+    }, 'Okres optymalny musi zawierać się w okresie akceptowalnym')
+    .refine((val) => {
+      const precisePeriodStart = val.precisePeriodStart;
+      const precisePeriodEnd = val.precisePeriodEnd;
+
+      return !precisePeriodStart || !precisePeriodEnd || precisePeriodStart <= precisePeriodEnd;
+    }, 'Dokładny okres musi być zgodny z okresem akceptowalnym i musi mieć poprawne daty')
+    .refine((val) => {
+      const precisePeriodStart = val.precisePeriodStart;
+      const precisePeriodEnd = val.precisePeriodEnd;
+      const acceptablePeriod = val.acceptablePeriod;
+      const optimalPeriod = val.optimalPeriod;
+      return (
+        (!!precisePeriodStart && !!precisePeriodEnd) ||
+        (!!acceptablePeriod && !!optimalPeriod) ||
+        (!acceptablePeriod && !optimalPeriod && !precisePeriodStart && !precisePeriodEnd)
+      );
+    }, 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny');
 
 export function getFormAValidationSchema(initValues: FormAInitValuesDto) {
   return ManagerAndDeputyManagerValidationSchema(initValues)

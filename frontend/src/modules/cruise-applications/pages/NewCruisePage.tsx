@@ -33,6 +33,8 @@ export function NewCruisePage() {
       year: initialStateQuery.data.years[0],
       acceptablePeriod: ['0', '24'],
       optimalPeriod: ['0', '24'],
+      precisePeriodStart: '',
+      precisePeriodEnd: '',
       cruiseHours: '0',
       periodNotes: '',
       shipUsage: '',

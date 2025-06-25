@@ -1,9 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
+import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 
@@ -11,31 +13,91 @@ import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodI
 
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+  const [periodSelectionType, setPeriodSelectionType] = useState<'precise' | 'period'>(
+    isReadonly ? (form.state.values.precisePeriodStart ? 'precise' : 'period') : 'period'
+  );
+
+  function handlePeriodSelectionChange(value: 'precise' | 'period') {
+    if (value === 'precise') {
+      form.setFieldValue('acceptablePeriod', '');
+      form.setFieldValue('optimalPeriod', '');
+    } else {
+      form.setFieldValue('precisePeriodStart', '');
+      form.setFieldValue('precisePeriodEnd', '');
+      form.setFieldValue('acceptablePeriod', ['0', '24']);
+      form.setFieldValue('optimalPeriod', ['0', '24']);
+    }
+
+    setPeriodSelectionType(value);
+  }
 
   return (
     <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <form.Field
-          name="acceptablePeriod"
-          children={(field) => (
-            <CruiseApplicationPeriodInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              label="Dopuszczalny okres, w którym miałby się odbywać rejs"
+        {!isReadonly && (
+          <div className="lg:col-span-2">
+            <AppDropdownInput
+              name="periodSelectionType"
+              value={periodSelectionType}
+              onChange={(value) => handlePeriodSelectionChange(value as 'precise' | 'period')}
+              label="Wybierz sposób określenia terminu rejsu"
+              allOptions={[
+                { value: 'precise', inlineLabel: 'Dokładny termin' },
+                { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
+              ]}
               required
-              disabled={isReadonly}
             />
-          )}
-        />
-
-        <form.Subscribe
-          selector={(state) => state.values.acceptablePeriod}
-          children={(acceptablePeriod) => (
+          </div>
+        )}
+        {periodSelectionType === 'precise' && (
+          <>
             <form.Field
-              name="optimalPeriod"
+              name="precisePeriodStart"
+              children={(field) => (
+                <AppDatePickerInput
+                  name={field.name}
+                  value={field.state.value}
+                  onChange={(newValue) => field.handleChange(newValue ?? '')}
+                  onBlur={field.handleBlur}
+                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  label="Dokładny termin rozpoczęcia rejsu"
+                  type="date"
+                  required
+                  disabled={isReadonly}
+                />
+              )}
+            />
+
+            <form.Subscribe
+              selector={(state) => state.values.precisePeriodStart}
+              children={(precisePeriodStart) => (
+                <form.Field
+                  name="precisePeriodEnd"
+                  children={(field) => (
+                    <AppDatePickerInput
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(newValue) => field.handleChange(newValue ?? '')}
+                      onBlur={field.handleBlur}
+                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      label="Dokładny termin zakończenia rejsu"
+                      type="date"
+                      required
+                      disabled={isReadonly}
+                      selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
+                      minimalDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
+                    />
+                  )}
+                />
+              )}
+            />
+          </>
+        )}
+
+        {periodSelectionType === 'period' && (
+          <>
+            <form.Field
+              name="acceptablePeriod"
               children={(field) => (
                 <CruiseApplicationPeriodInput
                   name={field.name}
@@ -43,15 +105,36 @@ export function FormACruiseLengthSection() {
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  maxValues={acceptablePeriod}
-                  label="Optymalny okres, w którym miałby się odbywać rejs"
+                  label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                   required
                   disabled={isReadonly}
                 />
               )}
             />
-          )}
-        />
+
+            <form.Subscribe
+              selector={(state) => state.values.acceptablePeriod}
+              children={(acceptablePeriod) => (
+                <form.Field
+                  name="optimalPeriod"
+                  children={(field) => (
+                    <CruiseApplicationPeriodInput
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      maxValues={acceptablePeriod}
+                      label="Optymalny okres, w którym miałby się odbywać rejs"
+                      required
+                      disabled={isReadonly}
+                    />
+                  )}
+                />
+              )}
+            />
+          </>
+        )}
 
         <form.Subscribe
           selector={(state) => state.values.cruiseHours}

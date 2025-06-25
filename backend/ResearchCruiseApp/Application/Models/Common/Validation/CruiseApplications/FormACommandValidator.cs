@@ -80,19 +80,52 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
 
     private void AddPeriodsCommonValidation()
     {
-        RuleForEach(command => command.FormADto.AcceptablePeriod)
-            .Must(edge =>
-                uint.TryParse(edge, out var edgeInt)
-                && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
-            )
-            .WithMessage("Granice dopuszczalnego okresu są w niepoprawnym formacie");
+        When(
+            command =>
+                command.FormADto.PrecisePeriodStart is not null
+                || command.FormADto.PrecisePeriodEnd is not null,
+            () =>
+            {
+                RuleFor(command => command.FormADto.AcceptablePeriod).Null();
+                RuleFor(command => command.FormADto.OptimalPeriod).Null();
 
-        RuleForEach(command => command.FormADto.OptimalPeriod)
-            .Must(edge =>
-                uint.TryParse(edge, out var edgeInt)
-                && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
-            )
-            .WithMessage("Granice optymalnego okresu są w niepoprawnym formacie");
+                RuleFor(command => command.FormADto)
+                    .Must(dto =>
+                        dto.PrecisePeriodStart is not null
+                        && dto.PrecisePeriodEnd is not null
+                        && dto.PrecisePeriodEnd >= dto.PrecisePeriodStart
+                    )
+                    .WithMessage("PrecisePeriod must not start after it's end");
+            }
+        );
+
+        When(
+            command =>
+                command.FormADto.PrecisePeriodStart is null
+                && command.FormADto.PrecisePeriodEnd is null,
+            () =>
+            {
+                RuleFor(command => command.FormADto.AcceptablePeriod)
+                    .Must(period => period?.Count == 2);
+
+                RuleFor(command => command.FormADto.OptimalPeriod)
+                    .Must(period => period?.Count == 2);
+
+                RuleForEach(command => command.FormADto.AcceptablePeriod)
+                    .Must(edge =>
+                        uint.TryParse(edge, out var edgeInt)
+                        && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
+                    )
+                    .WithMessage("Granice dopuszczalnego okresu są w niepoprawnym formacie");
+
+                RuleForEach(command => command.FormADto.OptimalPeriod)
+                    .Must(edge =>
+                        uint.TryParse(edge, out var edgeInt)
+                        && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
+                    )
+                    .WithMessage("Granice optymalnego okresu są w niepoprawnym formacie");
+            }
+        );
     }
 
     private void AddCruiseHoursDraftValidation()

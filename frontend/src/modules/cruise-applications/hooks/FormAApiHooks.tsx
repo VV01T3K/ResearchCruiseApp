@@ -23,6 +23,8 @@ export function useFormAQuery(cruiseId: string) {
     select: (res) => {
       const dto = res.data as FormADto;
       dto.note ??= '';
+      dto.precisePeriodStart ??= '';
+      dto.precisePeriodEnd ??= '';
       return dto;
     },
   });

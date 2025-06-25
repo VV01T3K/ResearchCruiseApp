@@ -11,7 +11,7 @@ import { CruisePeriodType } from '@/cruise-applications/models/FormADto';
 
 type Props = {
   name: string;
-  value: CruisePeriodType;
+  value: CruisePeriodType | undefined;
 
   maxValues?: CruisePeriodType;
   onChange?: (value: CruisePeriodType) => void;
@@ -38,7 +38,7 @@ export function CruiseApplicationPeriodInput({
   const rangerRef = React.useRef<HTMLDivElement>(null);
 
   const [values, setValues] = React.useState(() => {
-    if (value.length === 2) {
+    if (value?.length === 2) {
       return [parseInt(value[0]), parseInt(value[1])];
     }
 

@@ -64,6 +64,16 @@ public class AutoAddCruisesHandler(
 
     private (string start, string end) GetAutoCalculatedCruiseDates(FormA formA)
     {
+        if (formA is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null })
+        {
+            return (
+                globalizationService.GetIsoUtcString(
+                    formA.PrecisePeriodStart.Value.Date.AddHours(8)
+                ),
+                globalizationService.GetIsoUtcString(formA.PrecisePeriodEnd.Value.Date.AddHours(8))
+            );
+        }
+
         // Optimal period beg/end is a number from range 0...24 representing a point in a year
 
         var startDay =

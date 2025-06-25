@@ -13,11 +13,11 @@ public class FormADto
     [StringLength(4)]
     public string Year { get; init; } = null!;
 
-    [Length(2, 2)]
-    public HashSet<string> AcceptablePeriod { get; init; } = [];
+    public HashSet<string>? AcceptablePeriod { get; init; }
+    public HashSet<string>? OptimalPeriod { get; init; }
 
-    [Length(2, 2)]
-    public HashSet<string> OptimalPeriod { get; init; } = [];
+    public DateTime? PrecisePeriodStart { get; init; }
+    public DateTime? PrecisePeriodEnd { get; init; }
 
     [StringLength(8)]
     public string CruiseHours { get; init; } = null!;

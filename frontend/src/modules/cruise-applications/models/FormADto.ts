@@ -13,8 +13,10 @@ export type FormADto = {
   cruiseManagerId: string;
   deputyManagerId: string;
   year: string;
-  acceptablePeriod: CruisePeriodType;
-  optimalPeriod: CruisePeriodType;
+  acceptablePeriod: CruisePeriodType | '';
+  optimalPeriod: CruisePeriodType | '';
+  precisePeriodStart: string | '';
+  precisePeriodEnd: string | '';
   cruiseHours: string;
   periodNotes: string;
   shipUsage?: string;
@@ -71,7 +73,9 @@ export const FortnightValidationSchema = z.enum([
  * @example ['0', '1'] // represents the period from first half of January to second half of January
  */
 export type CruisePeriodType = z.infer<typeof CruisePeriodValidationSchema>;
-export const CruisePeriodValidationSchema = z.tuple([FortnightValidationSchema, FortnightValidationSchema]);
+export const CruisePeriodValidationSchema = z
+  .tuple([FortnightValidationSchema, FortnightValidationSchema])
+  .or(z.literal(''));
 
 export enum CruiseGoal {
   Research = '0',

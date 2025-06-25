@@ -19,20 +19,24 @@ internal class FormADtoProfile : Profile
             .ForMember(
                 dest => dest.AcceptablePeriod,
                 options =>
-                    options.MapFrom(src => new HashSet<string>
-                    {
-                        src.AcceptablePeriodBeg,
-                        src.AcceptablePeriodEnd,
-                    })
+                    options.MapFrom(src =>
+                        src.AcceptablePeriodBeg != null && src.AcceptablePeriodEnd != null
+                            ? new HashSet<string>
+                            {
+                                src.AcceptablePeriodBeg,
+                                src.AcceptablePeriodEnd,
+                            }
+                            : null
+                    )
             )
             .ForMember(
                 dest => dest.OptimalPeriod,
                 options =>
-                    options.MapFrom(src => new HashSet<string>
-                    {
-                        src.OptimalPeriodBeg,
-                        src.OptimalPeriodEnd,
-                    })
+                    options.MapFrom(src =>
+                        src.OptimalPeriodBeg != null && src.OptimalPeriodEnd != null
+                            ? new HashSet<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }
+                            : null
+                    )
             )
             .ForMember(dest => dest.Permissions, options => options.Ignore()) // Member requires complex logic
             .ForMember(
