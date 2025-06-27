@@ -8,4 +8,5 @@ export type CruiseFormDto = {
   endDate: string;
   managersTeam: CruiseManagersTeamDto;
   cruiseApplicationsIds: string[];
+  status?: string;
 };

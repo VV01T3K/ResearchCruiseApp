@@ -12,6 +12,7 @@ using ResearchCruiseApp.Application.UseCases.Cruises.EndCruise;
 using ResearchCruiseApp.Application.UseCases.Cruises.ExportToCsv;
 using ResearchCruiseApp.Application.UseCases.Cruises.GetAllCruises;
 using ResearchCruiseApp.Application.UseCases.Cruises.GetCruise;
+using ResearchCruiseApp.Application.UseCases.Cruises.RevertCruiseStatus;
 using ResearchCruiseApp.Web.Common.Extensions;
 
 namespace ResearchCruiseApp.Web.Controllers;
@@ -72,6 +73,14 @@ public class CruisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ConfirmCruise([FromRoute] Guid id)
     {
         var result = await mediator.Send(new ConfirmCruiseCommand(id));
+        return result.IsSuccess ? NoContent() : this.CreateError(result);
+    }
+
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
+    [HttpPut("{id:guid}/revert")]
+    public async Task<IActionResult> RevertCruiseStatus([FromRoute] Guid id)
+    {
+        var result = await mediator.Send(new RevertCruiseStatusCommand(id));
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 

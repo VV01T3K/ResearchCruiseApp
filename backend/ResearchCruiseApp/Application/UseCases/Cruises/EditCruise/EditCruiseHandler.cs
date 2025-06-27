@@ -26,13 +26,25 @@ public class EditCruiseHandler(
         if (cruise is null)
             return Error.ResourceNotFound();
 
-        var result = CheckStatuses(cruise);
-        if (!result.IsSuccess)
-            return result;
+        var newApplicationsIds = request
+            .CruiseFormModel.CruiseApplicationsIds.Where(id =>
+                !cruise.CruiseApplications.Any(application => application.Id == id)
+            )
+            .ToList();
+        if (newApplicationsIds.Count != 0)
+        {
+            var newApplications = await cruiseApplicationsRepository.GetAllByIds(
+                newApplicationsIds,
+                cancellationToken
+            );
+            var statusCheckResult = CheckApplicationsStatuses(newApplications);
+            if (!statusCheckResult.IsSuccess)
+                return statusCheckResult;
+        }
 
         UpdateCruiseDates(cruise, request);
 
-        result = await UpdateCruiseManagersTeam(cruise, request);
+        var result = await UpdateCruiseManagersTeam(cruise, request);
         if (!result.IsSuccess)
             return result;
 
@@ -42,13 +54,10 @@ public class EditCruiseHandler(
         return Result.Empty;
     }
 
-    private static Result CheckStatuses(Cruise cruise)
+    private static Result CheckApplicationsStatuses(List<CruiseApplication> cruiseApplications)
     {
-        if (cruise.Status != CruiseStatus.New)
-            return Error.InvalidArgument("Można edytować jedynie nowe zgłoszenia");
-
         if (
-            cruise.CruiseApplications.Any(application =>
+            cruiseApplications.Any(application =>
                 application.Status != CruiseApplicationStatus.Accepted
             )
         )
@@ -107,6 +116,21 @@ public class EditCruiseHandler(
 
         if (!affectedCruises.Contains(cruise))
             affectedCruises.Add(cruise); // The explicitly edited cruise is of course also affected
+
+        foreach (var application in newCruiseApplications)
+        {
+            if (
+                cruise.Status == CruiseStatus.Confirmed
+                && application.Status == CruiseApplicationStatus.Accepted
+            )
+                application.Status = CruiseApplicationStatus.FormBRequired;
+
+            if (
+                cruise.Status == CruiseStatus.Ended
+                && application.Status == CruiseApplicationStatus.FormBFilled
+            )
+                application.Status = CruiseApplicationStatus.Undertaken;
+        }
 
         cruise.CruiseApplications = newCruiseApplications;
         await unitOfWork.Complete(cancellationToken); // ORM will remove new cruise applications from their old cruises

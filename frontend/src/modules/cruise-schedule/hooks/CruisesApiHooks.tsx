@@ -107,6 +107,20 @@ export function useEndCruiseMutation(id: string) {
   });
 }
 
+export function useRevertCruiseStatusMutation(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      return client.put(`/api/Cruises/${id}/revert`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cruises'] });
+      queryClient.invalidateQueries({ queryKey: ['cruises', id] });
+    },
+  });
+}
+
 export function useCruiseCsvExportMutation(onSuccess: (file: FileDto) => void) {
   return useMutation({
     mutationFn: async (year: string) => {
