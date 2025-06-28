@@ -9,10 +9,9 @@ internal class ContractMapProfile : Profile
     public ContractMapProfile()
     {
         CreateMap<Contract, ContractDto>()
-            .ForMember(dest => dest.Scan, options => options.Ignore());
+            .ForMember(dest => dest.Scans, options => options.Ignore());
 
         CreateMap<ContractDto, Contract>()
-            .ForMember(dest => dest.ScanContent, options => options.Ignore())
-            .ForMember(dest => dest.ScanName, options => options.Ignore());
+            .ForMember(dest => dest.Files, options => options.Ignore());
     }
 }

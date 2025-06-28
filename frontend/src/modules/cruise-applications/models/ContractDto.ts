@@ -8,7 +8,7 @@ export type ContractDto = {
   institutionUnit: string;
   institutionLocalization: string;
   description: string;
-  scan: FileDto | undefined;
+  scans: FileDto[];
 };
 
 export function getContractCategoryName(category: ContractDto['category']): string {
@@ -21,5 +21,5 @@ export const ContractDtoValidationSchema = z.object({
   institutionUnit: z.string().nonempty('Jednostka jest wymagana'),
   institutionLocalization: z.string().nonempty('Lokalizacja instytucji jest wymagana'),
   description: z.string().nonempty('Opis jest wymagany'),
-  scan: FileDtoValidationSchema,
+  scans: FileDtoValidationSchema.array(),
 });

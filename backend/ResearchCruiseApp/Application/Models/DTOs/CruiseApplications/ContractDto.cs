@@ -12,5 +12,5 @@ public class ContractDto
 
     public string Description { get; init; } = null!;
 
-    public FileDto Scan { get; set; } = null!;
+    public List<FileDto> Scans { get; set; } = [];
 }

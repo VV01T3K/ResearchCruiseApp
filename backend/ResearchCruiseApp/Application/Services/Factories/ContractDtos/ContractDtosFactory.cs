@@ -12,10 +12,18 @@ internal class ContractDtosFactory(IMapper mapper, IFileDtosFactory fileDtosFact
     {
         var contractDto = mapper.Map<ContractDto>(contract);
 
-        contractDto.Scan = await fileDtosFactory.CreateFromCompressed(
-            contract.ScanName,
-            contract.ScanContent
-        );
+        foreach (var file in contract.Files)
+        {
+            if (string.IsNullOrEmpty(file.FileName) || file.FileContent == null)
+            {
+                continue;
+            }
+            var fileDto = await fileDtosFactory.CreateFromCompressed(
+                file.FileName,
+                file.FileContent
+            );
+            contractDto.Scans.Add(fileDto);
+        }
 
         return contractDto;
     }

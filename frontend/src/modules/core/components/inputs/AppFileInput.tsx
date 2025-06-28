@@ -88,7 +88,13 @@ export function AppFileInput({
   async function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const filesList = evt.target.files;
     if (filesList) {
-      updateFiles(await loadFileList(filesList));
+      if (allowMultiple) {
+        const newFiles = await loadFileList(filesList);
+        updateFiles([...files, ...newFiles]);
+      } else {
+        updateFiles(await loadFileList(filesList));
+      }
+      evt.target.value = '';
     }
   }
 

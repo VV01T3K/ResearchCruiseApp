@@ -345,8 +345,6 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
                 && !string.IsNullOrEmpty(contractDto.InstitutionUnit)
                 && !string.IsNullOrEmpty(contractDto.InstitutionLocalization)
                 && !string.IsNullOrEmpty(contractDto.Description)
-                && !string.IsNullOrEmpty(contractDto.Scan.Name)
-                && !string.IsNullOrEmpty(contractDto.Scan.Content)
             )
             .WithMessage("Wymagane jest podanie wszystkich szczegółów umów współpracy.");
     }
@@ -361,25 +359,19 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
             .WithMessage("Należy podać poprawną kategorię umowy.");
 
         RuleForEach(command => command.FormADto.Contracts)
-            .Must(contractDto => contractDto.Scan.Content == "" || contractDto.Scan.Name != "")
-            .WithMessage("Plik ze skanem umowy musi posiadać nazwę.");
-
-        RuleForEach(command => command.FormADto.Contracts)
             .Must(contractDto =>
-                contractDto.Scan is { Name: "", Content: "" }
-                || _fileInspector.IsFilePdf(contractDto.Scan.Content)
+                contractDto.Scans.All(scan => scan.Content == "" || scan.Name != "")
             )
-            .WithMessage("Skan umowy musi być plikiem PDF.");
+            .WithMessage("Każdy plik musi posiadać nazwę.");
 
         RuleForEach(command => command.FormADto.Contracts)
             .Must(contractDto =>
-                contractDto.Scan is { Name: "", Content: "" }
-                || _fileInspector.IsFileSizeValid(
-                    contractDto.Scan.Content,
-                    FileConstants.MaxFileSize
+                contractDto.Scans.All(scan =>
+                    scan is { Name: "", Content: "" }
+                    || _fileInspector.IsFileSizeValid(scan.Content, FileConstants.MaxFileSize)
                 )
             )
-            .WithMessage("Rozmiar skanu umowy nie może przekraczać 2 MiB.");
+            .WithMessage("Rozmiar skanu nie może przekraczać 2 MiB.");
     }
 
     private void AddUgTeamsDraftValidation()

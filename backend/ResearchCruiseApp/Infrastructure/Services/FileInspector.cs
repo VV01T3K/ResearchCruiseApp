@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Services;
@@ -14,7 +13,7 @@ internal class FileInspector : IFileInspector
 
         try
         {
-            var scanBytes = GetPdfFileBytes(contentAsBase64Url);
+            var scanBytes = GetFileBytes(contentAsBase64Url);
             var fileHeader = Encoding.ASCII.GetString(scanBytes.Take(fileHeaderLength).ToArray());
 
             return fileHeader == pdfFileHeaderString;
@@ -29,7 +28,7 @@ internal class FileInspector : IFileInspector
     {
         try
         {
-            var scanBytes = GetPdfFileBytes(contentAsBase64Url);
+            var scanBytes = GetFileBytes(contentAsBase64Url);
             return scanBytes.Length <= maxFileSize;
         }
         catch (FormatException)
@@ -38,12 +37,18 @@ internal class FileInspector : IFileInspector
         }
     }
 
-    private static byte[] GetPdfFileBytes(string contentAsBase64Url)
+    private static byte[] GetFileBytes(string contentAsBase64Url)
     {
-        var pdfBase64UrlPrefixLength = UrlPrefixes.PdfBase64Prefix.Length;
-
-        var contentAsBase64 = string.Concat(contentAsBase64Url.Skip(pdfBase64UrlPrefixLength));
-
-        return Convert.FromBase64String(contentAsBase64);
+        var base64prefixStartIndex = contentAsBase64Url.IndexOf(
+            UrlPrefixes.Base64Prefix,
+            StringComparison.Ordinal
+        );
+        if (base64prefixStartIndex >= 0)
+        {
+            contentAsBase64Url = string.Concat(
+                contentAsBase64Url.Skip(base64prefixStartIndex + UrlPrefixes.Base64Prefix.Length)
+            );
+        }
+        return Convert.FromBase64String(contentAsBase64Url);
     }
 }

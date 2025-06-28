@@ -52,6 +52,7 @@ internal static class CruiseApplicationsQueryableExtensions
             .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
             .ThenInclude(formAContract => formAContract.Contract)
+            .ThenInclude(contract => contract.Files)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAUgUnits)
             .ThenInclude(formAUgUnit => formAUgUnit.UgUnit)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAGuestUnits)
@@ -103,6 +104,7 @@ internal static class CruiseApplicationsQueryableExtensions
             .Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects)
             .ThenInclude(researchTaskEffect => researchTaskEffect.UserEffects)
             .Include(cruiseApplication => cruiseApplication.FormC!.Contracts)
+            .ThenInclude(contract => contract.Files)
             .Include(cruiseApplication => cruiseApplication.FormC!.SpubTasks)
             .Include(cruiseApplication => cruiseApplication.FormC!.FormCShortResearchEquipments)
             .ThenInclude(formCShortResearchEquipment =>

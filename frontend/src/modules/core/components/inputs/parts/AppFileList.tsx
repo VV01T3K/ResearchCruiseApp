@@ -22,9 +22,10 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
     <>
       <ul className={cn('w-full', className)} onClick={(e) => e.stopPropagation()}>
         <AnimatePresence>
-          {files.map((file) => (
+          {files.map((file, i) => (
             <motion.li
-              key={file.name}
+              // eslint-disable-next-line @eslint-react/no-array-index-key
+              key={file.name + i}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}

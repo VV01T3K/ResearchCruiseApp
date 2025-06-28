@@ -21,6 +21,7 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     public DbSet<FormAResearchTask> FormAResearchTasks { get; init; } = null!;
     public DbSet<ResearchTask> ResearchTasks { get; init; } = null!;
     public DbSet<Contract> Contracts { get; init; } = null!;
+    public DbSet<ContractFile> ContractFiles { get; init; } = null!;
     public DbSet<FormAUgUnit> FormAUgUnits { get; init; } = null!;
     public DbSet<UgUnit> UgUnits { get; init; } = null!;
     public DbSet<FormAGuestUnit> FormAGuestUnits { get; init; } = null!;

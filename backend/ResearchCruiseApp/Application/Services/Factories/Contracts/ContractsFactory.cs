@@ -11,8 +11,18 @@ internal class ContractsFactory(IMapper mapper, ICompressor compressor) : IContr
     {
         var contract = mapper.Map<Contract>(contractDto);
 
-        contract.ScanName = contractDto.Scan.Name;
-        contract.ScanContent = await compressor.Compress(contractDto.Scan.Content);
+        foreach (var scanDto in contractDto.Scans)
+        {
+            if (!string.IsNullOrEmpty(scanDto.Name) && !string.IsNullOrEmpty(scanDto.Content))
+            {
+                var contractFile = new ContractFile
+                {
+                    FileName = scanDto.Name,
+                    FileContent = await compressor.Compress(scanDto.Content),
+                };
+                contract.Files.Add(contractFile);
+            }
+        }
 
         return contract;
     }

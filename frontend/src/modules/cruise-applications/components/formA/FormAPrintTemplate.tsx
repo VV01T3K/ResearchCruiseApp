@@ -139,8 +139,12 @@ export function FormAPrintTemplate({ ref }: Props) {
                 </div>
                 <div className="font-semibold">Opis</div>
                 <div className="mb-4">{x.description}</div>
-                <div className="font-semibold">Skan</div>
-                <div>{x.scan?.name}</div>
+                <div className="font-semibold">Skany</div>
+                <div>
+                  {x.scans.length === 0
+                    ? 'Brak skanów'
+                    : x.scans.map((file, fileIndex) => <div key={fileIndex}>{file.name}</div>)}
+                </div>
               </div>
             </Fragment>
           ))}

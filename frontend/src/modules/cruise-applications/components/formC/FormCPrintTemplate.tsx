@@ -75,7 +75,9 @@ export function FormCPrintTemplate({ ref }: Props) {
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.description}</div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.executive}</div>
-              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.scan!.name}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>
+                {x.scan?.name || 'Brak skanu'}
+              </div>
             </Fragment>
           ))}
         </div>
@@ -163,8 +165,12 @@ export function FormCPrintTemplate({ ref }: Props) {
                 </div>
                 <div className="font-semibold">Opis</div>
                 <div className="mb-4">{x.description}</div>
-                <div className="font-semibold">Skan</div>
-                <div>{x.scan?.name}</div>
+                <div className="font-semibold">Skany</div>
+                <div>
+                  {x.scans.length === 0
+                    ? 'Brak skanów'
+                    : x.scans.map((file, fileIndex) => <div key={fileIndex}>{file.name}</div>)}
+                </div>
               </div>
             </Fragment>
           ))}

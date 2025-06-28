@@ -117,22 +117,24 @@ export function FormAContractsSection() {
         size: 30,
       },
       {
-        header: 'Skan',
-        accessorFn: (row) => row.scan,
+        header: 'Skany',
+        accessorFn: (row) => row.scans,
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
           <form.Field
-            name={`contracts[${row.index}].scan`}
+            name={`contracts[${row.index}].scans`}
             children={(field) => (
               <AppFileInput
                 name={field.name}
                 value={field.state.value}
-                acceptedMimeTypes={['application/pdf']}
+                allowMultiple={true}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Skan"
+                label="Skany"
+                uploadMessage="Kliknij lub przeciągnij pliki"
+                maxSizeInMb={2}
                 disabled={isReadonly}
               />
             )}
@@ -188,7 +190,7 @@ export function FormAContractsSection() {
                           institutionUnit: '',
                           institutionLocalization: '',
                           description: '',
-                          scan: undefined,
+                          scans: [],
                         });
                         field.handleChange((prev) => prev);
                         field.handleBlur();

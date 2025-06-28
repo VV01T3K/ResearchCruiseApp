@@ -61,15 +61,16 @@ export function ApplicationDetailsContractsSection() {
       size: 30,
     },
     {
-      header: 'Skan',
+      header: 'Skany',
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
         <AppFileInput
-          name="scan"
-          value={row.original.contract.scan}
-          acceptedMimeTypes={['application/pdf']}
-          label="Skan"
+          name="scans"
+          value={row.original.contract.scans}
+          allowMultiple={true}
+          label="Skany"
+          maxSizeInMb={2}
           disabled
         />
       ),

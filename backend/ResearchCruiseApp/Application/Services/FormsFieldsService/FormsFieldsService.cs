@@ -63,7 +63,38 @@ public class FormsFieldsService(
             Find(newContract, contractsInMemory)
             ?? await contractsRepository.Get(newContract, cancellationToken);
 
-        return oldContract ?? newContract;
+        if (oldContract != null)
+        {
+            bool filesChanged = oldContract.Files.Count != newContract.Files.Count;
+
+            if (!filesChanged)
+            {
+                var oldSortedFiles = oldContract.Files.OrderBy(f => f.FileName).ToList();
+                var newSortedFiles = newContract.Files.OrderBy(f => f.FileName).ToList();
+
+                for (int i = 0; i < oldSortedFiles.Count; i++)
+                {
+                    if (
+                        oldSortedFiles[i].FileName != newSortedFiles[i].FileName
+                        || !oldSortedFiles[i]
+                            .FileContent?.SequenceEqual(newSortedFiles[i].FileContent ?? []) == true
+                    )
+                    {
+                        filesChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            if (filesChanged)
+            {
+                return newContract;
+            }
+
+            return oldContract;
+        }
+
+        return newContract;
     }
 
     public async Task<Publication> GetUniquePublication(

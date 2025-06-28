@@ -72,22 +72,22 @@ internal class FormADtoProfile : Profile
             .ForMember(
                 dest => dest.AcceptablePeriodBeg,
                 options =>
-                    options.MapFrom(src => src.AcceptablePeriod.Select(int.Parse).Min().ToString())
+                    options.MapFrom(src => src.AcceptablePeriod!.Select(int.Parse).Min().ToString())
             )
             .ForMember(
                 dest => dest.AcceptablePeriodEnd,
                 options =>
-                    options.MapFrom(src => src.AcceptablePeriod.Select(int.Parse).Max().ToString())
+                    options.MapFrom(src => src.AcceptablePeriod!.Select(int.Parse).Max().ToString())
             )
             .ForMember(
                 dest => dest.OptimalPeriodBeg,
                 options =>
-                    options.MapFrom(src => src.OptimalPeriod.Select(int.Parse).Min().ToString())
+                    options.MapFrom(src => src.OptimalPeriod!.Select(int.Parse).Min().ToString())
             )
             .ForMember(
                 dest => dest.OptimalPeriodEnd,
                 options =>
-                    options.MapFrom(src => src.OptimalPeriod.Select(int.Parse).Max().ToString())
+                    options.MapFrom(src => src.OptimalPeriod!.Select(int.Parse).Max().ToString())
             )
             .ForMember(dest => dest.ResearchArea, options => options.Ignore()) // Member requires complex logic
             .ForMember(dest => dest.Permissions, options => options.Ignore()) // Member requires complex logic

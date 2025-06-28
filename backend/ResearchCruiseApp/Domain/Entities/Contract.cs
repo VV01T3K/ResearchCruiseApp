@@ -6,9 +6,6 @@ namespace ResearchCruiseApp.Domain.Entities;
 
 public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Contract>
 {
-    private string? _scanName;
-    private byte[]? _scanContent;
-
     [StringLength(1024)]
     public string Category { get; init; } = null!;
 
@@ -24,28 +21,7 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
     [StringLength(1024)]
     public string Description { get; init; } = null!;
 
-    [StringLength(1024)]
-    public string ScanName
-    {
-        get => _scanName ?? throw new InvalidOperationException("ScanName has not been set.");
-        set
-        {
-            if (_scanName is not null)
-                throw new InvalidOperationException("ScanName can only be set once.");
-            _scanName = value;
-        }
-    }
-
-    public byte[] ScanContent
-    {
-        get => _scanContent ?? throw new InvalidOperationException("ScanContent has not been set.");
-        set
-        {
-            if (_scanContent is not null)
-                throw new InvalidOperationException("ScanContent can only be set once.");
-            _scanContent = value;
-        }
-    }
+    public List<ContractFile> Files { get; init; } = [];
 
     public List<FormAContract> FormAContracts { get; init; } = [];
 
@@ -55,25 +31,55 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
 
     public override int GetHashCode()
     {
-        return Category.GetHashCode()
+        var hashCode =
+            Category.GetHashCode()
             + InstitutionName.GetHashCode()
             + InstitutionUnit.GetHashCode()
             + InstitutionLocalization.GetHashCode()
-            + Description.GetHashCode()
-            + ScanName.GetHashCode()
-            + ScanContent.GetHashCode();
+            + Description.GetHashCode();
+
+        foreach (var file in Files)
+        {
+            hashCode += file.FileName!.GetHashCode() + file.FileContent!.GetHashCode();
+        }
+
+        return hashCode;
     }
 
     public bool Equals(Contract? other)
     {
-        return other is not null
-            && other.Category == Category
+        if (other is null)
+            return false;
+
+        var basicPropertiesMatch =
+            other.Category == Category
             && other.InstitutionName == InstitutionName
             && other.InstitutionUnit == InstitutionUnit
             && other.InstitutionLocalization == InstitutionLocalization
-            && other.Description == Description
-            && other.ScanName == ScanName
-            && other.ScanContent.SequenceEqual(ScanContent);
+            && other.Description == Description;
+
+        if (!basicPropertiesMatch)
+            return false;
+
+        if (Files.Count != other.Files.Count)
+            return false;
+
+        var sortedFiles = Files.OrderBy(f => f.FileName).ToList();
+        var otherSortedFiles = other.Files.OrderBy(f => f.FileName).ToList();
+
+        for (int i = 0; i < sortedFiles.Count; i++)
+        {
+            var firstFile = sortedFiles[i];
+            var secondFile = otherSortedFiles[i];
+            if (firstFile.FileName != secondFile.FileName)
+                return false;
+            if (firstFile.FileContent is null || secondFile.FileContent is null)
+                return false;
+            if (!firstFile.FileContent.SequenceEqual(secondFile.FileContent))
+                return false;
+        }
+
+        return true;
     }
 
     public static Expression<Func<Contract, bool>> EqualsByExpression(Contract? other)
@@ -84,8 +90,6 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
             && other.InstitutionName == contract.InstitutionName
             && other.InstitutionUnit == contract.InstitutionUnit
             && other.InstitutionLocalization == contract.InstitutionLocalization
-            && other.Description == contract.Description
-            && other.ScanName == contract.ScanName
-            && other.ScanContent.SequenceEqual(contract.ScanContent);
+            && other.Description == contract.Description;
     }
 }

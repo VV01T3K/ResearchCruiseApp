@@ -77,10 +77,10 @@ public class AutoAddCruisesHandler(
         // Optimal period beg/end is a number from range 0...24 representing a point in a year
 
         var startDay =
-            int.Parse(formA.OptimalPeriodBeg) % 2 == 0
+            int.Parse(formA.OptimalPeriodBeg!) % 2 == 0
                 ? 1 // start at the beginning of a month
                 : 15; // start at the middle of a month
-        var startMonth = int.Parse(formA.OptimalPeriodBeg) / 2 + 1;
+        var startMonth = int.Parse(formA.OptimalPeriodBeg!) / 2 + 1;
 
         var startDate = new DateTime(
             int.Parse(formA.Year),
