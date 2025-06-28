@@ -2,13 +2,13 @@ import { useForm, useStore } from '@tanstack/react-form';
 import { useNavigate } from '@tanstack/react-router';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { useAppContext } from '@/core/hooks/AppContextHook';
-import { getErrors, removeEmptyValues } from '@/core/lib/utils';
+import { getErrors, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { FormA } from '@/cruise-applications/components/formA/FormA';
 import { getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
 import { useFormAInitValuesQuery, useSaveFormAMutation } from '@/cruise-applications/hooks/FormAApiHooks';
@@ -18,7 +18,6 @@ import { useUserContext } from '@/user/hooks/UserContextHook';
 
 export function NewCruisePage() {
   const navigate = useNavigate();
-  const appContext = useAppContext();
   const userContext = useUserContext();
   const initialStateQuery = useFormAInitValuesQuery();
   const saveMutation = useSaveFormAMutation();
@@ -86,11 +85,8 @@ export function NewCruisePage() {
     await form.validate('change');
     if (!form.state.isValid) {
       setIsSaveDraftModalOpen(false);
-      appContext.showAlert({
-        title: 'Wykryto błąd w formularzu',
-        message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
-        variant: 'danger',
-      });
+      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
       return;
     }
 
@@ -105,34 +101,29 @@ export function NewCruisePage() {
 
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
-      appContext.showAlert({
-        title: 'Wykryto błąd w formularzu',
-        message: 'Jedynie kierownik lub jego zastępca mogą zapisać formularz',
-        variant: 'danger',
-      });
+      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
+      navigateToFirstError();
       return;
     }
+
+    const loading = toast.loading('Zapisywanie formularza...');
 
     saveMutation.mutate(
       { form: dto, draft: false },
       {
         onSuccess: () => {
+          toast.success('Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.');
           navigate({ to: '/' });
-          appContext.showAlert({
-            title: 'Formularz przyjęty',
-            message: 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego',
-            variant: 'success',
-          });
         },
         onError: (err) => {
           console.error(err);
-          appContext.showAlert({
-            title: 'Wystąpił błąd',
-            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
-            variant: 'danger',
-          });
+          toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
+          navigateToFirstError();
         },
-        onSettled: () => setIsSaveDraftModalOpen(false),
+        onSettled: () => {
+          toast.dismiss(loading);
+          setIsSaveDraftModalOpen(false);
+        },
       }
     );
   }
@@ -149,34 +140,28 @@ export function NewCruisePage() {
 
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
-      appContext.showAlert({
-        title: 'Wykryto błąd w formularzu',
-        message: 'Jedynie kierownik lub jego zastępca mogą zapisać formularz',
-        variant: 'danger',
-      });
+      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
+      navigateToFirstError();
       return;
     }
 
+    const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     saveMutation.mutate(
       { form: dto, draft: true },
       {
         onSuccess: () => {
+          toast.success('Formularz został zapisany jako wersja robocza');
           navigate({ to: '/' });
-          appContext.showAlert({
-            title: 'Zapisano formularz',
-            message: 'Formularz został zapisany w wersji roboczej',
-            variant: 'success',
-          });
         },
         onError: (err) => {
           console.error(err);
-          appContext.showAlert({
-            title: 'Wystąpił błąd',
-            message: 'Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.',
-            variant: 'danger',
-          });
+          toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
+          navigateToFirstError();
         },
-        onSettled: () => setIsSaveDraftModalOpen(false),
+        onSettled: () => {
+          setIsSaveDraftModalOpen(false);
+          toast.dismiss(loading);
+        },
       }
     );
   }

@@ -4,16 +4,17 @@ import { Outlet, ScrollRestoration, useRouterState } from '@tanstack/react-route
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { motion } from 'motion/react';
 
-import { AppAlertDisplayer } from '@/core/components/layout/AppAlertDisplayer';
 import AppBackground from '@/core/components/layout/AppBackground';
 import { AppNavbar } from '@/core/components/layout/AppNavbar';
 import { AppNetworkDisconnectAlert } from '@/core/components/layout/AppNetworkDisconnectAlert';
+import { AppToaster } from '@/core/components/layout/AppToaster';
 
 export function RootLayout() {
   const routerState = useRouterState();
 
   return (
     <>
+      <AppToaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
@@ -38,7 +39,6 @@ export function RootLayout() {
         {config.dev && <TanStackRouterDevtools />}
         {config.dev && <ReactQueryDevtools />}
       </div>
-      <AppAlertDisplayer />
       <ScrollRestoration />
     </>
   );

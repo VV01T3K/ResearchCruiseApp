@@ -15,6 +15,10 @@ export function getErrors(field: FieldMeta, hasFormBeenSubmitted: boolean = true
   return field.errors.map((error) => error!.toString());
 }
 
+export function navigateToFirstError() {
+  document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 export function groupBy<T>(array: T[], key: (item: T) => string): [string, T[]][] {
   return Object.entries(
     array.reduce(

@@ -7,12 +7,12 @@ import PencilIcon from 'bootstrap-icons/icons/pencil.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
+import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
-import { useAppContext } from '@/core/hooks/AppContextHook';
-import { removeEmptyValues } from '@/core/lib/utils';
+import { navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
@@ -39,7 +39,6 @@ export function CruiseDetailsPage() {
   const endCruiseMutation = useEndCruiseMutation(cruiseId);
   const revertCruiseStatusMutation = useRevertCruiseStatusMutation(cruiseId);
 
-  const appContext = useAppContext();
   const navigate = useNavigate();
 
   const [editMode, setEditMode] = React.useState(false);
@@ -58,11 +57,8 @@ export function CruiseDetailsPage() {
   function handleCruiseUpdate() {
     form.validateAllFields('change');
     if (!form.state.isValid) {
-      appContext.showAlert({
-        title: 'Błąd walidacji formularza',
-        message: 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.',
-        variant: 'danger',
-      });
+      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
       return;
     }
 
@@ -74,19 +70,12 @@ export function CruiseDetailsPage() {
     updateCruiseMutation.mutate(dto, {
       onSuccess: () => {
         setEditMode(false);
-        appContext.showAlert({
-          title: 'Zapisano formularz',
-          message: 'Rejs został zaktualizowany pomyślnie.',
-          variant: 'success',
-        });
+        toast.success('Rejs został zaktualizowany pomyślnie.');
       },
       onError: (error) => {
         console.error(error);
-        appContext.showAlert({
-          title: 'Błąd zapisu',
-          message: 'Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.',
-          variant: 'danger',
-        });
+        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        navigateToFirstError();
       },
     });
   }

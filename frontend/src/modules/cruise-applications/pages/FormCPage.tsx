@@ -2,9 +2,10 @@ import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { AppLayout } from '@/core/components/AppLayout';
-import { useAppContext } from '@/core/hooks/AppContextHook';
+import { navigateToFirstError } from '@/core/lib/utils';
 import { FormC } from '@/cruise-applications/components/formC/FormC';
 import { getFormCValidationSchema } from '@/cruise-applications/helpers/FormCValidationSchema';
 import { useCruiseForCruiseApplicationQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
@@ -20,7 +21,6 @@ export function FormCPage() {
   const mode = routeApi.useSearch().mode ?? 'preview';
 
   const navigate = useNavigate();
-  const appContext = useAppContext();
 
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
@@ -87,15 +87,12 @@ export function FormCPage() {
     await form.validate('change');
 
     if (!form.state.canSubmit) {
-      appContext.showAlert({
-        title: 'Wystąpił błąd podczas wysyłania formularza',
-        message:
-          'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.',
-        variant: 'danger',
-      });
+      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
       return;
     }
 
+    const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(
       {
         id: applicationId,
@@ -105,37 +102,30 @@ export function FormCPage() {
       {
         onSuccess: () => {
           navigate({ to: '/applications' });
-          appContext.showAlert({
-            title: 'Formularz wysłany pomyślnie',
-            message: 'Formularz został wysłany pomyślnie.',
-            variant: 'success',
-          });
+          toast.success('Formularz został wysłany pomyślnie.');
         },
         onError: (err) => {
           if (isAxiosError(err) && err.response?.status === 403) {
-            appContext.showAlert({
-              title: 'Błędny status formularza',
-              message:
-                'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.',
-              variant: 'danger',
-            });
+            toast.error(
+              'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
+            );
             navigate({ to: '/applications' });
             return;
           }
 
           console.error(err);
-          appContext.showAlert({
-            title: 'Wystąpił błąd podczas wysyłania formularza',
-            message:
-              'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.',
-            variant: 'danger',
-          });
+          toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
+          navigateToFirstError();
+        },
+        onSettled: () => {
+          toast.dismiss(loading);
         },
       }
     );
   }
 
   async function handleDraftSave() {
+    const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     await updateMutation.mutateAsync(
       {
         id: applicationId,
@@ -145,30 +135,23 @@ export function FormCPage() {
       {
         onSuccess: () => {
           navigate({ to: '/applications' });
-          appContext.showAlert({
-            title: 'Wersja robocza zapisana',
-            message: 'Wersja robocza formularza została zapisana pomyślnie.',
-            variant: 'success',
-          });
+          toast.success('Wersja robocza formularza została zapisana pomyślnie.');
         },
         onError: (err) => {
           if (isAxiosError(err) && err.response?.status === 403) {
-            appContext.showAlert({
-              title: 'Błędny status formularza',
-              message:
-                'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.',
-              variant: 'danger',
-            });
+            toast.error(
+              'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
+            );
             navigate({ to: '/applications' });
             return;
           }
 
           console.error(err);
-          appContext.showAlert({
-            title: 'Wystąpił błąd podczas zapisywania wersji roboczej',
-            message: 'Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.',
-            variant: 'danger',
-          });
+          toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
+          navigateToFirstError();
+        },
+        onSettled: () => {
+          toast.dismiss(loading);
         },
       }
     );

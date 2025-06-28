@@ -1,13 +1,13 @@
 import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppTabs } from '@/core/components/AppTabs';
-import { useAppContext } from '@/core/hooks/AppContextHook';
 import { Role } from '@/core/models/Role';
 import { CruiseCalendar } from '@/cruise-schedule/components/CruiseCalendar';
 import { CruiseExportForm } from '@/cruise-schedule/components/CruiseExportForm';
@@ -23,7 +23,6 @@ export function CruisesPage() {
   const cruisesQuery = useCruisesQuery();
   const deleteCruiseMutation = useDeleteCruiseMutation();
   const autoAddCruisesMutation = useAutoAddCruisesMutation();
-  const appContext = useAppContext();
 
   const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseDto | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -31,18 +30,10 @@ export function CruisesPage() {
   async function autoAddCruises() {
     await autoAddCruisesMutation.mutateAsync(undefined, {
       onSuccess: () => {
-        appContext.showAlert({
-          title: 'Operacja zakończona sukcesem',
-          message: 'Rejsy zostały dodane automatycznie',
-          variant: 'success',
-        });
+        toast.success('Rejsy zostały dodane automatycznie');
       },
       onError: () => {
-        appContext.showAlert({
-          title: 'Wystąpił błąd',
-          message: 'Proces dodawania rejsów automatycznie zakończył się niepowodzeniem',
-          variant: 'danger',
-        });
+        toast.error('Proces dodawania rejsów automatycznie zakończył się niepowodzeniem');
       },
     });
   }

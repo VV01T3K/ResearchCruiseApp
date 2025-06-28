@@ -68,6 +68,7 @@ export function UserContextProvider({ children }: Props) {
   }, [updateAuthDetails]);
 
   const refreshUser = React.useCallback(async () => {
+    setAuthDetails(getStoredAuthDetails()); // Sync state with storage in case it changed in another tab
     if (authDetails) {
       await refreshTokenMutateAsync(authDetails);
       return;

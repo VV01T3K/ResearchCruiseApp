@@ -3,11 +3,11 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
+import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { useAppContext } from '@/core/hooks/AppContextHook';
-import { removeEmptyValues } from '@/core/lib/utils';
+import { navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseFormValidationSchema';
 import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
@@ -19,7 +19,6 @@ export function NewCruisePage() {
   const search = useSearch({ from: '/cruises/new' });
 
   const navigate = useNavigate();
-  const appContext = useAppContext();
 
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
 
@@ -44,11 +43,8 @@ export function NewCruisePage() {
     setHasFormBeenSubmitted(true);
     form.validateAllFields('change');
     if (!form.state.isValid) {
-      appContext.showAlert({
-        title: 'Błąd walidacji formularza',
-        message: 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.',
-        variant: 'danger',
-      });
+      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
       return;
     }
 
@@ -59,19 +55,12 @@ export function NewCruisePage() {
     await createCruiseMutation.mutateAsync(dto, {
       onSuccess: () => {
         navigate({ to: '/cruises' });
-        appContext.showAlert({
-          title: 'Zapisano formularz',
-          message: 'Rejs został utworzony pomyślnie.',
-          variant: 'success',
-        });
+        toast.success('Rejs został utworzony pomyślnie.');
       },
       onError: (error) => {
         console.error(error);
-        appContext.showAlert({
-          title: 'Błąd zapisu',
-          message: 'Nie udało się zapisać rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.',
-          variant: 'danger',
-        });
+        toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        navigateToFirstError();
       },
     });
   }

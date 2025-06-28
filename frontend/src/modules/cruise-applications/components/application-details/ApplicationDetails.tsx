@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
-import { useAppContext } from '@/core/hooks/AppContextHook';
 import { ApplicationDetailsProvider } from '@/cruise-applications/contexts/ApplicationDetailsContext';
 import {
   useAcceptApplicationMutation,
@@ -23,7 +23,6 @@ type Props = {
   evaluation: EvaluationDto;
 };
 export function ApplicationDetails({ application, evaluation }: Props) {
-  const appContext = useAppContext();
   const queryClient = useQueryClient();
 
   const acceptMutation = useAcceptApplicationMutation();
@@ -33,19 +32,11 @@ export function ApplicationDetails({ application, evaluation }: Props) {
     acceptMutation.mutate(application.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['cruiseApplications', application.id] });
-        appContext.showAlert({
-          title: 'Formularz został pomyślnie zaakceptowany',
-          message: 'Formularz został zaakceptowany.',
-          variant: 'success',
-        });
+        toast.success('Formularz został zaakceptowany');
       },
       onError: (err) => {
         console.error(err);
-        appContext.showAlert({
-          title: 'Wystąpił błąd',
-          message: 'Nie udało się zaakceptować formularza.',
-          variant: 'danger',
-        });
+        toast.error('Nie udało się zaakceptować formularza');
       },
     });
   }
@@ -54,19 +45,11 @@ export function ApplicationDetails({ application, evaluation }: Props) {
     rejectMutation.mutate(application.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['cruiseApplications', application.id] });
-        appContext.showAlert({
-          title: 'Formularz został pomyślnie odrzucony',
-          message: 'Formularz został odrzucony.',
-          variant: 'success',
-        });
+        toast.success('Formularz został odrzucony');
       },
       onError: (err) => {
         console.error(err);
-        appContext.showAlert({
-          title: 'Wystąpił błąd',
-          message: 'Nie udało się odrzucić formularza.',
-          variant: 'danger',
-        });
+        toast.error('Nie udało się odrzucić formularza');
       },
     });
   }

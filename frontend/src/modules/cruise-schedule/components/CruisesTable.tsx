@@ -35,7 +35,7 @@ export function CruisesTable({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Tytuł',
       id: 'title',
-      accessorFn: (row) => row.title,
+      accessorFn: (row) => row.title ?? 'Brak tytułu',
       cell: ({ row }) => <CruiseTitleBadge title={row.original.title} shipUnavailable={row.original.shipUnavailable} />,
       size: 10,
     },

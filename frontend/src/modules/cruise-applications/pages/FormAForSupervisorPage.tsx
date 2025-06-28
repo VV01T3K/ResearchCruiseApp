@@ -1,8 +1,8 @@
 import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import axios, { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 
-import { useAppContext } from '@/core/hooks/AppContextHook';
 import { FormAForSupervisor } from '@/cruise-applications/components/formA/FormAForSupervisor';
 import {
   useFormAForSupervisorInitValuesQuery,
@@ -14,7 +14,6 @@ import { FormADto } from '@/cruise-applications/models/FormADto';
 export function FormAForSupervisorPage() {
   const { cruiseApplicationId, supervisorCode } = getRouteApi('/cruiseapproval').useSearch();
   const navigate = useNavigate();
-  const appContext = useAppContext();
   const initialStateQuery = useFormAForSupervisorInitValuesQuery({ cruiseId: cruiseApplicationId, supervisorCode });
   const answerMutation = useSupervisorAnswerFormAMutation();
   const formA = useFormAForSupervisorQuery({ cruiseId: cruiseApplicationId, supervisorCode });
@@ -48,64 +47,48 @@ export function FormAForSupervisorPage() {
   });
 
   function handleAcceptForm() {
+    const loading = toast.loading('Przetwarzanie zgłoszenia...');
     answerMutation.mutate(
       { id: cruiseApplicationId!, accept: true, supervisorCode: supervisorCode! },
       {
         onSuccess: () => {
           navigate({ to: '/' });
-          appContext.showAlert({
-            title: 'Zaakceptowano zgłoszenie',
-            message: 'Zgłoszenie zostało zaakceptowane',
-            variant: 'success',
-          });
+          toast.success('Zgłoszenie zostało zaakceptowane');
         },
         onError: (err: Error | AxiosError) => {
           console.error(err);
           if (axios.isAxiosError(err) && err.response?.status === 403) {
-            appContext.showAlert({
-              title: 'Niedozwolona operacja',
-              message: err.response?.data,
-              variant: 'danger',
-            });
+            toast.error('Niedozwolona operacja: ' + err.response?.data);
           } else {
-            appContext.showAlert({
-              title: 'Wystąpił błąd',
-              message: 'Nie udało się zaakceptować zgłoszenia',
-              variant: 'danger',
-            });
+            toast.error('Wystąpił błąd: Nie udało się zaakceptować zgłoszenia');
           }
+        },
+        onSettled: () => {
+          toast.dismiss(loading);
         },
       }
     );
   }
 
   function handleDenyForm() {
+    const loading = toast.loading('Przetwarzanie zgłoszenia...');
     answerMutation.mutate(
       { id: cruiseApplicationId!, accept: false, supervisorCode: supervisorCode! },
       {
         onSuccess: () => {
           navigate({ to: '/' });
-          appContext.showAlert({
-            title: 'Odrzucono zgłoszenie',
-            message: 'Zgłoszenie zostało odrzucone',
-            variant: 'success',
-          });
+          toast.success('Zgłoszenie zostało odrzucone');
         },
         onError: (err: Error | AxiosError) => {
           console.error(err);
           if (axios.isAxiosError(err) && err.response?.status === 403) {
-            appContext.showAlert({
-              title: 'Niedozwolona operacja',
-              message: err.response?.data,
-              variant: 'danger',
-            });
+            toast.error('Niedozwolona operacja: ' + err.response?.data);
           } else {
-            appContext.showAlert({
-              title: 'Wystąpił błąd',
-              message: 'Nie udało się odrzucić zgłoszenia',
-              variant: 'danger',
-            });
+            toast.error('Wystąpił błąd: Nie udało się odrzucić zgłoszenia');
           }
+        },
+        onSettled: () => {
+          toast.dismiss(loading);
         },
       }
     );

@@ -50,11 +50,10 @@ export function LoginPage() {
         return;
       }
 
-      if (redirect) {
-        await router.navigate({ to: redirect });
-      } else {
-        await router.navigate({ to: '/' });
-      }
+      // Delay redirection so that the user context has time to update
+      setTimeout(() => {
+        router.navigate({ to: redirect ?? '/' });
+      }, 50);
     },
   });
 

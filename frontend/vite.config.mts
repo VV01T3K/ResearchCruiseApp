@@ -24,5 +24,5 @@ export default defineConfig({
     OTEL_SERVICE_NAME: JSON.stringify(process.env.OTEL_SERVICE_NAME),
     GRAFANA_FARO_URL: JSON.stringify(process.env.GRAFANA_FARO_URL),
   },
-  build: { chunkSizeWarningLimit: 1000 },
+  build: { chunkSizeWarningLimit: 2000 },
 });
