@@ -33,7 +33,7 @@ export function NewCruisePage() {
       cruiseApplicationsIds: [],
     },
     validators: {
-      onChange: getCruiseFormValidationSchema(cruiseApplicationsQuery.data),
+      onChange: getCruiseFormValidationSchema(),
     },
   });
 

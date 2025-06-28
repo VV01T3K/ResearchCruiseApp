@@ -134,6 +134,5 @@ public class EditCruiseHandler(
 
         cruise.CruiseApplications = newCruiseApplications;
         await unitOfWork.Complete(cancellationToken); // ORM will remove new cruise applications from their old cruises
-        await cruisesService.CheckEditedCruisesManagersTeams(affectedCruises, cancellationToken);
     }
 }

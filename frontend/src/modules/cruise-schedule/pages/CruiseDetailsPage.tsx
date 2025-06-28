@@ -51,7 +51,7 @@ export function CruiseDetailsPage() {
   const form = useForm<CruiseFormDto>({
     defaultValues: mapCruiseToForm(cruiseQuery.data),
     validators: {
-      onChange: getCruiseFormValidationSchema(applicationQuery.data),
+      onChange: getCruiseFormValidationSchema(),
     },
   });
 

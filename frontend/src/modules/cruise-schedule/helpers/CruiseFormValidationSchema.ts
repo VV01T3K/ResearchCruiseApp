@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
-
 const CruiseDatesValidationSchema = z
   .object({
     startDate: z.string().datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),
@@ -17,59 +15,32 @@ const CruiseDatesValidationSchema = z
     }
   });
 
-const ManagerAndDeputyValidationSchema = (cruiseApplications: CruiseApplicationDto[]) => {
-  const emptyGuid = '00000000-0000-0000-0000-000000000000';
+const emptyGuid = '00000000-0000-0000-0000-000000000000';
+const ManagerAndDeputyValidationSchema = z.object({
+  managersTeam: z
+    .object({
+      mainCruiseManagerId: z.string(),
+      mainDeputyManagerId: z.string(),
+    })
+    .superRefine(({ mainCruiseManagerId, mainDeputyManagerId }, ctx) => {
+      if (!mainCruiseManagerId || !mainDeputyManagerId || mainCruiseManagerId === emptyGuid) {
+        return z.NEVER;
+      }
 
-  function validateManagerId(val: string) {
-    return (
-      val === '' ||
-      val === emptyGuid ||
-      cruiseApplications
-        .reduce((acc, x) => {
-          acc.push(x.cruiseManagerId);
-          acc.push(x.deputyManagerId);
-          return acc;
-        }, [] as string[])
-        .includes(val)
-    );
-  }
-
-  return z.object({
-    managersTeam: z
-      .object({
-        mainCruiseManagerId: z
-          .string()
-          .refine(validateManagerId, 'Kierownik rejsu musi być jednym z dostępnych kierowników rejsu'),
-
-        mainDeputyManagerId: z
-          .string()
-          .refine(
-            validateManagerId,
-            'Zastępca kierownika rejsu musi być jednym z dostępnych zastępców kierownika rejsu'
-          ),
-      })
-      .superRefine(({ mainCruiseManagerId, mainDeputyManagerId }, ctx) => {
-        if (!mainCruiseManagerId || !mainDeputyManagerId || mainCruiseManagerId === emptyGuid) {
-          return z.NEVER;
-        }
-
-        if (mainCruiseManagerId == mainDeputyManagerId) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['mainDeputyManagerId'],
-            message: 'Kierownik rejsu nie może być jednocześnie zastępcą kierownika rejsu',
-          });
-        }
-      }),
-  });
-};
+      if (mainCruiseManagerId == mainDeputyManagerId) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['mainDeputyManagerId'],
+          message: 'Kierownik rejsu nie może być jednocześnie zastępcą kierownika rejsu',
+        });
+      }
+    }),
+});
 
 const CruiseApplicationsValidationSchema = z.object({
   cruiseApplicationsIds: z.array(z.string().uuid()),
 });
 
-export function getCruiseFormValidationSchema(cruiseApplications: CruiseApplicationDto[]) {
-  return CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema(cruiseApplications)).and(
-    CruiseApplicationsValidationSchema
-  );
+export function getCruiseFormValidationSchema() {
+  return CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema).and(CruiseApplicationsValidationSchema);
 }
