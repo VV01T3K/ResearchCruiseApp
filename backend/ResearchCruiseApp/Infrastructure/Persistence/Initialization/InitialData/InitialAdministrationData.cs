@@ -11,6 +11,7 @@ internal static class InitialAdministrationData
             RoleName.Shipowner,
             RoleName.CruiseManager,
             RoleName.Guest,
+            RoleName.ShipCrew,
         };
 
     public const string AdminEmail = "admin@admin.com";

@@ -20,4 +20,7 @@
     <data name="CruiseManager" xml:space="preserve">
         <value>Kierownik rejsów</value>
     </data>
+    <data name="ShipCrew" xml:space="preserve">
+        <value>Załoga statku</value>
+    </data>
 </root>

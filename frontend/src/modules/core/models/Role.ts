@@ -3,6 +3,7 @@ export enum Role {
   ShipOwner = 'Shipowner',
   CruiseManager = 'CruiseManager',
   Guest = 'Guest',
+  ShipCrew = 'ShipCrew',
 }
 
 export function getRoleLabel(role: Role): string {
@@ -15,6 +16,8 @@ export function getRoleLabel(role: Role): string {
       return 'Kierownik';
     case Role.Guest:
       return 'Gość';
+    case Role.ShipCrew:
+      return 'Załoga statku';
   }
 }
 
@@ -28,6 +31,8 @@ export function getRoleFromLabel(label: string): Role | undefined {
       return Role.CruiseManager;
     case 'Gość':
       return Role.Guest;
+    case 'Załoga statku':
+      return Role.ShipCrew;
     default:
       return undefined;
   }

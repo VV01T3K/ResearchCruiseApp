@@ -22,7 +22,7 @@ namespace ResearchCruiseApp.Web.Controllers;
 public class CruisesController(IMediator mediator) : ControllerBase
 {
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet]
     public async Task<IActionResult> GetAllCruises()
@@ -32,7 +32,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCruise([FromRoute] Guid id)
@@ -101,7 +101,7 @@ public class CruisesController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("csv")]
     public async Task<IActionResult> ExportToCsv([FromQuery] string year)

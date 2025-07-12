@@ -84,7 +84,7 @@ export function CruiseFormApplicationsSection() {
               <AppLink href={`/applications/${application.id}/formB`} disabled={!application.hasFormB} target="_blank">
                 Formularz B
               </AppLink>
-              <AppLink href={`/applications/${application.id}/formC&`} disabled={!application.hasFormC} target="_blank">
+              <AppLink href={`/applications/${application.id}/formC`} disabled={!application.hasFormC} target="_blank">
                 Formularz C
               </AppLink>
             </div>

@@ -38,6 +38,7 @@ public class UserPermissionVerifier(
             if (
                 otherUserRoles.Contains(RoleName.CruiseManager)
                 || otherUserRoles.Contains(RoleName.Guest)
+                || otherUserRoles.Contains(RoleName.ShipCrew)
             )
             {
                 return true;
@@ -60,6 +61,7 @@ public class UserPermissionVerifier(
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
             || currentUserRoles.Contains(RoleName.Guest)
+            || currentUserRoles.Contains(RoleName.ShipCrew)
         )
         {
             if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
@@ -94,6 +96,7 @@ public class UserPermissionVerifier(
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
             || currentUserRoles.Contains(RoleName.Guest)
+            || currentUserRoles.Contains(RoleName.ShipCrew)
         )
         {
             return true;
@@ -145,6 +148,7 @@ public class UserPermissionVerifier(
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
             || currentUserRoles.Contains(RoleName.Guest)
+            || currentUserRoles.Contains(RoleName.ShipCrew)
         )
         {
             if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
@@ -184,19 +188,25 @@ public class UserPermissionVerifier(
     public async Task<bool> CanUserDeleteOtherUsers(Guid otherUserId)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
-        
+
         if (currentUserRoles.Contains(RoleName.Administrator))
+        {
             return true;
-            
+        }
+
         if (currentUserRoles.Contains(RoleName.Shipowner))
         {
             var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
-            // Shipowner can delete users except Administrator and other Shipowners
-            if (otherUserRoles.Contains(RoleName.Administrator) || otherUserRoles.Contains(RoleName.Shipowner))
+            if (
+                otherUserRoles.Contains(RoleName.Administrator)
+                || otherUserRoles.Contains(RoleName.Shipowner)
+            )
+            {
                 return false;
+            }
             return true;
         }
-        
+
         return false;
     }
 }

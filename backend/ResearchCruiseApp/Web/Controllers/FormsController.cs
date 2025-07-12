@@ -14,7 +14,7 @@ namespace ResearchCruiseApp.Web.Controllers;
 public class FormsController(IMediator mediator) : ControllerBase
 {
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("InitValues/A")]
     public async Task<IActionResult> GetFormAInitValues()
@@ -37,7 +37,7 @@ public class FormsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("InitValues/B")]
     public async Task<IActionResult> GetFormBInitValues()

@@ -37,7 +37,7 @@ namespace ResearchCruiseApp.Web.Controllers;
 public class CruiseApplicationsController(IMediator mediator) : ControllerBase
 {
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet]
     public async Task<IActionResult> GetAllCruiseApplications()
@@ -47,7 +47,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("forCruise")]
     public async Task<IActionResult> GetCruiseApplicationsForCruise()
@@ -57,7 +57,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{cruiseApplicationId:guid}")]
     public async Task<IActionResult> GetCruiseApplicationById(Guid cruiseApplicationId)
@@ -92,7 +92,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{cruiseApplicationId:guid}/evaluation")]
     public async Task<IActionResult> GetCruiseApplicationEvaluation(Guid cruiseApplicationId)
@@ -134,7 +134,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager},  {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{cruiseApplicationId:guid}/formA")]
     public async Task<IActionResult> GetFormA(Guid cruiseApplicationId)
@@ -184,7 +184,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{cruiseApplicationId:guid}/formB")]
     public async Task<IActionResult> GetFormB(Guid cruiseApplicationId)
@@ -220,7 +220,9 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}, {RoleName.Guest}")]
+    [Authorize(
+        Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
+    )]
     [HttpGet("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> GetFormC(Guid cruiseApplicationId)
     {
@@ -244,7 +246,9 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}")]
+    [Authorize(
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}, {RoleName.ShipCrew}"
+    )]
     [HttpGet("{userId:guid}/effectsEvaluations")]
     public async Task<IActionResult> GetEffectsEvaluations(Guid userId)
     {
@@ -253,7 +257,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}, {RoleName.CruiseManager}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}, {RoleName.CruiseManager}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{cruiseApplicationId:guid}/cruise")]
     public async Task<IActionResult> GetCruiseForCruiseApplication(Guid cruiseApplicationId)
@@ -265,7 +269,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("effectsEvaluations")]
     public async Task<IActionResult> GetOwnEffectsEvaluations()

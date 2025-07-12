@@ -6,11 +6,11 @@ export function getModifiableRoles(userRole?: Role) {
   }
 
   if (userRole === Role.Administrator) {
-    return [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.Guest];
+    return [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.Guest, Role.ShipCrew];
   }
 
   if (userRole === Role.ShipOwner) {
-    return [Role.ShipOwner, Role.CruiseManager, Role.Guest];
+    return [Role.ShipOwner, Role.CruiseManager, Role.Guest, Role.ShipCrew];
   }
 
   throw new Error('Invalid user role');

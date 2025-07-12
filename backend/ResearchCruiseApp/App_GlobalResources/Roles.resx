@@ -27,4 +27,7 @@
     <data name="CruiseManager" xml:space="preserve">
         <value>Cruise manager</value>
     </data>
+    <data name="ShipCrew" xml:space="preserve">
+        <value>Ship crew</value>
+    </data>
 </root>

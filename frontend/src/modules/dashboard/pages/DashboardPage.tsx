@@ -76,6 +76,18 @@ export function DashboardPage() {
     );
   }
 
+  if (userContext.isInRole(Role.ShipCrew)) {
+    return (
+      <DashboardGrid>
+        <CruisesCard className="col-span-2 row-span-2" />
+        <ApplicationsCard className="col-span-2 row-span-2" />
+        <PrioritizationInfoCard />
+        <AccountSettingsCard />
+        <HelpCard className="col-span-2" />
+      </DashboardGrid>
+    );
+  }
+
   return (
     <AppAlert variant="danger">
       Brak dashboarda przypisanego do ról: {userContext.currentUser?.roles.join(', ')}. Zgłoś ten fakt administratorom

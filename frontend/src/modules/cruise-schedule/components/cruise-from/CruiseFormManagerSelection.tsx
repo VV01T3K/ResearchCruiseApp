@@ -14,7 +14,28 @@ import { useCruiseForm } from '@/cruise-schedule/contexts/CruiseFormContext';
 import { useUsersQuery } from '@/usermanagement/hooks/UserManagementApiHooks';
 
 export function CruiseFormManagerSelectionSection() {
-  const { form, cruiseApplications, isReadonly, hasFormBeenSubmitted } = useCruiseForm();
+  const { isReadonly } = useCruiseForm();
+
+  if (isReadonly) {
+    return <CruiseFormManagerSelectionReadonly />;
+  }
+
+  return <CruiseFormManagerSelectionEditable />;
+}
+
+function CruiseFormManagerSelectionReadonly() {
+  return (
+    <CruiseFormManagerSelectionLayout
+      users={[]}
+      cruiseManagersNotAssignedToApplication={[]}
+      isReadonly={true}
+      showWarnings={false}
+    />
+  );
+}
+
+function CruiseFormManagerSelectionEditable() {
+  const { form, cruiseApplications } = useCruiseForm();
   const usersQuery = useUsersQuery();
 
   const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
@@ -25,35 +46,59 @@ export function CruiseFormManagerSelectionSection() {
     return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, form.state.values.cruiseApplicationsIds);
   }, [usersQuery.data, cruiseApplications, form.state.values.cruiseApplicationsIds]);
 
-  const cruiseManagersNotAssignedToApplication = React.useMemo(
-    () =>
-      getCruiseManagersNotAssignedToApplication(
-        usersQuery.data,
-        [selectedCruiseManagerId, selectedDeputyManagerId],
-        cruiseApplications,
-        cruiseApplicationsIds
-      ),
-    [cruiseApplications, cruiseApplicationsIds, selectedCruiseManagerId, selectedDeputyManagerId, usersQuery.data]
+  const cruiseManagersNotAssignedToApplication = React.useMemo(() => {
+    return getCruiseManagersNotAssignedToApplication(
+      usersQuery.data ?? [],
+      [selectedCruiseManagerId, selectedDeputyManagerId],
+      cruiseApplications,
+      cruiseApplicationsIds
+    );
+  }, [cruiseApplications, cruiseApplicationsIds, selectedCruiseManagerId, selectedDeputyManagerId, usersQuery.data]);
+
+  return (
+    <CruiseFormManagerSelectionLayout
+      users={users}
+      cruiseManagersNotAssignedToApplication={cruiseManagersNotAssignedToApplication}
+      isReadonly={false}
+      showWarnings={true}
+    />
   );
+}
+
+function CruiseFormManagerSelectionLayout({
+  users,
+  cruiseManagersNotAssignedToApplication,
+  isReadonly,
+  showWarnings,
+}: {
+  users: AppDropdownInputOption[];
+  cruiseManagersNotAssignedToApplication: User[];
+  isReadonly: boolean;
+  showWarnings: boolean;
+}) {
+  const { form, hasFormBeenSubmitted } = useCruiseForm();
+  const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
 
   return (
     <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
-      <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
-        {cruiseManagersNotAssignedToApplication.length > 0 && (
-          <motion.div
-            className="mt-2"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ ease: 'easeOut' }}
-          >
-            <AppAlert variant="warning">
-              Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego
-              zgłoszenia dołączonego do rejsu.
-            </AppAlert>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showWarnings && (
+        <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
+          {cruiseManagersNotAssignedToApplication.length > 0 && (
+            <motion.div
+              className="mt-2"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ ease: 'easeOut' }}
+            >
+              <AppAlert variant="warning">
+                Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego
+                zgłoszenia dołączonego do rejsu.
+              </AppAlert>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <form.Field

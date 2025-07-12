@@ -11,6 +11,10 @@ export function RoleBadge({ role }: { role: Role }) {
   }
 
   if (role === Role.CruiseManager) {
+    return <AppBadge variant="warning">{getRoleLabel(role)}</AppBadge>;
+  }
+
+  if (role === Role.ShipCrew) {
     return <AppBadge variant="info">{getRoleLabel(role)}</AppBadge>;
   }
 

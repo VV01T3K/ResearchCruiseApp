@@ -24,10 +24,11 @@ type ModalStates =
   | { state: 'editUserModal'; user: User };
 
 const allowedRoles: Record<Role, Role[]> = {
-  [Role.Administrator]: [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.Guest],
-  [Role.ShipOwner]: [Role.ShipOwner, Role.CruiseManager, Role.Guest],
+  [Role.Administrator]: [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.Guest, Role.ShipCrew],
+  [Role.ShipOwner]: [Role.ShipOwner, Role.CruiseManager, Role.Guest, Role.ShipCrew],
   [Role.CruiseManager]: [],
   [Role.Guest]: [],
+  [Role.ShipCrew]: [],
 };
 
 export function UserManagementPage() {
