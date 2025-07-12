@@ -175,7 +175,7 @@ export function UserManagementPage() {
       >
         <GroupActionSection
           selectedUsers={usersQuery.data.filter((user) => selectedUsers[user.id])}
-          allowToRemoveUsers={currentUserRole === Role.Administrator}
+          allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
           close={() => handleModalClose()}
         />
       </AppModal>
@@ -189,7 +189,7 @@ export function UserManagementPage() {
           allUsers={usersQuery.data}
           allowedRoles={allowedRoles[currentUserRole]}
           close={() => handleModalClose()}
-          allowToRemoveUsers={currentUserRole === Role.Administrator}
+          allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
         />
       </AppModal>
     </>

@@ -184,6 +184,19 @@ public class UserPermissionVerifier(
     public async Task<bool> CanUserDeleteOtherUsers(Guid otherUserId)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
-        return currentUserRoles.Contains(RoleName.Administrator);
+        
+        if (currentUserRoles.Contains(RoleName.Administrator))
+            return true;
+            
+        if (currentUserRoles.Contains(RoleName.Shipowner))
+        {
+            var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+            // Shipowner can delete users except Administrator and other Shipowners
+            if (otherUserRoles.Contains(RoleName.Administrator) || otherUserRoles.Contains(RoleName.Shipowner))
+                return false;
+            return true;
+        }
+        
+        return false;
     }
 }

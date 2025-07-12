@@ -70,7 +70,7 @@ public class UsersController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
-    [Authorize(Roles = RoleName.Administrator)]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
     {
