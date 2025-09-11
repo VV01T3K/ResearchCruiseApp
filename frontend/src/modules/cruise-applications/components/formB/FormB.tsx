@@ -25,6 +25,7 @@ type Props = {
     onSubmit: () => void;
     onSaveDraft: () => void;
     onRevertToEdit?: () => void;
+    actionsDisabled?: boolean;
   };
 };
 export function FormB({ context }: Props) {
@@ -64,6 +65,7 @@ export function FormB({ context }: Props) {
             onSaveDraft={context.onSaveDraft}
             onRevertToEdit={context.onRevertToEdit}
             onPrint={() => handlePrint(reactToPrintContent)}
+            disabled={context.actionsDisabled}
           />
         </form>
         <FormBPrintTemplate ref={componentRef} />

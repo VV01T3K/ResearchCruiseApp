@@ -27,6 +27,7 @@ type Props = {
   context: FormCContextType & {
     onSubmit: () => void;
     onSaveDraft: () => void;
+    actionsDisabled?: boolean;
   };
 };
 export function FormC({ context }: Props) {
@@ -64,7 +65,11 @@ export function FormC({ context }: Props) {
         <FormCCollectedSamplesSection />
         <FormCSPUBReportDataSection />
         <FormCAdditionalDescriptionSection />
-        <FormCActionsSection onSaveDraft={context.onSaveDraft} onPrint={() => handlePrint(reactToPrintContent)} />
+        <FormCActionsSection
+          onSaveDraft={context.onSaveDraft}
+          onPrint={() => handlePrint(reactToPrintContent)}
+          disabled={context.actionsDisabled}
+        />
       </form>
       <FormCPrintTemplate ref={componentRef} />
     </FormCProvider>

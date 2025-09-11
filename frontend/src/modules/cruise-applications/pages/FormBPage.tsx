@@ -65,6 +65,7 @@ export function FormBPage() {
     onSubmit: handleSubmit,
     onSaveDraft: handleDraftSave,
     onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,
+    actionsDisabled: updateMutation.isPending || revertToEditMutation.isPending,
   };
 
   async function handleSubmit() {

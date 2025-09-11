@@ -9,26 +9,32 @@ import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 type Props = {
   onSaveDraft: () => void;
   onPrint?: () => void;
+  disabled?: boolean;
 };
-export function FormCActionsSection({ onSaveDraft, onPrint }: Props) {
+export function FormCActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
   const { isReadonly } = useFormC();
 
   return (
     <AppActionsSection>
       {!isReadonly && (
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="primaryOutline" onClick={onSaveDraft}>
+        <AppButton
+          className="gap-4 !justify-center w-36 lg:w-48"
+          variant="primaryOutline"
+          onClick={onSaveDraft}
+          disabled={disabled}
+        >
           <FloppyFillIcon className="h-4 w-4" />
           Zapisz
         </AppButton>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="gap-4 !justify-center w-36 lg:w-48">
+        <AppButton type="submit" className="gap-4 !justify-center w-36 lg:w-48" disabled={disabled}>
           <SendFillIcon className="h-4 w-4" />
           Wyślij
         </AppButton>
       )}
       {isReadonly && (
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={onPrint}>
+        <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={onPrint} disabled={disabled}>
           <PrinterFillIcon className="h-4 w-4" />
           Wydrukuj
         </AppButton>

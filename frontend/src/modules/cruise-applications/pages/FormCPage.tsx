@@ -78,6 +78,7 @@ export function FormCPage() {
     hasFormBeenSubmitted,
     onSubmit: handleSubmit,
     onSaveDraft: handleDraftSave,
+    actionsDisabled: updateMutation.isPending,
   };
 
   async function handleSubmit() {

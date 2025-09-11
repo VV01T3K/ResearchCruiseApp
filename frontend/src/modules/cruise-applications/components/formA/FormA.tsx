@@ -20,6 +20,7 @@ type Props = {
   context: FormAContextType & {
     onSubmit: () => void;
     onSaveDraft: () => void;
+    actionsDisabled?: boolean;
   };
 };
 export function FormA({ context }: Props) {
@@ -51,7 +52,11 @@ export function FormA({ context }: Props) {
           <FormAPublicationsSection />
           <FormASPUBTasksSection />
           <FormASupervisorInfoSection />
-          <FormAActionsSection onSaveDraft={context.onSaveDraft} onPrint={() => handlePrint(reactToPrintContent)} />
+          <FormAActionsSection
+            onSaveDraft={context.onSaveDraft}
+            onPrint={() => handlePrint(reactToPrintContent)}
+            disabled={context.actionsDisabled}
+          />
         </form>
         <FormAPrintTemplate ref={componentRef} />
       </FormAProvider>

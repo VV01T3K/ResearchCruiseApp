@@ -73,6 +73,7 @@ export function FormAPage() {
     hasFormBeenSubmitted,
     onSubmit: handleSubmitting,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
+    actionsDisabled: saveMutation.isPending,
   };
 
   async function handleSubmitting() {

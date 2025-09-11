@@ -12,33 +12,44 @@ type Props = {
   onSaveDraft: () => void;
   onRevertToEdit?: () => void;
   onPrint?: () => void;
+  disabled?: boolean;
 };
-export function FormBActionsSection({ onSaveDraft, onRevertToEdit, onPrint }: Props) {
+export function FormBActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled }: Props) {
   const { isReadonly } = useFormB();
 
   return (
     <AppActionsSection>
       <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {isReadonly && !!onRevertToEdit && (
-          <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="primaryOutline" onClick={onRevertToEdit}>
+          <AppButton
+            className="gap-4 !justify-center w-36 lg:w-48"
+            variant="primaryOutline"
+            onClick={onRevertToEdit}
+            disabled={disabled}
+          >
             Cofnij do edycji
           </AppButton>
         )}
       </AppGuard>
       {!isReadonly && (
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="primaryOutline" onClick={onSaveDraft}>
+        <AppButton
+          className="gap-4 !justify-center w-36 lg:w-48"
+          variant="primaryOutline"
+          onClick={onSaveDraft}
+          disabled={disabled}
+        >
           <FloppyFillIcon className="h-4 w-4" />
           Zapisz
         </AppButton>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="gap-4 !justify-center w-36 lg:w-48">
+        <AppButton type="submit" className="gap-4 !justify-center w-36 lg:w-48" disabled={disabled}>
           <SendFillIcon className="h-4 w-4" />
           Wyślij
         </AppButton>
       )}
       {isReadonly && (
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={onPrint}>
+        <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={onPrint} disabled={disabled}>
           <PrinterFillIcon className="h-4 w-4" />
           Wydrukuj
         </AppButton>
