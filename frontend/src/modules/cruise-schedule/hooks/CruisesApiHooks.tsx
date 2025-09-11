@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/core/lib/api';
 import { FileDto } from '@/cruise-applications/models/FileDto';
-import { CruiseDto } from '@/cruise-schedule/models/CruiseDto';
+import { BlockadePeriodDto, CruiseDto } from '@/cruise-schedule/models/CruiseDto';
 import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 
 export function useCruisesQuery() {
@@ -133,5 +133,15 @@ export function useCruiseCsvExportMutation(onSuccess: (file: FileDto) => void) {
       };
       onSuccess(file);
     },
+  });
+}
+
+export function useBlockadesQuery(year: number) {
+  return useQuery({
+    queryKey: ['cruises', 'blockades', year],
+    queryFn: async () => {
+      return client.get(`/api/Cruises/blockades/${year}`);
+    },
+    select: (res) => res.data as BlockadePeriodDto[],
   });
 }

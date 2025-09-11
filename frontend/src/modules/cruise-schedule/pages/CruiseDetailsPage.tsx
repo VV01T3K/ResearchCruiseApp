@@ -15,7 +15,7 @@ import { useAppContext } from '@/core/hooks/AppContextHook';
 import { removeEmptyValues } from '@/core/lib/utils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
-import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseFrom';
+import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseFormValidationSchema';
 import {
   useConfirmCruiseMutation,
@@ -364,5 +364,7 @@ function mapCruiseToForm(cruise: CruiseDto): CruiseFormDto {
     },
     cruiseApplicationsIds: cruise.cruiseApplicationsShortInfo.map((x) => x.id),
     status: cruise.status,
+    title: cruise.title || '',
+    shipUnavailable: cruise.shipUnavailable,
   };
 }

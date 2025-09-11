@@ -21,5 +21,10 @@ public class Cruise : Entity, IYearBasedNumbered
 
     public CruiseStatus Status { get; set; }
 
+    [StringLength(512)]
+    public string? Title { get; set; }
+
+    public bool ShipUnavailable { get; set; } = false;
+
     public List<CruiseApplication> CruiseApplications { get; set; } = null!;
 }

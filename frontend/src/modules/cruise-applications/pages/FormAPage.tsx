@@ -1,7 +1,7 @@
-import { useForm } from '@tanstack/react-form';
+import { useForm, useStore } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
@@ -17,6 +17,7 @@ import {
   useUpdateFormAMutation,
 } from '@/cruise-applications/hooks/FormAApiHooks';
 import { FormADto } from '@/cruise-applications/models/FormADto';
+import { useBlockadesQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 
 export function FormAPage() {
@@ -66,12 +67,23 @@ export function FormAPage() {
     },
   });
 
+  const year = useStore(form.store, (state) => state.values.year);
+  const blockadesQuery = useBlockadesQuery(+year);
+
+  // Update form validators when blockades change
+  useEffect(() => {
+    form.options.validators = {
+      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+    };
+  }, [blockadesQuery.data, initialStateQuery.data, form.options]);
+
   const context = {
     form,
     initValues: initialStateQuery.data,
     isReadonly: !editMode,
     hasFormBeenSubmitted,
     onSubmit: handleSubmitting,
+    blockades: blockadesQuery.data,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
   };

@@ -59,6 +59,12 @@ export function CruisesPage() {
         <PlusLgIcon className="ml-2 w-6 h-6" />
       </AppButton>
     </AppGuard>,
+    <AppGuard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <AppButton type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
+        Nowa blokada
+        <PlusLgIcon className="ml-2 w-6 h-6" />
+      </AppButton>
+    </AppGuard>,
     <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport

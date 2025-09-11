@@ -51,7 +51,10 @@ export function FormACruiseManagerInfoSection() {
             <AppDropdownInput
               name={field.name}
               value={field.state.value}
-              onChange={field.handleChange}
+              onChange={(newValue) => {
+                field.handleChange(newValue);
+                form.validateAllFields('change');
+              }}
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Rok"

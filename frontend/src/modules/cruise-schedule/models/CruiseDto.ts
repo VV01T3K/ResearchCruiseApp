@@ -19,4 +19,12 @@ export type CruiseDto = {
   mainDeputyManagerId: string;
   cruiseApplicationsShortInfo: CruiseApplicationShortInfoDto[];
   status: CruiseStatus;
+  title?: string;
+  shipUnavailable: boolean;
+};
+
+export type BlockadePeriodDto = {
+  startDate: string;
+  endDate: string;
+  title: string;
 };

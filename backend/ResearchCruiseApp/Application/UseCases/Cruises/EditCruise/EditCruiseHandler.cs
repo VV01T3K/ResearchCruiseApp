@@ -1,16 +1,17 @@
+using FluentValidation;
 using MediatR;
+using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
-using ResearchCruiseApp.Application.Services.CruisesService;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.Cruises.EditCruise;
 
 public class EditCruiseHandler(
-    ICruisesService cruisesService,
+    IValidator<EditCruiseCommand> validator,
     IIdentityService identityService,
     ICruisesRepository cruisesRepository,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
@@ -19,6 +20,10 @@ public class EditCruiseHandler(
 {
     public async Task<Result> Handle(EditCruiseCommand request, CancellationToken cancellationToken)
     {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+            return validationResult.ToApplicationResult();
+
         var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
             request.Id,
             cancellationToken
@@ -42,7 +47,7 @@ public class EditCruiseHandler(
                 return statusCheckResult;
         }
 
-        UpdateCruiseDates(cruise, request);
+        UpdateCruiseBasicInfo(cruise, request);
 
         var result = await UpdateCruiseManagersTeam(cruise, request);
         if (!result.IsSuccess)
@@ -68,10 +73,12 @@ public class EditCruiseHandler(
         return Result.Empty;
     }
 
-    private static void UpdateCruiseDates(Cruise cruise, EditCruiseCommand request)
+    private static void UpdateCruiseBasicInfo(Cruise cruise, EditCruiseCommand request)
     {
         cruise.StartDate = request.CruiseFormModel.StartDate;
         cruise.EndDate = request.CruiseFormModel.EndDate;
+        cruise.Title = request.CruiseFormModel.Title;
+        cruise.ShipUnavailable = request.CruiseFormModel.ShipUnavailable;
     }
 
     private async Task<Result> UpdateCruiseManagersTeam(Cruise cruise, EditCruiseCommand request)

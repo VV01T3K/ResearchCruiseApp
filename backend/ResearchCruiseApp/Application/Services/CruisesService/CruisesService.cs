@@ -63,4 +63,44 @@ internal class CruisesService(
                 cruise.MainDeputyManagerId = Guid.Empty;
         }
     }
+
+    public async Task<List<Cruise>> GetBlockingCruisesForYear(
+        int year,
+        CancellationToken cancellationToken
+    )
+    {
+        var cruises = await cruisesRepository.GetAll(cancellationToken);
+
+        return cruises
+            .Where(cruise =>
+                cruise.ShipUnavailable
+                && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
+            )
+            .Where(cruise =>
+                cruise.StartDate.StartsWith(year.ToString())
+                || cruise.EndDate.StartsWith(year.ToString())
+            )
+            .ToList();
+    }
+
+    public async Task<bool> CheckForOverlappingCruises(
+        DateTime start,
+        DateTime end,
+        int year,
+        CancellationToken cancellationToken
+    )
+    {
+        var overlappingCruises = (await GetBlockingCruisesForYear(year, cancellationToken)).Where(
+            cruise =>
+            {
+                DateTime cruiseStart = DateTime.Parse(cruise.StartDate),
+                    cruiseEnd = DateTime.Parse(cruise.EndDate);
+                return start <= cruiseStart && end >= cruiseEnd
+                    || start >= cruiseStart && start <= cruiseEnd
+                    || end >= cruiseStart && end <= cruiseEnd;
+            }
+        );
+
+        return overlappingCruises.Any();
+    }
 }

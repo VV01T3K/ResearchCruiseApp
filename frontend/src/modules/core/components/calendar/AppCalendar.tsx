@@ -142,6 +142,7 @@ export type CalendarEvent = {
   end: Date;
 
   link?: string;
+  color?: string;
 };
 
 export type CalendarEventWithRow = CalendarEvent & { row: number };

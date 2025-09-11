@@ -75,8 +75,9 @@ export function CruiseApplicationPeriodInput({
 
     if (changed) {
       setValues(tmpValues);
+      onChange?.(tmpValues.map((v) => v.toString()) as CruisePeriodType);
     }
-  }, [maxValues, values]);
+  }, [maxValues, onChange, values]);
 
   const rangerInstance = useRanger<HTMLDivElement>({
     getRangerElement: () => rangerRef.current,
@@ -108,9 +109,7 @@ export function CruiseApplicationPeriodInput({
       }
 
       setValues(sortedValues);
-      if (onChange) {
-        onChange(sortedValues.map((v) => v.toString()) as CruisePeriodType);
-      }
+      onChange?.(sortedValues.map((v) => v.toString()) as CruisePeriodType);
     },
   });
 

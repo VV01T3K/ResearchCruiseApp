@@ -1,3 +1,5 @@
+import { Fragment } from 'react/jsx-runtime';
+
 import { AppLink } from '@/core/components/AppLink';
 import { CalendarEventWithRow } from '@/core/components/calendar/AppCalendar';
 import { dateToUtcDay } from '@/core/lib/calendarUtils';
@@ -40,7 +42,8 @@ function CalendarEventTiles({ date, eventsWithRows, tileWidth }: CalendarEventTi
       const className = cn(
         start ? 'rounded-l-lg ml-3' : '',
         end ? 'rounded-r-lg mr-3' : '',
-        'bg-primary h-8 truncate text-white text-sm p-2 '
+        event.color ? 'bg-[var(--color)]' : 'bg-primary',
+        'h-8 truncate text-white text-sm p-2 '
       );
 
       // calculate maximum width of the text tile based on the number of days left in the week and the event duration
@@ -53,13 +56,19 @@ function CalendarEventTiles({ date, eventsWithRows, tileWidth }: CalendarEventTi
         </div>
       );
 
+      const innerComponent = (
+        <div style={{ '--color': event.color } as React.CSSProperties} className={className}>
+          {textComponent}
+        </div>
+      );
+
       eventTiles.push(
         event.link ? (
-          <AppLink href={event.link} variant="plain" className={className} key={`${event.title}-${i}`}>
-            {textComponent}
+          <AppLink href={event.link} variant="plain" key={`${event.title}-${i}`}>
+            {innerComponent}
           </AppLink>
         ) : (
-          <div className={className}>{textComponent}</div>
+          <Fragment key={`${event.title}-${i}`}>{innerComponent}</Fragment>
         )
       );
     } else if (eventsInRow.length === 0) {

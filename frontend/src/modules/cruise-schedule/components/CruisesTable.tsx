@@ -12,6 +12,8 @@ import { Role } from '@/core/models/Role';
 import { CruiseStatusBadge } from '@/cruise-schedule/components/CruiseStatusBadge';
 import { CruiseApplicationShortInfoDto, CruiseDto } from '@/cruise-schedule/models/CruiseDto';
 
+import { CruiseTitleBadge } from './CruiseTitleBadge';
+
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 const dateFormat = 'DD.MM.YYYY, HH:mm';
 
@@ -28,7 +30,14 @@ export function CruisesTable({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.number,
       sortingFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
-      size: 15,
+      size: 5,
+    },
+    {
+      header: 'Tytuł',
+      id: 'title',
+      accessorFn: (row) => row.title,
+      cell: ({ row }) => <CruiseTitleBadge title={row.original.title} shipUnavailable={row.original.shipUnavailable} />,
+      size: 10,
     },
     {
       header: 'Data rozpoczęcia',

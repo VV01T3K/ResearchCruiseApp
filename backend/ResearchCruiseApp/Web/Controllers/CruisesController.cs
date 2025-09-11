@@ -11,6 +11,7 @@ using ResearchCruiseApp.Application.UseCases.Cruises.EditCruise;
 using ResearchCruiseApp.Application.UseCases.Cruises.EndCruise;
 using ResearchCruiseApp.Application.UseCases.Cruises.ExportToCsv;
 using ResearchCruiseApp.Application.UseCases.Cruises.GetAllCruises;
+using ResearchCruiseApp.Application.UseCases.Cruises.GetBlockades;
 using ResearchCruiseApp.Application.UseCases.Cruises.GetCruise;
 using ResearchCruiseApp.Application.UseCases.Cruises.RevertCruiseStatus;
 using ResearchCruiseApp.Web.Common.Extensions;
@@ -108,5 +109,15 @@ public class CruisesController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new ExportToCsvCommand(year));
         return result.IsSuccess ? Ok(result.Data!) : this.CreateError(result);
+    }
+
+    [Authorize(
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
+    )]
+    [HttpGet("blockades/{year:int}")]
+    public async Task<IActionResult> GetBlockades([FromRoute] int year)
+    {
+        var result = await mediator.Send(new GetBlockadesQuery(year));
+        return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 }

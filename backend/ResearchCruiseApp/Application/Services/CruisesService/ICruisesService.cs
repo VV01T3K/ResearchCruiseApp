@@ -1,3 +1,4 @@
+using ResearchCruiseApp.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.Services.CruisesService;
@@ -11,6 +12,15 @@ public interface ICruisesService
     /// </summary>
     Task CheckEditedCruisesManagersTeams(
         List<Cruise> editedCruises,
+        CancellationToken cancellationToken
+    );
+
+    Task<List<Cruise>> GetBlockingCruisesForYear(int year, CancellationToken cancellationToken);
+
+    Task<bool> CheckForOverlappingCruises(
+        DateTime start,
+        DateTime end,
+        int year,
         CancellationToken cancellationToken
     );
 }

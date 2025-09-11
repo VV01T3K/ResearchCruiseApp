@@ -10,6 +10,7 @@ import { PublicationDtoValidationSchema } from '@/cruise-applications/models/Pub
 import { ResearchTaskDtoValidationSchema } from '@/cruise-applications/models/ResearchTaskDto';
 import { SpubTaskDtoValidationSchema } from '@/cruise-applications/models/SpubTaskDto';
 import { UGTeamDtoValidationSchema } from '@/cruise-applications/models/UGTeamDto';
+import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
 const ManagerAndDeputyManagerValidationSchema = (initValues: FormAInitValuesDto) =>
   z
@@ -76,6 +77,104 @@ const CruiseGoalValidationSchema = z
       });
     }
   });
+
+const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
+  function checkDateForBlockadeCollision(field: string) {
+    if (!blockades) return true;
+    if (isNaN(Date.parse(field))) return false;
+
+    const date = new Date(field);
+    return !blockades.some((b) => {
+      const start = new Date(b.startDate);
+      const end = new Date(b.endDate);
+      return date >= start && date <= end;
+    });
+  }
+
+  function convertFortnightToDate(fortnight: number, year: number) {
+    const month = Math.floor(fortnight / 2);
+    const day = fortnight % 2 === 0 ? 1 : 15;
+    return new Date(year, month, day);
+  }
+
+  return z
+    .object({
+      year: z.string(),
+      acceptablePeriod: CruisePeriodValidationSchema.or(literal('')),
+      optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
+      precisePeriodStart: z
+        .string()
+        .refine((val) => checkDateForBlockadeCollision(val), 'Data rozpoczęcia koliduje z istniejącą blokadą')
+        .or(literal('')),
+      precisePeriodEnd: z
+        .string()
+        .refine((val) => checkDateForBlockadeCollision(val), 'Data zakończenia koliduje z istniejącą blokadą')
+        .or(literal('')),
+    })
+    .superRefine(({ precisePeriodStart, precisePeriodEnd }, ctx) => {
+      const precisePeriodStartDate = precisePeriodStart ? new Date(precisePeriodStart) : null,
+        precisePeriodEndDate = precisePeriodEnd ? new Date(precisePeriodEnd) : null;
+      for (const blockade of blockades || []) {
+        const blockadeStart = new Date(blockade.startDate),
+          blockadeEnd = new Date(blockade.endDate);
+        if (
+          precisePeriodStartDate &&
+          precisePeriodEndDate &&
+          precisePeriodStartDate <= blockadeStart &&
+          precisePeriodEndDate >= blockadeEnd
+        ) {
+          ['precisePeriodStart', 'precisePeriodEnd'].forEach((field) => {
+            ctx.addIssue({
+              code: 'custom',
+              message: `Okres rejsu koliduje z istniejącą blokadą`,
+              path: [field],
+            });
+          });
+          break;
+        }
+      }
+    })
+    .superRefine(({ acceptablePeriod, year }, ctx) => {
+      const acceptableStart = convertFortnightToDate(+acceptablePeriod[0], +year),
+        acceptableEnd = convertFortnightToDate(+acceptablePeriod[1], +year);
+      for (const blockade of blockades || []) {
+        const blockadeStart = new Date(blockade.startDate),
+          blockadeEnd = new Date(blockade.endDate);
+        if (
+          (acceptableStart <= blockadeStart && acceptableEnd >= blockadeEnd) ||
+          (acceptableStart >= blockadeStart && acceptableStart <= blockadeEnd) ||
+          (acceptableEnd >= blockadeStart && acceptableEnd <= blockadeEnd)
+        ) {
+          ctx.addIssue({
+            code: 'custom',
+            message: `Okres akceptowalny rejsu koliduje z istniejącą blokadą`,
+            path: ['acceptablePeriod'],
+          });
+          break;
+        }
+      }
+    })
+    .superRefine(({ optimalPeriod, year }, ctx) => {
+      const optimalStart = convertFortnightToDate(+optimalPeriod[0], +year),
+        optimalEnd = convertFortnightToDate(+optimalPeriod[1], +year);
+      for (const blockade of blockades || []) {
+        const blockadeStart = new Date(blockade.startDate),
+          blockadeEnd = new Date(blockade.endDate);
+        if (
+          (optimalStart <= blockadeStart && optimalEnd >= blockadeEnd) ||
+          (optimalStart >= blockadeStart && optimalStart <= blockadeEnd) ||
+          (optimalEnd >= blockadeStart && optimalEnd <= blockadeEnd)
+        ) {
+          ctx.addIssue({
+            code: 'custom',
+            message: `Okres optymalny rejsu koliduje z istniejącą blokadą`,
+            path: ['optimalPeriod'],
+          });
+          break;
+        }
+      }
+    });
+};
 
 const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
   z
@@ -153,9 +252,10 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
       );
     }, 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny');
 
-export function getFormAValidationSchema(initValues: FormAInitValuesDto) {
+export function getFormAValidationSchema(initValues: FormAInitValuesDto, blockades?: BlockadePeriodDto[]) {
   return ManagerAndDeputyManagerValidationSchema(initValues)
     .and(ShipUsageValidationSchema)
     .and(CruiseGoalValidationSchema)
+    .and(BlockadeCollisionValidationSchema(blockades))
     .and(OtherValidationSchema(initValues));
 }

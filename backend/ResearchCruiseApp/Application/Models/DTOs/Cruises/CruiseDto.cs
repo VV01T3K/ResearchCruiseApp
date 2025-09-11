@@ -21,4 +21,8 @@ public class CruiseDto
     public List<CruiseApplicationShortInfoDto> CruiseApplicationsShortInfo { get; set; } = [];
 
     public string Status { get; init; } = null!;
+
+    public string? Title { get; set; }
+
+    public bool ShipUnavailable { get; set; } = false;
 }

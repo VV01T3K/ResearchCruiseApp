@@ -10,6 +10,7 @@ using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationEvaluationDetailsDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationShortInfoDtos;
+using ResearchCruiseApp.Application.Services.Factories.CruiseBlockadePeriodDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp.Application.Services.Factories.Cruises;
 using ResearchCruiseApp.Application.Services.Factories.FileDtos;
@@ -73,6 +74,7 @@ public static class DependencyInjection
             >()
             .AddScoped<ICruisesFactory, CruisesFactory>()
             .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>()
+            .AddScoped<ICruiseBlockadePeriodDtosFactory, CruiseBlockadePeriodDtosFactory>()
             .AddScoped<
                 ICruiseApplicationShortInfoDtosFactory,
                 CruiseApplicationShortInfoDtosFactory

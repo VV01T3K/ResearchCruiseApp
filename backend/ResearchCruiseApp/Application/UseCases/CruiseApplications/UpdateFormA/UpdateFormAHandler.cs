@@ -9,6 +9,7 @@ using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp.Application.Services.CruiseApplications;
+using ResearchCruiseApp.Application.Services.CruisesService;
 using ResearchCruiseApp.Application.Services.Factories.FormsA;
 using ResearchCruiseApp.Application.Services.FormsService;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
@@ -24,6 +25,7 @@ public class UpdateFormAHandler(
     IUnitOfWork unitOfWork,
     IFormsAFactory formsAFactory,
     IFormsService formsService,
+    ICruisesService cruisesService,
     ICruiseApplicationsService cruiseApplicationsService,
     ICruiseApplicationEvaluator cruiseApplicationEvaluator
 ) : IRequestHandler<UpdateFormACommand, Result>
@@ -47,6 +49,13 @@ public class UpdateFormAHandler(
         var verificationResult = await VerifyOperation(cruiseApplication);
         if (!verificationResult.IsSuccess)
             return verificationResult;
+
+        var periodValidationResult = await ValidatePrecisePeriodAgainstBlockades(
+            request.FormADto,
+            cancellationToken
+        );
+        if (!periodValidationResult.IsSuccess)
+            return periodValidationResult;
 
         var result = await unitOfWork.ExecuteIsolated(
             action: () =>
@@ -134,5 +143,31 @@ public class UpdateFormAHandler(
         cruiseApplication.FormA = newFormAResult.Data!;
 
         return Result.Empty;
+    }
+
+    private async Task<Result> ValidatePrecisePeriodAgainstBlockades(
+        FormADto formADto,
+        CancellationToken cancellationToken
+    )
+    {
+        if (formADto.PrecisePeriodStart is null || formADto.PrecisePeriodEnd is null)
+        {
+            return Result.Empty;
+        }
+
+        int year;
+        if (!int.TryParse(formADto.Year, out year))
+        {
+            return Error.InvalidArgument("Rok w zgłoszeniu ma niepoprawny format.");
+        }
+
+        return await cruisesService.CheckForOverlappingCruises(
+            formADto.PrecisePeriodStart.Value,
+            formADto.PrecisePeriodEnd.Value,
+            year,
+            cancellationToken
+        )
+            ? Error.Conflict("Podany dokładny termin koliduje z innymi rejsami blokującymi statek.")
+            : Result.Empty;
     }
 }

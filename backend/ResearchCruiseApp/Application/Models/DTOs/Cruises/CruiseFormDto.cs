@@ -9,4 +9,8 @@ public class CruiseFormDto
     public CruiseManagersTeamDto ManagersTeam { get; set; }
 
     public List<Guid> CruiseApplicationsIds { get; set; } = [];
+
+    public string? Title { get; set; }
+
+    public bool ShipUnavailable { get; set; } = false;
 }

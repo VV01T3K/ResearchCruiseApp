@@ -1,4 +1,6 @@
+using FluentValidation;
 using MediatR;
+using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
@@ -9,6 +11,7 @@ using ResearchCruiseApp.Domain.Common.Enums;
 namespace ResearchCruiseApp.Application.UseCases.Cruises.AddCruise;
 
 public class AddCruiseHandler(
+    IValidator<AddCruiseCommand> validator,
     ICruisesFactory cruisesFactory,
     ICruisesService cruisesService,
     ICruisesRepository cruisesRepository,
@@ -17,6 +20,10 @@ public class AddCruiseHandler(
 {
     public async Task<Result> Handle(AddCruiseCommand request, CancellationToken cancellationToken)
     {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+            return validationResult.ToApplicationResult();
+
         var newCruise = await cruisesFactory.Create(request.CruiseFormDto, cancellationToken);
 
         if (

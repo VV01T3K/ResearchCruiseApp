@@ -3,12 +3,14 @@ import { createContext, useContext } from 'react';
 
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
+import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
 export type FormAContextType = {
   initValues: FormAInitValuesDto;
   form: ReactFormExtendedApi<FormADto, undefined>;
   hasFormBeenSubmitted: boolean;
   isReadonly: boolean;
+  blockades?: BlockadePeriodDto[];
 };
 
 const FormAContext = createContext<FormAContextType | undefined>(undefined);

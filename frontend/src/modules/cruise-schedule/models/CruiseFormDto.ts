@@ -9,4 +9,6 @@ export type CruiseFormDto = {
   managersTeam: CruiseManagersTeamDto;
   cruiseApplicationsIds: string[];
   status?: string;
+  title?: string;
+  shipUnavailable: boolean;
 };

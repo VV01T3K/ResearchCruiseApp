@@ -41,6 +41,23 @@ const CruiseApplicationsValidationSchema = z.object({
   cruiseApplicationsIds: z.array(z.string().uuid()),
 });
 
+const CustomCruiseValidationSchema = z
+  .object({
+    title: z.string().optional(),
+    shipUnavailable: z.boolean(),
+  })
+  .superRefine(({ shipUnavailable, title }, ctx) => {
+    if (shipUnavailable && (!title || title.trim() === '')) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['title'],
+        message: 'Tytuł jest wymagany dla blokad statku',
+      });
+    }
+  });
+
 export function getCruiseFormValidationSchema() {
-  return CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema).and(CruiseApplicationsValidationSchema);
+  return CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema)
+    .and(CruiseApplicationsValidationSchema)
+    .and(CustomCruiseValidationSchema);
 }

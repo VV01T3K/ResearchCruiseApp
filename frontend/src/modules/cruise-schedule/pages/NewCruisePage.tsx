@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
@@ -8,7 +8,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { useAppContext } from '@/core/hooks/AppContextHook';
 import { removeEmptyValues } from '@/core/lib/utils';
-import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseFrom';
+import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseFormValidationSchema';
 import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
 import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
@@ -16,6 +16,7 @@ import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 export function NewCruisePage() {
   const cruiseApplicationsQuery = useCruiseApplicationsForCruiseQuery();
   const createCruiseMutation = useCreateCruiseMutation();
+  const search = useSearch({ from: '/cruises/new' });
 
   const navigate = useNavigate();
   const appContext = useAppContext();
@@ -31,6 +32,8 @@ export function NewCruisePage() {
         mainDeputyManagerId: '',
       },
       cruiseApplicationsIds: [],
+      title: '',
+      shipUnavailable: search.blockade ?? false,
     },
     validators: {
       onChange: getCruiseFormValidationSchema(),
@@ -88,7 +91,7 @@ export function NewCruisePage() {
 
   return (
     <>
-      <AppLayout title="Nowy rejs">
+      <AppLayout title={search.blockade ? 'Nowa blokada' : 'Nowy rejs'}>
         <CruiseFrom
           context={{
             form,
