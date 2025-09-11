@@ -2,6 +2,7 @@ import { FieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
+import { AppAlert } from '@/core/components/AppAlert';
 import { AppButton } from '@/core/components/AppButton';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
@@ -389,6 +390,7 @@ export function FormBMembersSection() {
 
   return (
     <AppAccordion title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+      <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"
