@@ -29,7 +29,7 @@ export type FormCDto = {
   researchEquipments: ResearchEquipmentDto[];
   shipEquipmentsIds: string[];
   collectedSamples: CollectedSampleDto[];
-  spubReportData?: string; // Max length 1024
-  additionalDescription?: string; // Max length 1024
+  spubReportData?: string; // Max length 10240
+  additionalDescription?: string; // Max length 10240
   photos: FileDto[];
 };

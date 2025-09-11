@@ -18,7 +18,7 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
     [StringLength(1024)]
     public string InstitutionLocalization { get; init; } = null!;
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string Description { get; init; } = null!;
 
     public List<ContractFile> Files { get; init; } = [];

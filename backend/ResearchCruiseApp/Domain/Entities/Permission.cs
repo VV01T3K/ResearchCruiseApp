@@ -9,7 +9,7 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
     private string? _scanName;
     private byte[]? _scanContent;
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string Description { get; init; } = null!;
 
     [StringLength(1024)]

@@ -85,7 +85,7 @@ export type DidacticsResearchTaskDto = {
 
 export const DidacticsResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.Didactics]),
-  description: z.string().nonempty('Opis nie może być pusty'),
+  description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
 
 export type OwnResearchTaskDto = {
@@ -119,7 +119,7 @@ export type OtherResearchTaskDto = {
 
 export const OtherResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.OtherResearchTask]),
-  description: z.string().nonempty('Opis nie może być pusty'),
+  description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
 
 export type ResearchTaskDto =

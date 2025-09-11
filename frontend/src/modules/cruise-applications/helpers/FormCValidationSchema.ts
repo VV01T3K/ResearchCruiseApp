@@ -71,8 +71,8 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
     researchEquipments: ResearchEquipmentDtoValidationSchema.array(),
     shipEquipmentsIds: z.array(z.string()),
     collectedSamples: CollectedSampleDtoValidationSchema.array(),
-    spubReportData: z.string().max(1024, 'Maksymalna długość to 1024 znaki'),
-    additionalDescription: z.string().max(1024, 'Maksymalna długość to 1024 znaki'),
+    spubReportData: z.string().max(10240, 'Maksymalna długość to 10240 znaków'),
+    additionalDescription: z.string().max(10240, 'Maksymalna długość to 10240 znaków'),
     photos: FileDtoValidationSchema.array(),
   });
 

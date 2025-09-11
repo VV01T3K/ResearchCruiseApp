@@ -33,7 +33,7 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
     [StringLength(1024)]
     public string? FinancingAmount { get; init; }
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string? Description { get; init; }
 
     [StringLength(1024)]

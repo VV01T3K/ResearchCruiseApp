@@ -38,10 +38,10 @@ public class FormCDto
 
     public List<CollectedSampleDto> CollectedSamples { get; init; } = [];
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string? SpubReportData { get; init; } = null!;
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string? AdditionalDescription { get; init; } = null!;
 
     public List<FileDto> Photos { get; init; } = []!;

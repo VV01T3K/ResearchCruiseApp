@@ -65,7 +65,7 @@ const CruiseGoalValidationSchema = z
     cruiseGoal: z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational], {
       message: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
     }),
-    cruiseGoalDescription: z.string(),
+    cruiseGoalDescription: z.string().max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
   })
   .superRefine(({ cruiseGoal, cruiseGoalDescription }, ctx) => {
     if (!!cruiseGoal && cruiseGoalDescription?.length <= 0) {
@@ -106,7 +106,7 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
           (val) => !!val && initValues.researchAreas.map((x) => x.id).includes(val),
           'Obszar badań musi być jednym z dostępnych obszarów badań'
         ),
-      researchAreaInfo: z.string(),
+      researchAreaInfo: z.string().max(10240, 'Informacje o obszarze badań nie mogą być dłuższe niż 10240 znaków'),
       researchTasks: ResearchTaskDtoValidationSchema.array().min(1, 'Co najmniej jedno zadanie badawcze jest wymagane'),
       contracts: ContractDtoValidationSchema.array(),
       ugTeams: UGTeamDtoValidationSchema.array()

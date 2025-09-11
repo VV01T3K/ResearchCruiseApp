@@ -42,13 +42,13 @@ public class FormA : Entity
 
     public ResearchArea? ResearchArea { get; set; }
 
-    [MaxLength(1024)]
+    [StringLength(10240)]
     public string? ResearchAreaInfo { get; init; }
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string? CruiseGoal { get; init; }
 
-    [MaxLength(1024)]
+    [StringLength(10240)]
     public string CruiseGoalDescription { get; init; } = null!;
 
     public List<FormAResearchTask> FormAResearchTasks { get; init; } = [];

@@ -35,12 +35,12 @@ public class FormADto
 
     public Guid? ResearchAreaId { get; init; }
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string? ResearchAreaInfo { get; init; }
 
     public string? CruiseGoal { get; init; }
 
-    [StringLength(1024)]
+    [StringLength(10240)]
     public string CruiseGoalDescription { get; init; } = null!;
 
     public List<ResearchTaskDto> ResearchTasks { get; init; } = [];

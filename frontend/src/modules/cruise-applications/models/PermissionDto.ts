@@ -9,7 +9,7 @@ export type PermissionDto = {
 };
 
 export const PermissionDtoValidationSchema = z.object({
-  description: z.string().nonempty('Treść pozwolenia jest wymagany'),
+  description: z.string().nonempty('Treść pozwolenia jest wymagany').max(10240, 'Maksymalna długość to 10240 znaków'),
   executive: z.string().nonempty('Organ wydający jest wymagany'),
   scan: FileDtoValidationSchema.optional(),
 });

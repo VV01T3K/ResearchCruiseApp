@@ -15,5 +15,5 @@ export const CruiseDayDetailsDtoValidationSchema = z.object({
   taskName: z.string().nonempty('Nazwa zadania jest wymagana'),
   region: z.string().nonempty('Region jest wymagany'),
   position: z.string().nonempty('Pozycja jest wymagana'),
-  comment: z.string().nonempty('Komentarz jest wymagany'),
+  comment: z.string().nonempty('Komentarz jest wymagany').max(10240, 'Komentarz nie może być dłuższy niż 10240 znaków'),
 });
