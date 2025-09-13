@@ -22,6 +22,10 @@ spec:
             - containerPort: 8080
               name: http
               protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           resources:
             limits:
               memory: 10Mi

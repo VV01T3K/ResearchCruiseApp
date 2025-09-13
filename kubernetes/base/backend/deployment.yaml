@@ -27,7 +27,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
           resources:
             limits:
               memory: 300Mi
