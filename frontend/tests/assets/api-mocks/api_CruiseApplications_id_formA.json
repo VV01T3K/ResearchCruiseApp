@@ -1,0 +1,47 @@
+{
+  "id": "98ffcaf1-ae8c-4d0f-b647-08ddbc7c9753",
+  "cruiseManagerId": "51b15ef0-6415-4dc7-a422-1c026177e34e",
+  "deputyManagerId": "2f140d1d-5ad4-4608-9156-279b338a960e",
+  "year": "2025",
+  "acceptablePeriod": ["0", "24"],
+  "optimalPeriod": ["0", "24"],
+  "cruiseHours": "48",
+  "periodNotes": "",
+  "shipUsage": "0",
+  "differentUsage": "",
+  "permissions": [],
+  "researchAreaId": "cb2b71c0-14d8-4cec-562b-08ddaf6348c2",
+  "researchAreaInfo": "",
+  "cruiseGoal": "0",
+  "cruiseGoalDescription": "abc",
+  "researchTasks": [
+    {
+      "type": "0",
+      "title": "def",
+      "magazine": null,
+      "author": "abc",
+      "institution": null,
+      "date": null,
+      "startDate": null,
+      "endDate": null,
+      "financingAmount": null,
+      "financingApproved": null,
+      "description": null,
+      "securedAmount": null,
+      "ministerialPoints": null
+    }
+  ],
+  "contracts": [],
+  "ugTeams": [
+    {
+      "ugUnitId": "6791eca7-de14-494b-424c-08dd4784a864",
+      "noOfEmployees": "2",
+      "noOfStudents": "0"
+    }
+  ],
+  "guestTeams": [],
+  "publications": [],
+  "spubTasks": [],
+  "supervisorEmail": "caxivec886@axcradio.com",
+  "note": null
+}

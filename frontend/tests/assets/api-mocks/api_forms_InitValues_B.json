@@ -1,0 +1,60 @@
+{
+  "shipEquipments": [
+    {
+      "id": "39365f77-d460-4213-9dac-08dd4784a874",
+      "name": "Żurawik hydrograficzny dziobowy (prawa burta)"
+    },
+    {
+      "id": "07fc16f2-e8f7-4c31-9dad-08dd4784a874",
+      "name": "Żurawik hydrograficzny rufowy (prawa burta)"
+    },
+    {
+      "id": "44ee697a-ee5b-4cd5-9dae-08dd4784a874",
+      "name": "Żurawik hydrograficzny rufowy (lewa burta)"
+    },
+    {
+      "id": "caa04569-d39e-415d-9daf-08dd4784a874",
+      "name": "Dźwig główny"
+    },
+    {
+      "id": "cdc188aa-86e0-430b-9db0-08dd4784a874",
+      "name": "Bom STBS (prawa burta)"
+    },
+    {
+      "id": "4813d914-859d-4918-9db1-08dd4784a874",
+      "name": "Bom PS (lewa burta)"
+    },
+    {
+      "id": "b0cfbb86-b66f-45db-9db2-08dd4784a874",
+      "name": "Kablolina 35 kN"
+    },
+    {
+      "id": "f7b56c19-dae8-45e7-9db3-08dd4784a874",
+      "name": "Kablolina 5 kN"
+    },
+    {
+      "id": "fbbbb959-bcc7-4908-9db4-08dd4784a874",
+      "name": "Bramownica główna (rufowa)"
+    },
+    {
+      "id": "9b2961f6-5a53-4bc1-9db5-08dd4784a874",
+      "name": "Bramownica pomocnicza STBS (prawa burta)"
+    },
+    {
+      "id": "4859e707-c1e1-4881-9db6-08dd4784a874",
+      "name": "Winda trałowa STBS (prawa burta)"
+    },
+    {
+      "id": "927fd453-999d-430d-9db7-08dd4784a874",
+      "name": "Winda trałowa PS (lewa burta)"
+    },
+    {
+      "id": "e8f30c46-605c-4ea5-9db8-08dd4784a874",
+      "name": "Łódź robocza"
+    },
+    {
+      "id": "ebbb975a-a141-4b2b-9db9-08dd4784a874",
+      "name": "Obserwatorium (bocianie gniazdo)"
+    }
+  ]
+}

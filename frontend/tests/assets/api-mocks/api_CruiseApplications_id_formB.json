@@ -1,0 +1,19 @@
+{
+  "isCruiseManagerPresent": "true",
+  "permissions": [],
+  "ugTeams": [
+    {
+      "ugUnitId": "6791eca7-de14-494b-424c-08dd4784a864",
+      "noOfEmployees": "2",
+      "noOfStudents": "0"
+    }
+  ],
+  "guestTeams": [],
+  "crewMembers": [],
+  "shortResearchEquipments": [],
+  "longResearchEquipments": [],
+  "ports": [],
+  "cruiseDaysDetails": [],
+  "researchEquipments": [],
+  "shipEquipmentsIds": []
+}

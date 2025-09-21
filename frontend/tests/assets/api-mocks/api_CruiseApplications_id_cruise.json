@@ -1,0 +1,20 @@
+{
+  "id": "32cd36bb-7425-4808-7393-08ddbe51af85",
+  "number": "2025/5",
+  "startDate": "2025-01-01T07:00:00.000Z",
+  "endDate": "2025-01-03T07:00:00.000Z",
+  "mainCruiseManagerId": "51b15ef0-6415-4dc7-a422-1c026177e34e",
+  "mainCruiseManagerFirstName": "Pan",
+  "mainCruiseManagerLastName": "Admin",
+  "mainDeputyManagerId": "2f140d1d-5ad4-4608-9156-279b338a960e",
+  "cruiseApplicationsShortInfo": [
+    {
+      "id": "cfaf9304-b7c9-4577-0b82-08ddbe518f78",
+      "cruiseManagerId": "51b15ef0-6415-4dc7-a422-1c026177e34e",
+      "deputyManagerId": "2f140d1d-5ad4-4608-9156-279b338a960e",
+      "number": "1012",
+      "points": "0"
+    }
+  ],
+  "status": "Potwierdzony"
+}

@@ -24,9 +24,17 @@ export function useOutsideClickDetection({ refs, ignoreWhen, onOutsideClick }: P
       onOutsideClick();
     }
 
+    function handleKeyDown(evt: KeyboardEvent) {
+      if (evt.key === 'Escape') {
+        onOutsideClick();
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [onOutsideClick, ignoreWhen, refs]);
 }

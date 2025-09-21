@@ -1,0 +1,10 @@
+{
+  "id": "f77ae78e-420f-4e62-911a-728422718767",
+  "userName": "admin@gmail.com",
+  "email": "admin@gmail.com",
+  "firstName": "Admin",
+  "lastName": "Adminowy",
+  "roles": ["Administrator"],
+  "emailConfirmed": true,
+  "accepted": true
+}

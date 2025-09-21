@@ -1,0 +1,2700 @@
+{
+  "cruiseManagers": [
+    {
+      "id": "ea7ad7ca-1c5d-4bc9-859c-ee98321f5949",
+      "email": "kierownik@o2.com",
+      "firstName": "Kierownik",
+      "lastName": "Kierowniczy"
+    },
+    {
+      "id": "f77ae78e-420f-4e62-911a-728422718767",
+      "email": "admin@gmail.com",
+      "firstName": "Admin",
+      "lastName": "Adminowy"
+    }
+  ],
+  "deputyManagers": [
+    {
+      "id": "ea7ad7ca-1c5d-4bc9-859c-ee98321f5949",
+      "email": "kierownik@o2.com",
+      "firstName": "Kierownik",
+      "lastName": "Kierowniczy"
+    },
+    {
+      "id": "f77ae78e-420f-4e62-911a-728422718767",
+      "email": "admin@gmail.com",
+      "firstName": "Admin",
+      "lastName": "Adminowy"
+    }
+  ],
+  "years": ["2025", "2026"],
+  "shipUsages": [
+    "całą dobę",
+    "jedynie w ciągu dnia (maks. 8–12 h)",
+    "jedynie w nocy (maks. 8–12 h)",
+    "8–12 h w ciągu doby rejsowej, ale bez znaczenia o jakiej porze albo z założenia o różnych porach",
+    "w inny sposób"
+  ],
+  "researchAreas": [
+    {
+      "id": "cb2b71c0-14d8-4cec-562b-08ddaf6348c2",
+      "name": "Zatoka Gdańska"
+    },
+    {
+      "id": "e8e7542c-4d12-4334-562c-08ddaf6348c2",
+      "name": "Głębia Gdańska"
+    },
+    {
+      "id": "ebc522f6-1eaa-4451-562d-08ddaf6348c2",
+      "name": "Ławica Słupska i jej okolice"
+    },
+    {
+      "id": "8653131d-1ec3-427a-562e-08ddaf6348c2",
+      "name": "Rynna Słupska i jej okolice"
+    },
+    {
+      "id": "515cb2aa-7473-428e-562f-08ddaf6348c2",
+      "name": "Ujście Wisły"
+    },
+    {
+      "id": "053ff1a8-a04f-436e-5630-08ddaf6348c2",
+      "name": "Zatoka Pomorska"
+    },
+    {
+      "id": "0feba71f-7d2e-4535-5631-08ddaf6348c2",
+      "name": "Zatoka Pucka"
+    },
+    {
+      "id": "43581ce5-eadf-4e10-5632-08ddaf6348c2",
+      "name": "Poza Polską Wyłączną Strefą Ekonomiczną"
+    }
+  ],
+  "cruiseGoals": ["Naukowy", "Komercyjny", "Dydaktyczny"],
+  "historicalResearchTasks": [],
+  "historicalContracts": [],
+  "ugUnits": [
+    {
+      "id": "8f8e8ba8-af4f-43e1-3a51-08ddaf6348b7",
+      "name": "Administracja Rektora i Jednostki Ogólnouniwersyteckie"
+    },
+    {
+      "id": "8c670764-7269-4cf3-3a52-08ddaf6348b7",
+      "name": "Rektor (0000)"
+    },
+    {
+      "id": "4b24b99d-9bf8-405a-3a53-08ddaf6348b7",
+      "name": "Uniwersyteckie Centrum Mediacji i Arbitrażu (0P00)"
+    },
+    {
+      "id": "55a40efd-9f38-4ea2-3a54-08ddaf6348b7",
+      "name": "Sekretariat Rektora (0100)"
+    },
+    {
+      "id": "e606c8c7-28a4-4389-3a55-08ddaf6348b7",
+      "name": "Centrum Filmowe im. Andrzeja Wajdy (0N00)"
+    },
+    {
+      "id": "cdb62999-fbf2-4289-3a56-08ddaf6348b7",
+      "name": "Biuro Prawne (0300)"
+    },
+    {
+      "id": "4578d5d9-0d4c-45b4-3a57-08ddaf6348b7",
+      "name": "Biuro Organizacji (0400)"
+    },
+    {
+      "id": "5e3fe456-9bc1-4768-3a58-08ddaf6348b7",
+      "name": "Biuro Audytu Wewnętrznego (0500)"
+    },
+    {
+      "id": "5d3bc1a6-915a-4194-3a59-08ddaf6348b7",
+      "name": "Biuro Kontroli Wewnętrznej (0600)"
+    },
+    {
+      "id": "66d58427-7205-4f96-3a5a-08ddaf6348b7",
+      "name": "Szkoły Doktorskie (0C00)"
+    },
+    {
+      "id": "98c7b130-0db0-4ba8-3a5b-08ddaf6348b7",
+      "name": "Szkoła Doktorska Teorii Informacji Kwantowej (0C50)"
+    },
+    {
+      "id": "a9f6fc11-b957-465f-3a5c-08ddaf6348b7",
+      "name": "Biuro Bezpieczeństwa i Oceny Ryzyka (0700)"
+    },
+    {
+      "id": "24b23a71-aaee-429a-3a5d-08ddaf6348b7",
+      "name": "Biuro Rzecznika ds. Równego Traktowania i Przeciwdziałania Mobbingowi (800)"
+    },
+    {
+      "id": "03ae97d1-f627-4dd0-3a5e-08ddaf6348b7",
+      "name": "Centrum Produkcji Filmowej i Dokumentalnej (0E00)"
+    },
+    {
+      "id": "d94f5f1e-c4b2-450f-3a5f-08ddaf6348b7",
+      "name": "Uniwersytecki Ośrodek Badań Stosowanych i Międzyobszarowych (0M00)"
+    },
+    {
+      "id": "ed04aa79-51bb-4d04-3a60-08ddaf6348b7",
+      "name": "Centrum Terapii Fagowych (0M50)"
+    },
+    {
+      "id": "af1ef3a3-3e64-4ad9-3a61-08ddaf6348b7",
+      "name": "Centrum Badań Memlingowskich (0M20)"
+    },
+    {
+      "id": "220078f4-a50f-4c9c-3a62-08ddaf6348b7",
+      "name": "Centrum Studiów Azji Wschodniej (OM40)"
+    },
+    {
+      "id": "08fdb780-2b4f-47c0-3a63-08ddaf6348b7",
+      "name": "Międzynarodowe Centrum Studiów nad Granicami (0M10)"
+    },
+    {
+      "id": "94189d04-0597-41a4-3a64-08ddaf6348b7",
+      "name": "Międzynarodowe Centrum Badań nad Szczepionkami Przeciwnowotworowymi (International Centre for Cancer Vaccine Science) (0B00)"
+    },
+    {
+      "id": "a0dee7ff-583c-42ba-3a65-08ddaf6348b7",
+      "name": "Międzynarodowe Centrum Teorii Technologii Kwantowych (International Centre for Theory of Quantum Technologies) (0A00)"
+    },
+    {
+      "id": "8ccbe68e-5570-4f50-3a66-08ddaf6348b7",
+      "name": "Biuro Wsparcia Badan i Współpracy z Przemysłem"
+    },
+    {
+      "id": "6ece3aac-64fd-4cf0-3a67-08ddaf6348b7",
+      "name": "Sekcja ds. Badań i Rozwoju."
+    },
+    {
+      "id": "138f7d8f-1ed3-4fe6-3a68-08ddaf6348b7",
+      "name": "Sekcja Administracyjnego Wsparcia Badań"
+    },
+    {
+      "id": "1b81ab58-e4dc-43eb-3a69-08ddaf6348b7",
+      "name": "Zespół Wielofotonowej Optyki Kwantowej i Kwantowej Informacji"
+    },
+    {
+      "id": "68c48b85-b294-4b14-3a6a-08ddaf6348b7",
+      "name": "Zespół Fundamentalnych Podstaw Technologii Kwantowych"
+    },
+    {
+      "id": "ab8768ae-b529-493f-3a6b-08ddaf6348b7",
+      "name": "Zespół Nowych Zasobów Kwantowych"
+    },
+    {
+      "id": "dfaf1a21-19a6-43d4-3a6c-08ddaf6348b7",
+      "name": "Zespół Nowych Zasobów Kwantowych i Termodynamiki Kwantowej"
+    },
+    {
+      "id": "7a64f511-3c81-44dc-3a6d-08ddaf6348b7",
+      "name": "Zespół Układów Otwartych związanych z Optyką Kwantową"
+    },
+    {
+      "id": "7988d46e-bfd5-4359-3a6e-08ddaf6348b7",
+      "name": "Zespół Kwantowego Cyberbezpieczeństwa i Komunikacji"
+    },
+    {
+      "id": "6dfb5cc4-0471-48b4-3a6f-08ddaf6348b7",
+      "name": "Archiwum UG (0H00)"
+    },
+    {
+      "id": "6ba8de40-e9ac-4b22-3a70-08ddaf6348b7",
+      "name": "\"Gazeta Uniwersytecka\" Pismo Społeczności Akademickiej UG (0F00)"
+    },
+    {
+      "id": "a065624c-a60b-4b03-3a71-08ddaf6348b7",
+      "name": "Prorektor ds. Współpracy Międzynarodowej (4000)"
+    },
+    {
+      "id": "a74bc2c3-93ec-4698-3a72-08ddaf6348b7",
+      "name": "Sekretariat Prorektora ds. Współpracy Międzynarodowej (4100)"
+    },
+    {
+      "id": "aae7bfdc-92a9-4035-3a73-08ddaf6348b7",
+      "name": "Biuro Współpracy Międzynarodowej (4200)"
+    },
+    {
+      "id": "ce07ea9e-cf1b-4ea6-3a74-08ddaf6348b7",
+      "name": "Sekcja Obsługi Profesorów Zagranicznych (4230)"
+    },
+    {
+      "id": "61330820-7734-44ca-3a75-08ddaf6348b7",
+      "name": "Sekcja Obsługi Studentów Zagranicznych (4210)"
+    },
+    {
+      "id": "c0793acd-3032-4ebc-3a76-08ddaf6348b7",
+      "name": "Sekcja Obsługi Programu Erasmus+ (4220)"
+    },
+    {
+      "id": "7cc603da-408b-4304-3a77-08ddaf6348b7",
+      "name": "Biuro Projektu European University of the Seas – SEA-EU (4300)"
+    },
+    {
+      "id": "bfc9e4d0-64a9-49e9-3a78-08ddaf6348b7",
+      "name": "Centrum J.G. Herdera (4B00)"
+    },
+    {
+      "id": "365546b0-6bc2-4295-3a79-08ddaf6348b7",
+      "name": "Instytut Konfucjusza Uniwersytetu Gdańskiego (4A00)"
+    },
+    {
+      "id": "07b83503-ec24-4998-3a7a-08ddaf6348b7",
+      "name": "Akademickie Centrum Języka Polskiego i Kultury Polskiej dla Cudzoziemców (4D00)"
+    },
+    {
+      "id": "73a6e89a-9d75-4a8b-3a7b-08ddaf6348b7",
+      "name": "Prorektor ds. Studentów i Jakości Kształcenia (3000)"
+    },
+    {
+      "id": "e963f6f3-8912-4246-3a7c-08ddaf6348b7",
+      "name": "Biuro Karier (3700)"
+    },
+    {
+      "id": "670624b2-db53-4611-3a7d-08ddaf6348b7",
+      "name": "Biuro Kształcenia (3200)"
+    },
+    {
+      "id": "7e41c41a-f719-4c3b-3a7e-08ddaf6348b7",
+      "name": "Biuro Rekrutacji (3400)"
+    },
+    {
+      "id": "4308db55-c30c-4457-3a7f-08ddaf6348b7",
+      "name": "Biuro Stypendialne (3500)"
+    },
+    {
+      "id": "6652db12-8253-43e0-3a80-08ddaf6348b7",
+      "name": "Biuro ds. Osób z Niepełnosprawnością (3600)"
+    },
+    {
+      "id": "3ff827da-095c-4bb8-3a81-08ddaf6348b7",
+      "name": "Centrum Wychowania Fizycznego i Sportu (3D00)"
+    },
+    {
+      "id": "efef2a04-6073-4f6a-3a82-08ddaf6348b7",
+      "name": "Biuro Centrum (3D10)"
+    },
+    {
+      "id": "21b3ea20-a065-42b6-3a83-08ddaf6348b7",
+      "name": "Centrum Kursów i Szkoleń (3800)"
+    },
+    {
+      "id": "8d0d6d83-52c6-4d61-3a84-08ddaf6348b7",
+      "name": "Biuro ds. Indywidualnych Studiów Międzydziedzinowych (3900)"
+    },
+    {
+      "id": "f0342788-a4ac-42da-3a85-08ddaf6348b7",
+      "name": "Centrum Języków Obcych (3C00)"
+    },
+    {
+      "id": "c7778974-e269-4e75-3a86-08ddaf6348b7",
+      "name": "Sekcja ds. Hospitacji (3C70)"
+    },
+    {
+      "id": "17cef286-eec1-4ed6-3a87-08ddaf6348b7",
+      "name": "Zespół Lektorów Języka Angielskiego (3C20)"
+    },
+    {
+      "id": "90803acb-3888-4367-3a88-08ddaf6348b7",
+      "name": "Zespół Lektorów Języków Germańskich, Romańskich i Słowiańskich (3C30)"
+    },
+    {
+      "id": "507ce46b-6787-40fa-3a89-08ddaf6348b7",
+      "name": "Język łaciński"
+    },
+    {
+      "id": "015ae521-b899-4974-3a8a-08ddaf6348b7",
+      "name": "Język włoski"
+    },
+    {
+      "id": "4c93c72b-a9bf-4bb0-3a8b-08ddaf6348b7",
+      "name": "Język rosyjski"
+    },
+    {
+      "id": "95ed06f3-fc72-4920-3a8c-08ddaf6348b7",
+      "name": "Język szwedzki"
+    },
+    {
+      "id": "b11778bc-0894-412d-3a8d-08ddaf6348b7",
+      "name": "Język polski (dla obcokrajowców)"
+    },
+    {
+      "id": "bbafa880-9874-4e15-3a8e-08ddaf6348b7",
+      "name": "Język niemiecki"
+    },
+    {
+      "id": "8b57c952-7cdc-4018-3a8f-08ddaf6348b7",
+      "name": "Język francuski"
+    },
+    {
+      "id": "f7294eb3-ef1f-44a2-3a90-08ddaf6348b7",
+      "name": "Język hiszpański"
+    },
+    {
+      "id": "d7d7fc93-c1c6-4b74-3a91-08ddaf6348b7",
+      "name": "Sekcja ds. Metodyki i Jakości Kształcenia (3C50)"
+    },
+    {
+      "id": "37380581-38cb-486b-3a92-08ddaf6348b7",
+      "name": "Sekcja ds. Tłumaczeń (3C60)"
+    },
+    {
+      "id": "cab1c5fc-42d5-43a1-3a93-08ddaf6348b7",
+      "name": "Centrum Kształcenia Nauczycieli (3I00)"
+    },
+    {
+      "id": "a3bf9afd-0347-4c76-3a94-08ddaf6348b7",
+      "name": "Akademickie Centrum Kultury UG \"Alternator\" (3A00)"
+    },
+    {
+      "id": "9e31a255-1851-40eb-3a95-08ddaf6348b7",
+      "name": "Gdański Uniwersytet Trzeciego Wieku (3B00)"
+    },
+    {
+      "id": "3340279f-56b0-4b74-3a96-08ddaf6348b7",
+      "name": "Biuro GUTW (3B10)"
+    },
+    {
+      "id": "ee944071-9175-4571-3a97-08ddaf6348b7",
+      "name": "Centrum Aktywności Studenckiej i Doktoranckiej (3F00)"
+    },
+    {
+      "id": "4c8cf2bf-8eff-4a01-3a98-08ddaf6348b7",
+      "name": "Biuro Centrum Aktywności Studenckiej i Doktoranckiej (3F50)"
+    },
+    {
+      "id": "ecd9a816-0af1-414d-3a99-08ddaf6348b7",
+      "name": "Biuro Parlamentu Studentów UG (3F10)"
+    },
+    {
+      "id": "17a93c8f-b90f-424e-3a9a-08ddaf6348b7",
+      "name": "Biuro Rady Doktorantów (3F20)"
+    },
+    {
+      "id": "65e329fd-08e8-45df-3a9b-08ddaf6348b7",
+      "name": "Czasopismo \"Progress\" (3F40)"
+    },
+    {
+      "id": "e5aeda15-cd6b-4060-3a9c-08ddaf6348b7",
+      "name": "Centrum Doskonalenia Dydaktycznego i Tutoringu (3E00)"
+    },
+    {
+      "id": "750a6b49-7a01-45ab-3a9d-08ddaf6348b7",
+      "name": "Biuro Jakości Kształcenia (3E10)"
+    },
+    {
+      "id": "e51aa3dc-5128-4cc3-3a9e-08ddaf6348b7",
+      "name": "Prorektor ds. Badań Naukowych (1000)"
+    },
+    {
+      "id": "dede426d-8410-459f-3a9f-08ddaf6348b7",
+      "name": "Biuro Nauki (1200)"
+    },
+    {
+      "id": "00046983-995d-45da-3aa0-08ddaf6348b7",
+      "name": "Biuro Rzecznika Rzetelności Naukowej (1300)"
+    },
+    {
+      "id": "08d1d425-f802-4f60-3aa1-08ddaf6348b7",
+      "name": "Biuro Wsparcia Realizacji Projektów (1700)"
+    },
+    {
+      "id": "fbd2e37c-e0d1-4a53-3aa2-08ddaf6348b7",
+      "name": "Samodzielne Stanowisko Koordynatora systemu POL-on (1600)"
+    },
+    {
+      "id": "f20de974-f254-4793-3aa3-08ddaf6348b7",
+      "name": "Wydawnictwo UG (1B00)"
+    },
+    {
+      "id": "d7da36a6-f324-4c95-3aa4-08ddaf6348b7",
+      "name": "Zakład Poligrafii (1B10)"
+    },
+    {
+      "id": "2583532f-8397-4cf5-3aa5-08ddaf6348b7",
+      "name": "Księgarnia Uniwersytecka (1B20)"
+    },
+    {
+      "id": "9ec15e1f-d0c4-4206-3aa6-08ddaf6348b7",
+      "name": "Biblioteka UG (1A00)"
+    },
+    {
+      "id": "d75218d0-8643-43c4-3aa7-08ddaf6348b7",
+      "name": "Sekcja Zarządzania Danymi Badawczymi i Otwartej Nauki (1AP0)"
+    },
+    {
+      "id": "c91d05e9-4b07-45a4-3aa8-08ddaf6348b7",
+      "name": "Samodzielna Sekcja ds. Technik Multimedialnych Obiektu Biblioteka Główna"
+    },
+    {
+      "id": "667dbf9c-5d34-434a-3aa9-08ddaf6348b7",
+      "name": "Oddział Informatyzacji"
+    },
+    {
+      "id": "46642507-5e78-4465-3aaa-08ddaf6348b7",
+      "name": "Oddział Digitalizacji Zbiorów"
+    },
+    {
+      "id": "7380805d-619e-49f7-3aab-08ddaf6348b7",
+      "name": "Oddział Gromadzenia i Uzupełniania Zbiorów"
+    },
+    {
+      "id": "d656b1e9-94ff-4c4a-3aac-08ddaf6348b7",
+      "name": "Oddział Opracowania Zbiorów"
+    },
+    {
+      "id": "2d184947-2812-4916-3aad-08ddaf6348b7",
+      "name": "Oddział Bibliografii i Bibliometrii"
+    },
+    {
+      "id": "f7b407a1-842e-4380-3aae-08ddaf6348b7",
+      "name": "Oddział Zbiorów Specjalnych"
+    },
+    {
+      "id": "d1bac0ab-606e-4712-3aaf-08ddaf6348b7",
+      "name": "Oddział Udostępniania i Informacji (1AM0)"
+    },
+    {
+      "id": "2fce30b4-03ed-487d-3ab0-08ddaf6348b7",
+      "name": "Czytelnia III - Nauki ścisłe"
+    },
+    {
+      "id": "f6086c7b-af7b-424b-3ab1-08ddaf6348b7",
+      "name": "Wypożyczalnia"
+    },
+    {
+      "id": "1ab4f96b-5461-4ff6-3ab2-08ddaf6348b7",
+      "name": "Czytelnia III - Nauki Społeczne"
+    },
+    {
+      "id": "f90d7614-9c00-46e9-3ab3-08ddaf6348b7",
+      "name": "Czytelnia II - Nauki humanistyczne"
+    },
+    {
+      "id": "f91152b8-2ed1-410d-3ab4-08ddaf6348b7",
+      "name": "Czytelnia I - Kultura i Sztuka"
+    },
+    {
+      "id": "0cf50098-b35d-4566-3ab5-08ddaf6348b7",
+      "name": "Czytelnia II - Nauka o literaturze, Językoznawstwo"
+    },
+    {
+      "id": "5bfb892e-a4a4-45a7-3ab6-08ddaf6348b7",
+      "name": "Sekcja Zasobów Bibliotecznych (1AN0)"
+    },
+    {
+      "id": "6771b62d-bb29-4983-3ab7-08ddaf6348b7",
+      "name": "Sekcja Usług Introligatorskich (1AR0)"
+    },
+    {
+      "id": "fe429217-b159-450b-3ab8-08ddaf6348b7",
+      "name": "Biblioteka Neofilologiczna Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "8a0da196-cf49-4f64-3ab9-08ddaf6348b7",
+      "name": "Biblioteka Ekonomiczna Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "5a356201-5989-4d53-3aba-08ddaf6348b7",
+      "name": "Biblioteka Humanistyczna Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "b388bd82-0984-46d4-3abb-08ddaf6348b7",
+      "name": "Biblioteka Prawna Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "18bc2106-950b-456b-3abc-08ddaf6348b7",
+      "name": "Biblioteka Historii Kultury"
+    },
+    {
+      "id": "e7fabb85-6a6d-43b8-3abd-08ddaf6348b7",
+      "name": "Klub Profesora Emerytowanego Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "ab711289-059f-4a28-3abe-08ddaf6348b7",
+      "name": "Centrum Popularyzacji Nauki (1D00)"
+    },
+    {
+      "id": "64005ab4-4a2f-448a-3abf-08ddaf6348b7",
+      "name": "Prorektor ds. Współpracy i Rozwoju (9000)"
+    },
+    {
+      "id": "dca1c5bf-f8b4-484c-3ac0-08ddaf6348b7",
+      "name": "Centrum Badań nad Gospodarką Morską (9D00)"
+    },
+    {
+      "id": "10d7e153-3d16-4527-3ac1-08ddaf6348b7",
+      "name": "Biuro Współpracy i Rozwoju (9200)"
+    },
+    {
+      "id": "2d6a4245-7ee3-4fde-3ac2-08ddaf6348b7",
+      "name": "Biuro Wsparcia Przygotowania Projektów – Inkubator Projektowy (9500)"
+    },
+    {
+      "id": "956e5ed0-9b9f-425d-3ac3-08ddaf6348b7",
+      "name": "Centrum Transferu Technologii (9A00)"
+    },
+    {
+      "id": "80cb1923-059c-44cd-3ac4-08ddaf6348b7",
+      "name": "Biuro Analiz i Ekspertyz (9400)"
+    },
+    {
+      "id": "58c70d69-af4d-4cb3-3ac5-08ddaf6348b7",
+      "name": "Uniwersyteckie Laboratorium Usług Badawczych (9E00)"
+    },
+    {
+      "id": "8a547e05-44aa-4db0-3ac6-08ddaf6348b7",
+      "name": "Centrum Zrównoważonego Rozwoju (9B00)"
+    },
+    {
+      "id": "333fc3e7-8c5b-45bf-3ac7-08ddaf6348b7",
+      "name": "Akademickie Centrum Wsparcia Psychologicznego (9C00)"
+    },
+    {
+      "id": "ca1db482-44ae-4c34-3ac8-08ddaf6348b7",
+      "name": "Kanclerz (5000)"
+    },
+    {
+      "id": "ba2380a7-ec17-4065-3ac9-08ddaf6348b7",
+      "name": "Biuro Kanclerza (5900)"
+    },
+    {
+      "id": "0ccc74b1-b9a3-43ff-3aca-08ddaf6348b7",
+      "name": "Centrum Zamówień Publicznych (5B00)"
+    },
+    {
+      "id": "d2294948-e1b9-485d-3acb-08ddaf6348b7",
+      "name": "Dział Monitoringu Realizacji Zamówień Publicznych (5B30)"
+    },
+    {
+      "id": "82a373fc-87b6-49f7-3acc-08ddaf6348b7",
+      "name": "Dział Zamówień Publicznych (5B10)"
+    },
+    {
+      "id": "e0d100c3-64d4-44f5-3acd-08ddaf6348b7",
+      "name": "Dział Analiz i Wsparcia w Procesach Zakupowych (5B20)"
+    },
+    {
+      "id": "9c4b4f96-1dbc-43db-3ace-08ddaf6348b7",
+      "name": "Biuro Armatora z jednostką r/v Oceanograf. (5A00)"
+    },
+    {
+      "id": "ee059aed-f1ba-4fa2-3acf-08ddaf6348b7",
+      "name": "jednostka r/v Oceanograf"
+    },
+    {
+      "id": "82b4f102-52dc-4743-3ad0-08ddaf6348b7",
+      "name": "Sekcja ds. Ubezpieczeń (5600)"
+    },
+    {
+      "id": "25f5416d-5448-42aa-3ad1-08ddaf6348b7",
+      "name": "Sekcja ds. Rozliczeń (5500)"
+    },
+    {
+      "id": "9a37399d-343a-484d-3ad2-08ddaf6348b7",
+      "name": "Ośrodek Konferencyjno-Szkoleniowy UG w Leźnie"
+    },
+    {
+      "id": "8503229c-6376-4737-3ad3-08ddaf6348b7",
+      "name": "Kancelaria Ogólna (5400)"
+    },
+    {
+      "id": "13db7d41-ef0b-493e-3ad4-08ddaf6348b7",
+      "name": "Zastępca Kanclerza ds. Infrastruktury i Administracji (700A)"
+    },
+    {
+      "id": "85e18988-c43f-487f-3ad5-08ddaf6348b7",
+      "name": "Centrum Eksploatacji Nieruchomości (7900)"
+    },
+    {
+      "id": "e20706f7-0b90-4240-3ad6-08ddaf6348b7",
+      "name": "Sekcja Ochrony Mienia (7970)"
+    },
+    {
+      "id": "70b9b0c4-e62c-466d-3ad7-08ddaf6348b7",
+      "name": "Dział Administrowania Nieruchomościami (7920)"
+    },
+    {
+      "id": "89758347-259c-413d-3ad8-08ddaf6348b7",
+      "name": "Biuro Centrum (7910)"
+    },
+    {
+      "id": "529494bf-625f-46d5-3ad9-08ddaf6348b7",
+      "name": "Dział Hoteli Asystenckich (7960)"
+    },
+    {
+      "id": "f2f03422-b154-4f5c-3ada-08ddaf6348b7",
+      "name": "Dział Obiektów Dydaktycznych (7950)"
+    },
+    {
+      "id": "918a5d4c-d017-4ce5-3adb-08ddaf6348b7",
+      "name": "Dział Technicznego Utrzymania Nieruchomości (7930)"
+    },
+    {
+      "id": "ca34876b-bced-41db-3adc-08ddaf6348b7",
+      "name": "Dział Domów Studenckich (7940)"
+    },
+    {
+      "id": "e5620461-2723-4343-3add-08ddaf6348b7",
+      "name": "Dział Inwestycji i Remontów (7700)"
+    },
+    {
+      "id": "09836817-914e-4f16-3ade-08ddaf6348b7",
+      "name": "Straż Uniwersytecka (7200)"
+    },
+    {
+      "id": "c265a78c-a69e-40cd-3adf-08ddaf6348b7",
+      "name": "Muzeum Uniwersytetu Gdańskiego (7500)"
+    },
+    {
+      "id": "274fb4c9-e27d-4e65-3ae0-08ddaf6348b7",
+      "name": "Samodzielne Stanowisko ds. Infrastruktury (7A00)"
+    },
+    {
+      "id": "66ab2bb2-a276-4e5c-3ae1-08ddaf6348b7",
+      "name": "Samodzielne Stanowisko ds. Przedsięwzięć Innowacyjnych. (7B00)"
+    },
+    {
+      "id": "0ab73b46-4da5-4f56-3ae2-08ddaf6348b7",
+      "name": "Samodzielne Stanowisko Koordynatora ds. Budowy Centrum Sportowego (7C00)"
+    },
+    {
+      "id": "c83f3217-15e4-473f-3ae3-08ddaf6348b7",
+      "name": "Zastępca Kanclerza ds . HR (Q000)"
+    },
+    {
+      "id": "a425c5e7-34b7-47e8-3ae4-08ddaf6348b7",
+      "name": "Dział Kadr (Q100)"
+    },
+    {
+      "id": "826b1ee9-3bfa-48af-3ae5-08ddaf6348b7",
+      "name": "Dział Płac (Q200)"
+    },
+    {
+      "id": "2756eeb5-4de1-4141-3ae6-08ddaf6348b7",
+      "name": "Sekcja Umów Cywilnoprawnych (0221)"
+    },
+    {
+      "id": "34378a3c-70e2-4f71-3ae7-08ddaf6348b7",
+      "name": "Sekcja Spraw Socjalnych (Q400)"
+    },
+    {
+      "id": "5d4f00f6-1291-4caf-3ae8-08ddaf6348b7",
+      "name": "Biuro Bezpieczeństwa Pracy i Ochrony Zdrowia (Q300)"
+    },
+    {
+      "id": "d86e3a97-6ac5-4aae-3ae9-08ddaf6348b7",
+      "name": "Zastępca Kanclerza ds. Projektów Strategicznych (V000)"
+    },
+    {
+      "id": "b5417981-68b2-4838-3aea-08ddaf6348b7",
+      "name": "Biuro Monitoringu Projektów (V200)"
+    },
+    {
+      "id": "e10de4de-233f-483d-3aeb-08ddaf6348b7",
+      "name": "Biuro Projektów Strategicznych i Inicjatyw Rektora (V100)"
+    },
+    {
+      "id": "53835858-ff48-4a47-3aec-08ddaf6348b7",
+      "name": "Zastępca Kanclerza ds. Informatyzacji, Komunikacji i Promocji (8000)"
+    },
+    {
+      "id": "a93b4f74-cf42-4a98-3aed-08ddaf6348b7",
+      "name": "Centrum Informatyczne (8100)"
+    },
+    {
+      "id": "1212fea3-ffd5-4706-3aee-08ddaf6348b7",
+      "name": "Sekretariat Centrum Informatycznego (81H0)"
+    },
+    {
+      "id": "d2e1143f-cc78-4fcb-3aef-08ddaf6348b7",
+      "name": "Sekcja Administratorów Lokalnych (81I0)"
+    },
+    {
+      "id": "79f4f14a-b450-4557-3af0-08ddaf6348b7",
+      "name": "Sekcja Systemów Wspomagających Zarządzanie Uczelnią (81L0)"
+    },
+    {
+      "id": "327c5ac2-5255-4666-3af1-08ddaf6348b7",
+      "name": "Sekcja Wsparcia Użytkowników - Help Desk (81J0)"
+    },
+    {
+      "id": "72535080-97fa-4fb7-3af2-08ddaf6348b7",
+      "name": "Sekcja Zarządzania Infrastrukturą Centralną (81C0)"
+    },
+    {
+      "id": "03dc2802-c95d-496f-3af3-08ddaf6348b7",
+      "name": "Sekcja Rozwoju Oprogramowania (81D0)"
+    },
+    {
+      "id": "941ff808-173e-47ec-3af4-08ddaf6348b7",
+      "name": "Sekcja WWW (81E0)"
+    },
+    {
+      "id": "eed1edf4-1e80-4895-3af5-08ddaf6348b7",
+      "name": "Samodzielne Stanowisko ds. Bezpieczeństwa i Zarządzania Zgodnością IT (81K0)"
+    },
+    {
+      "id": "08f0a75a-47be-47f2-3af6-08ddaf6348b7",
+      "name": "Centrum Kompetencyjne EZD (8200)"
+    },
+    {
+      "id": "65d1c817-538c-4807-3af7-08ddaf6348b7",
+      "name": "Centrum Komunikacji i Promocji (8300)"
+    },
+    {
+      "id": "aecfc775-97d6-4bb8-3af8-08ddaf6348b7",
+      "name": "Zespół Prasowy (8310)"
+    },
+    {
+      "id": "4f729772-91d6-45c2-3af9-08ddaf6348b7",
+      "name": "Zespół Promocji i Kontaktów ze Sponsorami (8340)"
+    },
+    {
+      "id": "7f26169e-844f-45be-3afa-08ddaf6348b7",
+      "name": "Radio MORS (8500)"
+    },
+    {
+      "id": "2241fb58-9aba-4c4b-3afb-08ddaf6348b7",
+      "name": "Kwestor - Główny Księgowy (6000)"
+    },
+    {
+      "id": "da85b26b-647c-49d6-3afc-08ddaf6348b7",
+      "name": "Dział Kontrolingu (6010)"
+    },
+    {
+      "id": "ed3602bc-96fe-4b3b-3afd-08ddaf6348b7",
+      "name": "Stanowisko Głównego Specjalisty ds. Finansowo-Księgowych (6100)"
+    },
+    {
+      "id": "94500243-cb3a-4a16-3afe-08ddaf6348b7",
+      "name": "Sekcja ds. Weryfikacji i Akceptacji Dokumentów (6200)"
+    },
+    {
+      "id": "63837510-04aa-49e1-3aff-08ddaf6348b7",
+      "name": "Zastępca Kwestora ds. Finansów (6500)"
+    },
+    {
+      "id": "f324c8b6-08e7-40c9-3b00-08ddaf6348b7",
+      "name": "Dział Finansowy (6510)"
+    },
+    {
+      "id": "ac9fae12-9e72-4bd5-3b01-08ddaf6348b7",
+      "name": "Sekcja Obsługi Kasowej (6511)"
+    },
+    {
+      "id": "a8cbfba0-b19d-446a-3b02-08ddaf6348b7",
+      "name": "Sekcja Sprawozdawczości Statystycznej i Budżetowej (6520)"
+    },
+    {
+      "id": "8404af27-9b72-4172-3b03-08ddaf6348b7",
+      "name": "Sekcja Windykacji (6530)"
+    },
+    {
+      "id": "f329a994-bf93-43fc-3b04-08ddaf6348b7",
+      "name": "Zastępca Kwestora ds. Rachunkowości (6400)"
+    },
+    {
+      "id": "14e94f5b-9f0e-4816-3b05-08ddaf6348b7",
+      "name": "Dział Rachunkowości Finansowej (6410)"
+    },
+    {
+      "id": "f65a7d4d-490a-48dd-3b06-08ddaf6348b7",
+      "name": "Sekcja Obsługi Uniwersyteckich Jednostek Oświatowych (6414)"
+    },
+    {
+      "id": "d3bcfc81-0176-4352-3b07-08ddaf6348b7",
+      "name": "Sekcja Rozliczeń Działalności Dydaktycznej i Funduszy (6415)"
+    },
+    {
+      "id": "a2820a28-acd8-4d29-3b08-08ddaf6348b7",
+      "name": "Sekcja Rozliczeń Publiczno-Prawnych (6413)"
+    },
+    {
+      "id": "fc319d9c-ea05-4431-3b09-08ddaf6348b7",
+      "name": "Sekcja ds. Ewidencji Księgowej Projektów (6411)"
+    },
+    {
+      "id": "3b7f024a-baed-4bcc-3b0a-08ddaf6348b7",
+      "name": "Sekcja Rozrachunków (6412)"
+    },
+    {
+      "id": "321f76b3-5b2e-4764-3b0b-08ddaf6348b7",
+      "name": "Dział Gospodarowania Rzeczowymi Składnikami Majątku (6420)"
+    },
+    {
+      "id": "33d08300-73f4-41cb-3b0c-08ddaf6348b7",
+      "name": "Zastępca Kwestora ds. Projektów (6600)"
+    },
+    {
+      "id": "467d8fd2-a47a-437b-3b0d-08ddaf6348b7",
+      "name": "Dział Obsługi Finansowej Projektów (6610)"
+    },
+    {
+      "id": "ee3a07ed-0626-4ece-3b0e-08ddaf6348b7",
+      "name": "Wydział Biologii (D000)"
+    },
+    {
+      "id": "efa0e708-043a-4884-3b0f-08ddaf6348b7",
+      "name": "Dziekan Wydziału Biologii"
+    },
+    {
+      "id": "195bcdfc-484d-48ad-3b10-08ddaf6348b7",
+      "name": "Katedra Biologii Eksperymentalnej i Biotechnologii Roślin (D230)"
+    },
+    {
+      "id": "316e2d63-855c-43b7-3b11-08ddaf6348b7",
+      "name": "Pracownia Biotechnologii Roślin (D232)"
+    },
+    {
+      "id": "2d19459e-149d-47f3-3b12-08ddaf6348b7",
+      "name": "Pracownia Cytologii i Embriologii Roślin (D231)"
+    },
+    {
+      "id": "2c75cc57-1f87-47d7-3b13-08ddaf6348b7",
+      "name": "Pracownia Fizjologii Roślin i Toksykologii (D233)"
+    },
+    {
+      "id": "1cbe5717-20d1-4a6a-3b14-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki"
+    },
+    {
+      "id": "18840faa-d2fb-47b1-3b15-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich i Rozwoju"
+    },
+    {
+      "id": "279e3651-9747-4395-3b16-08ddaf6348b7",
+      "name": "Prodziekan ds. Kształcenia"
+    },
+    {
+      "id": "a39ddf2c-399b-4212-3b17-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Biologii (D001)"
+    },
+    {
+      "id": "1f2d2af9-e290-4899-3b18-08ddaf6348b7",
+      "name": "Katedra Biochemii Ogólnej i Medycznej (D010)"
+    },
+    {
+      "id": "de27f616-99a6-4856-3b19-08ddaf6348b7",
+      "name": "Pracownia Biochemii Białek i Kwasów Nukleinowych (D011)"
+    },
+    {
+      "id": "00bfd261-658b-4869-3b1a-08ddaf6348b7",
+      "name": "Pracownia Biochemii Mikroorganizmów (D012)"
+    },
+    {
+      "id": "257cbdcf-54e4-466b-3b1b-08ddaf6348b7",
+      "name": "Katedra Biologii i Genetyki Medycznej (D130)"
+    },
+    {
+      "id": "879ce1bb-6d46-466a-3b1c-08ddaf6348b7",
+      "name": "Pracownia Molekularnych i Komórkowych Podstaw Strategii Nutraceutycznych (D133)"
+    },
+    {
+      "id": "2be38f5c-b082-4cae-3b1d-08ddaf6348b7",
+      "name": "Pracownia Genomiki i Genetyki Człowieka (D132)"
+    },
+    {
+      "id": "cac8da17-df59-459a-3b1e-08ddaf6348b7",
+      "name": "Pracownia Sygnalizacji Wewnątrzkomórkowej (D131)"
+    },
+    {
+      "id": "3cf8c793-eba5-456d-3b1f-08ddaf6348b7",
+      "name": "Katedra Genetyki Molekularnej Bakterii (D140)"
+    },
+    {
+      "id": "816f1bec-d3ee-4961-3b20-08ddaf6348b7",
+      "name": "Laboratorium Izotopowe (D141)"
+    },
+    {
+      "id": "1e881c32-8e9f-497d-3b21-08ddaf6348b7",
+      "name": "Katedra Biologii Molekularnej (D020)"
+    },
+    {
+      "id": "b47594b5-da10-467f-3b22-08ddaf6348b7",
+      "name": "Katedra Ekologii Roślin (D040)"
+    },
+    {
+      "id": "b71e6c97-1313-4208-3b23-08ddaf6348b7",
+      "name": "Pracownia Ekologii Wód Słodkich (D041)"
+    },
+    {
+      "id": "f1b95e18-e4e2-4f67-3b24-08ddaf6348b7",
+      "name": "Pracownia Paleoekologii i Archeobotaniki (D042)"
+    },
+    {
+      "id": "3aa77a19-2fa8-4624-3b25-08ddaf6348b7",
+      "name": "Katedra Ekologii i Zoologii Kręgowców (D050)"
+    },
+    {
+      "id": "797af732-3e7a-42b7-3b26-08ddaf6348b7",
+      "name": "Pracownia Ekologii i Etologii Kręgowców (D051)"
+    },
+    {
+      "id": "1f6b894a-4d7e-4f83-3b27-08ddaf6348b7",
+      "name": "Pracownia Ornitologii (D053)"
+    },
+    {
+      "id": "9434fce3-6324-41e9-3b28-08ddaf6348b7",
+      "name": "Katedra Fizjologii Zwierząt i Człowieka (D080)"
+    },
+    {
+      "id": "790c97f7-af41-4c68-3b29-08ddaf6348b7",
+      "name": "Pracownia Bioenergetyki (D087)"
+    },
+    {
+      "id": "ede11ada-2bb4-4f31-3b2a-08ddaf6348b7",
+      "name": "Pracownia Zwierząt Doświadczalnych (D084)"
+    },
+    {
+      "id": "22decefa-155b-418a-3b2b-08ddaf6348b7",
+      "name": "Pracownia Neurofizjologii i Neurochemii (D085)"
+    },
+    {
+      "id": "4ea0eeb8-3082-4e5a-3b2c-08ddaf6348b7",
+      "name": "Pracownia Neurobiologii (D081)"
+    },
+    {
+      "id": "f825f2f9-7173-491b-3b2d-08ddaf6348b7",
+      "name": "Pracownia Fizjologii Behawioru i Stresu (D083)"
+    },
+    {
+      "id": "3ccea852-07fb-4f11-3b2e-08ddaf6348b7",
+      "name": "Katedra Genetyki Ewolucyjnej i Biosystematyki (D200)"
+    },
+    {
+      "id": "2b881159-2e76-4817-3b2f-08ddaf6348b7",
+      "name": "Pracownia Genetyki (D203)"
+    },
+    {
+      "id": "aed0e554-47cf-4ec0-3b30-08ddaf6348b7",
+      "name": "Pracownia Biosystematyki i Ekologii Bezkręgowców Wodnych (D202)"
+    },
+    {
+      "id": "f36b9d81-861d-4650-3b31-08ddaf6348b7",
+      "name": "Pracownia Ewolucji Molekularnej i Bioinformatyki (D201)"
+    },
+    {
+      "id": "73684f2c-6e46-4250-3b32-08ddaf6348b7",
+      "name": "Katedra Mikrobiologii (D100)"
+    },
+    {
+      "id": "5d220121-0164-4fed-3b33-08ddaf6348b7",
+      "name": "Pracownia Biologii Ekstremofili (D101)"
+    },
+    {
+      "id": "b13d0ffa-dde9-42ba-3b34-08ddaf6348b7",
+      "name": "Katedra Taksonomii Roślin i Ochrony Przyrody (D110)"
+    },
+    {
+      "id": "7b34186b-4ccb-47b2-3b35-08ddaf6348b7",
+      "name": "Pracownia Symbioz Roślinnych (D114)"
+    },
+    {
+      "id": "80e974a8-038a-44f5-3b36-08ddaf6348b7",
+      "name": "Pracownia Geobotaniki i Ochrony Przyrody (D111)"
+    },
+    {
+      "id": "846aa04c-a5f1-403f-3b37-08ddaf6348b7",
+      "name": "Pracownia Lichenologii i Mykologii Eksperymentalnej (D112)"
+    },
+    {
+      "id": "d619bc6c-8a3c-4102-3b38-08ddaf6348b7",
+      "name": "Pracownia Taksonomii Roślin (D113)"
+    },
+    {
+      "id": "e4b84ac9-4b78-4909-3b39-08ddaf6348b7",
+      "name": "Katedra Zoologii Bezkręgowców i Parazytologii (D120)"
+    },
+    {
+      "id": "6815540c-5ca6-4ad5-3b3a-08ddaf6348b7",
+      "name": "Pracownia Parazytologii i Zoologii Ogólnej (D121)"
+    },
+    {
+      "id": "047ef3e6-62af-42d9-3b3b-08ddaf6348b7",
+      "name": "Pracownia Zoologii Systematycznej (D122)"
+    },
+    {
+      "id": "06bfbae2-5602-48e8-3b3c-08ddaf6348b7",
+      "name": "Pracownia Entomologii Ewolucyjnej i Muzeum Inkluzji w Bursztynie (D133)"
+    },
+    {
+      "id": "846b48fb-08bc-44f7-3b3d-08ddaf6348b7",
+      "name": "Stacja Badania Wędrówek Ptaków (D150)"
+    },
+    {
+      "id": "fe2df220-19c2-45ea-3b3e-08ddaf6348b7",
+      "name": "Laboratorium Bioobrazowania (D220)"
+    },
+    {
+      "id": "8f91843e-afa2-4415-3b3f-08ddaf6348b7",
+      "name": "Kolekcja Plazmidów i Drobnoustrojów (D190)"
+    },
+    {
+      "id": "366b6559-46a0-4894-3b40-08ddaf6348b7",
+      "name": "Gdańskie Centrum Zasobów Biologicznych (D210)"
+    },
+    {
+      "id": "9770414d-d730-49b7-3b41-08ddaf6348b7",
+      "name": "Wydział Chemii (T000)"
+    },
+    {
+      "id": "75d81e13-587f-413f-3b42-08ddaf6348b7",
+      "name": "Dziekan Wydziału Chemii"
+    },
+    {
+      "id": "c6d40d4f-7d54-428f-3b43-08ddaf6348b7",
+      "name": "Biuro Dziekana (T002)"
+    },
+    {
+      "id": "1722785d-0bfa-48bb-3b44-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich i Kształcenia"
+    },
+    {
+      "id": "532141ad-7c14-48d3-3b45-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki"
+    },
+    {
+      "id": "558c19ca-0dfb-46a0-3b46-08ddaf6348b7",
+      "name": "Prodziekan ds. Umiędzynarodowienia i Rozwoju"
+    },
+    {
+      "id": "bdf9a461-7fcf-494c-3b47-08ddaf6348b7",
+      "name": "Dziekanat (T001)"
+    },
+    {
+      "id": "274b815f-c8a8-4f3a-3b48-08ddaf6348b7",
+      "name": "Katedra Analizy Środowiska (T010)"
+    },
+    {
+      "id": "6380de32-7dc1-40d3-3b49-08ddaf6348b7",
+      "name": "Pracownia Analityki i Diagnostyki Chemicznej"
+    },
+    {
+      "id": "ee04b863-9c0e-40d6-3b4a-08ddaf6348b7",
+      "name": "Pracownia Analityki i Monitoringu Środowiska"
+    },
+    {
+      "id": "bdec387d-210b-4960-3b4b-08ddaf6348b7",
+      "name": "Pracownia Analizy Związków Naturalnych"
+    },
+    {
+      "id": "0b1ff7d3-a317-41a6-3b4c-08ddaf6348b7",
+      "name": "Pracownia Chemicznych Zagrożeń Środowiska"
+    },
+    {
+      "id": "71313bbb-f35b-4c05-3b4d-08ddaf6348b7",
+      "name": "Katedra Technologii Środowiska (T020)"
+    },
+    {
+      "id": "40328589-88b6-45e2-3b4e-08ddaf6348b7",
+      "name": "Pracownia Analityki i Nanodiagnostyki Biochemicznej"
+    },
+    {
+      "id": "0a8241ae-d8f6-4ffd-3b4f-08ddaf6348b7",
+      "name": "Pracownia Materiałów i Procesów Katalitycznych (T023)"
+    },
+    {
+      "id": "5e06d61a-693d-434d-3b50-08ddaf6348b7",
+      "name": "Pracownia Fotokatalizy"
+    },
+    {
+      "id": "19763d06-9b54-4a55-3b51-08ddaf6348b7",
+      "name": "Pracownia Materiałów i Procesów Katalitycznych"
+    },
+    {
+      "id": "ed79f159-a10b-4ab2-3b52-08ddaf6348b7",
+      "name": "Katedra Chemii i Radiochemii Środowiska (T030)"
+    },
+    {
+      "id": "b5ec0824-8b68-448f-3b53-08ddaf6348b7",
+      "name": "Pracownia Analityki i Radiochemii Środowiska"
+    },
+    {
+      "id": "f8633e4e-c4ff-4834-3b54-08ddaf6348b7",
+      "name": "Pracownia Chemoinformatyki Środowiska"
+    },
+    {
+      "id": "04dcaf04-b431-41bb-3b55-08ddaf6348b7",
+      "name": "Pracownia Toksykologii i Ochrony Radiologicznej"
+    },
+    {
+      "id": "c2ddef7f-d30b-4e1b-3b56-08ddaf6348b7",
+      "name": "Katedra Biotechnologii Molekularnej (T040)"
+    },
+    {
+      "id": "bd11802d-4e4e-43a5-3b57-08ddaf6348b7",
+      "name": "Pracownia Chemii Makromolekuł Biologicznych"
+    },
+    {
+      "id": "7f2767a1-adca-4d27-3b58-08ddaf6348b7",
+      "name": "Pracownia Bionanotechnologii (T043)"
+    },
+    {
+      "id": "3d9d0dcf-0ec0-4b3d-3b59-08ddaf6348b7",
+      "name": "Katedra Chemii Analitycznej (T050)"
+    },
+    {
+      "id": "4e499127-ec14-4be1-3b5a-08ddaf6348b7",
+      "name": "Pracownia Chemii i Analityki Kosmetyków"
+    },
+    {
+      "id": "b3e15d30-9574-452a-3b5b-08ddaf6348b7",
+      "name": "Pracownia Chemii Supramolekularnej"
+    },
+    {
+      "id": "d27499c1-09ac-4fe7-3b5c-08ddaf6348b7",
+      "name": "Katedra Biochemii Molekularnej (T060)"
+    },
+    {
+      "id": "10325aed-21c1-4cad-3b5d-08ddaf6348b7",
+      "name": "Pracownia Chemii Bioorganicznej"
+    },
+    {
+      "id": "751b07f6-3063-4ca1-3b5e-08ddaf6348b7",
+      "name": "Pracownia Chemii Związków Biologicznie Czynnych"
+    },
+    {
+      "id": "e5d82161-35e4-4e63-3b5f-08ddaf6348b7",
+      "name": "Katedra Chemii Biomedycznej (T070)"
+    },
+    {
+      "id": "00a8479b-ae8a-47a0-3b60-08ddaf6348b7",
+      "name": "Pracownia Biochemii Strukturalnej"
+    },
+    {
+      "id": "31bb16db-9f8d-4c8e-3b61-08ddaf6348b7",
+      "name": "Pracownia Chemii Medycznej"
+    },
+    {
+      "id": "de04f337-382b-4fc7-3b62-08ddaf6348b7",
+      "name": "Katedra Chemii Fizycznej (T080)"
+    },
+    {
+      "id": "c0d0964e-4a0c-4160-3b63-08ddaf6348b7",
+      "name": "Pracownia Badań Luminescencyjnych"
+    },
+    {
+      "id": "56c6a9b0-9162-4381-3b64-08ddaf6348b7",
+      "name": "Pracownia Krystalochemii"
+    },
+    {
+      "id": "259a3840-6fac-48d7-3b65-08ddaf6348b7",
+      "name": "Pracownia Sensybilizatorów Biologicznych"
+    },
+    {
+      "id": "c426b36c-310d-4e64-3b66-08ddaf6348b7",
+      "name": "Katedra Chemii Ogólnej i Nieorganicznej (T090)"
+    },
+    {
+      "id": "f4c868aa-03a7-409a-3b67-08ddaf6348b7",
+      "name": "Pracownia Biologicznej Chemii Nieorganicznej"
+    },
+    {
+      "id": "188ba132-e3c5-436b-3b68-08ddaf6348b7",
+      "name": "Pracownia Fizykochemii Związków Kompleksowych"
+    },
+    {
+      "id": "167e1fe4-3e20-4e59-3b69-08ddaf6348b7",
+      "name": "Katedra Chemii Bionieorganicznej (T120)"
+    },
+    {
+      "id": "33148bd3-924d-4fe9-3b6a-08ddaf6348b7",
+      "name": "Pracownia Oddziaływań Międzycząsteczkowych"
+    },
+    {
+      "id": "496c6ee8-2afd-4ec6-3b6b-08ddaf6348b7",
+      "name": "Katedra Chemii Organicznej (T100)"
+    },
+    {
+      "id": "14052c0f-1b53-40ec-3b6c-08ddaf6348b7",
+      "name": "Pracownia Glikochemii"
+    },
+    {
+      "id": "d3d66a8b-0e42-4d38-3b6d-08ddaf6348b7",
+      "name": "Pracownia Chemii Cukrów"
+    },
+    {
+      "id": "1610473c-f911-47df-3b6e-08ddaf6348b7",
+      "name": "Pracownia Chemii Peptydów"
+    },
+    {
+      "id": "9f3c85b8-9d02-4e0e-3b6f-08ddaf6348b7",
+      "name": "Pracownia Badań Strukturalnych Biopolimerów"
+    },
+    {
+      "id": "a4c59a66-875e-44b5-3b70-08ddaf6348b7",
+      "name": "Katedra Chemii Teoretycznej (T110)"
+    },
+    {
+      "id": "7527d902-8953-439f-3b71-08ddaf6348b7",
+      "name": "Pracownia Chemii Kwantowej"
+    },
+    {
+      "id": "2d9b6938-9ab5-45c0-3b72-08ddaf6348b7",
+      "name": "Pracownia Modelowania Molekularnego"
+    },
+    {
+      "id": "d1b5ba31-bd06-4973-3b73-08ddaf6348b7",
+      "name": "Pracownia Symulacji Polimerów"
+    },
+    {
+      "id": "6ca8f0ff-3946-43e7-3b74-08ddaf6348b7",
+      "name": "Zakład Dydaktyki i Popularyzacji Nauki (T130)"
+    },
+    {
+      "id": "c40e3b9a-7a98-41a0-3b75-08ddaf6348b7",
+      "name": "Dział Zaopatrzenia i Obsługi Technicznej (T140)"
+    },
+    {
+      "id": "2b40c890-bf7e-46b6-3b76-08ddaf6348b7",
+      "name": "Sekcja Aparatury i Zamówień Publicznych (T141)"
+    },
+    {
+      "id": "f405f9a1-7b53-4745-3b77-08ddaf6348b7",
+      "name": "Sekcja Obsługi Technicznej i Magazynowej (T142)"
+    },
+    {
+      "id": "b30288d7-e1a0-4d9b-3b78-08ddaf6348b7",
+      "name": "Sekcja Pomiarów Fizyko-Chemicznych (T003)"
+    },
+    {
+      "id": "8bf07902-2a8e-4774-3b79-08ddaf6348b7",
+      "name": "Wydział Ekonomiczny (E000)"
+    },
+    {
+      "id": "b6685f7d-21cb-411d-3b7a-08ddaf6348b7",
+      "name": "Dziekan Wydziału Ekonomicznego"
+    },
+    {
+      "id": "908e83e8-0f95-492b-3b7b-08ddaf6348b7",
+      "name": "Sekcja Informatyczna Wydziału Ekonomicznego (E003)"
+    },
+    {
+      "id": "c628c125-c150-4174-3b7c-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich i Kształcenia"
+    },
+    {
+      "id": "95dce0d0-d5aa-49b1-3b7d-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki i Umiędzynarodowienia"
+    },
+    {
+      "id": "d11e77bb-9684-4fc2-3b7e-08ddaf6348b7",
+      "name": "Prodziekan ds. Rozwoju i Współpracy z Otoczeniem Społeczno-Gospodarczym"
+    },
+    {
+      "id": "7adb38b6-8307-4231-3b7f-08ddaf6348b7",
+      "name": "Biuro Dziekana (E002)"
+    },
+    {
+      "id": "6d3f8bf6-49e8-4656-3b80-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Ekonomicznego (E001)"
+    },
+    {
+      "id": "8626bab8-8ee9-464c-3b81-08ddaf6348b7",
+      "name": "Katedra Biznesu Międzynarodowego (E010)"
+    },
+    {
+      "id": "4871f0c6-a253-41ad-3b82-08ddaf6348b7",
+      "name": "Zakład Handlu Zagranicznego (E011)"
+    },
+    {
+      "id": "1b3d8a19-51a6-47b9-3b83-08ddaf6348b7",
+      "name": "Zakład Strategii Marketingowych (E012)"
+    },
+    {
+      "id": "fb94aff3-7094-4796-3b84-08ddaf6348b7",
+      "name": "Zakład Międzynarodowych Stosunków Ekonomicznych (E013)"
+    },
+    {
+      "id": "af9f102e-39d1-4b68-3b85-08ddaf6348b7",
+      "name": "Zakład Międzynarodowych Rynków Finansowych (E014)"
+    },
+    {
+      "id": "ee6ea9e4-5cec-4f90-3b86-08ddaf6348b7",
+      "name": "Katedra Transportu i Handlu Morskiego (E030)"
+    },
+    {
+      "id": "959a8ced-c933-4b14-3b87-08ddaf6348b7",
+      "name": "Zakład Gospodarki Morskiej (E031)"
+    },
+    {
+      "id": "9b5fe218-45ae-4bb9-3b88-08ddaf6348b7",
+      "name": "Zakład Gospodarki Globalnej (E032)"
+    },
+    {
+      "id": "4fb26792-f01e-4012-3b89-08ddaf6348b7",
+      "name": "Zakład Gospodarki Elektronicznej (E033)"
+    },
+    {
+      "id": "f66b9576-45c7-42cd-3b8a-08ddaf6348b7",
+      "name": "Katedra Zrównoważonych Procesów Rynkowych (E020)"
+    },
+    {
+      "id": "b9d6b6d3-c8c6-48c7-3b8b-08ddaf6348b7",
+      "name": "Katedra Ekonomiki Transportu (E040)"
+    },
+    {
+      "id": "73e303bf-1b4a-45b8-3b8c-08ddaf6348b7",
+      "name": "Katedra Ekonomiki i Funkcjonowania Przedsiębiorstw Transportowych (E050)"
+    },
+    {
+      "id": "a9391978-5d3a-4538-3b8d-08ddaf6348b7",
+      "name": "Katedra Ekonomii Międzynarodowej i Rozwoju Gospodarczego (E060)"
+    },
+    {
+      "id": "99fad7cb-0172-47c9-3b8e-08ddaf6348b7",
+      "name": "Katedra Logistyki (E070)"
+    },
+    {
+      "id": "9ab719c4-0016-4f0d-3b8f-08ddaf6348b7",
+      "name": "Katedra Makroekonomii (E080)"
+    },
+    {
+      "id": "3e127218-62d5-466e-3b90-08ddaf6348b7",
+      "name": "Katedra Mikroekonomii (E090)"
+    },
+    {
+      "id": "282eaabf-6fdf-4961-3b91-08ddaf6348b7",
+      "name": "Katedra Polityki Gospodarczej (E100)"
+    },
+    {
+      "id": "f8d5d7ad-80ad-4ce0-3b92-08ddaf6348b7",
+      "name": "Katedra Polityki Transportowej i Integracji Gospodarczej (E140)"
+    },
+    {
+      "id": "e8f3dd1f-4cb8-43a1-3b93-08ddaf6348b7",
+      "name": "Katedra Rynku Transportowego (E120)"
+    },
+    {
+      "id": "9c6ee6f4-d57d-4a09-3b94-08ddaf6348b7",
+      "name": "Centrum Badań nad Odpowiedzialnością Korporacyjną (E150)"
+    },
+    {
+      "id": "72a50db6-ec58-451c-3b95-08ddaf6348b7",
+      "name": "Międzywydziałowe Studia Podyplomowe MBA, Master of business administration (Wydziały Ekonomiczny i Zarządzania)"
+    },
+    {
+      "id": "e517ca6a-26d0-4ac5-3b96-08ddaf6348b7",
+      "name": "Wydział Filologiczny (I000)"
+    },
+    {
+      "id": "3539d358-42af-4b14-3b97-08ddaf6348b7",
+      "name": "Dziekan Wydziału Filologicznego"
+    },
+    {
+      "id": "5b3cee6e-bde7-4d55-3b98-08ddaf6348b7",
+      "name": "Biuro Dziekana (I004)"
+    },
+    {
+      "id": "bde0e1ce-3b6e-458c-3b99-08ddaf6348b7",
+      "name": "Prodziekan ds. Kształcenia i Współpracy z Otoczeniem"
+    },
+    {
+      "id": "04482c7d-efed-42d7-3b9a-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki i Współpracy Międzynarodowej"
+    },
+    {
+      "id": "57c6d4eb-8d29-4d76-3b9b-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich"
+    },
+    {
+      "id": "9ab7aeb8-49ff-4c24-3b9c-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Filologicznego (I001)"
+    },
+    {
+      "id": "8ed0d6a7-1aa8-4b47-3b9d-08ddaf6348b7",
+      "name": "Samodzielne Stanowisko Pracy ds. Promocji (I002)"
+    },
+    {
+      "id": "27ee2b25-d8a3-4761-3b9e-08ddaf6348b7",
+      "name": "Zespół ds. Aparatury Wydziału (I003)"
+    },
+    {
+      "id": "8e0cd68f-20cf-4389-3b9f-08ddaf6348b7",
+      "name": "Instytut Anglistyki i Amerykanistyki (I010)"
+    },
+    {
+      "id": "948b0da2-4e65-4ef6-3ba0-08ddaf6348b7",
+      "name": "Zakład Badań nad Literaturą Anglojęzyczną (I011)"
+    },
+    {
+      "id": "b8b8881b-24b1-4b25-3ba1-08ddaf6348b7",
+      "name": "Zakład Amerykanistyki (I016)"
+    },
+    {
+      "id": "a27edadd-4073-4d7c-3ba2-08ddaf6348b7",
+      "name": "Zakład Badań nad Sztukami Scenicznymi (I015)"
+    },
+    {
+      "id": "8f423664-23b2-418a-3ba3-08ddaf6348b7",
+      "name": "Zakład Glottodydaktyki i Przetwarzania Języka Naturalnego (I014)"
+    },
+    {
+      "id": "4f825a41-819b-429e-3ba4-08ddaf6348b7",
+      "name": "Zakład Języka Angielskiego i Językoznawstwa Teoretycznego (I013)"
+    },
+    {
+      "id": "91c48f4b-7c50-47a2-3ba5-08ddaf6348b7",
+      "name": "Zakład Translatoryki Anglistycznej (I012)"
+    },
+    {
+      "id": "bbb77fda-fe16-4701-3ba6-08ddaf6348b7",
+      "name": "Instytut Badań nad Kulturą (I090)"
+    },
+    {
+      "id": "0aaa708e-aba6-4020-3ba7-08ddaf6348b7",
+      "name": "Zakład Filmu i Mediów (I091)"
+    },
+    {
+      "id": "4995150c-4aa7-4363-3ba8-08ddaf6348b7",
+      "name": "Zakład Kulturoznawstwa (I092)"
+    },
+    {
+      "id": "bd3a4340-3f86-4d3c-3ba9-08ddaf6348b7",
+      "name": "Instytut Filologii Germańskiej (I020)"
+    },
+    {
+      "id": "fae6c8a6-9438-49bb-3baa-08ddaf6348b7",
+      "name": "Zakład Języka Niemieckiego i Translatoryki (I021)"
+    },
+    {
+      "id": "f699a765-37e8-43b6-3bab-08ddaf6348b7",
+      "name": "Zakład Literatury i Kultury Niemieckiej (I022)"
+    },
+    {
+      "id": "68474742-368f-4ee7-3bac-08ddaf6348b7",
+      "name": "Instytut Filologii Polskiej (I030)"
+    },
+    {
+      "id": "cc781b0d-7afd-4fde-3bad-08ddaf6348b7",
+      "name": "Zakład Dramatu, Teatru i Widowisk (I035)"
+    },
+    {
+      "id": "6f3abf26-94dd-41c6-3bae-08ddaf6348b7",
+      "name": "Zakład Historii Literatury Polskiej (I033)"
+    },
+    {
+      "id": "f5755baa-608a-4f42-3baf-08ddaf6348b7",
+      "name": "Zakład Języka Polskiego (I031)"
+    },
+    {
+      "id": "06567adf-ebdb-4fc2-3bb0-08ddaf6348b7",
+      "name": "Zakład Polonistyki Stosowanej (I032)"
+    },
+    {
+      "id": "9928f12d-3a47-4901-3bb1-08ddaf6348b7",
+      "name": "Zakład Teorii Literatury i Krytyki Artystycznej (I034)"
+    },
+    {
+      "id": "756c5b23-4c77-4646-3bb2-08ddaf6348b7",
+      "name": "Instytut Filologii Romańskiej (I050)"
+    },
+    {
+      "id": "d4d80cc1-eeb5-4532-3bb3-08ddaf6348b7",
+      "name": "Zakład Językoznawstwa Romańskiego (I052)"
+    },
+    {
+      "id": "dfa4afc4-6a07-499a-3bb4-08ddaf6348b7",
+      "name": "Zakład Iberystyki (I053)"
+    },
+    {
+      "id": "d24d2871-696d-45e2-3bb5-08ddaf6348b7",
+      "name": "Zakład Literatur Romańskich (I051)"
+    },
+    {
+      "id": "381bd18f-1773-47b8-3bb6-08ddaf6348b7",
+      "name": "Instytut Lingwistyki Stosowanej (I070)"
+    },
+    {
+      "id": "08e74c36-7fea-4aa3-3bb7-08ddaf6348b7",
+      "name": "Instytut Logopedii (I100)"
+    },
+    {
+      "id": "52ad3eeb-a946-4df7-3bb8-08ddaf6348b7",
+      "name": "Instytut Rusycystyki i Studiów Wschodnich (I040)"
+    },
+    {
+      "id": "39e87be2-e700-4908-3bb9-08ddaf6348b7",
+      "name": "Zakład Języka Rosyjskiego i Przekładoznawstwa (I043)"
+    },
+    {
+      "id": "b217f2e3-ce3f-4206-3bba-08ddaf6348b7",
+      "name": "Zakład Kultury i Języków Azji Wschodniej (I044)"
+    },
+    {
+      "id": "43bfc924-5d08-4568-3bbb-08ddaf6348b7",
+      "name": "Zakład Pragmatyki Komunikacji i Dydaktyki Języka Rosyjskiego (I041)"
+    },
+    {
+      "id": "86e59191-6bfb-4f5a-3bbc-08ddaf6348b7",
+      "name": "Zakład Rosjoznawstwa, Literatury i Kultury Rosyjskiej (I042)"
+    },
+    {
+      "id": "a060ba22-9b1d-4cbc-3bbd-08ddaf6348b7",
+      "name": "Instytut Skandynawistyki i Fennistyki (I080)"
+    },
+    {
+      "id": "99894ea2-dd36-4d1f-3bbe-08ddaf6348b7",
+      "name": "Instytut Studiów Klasycznych i Slawistyki (I060)"
+    },
+    {
+      "id": "330d7457-0b81-406b-3bbf-08ddaf6348b7",
+      "name": "Zakład Filologii Klasycznej (I062)"
+    },
+    {
+      "id": "c7520219-a76c-4a51-3bc0-08ddaf6348b7",
+      "name": "Zakład Slawistyki i Studiów Bałkańskich (I061)"
+    },
+    {
+      "id": "a6b4698f-7b06-4995-3bc1-08ddaf6348b7",
+      "name": "Ośrodek Egzaminacyjny Wydziału Filologicznego (I110)"
+    },
+    {
+      "id": "3b7359b1-03df-4e93-3bc2-08ddaf6348b7",
+      "name": "Telefoniczna Poradnia Językowa Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "5aad663c-c4d5-4b60-3bc3-08ddaf6348b7",
+      "name": "Centrum Teatralne (I110)"
+    },
+    {
+      "id": "73a6445c-a78e-4bf3-3bc4-08ddaf6348b7",
+      "name": "Wydział Historyczny (U000)"
+    },
+    {
+      "id": "c80bec04-573b-4d42-3bc5-08ddaf6348b7",
+      "name": "Dziekan Wydziału Historycznego"
+    },
+    {
+      "id": "913608fc-8c1f-4513-3bc6-08ddaf6348b7",
+      "name": "Biuro Dziekana (U0002)"
+    },
+    {
+      "id": "251fb40b-dbbd-4d13-3bc7-08ddaf6348b7",
+      "name": "Prodziekan ds. Jakości Kształcenia"
+    },
+    {
+      "id": "cc46f915-e00a-43b3-3bc8-08ddaf6348b7",
+      "name": "Prodziekan ds. Badań Naukowych i Współpracy Międzynarodowej"
+    },
+    {
+      "id": "90d78800-af19-47ed-3bc9-08ddaf6348b7",
+      "name": "Prodziekan ds. Studentów i Współpracy z Otoczeniem Społeczno-Gospodarczym"
+    },
+    {
+      "id": "b94a8200-30bb-4c25-3bca-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Historycznego (U001)"
+    },
+    {
+      "id": "e092958b-42ec-452f-3bcb-08ddaf6348b7",
+      "name": "Instytut Historii (U100)"
+    },
+    {
+      "id": "0beae25b-7d98-469e-3bcc-08ddaf6348b7",
+      "name": "Zakład Historii Europy Wschodniej (U113)"
+    },
+    {
+      "id": "84a7040e-bb9a-496a-3bcd-08ddaf6348b7",
+      "name": "Zakład Historii Gdańska, Pomorza i Regionu Nadbałtyckiego (U114)"
+    },
+    {
+      "id": "ca13ef5e-9974-4e23-3bce-08ddaf6348b7",
+      "name": "Zakład Historii Starożytnej (U101)"
+    },
+    {
+      "id": "b5be4c94-357e-48e8-3bcf-08ddaf6348b7",
+      "name": "Zakład Historii Powszechnej Średniowiecza (U102)"
+    },
+    {
+      "id": "5ed52291-8681-4ab9-3bd0-08ddaf6348b7",
+      "name": "Zakład Historii Średniowiecza Polski i Nauk Pomocniczych Historii (U103)"
+    },
+    {
+      "id": "291ae7f0-271a-4fc1-3bd1-08ddaf6348b7",
+      "name": "Zakład Historii Nowożytnej (U104)"
+    },
+    {
+      "id": "d8b52133-f696-491e-3bd2-08ddaf6348b7",
+      "name": "Zakład Historii XIX wieku (U111)"
+    },
+    {
+      "id": "4f1b3041-de1a-4733-3bd3-08ddaf6348b7",
+      "name": "Zakład Historii XX wieku (U112)"
+    },
+    {
+      "id": "0db5b79c-9340-490b-3bd4-08ddaf6348b7",
+      "name": "Zakład Historii Myśli i Kultury Politycznej (U108)"
+    },
+    {
+      "id": "6d7e1c11-d840-4a7d-3bd5-08ddaf6348b7",
+      "name": "Zakład Metodologii Historii, Historii Historiografii i Archiwistyki (U109)"
+    },
+    {
+      "id": "cc97d1c7-16db-4915-3bd6-08ddaf6348b7",
+      "name": "Zakład Edukacji Historycznej (U115)"
+    },
+    {
+      "id": "26869913-5a09-4024-3bd7-08ddaf6348b7",
+      "name": "Instytut Archeologii (U400)"
+    },
+    {
+      "id": "24c116ec-5856-4875-3bd8-08ddaf6348b7",
+      "name": "Zakład Archeologii Pradziejowej (U201)"
+    },
+    {
+      "id": "35d24eae-336d-425c-3bd9-08ddaf6348b7",
+      "name": "Zakład Archeologii Śródziemnomorskiej (U202)"
+    },
+    {
+      "id": "2ef50fdd-b787-4770-3bda-08ddaf6348b7",
+      "name": "Zakład Archeologii Średniowiecza i Nowożytności (U203)"
+    },
+    {
+      "id": "fca7e113-f76a-4ee3-3bdb-08ddaf6348b7",
+      "name": "Instytut Historii Sztuki (U300)"
+    },
+    {
+      "id": "676b3713-80d9-468c-3bdc-08ddaf6348b7",
+      "name": "Zakład Teorii Sztuki (U301)"
+    },
+    {
+      "id": "eac35668-262e-4630-3bdd-08ddaf6348b7",
+      "name": "Zakład Historii Sztuki Średniowiecznej (U302)"
+    },
+    {
+      "id": "c7648c67-43d9-498d-3bde-08ddaf6348b7",
+      "name": "Zakład Historii Sztuki Nowoczesnej (U303)"
+    },
+    {
+      "id": "4bb2073f-df23-4745-3bdf-08ddaf6348b7",
+      "name": "Zakładu Historii Sztuki Nowożytnej (U304)"
+    },
+    {
+      "id": "9edd3532-22ac-48a7-3be0-08ddaf6348b7",
+      "name": "Instytut Antropologii (U500)"
+    },
+    {
+      "id": "ca27e43c-6107-44cc-3be1-08ddaf6348b7",
+      "name": "Zakład Etnologii Polski i Antropologii Historii (U502)"
+    },
+    {
+      "id": "41a817e6-db1b-4372-3be2-08ddaf6348b7",
+      "name": "Zakład Studiów nad Religią (U503)"
+    },
+    {
+      "id": "7e3e7077-5036-442b-3be3-08ddaf6348b7",
+      "name": "Zakład Antropologii Nowego Świata i Studiów Etnicznych (U501)"
+    },
+    {
+      "id": "8acbb2c3-f8cd-4b62-3be4-08ddaf6348b7",
+      "name": "Wydział Matematyki, Fizyki i Informatyki (K000)"
+    },
+    {
+      "id": "07ea0329-5bfd-4e61-3be5-08ddaf6348b7",
+      "name": "Dziekan Wydziału Matematyki, Fizyki i Informatyki"
+    },
+    {
+      "id": "56c2a339-c563-4723-3be6-08ddaf6348b7",
+      "name": "Prodziekan ds. Umiędzynarodowienia i Rozwoju"
+    },
+    {
+      "id": "2fc28954-80d8-4776-3be7-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki"
+    },
+    {
+      "id": "9c4ec06f-88ca-43d1-3be8-08ddaf6348b7",
+      "name": "Sekcja Informatyczna Wydziału Matematyki, Fizyki i Informatyki (K005)"
+    },
+    {
+      "id": "878fa9a9-f301-408f-3be9-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich i Kształcenia"
+    },
+    {
+      "id": "b0bc114e-0ad1-461f-3bea-08ddaf6348b7",
+      "name": "Biuro Dziekana (K002)"
+    },
+    {
+      "id": "5272ca61-b5de-4108-3beb-08ddaf6348b7",
+      "name": "Dziekanat (K001)"
+    },
+    {
+      "id": "04a813c8-1dd1-4ee4-3bec-08ddaf6348b7",
+      "name": "Zespół obsługi jednostek wydziałowych (K004)"
+    },
+    {
+      "id": "b8bf468c-f177-4ab3-3bed-08ddaf6348b7",
+      "name": "Instytut Matematyki (K100)"
+    },
+    {
+      "id": "88539dea-9f43-449d-3bee-08ddaf6348b7",
+      "name": "Zakład Analizy Matematycznej (K101)"
+    },
+    {
+      "id": "d8a4fbf3-ac22-4496-3bef-08ddaf6348b7",
+      "name": "Zakład Funkcji Rzeczywistych (K102)"
+    },
+    {
+      "id": "a259ff92-0bd2-431e-3bf0-08ddaf6348b7",
+      "name": "Zakład Matematyki Stosowanej i Probabilistyki (K103)"
+    },
+    {
+      "id": "a55611c9-53c7-4756-3bf1-08ddaf6348b7",
+      "name": "Zakład Teorii Mnogości (K105)"
+    },
+    {
+      "id": "13663311-aef5-4314-3bf2-08ddaf6348b7",
+      "name": "Zakład Topologii (K106)"
+    },
+    {
+      "id": "e41ba7e3-36e7-424e-3bf3-08ddaf6348b7",
+      "name": "Zakład Algebry (K107)"
+    },
+    {
+      "id": "7c649de0-1df7-4249-3bf4-08ddaf6348b7",
+      "name": "Zakład Geometrii (K108)"
+    },
+    {
+      "id": "a0eed0f8-2123-4352-3bf5-08ddaf6348b7",
+      "name": "Zakład Dydaktyki Matematyki (K110)"
+    },
+    {
+      "id": "f2e6f43b-a22b-471a-3bf6-08ddaf6348b7",
+      "name": "Instytut Informatyki (K300)"
+    },
+    {
+      "id": "8815f5f7-e663-4cea-3bf7-08ddaf6348b7",
+      "name": "Zakład Inżynierii Oprogramowania (K304)"
+    },
+    {
+      "id": "25c465f3-c2c4-41b6-3bf8-08ddaf6348b7",
+      "name": "Zakład Informatyki Kwantowej (K305)"
+    },
+    {
+      "id": "b8f93cdf-5415-4951-3bf9-08ddaf6348b7",
+      "name": "Zakład Optymalizacji Kombinatorycznej (K301)"
+    },
+    {
+      "id": "d228c3ce-ceb1-481d-3bfa-08ddaf6348b7",
+      "name": "Zakład Języków Formalnych (K302)"
+    },
+    {
+      "id": "a37f3904-d588-4401-3bfb-08ddaf6348b7",
+      "name": "Zakład Sztucznej Inteligencji (K303)"
+    },
+    {
+      "id": "c44088f1-c941-44d1-3bfc-08ddaf6348b7",
+      "name": "Instytut Fizyki Doświadczalnej (K200)"
+    },
+    {
+      "id": "ebe3aadf-0d8e-4559-3bfd-08ddaf6348b7",
+      "name": "Zakład Fizykochemii Powierzchni i Zjawisk Międzyfazowych (K209)"
+    },
+    {
+      "id": "2329b8e5-a6f6-46df-3bfe-08ddaf6348b7",
+      "name": "Zakład Spektroskopii Fazy Skondensowanej (K203)"
+    },
+    {
+      "id": "d907d711-60c3-4fcb-3bff-08ddaf6348b7",
+      "name": "Zakład Biomateriałów i Fizyki Medycznej (K204)"
+    },
+    {
+      "id": "49261867-0b78-4861-3c00-08ddaf6348b7",
+      "name": "Zakład Fizyki Stosowanej (K205)"
+    },
+    {
+      "id": "929ce7b1-bacc-4748-3c01-08ddaf6348b7",
+      "name": "Zakład Fizyki Atomowej i Molekularnej (K210)"
+    },
+    {
+      "id": "1ece35b7-303e-4126-3c02-08ddaf6348b7",
+      "name": "Laboratorium Charakteryzacji Materiałów Luminescencyjnych i Nanomateriałów (K207)"
+    },
+    {
+      "id": "9e4c4989-1df1-4192-3c03-08ddaf6348b7",
+      "name": "Laboratorium Dydaktyki Fizyki (K208)"
+    },
+    {
+      "id": "dcbfd867-da2c-472f-3c04-08ddaf6348b7",
+      "name": "Instytut Fizyki Teoretycznej i Astrofizyki (K400)"
+    },
+    {
+      "id": "2aba60d1-5c7f-4a1a-3c05-08ddaf6348b7",
+      "name": "Zakład Spektroskopii Atomowo-Molekularnej i Astrofizyki (K401)"
+    },
+    {
+      "id": "e743c270-249e-48f3-3c06-08ddaf6348b7",
+      "name": "Zakład Metod Matematycznych Fizyki (K402)"
+    },
+    {
+      "id": "05566609-8115-453b-3c07-08ddaf6348b7",
+      "name": "Zakład Optyki i Informacji Kwantowej (K403)"
+    },
+    {
+      "id": "81f67d5c-b386-42a3-3c08-08ddaf6348b7",
+      "name": "Wydział Nauk Społecznych (W000)"
+    },
+    {
+      "id": "17b7a455-da47-4521-3c09-08ddaf6348b7",
+      "name": "Dziekan Wydziału Nauk Społecznych"
+    },
+    {
+      "id": "38b85c15-cf48-4b92-3c0a-08ddaf6348b7",
+      "name": "Prodziekan ds. Kształcenia"
+    },
+    {
+      "id": "e4769e5e-4358-402b-3c0b-08ddaf6348b7",
+      "name": "Prodziekan ds. Badań Naukowych i Współpracy Międzynarodowej"
+    },
+    {
+      "id": "d7bbff1b-6df4-457b-3c0c-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich"
+    },
+    {
+      "id": "b14ca95e-07a7-4f00-3c0d-08ddaf6348b7",
+      "name": "Biuro Dziekana (W002)"
+    },
+    {
+      "id": "10dc85dd-b4c2-4a48-3c0e-08ddaf6348b7",
+      "name": "Sekcja Informatyczna Wydziału Nauk Społecznych (W004)"
+    },
+    {
+      "id": "72be0b0a-9bda-4a81-3c0f-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Nauk Społecznych (W001)"
+    },
+    {
+      "id": "b59308ad-237e-4287-3c10-08ddaf6348b7",
+      "name": "Instytut Geografii Społeczno-Ekonomicznej i Gospodarki Przestrzennej (W700)"
+    },
+    {
+      "id": "b49a5d97-f488-42df-3c11-08ddaf6348b7",
+      "name": "Zakład Badań Krajobrazu i Kształtowania Środowiska (W701)"
+    },
+    {
+      "id": "6393fd7b-5e84-440b-3c12-08ddaf6348b7",
+      "name": "Zakład Geografii Politycznej (W705)"
+    },
+    {
+      "id": "aeed65e0-ecdb-45be-3c13-08ddaf6348b7",
+      "name": "Zakład Rozwoju Regionalnego (W704)"
+    },
+    {
+      "id": "8851956c-4ccd-436e-3c14-08ddaf6348b7",
+      "name": "Pracownia Analiz Terytorialnych (W705)"
+    },
+    {
+      "id": "de8d8610-ad69-46b9-3c15-08ddaf6348b7",
+      "name": "Zakład Geografii Społeczno-Ekonomicznej (W702)"
+    },
+    {
+      "id": "cd40b1ef-4ca3-4c55-3c16-08ddaf6348b7",
+      "name": "Zakład Studiów Przestrzennych (W706)"
+    },
+    {
+      "id": "96623539-2b0c-4c94-3c17-08ddaf6348b7",
+      "name": "Instytut Mediów, Dziennikarstwa i Komunikacji Społecznej (W300)"
+    },
+    {
+      "id": "5ebc9bd0-f1d7-40ac-3c18-08ddaf6348b7",
+      "name": "Zakład Komunikacji Społecznej i Kulturowej (W304)"
+    },
+    {
+      "id": "93523d3b-44a2-42e4-3c19-08ddaf6348b7",
+      "name": "Zakład Teorii, Historii i Języka Mediów (W301)"
+    },
+    {
+      "id": "ff0ec723-a609-45d2-3c1a-08ddaf6348b7",
+      "name": "Zakład Antropologii Obrazu (W302)"
+    },
+    {
+      "id": "69cedfab-0b16-46af-3c1b-08ddaf6348b7",
+      "name": "Zakład Dziennikarstwa i Mediów (W303)"
+    },
+    {
+      "id": "0db62216-bd4d-490c-3c1c-08ddaf6348b7",
+      "name": "Studio Radiowe-Radio MORS"
+    },
+    {
+      "id": "9cfb6cf0-2420-4531-3c1d-08ddaf6348b7",
+      "name": "Instytut Socjologii (W200)"
+    },
+    {
+      "id": "ad779db5-3310-4b5e-3c1e-08ddaf6348b7",
+      "name": "Zakład Teorii Socjologicznej i Metodologii Badań Społecznych (W201)"
+    },
+    {
+      "id": "54b56bef-5e4c-4920-3c1f-08ddaf6348b7",
+      "name": "Zakład Socjologii Życia Codziennego (W204)"
+    },
+    {
+      "id": "99994c25-abb0-4c2b-3c20-08ddaf6348b7",
+      "name": "Pomorska Pracownia Badań nad Kulturą (W206)"
+    },
+    {
+      "id": "489ffb65-4e67-4273-3c21-08ddaf6348b7",
+      "name": "Zakład Socjologii Stosowanej (W205)"
+    },
+    {
+      "id": "c93ac8e6-887b-46d1-3c22-08ddaf6348b7",
+      "name": "Pracownia Realizacji Badań Socjologicznych"
+    },
+    {
+      "id": "497f29c5-b64e-405e-3c23-08ddaf6348b7",
+      "name": "Zakład Antropologii Społecznej (W203)"
+    },
+    {
+      "id": "567de6e7-430d-47b0-3c24-08ddaf6348b7",
+      "name": "Zakład Socjologii Spraw Publicznych i Gospodarki (W202)"
+    },
+    {
+      "id": "9699229f-db29-4d33-3c25-08ddaf6348b7",
+      "name": "Instytut Filozofii (W100)"
+    },
+    {
+      "id": "afbe5089-5aba-4e85-3c26-08ddaf6348b7",
+      "name": "Zakład Estetyki i Filozofii Kultury (W101)"
+    },
+    {
+      "id": "e417a248-9544-4c5a-3c27-08ddaf6348b7",
+      "name": "Zakład Etyki i Filozofii Społecznej (W102)"
+    },
+    {
+      "id": "2487b26b-0384-4b5c-3c28-08ddaf6348b7",
+      "name": "Zakład Historii Filozofii Starożytnej, Średniowiecznej i Nowożytnej (W103)"
+    },
+    {
+      "id": "4bfe054c-ef01-4244-3c29-08ddaf6348b7",
+      "name": "Zakład Logiki, Filozofii Nauki i Epistemologii (W104)"
+    },
+    {
+      "id": "49f82165-16da-42f8-3c2a-08ddaf6348b7",
+      "name": "Zakład Metafizyki, Filozofii Religii i Filozofii Współczesnej (W105)"
+    },
+    {
+      "id": "e5dd8880-692c-46fd-3c2b-08ddaf6348b7",
+      "name": "Biblioteka Instytutu"
+    },
+    {
+      "id": "bdeb8778-081f-4520-3c2c-08ddaf6348b7",
+      "name": "Instytut Pedagogiki (W400)"
+    },
+    {
+      "id": "0ccb59eb-a09d-44a1-3c2d-08ddaf6348b7",
+      "name": "Zakład Pedagogiki Specjalnej (W401)"
+    },
+    {
+      "id": "6c15fea1-af1c-423c-3c2e-08ddaf6348b7",
+      "name": "Pracownia Interdyscyplinarnych Studiów o Niepełnosprawności i Metodologii Badań (W40A)"
+    },
+    {
+      "id": "6322621b-0ac6-467c-3c2f-08ddaf6348b7",
+      "name": "Zakład Pedagogiki Społecznej (W402)"
+    },
+    {
+      "id": "ba7251f6-f43a-44f1-3c30-08ddaf6348b7",
+      "name": "Zakład Patologii Społecznej i Resocjalizacji (W404)"
+    },
+    {
+      "id": "d2f036b4-3956-4386-3c31-08ddaf6348b7",
+      "name": "Zakład Historii Nauki, Oświaty i Wychowania (W405)"
+    },
+    {
+      "id": "ea22aa14-3bc9-4bcf-3c32-08ddaf6348b7",
+      "name": "Zakład Dydaktyki i Andragogiki (W406)"
+    },
+    {
+      "id": "56b7b768-38fc-42a8-3c33-08ddaf6348b7",
+      "name": "Zakład Teorii Wychowania i Pedagogiki Opiekuńczej (W407)"
+    },
+    {
+      "id": "21c9a4d6-c995-4b8c-3c34-08ddaf6348b7",
+      "name": "Zakład Pedagogiki Ogólnej (W408)"
+    },
+    {
+      "id": "e1ac4409-d9fb-4995-3c35-08ddaf6348b7",
+      "name": "Zakład Filozofii Wychowania i Studiów Kulturowych (W409)"
+    },
+    {
+      "id": "1a4aa145-5982-4538-3c36-08ddaf6348b7",
+      "name": "Zakład Badań nad Dzieciństwem i Szkołą (W410)"
+    },
+    {
+      "id": "6e75fbfb-dc83-48f1-3c37-08ddaf6348b7",
+      "name": "Pracownia Edukacji Medialnej (W411)"
+    },
+    {
+      "id": "e3305ded-dff7-4fa9-3c38-08ddaf6348b7",
+      "name": "Instytut Psychologii (W500)"
+    },
+    {
+      "id": "eee05d06-c918-4e87-3c39-08ddaf6348b7",
+      "name": "Zakład Psychologii Klinicznej i Zdrowia (W515)"
+    },
+    {
+      "id": "71eee22a-9730-4f91-3c3a-08ddaf6348b7",
+      "name": "Zakład Neuropsychologii (W516)"
+    },
+    {
+      "id": "0ffde1be-6b38-41ff-3c3b-08ddaf6348b7",
+      "name": "Zakład Psychologii Ogólnej (W502)"
+    },
+    {
+      "id": "f487af53-6222-4cc3-3c3c-08ddaf6348b7",
+      "name": "Zakład Psychologii Ekonomicznej i Psychologii Organizacji (W503)"
+    },
+    {
+      "id": "8a6a55fa-62c0-4cb9-3c3d-08ddaf6348b7",
+      "name": "Zakład Psychologii i Psychopatologii Rozwoju (W504)"
+    },
+    {
+      "id": "f0b5adba-9b99-4d96-3c3e-08ddaf6348b7",
+      "name": "Zakład Psychologii Osobowości i Psychologii Sądowej (W505)"
+    },
+    {
+      "id": "e2221092-616c-4579-3c3f-08ddaf6348b7",
+      "name": "Zakład Psychologii Społecznej (W506)"
+    },
+    {
+      "id": "23573434-8965-4cf5-3c40-08ddaf6348b7",
+      "name": "Zakład Psychologii Międzykulturowej i Psychologii Rodzaju (W507)"
+    },
+    {
+      "id": "504e1f1e-1e63-43bd-3c41-08ddaf6348b7",
+      "name": "Zakład Badań nad Rodziną i Jakością Życia (W508)"
+    },
+    {
+      "id": "d7df4258-01ba-46b1-3c42-08ddaf6348b7",
+      "name": "Zakład Psychologii Sportu (W509)"
+    },
+    {
+      "id": "a8c30cb3-0b23-495e-3c43-08ddaf6348b7",
+      "name": "Zakład Psychometrii i Statystyki (W510)"
+    },
+    {
+      "id": "86985201-f4b1-40f7-3c44-08ddaf6348b7",
+      "name": "Laboratorium Diagnostyki Psychologicznej (W511)"
+    },
+    {
+      "id": "d5a4f5fb-de2d-4758-3c45-08ddaf6348b7",
+      "name": "Pracownia Psychologii Badań Biznesu (W512)"
+    },
+    {
+      "id": "c907095e-1a82-4aaa-3c46-08ddaf6348b7",
+      "name": "Psychologiczna Poradnia Genetycznych Chorób Rzadkich (W513)"
+    },
+    {
+      "id": "08028304-4f16-4d5c-3c47-08ddaf6348b7",
+      "name": "Pracownia Psychologii Środowiskowej i Relacji Międzygrupowych (W514)"
+    },
+    {
+      "id": "9740098c-980b-4914-3c48-08ddaf6348b7",
+      "name": "Instytut Politologii (W600)"
+    },
+    {
+      "id": "4d80d6e9-56e7-431c-3c49-08ddaf6348b7",
+      "name": "Zakład Teorii Polityki (W601)"
+    },
+    {
+      "id": "3b47ffef-b1c9-43de-3c4a-08ddaf6348b7",
+      "name": "Zakład Polityk Publicznych i Administracji (W602)"
+    },
+    {
+      "id": "52673691-f6a6-4847-3c4b-08ddaf6348b7",
+      "name": "Zakład Systemów Politycznych (W603)"
+    },
+    {
+      "id": "e311e5e5-95a6-4111-3c4c-08ddaf6348b7",
+      "name": "Zakład Stosunków Międzynarodowych (W604)"
+    },
+    {
+      "id": "11e4c48b-6175-4465-3c4d-08ddaf6348b7",
+      "name": "Zakład Myśli Politycznej i Historii Najnowszej (W605)"
+    },
+    {
+      "id": "8f3924d2-7221-414f-3c4e-08ddaf6348b7",
+      "name": "Zakład Nauk o Bezpieczeństwie (W606)"
+    },
+    {
+      "id": "13ec0073-1433-427c-3c4f-08ddaf6348b7",
+      "name": "Zakład Kultury Politycznej (W607)"
+    },
+    {
+      "id": "8f87cf69-d0ab-42b6-3c50-08ddaf6348b7",
+      "name": "Sekcja Informatyczna Wydziału Nauk Społecznych (W004)"
+    },
+    {
+      "id": "dd8415c6-0f18-4ed2-3c51-08ddaf6348b7",
+      "name": "Wydział Oceanografii i Geografii (O000)"
+    },
+    {
+      "id": "465cfd74-7ed3-4d1a-3c52-08ddaf6348b7",
+      "name": "Dziekan Wydziału Oceanografii i Geografii"
+    },
+    {
+      "id": "2c3aafbf-133e-4c11-3c53-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki i Rozwoju"
+    },
+    {
+      "id": "480ab25d-d76d-4b9f-3c54-08ddaf6348b7",
+      "name": "Prodziekan ds. Kształcenia"
+    },
+    {
+      "id": "6a739e39-a28f-49df-3c55-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich"
+    },
+    {
+      "id": "25cbd749-1333-4923-3c56-08ddaf6348b7",
+      "name": "Biuro Dziekana (O002)"
+    },
+    {
+      "id": "2359efbe-702d-4ad0-3c57-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Oceanografii i Geografii (O001)"
+    },
+    {
+      "id": "5d0dab67-46b3-4dd1-3c58-08ddaf6348b7",
+      "name": "Katedra Biologii Morza i Biotechnologii (O300)"
+    },
+    {
+      "id": "04bea6b7-7b4b-4d70-3c59-08ddaf6348b7",
+      "name": "Pracownia Akwakultury (O301)"
+    },
+    {
+      "id": "5880555e-5c81-419d-3c5a-08ddaf6348b7",
+      "name": "Pracownia Fykologii (O304)"
+    },
+    {
+      "id": "b94ed54e-134d-4550-3c5b-08ddaf6348b7",
+      "name": "Pracownia Biologii Planktonu (O302)"
+    },
+    {
+      "id": "8f010a1b-3f16-4f25-3c5c-08ddaf6348b7",
+      "name": "Pracownia Biotechnologii Morskiej (O303)"
+    },
+    {
+      "id": "f89e08fd-8086-4e98-3c5d-08ddaf6348b7",
+      "name": "Katedra Ekologii Morza (O400)"
+    },
+    {
+      "id": "6d6bcccf-d70f-4fcb-3c5e-08ddaf6348b7",
+      "name": "Pracownia Ekofizjologii i Bioenergetyki (O404)"
+    },
+    {
+      "id": "da8a09e6-94a6-4126-3c5f-08ddaf6348b7",
+      "name": "Pracownia Ichtiologii (0402)"
+    },
+    {
+      "id": "2cf3bdd4-5dbf-40e3-3c60-08ddaf6348b7",
+      "name": "Pracownia Bioróżnorodności i Funkcjonowania Bentosu (O403)"
+    },
+    {
+      "id": "b22783c2-dab5-40a4-3c61-08ddaf6348b7",
+      "name": "Katedra Geomorfologii i Geologii Czwartorzędu (O700)"
+    },
+    {
+      "id": "e8a1b9a2-4ae8-40fa-3c62-08ddaf6348b7",
+      "name": "Pracownia Badań Paleośrodowiskowych (O701)"
+    },
+    {
+      "id": "154bf156-0fd9-4e24-3c63-08ddaf6348b7",
+      "name": "Pracownia Rekonstrukcji Geomorfologicznych (O702)"
+    },
+    {
+      "id": "207d2ebd-b058-4eaf-3c64-08ddaf6348b7",
+      "name": "Katedra Hydrologii (O800)"
+    },
+    {
+      "id": "2d32eb41-b4b0-468f-3c65-08ddaf6348b7",
+      "name": "Pracownia Hydrologii (O801)"
+    },
+    {
+      "id": "f970c0c1-77d3-4414-3c66-08ddaf6348b7",
+      "name": "Miejskie Laboratorium Badań Środowiskowych (Coastal Cities Living Lab - CCLL) (O271)"
+    },
+    {
+      "id": "17d2c440-5e9b-4e8d-3c67-08ddaf6348b7",
+      "name": "Pracownia Limnologii (O802)"
+    },
+    {
+      "id": "2fe46fd1-950c-4984-3c68-08ddaf6348b7",
+      "name": "Katedra Oceanografii Fizycznej i Badań Klimatu (OA00)"
+    },
+    {
+      "id": "6fe9665b-7003-4a08-3c69-08ddaf6348b7",
+      "name": "Pracownia Badań Klimatu (OA01)"
+    },
+    {
+      "id": "438d8f93-a04c-4a61-3c6a-08ddaf6348b7",
+      "name": "Pracownia Oceanografii Fizycznej (OA02)"
+    },
+    {
+      "id": "a29db9f8-08e0-4d17-3c6b-08ddaf6348b7",
+      "name": "Katedra Funkcjonowania Ekosystemów Morskich (O500)"
+    },
+    {
+      "id": "758f2788-4b65-42ce-3c6c-08ddaf6348b7",
+      "name": "Katedra Oceanografii Chemicznej i Geologii Morza (O900)"
+    },
+    {
+      "id": "32711dc5-5eae-4ebf-3c6d-08ddaf6348b7",
+      "name": "Pracownia Ochrony Środowiska Morskiego (O903)"
+    },
+    {
+      "id": "7de13fff-c086-4cf3-3c6e-08ddaf6348b7",
+      "name": "Pracownia Biogeochemicznego Obiegu Pierwiastków (O901)"
+    },
+    {
+      "id": "1567fd17-34bc-432a-3c6f-08ddaf6348b7",
+      "name": "Pracownia Transformacji Substancji Toksycznych (O904)"
+    },
+    {
+      "id": "67e0ea33-58f7-416d-3c70-08ddaf6348b7",
+      "name": "Pracownia Geologii Morza (O902)"
+    },
+    {
+      "id": "c50056c1-a4f8-4fea-3c71-08ddaf6348b7",
+      "name": "Katedra Geofizyki (O600)"
+    },
+    {
+      "id": "23ed3c55-5ef3-4a35-3c72-08ddaf6348b7",
+      "name": "Stacja Morska im. Profesora Krzysztofa Skóry Instytutu Oceanografii w Helu (O011)"
+    },
+    {
+      "id": "f745800b-7e7f-4344-3c73-08ddaf6348b7",
+      "name": "Centrum Monitoringu i Ochrony Wód (O010)"
+    },
+    {
+      "id": "dbab2a13-5be2-48f8-3c74-08ddaf6348b7",
+      "name": "Pracownia Systemów Informacji Geograficznej - GIS (O014)"
+    },
+    {
+      "id": "b898c687-a5cd-4a6b-3c75-08ddaf6348b7",
+      "name": "Redakcja Czasopisma \"Oceanological and Hydrobiological Studies\" (O003)"
+    },
+    {
+      "id": "cbb82d64-7ec0-4f3e-3c76-08ddaf6348b7",
+      "name": "Kolekcja Kultur Glonów Bałtyckich - Culture Collection of Baltic Algae (O012)"
+    },
+    {
+      "id": "52601ebc-c063-4409-3c77-08ddaf6348b7",
+      "name": "Pracownia Aparatury Badawczej (O013)"
+    },
+    {
+      "id": "ccf77a11-8f53-408f-3c78-08ddaf6348b7",
+      "name": "Wydział Prawa i Administracji (P000)"
+    },
+    {
+      "id": "215adea5-9ab5-4762-3c79-08ddaf6348b7",
+      "name": "Dziekan Wydziału Prawa i Administracji"
+    },
+    {
+      "id": "5383dd3c-47b0-45eb-3c7a-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki"
+    },
+    {
+      "id": "f2465396-c3da-4a1d-3c7b-08ddaf6348b7",
+      "name": "Prodziekan ds. Współpracy Międzynarodowej i Rozwoju"
+    },
+    {
+      "id": "0143b7fb-013e-4cc4-3c7c-08ddaf6348b7",
+      "name": "Prodziekan ds. Kształcenia"
+    },
+    {
+      "id": "430b86d8-fa9e-4393-3c7d-08ddaf6348b7",
+      "name": "Biuro Dziekana (P002)"
+    },
+    {
+      "id": "0ffbde67-fd32-48e0-3c7e-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Prawa i Administracji (P001)"
+    },
+    {
+      "id": "501621fb-b81e-4265-3c7f-08ddaf6348b7",
+      "name": "Katedra Historii Prawa (P020)"
+    },
+    {
+      "id": "c3e11a40-619c-4f5a-3c80-08ddaf6348b7",
+      "name": "Katedra Informatyki Prawniczej (P030)"
+    },
+    {
+      "id": "8499710e-f43c-453b-3c81-08ddaf6348b7",
+      "name": "Katedra Postępowania Administracyjnego i Sądowoadministracyjnego (P040)"
+    },
+    {
+      "id": "f834adde-27c8-4d47-3c82-08ddaf6348b7",
+      "name": "Katedra Postępowania Cywilnego (P050)"
+    },
+    {
+      "id": "18c31be6-b51a-40d5-3c83-08ddaf6348b7",
+      "name": "Katedra Prawa Administracyjnego (P070)"
+    },
+    {
+      "id": "9efda1d6-58f1-4788-3c84-08ddaf6348b7",
+      "name": "Katedra Prawa Cywilnego (P080)"
+    },
+    {
+      "id": "fdc3d858-8986-4988-3c85-08ddaf6348b7",
+      "name": "Pracownia Prawa Ubezpieczeniowego (P081)"
+    },
+    {
+      "id": "675a4e96-02c2-4555-3c86-08ddaf6348b7",
+      "name": "Zakład Prawa Prywatnego Międzynarodowego (P083)"
+    },
+    {
+      "id": "f5df5d11-1d34-45b4-3c87-08ddaf6348b7",
+      "name": "Zakład Prawa Rzymskiego (P082)"
+    },
+    {
+      "id": "ce98ea7a-c96c-4a00-3c88-08ddaf6348b7",
+      "name": "Katedra Praw Człowieka i Prawa Własności Intelektualnej (P060)"
+    },
+    {
+      "id": "1ff482db-a46a-4fbe-3c89-08ddaf6348b7",
+      "name": "Katedra Prawa Europejskiego i Komparatystyki Prawniczej (P190)"
+    },
+    {
+      "id": "691a0b33-5e25-4bd2-3c8a-08ddaf6348b7",
+      "name": "Katedra Prawa Finansowego (P090)"
+    },
+    {
+      "id": "fff7fc3d-cb4e-4454-3c8b-08ddaf6348b7",
+      "name": "Katedra Prawa Gospodarczego Publicznego i Ochrony Środowiska (P100)"
+    },
+    {
+      "id": "18ff8e38-c02c-4d61-3c8c-08ddaf6348b7",
+      "name": "Katedra Prawa Handlowego (P010)"
+    },
+    {
+      "id": "96fa52dd-6bc8-4ad3-3c8d-08ddaf6348b7",
+      "name": "Katedra Prawa Karnego Materialnego i Kryminologii (P110)"
+    },
+    {
+      "id": "9da3edb5-5bd0-4e6f-3c8e-08ddaf6348b7",
+      "name": "Zakład Kryminologii (P111)"
+    },
+    {
+      "id": "f5b1e015-b1f2-42a1-3c8f-08ddaf6348b7",
+      "name": "Katedra Prawa Karnego Procesowego i Kryminalistyki (P120)"
+    },
+    {
+      "id": "836672f3-72e7-4525-3c90-08ddaf6348b7",
+      "name": "Zakład Kryminalistyki i Prawa Dowodowego (P121)"
+    },
+    {
+      "id": "20d7fe4a-8d54-4b07-3c91-08ddaf6348b7",
+      "name": "Katedra Prawa Konstytucyjnego i Instytucji Politycznych (P130)"
+    },
+    {
+      "id": "71abe319-7a8e-44d5-3c92-08ddaf6348b7",
+      "name": "Katedra Prawa Międzynarodowego Publicznego (P140)"
+    },
+    {
+      "id": "5b917b3d-4c6f-4b39-3c93-08ddaf6348b7",
+      "name": "Katedra Prawa Morskiego (P150)"
+    },
+    {
+      "id": "609683f7-924b-4888-3c94-08ddaf6348b7",
+      "name": "Centrum Prawa Nowych Technologii (P400)"
+    },
+    {
+      "id": "8222aec0-c660-49c2-3c95-08ddaf6348b7",
+      "name": "Katedra Prawa Pracy (P160)"
+    },
+    {
+      "id": "22332f0f-a7e6-43a6-3c96-08ddaf6348b7",
+      "name": "Katedra Teorii i Filozofii Państwa i Prawa (P170)"
+    },
+    {
+      "id": "f3362dfc-2f03-4662-3c97-08ddaf6348b7",
+      "name": "Muzeum Kryminalistyki Wydziału Prawa i Administracji (6020)"
+    },
+    {
+      "id": "503c5608-c1b8-41f1-3c98-08ddaf6348b7",
+      "name": "Biuro Ochrony Danych Osobowych oraz Technik Multimedialnych (P004)"
+    },
+    {
+      "id": "a26b3711-2b1a-4876-3c99-08ddaf6348b7",
+      "name": "Centrum Prawa Samorządowego i Prawa Finansów Lokalnych (P200)"
+    },
+    {
+      "id": "888fc823-5a5d-4564-3c9a-08ddaf6348b7",
+      "name": "Międzyuczelniany Wydział Biotechnologii UG i GUMed (Uniwersytetu Gdańskiego i Gdańskiego Uniwersytetu Medycznego) (N000)"
+    },
+    {
+      "id": "909d292a-48a4-4e52-3c9b-08ddaf6348b7",
+      "name": "Dziekan Międzyuczelnianego Wydziału Biotechnologii"
+    },
+    {
+      "id": "3bf930b5-8cb9-4670-3c9c-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich i Kształcenia"
+    },
+    {
+      "id": "de947570-6a09-4d1c-3c9d-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki"
+    },
+    {
+      "id": "54d6e62c-3741-43a7-3c9e-08ddaf6348b7",
+      "name": "Prodziekan ds. Umiędzynarodowienia i Rozwoju"
+    },
+    {
+      "id": "3eb03041-9bc1-4a78-3c9f-08ddaf6348b7",
+      "name": "Biuro Dziekana Międzyuczelnianego Wydziału Biotechnologii UG i GUMed (N002)"
+    },
+    {
+      "id": "54e4d634-2cbd-48f6-3ca0-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Biotechnologii (N001)"
+    },
+    {
+      "id": "0bd63572-2ad5-4e0f-3ca1-08ddaf6348b7",
+      "name": "Jednostki organizacyjne wydziału w Uniwersytecie Gdańskim"
+    },
+    {
+      "id": "0bbd3551-22eb-416a-3ca2-08ddaf6348b7",
+      "name": "Instytut Biotechnologii UG (N100)"
+    },
+    {
+      "id": "22e34563-1fe5-42c2-3ca3-08ddaf6348b7",
+      "name": "Zakład Biochemii Białek (N103)"
+    },
+    {
+      "id": "14b39940-b735-4668-3ca4-08ddaf6348b7",
+      "name": "Zakład Biologii Strukturalnej (N110)"
+    },
+    {
+      "id": "cc5480a3-0f12-4836-3ca5-08ddaf6348b7",
+      "name": "Zakład Ochrony i Biotechnologii Roślin (N107)"
+    },
+    {
+      "id": "a0de2499-0440-4a64-3ca6-08ddaf6348b7",
+      "name": "Zakład Biologii Molekularnej (N102)"
+    },
+    {
+      "id": "6174c19d-7849-4624-3ca7-08ddaf6348b7",
+      "name": "Zakład Fotobiologii i Diagnostyki Molekularnej (N119)"
+    },
+    {
+      "id": "9054a3c4-e174-4404-3ca8-08ddaf6348b7",
+      "name": "Zakład Biochemii Ewolucyjnej (N101)"
+    },
+    {
+      "id": "7679eceb-0024-4cdd-3ca9-08ddaf6348b7",
+      "name": "Zakład Biochemii Roślin (N113)"
+    },
+    {
+      "id": "c3df645c-3564-445d-3caa-08ddaf6348b7",
+      "name": "Zakład Mikrobiologii Roślin (N120)"
+    },
+    {
+      "id": "622b0a0f-326c-45be-3cab-08ddaf6348b7",
+      "name": "Zakład Badania Związków Biologicznie Czynnych (N104)"
+    },
+    {
+      "id": "82b9016b-f5b3-4365-3cac-08ddaf6348b7",
+      "name": "Zakład Biologii Molekularnej Wirusów (N108)"
+    },
+    {
+      "id": "564ab1c4-e00e-4e33-3cad-08ddaf6348b7",
+      "name": "Zakład Szczepionek Rekombinowanych (N109)"
+    },
+    {
+      "id": "2c80ddba-c6f4-4253-3cae-08ddaf6348b7",
+      "name": "Pracownia Struktury Biopolimerów (N114)"
+    },
+    {
+      "id": "18444992-58a3-447c-3caf-08ddaf6348b7",
+      "name": "Pracownia Biochemii Fizycznej (N112)"
+    },
+    {
+      "id": "b59b8b66-0788-4618-3cb0-08ddaf6348b7",
+      "name": "Pracownia Biofizyki (N111)"
+    },
+    {
+      "id": "33fe0229-1c33-4a59-3cb1-08ddaf6348b7",
+      "name": "Pracownia Immunologii Doświadczalnej i Translacyjnej (N116)"
+    },
+    {
+      "id": "e7356916-f604-4c60-3cb2-08ddaf6348b7",
+      "name": "Zespół Obsługi Naukowo-Technicznej (N118)"
+    },
+    {
+      "id": "dcb0613e-13a8-4e97-3cb3-08ddaf6348b7",
+      "name": "Laboratorium Badawczo-Wdrożeniowe (N117)"
+    },
+    {
+      "id": "8fdeeb38-167e-42b8-3cb4-08ddaf6348b7",
+      "name": "Jednostki organizacyjne wydziału w Gdańskim Uniwersytecie Medycznym"
+    },
+    {
+      "id": "19de6c9a-b970-49fc-3cb5-08ddaf6348b7",
+      "name": "Instytut Biotechnologii Medycznej i Onkologii Doświadczalnej GUMed"
+    },
+    {
+      "id": "88210cb0-28d3-4d21-3cb6-08ddaf6348b7",
+      "name": "Zakład Onkologii Translacyjnej"
+    },
+    {
+      "id": "71865632-a873-49e7-3cb7-08ddaf6348b7",
+      "name": "Zakład Biologii Komórki i Immunologii"
+    },
+    {
+      "id": "c482a4f7-e48a-4aa6-3cb8-08ddaf6348b7",
+      "name": "Zakład Enzymologii i Onkologii Molekularnej"
+    },
+    {
+      "id": "7aa55f7d-94a6-4bb1-3cb9-08ddaf6348b7",
+      "name": "Zakład Bakteriologii Molekularnej"
+    },
+    {
+      "id": "415e8419-c333-4d5a-3cba-08ddaf6348b7",
+      "name": "Organizational units common to the University of Gdańsk and the Medical University of Gdańsk"
+    },
+    {
+      "id": "658638ce-6de2-4b2d-3cbb-08ddaf6348b7",
+      "name": "Zespół Laboratoriów Dydaktycznych MWB UG i GUMed (N003)"
+    },
+    {
+      "id": "b5e4b0cc-765e-4ff4-3cbc-08ddaf6348b7",
+      "name": "Zespół Laboratoriów Specjalistycznych MWB UG i GUMed (N004)"
+    },
+    {
+      "id": "8fc7d249-fcd4-4357-3cbd-08ddaf6348b7",
+      "name": "Wydział Zarządzania (Z000)"
+    },
+    {
+      "id": "46dfc36d-847a-4de1-3cbe-08ddaf6348b7",
+      "name": "Dziekan Wydziału Zarządzania"
+    },
+    {
+      "id": "c1c9e1c1-d92e-4d72-3cbf-08ddaf6348b7",
+      "name": "Prodziekan ds. Studenckich i Kształcenia"
+    },
+    {
+      "id": "bd16e0f3-fb8c-487b-3cc0-08ddaf6348b7",
+      "name": "Prodziekan ds. Nauki"
+    },
+    {
+      "id": "bf36d33f-1cc7-40f5-3cc1-08ddaf6348b7",
+      "name": "Sekcja Informatyczna Wydziału Zarządzania (Z003)"
+    },
+    {
+      "id": "8b8250d3-7b82-4fd3-3cc2-08ddaf6348b7",
+      "name": "Prodziekan ds. Umiędzynarodowienia i Rozwoju"
+    },
+    {
+      "id": "dbb1db2c-bfbc-4847-3cc3-08ddaf6348b7",
+      "name": "Dziekanat Wydziału Zarządzania (Z001)"
+    },
+    {
+      "id": "d69d0ead-a484-4cfd-3cc4-08ddaf6348b7",
+      "name": "Katedra Organizacji i Zarządzania (Z010)"
+    },
+    {
+      "id": "98f0d625-6c5b-4f33-3cc5-08ddaf6348b7",
+      "name": "Zakład Zarządzania Organizacjami Publicznymi (Z014)"
+    },
+    {
+      "id": "20982a79-4d72-4f15-3cc6-08ddaf6348b7",
+      "name": "Zakład Systemów Zarządzania (Z012)"
+    },
+    {
+      "id": "d41668d5-cdf4-4124-3cc7-08ddaf6348b7",
+      "name": "Zakład Zarządzania Zasobami Ludzkimi (Z013)"
+    },
+    {
+      "id": "bfc10417-4115-4141-3cc8-08ddaf6348b7",
+      "name": "Zakład Strategii i Zarządzania Przedsiębiorstwem (Z011)"
+    },
+    {
+      "id": "f8051aee-faae-4d37-3cc9-08ddaf6348b7",
+      "name": "Katedra Ekonometrii (Z020)"
+    },
+    {
+      "id": "b71e174d-ba3d-4c68-3cca-08ddaf6348b7",
+      "name": "Katedra Strategicznego Rozwoju (Z110)"
+    },
+    {
+      "id": "0dd4cab4-b53f-45e1-3ccb-08ddaf6348b7",
+      "name": "Zakład Rozwoju i Restrukturyzacji Przedsiębiorstw (Z031)"
+    },
+    {
+      "id": "d17230fa-efa5-4fbf-3ccc-08ddaf6348b7",
+      "name": "Zakład Zrównoważonego Rozwoju i Nauk o Jakości (Z112)"
+    },
+    {
+      "id": "0264222a-cc56-4d65-3ccd-08ddaf6348b7",
+      "name": "Katedra Finansów Przedsiębiorstw (Z040)"
+    },
+    {
+      "id": "e0804b70-a64e-4cdc-3cce-08ddaf6348b7",
+      "name": "Katedra Bankowości i Finansów (Z050)"
+    },
+    {
+      "id": "79ce2d23-489e-4e09-3ccf-08ddaf6348b7",
+      "name": "Katedra Informatyki Ekonomicznej (Z060)"
+    },
+    {
+      "id": "c25c5b2e-d29c-4687-3cd0-08ddaf6348b7",
+      "name": "Katedra Inwestycji i Nieruchomości (Z070)"
+    },
+    {
+      "id": "93cefac2-1317-475f-3cd1-08ddaf6348b7",
+      "name": "Katedra Marketingu (Z080)"
+    },
+    {
+      "id": "80439337-6fc6-4815-3cd2-08ddaf6348b7",
+      "name": "Katedra Rachunkowości (Z090)"
+    },
+    {
+      "id": "45e75f95-06b4-45f0-3cd3-08ddaf6348b7",
+      "name": "Zakład Rachunkowości Finansowej (Z091)"
+    },
+    {
+      "id": "98a75251-4673-4b97-3cd4-08ddaf6348b7",
+      "name": "Zakład Rachunkowości Zarządczej (Z092)"
+    },
+    {
+      "id": "feda93ed-dfb3-4d15-3cd5-08ddaf6348b7",
+      "name": "Katedra Statystyki (Z100)"
+    },
+    {
+      "id": "e01fd245-e545-45b1-3cd6-08ddaf6348b7",
+      "name": "Centrum Dydaktyczno-Konferencyjne (Z002)"
+    },
+    {
+      "id": "7f497b5d-5570-450e-3cd7-08ddaf6348b7",
+      "name": "Akademicki Związek Sportowy (S040)"
+    },
+    {
+      "id": "4ebb89aa-d17f-4982-3cd8-08ddaf6348b7",
+      "name": "Klub Uczelniany AZS"
+    },
+    {
+      "id": "988e9551-90d5-432d-3cd9-08ddaf6348b7",
+      "name": "Krajowe Centrum Informatyki Kwantowej (S150)"
+    },
+    {
+      "id": "d04cd819-febe-4b00-3cda-08ddaf6348b7",
+      "name": "Klub Seniora"
+    },
+    {
+      "id": "d89593e4-32f6-4190-3cdb-08ddaf6348b7",
+      "name": "Samorząd Studentów UG"
+    },
+    {
+      "id": "7fd40acb-2e82-4942-3cdc-08ddaf6348b7",
+      "name": "Fundacja Rozwoju Uniwersytetu Gdańskiego"
+    },
+    {
+      "id": "df56658a-a908-458e-3cdd-08ddaf6348b7",
+      "name": "Fundacja im. Johanna Gottfrieda Herdera"
+    },
+    {
+      "id": "59e2232a-7539-45c6-3cde-08ddaf6348b7",
+      "name": "Gdańska Fundacja Kształcenia Menedżerów"
+    },
+    {
+      "id": "6b6f44a3-1b0b-4f20-3cdf-08ddaf6348b7",
+      "name": "Spółka celowa Univentum Labs sp. z. o. o."
+    }
+  ],
+  "historicalGuestInstitutions": [],
+  "historicalSpubTasks": [],
+  "historicalPublications": []
+}

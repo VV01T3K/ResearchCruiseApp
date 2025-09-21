@@ -13,9 +13,13 @@
     "stylelint:fix": "stylelint --fix 'src/**/*.{css,scss}'",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
+    "linters": "run-s eslint prettier",
+    "linters:fix": "run-s eslint:fix prettier:fix",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "pnpm playwright test",
+    "test:ui": "pnpm playwright test --ui"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
@@ -23,6 +27,7 @@
     "@eslint/js": "^9.18.0",
     "@grafana/faro-web-sdk": "^1.17.2",
     "@grafana/faro-web-tracing": "^1.17.2",
+    "@playwright/test": "^1.55.0",
     "@storybook/addon-essentials": "^8.5.3",
     "@storybook/addon-interactions": "^8.5.3",
     "@storybook/addon-onboarding": "^8.5.3",
@@ -41,6 +46,7 @@
     "@tanstack/react-table": "^8.20.6",
     "@tanstack/router-devtools": "^1.97.14",
     "@tanstack/router-plugin": "^1.97.14",
+    "@types/node": "^24.5.2",
     "@types/papaparse": "^5.3.15",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
@@ -58,6 +64,7 @@
     "eslint-plugin-storybook": "^0.11.2",
     "globals": "^15.14.0",
     "motion": "^12.0.5",
+    "npm-run-all": "^4.1.5",
     "papaparse": "^5.5.1",
     "prettier": "^3.4.2",
     "react": "^19.0.0",
