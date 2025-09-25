@@ -4,4 +4,7 @@ namespace ResearchCruiseApp.Application.ExternalServices.Persistence.Repositorie
 
 public interface IResearchAreasRepository
     : IRepository<ResearchArea>,
-        IDbDictionaryRepository<ResearchArea>;
+        IDbDictionaryRepository<ResearchArea>
+{
+    Task<ResearchArea?> GetByName(string name, CancellationToken cancellationToken);
+}

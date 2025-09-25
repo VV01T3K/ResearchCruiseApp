@@ -12,7 +12,6 @@ internal class FormsAFactory(
     ICurrentUserService currentUserService,
     IIdentityService identityService,
     IFormsFieldsService formsFieldsService,
-    IResearchAreasRepository researchAreasRepository,
     IUgUnitsRepository ugUnitsRepository,
     IUserPublicationsRepository userPublicationsRepository,
     IMapper mapper
@@ -26,15 +25,12 @@ internal class FormsAFactory(
         if (!result.IsSuccess)
             return result.Error!;
 
-        result = await AddResearchArea(formA, formADto, cancellationToken);
-        if (!result.IsSuccess)
-            return result.Error!;
-
         result = await AddFormAUgUnits(formA, formADto, cancellationToken);
         if (!result.IsSuccess)
             return result.Error!;
 
         await AddPermissions(formA, formADto, cancellationToken);
+        await AddResearchAreaDescriptions(formA, formADto, cancellationToken);
         await AddFormAResearchTasks(formA, formADto, cancellationToken);
         await AddFormAContracts(formA, formADto, cancellationToken);
         await AddFormAGuestUnits(formA, formADto, cancellationToken);
@@ -93,24 +89,25 @@ internal class FormsAFactory(
         }
     }
 
-    private async Task<Result> AddResearchArea(
+    private async Task AddResearchAreaDescriptions(
         FormA formA,
         FormADto formADto,
         CancellationToken cancellationToken
     )
     {
-        if (formADto.ResearchAreaId is null)
-            return Result.Empty;
+        var alreadyAddedResearchAreaDescriptions = new HashSet<ResearchAreaDescription>();
 
-        var researchArea = await researchAreasRepository.GetById(
-            (Guid)formADto.ResearchAreaId,
-            cancellationToken
-        );
-        if (researchArea is null)
-            return Error.InvalidArgument("Podany obszar badawczy nie istnieje.");
+        foreach (var researchAreaDescriptionDto in formADto.ResearchAreaDescriptions)
+        {
+            var researchAreaDescription = await formsFieldsService.GetUniqueResearchAreaDescription(
+                researchAreaDescriptionDto,
+                alreadyAddedResearchAreaDescriptions,
+                cancellationToken
+            );
+            alreadyAddedResearchAreaDescriptions.Add(researchAreaDescription);
 
-        formA.ResearchArea = researchArea;
-        return Result.Empty;
+            formA.ResearchAreaDescriptions.Add(researchAreaDescription);
+        }
     }
 
     private async Task AddFormAResearchTasks(

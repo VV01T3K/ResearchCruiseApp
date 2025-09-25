@@ -10,6 +10,7 @@ import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 import { mapPersonToText } from '@/cruise-applications/helpers/PersonMappers';
 import { getContractCategoryName } from '@/cruise-applications/models/ContractDto';
 import { getPublicationCategoryLabel } from '@/cruise-applications/models/PublicationDto';
+import { getResearchAreaName } from '@/cruise-applications/models/ResearchAreaDto';
 import { getTaskName } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {
@@ -68,12 +69,24 @@ export function FormAPrintTemplate({ ref }: Props) {
         </div>
       </PrintingPageSection>
 
-      <PrintingPageSection title="4. Rejon prowadzenia badań">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-          <span>Rejon prowadzenia badań: </span>
-          <span>{initValues.researchAreas.find((x) => x.id === values.researchAreaId)?.name}</span>
-          <span>Informacje dodatkowe: </span>
-          <span>{values.researchAreaInfo}</span>
+      <PrintingPageSection title="4. Rejony prowadzenia badań">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="mb-4 font-semibold col-span-1 text-center">Lp.</div>
+          <div className="mb-4 font-semibold col-span-4 text-center">Rejon prowadzenia badań</div>
+          <div className="mb-4 font-semibold col-span-4 text-center">Informacje dodatkowe</div>
+          {values.researchAreaDescriptions.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                <div>{i + 1}.</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>
+                <div>{x.areaId ? getResearchAreaName(initValues.researchAreas, x.areaId) : x.differentName}</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>
+                <div>{x.info}</div>
+              </div>
+            </Fragment>
+          ))}
         </div>
       </PrintingPageSection>
 

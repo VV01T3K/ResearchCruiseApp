@@ -40,10 +40,7 @@ public class FormA : Entity
 
     public List<Permission> Permissions { get; init; } = [];
 
-    public ResearchArea? ResearchArea { get; set; }
-
-    [StringLength(10240)]
-    public string? ResearchAreaInfo { get; init; }
+    public List<ResearchAreaDescription> ResearchAreaDescriptions { get; init; } = [];
 
     [StringLength(10240)]
     public string? CruiseGoal { get; init; }

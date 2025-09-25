@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250925144401_ChangeResearchAreaToListInFormAAndFormCAndAllowForCustomAreaNames")]
+    partial class ChangeResearchAreaToListInFormAAndFormCAndAllowForCustomAreaNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -678,6 +681,9 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("PrecisePeriodStart")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ResearchAreaId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ShipUsage")
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
@@ -698,6 +704,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ResearchAreaId");
 
                     b.ToTable("FormsA");
                 });
@@ -1068,6 +1076,9 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
+                    b.Property<Guid?>("ResearchAreaId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ShipUsage")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -1078,6 +1089,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ResearchAreaId");
 
                     b.ToTable("FormsC");
                 });
@@ -2020,6 +2033,13 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Navigation("FormC");
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormA", b =>
+                {
+                    b.HasOne("ResearchCruiseApp.Domain.Entities.ResearchArea", null)
+                        .WithMany("FormsA")
+                        .HasForeignKey("ResearchAreaId");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormAContract", b =>
                 {
                     b.HasOne("ResearchCruiseApp.Domain.Entities.Contract", "Contract")
@@ -2246,6 +2266,13 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Navigation("FormB");
 
                     b.Navigation("UgUnit");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormC", b =>
+                {
+                    b.HasOne("ResearchCruiseApp.Domain.Entities.ResearchArea", null)
+                        .WithMany("FormsC")
+                        .HasForeignKey("ResearchAreaId");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormCGuestUnit", b =>
@@ -2497,6 +2524,13 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Navigation("FormAPublications");
 
                     b.Navigation("UserPublications");
+                });
+
+            modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.ResearchArea", b =>
+                {
+                    b.Navigation("FormsA");
+
+                    b.Navigation("FormsC");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.ResearchEquipment", b =>

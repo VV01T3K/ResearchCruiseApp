@@ -13,7 +13,6 @@ namespace ResearchCruiseApp.Application.Services.Factories.FormsC;
 
 public class FormsCFactory(
     IMapper mapper,
-    IResearchAreasRepository researchAreasRepository,
     IUgUnitsRepository ugUnitsRepository,
     IShipEquipmentsRepository shipEquipmentsRepository,
     IFormsFieldsService formsFieldsService,
@@ -25,11 +24,8 @@ public class FormsCFactory(
     {
         var formC = mapper.Map<FormC>(formCDto);
 
-        var result = await AddResearchArea(formC, formCDto, cancellationToken);
-        if (!result.IsSuccess)
-            return result.Error!;
-
         await AddPermissions(formC, formCDto, cancellationToken);
+        await AddResearchAreaDescriptions(formC, formCDto, cancellationToken);
         await AddFormCUgUnits(formC, formCDto, cancellationToken);
         await AddFormCGuestUnits(formC, formCDto, cancellationToken);
         await effectsService.AddResearchTasksEffects(
@@ -88,21 +84,25 @@ public class FormsCFactory(
         }
     }
 
-    private async Task<Result> AddResearchArea(
+    private async Task AddResearchAreaDescriptions(
         FormC formC,
         FormCDto formCDto,
         CancellationToken cancellationToken
     )
     {
-        var researchArea = await researchAreasRepository.GetById(
-            formCDto.ResearchAreaId,
-            cancellationToken
-        );
-        if (researchArea is null)
-            return Error.InvalidArgument("Podany obszar badawczy nie istnieje.");
+        var alreadyAddedResearchAreaDescriptions = new HashSet<ResearchAreaDescription>();
 
-        formC.ResearchArea = researchArea;
-        return Result.Empty;
+        foreach (var researchAreaDescriptionDto in formCDto.ResearchAreaDescriptions)
+        {
+            var researchAreaDescription = await formsFieldsService.GetUniqueResearchAreaDescription(
+                researchAreaDescriptionDto,
+                alreadyAddedResearchAreaDescriptions,
+                cancellationToken
+            );
+            alreadyAddedResearchAreaDescriptions.Add(researchAreaDescription);
+
+            formC.ResearchAreaDescriptions.Add(researchAreaDescription);
+        }
     }
 
     private async Task AddFormCUgUnits(

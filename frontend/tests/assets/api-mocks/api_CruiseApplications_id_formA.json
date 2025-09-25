@@ -10,8 +10,13 @@
   "shipUsage": "0",
   "differentUsage": "",
   "permissions": [],
-  "researchAreaId": "cb2b71c0-14d8-4cec-562b-08ddaf6348c2",
-  "researchAreaInfo": "",
+  "researchAreaDescriptions": [
+    {
+      "areaId": "cb2b71c0-14d8-4cec-562b-08ddaf6348c2",
+      "differentName": null,
+      "info": ""
+    }
+  ],
   "cruiseGoal": "0",
   "cruiseGoalDescription": "abc",
   "researchTasks": [

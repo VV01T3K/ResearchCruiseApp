@@ -33,10 +33,7 @@ public class FormADto
 
     public List<PermissionDto> Permissions { get; init; } = [];
 
-    public Guid? ResearchAreaId { get; init; }
-
-    [StringLength(10240)]
-    public string? ResearchAreaInfo { get; init; }
+    public List<ResearchAreaDescriptionDto> ResearchAreaDescriptions { get; init; } = [];
 
     public string? CruiseGoal { get; init; }
 

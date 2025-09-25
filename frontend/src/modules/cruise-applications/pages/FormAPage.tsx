@@ -40,7 +40,6 @@ export function FormAPage() {
       ? {
           ...formA.data,
           deputyManagerId: formA.data.deputyManagerId ?? '', // API might return null values for drafts
-          researchAreaId: formA.data.researchAreaId ?? '',
         }
       : {
           id: undefined,
@@ -56,8 +55,7 @@ export function FormAPage() {
           shipUsage: '',
           differentUsage: '',
           permissions: [],
-          researchAreaId: '',
-          researchAreaInfo: '',
+          researchAreaDescriptions: [],
           cruiseGoal: '',
           cruiseGoalDescription: '',
           researchTasks: [],

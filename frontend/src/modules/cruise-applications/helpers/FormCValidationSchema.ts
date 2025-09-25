@@ -5,7 +5,6 @@ import { CollectedSampleDtoValidationSchema } from '@/cruise-applications/models
 import { ContractDtoValidationSchema } from '@/cruise-applications/models/ContractDto';
 import { CruiseDayDetailsDtoValidationSchema } from '@/cruise-applications/models/CruiseDayDetailsDto';
 import { FileDtoValidationSchema } from '@/cruise-applications/models/FileDto';
-import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
 import { GuestTeamDtoValidationSchema } from '@/cruise-applications/models/GuestTeamDto';
 import { LongResearchEquipmentDtoValidationSchema } from '@/cruise-applications/models/LongResearchEquipmentDto';
 import { PermissionDtoWithFileValidationSchema } from '@/cruise-applications/models/PermissionDto';
@@ -15,6 +14,9 @@ import { ResearchTaskEffectDtoValidationSchema } from '@/cruise-applications/mod
 import { ShortResearchEquipmentDtoValidationSchema } from '@/cruise-applications/models/ShortResearchEquipmentDto';
 import { SpubTaskDtoValidationSchema } from '@/cruise-applications/models/SpubTaskDto';
 import { UGTeamDtoValidationSchema } from '@/cruise-applications/models/UGTeamDto';
+
+import { FormAInitValuesDto } from '../models/FormAInitValuesDto';
+import { getResearchAreaDescriptionDtoValidationSchema } from '../models/ResearchAreaDescriptionDto';
 
 const ShipUsageValidationSchema = z
   .object({
@@ -33,15 +35,12 @@ const ShipUsageValidationSchema = z
     }
   });
 
-const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
+const OtherValidationSchema = (formAInitValues: FormAInitValuesDto) =>
   z.object({
     permissions: PermissionDtoWithFileValidationSchema.array(),
-    researchAreaId: z
-      .string()
-      .refine(
-        (val) => !!val && initValues.researchAreas.map((x) => x.id).includes(val),
-        'Obszar badań musi być jednym z dostępnych obszarów badań'
-      ),
+    researchAreaDescriptions: getResearchAreaDescriptionDtoValidationSchema(formAInitValues)
+      .array()
+      .min(1, 'Co najmniej jeden rejon badań jest wymagany'),
     ugTeams: UGTeamDtoValidationSchema.array()
       .min(1, 'Co najmniej jeden zespół UG jest wymagany')
       .refine(
@@ -76,6 +75,6 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
     photos: FileDtoValidationSchema.array(),
   });
 
-export function getFormCValidationSchema(initValues: FormAInitValuesDto) {
-  return ShipUsageValidationSchema.and(OtherValidationSchema(initValues));
+export function getFormCValidationSchema(formAInitValues: FormAInitValuesDto) {
+  return ShipUsageValidationSchema.and(OtherValidationSchema(formAInitValues));
 }

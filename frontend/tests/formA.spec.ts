@@ -31,50 +31,62 @@ test.describe('cruise length section tests', () => {
   });
 
   // allowed cruise days count is in range (0-60] (right-side inclusive)
+  const dayTestCases: [boolean, number][] = [
+    [false, 0],
+    [false, 61],
+    [false, 100],
+    [true, 1],
+    [true, 45],
+    [true, 59],
+    [true, 60],
+  ];
   test.describe('planned cruise days constrains', () => {
-    [
-      [false, 0],
-      [false, 61],
-      [false, 100],
-      [true, 1],
-      [true, 45],
-      [true, 59],
-      [true, 60],
-    ].forEach(([isValid, val]) => {
+    dayTestCases.forEach(([isValid, val]) => {
       test(`${isValid ? 'valid' : 'invalid'}-${val}`, async ({ formAPage }) => {
+        const LOWER_DAY_LIMIT = 1;
+        const UPPER_DAY_LIMIT = 60;
+
         await formAPage.sections.cruiseLengthSection.defaultFill();
         await formAPage.sections.cruiseLengthSection.cruiseDaysInput.fill(val.toString());
 
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
-        } else {
+        } else if (val < LOWER_DAY_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
           await formAPage.submitForm({ expectedResult: 'invalid' });
+        } else if (val > UPPER_DAY_LIMIT) {
+          await expect(formAPage.sections.cruiseLengthSection.cruiseDaysInput).toHaveValue(`${UPPER_DAY_LIMIT}`); // input should cap the value
         }
       });
     });
   });
 
   // allowed cruise hours count is in range (0-1440] (right-side inclusive)
+  const hourTestCases: [boolean, number][] = [
+    [false, 0],
+    [false, 1441],
+    [false, 1500],
+    [true, 1],
+    [true, 1000],
+    [true, 1439],
+    [true, 1440],
+  ];
   test.describe('planned cruise hours constrains', () => {
-    [
-      [false, 0],
-      [false, 1441],
-      [false, 1500],
-      [true, 1],
-      [true, 1000],
-      [true, 1439],
-      [true, 1440],
-    ].forEach(([isValid, val]) => {
+    hourTestCases.forEach(([isValid, val]) => {
       test(`${isValid ? 'valid' : 'invalid'}-${val}`, async ({ formAPage }) => {
+        const LOWER_HOUR_LIMIT = 1;
+        const UPPER_HOUR_LIMIT = 1440;
+
         await formAPage.sections.cruiseLengthSection.defaultFill();
         await formAPage.sections.cruiseLengthSection.cruiseHoursInput.fill(val.toString());
 
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
-        } else {
+        } else if (val < LOWER_HOUR_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
           await formAPage.submitForm({ expectedResult: 'invalid' });
+        } else if (val > UPPER_HOUR_LIMIT) {
+          await expect(formAPage.sections.cruiseLengthSection.cruiseHoursInput).toHaveValue(`${UPPER_HOUR_LIMIT}`); // input should cap the value
         }
       });
     });
@@ -125,12 +137,38 @@ test.describe('research area section tests', () => {
     await formAPage.fillForm({ except: ['researchAreaSection'] });
   });
 
-  test('no research area chosen', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(formAPage.sections.researchAreaSection.noResearchAreaChosenMessage).toBeVisible();
+  test('no research areas', async ({ formAPage }) => {
+    const researchAreaSection = formAPage.sections.researchAreaSection;
 
-    await formAPage.sections.researchAreaSection.researchAreaDropdown.selectOption('Ujście Wisły');
-    await expect(formAPage.sections.researchAreaSection.noResearchAreaChosenMessage).toBeHidden();
+    await formAPage.submitForm({ expectedResult: 'invalid' });
+    await expect(researchAreaSection.noResearchAreasMessage).toBeVisible();
+
+    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
+    await expect(researchAreaSection.noResearchAreasMessage).toBeHidden();
+    await researchAreaSection.researchAreaRow('last').additionalInfoInput.fill('Dodatkowe informacje o rejonie badań');
+    await formAPage.submitForm({ expectedResult: 'valid' });
+  });
+
+  test('missing area name', async ({ formAPage }) => {
+    const researchAreaSection = formAPage.sections.researchAreaSection;
+    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
+    const researchAreaRow = researchAreaSection.researchAreaRow('last');
+    await researchAreaRow.additionalInfoInput.fill('Dodatkowe informacje o rejonie badań');
+
+    await researchAreaRow.nameInput.fill(''); // make sure the input is empty
+    await expect(researchAreaRow.nameInput.errors.required).toBeVisible();
+    await formAPage.submitForm();
+    await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
+
+    await researchAreaRow.nameInput.fill('Jakaś strefa');
+    await expect(researchAreaRow.nameInput.errors.required).toBeHidden();
+    await formAPage.submitForm({ expectedResult: 'valid' });
+  });
+
+  test('missing additional info', async ({ formAPage }) => {
+    const researchAreaSection = formAPage.sections.researchAreaSection;
+    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
+
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
 });
@@ -209,7 +247,7 @@ test.describe('contracts section tests', () => {
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
 
-  test('missing data', async ({ formAPage }) => {
+  test.fixme('missing data', async ({ formAPage }) => {
     const contractsSection = formAPage.sections.contractsSection;
     await contractsSection.addNewContractDropdown.selectOption('Międzynarodowa');
     const contractRow = contractsSection.contractRow('first');

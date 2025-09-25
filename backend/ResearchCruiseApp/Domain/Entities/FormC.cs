@@ -12,7 +12,7 @@ public class FormC : Entity
 
     public List<Permission> Permissions { get; init; } = [];
 
-    public ResearchArea ResearchArea { get; set; } = null!;
+    public List<ResearchAreaDescription> ResearchAreaDescriptions { get; init; } = [];
 
     public List<FormCUgUnit> FormCUgUnits { get; init; } = [];
 

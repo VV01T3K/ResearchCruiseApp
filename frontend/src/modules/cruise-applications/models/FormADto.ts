@@ -4,6 +4,7 @@ import { ContractDto } from '@/cruise-applications/models/ContractDto';
 import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
 import { PermissionDto } from '@/cruise-applications/models/PermissionDto';
 import { PublicationDto } from '@/cruise-applications/models/PublicationDto';
+import { ResearchAreaDescriptionDto } from '@/cruise-applications/models/ResearchAreaDescriptionDto';
 import { ResearchTaskDto } from '@/cruise-applications/models/ResearchTaskDto';
 import { SpubTaskDto } from '@/cruise-applications/models/SpubTaskDto';
 import { UGTeamDto } from '@/cruise-applications/models/UGTeamDto';
@@ -22,8 +23,7 @@ export type FormADto = {
   shipUsage?: string;
   differentUsage: string;
   permissions: PermissionDto[];
-  researchAreaId: string | '';
-  researchAreaInfo: string | '';
+  researchAreaDescriptions: ResearchAreaDescriptionDto[];
   cruiseGoal: CruiseGoal | '';
   cruiseGoalDescription: string;
   researchTasks: ResearchTaskDto[];

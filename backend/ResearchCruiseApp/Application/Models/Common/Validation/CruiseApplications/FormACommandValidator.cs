@@ -194,9 +194,16 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
 
     private void AddResearchAreaNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.ResearchAreaId)
-            .Must(id => id != null)
-            .WithMessage("Wybranie obszaru badawczego jest wymagane.");
+        RuleFor(command => command.FormADto.ResearchAreaDescriptions)
+            .Must(descriptions => descriptions.Count > 0)
+            .WithMessage("Wymagane jest podanie przynajmniej jednego obszaru badawczego.");
+
+        RuleForEach(command => command.FormADto.ResearchAreaDescriptions)
+            .Where(descriptionDto => descriptionDto.AreaId is null)
+            .Must(descriptionDto => !string.IsNullOrEmpty(descriptionDto.DifferentName))
+            .WithMessage(
+                "Wybranie obszaru badawczego albo podanie alternatywnej nazwy jest wymagane."
+            );
     }
 
     private void AddCruiseGoalDraftValidation()

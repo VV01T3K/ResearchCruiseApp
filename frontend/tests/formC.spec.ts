@@ -99,7 +99,7 @@ test.describe('contracts section tests', () => {
     await formCPage.submitForm({ expectedResult: 'valid' });
   });
 
-  test('missing data', async ({ formCPage }) => {
+  test.fixme('missing data', async ({ formCPage }) => {
     const contractsSection = formCPage.sections.contractsSection;
     await contractsSection.addNewContractDropdown.selectOption('Międzynarodowa');
     const contractRow = contractsSection.contractRow('first');

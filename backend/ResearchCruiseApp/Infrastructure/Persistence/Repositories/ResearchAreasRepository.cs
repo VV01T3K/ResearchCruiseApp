@@ -15,4 +15,12 @@ internal class ResearchAreasRepository : Repository<ResearchArea>, IResearchArea
             .ResearchAreas.Where(researchArea => researchArea.IsActive)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<ResearchArea?> GetByName(string name, CancellationToken cancellationToken)
+    {
+        return await DbContext.ResearchAreas.FirstOrDefaultAsync(
+            ra => ra.Name == name,
+            cancellationToken
+        );
+    }
 }

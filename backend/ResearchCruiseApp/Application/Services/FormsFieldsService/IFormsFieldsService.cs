@@ -12,6 +12,12 @@ public interface IFormsFieldsService
         CancellationToken cancellationToken
     );
 
+    Task<ResearchAreaDescription> GetUniqueResearchAreaDescription(
+        ResearchAreaDescriptionDto researchAreaDescriptionDto,
+        IEnumerable<ResearchAreaDescription> researchAreaDescriptionsInMemory,
+        CancellationToken cancellationToken
+    );
+
     Task<ResearchTask> GetUniqueResearchTask(
         IResearchTaskDto researchTaskDto,
         IEnumerable<ResearchTask> researchTasksInMemory,

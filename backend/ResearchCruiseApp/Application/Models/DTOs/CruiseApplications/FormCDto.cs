@@ -12,7 +12,7 @@ public class FormCDto
 
     public List<PermissionDto> Permissions { get; init; } = [];
 
-    public Guid ResearchAreaId { get; init; }
+    public List<ResearchAreaDescriptionDto> ResearchAreaDescriptions { get; init; } = [];
 
     public List<UgTeamDto> UgTeams { get; init; } = [];
 

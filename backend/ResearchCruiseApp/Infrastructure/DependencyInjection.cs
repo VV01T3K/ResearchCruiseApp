@@ -103,6 +103,7 @@ public static class DependencyInjection
             .AddScoped<IFormsARepository, FormsARepository>()
             .AddScoped<IPermissionsRepository, PermissionsRepository>()
             .AddScoped<IResearchAreasRepository, ResearchAreasRepository>()
+            .AddScoped<IResearchAreaDescriptionsRepository, ResearchAreaDescriptionsRepository>()
             .AddScoped<IContractsRepository, ContractsRepository>()
             .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()
             .AddScoped<IPublicationsRepository, PublicationsRepository>()

@@ -21,7 +21,9 @@ public class FormsFieldsService(
     IPortsRepository portsRepository,
     ICruiseDaysDetailsRepository cruiseDaysDetailsRepository,
     IPermissionsFactory permissionsFactory,
-    IContractsFactory contractsFactory
+    IContractsFactory contractsFactory,
+    IResearchAreaDescriptionsRepository researchAreaDescriptionsRepository,
+    IResearchAreasRepository researchAreasRepository
 ) : IFormsFieldsService
 {
     public async Task<Permission> GetUniquePermission(
@@ -36,6 +38,46 @@ public class FormsFieldsService(
             ?? await permissionsRepository.Get(newPermission, cancellationToken);
 
         return oldPermission ?? newPermission;
+    }
+
+    public async Task<ResearchAreaDescription> GetUniqueResearchAreaDescription(
+        ResearchAreaDescriptionDto researchAreaDescriptionDto,
+        IEnumerable<ResearchAreaDescription> researchAreaDescriptionsInMemory,
+        CancellationToken cancellationToken
+    )
+    {
+        // If the research area description has a different name, we check if this name already exists in the researchAreasRepository
+        if (
+            researchAreaDescriptionDto.AreaId is null
+            && !string.IsNullOrEmpty(researchAreaDescriptionDto.DifferentName)
+        )
+        {
+            var researchArea = await researchAreasRepository.GetByName(
+                researchAreaDescriptionDto.DifferentName,
+                cancellationToken
+            );
+
+            if (researchArea is not null)
+            {
+                researchAreaDescriptionDto = researchAreaDescriptionDto with
+                {
+                    AreaId = researchArea.Id,
+                    DifferentName = null, // Clear the different name since we found a matching research area
+                };
+            }
+        }
+
+        var newResearchAreaDescription = mapper.Map<ResearchAreaDescription>(
+            researchAreaDescriptionDto
+        );
+        var oldResearchAreaDescription =
+            Find(newResearchAreaDescription, researchAreaDescriptionsInMemory)
+            ?? await researchAreaDescriptionsRepository.Get(
+                newResearchAreaDescription,
+                cancellationToken
+            );
+
+        return oldResearchAreaDescription ?? newResearchAreaDescription;
     }
 
     public async Task<ResearchTask> GetUniqueResearchTask(

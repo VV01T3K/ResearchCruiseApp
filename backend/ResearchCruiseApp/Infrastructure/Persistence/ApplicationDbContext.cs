@@ -18,6 +18,7 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
 
     public DbSet<ResearchArea> ResearchAreas { get; init; } = null!;
     public DbSet<Permission> Permissions { get; init; } = null!;
+    public DbSet<ResearchAreaDescription> ResearchAreaDescriptions { get; init; } = null!;
     public DbSet<FormAResearchTask> FormAResearchTasks { get; init; } = null!;
     public DbSet<ResearchTask> ResearchTasks { get; init; } = null!;
     public DbSet<Contract> Contracts { get; init; } = null!;

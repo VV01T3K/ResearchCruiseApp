@@ -6,6 +6,7 @@ import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
 import { LongResearchEquipmentDto } from '@/cruise-applications/models/LongResearchEquipmentDto';
 import { PermissionDto } from '@/cruise-applications/models/PermissionDto';
 import { PortDto } from '@/cruise-applications/models/PortDto';
+import { ResearchAreaDescriptionDto } from '@/cruise-applications/models/ResearchAreaDescriptionDto';
 import { ResearchEquipmentDto } from '@/cruise-applications/models/ResearchEquipmentDto';
 import { ResearchTaskEffectDto } from '@/cruise-applications/models/ResearchTaskEffectDto';
 import { ShortResearchEquipmentDto } from '@/cruise-applications/models/ShortResearchEquipmentDto';
@@ -16,7 +17,7 @@ export type FormCDto = {
   shipUsage: string; // Max length 1
   differentUsage: string; // Max length 1024
   permissions: PermissionDto[];
-  researchAreaId: string;
+  researchAreaDescriptions: ResearchAreaDescriptionDto[];
   ugTeams: UGTeamDto[];
   guestTeams: GuestTeamDto[];
   researchTasksEffects: ResearchTaskEffectDto[];

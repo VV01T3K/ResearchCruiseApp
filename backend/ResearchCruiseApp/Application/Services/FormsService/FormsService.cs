@@ -11,6 +11,7 @@ public class FormsService(
     IFormAResearchTasksRepository formAResearchTasksRepository,
     IResearchTasksRepository researchTasksRepository,
     IFormAContractsRepository formAContractsRepository,
+    IResearchAreaDescriptionsRepository researchAreaDescriptionsRepository,
     IFormAUgUnitsRepository formAUgUnitsRepository,
     IFormAGuestUnitsRepository formAGuestUnitsRepository,
     IFormAPublicationsRepository formAPublicationsRepository,
@@ -48,6 +49,7 @@ public class FormsService(
         await DeletePermissions(formA, cancellationToken);
         await DeleteFormAResearchTasks(formA, cancellationToken);
         await DeleteFormAContracts(formA, cancellationToken);
+        await DeleteFormAResearchAreaDescriptions(formA, cancellationToken);
         DeleteFormAUgUnits(formA);
         await DeleteFormAGuestUnits(formA, cancellationToken);
         await DeleteFormAPublications(formA, cancellationToken);
@@ -81,6 +83,7 @@ public class FormsService(
         await DeleteFormCGuestUnits(formC, cancellationToken);
         await effectsService.DeleteResearchTasksEffects(formC, cancellationToken);
         await DeleteContracts(formC, cancellationToken);
+        await DeleteFormCResearchAreaDescriptions(formC, cancellationToken);
         await DeleteSpubTasks(formC, cancellationToken);
         await DeleteFormCShortResearchEquipments(formC, cancellationToken);
         await DeleteFormCLongResearchEquipments(formC, cancellationToken);
@@ -151,6 +154,31 @@ public class FormsService(
                 contractsRepository.Delete(contract);
             }
         }
+    }
+
+    private async Task DeleteFormAResearchAreaDescriptions(
+        FormA formA,
+        CancellationToken cancellationToken
+    )
+    {
+        foreach (var researchAreaDescription in formA.ResearchAreaDescriptions)
+        {
+            if (
+                await researchAreaDescriptionsRepository.CountFormsA(
+                    researchAreaDescription,
+                    cancellationToken
+                ) == 1 // The one to be deleted
+                && await researchAreaDescriptionsRepository.CountFormsC(
+                    researchAreaDescription,
+                    cancellationToken
+                ) == 0
+            )
+            {
+                researchAreaDescriptionsRepository.Delete(researchAreaDescription);
+            }
+        }
+
+        formA.ResearchAreaDescriptions.Clear();
     }
 
     private void DeleteFormAUgUnits(FormA formA)
@@ -454,6 +482,31 @@ public class FormsService(
         }
 
         formC.Contracts.Clear();
+    }
+
+    private async Task DeleteFormCResearchAreaDescriptions(
+        FormC formC,
+        CancellationToken cancellationToken
+    )
+    {
+        foreach (var researchAreaDescription in formC.ResearchAreaDescriptions)
+        {
+            if (
+                await researchAreaDescriptionsRepository.CountFormsC(
+                    researchAreaDescription,
+                    cancellationToken
+                ) == 1 // The one to be deleted
+                && await researchAreaDescriptionsRepository.CountFormsA(
+                    researchAreaDescription,
+                    cancellationToken
+                ) == 0
+            )
+            {
+                researchAreaDescriptionsRepository.Delete(researchAreaDescription);
+            }
+        }
+
+        formC.ResearchAreaDescriptions.Clear();
     }
 
     private async Task DeleteSpubTasks(FormC formC, CancellationToken cancellationToken)
