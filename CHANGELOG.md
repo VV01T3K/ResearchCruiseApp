@@ -1,3 +1,26 @@
+## 2.1.0 - 2025-09-25
+#### Changes since *2.0.0*:
+* feat: add support for multiple and custom research areas (#389)
+* feat: add basic frontend tests (#388)
+* feat: improve form validation UX
+* feat: add custom cruises
+* chore: add renovate label
+* chore: add k8s readiness probes
+* fix: block submit button in forms
+* feat: add hint in form b
+* feat: increase max string length limit for text fields
+* chore(config): migrate config renovate.json
+* feat: add renovate config
+* fix: prod docker compose
+* feat: add cruise ship role
+* feat: allow shipowner to remove users
+* feat: allow multiple scans attached to one contract
+* feat: show warning if unassigned cruise manager is selected
+* feat: add precise period selection in form A
+* feat: allow any cruise modifications by ship owner (#360)
+* docs: selection and adaptation of methodology
+* docs: add scrum sprint retrospective
+
 ## 2.0.0 - 2025-05-13
 #### Changes since *1.1.0*:
 * chore: rename k8s directory
@@ -65,5 +88,3 @@
 * docs: add scrum product backlog
 * feat: add document version to template
 * docs: add project organization
-
-
