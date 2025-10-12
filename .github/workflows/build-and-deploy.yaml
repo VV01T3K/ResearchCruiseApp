@@ -119,6 +119,7 @@ jobs:
       - name: Configure secrets
         run: |
           echo "ConnectionStrings__Database=${{ secrets.DB }}" >> ../../base/backend/.env
+          echo "JWT__Secret=${{ secrets.JWT_SECRET }}" >> ../../base/backend/.env
 
       - name: Deploy to staging
         run: |

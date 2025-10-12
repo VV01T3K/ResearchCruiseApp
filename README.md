@@ -23,6 +23,16 @@ The application aims to streamline processes related to the booking, management,
 | `FrontendUrl`                           | Frontend URL - for CORS and email verification     | `http://localhost:3000`                                                         | Yes      |
 | `UseOtlpExporter`                       | Whether to use the OTLP exporter for OpenTelemetry | `true`                                                                          | No       |
 | `OtlpExporterEndpoint`                  | OTLP exporter endpoint                             | `http://alloy:4318` or `grpc://alloy:4317`                                      | No       |
+| `SmtpSettings__SmtpServer`              | SMTP server address                                | `smtp.gmail.com`                                                                | Yes      |
+| `SmtpSettings__SmtpPort`                | SMTP server port                                   | `465`                                                                           | No       |
+| `SmtpSettings__SmtpUsername`            | SMTP username                                      | `example@gmail.com`                                                             | Yes      |
+| `SmtpSettings__SmtpPassword`            | SMTP password                                      | `P@ssword1`                                                                     | Yes      |
+| `SmtpSettings__SenderName`              | Email sender name                                  | `Biuro Armatora z jednostką r/v Oceanograf, Uniwersytet Gdański`                | No       |
+| `JWT__ValidAudience`                    | JWT valid audience                                 | `https://rejsy.ug.edu.pl/`                                                      | No       |
+| `JWT__ValidIssuer`                      | JWT valid issuer                                   | `https://rejsy.ug.edu.pl/`                                                      | No       |
+| `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds               | `3600`                                                                          | No       |
+| `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds              | `7200`                                                                          | No       |
+| `JWT__Secret`                           | JWT signing secret                                 | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
 
 ## Deployment
 
