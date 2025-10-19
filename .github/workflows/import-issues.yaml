@@ -1,0 +1,62 @@
+name: Import issues from another repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      src:
+        description: "Source repo (owner/repo)"
+        required: true
+      state:
+        description: "Issues state: open | closed | all"
+        required: false
+        default: "all"
+      copy_comments:
+        description: "Copy comments: yes | no"
+        required: false
+        default: "yes"
+      create_milestones:
+        description: "Create missing milestones: yes | no"
+        required: false
+        default: "yes"
+      from_issue:
+        description: "Start from source issue number (optional)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: import-issues
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout destination repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run importer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python import-github-issues.py \
+            --throttle-ms 500 \
+            --src "${{ inputs.src }}" \
+            --dst "${{ github.repository }}" \
+            --state "${{ inputs.state }}" \
+            --copy-comments "${{ inputs.copy_comments }}" \
+            --create-milestones "${{ inputs.create_milestones }}" \
+            $([ -n "${{ inputs.from_issue }}" ] && echo --from-issue "${{ inputs.from_issue }}")
