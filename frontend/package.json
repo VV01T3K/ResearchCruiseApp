@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "2.1.0",
-  "repository": "https://github.com/KanarekLife/ResearchCruiseApp",
+  "repository": "https://github.com/VV01T3K/ResearchCruiseApp",
   "type": "module",
   "scripts": {
     "dev": "vite",

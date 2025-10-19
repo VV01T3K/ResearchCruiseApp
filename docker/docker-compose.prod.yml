@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: researchcruiseapp-backend
-    image: ghcr.io/kanareklife/researchcruiseapp/backend
+    image: ghcr.io/vv01t3k/researchcruiseapp/backend
     environment:
       - Database__SeedAutomatically=false
       - Database__MigrateAutomatically=false
@@ -14,6 +14,6 @@ services:
       - 3000:8080
   frontend:
     container_name: researchcruiseapp-frontend
-    image: ghcr.io/kanareklife/researchcruiseapp/frontend
+    image: ghcr.io/vv01t3k/researchcruiseapp/frontend
     ports:
       - 8080:8080
