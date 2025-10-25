@@ -6,6 +6,9 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
+	"containerEnv": {
+		"DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Configure tool-specific properties.
@@ -23,10 +26,15 @@
 				"esbenp.prettier-vscode",
 				"EditorConfig.EditorConfig",
 				"ahmadalli.vscode-nginx-conf",
-				"docker.docker"
+				"docker.docker",
+				"csharpier.csharpier-vscode",
+				"ms-dotnettools.csharp",
+				"ms-dotnettools.vscode-dotnet-runtime",
+				"cweijan.vscode-mysql-client2"
 			]
 		}
-	}
+	},
+	"postCreateCommand": "cd backend && dotnet restore && sudo dotnet workload update"
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
