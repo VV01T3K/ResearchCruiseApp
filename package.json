@@ -1,0 +1,10 @@
+{
+  "name": "research-cruise-app-scripts",
+  "scripts": {
+    "db:up": "cd docker && docker compose -f docker-compose.infra.yml up -d db",
+    "db:down": "cd docker && docker compose -f docker-compose.infra.yml down",
+    "db:del": "pnpm db:down && docker volume rm researchcruiseapp_researchcruiseapp-db",
+    "getAdminPass": "pnpm db:up && sleep 5 && cd backend && tempfile=$(mktemp) && (timeout 20 dotnet run --project ResearchCruiseApp.csproj | tee -a $tempfile) && pnpm db:down && cat $tempfile | grep admin && rm $tempfile"
+  },
+  "packageManager": "pnpm@10.11.0"
+}
