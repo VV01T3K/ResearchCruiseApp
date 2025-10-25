@@ -36,4 +36,12 @@ export type CruiseApplicationDto = {
   status: CruiseApplicationStatus;
   effectsDoneRate: string;
   note: string | null;
+
+  cruiseHours: string;
+  acceptablePeriodBeg: string | null;
+  acceptablePeriodEnd: string | null;
+  optimalPeriodBeg: string | null;
+  optimalPeriodEnd: string | null;
+  precisePeriodStart: string | null;
+  precisePeriodEnd: string | null;
 };

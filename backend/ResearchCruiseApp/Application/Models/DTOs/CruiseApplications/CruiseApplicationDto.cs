@@ -39,4 +39,18 @@ public class CruiseApplicationDto
     public string EffectsDoneRate { get; set; } = "0";
 
     public string? Note { get; init; }
+
+    public string? CruiseHours { get; init; }
+
+    public string? AcceptablePeriodBeg { get; init; }
+
+    public string? AcceptablePeriodEnd { get; init; }
+
+    public string? OptimalPeriodBeg { get; init; }
+
+    public string? OptimalPeriodEnd { get; init; }
+
+    public DateTime? PrecisePeriodStart { get; init; }
+
+    public DateTime? PrecisePeriodEnd { get; init; }
 }
