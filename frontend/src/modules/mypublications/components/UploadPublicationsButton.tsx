@@ -1,3 +1,6 @@
+import '@citation-js/plugin-bibtex';
+import '@citation-js/plugin-csl';
+
 import Papa from 'papaparse';
 import React from 'react';
 
@@ -29,11 +32,29 @@ function parseCSV(csvText: string): Publication[] {
   return publications;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function parseBibTeX(_bibTexText: string): Publication[] {
-  // TODO: Implement BibTeX parsing
-  console.warn('BibTeX parsing not yet implemented');
-  return [];
+async function parseBibTeX(bibTexText: string): Promise<Publication[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const module = (await import('@citation-js/core')) as any;
+  const { Cite } = module;
+
+  const cite = new Cite(bibTexText);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bibliography: any[] = cite.data || [];
+
+  return bibliography.map(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (entry: any) =>
+      ({
+        category: 'subject',
+        doi: entry.DOI || '-',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        authors: entry.author ? entry.author.map((a: any) => `${a.given} ${a.family}`).join(', ') : '-',
+        title: entry.title || '-',
+        magazine: entry['container-title'] || entry.journal || '-',
+        year: entry.issued?.['date-parts']?.[0]?.[0]?.toString() || '-',
+        ministerialPoints: '-',
+      }) as Publication
+  );
 }
 
 async function parsePublicationFile(file: File): Promise<Publication[]> {
@@ -57,10 +78,11 @@ async function parsePublicationFile(file: File): Promise<Publication[]> {
   if (file.type === 'text/plain' || file.name.endsWith('.bib')) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (evt) => {
+      reader.onload = async (evt) => {
         try {
           const bibTexText = new TextDecoder('utf-8').decode(evt.target?.result as ArrayBuffer);
-          resolve(parseBibTeX(bibTexText));
+          const publications = await parseBibTeX(bibTexText);
+          resolve(publications);
         } catch (error) {
           reject(error);
         }
