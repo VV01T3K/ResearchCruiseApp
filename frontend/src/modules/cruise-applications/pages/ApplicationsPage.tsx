@@ -9,15 +9,9 @@ import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppTable } from '@/core/components/table/AppTable';
+import { getDisplayPeriod } from '@/cruise-applications/helpers/periodUtils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
-
-function convertPeriodNumberToDate(periodNumber: string, year: number): Date {
-  const num = parseInt(periodNumber);
-  const startDay = num % 2 === 0 ? 1 : 15;
-  const startMonth = Math.floor(num / 2) + 1;
-  return new Date(year, startMonth - 1, startDay, 8, 0, 0);
-}
 
 export function ApplicationsPage() {
   const applicationsQuery = useCruiseApplicationsQuery();
@@ -42,32 +36,13 @@ export function ApplicationsPage() {
     },
     {
       header: 'Liczba dni rejsowych',
-      cell: ({ row }) => {
-        const cruiseHours = row.original.cruiseHours;
-        if (!cruiseHours) return '-';
-        const days = Math.floor(parseInt(cruiseHours) / 24);
-        return days > 0 ? `${days}` : '-';
-      },
-      enableColumnFilter: false,
-      enableSorting: false,
-      size: 10,
+      accessorFn: (row) => (row.cruiseDays !== null ? `${row.cruiseDays}` : '-'),
+      size: 5,
     },
     {
       header: 'Okres optymalny / dopuszczalny',
       cell: ({ row }) => {
-        let start, end;
-        if (row.original.precisePeriodStart && row.original.precisePeriodEnd) {
-          start = row.original.precisePeriodStart;
-          end = row.original.precisePeriodEnd;
-        }
-        if (row.original.optimalPeriodBeg && row.original.optimalPeriodEnd) {
-          start = convertPeriodNumberToDate(row.original.optimalPeriodBeg, row.original.year);
-          end = convertPeriodNumberToDate(row.original.optimalPeriodEnd, row.original.year);
-        }
-        if (row.original.acceptablePeriodBeg && row.original.acceptablePeriodEnd) {
-          start = convertPeriodNumberToDate(row.original.acceptablePeriodBeg, row.original.year);
-          end = convertPeriodNumberToDate(row.original.acceptablePeriodEnd, row.original.year);
-        }
+        const { start, end } = getDisplayPeriod(row.original);
         if (start && end) {
           return (
             <div className="text-sm">

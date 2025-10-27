@@ -20,6 +20,7 @@ internal class CruiseApplicationDtosFactory(
         await AddManagers(cruiseApplication, cruiseApplicationDto);
         AddPoints(cruiseApplication, cruiseApplicationDto);
         AddEffectsDoneRate(cruiseApplication, cruiseApplicationDto);
+        AddCruiseDays(cruiseApplicationDto);
 
         return cruiseApplicationDto;
     }
@@ -73,5 +74,20 @@ internal class CruiseApplicationDtosFactory(
         var effectsDoneRate = $"{100 * (float)doneEffectsCount / allEffectsCount:f2}";
 
         cruiseApplicationDto.EffectsDoneRate = $"{effectsDoneRate}%";
+    }
+
+    private void AddCruiseDays(CruiseApplicationDto cruiseApplicationDto)
+    {
+        if (string.IsNullOrEmpty(cruiseApplicationDto.CruiseHours))
+        {
+            cruiseApplicationDto.CruiseDays = null;
+            return;
+        }
+
+        if (int.TryParse(cruiseApplicationDto.CruiseHours, out int cruiseHours))
+        {
+            int days = cruiseHours / 24;
+            cruiseApplicationDto.CruiseDays = days > 0 ? days : null;
+        }
     }
 }

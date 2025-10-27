@@ -38,6 +38,7 @@ export type CruiseApplicationDto = {
   note: string | null;
 
   cruiseHours: string;
+  cruiseDays: number | null;
   acceptablePeriodBeg: string | null;
   acceptablePeriodEnd: string | null;
   optimalPeriodBeg: string | null;

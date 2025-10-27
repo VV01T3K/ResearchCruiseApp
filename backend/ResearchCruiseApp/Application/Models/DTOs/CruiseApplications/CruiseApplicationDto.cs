@@ -42,6 +42,8 @@ public class CruiseApplicationDto
 
     public string? CruiseHours { get; init; }
 
+    public int? CruiseDays { get; set; }
+
     public string? AcceptablePeriodBeg { get; init; }
 
     public string? AcceptablePeriodEnd { get; init; }
