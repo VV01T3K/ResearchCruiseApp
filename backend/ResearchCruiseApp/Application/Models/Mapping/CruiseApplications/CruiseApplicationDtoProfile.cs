@@ -68,6 +68,26 @@ internal class CruiseApplicationDtoProfile : Profile
                 dest => dest.PrecisePeriodEnd,
                 options =>
                     options.MapFrom(src => src.FormA != null ? src.FormA.PrecisePeriodEnd : null)
+            )
+            .ForMember(
+                dest => dest.StartDate,
+                options =>
+                    options.MapFrom(
+                        (src, dest) =>
+                            src.Cruise != null && !string.IsNullOrEmpty(src.Cruise.StartDate)
+                                ? DateTime.Parse(src.Cruise.StartDate)
+                                : (DateTime?)null
+                    )
+            )
+            .ForMember(
+                dest => dest.EndDate,
+                options =>
+                    options.MapFrom(
+                        (src, dest) =>
+                            src.Cruise != null && !string.IsNullOrEmpty(src.Cruise.EndDate)
+                                ? DateTime.Parse(src.Cruise.EndDate)
+                                : (DateTime?)null
+                    )
             );
     }
 }

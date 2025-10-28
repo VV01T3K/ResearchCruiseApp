@@ -13,6 +13,8 @@ import { getDisplayPeriod } from '@/cruise-applications/helpers/periodUtils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
 
+const dateFormat = 'DD.MM.YYYY, HH:mm';
+
 export function ApplicationsPage() {
   const applicationsQuery = useCruiseApplicationsQuery();
 
@@ -46,8 +48,8 @@ export function ApplicationsPage() {
         if (start && end) {
           return (
             <div className="text-sm">
-              <div>od: {dayjs(start).format('YYYY-MM-DD')}</div>
-              <div>do: {dayjs(end).format('YYYY-MM-DD')}</div>
+              <div>od: {dayjs(start).format(dateFormat)}</div>
+              <div>do: {dayjs(end).format(dateFormat)}</div>
             </div>
           );
         }
@@ -60,11 +62,11 @@ export function ApplicationsPage() {
     {
       header: 'Data rejsu',
       cell: ({ row }) => {
-        if (row.original.precisePeriodStart && row.original.precisePeriodEnd) {
+        if (row.original.startDate && row.original.endDate) {
           return (
             <div className="text-sm">
-              <div>{dayjs(row.original.precisePeriodStart).format('YYYY-MM-DD')}</div>
-              <div>{dayjs(row.original.precisePeriodEnd).format('YYYY-MM-DD')}</div>
+              <div>od:{dayjs(row.original.startDate).format(dateFormat)}</div>
+              <div>do:{dayjs(row.original.endDate).format(dateFormat)}</div>
             </div>
           );
         }
@@ -111,7 +113,7 @@ export function ApplicationsPage() {
           </div>
         );
       },
-      size: 10,
+      size: 15,
     },
     {
       header: 'Punkty',

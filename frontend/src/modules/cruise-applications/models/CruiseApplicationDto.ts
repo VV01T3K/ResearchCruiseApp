@@ -45,4 +45,6 @@ export type CruiseApplicationDto = {
   optimalPeriodEnd: string | null;
   precisePeriodStart: string | null;
   precisePeriodEnd: string | null;
+  startDate: string | null;
+  endDate: string | null;
 };
