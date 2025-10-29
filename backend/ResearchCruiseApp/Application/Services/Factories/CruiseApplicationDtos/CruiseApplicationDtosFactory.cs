@@ -86,7 +86,7 @@ internal class CruiseApplicationDtosFactory(
 
         if (int.TryParse(cruiseApplicationDto.CruiseHours, out int cruiseHours))
         {
-            int days = cruiseHours / 24;
+            float days = cruiseHours / 24f;
             cruiseApplicationDto.CruiseDays = days > 0 ? days : null;
         }
     }
