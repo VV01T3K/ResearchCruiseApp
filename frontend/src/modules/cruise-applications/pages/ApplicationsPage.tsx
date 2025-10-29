@@ -13,7 +13,7 @@ import { getDisplayPeriod } from '@/cruise-applications/helpers/periodUtils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
 
-const dateFormat = 'DD.MM.YYYY, HH:mm';
+const dateFormat = 'DD.MM.YYYY';
 
 export function ApplicationsPage() {
   const applicationsQuery = useCruiseApplicationsQuery();
@@ -37,7 +37,7 @@ export function ApplicationsPage() {
       size: 5,
     },
     {
-      header: 'Liczba dni rejsowych',
+      header: 'Liczba dni',
       accessorFn: (row) => (row.cruiseDays !== null ? `${row.cruiseDays}` : '-'),
       size: 5,
     },
@@ -65,8 +65,8 @@ export function ApplicationsPage() {
         if (row.original.startDate && row.original.endDate) {
           return (
             <div className="text-sm">
-              <div>od:{dayjs(row.original.startDate).format(dateFormat)}</div>
-              <div>do:{dayjs(row.original.endDate).format(dateFormat)}</div>
+              <div>od: {dayjs(row.original.startDate).format(dateFormat)}</div>
+              <div>do: {dayjs(row.original.endDate).format(dateFormat)}</div>
             </div>
           );
         }
@@ -74,7 +74,7 @@ export function ApplicationsPage() {
       },
       enableColumnFilter: false,
       enableSorting: false,
-      size: 15,
+      size: 20,
     },
     {
       id: 'avatar',
