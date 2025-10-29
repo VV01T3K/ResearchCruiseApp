@@ -38,7 +38,7 @@ export function ApplicationsPage() {
     },
     {
       header: 'Liczba dni',
-      accessorFn: (row) => (row.cruiseDays !== null ? `${row.cruiseDays.toFixed(2)}` : '-'),
+      accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
       size: 5,
     },
     {
