@@ -34,6 +34,60 @@ internal class CruiseApplicationDtoProfile : Profile
             .ForMember(
                 dest => dest.Status,
                 options => options.MapFrom(src => src.Status.GetStringValue())
+            )
+            .ForMember(
+                dest => dest.CruiseHours,
+                options => options.MapFrom(src => src.FormA != null ? src.FormA.CruiseHours : null)
+            )
+            .ForMember(
+                dest => dest.AcceptablePeriodBeg,
+                options =>
+                    options.MapFrom(src => src.FormA != null ? src.FormA.AcceptablePeriodBeg : null)
+            )
+            .ForMember(
+                dest => dest.AcceptablePeriodEnd,
+                options =>
+                    options.MapFrom(src => src.FormA != null ? src.FormA.AcceptablePeriodEnd : null)
+            )
+            .ForMember(
+                dest => dest.OptimalPeriodBeg,
+                options =>
+                    options.MapFrom(src => src.FormA != null ? src.FormA.OptimalPeriodBeg : null)
+            )
+            .ForMember(
+                dest => dest.OptimalPeriodEnd,
+                options =>
+                    options.MapFrom(src => src.FormA != null ? src.FormA.OptimalPeriodEnd : null)
+            )
+            .ForMember(
+                dest => dest.PrecisePeriodStart,
+                options =>
+                    options.MapFrom(src => src.FormA != null ? src.FormA.PrecisePeriodStart : null)
+            )
+            .ForMember(
+                dest => dest.PrecisePeriodEnd,
+                options =>
+                    options.MapFrom(src => src.FormA != null ? src.FormA.PrecisePeriodEnd : null)
+            )
+            .ForMember(
+                dest => dest.StartDate,
+                options =>
+                    options.MapFrom(
+                        (src, dest) =>
+                            src.Cruise != null && !string.IsNullOrEmpty(src.Cruise.StartDate)
+                                ? DateTime.Parse(src.Cruise.StartDate)
+                                : (DateTime?)null
+                    )
+            )
+            .ForMember(
+                dest => dest.EndDate,
+                options =>
+                    options.MapFrom(
+                        (src, dest) =>
+                            src.Cruise != null && !string.IsNullOrEmpty(src.Cruise.EndDate)
+                                ? DateTime.Parse(src.Cruise.EndDate)
+                                : (DateTime?)null
+                    )
             );
     }
 }

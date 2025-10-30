@@ -1,5 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import dayjs from 'dayjs';
 
 import { AppAvatar } from '@/core/components/AppAvatar';
 import { AppBadge } from '@/core/components/AppBadge';
@@ -8,8 +9,11 @@ import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppTable } from '@/core/components/table/AppTable';
+import { getDisplayPeriod } from '@/cruise-applications/helpers/periodUtils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
+
+const dateFormat = 'DD.MM.YYYY';
 
 export function ApplicationsPage() {
   const applicationsQuery = useCruiseApplicationsQuery();
@@ -17,20 +21,60 @@ export function ApplicationsPage() {
   const columns: ColumnDef<CruiseApplicationDto>[] = [
     {
       id: 'number',
-      header: 'Numer',
+      header: 'Nr',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
-      size: 5,
+      size: 2,
     },
     {
       header: 'Data',
       accessorFn: (row) => row.date,
-      size: 10,
+      size: 5,
     },
     {
       header: 'Rok rejsu',
       accessorFn: (row) => row.year,
-      size: 10,
+      size: 5,
+    },
+    {
+      header: 'Liczba dni',
+      accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
+      size: 5,
+    },
+    {
+      header: 'Okres optymalny / dopuszczalny',
+      cell: ({ row }) => {
+        const { start, end } = getDisplayPeriod(row.original);
+        if (start && end) {
+          return (
+            <div className="text-sm">
+              <div>od: {dayjs(start).format(dateFormat)}</div>
+              <div>do: {dayjs(end).format(dateFormat)}</div>
+            </div>
+          );
+        }
+        return '-';
+      },
+      enableColumnFilter: false,
+      enableSorting: false,
+      size: 15,
+    },
+    {
+      header: 'Data rejsu',
+      cell: ({ row }) => {
+        if (row.original.startDate && row.original.endDate) {
+          return (
+            <div className="text-sm">
+              <div>od: {dayjs(row.original.startDate).format(dateFormat)}</div>
+              <div>do: {dayjs(row.original.endDate).format(dateFormat)}</div>
+            </div>
+          );
+        }
+        return '-';
+      },
+      enableColumnFilter: false,
+      enableSorting: false,
+      size: 20,
     },
     {
       id: 'avatar',
@@ -69,7 +113,7 @@ export function ApplicationsPage() {
           </div>
         );
       },
-      size: 10,
+      size: 15,
     },
     {
       header: 'Punkty',
