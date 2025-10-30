@@ -37,7 +37,7 @@ export function FormACruiseManagerInfoSection() {
               onChange={field.handleChange}
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              label="Zastępca kierownika rejsu"
+              label="Zastępca kierownika rejsu*"
               placeholder="Wybierz zastępcę kierownika rejsu"
               allOptions={initValues.deputyManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
