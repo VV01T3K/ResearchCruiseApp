@@ -11,7 +11,7 @@ export function convertPeriodNumberToDate(periodNumber: string, year: number): D
   return new Date(year, startMonth - 1, startDay, 8, 0, 0);
 }
 
-function parseBackendDateTimeType(value: string): Date{
+function parseBackendDateTimeType(value: string): Date {
   const normalized = value.endsWith('Z') ? value : `${value}Z`;
   return dayjs.utc(normalized).toDate();
 }

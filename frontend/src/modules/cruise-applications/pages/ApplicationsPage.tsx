@@ -65,10 +65,10 @@ export function ApplicationsPage() {
       header: 'Data rejsu',
       cell: ({ row }) => {
         if (row.original.startDate && row.original.endDate) {
-          //TODO: CHECK IF BELOW DATES ARE CORRECT OR IT NEEDS .UTC() OR STH 
+          //TODO: CHECK IF BELOW DATES ARE CORRECT OR IT NEEDS .UTC() OR STH
           return (
             <div className="text-sm">
-              <div>od: {dayjs(row.original.startDate).format(dateFormat)}</div> 
+              <div>od: {dayjs(row.original.startDate).format(dateFormat)}</div>
               <div>do: {dayjs(row.original.endDate).format(dateFormat)}</div>
             </div>
           );
