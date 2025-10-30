@@ -286,7 +286,7 @@ function getValueFromDate(date: Date | undefined): string | undefined {
   if (!date) {
     return undefined;
   }
-  
+
   return date.toISOString();
 }
 
