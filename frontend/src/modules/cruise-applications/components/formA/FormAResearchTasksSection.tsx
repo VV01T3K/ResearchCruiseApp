@@ -74,7 +74,7 @@ export function FormAResearchTasksSection() {
   }
 
   return (
-    <AppAccordion title="6. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
+    <AppAccordion title="6. Zadania do zrealizowania w trakcie rejsu*" expandedByDefault>
       <div>
         <form.Field
           name="researchTasks"

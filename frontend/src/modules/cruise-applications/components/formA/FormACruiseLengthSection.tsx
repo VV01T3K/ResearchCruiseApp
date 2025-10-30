@@ -33,7 +33,7 @@ export function FormACruiseLengthSection() {
   }
 
   return (
-    <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
+    <AppAccordion title="2. Czas trwania zgłaszanego rejsu*" expandedByDefault>
       <div className="space-y-4">
         <FormABlockadeWarning year={+form.state.values.year} blockades={blockades} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -157,7 +157,7 @@ export function FormACruiseLengthSection() {
                       onChange={(x: number) => field.handleChange((x * 24).toString())}
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Liczba planowanych dób rejsowych"
+                      label="Liczba planowanych dób rejsowych*"
                       required
                       disabled={isReadonly}
                     />
@@ -220,7 +220,7 @@ export function FormACruiseLengthSection() {
                   onChange={(e) => field.handleChange(e as string)}
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Statek na potrzeby badań będzie wykorzystywany"
+                  label="Statek na potrzeby badań będzie wykorzystywany*"
                   allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
                     value: i.toString(),
                     inlineLabel: shipUsage,

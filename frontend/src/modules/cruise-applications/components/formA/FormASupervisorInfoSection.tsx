@@ -25,7 +25,7 @@ export function FormASupervisorInfoSection() {
               onChange={field.handleChange}
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              label="Adres e-mail przełożonego"
+              label="Adres e-mail przełożonego*"
               placeholder="Wprowadź adres e-mail przełożonego"
               type="email"
               disabled={isReadonly}
