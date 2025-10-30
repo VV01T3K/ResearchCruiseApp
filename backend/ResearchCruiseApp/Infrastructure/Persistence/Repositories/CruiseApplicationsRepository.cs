@@ -30,6 +30,7 @@ internal class CruiseApplicationsRepository
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
             .IncludeEffects()
+            .IncludeCruise()
             .ToListAsync(cancellationToken);
     }
 
