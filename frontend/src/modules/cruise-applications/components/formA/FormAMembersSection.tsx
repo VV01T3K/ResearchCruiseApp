@@ -195,7 +195,7 @@ export function FormAMembersSection() {
   }
 
   return (
-    <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+    <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie*" expandedByDefault>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"

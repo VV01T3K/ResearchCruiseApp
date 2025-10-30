@@ -99,7 +99,7 @@ export function FormAResearchAreaSection() {
   }
 
   return (
-    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault>
+    <AppAccordion title="4. Rejony prowadzenia badań*" expandedByDefault>
       <form.Field
         name="researchAreaDescriptions"
         mode="array"

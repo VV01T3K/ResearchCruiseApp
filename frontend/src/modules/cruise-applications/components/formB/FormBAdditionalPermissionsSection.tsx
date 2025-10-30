@@ -72,7 +72,7 @@ export function FormBAdditionalPermissionsSection() {
         size: 20,
       },
       {
-        header: 'Skan',
+        header: 'Skan*',
         accessorFn: (row) => row.scan,
         enableColumnFilter: false,
         enableSorting: false,
