@@ -95,7 +95,7 @@ export function AppDropdownInput({
 
   return (
     <div className="flex flex-col">
-      <AppInputLabel name={name} value={label} />
+  <AppInputLabel name={name} value={label} required={required} />
       <div
         className={cn(
           'relative inline-block',

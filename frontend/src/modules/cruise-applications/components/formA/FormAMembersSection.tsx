@@ -30,6 +30,7 @@ export function FormAMembersSection() {
       },
       {
         header: 'Jednostka',
+        meta: { required: true },
         accessorFn: (row) => row.ugUnitId,
         cell: ({ row }) => initValues.ugUnits.find((unit) => unit.id === row.original.ugUnitId)?.name,
         size: 50,
@@ -195,7 +196,7 @@ export function FormAMembersSection() {
   }
 
   return (
-    <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie*" expandedByDefault>
+  <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"
@@ -205,6 +206,7 @@ export function FormAMembersSection() {
               <AppTable
                 columns={getUgTeamsColumns(field)}
                 data={field.state.value}
+                autoMarkEmptyWhenColumnsRequired
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"
