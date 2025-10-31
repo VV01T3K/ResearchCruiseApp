@@ -9,7 +9,7 @@ export function FormACruiseGoalSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
   return (
-    <AppAccordion title="5. Cel rejsu*" expandedByDefault>
+  <AppAccordion title="5. Cel rejsu" expandedByDefault>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <form.Field
           name="cruiseGoal"
