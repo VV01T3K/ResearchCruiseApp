@@ -4,7 +4,12 @@ import { AppTableClearFiltersButton } from '@/core/components/table/common/AppTa
 import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/core/components/table/desktop/AppDesktopTableHeader';
 
-export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, autoMarkEmptyWhenColumnsRequired }: TableProps<T>) {
+export function AppDesktopTable<T>({
+  table,
+  buttons,
+  emptyTableMessage,
+  autoMarkEmptyWhenColumnsRequired,
+}: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
@@ -61,14 +66,18 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, autoMark
                 {(() => {
                   const hasRequiredColumn = table
                     .getAllColumns()
-                    .some(
-                      (c) => Boolean(((c.columnDef as unknown) as { meta?: { required?: boolean } })?.meta?.required)
+                    .some((c) =>
+                      Boolean((c.columnDef as unknown as { meta?: { required?: boolean } })?.meta?.required)
                     );
                   if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn) {
                     return (
                       <>
                         {emptyTableMessage}
-                        <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia" aria-label="pole wymagane do wypełnienia">
+                        <span
+                          className="ml-1 text-red-600 font-bold"
+                          title="pole wymagane do wypełnienia"
+                          aria-label="pole wymagane do wypełnienia"
+                        >
                           *
                         </span>
                       </>
