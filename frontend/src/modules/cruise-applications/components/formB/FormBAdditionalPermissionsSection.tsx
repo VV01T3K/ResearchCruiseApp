@@ -72,7 +72,20 @@ export function FormBAdditionalPermissionsSection() {
         size: 20,
       },
       {
-        header: 'Skan*',
+        id: 'scan',
+        header: () => (
+          <span>
+            Skan
+            <span
+              className="ml-1 text-red-600 font-bold"
+              title="pole wymagane do wypełnienia"
+              aria-hidden="false"
+              aria-label="pole wymagane do wypełnienia"
+            >
+              *
+            </span>
+          </span>
+        ),
         accessorFn: (row) => row.scan,
         enableColumnFilter: false,
         enableSorting: false,

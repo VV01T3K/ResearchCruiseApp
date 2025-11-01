@@ -33,7 +33,7 @@ export function FormACruiseLengthSection() {
   }
 
   return (
-  <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
+    <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
       <div className="space-y-4">
         <FormABlockadeWarning year={+form.state.values.year} blockades={blockades} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

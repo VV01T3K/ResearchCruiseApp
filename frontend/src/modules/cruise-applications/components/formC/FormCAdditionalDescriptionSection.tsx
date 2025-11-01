@@ -8,7 +8,7 @@ export function FormCAdditionalDescriptionSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
-  <AppAccordion title="18. Krótki opis podsumowujący dany rejs" expandedByDefault>
+    <AppAccordion title="18. Krótki opis podsumowujący dany rejs" expandedByDefault>
       <header className="text-center text-sm space-y-4 mb-8 max-w-2xl mx-auto">
         Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia w
         osobnych plikach
