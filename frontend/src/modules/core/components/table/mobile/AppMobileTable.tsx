@@ -8,7 +8,13 @@ import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/core/lib/utils';
 
-export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, autoMarkEmptyWhenColumnsRequired }: TableProps<T>) {
+export function AppMobileTable<T>({
+  table,
+  buttons,
+  emptyTableMessage,
+  variant,
+  autoMarkEmptyWhenColumnsRequired,
+}: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   const defaultButtons: React.ReactNode[] = [
@@ -59,14 +65,18 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, 
                   {(() => {
                     const hasRequiredColumn = table
                       .getAllColumns()
-                      .some(
-                        (c) => Boolean(((c.columnDef as unknown) as { meta?: { required?: boolean } })?.meta?.required)
+                      .some((c) =>
+                        Boolean((c.columnDef as unknown as { meta?: { required?: boolean } })?.meta?.required)
                       );
                     if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn) {
                       return (
                         <>
                           {emptyTableMessage}
-                          <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia" aria-label="pole wymagane do wypełnienia">
+                          <span
+                            className="ml-1 text-red-600 font-bold"
+                            title="pole wymagane do wypełnienia"
+                            aria-label="pole wymagane do wypełnienia"
+                          >
                             *
                           </span>
                         </>
