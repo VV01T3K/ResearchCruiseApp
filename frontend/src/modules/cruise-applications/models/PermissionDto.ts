@@ -17,5 +17,12 @@ export const PermissionDtoValidationSchema = z.object({
 export const PermissionDtoWithFileValidationSchema = PermissionDtoValidationSchema.extend({
   scan: FileDtoValidationSchema.extend({
     name: z.string().endsWith('.pdf', 'Plik musi być w formacie PDF'),
+  }).superRefine((val, ctx) => {
+    if (!val) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Załączenie pliku PDF jest wymagane',
+      });
+    }
   }),
 });
