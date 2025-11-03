@@ -26,7 +26,6 @@ export function FormCSPUBReportDataSection() {
             className="h-48"
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz dodatkowe dane do raportu SPUB"
-            required
             disabled={isReadonly}
           />
         )}

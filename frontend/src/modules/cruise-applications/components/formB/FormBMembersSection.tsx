@@ -60,7 +60,6 @@ export function FormBMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                required
                 disabled={isReadonly}
               />
             )}
@@ -88,7 +87,6 @@ export function FormBMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                required
                 disabled={isReadonly}
               />
             )}
@@ -144,7 +142,6 @@ export function FormBMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 containerClassName="mx-4"
-                required
                 disabled={isReadonly}
               />
             )}
@@ -172,7 +169,6 @@ export function FormBMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                required
                 disabled={isReadonly}
               />
             )}
@@ -228,7 +224,6 @@ export function FormBMembersSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Tytuł"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -245,7 +240,6 @@ export function FormBMembersSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Imiona"
                   containerClassName="col-span-2"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -262,7 +256,6 @@ export function FormBMembersSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Nazwisko"
                   containerClassName="col-span-2"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -287,7 +280,6 @@ export function FormBMembersSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Miejsce urodzenia"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -303,7 +295,6 @@ export function FormBMembersSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Data urodzenia"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -319,7 +310,6 @@ export function FormBMembersSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Numer ID dokumentu"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -335,7 +325,6 @@ export function FormBMembersSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Data ważności dokumentu"
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -360,7 +349,6 @@ export function FormBMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 placeholder="Wprowadź nazwę jednostki"
-                required
                 disabled={isReadonly}
               />
             )}

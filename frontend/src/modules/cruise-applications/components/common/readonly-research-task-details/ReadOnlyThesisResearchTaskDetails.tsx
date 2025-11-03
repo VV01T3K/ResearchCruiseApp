@@ -12,7 +12,6 @@ export function ReadOnlyThesisResearchTaskDetails({ data }: Props) {
         value={data.author}
         label="Autor"
         placeholder="Wprowadź autora"
-        required
         disabled={true}
       />
 
@@ -21,7 +20,6 @@ export function ReadOnlyThesisResearchTaskDetails({ data }: Props) {
         value={data.title}
         label="Tytuł"
         placeholder="Wprowadź tytuł"
-        required
         disabled={true}
       />
     </div>

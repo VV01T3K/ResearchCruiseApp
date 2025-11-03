@@ -112,7 +112,6 @@ function CruiseFormManagerSelectionLayout({
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               allOptions={users}
               label="Kierownik główny"
-              required
               placeholder="Wybierz kierownika głównego"
               disabled={isReadonly}
             />
@@ -130,7 +129,6 @@ function CruiseFormManagerSelectionLayout({
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               allOptions={users}
               label="Zastępca kierownika głównego"
-              required
               placeholder="Wybierz zastępcę kierownika głównego"
               disabled={isReadonly}
             />

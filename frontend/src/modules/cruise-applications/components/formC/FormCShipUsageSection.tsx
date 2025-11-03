@@ -55,7 +55,6 @@ export function FormCShipUsageSection() {
                         errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                         label="Inny sposób użycia"
                         placeholder="np. statek badawczy"
-                        required
                         disabled={isReadonly}
                       />
                     )}

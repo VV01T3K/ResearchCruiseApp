@@ -27,7 +27,6 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
   allowEmptyOption?: boolean;
@@ -42,7 +41,6 @@ export function AppDropdownInput({
   onBlur,
   errors,
   label,
-  required,
   disabled,
   helper,
   allowEmptyOption = false,
@@ -106,7 +104,7 @@ export function AppDropdownInput({
         )}
         ref={inputRef}
       >
-        <input type="hidden" name={name} value={selectedOption.value} required={required} disabled={disabled} />
+        <input type="hidden" name={name} value={selectedOption.value} disabled={disabled} />
         <AppButton
           variant="plain"
           onClick={() => {

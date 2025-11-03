@@ -18,7 +18,6 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label: React.ReactNode;
-  required?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
 };
@@ -31,7 +30,6 @@ export function CruiseApplicationPeriodInput({
   onBlur,
   errors,
   label,
-  required,
   disabled,
   helper,
 }: Props) {
@@ -129,7 +127,7 @@ export function CruiseApplicationPeriodInput({
   return (
     <div className="flex flex-col">
       <AppInputLabel name={name} value={label} />
-      <input type="hidden" name={name} value={values.join(',')} required={required} disabled={disabled} />
+      <input type="hidden" name={name} value={values.join(',')} disabled={disabled} />
 
       <div
         ref={rangerRef}

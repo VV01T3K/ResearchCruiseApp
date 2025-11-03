@@ -77,7 +77,6 @@ export function LoginPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta)}
                 label="E-mail"
-                required
               />
             )}
           />
@@ -92,7 +91,6 @@ export function LoginPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta)}
                 label="Hasło"
-                required
               />
             )}
           />

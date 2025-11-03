@@ -46,14 +46,6 @@ export const Email: Story = {
   },
 };
 
-export const Required: Story = {
-  args: {
-    name: 'Required input',
-    label: 'Required input',
-    required: true,
-  },
-};
-
 export const DisabledEmpty: Story = {
   args: {
     name: 'Disabled input',

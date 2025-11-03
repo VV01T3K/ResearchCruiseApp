@@ -25,7 +25,6 @@ export function ApplicationDetailsSPUBTasksSection() {
         <AppYearPickerInput
           name={`spubTasks[${row.index}].yearFrom`}
           value={parseInt(row.original.spubTask.yearFrom)}
-          required
           disabled
         />
       ),
@@ -40,7 +39,6 @@ export function ApplicationDetailsSPUBTasksSection() {
         <AppYearPickerInput
           name={`spubTasks[${row.index}].yearTo`}
           value={parseInt(row.original.spubTask.yearTo)}
-          required
           disabled
         />
       ),
@@ -51,9 +49,7 @@ export function ApplicationDetailsSPUBTasksSection() {
       accessorFn: (row) => row.spubTask.name,
       enableColumnFilter: false,
       enableSorting: false,
-      cell: ({ row }) => (
-        <AppInput name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} required disabled />
-      ),
+      cell: ({ row }) => <AppInput name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} disabled />,
       size: 50,
     },
     {

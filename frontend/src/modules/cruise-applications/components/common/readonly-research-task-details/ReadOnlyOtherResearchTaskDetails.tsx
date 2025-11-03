@@ -12,7 +12,6 @@ export function ReadOnlyOtherResearchTaskDetails({ data }: Props) {
         value={data.description}
         label="Opis zadania"
         placeholder="Wprowadź opis zadania"
-        required
         disabled={true}
       />
     </div>

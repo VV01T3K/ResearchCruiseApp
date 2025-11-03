@@ -68,15 +68,6 @@ export const Disabled: Story = {
   },
 };
 
-export const Required: Story = {
-  args: {
-    name: 'name',
-    value: '',
-    label: 'Required',
-    required: true,
-  },
-};
-
 export const WithErrors: Story = {
   args: {
     value: 'Some string',

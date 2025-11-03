@@ -29,7 +29,6 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
-            required
             disabled={disabled}
           />
         )}
@@ -44,7 +43,6 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             onBlur={field.handleBlur}
             onChange={field.handleChange}
             label="Przewidywany termin składania"
-            required
             disabled={disabled}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
           />
@@ -64,7 +62,6 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
               { value: 'false', inlineLabel: 'Nie' },
             ]}
             label="Otrzymano decyzję o finansowaniu?"
-            required
             disabled={disabled}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
           />

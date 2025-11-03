@@ -41,7 +41,6 @@ export function FormCSPUBTasksSection() {
                 onChange={(e) => field.handleChange(e?.toString() ?? '')}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                required
                 disabled={isReadonly}
               />
             )}
@@ -64,7 +63,6 @@ export function FormCSPUBTasksSection() {
                 onChange={(e) => field.handleChange(e?.toString() ?? '')}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                required
                 disabled={isReadonly}
               />
             )}
@@ -87,7 +85,6 @@ export function FormCSPUBTasksSection() {
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                required
                 disabled={isReadonly}
               />
             )}

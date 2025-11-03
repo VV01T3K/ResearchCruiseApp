@@ -16,7 +16,6 @@ type Props = {
   onChange?: (value: string) => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
@@ -32,7 +31,6 @@ export function AppInput({
   onChange,
   errors,
   label,
-  required,
   className,
   disabled,
   helper,
@@ -62,7 +60,6 @@ export function AppInput({
           type={type}
           onBlur={onBlur}
           onChange={(evt) => onChange?.(evt.target.value)}
-          required={required}
           disabled={disabled}
           className={cn(
             className,

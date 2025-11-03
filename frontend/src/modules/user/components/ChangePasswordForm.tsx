@@ -78,7 +78,6 @@ export function ChangePasswordForm() {
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
               label="Aktualne hasło"
-              required
             />
           )}
         />
@@ -94,7 +93,6 @@ export function ChangePasswordForm() {
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
               label="Nowe hasło"
-              required
             />
           )}
         />
@@ -110,7 +108,6 @@ export function ChangePasswordForm() {
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
               label="Powtórz nowe hasło"
-              required
             />
           )}
         />

@@ -44,12 +44,6 @@ export const Disabled: Story = {
   },
 };
 
-export const Required: Story = {
-  args: {
-    required: true,
-  },
-};
-
 export const WithPlaceholder: Story = {
   args: {
     value: undefined,

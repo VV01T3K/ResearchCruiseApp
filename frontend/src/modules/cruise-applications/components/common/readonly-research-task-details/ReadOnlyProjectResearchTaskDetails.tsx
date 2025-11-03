@@ -15,7 +15,6 @@ export function ReadOnlyProjectResearchTaskDetails({ data }: Props) {
         label="Tytuł"
         placeholder="Wprowadź tytuł"
         containerClassName="lg:col-span-2"
-        required
         disabled={true}
       />
 
@@ -23,7 +22,6 @@ export function ReadOnlyProjectResearchTaskDetails({ data }: Props) {
         name="researchTasks[].startDate"
         value={data.startDate}
         label="Data rozpoczęcia"
-        required
         disabled={true}
       />
 
@@ -31,7 +29,6 @@ export function ReadOnlyProjectResearchTaskDetails({ data }: Props) {
         name="researchTasks[].endDate"
         value={data.endDate}
         label="Data zakończenia"
-        required
         disabled={true}
       />
 
@@ -41,7 +38,6 @@ export function ReadOnlyProjectResearchTaskDetails({ data }: Props) {
         type="float"
         minimum={0}
         label="Kwota finansowania [zł]"
-        required
         disabled={true}
       />
 
@@ -51,7 +47,6 @@ export function ReadOnlyProjectResearchTaskDetails({ data }: Props) {
         type="float"
         minimum={0}
         label="Środki zabezpieczone na realizację rejsu [zł]"
-        required
         disabled={true}
       />
     </div>

@@ -25,7 +25,6 @@ export function CruiseFormDateSelectionSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Data rozpoczęcia rejsu"
-                required
                 placeholder="Wybierz datę rozpoczęcia rejsu"
                 type="datetime"
                 minuteStep={30}
@@ -44,7 +43,6 @@ export function CruiseFormDateSelectionSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Data zakończenia rejsu"
-                required
                 placeholder="Wybierz datę zakończenia rejsu"
                 type="datetime"
                 minuteStep={30}

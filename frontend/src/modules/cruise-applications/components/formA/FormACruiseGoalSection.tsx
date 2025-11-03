@@ -25,7 +25,6 @@ export function FormACruiseGoalSection() {
                 value: index.toString(),
                 inlineLabel: cruiseGoal,
               }))}
-              required
               disabled={isReadonly}
             />
           )}
@@ -46,7 +45,6 @@ export function FormACruiseGoalSection() {
                   label="Opis"
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}
-                  required
                 />
               )}
             />

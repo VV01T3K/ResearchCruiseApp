@@ -46,13 +46,6 @@ export const Disabled: Story = {
   },
 };
 
-export const Required: Story = {
-  args: {
-    label: 'Required dropdown input',
-    required: true,
-  },
-};
-
 export const WithHelper: Story = {
   args: {
     label: 'Dropdown input with helper',

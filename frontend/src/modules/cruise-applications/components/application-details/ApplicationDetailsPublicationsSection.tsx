@@ -38,28 +38,24 @@ export function ApplicationDetailsPublicationsSection() {
             name={`publications[${row.index}].publication.doi`}
             value={row.original.publication.doi}
             label="DOI"
-            required
             disabled
           />
           <AppInput
             name={`publications[${row.index}].publication.authors`}
             value={row.original.publication.authors}
             label="Autorzy"
-            required
             disabled
           />
           <AppInput
             name={`publications[${row.index}].publication.title`}
             value={row.original.publication.title}
             label="Tytuł"
-            required
             disabled
           />
           <AppInput
             name={`publications[${row.index}].publication.magazine`}
             value={row.original.publication.magazine}
             label="Czasopismo"
-            required
             disabled
           />
         </div>
@@ -75,7 +71,6 @@ export function ApplicationDetailsPublicationsSection() {
         <AppYearPickerInput
           name={`publications[${row.index}].publication.year`}
           value={parseInt(row.original.publication.year)}
-          required
           disabled
         />
       ),
@@ -91,7 +86,6 @@ export function ApplicationDetailsPublicationsSection() {
           name={`publications[${row.index}].publication.ministerialPoints`}
           value={parseInt(row.original.publication.ministerialPoints)}
           minimum={0}
-          required
           disabled
         />
       ),

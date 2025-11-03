@@ -185,7 +185,6 @@ export function NewCruisePage() {
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
                 errors={getErrors(field.state.meta)}
                 autoFocus
-                required
               />
             )}
           />

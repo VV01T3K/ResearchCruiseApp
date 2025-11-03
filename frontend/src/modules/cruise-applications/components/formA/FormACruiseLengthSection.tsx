@@ -48,7 +48,6 @@ export function FormACruiseLengthSection() {
                   { value: 'precise', inlineLabel: 'Dokładny termin' },
                   { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
                 ]}
-                required
               />
             </div>
           )}
@@ -65,7 +64,6 @@ export function FormACruiseLengthSection() {
                     errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Dokładny termin rozpoczęcia rejsu"
                     type="date"
-                    required
                     disabled={isReadonly}
                   />
                 )}
@@ -88,7 +86,6 @@ export function FormACruiseLengthSection() {
                         errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
-                        required
                         disabled={isReadonly}
                         selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
                         minimalDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
@@ -112,7 +109,6 @@ export function FormACruiseLengthSection() {
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
-                    required
                     disabled={isReadonly}
                   />
                 )}
@@ -132,7 +128,6 @@ export function FormACruiseLengthSection() {
                         errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                         maxValues={acceptablePeriod}
                         label="Optymalny okres, w którym miałby się odbywać rejs"
-                        required
                         disabled={isReadonly}
                       />
                     )}
@@ -158,7 +153,6 @@ export function FormACruiseLengthSection() {
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                       label="Liczba planowanych dób rejsowych"
-                      required
                       disabled={isReadonly}
                     />
                   )}
@@ -183,7 +177,6 @@ export function FormACruiseLengthSection() {
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                       label="Liczba planowanych godzin rejsowych"
-                      required
                       disabled={isReadonly}
                     />
                   )}
@@ -254,7 +247,6 @@ export function FormACruiseLengthSection() {
                             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                             label="Inny sposób użycia"
                             placeholder="np. statek badawczy"
-                            required
                             disabled={isReadonly}
                           />
                         )}

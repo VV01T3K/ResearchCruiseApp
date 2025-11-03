@@ -18,7 +18,6 @@ type Props = {
   onChange?: (value: number) => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
@@ -42,7 +41,6 @@ export function AppNumberInput({
   onChange,
   errors,
   label,
-  required,
   className,
   disabled,
   helper,
@@ -129,7 +127,6 @@ export function AppNumberInput({
             value={stringValue}
             onChange={handleInputChange}
             onBlur={onBlur}
-            required={required}
             disabled={disabled}
             className={cn(
               'bg-gray-50 border border-gray-300 h-11 text-center text-gray-900 text-sm block w-full py-2.5',

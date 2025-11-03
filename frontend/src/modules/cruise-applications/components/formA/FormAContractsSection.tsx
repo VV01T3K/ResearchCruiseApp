@@ -52,7 +52,6 @@ export function FormAContractsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Nazwa instytucji"
                   placeholder='np. "Uniwersytet Gdański"'
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -68,7 +67,6 @@ export function FormAContractsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Jednostka"
                   placeholder='np. "Wydział Biologii"'
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -84,7 +82,6 @@ export function FormAContractsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Lokalizacja instytucji"
                   placeholder='np. "Gdańsk"'
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -108,7 +105,6 @@ export function FormAContractsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Opis"
                 placeholder='np. "Umowa o współpracy"'
-                required
                 disabled={isReadonly}
               />
             )}

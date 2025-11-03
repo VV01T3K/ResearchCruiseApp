@@ -22,7 +22,6 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
   placeholder?: string;
@@ -34,7 +33,6 @@ export function AppMonthPickerInput({
   onBlur,
   errors,
   label,
-  required,
   disabled,
   helper,
   placeholder = 'Wybierz miesiąc',
@@ -86,7 +84,7 @@ export function AppMonthPickerInput({
       <div className="flex flex-col">
         <AppInputLabel name={name} value={label} />
         <div className={cn()} ref={inputRef}>
-          <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
+          <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
             variant="plain"
             onClick={handleInputClick}
