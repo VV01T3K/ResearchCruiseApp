@@ -24,7 +24,7 @@ export function FormCActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
           disabled={disabled}
         >
           <FloppyFillIcon className="h-4 w-4" />
-          Zapisz
+          Zapisz wersję roboczą
         </AppButton>
       )}
       {!isReadonly && (
