@@ -79,7 +79,7 @@ export function AppMobileTable<T>({
                           </span>
                           <span
                             className="ml-1 text-red-600 font-bold"
-                            aria-hidden="true"
+                            title="Pola oznaczone '*' są obowiązkowe"
                           >
                             *
                           </span>

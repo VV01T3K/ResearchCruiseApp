@@ -44,7 +44,7 @@ export function AppInputLabel({ name, value, className, required }: Props) {
       {showAsterisk && (
         <span
           className="ml-1 text-red-600 font-bold"
-          aria-hidden="true"
+          title="Pole jest obowiązkowe do wypełnienia"
         >
           *
         </span>
