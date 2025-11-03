@@ -72,11 +72,15 @@ export function AppDesktopTable<T>({
                   if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn) {
                     return (
                       <>
-                        {emptyTableMessage}
+                        <span
+                          className="inline"
+                          title="pole wymagane do wypełnienia"
+                        >
+                          {emptyTableMessage}
+                        </span>
                         <span
                           className="ml-1 text-red-600 font-bold"
-                          title="pole wymagane do wypełnienia"
-                          aria-label="pole wymagane do wypełnienia"
+                          aria-hidden="true"
                         >
                           *
                         </span>
