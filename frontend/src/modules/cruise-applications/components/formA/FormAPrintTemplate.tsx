@@ -2,7 +2,10 @@
 import { Fragment, RefObject } from 'react';
 
 import { cn } from '@/core/lib/utils';
-import { getExplanationForPeriod } from '@/cruise-applications/components/common/cruisePeriodExplanation';
+import {
+  formatLocalDateStringFromUtcString,
+  getExplanationForPeriod,
+} from '@/cruise-applications/components/common/cruisePeriodExplanation';
 import { PrintableResearchTaskDetails } from '@/cruise-applications/components/common/printable-research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/cruise-applications/components/common/printing/PrintingPage';
 import { PrintingPageSection } from '@/cruise-applications/components/common/printing/PrintingPageSection';
@@ -35,12 +38,35 @@ export function FormAPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="2. Zgłaszany rejs">
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-          <span>Dopuszczalny okres, w którym miałby się odbywać rejs: </span>
-          <span>
-            {getExplanationForPeriod(parseInt(values.acceptablePeriod[0]), parseInt(values.acceptablePeriod[1]))}
-          </span>
-          <span>Optymalny okres, w którym miałby się odbywać rejs: </span>
-          <span>{getExplanationForPeriod(parseInt(values.optimalPeriod[0]), parseInt(values.optimalPeriod[1]))}</span>
+          {values.acceptablePeriod?.length !== 0 && (
+            <>
+              <span>Dopuszczalny okres, w którym miałby się odbywać rejs: </span>
+              <span>
+                {getExplanationForPeriod(parseInt(values.acceptablePeriod[0]), parseInt(values.acceptablePeriod[1]))}
+              </span>
+            </>
+          )}
+          {values.optimalPeriod?.length !== 0 && (
+            <>
+              <span>Optymalny okres, w którym miałby się odbywać rejs: </span>
+              <span>
+                {getExplanationForPeriod(parseInt(values.optimalPeriod[0]), parseInt(values.optimalPeriod[1]))}
+              </span>
+            </>
+          )}
+          {values.precisePeriodStart && (
+            <>
+              <span>Dokładny termin rozpoczęcia rejsu: </span>
+              <span>{formatLocalDateStringFromUtcString(values.precisePeriodStart)}</span>
+            </>
+          )}
+          {values.precisePeriodStart && (
+            <>
+              <span>Dokładny termin zakończenia rejsu: </span>
+              <span>{formatLocalDateStringFromUtcString(values.precisePeriodEnd)}</span>
+            </>
+          )}
+
           <span>Liczba planowanych dób rejsowych: </span>
           <span>{parseInt(values.cruiseHours) / 24}</span>
           <span>Liczba planowanych godzin rejsowych:</span>

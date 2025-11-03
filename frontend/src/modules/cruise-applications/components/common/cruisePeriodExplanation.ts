@@ -26,3 +26,19 @@ export function getExplanationForPeriod(start: number, end: number): string {
 
   return `od początku ${getPointAtTime(start)} do końca ${getPointAtTime(end - 1)}`;
 }
+
+export function formatLocalDateStringFromUtcString(utcString?: string): string {
+  if (!utcString) {
+    return '-';
+  }
+  const normalized = utcString.endsWith('Z') ? utcString : `${utcString}Z`;
+  const date = new Date(normalized);
+  if (isNaN(date.getTime())) return '-';
+
+  return date.toLocaleString('pl-PL', {
+    timeZone: 'Europe/Warsaw',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+}
