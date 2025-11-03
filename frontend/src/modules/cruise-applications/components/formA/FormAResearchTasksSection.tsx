@@ -99,7 +99,7 @@ export function FormAResearchTasksSection() {
                     variant="primary"
                     disabled={isReadonly}
                   >
-                    Dodaj nowe zadanie
+                    Dodaj nowe efekty rejsu
                   </CruiseApplicationDropdownElementSelectorButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
@@ -127,7 +127,7 @@ export function FormAResearchTasksSection() {
                     variant="primaryOutline"
                     disabled={isReadonly}
                   >
-                    Dodaj historyczne zadanie
+                    Dodaj historyczne efekty rejsu
                   </CruiseApplicationDropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zadania."

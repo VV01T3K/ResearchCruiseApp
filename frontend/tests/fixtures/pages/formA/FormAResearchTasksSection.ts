@@ -19,11 +19,14 @@ export class FormAResearchTasksSection {
     this.page = formPage.page;
     this.sectionDiv = locateSectionDiv(formPage.page, '6. Zadania do zrealizowania w trakcie rejsu');
 
-    this.addNewTaskDropdown = new FormDropdown(this.sectionDiv.getByRole('button', { name: 'Dodaj nowe zadanie' }), {
-      variant: 'menu-with-buttons',
-    });
+    this.addNewTaskDropdown = new FormDropdown(
+      this.sectionDiv.getByRole('button', { name: 'Dodaj nowe efekty rejsue' }),
+      {
+        variant: 'menu-with-buttons',
+      }
+    );
     this.addHistoricalTaskDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczne zadanie' })
+      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczne efekty rejsu' })
     );
     this.noResearchTasksMessage = this.sectionDiv.getByText('Co najmniej jedno zadanie badawcze jest wymagane');
     this.emptyAuthorMessage = this.sectionDiv.getByText('Autor nie może być pusty');
