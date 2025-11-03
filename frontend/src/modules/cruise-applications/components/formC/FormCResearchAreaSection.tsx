@@ -54,7 +54,6 @@ export function FormCResearchAreaSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   placeholder="Nazwa rejonu"
                   disabled={isReadonly}
-                  required
                 />
               )}
             />

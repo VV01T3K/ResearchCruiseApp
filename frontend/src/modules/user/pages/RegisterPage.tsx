@@ -97,7 +97,6 @@ export function RegisterPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="E-mail"
-                required
               />
             )}
           />
@@ -113,7 +112,6 @@ export function RegisterPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Imię"
-                required
               />
             )}
           />
@@ -129,7 +127,6 @@ export function RegisterPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Nazwisko"
-                required
               />
             )}
           />
@@ -145,7 +142,6 @@ export function RegisterPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Hasło"
-                required
               />
             )}
           />
@@ -161,7 +157,6 @@ export function RegisterPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Potwierdź hasło"
-                required
               />
             )}
           />

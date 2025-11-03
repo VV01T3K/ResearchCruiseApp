@@ -26,7 +26,6 @@ export function OtherResearchTaskDetails({ form, row, disabled, hasFormBeenSubmi
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Opis zadania"
             placeholder="Wprowadź opis zadania"
-            required
             disabled={disabled}
           />
         )}

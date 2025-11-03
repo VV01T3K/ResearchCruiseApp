@@ -120,7 +120,6 @@ export function ResetPasswordPage() {
               onChange={field.handleChange}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Hasło"
-              required
             />
           )}
         />
@@ -136,7 +135,6 @@ export function ResetPasswordPage() {
               onChange={field.handleChange}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Potwierdź hasło"
-              required
             />
           )}
         />

@@ -12,7 +12,6 @@ type Props = {
   onChange?: (value: string) => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
@@ -25,7 +24,6 @@ export function AppFloatingLabelInput({
   onChange,
   errors,
   label,
-  required,
   className,
   disabled,
   helper,
@@ -41,7 +39,6 @@ export function AppFloatingLabelInput({
           errors ? 'border-danger text-danger focus:border-danger' : ''
         )}
         placeholder={''}
-        required={required}
         value={value}
         onBlur={onBlur}
         onChange={(evt) => onChange?.(evt.target.value)}

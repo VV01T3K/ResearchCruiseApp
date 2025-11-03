@@ -15,7 +15,6 @@ export function ReadOnlyProjectPreparationResearchTaskDetails({ data }: Props) {
         label="Roboczy tytuł projektu"
         placeholder="Wprowadź tytuł"
         containerClassName="lg:col-span-2"
-        required
         disabled={true}
       />
 
@@ -23,7 +22,6 @@ export function ReadOnlyProjectPreparationResearchTaskDetails({ data }: Props) {
         name="researchTasks[].date"
         value={data.date}
         label="Przewidywany termin składania"
-        required
         disabled={true}
       />
 
@@ -35,7 +33,6 @@ export function ReadOnlyProjectPreparationResearchTaskDetails({ data }: Props) {
           { value: 'false', inlineLabel: 'Nie' },
         ]}
         label="Otrzymano decyzję o finansowaniu?"
-        required
         disabled={true}
       />
     </div>

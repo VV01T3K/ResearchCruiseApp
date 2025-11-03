@@ -29,12 +29,6 @@ export const Disabled: Story = {
   },
 };
 
-export const Required: Story = {
-  args: {
-    required: true,
-  },
-};
-
 export const Multiple: Story = {
   args: {
     allowMultiple: true,

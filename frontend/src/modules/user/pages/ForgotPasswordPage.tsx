@@ -73,7 +73,6 @@ export function ForgotPasswordPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta)}
                 label="E-mail"
-                required
               />
             )}
           />

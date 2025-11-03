@@ -12,7 +12,6 @@ export function ReadOnlyDidacticsResearchTaskDetails({ data }: Props) {
         value={data.description}
         label="Opis zajęcia dydaktycznego"
         placeholder="Wprowadź opis zajęcia dydaktycznego"
-        required
         disabled={true}
       />
     </div>

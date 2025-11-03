@@ -203,7 +203,6 @@ export function FormAPage() {
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
                 errors={getErrors(field.state.meta)}
                 autoFocus
-                required
               />
             )}
           />
