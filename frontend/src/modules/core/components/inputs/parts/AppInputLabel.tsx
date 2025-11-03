@@ -27,17 +27,31 @@ export function AppInputLabel({ name, value, className, required }: Props) {
     showAsterisk = true;
   }
 
+  // id for accessible description when asterisk is present
+  const descId = showAsterisk && name ? `${name}-required-desc` : undefined;
+
   return (
     <label htmlFor={name} className={cn('block mb-2 text-sm font-medium text-gray-900', className)}>
-      {labelContent}
+      {/* Wrap the label text so hovering over the text (before the asterisk) shows the explanation */}
+      <span
+        className="inline"
+        title={showAsterisk ? "Pole jest obowiązkowe do wypełnienia" : undefined}
+        {...(descId ? { 'aria-describedby': descId } : {})}
+        tabIndex={showAsterisk ? 0 : undefined}
+      >
+        {labelContent}
+      </span>
       {showAsterisk && (
         <span
           className="ml-1 text-red-600 font-bold"
-          title="pole wymagane do wypełnienia"
-          aria-hidden="false"
-          aria-label="pole wymagane do wypełnienia"
+          aria-hidden="true"
         >
           *
+        </span>
+      )}
+      {showAsterisk && descId && (
+        <span id={descId} className="sr-only">
+          Pola oznaczone gwiazdką są obowiązkowe do wypełnienia.
         </span>
       )}
     </label>
