@@ -20,7 +20,7 @@ export class FormAResearchTasksSection {
     this.sectionDiv = locateSectionDiv(formPage.page, '6. Zadania do zrealizowania w trakcie rejsu');
 
     this.addNewTaskDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj nowe efekty rejsue' }),
+      this.sectionDiv.getByRole('button', { name: 'Dodaj nowe efekty rejsu' }),
       {
         variant: 'menu-with-buttons',
       }
