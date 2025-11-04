@@ -5,7 +5,7 @@ import { PriorityInformationRow } from '@/other/components/PriorityInformationRo
 export function PriorityInformationPage() {
   return (
     <AppLayout title="Informacje o priorytetyzacji">
-      <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-clip-border px-5">
+      <div className="relative flex flex-col w-full h-full text-gray-700 bg-clip-border px-5">
         <table className="w-full text-left table-auto">
           <thead>
             <tr>
@@ -73,7 +73,7 @@ export function PriorityInformationPage() {
               <PriorityInformationCell>
                 Dotyczy jedynie projektów zatwierdzonych do finansowania oficjalną decyzją uzyskaną z instytucji
                 finansującej. Ponadto, na etapie aplikowania, we wniosku projektowym musiało być wpisane, że badania
-                będą pPriorityInformationRowadzone na r/v Oceanograf i w jakim wymiarze czasowym.
+                będą prowadzone na r/v Oceanograf i w jakim wymiarze czasowym.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
@@ -87,9 +87,8 @@ export function PriorityInformationPage() {
                 Do indywidualnego rozpatrzenia UWAGA: W przypadku rezygnacji z części zamówionych wcześniej dni
                 rejsowych (np. gdy uda się zrealizować zamierzone prace wcześniej, ze względu na odpowiednie warunki
                 pogodowe), te „wolne” dni rejsowe z powrotem trafiają do puli do rozdysponowania i mają prawo ubiegać
-                się o te dni w pierwszej kolejności KiePriorityInformationRownicy Naukowi rejsów, którzy to ze względu
-                na uzyskany niski wynik w priorytetyzacji nie otrzymali możliwości odbycia pierwotnie zgłaszanego w
-                formularzu A rejsu.
+                się o te dni w pierwszej kolejności Kierownicy Naukowi rejsów, którzy to ze względu na uzyskany niski
+                wynik w priorytetyzacji nie otrzymali możliwości odbycia pierwotnie zgłaszanego w formularzu A rejsu.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
@@ -181,9 +180,9 @@ export function PriorityInformationPage() {
               <PriorityInformationCell>
                 B) Publikacje z listy powyżej oraz inne niezwiązane tematycznie z zadaniami do realizacji na planowanym
                 rejsie, autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w treści publikacji
-                (w wersji polskiej lub w innym języku), że „badania w ramach niniejszej publikacji były
-                pPriorityInformationRowadzone z pokładu RV Oceanograf” (należy podać publikacje, wpisując dla każdej z
-                nich: autorów, rok wydania, tytuł, nazwę czasopisma i nr, DOI i liczbę punktów ministerialnych).
+                (w wersji polskiej lub w innym języku), że „badania w ramach niniejszej publikacji były prowadzone z
+                pokładu RV Oceanograf” (należy podać publikacje, wpisując dla każdej z nich: autorów, rok wydania,
+                tytuł, nazwę czasopisma i nr, DOI i liczbę punktów ministerialnych).
               </PriorityInformationCell>
               <PriorityInformationCell>
                 suma liczby punktów ministerialnych za wszystkie publikacje
@@ -201,8 +200,8 @@ export function PriorityInformationPage() {
               <PriorityInformationCell>
                 20 punktów – praca licencjacka 50 punktów – praca magisterska UWAGA: Powstałe i obronione prace muszą
                 zawierać dopisek, że badania były realizowane (próbki były pobierane) z pokładu R/V Oceanograf. Punkty
-                uwzględnianie w priorytetyzacji pod warunkiem, że KiePriorityInformationRownik Naukowy zgłaszanego rejsu
-                był promotorem tych prac.
+                uwzględnianie w priorytetyzacji pod warunkiem, że Kierownik Naukowy zgłaszanego rejsu był promotorem
+                tych prac.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
@@ -210,8 +209,8 @@ export function PriorityInformationPage() {
               <PriorityInformationCell>
                 200 punktów – praca doktorska UWAGA: Powstałe i obronione prace muszą zawierać dopisek, że badania były
                 realizowane (próbki były pobierane) z pokładu R/V Oceanograf. Punkty uwzględnianie w priorytetyzacji pod
-                warunkiem, że KiePriorityInformationRownik Naukowy zgłaszanego rejsu był promotorem tej pracy LUB
-                autorem tej pracy i jednocześnie pracownikiem UG.
+                warunkiem, że Kierownik Naukowy zgłaszanego rejsu był promotorem tej pracy LUB autorem tej pracy i
+                jednocześnie pracownikiem UG.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
@@ -220,9 +219,8 @@ export function PriorityInformationPage() {
               </PriorityInformationCell>
               <PriorityInformationCell>
                 100 punktów, jeżeli w ramach zrealizowanego pod to zadanie rejsu powstała publikacja naukowa za co
-                najmniej 100 punktów ministerialnych LUB jeżeli po zrealizowanym pod to zadanie rejsie
-                KiePriorityInformationRownik Naukowy rejsu uzyskał finansowanie projektu w przeciągu kolejnych 2 lat od
-                daty rejsu.
+                najmniej 100 punktów ministerialnych LUB jeżeli po zrealizowanym pod to zadanie rejsie Kierownik Naukowy
+                rejsu uzyskał finansowanie projektu w przeciągu kolejnych 2 lat od daty rejsu.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
@@ -260,7 +258,7 @@ export function PriorityInformationPage() {
               <PriorityInformationCell>
                 Punkty za publikacje w ramach punktu 7 (powyższa tabela) są liczone dodatkowo względem punktów
                 uzyskiwanych w ramach punktu 6 (Historia publikacji) i wskazują one na „efektywność planowania” danego
-                KiePriorityInformationRownika Naukowego.
+                Kierownika Naukowego.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
@@ -284,14 +282,14 @@ export function PriorityInformationPage() {
                 1. W przypadku rezygnacji z części zamówionych wcześniej dni rejsowych (np. gdy uda się zrealizować
                 zamierzone prace wcześniej, ze względu na odpowiednie warunki pogodowe), te „wolne” dni rejsowe z
                 powrotem trafiają do puli do rozdysponowania i mają prawo ubiegać się o te dni w pierwszej kolejności
-                KiePriorityInformationRownicy Naukowi rejsów, którzy to ze względu na uzyskany niski wynik w
-                priorytetyzacji nie otrzymali możliwości odbycia pierwotnie zgłaszanego w formularzu A rejsu.
+                Kierownicy Naukowi rejsów, którzy to ze względu na uzyskany niski wynik w priorytetyzacji nie otrzymali
+                możliwości odbycia pierwotnie zgłaszanego w formularzu A rejsu.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
               <PriorityInformationCell colSpan={2}>
                 2. Kwestia j.w. dotyczy również wolnych dni rejsowych w harmonogramie, które to pojawiły się po tym, jak
-                KiePriorityInformationRownik Naukowy zrezygnował ze „swojego” rejsu.
+                Kierownik Naukowy zrezygnował ze „swojego” rejsu.
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
