@@ -40,6 +40,7 @@ export function FormAPage() {
       ? {
           ...formA.data,
           deputyManagerId: formA.data.deputyManagerId ?? '', // API might return null values for drafts
+          permissions: formA.data.permissions.map((p) => ({ ...p, scan: undefined })),
         }
       : {
           id: undefined,
