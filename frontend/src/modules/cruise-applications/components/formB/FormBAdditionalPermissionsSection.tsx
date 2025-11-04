@@ -77,10 +77,7 @@ export function FormBAdditionalPermissionsSection() {
           <span>
             Skan
             {table.getRowModel().rows.length > 0 && (
-              <span
-                className="ml-1 text-red-600 font-bold"
-                title="pole wymagane do wypełnienia"
-              >
+              <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia">
                 *
               </span>
             )}
