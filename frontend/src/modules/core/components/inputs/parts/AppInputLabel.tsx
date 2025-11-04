@@ -41,17 +41,14 @@ export function AppInputLabel({ name, value, className, required, disabled }: Pr
       {/* Wrap the label text so hovering over the text (before the asterisk) shows the explanation */}
       <span
         className="inline"
-        title={showAsterisk ? "Pole jest obowiązkowe do wypełnienia" : undefined}
+        title={showAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}
         {...(descId ? { 'aria-describedby': descId } : {})}
         tabIndex={showAsterisk ? 0 : undefined}
       >
         {labelContent}
       </span>
       {showAsterisk && (
-        <span
-          className="ml-1 text-red-600 font-bold"
-          title="Pole jest obowiązkowe do wypełnienia"
-        >
+        <span className="ml-1 text-red-600 font-bold" title="Pole jest obowiązkowe do wypełnienia">
           *
         </span>
       )}

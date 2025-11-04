@@ -72,16 +72,10 @@ export function AppMobileTable<T>({
                     if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn && !disabled) {
                       return (
                         <>
-                          <span
-                            className="inline"
-                            title="Pola oznaczone '*' są obowiązkowe"
-                          >
+                          <span className="inline" title="Pola oznaczone '*' są obowiązkowe">
                             {emptyTableMessage}
                           </span>
-                          <span
-                            className="ml-1 text-red-600 font-bold"
-                            title="Pola oznaczone '*' są obowiązkowe"
-                          >
+                          <span className="ml-1 text-red-600 font-bold" title="Pola oznaczone '*' są obowiązkowe">
                             *
                           </span>
                         </>
