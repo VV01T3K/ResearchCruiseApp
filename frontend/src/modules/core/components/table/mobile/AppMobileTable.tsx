@@ -8,7 +8,14 @@ import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/core/lib/utils';
 
-export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }: TableProps<T>) {
+export function AppMobileTable<T>({
+  table,
+  buttons,
+  emptyTableMessage,
+  variant,
+  autoMarkEmptyWhenColumnsRequired,
+  disabled,
+}: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   const defaultButtons: React.ReactNode[] = [
@@ -56,7 +63,26 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
                 <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
-                  {emptyTableMessage}
+                  {(() => {
+                    const hasRequiredColumn = table
+                      .getAllColumns()
+                      .some((c) =>
+                        Boolean((c.columnDef as unknown as { meta?: { required?: boolean } })?.meta?.required)
+                      );
+                    if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn && !disabled) {
+                      return (
+                        <>
+                          <span className="inline" title="Pola oznaczone '*' są obowiązkowe">
+                            {emptyTableMessage}
+                          </span>
+                          <span className="ml-1 text-red-600 font-bold" title="Pola oznaczone '*' są obowiązkowe">
+                            *
+                          </span>
+                        </>
+                      );
+                    }
+                    return emptyTableMessage;
+                  })()}
                 </td>
               </tr>
             )}
