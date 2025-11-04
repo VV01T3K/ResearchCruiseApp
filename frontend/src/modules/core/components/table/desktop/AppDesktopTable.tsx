@@ -9,6 +9,7 @@ export function AppDesktopTable<T>({
   buttons,
   emptyTableMessage,
   autoMarkEmptyWhenColumnsRequired,
+  disabled,
 }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
@@ -69,7 +70,7 @@ export function AppDesktopTable<T>({
                     .some((c) =>
                       Boolean((c.columnDef as unknown as { meta?: { required?: boolean } })?.meta?.required)
                     );
-                  if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn) {
+                  if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn && !disabled) {
                     return (
                       <>
                         <span
