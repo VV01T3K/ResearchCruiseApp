@@ -78,7 +78,6 @@ export function AppDatePickerInput({
   React.useEffect(() => {
     // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setSelectedDate(getDateFromValue(value));
-    // console.log(value);
   }, [value]);
 
   useOutsideClickDetection({
