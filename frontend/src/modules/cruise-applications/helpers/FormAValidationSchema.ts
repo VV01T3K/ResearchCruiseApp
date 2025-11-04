@@ -219,7 +219,7 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
       guestTeams: GuestTeamDtoValidationSchema.array(),
       publications: PublicationDtoValidationSchema.array(),
       spubTasks: SpubTaskDtoValidationSchema.array(),
-      supervisorEmail: z.string().nonempty('Adres e-mail przełożonego jest wymagany').email('Niepoprawny adres email'),
+      supervisorEmail: z.string().email('Niepoprawny adres email'),
       note: z.string().optional(),
     })
     .refine((val) => {

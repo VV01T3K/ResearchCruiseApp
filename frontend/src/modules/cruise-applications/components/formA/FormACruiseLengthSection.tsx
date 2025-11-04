@@ -221,7 +221,6 @@ export function FormACruiseLengthSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Statek na potrzeby badań będzie wykorzystywany"
-                  required
                   allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
                     value: i.toString(),
                     inlineLabel: shipUsage,

@@ -17,7 +17,6 @@ export function FormBResearchTasksSection() {
     },
     {
       header: 'Zadanie',
-      meta: { required: true },
       accessorFn: (row) => getTaskName(row.type) ?? 'Nieznany typ',
       size: 20,
     },
@@ -35,7 +34,6 @@ export function FormBResearchTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
-        autoMarkEmptyWhenColumnsRequired
         variant="form"
         disabled={isReadonly}
       />

@@ -128,7 +128,7 @@ export function AppFileInput({
 
   return (
     <div>
-      <AppInputLabel name={name} value={label} required={required} />
+      <AppInputLabel name={name} value={label} />
       <div
         className="flex items-center justify-center w-full"
         onClick={() => inputRef.current?.click()}

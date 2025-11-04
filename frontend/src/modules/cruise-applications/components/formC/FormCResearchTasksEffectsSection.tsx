@@ -20,7 +20,6 @@ export function FormCResearchTasksSection() {
     },
     {
       header: 'Zadanie',
-      meta: { required: true },
       accessorFn: (row) => getTaskName(row.type) ?? 'Nieznany typ',
       size: 15,
     },
@@ -113,7 +112,6 @@ export function FormCResearchTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
-        autoMarkEmptyWhenColumnsRequired
         disabled={isReadonly}
       />
     </AppAccordion>
