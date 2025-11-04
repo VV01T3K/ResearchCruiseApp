@@ -41,6 +41,9 @@ export function FormAPage() {
           ...formA.data,
           deputyManagerId: formA.data.deputyManagerId ?? '', // API might return null values for drafts
           permissions: formA.data.permissions.map((p) => ({ ...p, scan: undefined })),
+          ...(formA.data.precisePeriodStart && formA.data.precisePeriodEnd
+            ? { acceptablePeriod: '', optimalPeriod: '' }
+            : {}),
         }
       : {
           id: undefined,
