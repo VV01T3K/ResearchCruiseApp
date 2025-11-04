@@ -80,6 +80,7 @@ export function AppTable<T>({
       emptyTableMessage={emptyTableMessage}
       autoMarkEmptyWhenColumnsRequired={autoMarkEmptyWhenColumnsRequired}
       variant={variant}
+      disabled={disabled}
     />
   );
 }

@@ -10,4 +10,5 @@ export type TableProps<T> = {
   // if true, and the table is empty, automatically append the required
   // marker to the emptyTableMessage when any column declares meta.required = true
   autoMarkEmptyWhenColumnsRequired?: boolean;
+  disabled?: boolean;
 };
