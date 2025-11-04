@@ -7,10 +7,9 @@ type Props = {
   title: string;
   children: React.ReactNode;
   expandedByDefault?: true | undefined;
-  hasRequired?: boolean;
 };
 
-export function AppAccordion({ title, children, expandedByDefault = undefined, hasRequired = false }: Props) {
+export function AppAccordion({ title, children, expandedByDefault = undefined }: Props) {
   const [expanded, setExpanded] = React.useState<boolean>(!!expandedByDefault);
 
   return (
@@ -21,19 +20,7 @@ export function AppAccordion({ title, children, expandedByDefault = undefined, h
           className="w-full flex justify-between items-center cursor-pointer px-4 py-4 bg-black/2 rounded-xl"
           onClick={() => setExpanded(!expanded)}
         >
-          <span className="font-semibold text-lg">
-            {title}
-            {hasRequired && (
-              <span
-                className="ml-2 text-red-600 font-bold"
-                title="pole wymagane do wypełnienia"
-                aria-hidden="false"
-                aria-label="pole wymagane do wypełnienia"
-              >
-                *
-              </span>
-            )}
-          </span>
+          <span className="font-semibold text-lg">{title}</span>
           <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
         </button>
       </h2>

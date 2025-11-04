@@ -128,7 +128,7 @@ export function CruiseApplicationPeriodInput({
 
   return (
     <div className="flex flex-col">
-      <AppInputLabel name={name} value={label} required={required} />
+      <AppInputLabel name={name} value={label} />
       <input type="hidden" name={name} value={values.join(',')} required={required} disabled={disabled} />
 
       <div

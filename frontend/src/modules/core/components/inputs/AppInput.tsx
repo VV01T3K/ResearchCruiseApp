@@ -52,7 +52,7 @@ export function AppInput({
 
   return (
     <div className={cn('flex flex-col', containerClassName)}>
-      <AppInputLabel name={name} value={label} required={required} disabled={disabled} />
+      <AppInputLabel name={name} value={label} />
 
       <div className="flex relative">
         <InputElement

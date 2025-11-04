@@ -17,7 +17,6 @@ export function FormBResearchAreaSection() {
     },
     {
       header: 'Rejon prowadzenia badań',
-      meta: { required: true },
       cell: ({ row }) =>
         `${row.original.differentName ?? getResearchAreaName(formAInitValues.researchAreas, row.original.areaId!)!}`,
       size: 30,
@@ -35,7 +34,6 @@ export function FormBResearchAreaSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego rejonu."
-        autoMarkEmptyWhenColumnsRequired
         disabled={isReadonly}
       />
     </AppAccordion>

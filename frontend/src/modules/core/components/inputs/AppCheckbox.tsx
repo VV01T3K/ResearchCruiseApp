@@ -20,12 +20,10 @@ type Props = {
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
-  required?: boolean;
 };
 export function AppCheckbox({
   name,
   checked,
-  required,
   variant = 'primary',
   size = 'sm',
   onBlur,
@@ -54,7 +52,7 @@ export function AppCheckbox({
       />
       <div className={cn('flex flex-col', className)}>
         <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
-          <AppInputLabel name={name} value={label} className="mb-0" required={required} />
+          <AppInputLabel name={name} value={label} className="mb-0" />
 
           <div onClick={() => elementRef.current?.click()}>
             <div
