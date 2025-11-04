@@ -14,9 +14,9 @@ import { FormABlockadeWarning } from './FormABlockadeWarning';
 
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
-  const [periodSelectionType, setPeriodSelectionType] = useState<'precise' | 'period'>(
-    isReadonly ? (form.state.values.precisePeriodStart ? 'precise' : 'period') : 'period'
-  );
+  const [periodSelectionType, setPeriodSelectionType] = useState<'precise' | 'period'>(() => {
+    return form.state.values.precisePeriodStart || form.state.values.precisePeriodEnd ? 'precise' : 'period';
+  });
 
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
     if (value === 'precise') {
