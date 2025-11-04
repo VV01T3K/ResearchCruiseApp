@@ -73,17 +73,17 @@ export function FormBAdditionalPermissionsSection() {
       },
       {
         id: 'scan',
-        header: () => (
+        header: ({ table }) => (
           <span>
             Skan
-            <span
-              className="ml-1 text-red-600 font-bold"
-              title="pole wymagane do wypełnienia"
-              aria-hidden="false"
-              aria-label="pole wymagane do wypełnienia"
-            >
-              *
-            </span>
+            {table.getRowModel().rows.length > 0 && (
+              <span
+                className="ml-1 text-red-600 font-bold"
+                title="pole wymagane do wypełnienia"
+              >
+                *
+              </span>
+            )}
           </span>
         ),
         accessorFn: (row) => row.scan,

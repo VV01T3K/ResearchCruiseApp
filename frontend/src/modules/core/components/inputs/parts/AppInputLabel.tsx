@@ -6,8 +6,9 @@ type Props = {
   name?: string;
   className?: string;
   required?: boolean;
+  disabled?: boolean;
 };
-export function AppInputLabel({ name, value, className, required }: Props) {
+export function AppInputLabel({ name, value, className, required, disabled }: Props) {
   if (!value) return null;
 
   // Normalize label text: if it already ends with '*' treat it as required and strip the star
@@ -25,6 +26,11 @@ export function AppInputLabel({ name, value, className, required }: Props) {
   // Also show asterisk when `required` prop is passed
   if (required) {
     showAsterisk = true;
+  }
+
+  // Don't show asterisk if field is disabled
+  if (disabled) {
+    showAsterisk = false;
   }
 
   // id for accessible description when asterisk is present
