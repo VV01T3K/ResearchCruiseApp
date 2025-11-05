@@ -31,11 +31,11 @@ export class FormCCruiseDetailsSection {
     const rowLocator = this.equipmentRowLocator(index);
     return {
       fromDateDropdown: new FormDropdown(rowLocator.locator('td').nth(1).getByRole('button').first(), {
-        variant: 'menu-with-buttons',
+        variant: 'datetime-picker',
         errors: { required: rowLocator.getByText('Data rozpoczęcia jest wymagana') },
       }),
       toDateDropdown: new FormDropdown(rowLocator.locator('td').nth(2).getByRole('button').first(), {
-        variant: 'menu-with-buttons',
+        variant: 'datetime-picker',
         errors: { required: rowLocator.getByText('Data zakończenia jest wymagana') },
       }),
       nameInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
