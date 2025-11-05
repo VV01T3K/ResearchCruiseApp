@@ -1,10 +1,6 @@
 {
   "shipEquipments": [
     {
-      "id": "39365f77-d460-4213-9dac-08dd4784a874",
-      "name": "Żurawik hydrograficzny dziobowy (prawa burta)"
-    },
-    {
       "id": "07fc16f2-e8f7-4c31-9dad-08dd4784a874",
       "name": "Żurawik hydrograficzny rufowy (prawa burta)"
     },
