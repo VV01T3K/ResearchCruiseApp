@@ -29,11 +29,12 @@
 				"docker.docker",
 				"csharpier.csharpier-vscode",
 				"ms-dotnettools.csharp",
-				"cweijan.vscode-mysql-client2"
+				"cweijan.vscode-mysql-client2",
+				"ms-playwright.playwright"
 			]
 		}
 	},
-	"postCreateCommand": "cd backend && dotnet restore && dotnet restore"
+	"postCreateCommand": "(cd backend && dotnet restore && dotnet restore) && (cd frontend && pnpm install && sudo /usr/local/bin/bun x playwright install --with-deps chromium && pnpm exec playwright install)"
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
