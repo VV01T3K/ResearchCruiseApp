@@ -22,6 +22,10 @@ import {
 export function FormAResearchTasksSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
+  // Note: the section-level required marker is rendered inline next to the
+  // empty-table message. We avoid computing unused locals here to prevent
+  // eslint/TS warnings about unused variables.
+
   function getColumns(
     field: FieldApi<FormADto, 'researchTasks', undefined, undefined, ResearchTaskDto[]>
   ): ColumnDef<ResearchTaskDto>[] {
@@ -33,6 +37,7 @@ export function FormAResearchTasksSection() {
       },
       {
         header: 'Zadanie',
+        meta: { required: true },
         accessorFn: (row) => getTaskName(row.type),
         cell: ({ row }) => (
           <form.Field
@@ -84,6 +89,7 @@ export function FormAResearchTasksSection() {
               <AppTable
                 columns={getColumns(field)}
                 data={field.state.value}
+                autoMarkEmptyWhenColumnsRequired
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"

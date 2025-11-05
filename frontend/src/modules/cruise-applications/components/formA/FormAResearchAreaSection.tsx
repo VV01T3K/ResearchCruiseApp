@@ -17,6 +17,9 @@ import { CruiseApplicationDropdownElementSelectorButton } from '../common/Cruise
 export function FormAResearchAreaSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
+  // The table now handles showing the required marker when empty via
+  // `autoMarkEmptyWhenColumnsRequired`, so we don't compute sectionHasErrors here.
+
   function getColumns(
     field: FieldApi<FormADto, 'researchAreaDescriptions', undefined, undefined, ResearchAreaDescriptionDto[]>
   ): ColumnDef<ResearchAreaDescriptionDto>[] {
@@ -28,6 +31,7 @@ export function FormAResearchAreaSection() {
       },
       {
         header: 'Rejon prowadzenia badań',
+        meta: { required: true },
         cell: ({ row }) => (
           <>
             <form.Field
@@ -108,6 +112,7 @@ export function FormAResearchAreaSection() {
             <AppTable
               columns={getColumns(field)}
               data={field.state.value}
+              autoMarkEmptyWhenColumnsRequired
               buttons={() => [
                 <CruiseApplicationDropdownElementSelectorButton
                   key="new"
