@@ -4,7 +4,6 @@ internal static class InitialShipEquipmentData
 {
     public static string[] ShipEquipmentsNames =>
         [
-            "Żurawik hydrograficzny dziobowy (prawa burta)",
             "Żurawik hydrograficzny rufowy (prawa burta)",
             "Żurawik hydrograficzny rufowy (lewa burta)",
             "Dźwig główny",
