@@ -29,7 +29,7 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       await expect(this.page.getByRole('menu')).toHaveCount(0);
     } else if (this.variant === 'datetime-picker') {
       // for now, only day selection is supported
-      await this.page.getByRole('menu').getByRole('button', { name: itemText }).click();
+      await this.page.getByRole('menu').getByRole('button', { name: itemText, exact: true }).click();
       await this.page.keyboard.press('Escape'); // to close the datetime picker
       await expect(this.page.getByRole('menu')).toHaveCount(0);
     }

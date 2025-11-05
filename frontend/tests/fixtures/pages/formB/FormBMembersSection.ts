@@ -92,13 +92,13 @@ export class FormBMembersSection {
         errors: { required: rowLocator.getByText('Numer dokumentu jest wymagany') },
       }),
       birthdayDropdown: new FormDropdown(rowLocator.locator('button:below(:text("Data urodzenia"))').first(), {
-        variant: 'menu-with-buttons',
+        variant: 'datetime-picker',
         errors: { required: rowLocator.getByText('Data urodzenia jest wymagana') },
       }),
       documentExpirationDateDropdown: new FormDropdown(
         rowLocator.locator('button:below(:text("Data ważności dokumentu"))').first(),
         {
-          variant: 'menu-with-buttons',
+          variant: 'datetime-picker',
           errors: { required: rowLocator.getByText('Data ważności dokumentu jest wymagana') },
         }
       ),
