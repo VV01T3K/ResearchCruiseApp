@@ -133,6 +133,7 @@ export function FormAResearchAreaSection() {
               emptyTableMessage="Nie dodano żadnego rejonu."
               variant="form"
               disabled={isReadonly}
+              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             />
             <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
           </>
