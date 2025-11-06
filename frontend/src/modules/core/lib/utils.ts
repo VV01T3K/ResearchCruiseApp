@@ -77,7 +77,7 @@ export function getFormErrorMessage<TForm extends Record<string, unknown>>(
   if (firstError) {
     return firstError.sectionNumber
       ? `Formularz błędny w sekcji nr ${firstError.sectionNumber}:\n${firstError.errorMessage}`
-      : firstError.errorMessage;
+      : `Formularz zawiera błędy:\n ${firstError.errorMessage}`;
   }
   return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
