@@ -1,10 +1,85 @@
-import { FieldMeta } from '@tanstack/react-form';
+import { FieldMeta, ReactFormExtendedApi } from '@tanstack/react-form';
 import clsx, { ClassValue } from 'clsx';
 import { createPortal } from 'react-dom';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
+}
+
+export interface FormError {
+  fieldName: string;
+  errorMessage: string;
+  sectionNumber?: number;
+}
+
+// Mapping of field names to section numbers for Form A
+const formAFieldToSection: Record<string, number> = {
+  cruiseManagerId: 1,
+  deputyManagerId: 1,
+  year: 2,
+  acceptablePeriod: 2,
+  optimalPeriod: 2,
+  precisePeriodStart: 2,
+  precisePeriodEnd: 2,
+  cruiseHours: 2,
+  periodNotes: 2,
+  shipUsage: 2,
+  differentUsage: 2,
+  permissions: 3,
+  researchAreaDescriptions: 4,
+  cruiseGoal: 5,
+  cruiseGoalDescription: 5,
+  researchTasks: 6,
+  contracts: 7,
+  ugTeams: 8,
+  guestTeams: 8,
+  publications: 9,
+  spubTasks: 10,
+  supervisorEmail: 11,
+  note: 11,
+};
+
+function getSectionNumberFromFieldName(fieldName: string): number | undefined {
+  const directMatch = formAFieldToSection[fieldName];
+  if (directMatch) {
+    return directMatch;
+  }
+
+  return undefined;
+}
+
+export function getFirstFormError<TForm extends Record<string, unknown>>(
+  form: ReactFormExtendedApi<TForm, undefined>
+): FormError | null {
+  const errors = (form.state as { fieldMeta: Record<string, { errors: unknown[] }> }).fieldMeta;
+
+  for (const [fieldName, fieldMeta] of Object.entries(errors)) {
+    if (fieldMeta.errors && fieldMeta.errors.length > 0) {
+      const errorMessage = fieldMeta.errors[0]?.toString() || 'Błąd walidacji';
+      const sectionNumber = getSectionNumberFromFieldName(fieldName);
+
+      return {
+        fieldName,
+        errorMessage,
+        sectionNumber,
+      };
+    }
+  }
+
+  return null;
+}
+
+export function getFormErrorMessage<TForm extends Record<string, unknown>>(
+  form: ReactFormExtendedApi<TForm, undefined>
+): string {
+  const firstError = getFirstFormError(form);
+  if (firstError) {
+    return firstError.sectionNumber
+      ? `Formularz błędny w sekcji nr ${firstError.sectionNumber}:\n${firstError.errorMessage}`
+      : firstError.errorMessage;
+  }
+  return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
 export function getErrors(field: FieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {

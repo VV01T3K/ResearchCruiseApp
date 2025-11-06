@@ -5,7 +5,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { AppLayout } from '@/core/components/AppLayout';
-import { navigateToFirstError } from '@/core/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/core/lib/utils';
 import { FormC } from '@/cruise-applications/components/formC/FormC';
 import { getFormCValidationSchema } from '@/cruise-applications/helpers/FormCValidationSchema';
 import { useCruiseForCruiseApplicationQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
@@ -87,7 +87,7 @@ export function FormCPage() {
     await form.validate('change');
 
     if (!form.state.canSubmit) {
-      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      toast.error(getFormErrorMessage(form));
       navigateToFirstError();
       return;
     }
