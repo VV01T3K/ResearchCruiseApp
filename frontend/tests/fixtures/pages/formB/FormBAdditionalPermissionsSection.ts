@@ -25,7 +25,7 @@ export class FormBAdditionalPermissionsSection {
     const rowLocator = this.permissionRowLocator(index);
     return {
       descriptionInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
-        errors: { required: rowLocator.getByText('Treść pozwolenia jest wymagany') },
+        errors: { required: rowLocator.getByText('Treść pozwolenia jest wymagana') },
       }),
       executiveInput: new FormInput(rowLocator.getByRole('textbox').nth(1), {
         errors: { required: rowLocator.getByText('Organ wydający jest wymagany') },

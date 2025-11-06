@@ -17,7 +17,7 @@ export class FormAPermissionsSection {
     this.page = formPage.page;
     this.sectionDiv = locateSectionDiv(formPage.page, '3. Dodatkowe pozwolenia do planowanych podczas rejsu badań');
     this.addPermissionButton = this.sectionDiv.getByRole('button', { name: 'Dodaj pozwolenie' });
-    this.descriptionRequiredMessage = this.sectionDiv.getByText('Treść pozwolenia jest wymagany').first();
+    this.descriptionRequiredMessage = this.sectionDiv.getByText('Treść pozwolenia jest wymagana').first();
     this.executiveRequiredMessage = this.sectionDiv.getByText('Organ wydający jest wymagany').first();
   }
 
