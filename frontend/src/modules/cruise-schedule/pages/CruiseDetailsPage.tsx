@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
-import { navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
+import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
@@ -57,7 +57,7 @@ export function CruiseDetailsPage() {
   function handleCruiseUpdate() {
     form.validateAllFields('change');
     if (!form.state.isValid) {
-      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      toast.error(getFormErrorMessage(form));
       navigateToFirstError();
       return;
     }

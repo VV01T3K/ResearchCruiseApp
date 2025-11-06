@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
-import { navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
+import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseFormValidationSchema';
 import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
@@ -43,7 +43,7 @@ export function NewCruisePage() {
     setHasFormBeenSubmitted(true);
     form.validateAllFields('change');
     if (!form.state.isValid) {
-      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      toast.error(getFormErrorMessage(form));
       navigateToFirstError();
       return;
     }

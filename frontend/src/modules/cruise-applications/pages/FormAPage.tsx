@@ -8,7 +8,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { getErrors, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
+import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { FormA } from '@/cruise-applications/components/formA/FormA';
 import { getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
 import {
@@ -103,7 +103,7 @@ export function FormAPage() {
     await form.validate('change');
     if (!form.state.isValid) {
       setIsSaveDraftModalOpen(false);
-      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      toast.error(getFormErrorMessage(form));
       navigateToFirstError();
       return;
     }
