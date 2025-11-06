@@ -75,7 +75,7 @@ export function FormBPage() {
 
     if (!form.state.canSubmit) {
       toast.error(getFormErrorMessage(form));
-      navigateToFirstError();
+      navigateToFirstError(form);
       return;
     }
 
@@ -104,7 +104,7 @@ export function FormBPage() {
           toast.error(
             'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
           );
-          navigateToFirstError();
+          navigateToFirstError(form);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -137,7 +137,7 @@ export function FormBPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError();
+          navigateToFirstError(form);
         },
         onSettled: () => {
           toast.dismiss(loading);
