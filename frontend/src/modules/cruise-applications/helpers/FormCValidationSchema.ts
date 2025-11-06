@@ -18,6 +18,32 @@ import { UGTeamDtoValidationSchema } from '@/cruise-applications/models/UGTeamDt
 import { FormAInitValuesDto } from '../models/FormAInitValuesDto';
 import { getResearchAreaDescriptionDtoValidationSchema } from '../models/ResearchAreaDescriptionDto';
 
+export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
+  cruiseManagerId: 2,
+  shipUsage: 3,
+  differentUsage: 3,
+  permissions: 4,
+  researchAreaDescriptions: 5,
+  cruiseGoal: 6,
+  cruiseGoalDescription: 6,
+  researchTasksEffects: 7,
+  ugTeams: 9,
+  guestTeams: 9,
+  publications: 10,
+  spubTasks: 11,
+  cruiseDetailsInfo: 12,
+  cruiseDaysDetails: 13,
+  researchEquipments: 14,
+  shipEquipmentsIds: 15,
+  collectedSamples: 16,
+  shortResearchEquipments: 14,
+  longResearchEquipments: 14,
+  ports: 12,
+  photos: 18,
+  additionalDescription: 18,
+  spubReportData: 17,
+};
+
 const ShipUsageValidationSchema = z
   .object({
     shipUsage: z.enum(['0', '1', '2', '3', '4'], {

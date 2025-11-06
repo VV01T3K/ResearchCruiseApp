@@ -10,7 +10,7 @@ import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { FormA } from '@/cruise-applications/components/formA/FormA';
-import { getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
+import { FORM_A_FIELD_TO_SECTION, getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
 import { useFormAInitValuesQuery, useSaveFormAMutation } from '@/cruise-applications/hooks/FormAApiHooks';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { useBlockadesQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
@@ -84,8 +84,8 @@ export function NewCruisePage() {
     await form.validate('change');
     if (!form.state.isValid) {
       setIsSaveDraftModalOpen(false);
-      toast.error(getFormErrorMessage(form));
-      navigateToFirstError(form);
+      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -101,7 +101,7 @@ export function NewCruisePage() {
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError(form);
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -117,7 +117,7 @@ export function NewCruisePage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form);
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -140,7 +140,7 @@ export function NewCruisePage() {
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError(form);
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -155,7 +155,7 @@ export function NewCruisePage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form);
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);

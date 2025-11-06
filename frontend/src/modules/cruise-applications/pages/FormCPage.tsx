@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { AppLayout } from '@/core/components/AppLayout';
 import { getFormErrorMessage, navigateToFirstError } from '@/core/lib/utils';
 import { FormC } from '@/cruise-applications/components/formC/FormC';
-import { getFormCValidationSchema } from '@/cruise-applications/helpers/FormCValidationSchema';
+import { FORM_C_FIELD_TO_SECTION, getFormCValidationSchema } from '@/cruise-applications/helpers/FormCValidationSchema';
 import { useCruiseForCruiseApplicationQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { useFormAInitValuesQuery, useFormAQuery } from '@/cruise-applications/hooks/FormAApiHooks';
 import { useFormBInitValuesQuery, useFormBQuery } from '@/cruise-applications/hooks/FormBApiHooks';
@@ -87,8 +87,8 @@ export function FormCPage() {
     await form.validate('change');
 
     if (!form.state.canSubmit) {
-      toast.error(getFormErrorMessage(form));
-      navigateToFirstError(form);
+      toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
       return;
     }
 
@@ -115,7 +115,7 @@ export function FormCPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form);
+          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -148,7 +148,7 @@ export function FormCPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError(form);
+          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);

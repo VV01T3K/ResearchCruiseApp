@@ -13,67 +13,65 @@ export interface FormError {
   sectionNumber?: number;
 }
 
-// Mapping of field names to section numbers for Form A
-const formAFieldToSection: Record<string, number> = {
-  cruiseManagerId: 1,
-  deputyManagerId: 1,
-  year: 2,
-  acceptablePeriod: 2,
-  optimalPeriod: 2,
-  precisePeriodStart: 2,
-  precisePeriodEnd: 2,
-  cruiseHours: 2,
-  periodNotes: 2,
-  shipUsage: 2,
-  differentUsage: 2,
-  permissions: 3,
-  researchAreaDescriptions: 4,
-  cruiseGoal: 5,
-  cruiseGoalDescription: 5,
-  researchTasks: 6,
-  contracts: 7,
-  ugTeams: 8,
-  guestTeams: 8,
-  publications: 9,
-  spubTasks: 10,
-  supervisorEmail: 11,
-  note: 11,
-};
-
-function getSectionNumberFromFieldName(fieldName: string): number | undefined {
-  const directMatch = formAFieldToSection[fieldName];
+function getSectionNumberFromFieldName(
+  fieldName: string,
+  fieldToSectionMapping: Record<string, number>
+): number | undefined {
+  const directMatch = fieldToSectionMapping[fieldName];
   if (directMatch) {
     return directMatch;
+  }
+
+  // Handle array fields like "permissions[0].description" by extracting the base field name
+  const baseFieldName = fieldName.split('[')[0];
+  if (baseFieldName && baseFieldName !== fieldName) {
+    return fieldToSectionMapping[baseFieldName];
   }
 
   return undefined;
 }
 
 export function getFirstFormError<TForm extends Record<string, unknown>>(
-  form: ReactFormExtendedApi<TForm, undefined>
+  form: ReactFormExtendedApi<TForm, undefined>,
+  fieldToSectionMapping: Record<string, number>
 ): FormError | null {
   const errors = (form.state as { fieldMeta: Record<string, { errors: unknown[] }> }).fieldMeta;
+
+  // Collect all errors with their section numbers
+  const allErrors: Array<{ fieldName: string; errorMessage: string; sectionNumber?: number }> = [];
 
   for (const [fieldName, fieldMeta] of Object.entries(errors)) {
     if (fieldMeta.errors && fieldMeta.errors.length > 0) {
       const errorMessage = fieldMeta.errors[0]?.toString() || 'Błąd walidacji';
-      const sectionNumber = getSectionNumberFromFieldName(fieldName);
+      const sectionNumber = getSectionNumberFromFieldName(fieldName, fieldToSectionMapping);
 
-      return {
+      allErrors.push({
         fieldName,
         errorMessage,
         sectionNumber,
-      };
+      });
     }
   }
 
-  return null;
+  if (allErrors.length === 0) {
+    return null;
+  }
+
+  // Sort errors: first by section number (ascending), then put undefined sections at the end
+  allErrors.sort((a, b) => {
+    const aSection = a.sectionNumber ?? Infinity;
+    const bSection = b.sectionNumber ?? Infinity;
+    return aSection - bSection;
+  });
+
+  return allErrors[0];
 }
 
 export function getFormErrorMessage<TForm extends Record<string, unknown>>(
-  form: ReactFormExtendedApi<TForm, undefined>
+  form: ReactFormExtendedApi<TForm, undefined>,
+  fieldToSectionMapping: Record<string, number>
 ): string {
-  const firstError = getFirstFormError(form);
+  const firstError = getFirstFormError(form, fieldToSectionMapping);
   if (firstError) {
     return firstError.sectionNumber
       ? `Formularz błędny w sekcji nr ${firstError.sectionNumber}:\n${firstError.errorMessage}`
@@ -105,9 +103,10 @@ function scrollToError(delay: number = 0): void {
 
 // it can be improved further to get rid of the small jump when expanding the accordion
 export function navigateToFirstError<TForm extends Record<string, unknown>>(
-  form?: ReactFormExtendedApi<TForm, undefined>
+  form: ReactFormExtendedApi<TForm, undefined> | undefined,
+  fieldToSectionMapping: Record<string, number>
 ): void {
-  const firstError = form ? getFirstFormError(form) : null;
+  const firstError = form ? getFirstFormError(form, fieldToSectionMapping) : null;
   const sectionNumber = firstError?.sectionNumber;
 
   // Find and expand the accordion section containing the error

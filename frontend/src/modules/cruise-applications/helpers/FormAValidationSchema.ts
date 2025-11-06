@@ -14,6 +14,32 @@ import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
 import { getResearchAreaDescriptionDtoValidationSchema } from '../models/ResearchAreaDescriptionDto';
 
+export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
+  cruiseManagerId: 1,
+  deputyManagerId: 1,
+  year: 2,
+  acceptablePeriod: 2,
+  optimalPeriod: 2,
+  precisePeriodStart: 2,
+  precisePeriodEnd: 2,
+  cruiseHours: 2,
+  periodNotes: 2,
+  shipUsage: 2,
+  differentUsage: 2,
+  permissions: 3,
+  researchAreaDescriptions: 4,
+  cruiseGoal: 5,
+  cruiseGoalDescription: 5,
+  researchTasks: 6,
+  contracts: 7,
+  ugTeams: 8,
+  guestTeams: 8,
+  publications: 9,
+  spubTasks: 10,
+  supervisorEmail: 11,
+  note: 11,
+};
+
 const ManagerAndDeputyManagerValidationSchema = (initValues: FormAInitValuesDto) =>
   z
     .object({
