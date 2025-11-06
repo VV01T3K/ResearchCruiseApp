@@ -156,7 +156,7 @@ test.describe('cruise details section tests', () => {
     await formBPage.submitForm();
     await expect(formBPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(equipmentRow.nameInput);
+    await touchInput(equipmentRow.nameInput);
     await expect(equipmentRow.nameInput.errors.required).toBeVisible();
 
     await equipmentRow.nameInput.fill('Jakiś sprzęt');
@@ -182,9 +182,9 @@ test.describe('cruise details section tests', () => {
     await formBPage.submitForm();
     await expect(formBPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(actionRow.timeInput);
+    await touchInput(actionRow.timeInput);
     await expect(actionRow.timeInput.errors.required).toBeVisible();
-    touchInput(actionRow.nameInput);
+    await touchInput(actionRow.nameInput);
     await expect(actionRow.nameInput.errors.required).toBeVisible();
 
     await actionRow.timeInput.fill('10');
@@ -203,7 +203,7 @@ test.describe('cruise details section tests', () => {
     await formBPage.submitForm();
     await expect(formBPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(portRow.nameInput);
+    await touchInput(portRow.nameInput);
     await expect(portRow.nameInput.errors.required).toBeVisible();
 
     await portRow.nameInput.fill('Jakaś nazwa');
@@ -263,7 +263,7 @@ test.describe('research equipments section tests', () => {
     await formBPage.submitForm();
     await expect(formBPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(equipmentRow.nameInput);
+    await touchInput(equipmentRow.nameInput);
     await expect(equipmentRow.nameInput.errors.required).toBeVisible();
 
     await equipmentRow.nameInput.fill('Jakiś sprzęt');
