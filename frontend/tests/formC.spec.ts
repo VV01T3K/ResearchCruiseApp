@@ -225,7 +225,7 @@ test.describe('cruise details section tests', () => {
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(equipmentRow.nameInput);
+    await touchInput(equipmentRow.nameInput);
     await expect(equipmentRow.nameInput.errors.required).toBeVisible();
 
     await equipmentRow.nameInput.fill('Jakiś sprzęt');
@@ -251,9 +251,9 @@ test.describe('cruise details section tests', () => {
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(actionRow.timeInput);
+    await touchInput(actionRow.timeInput);
     await expect(actionRow.timeInput.errors.required).toBeVisible();
-    touchInput(actionRow.nameInput);
+    await touchInput(actionRow.nameInput);
     await expect(actionRow.nameInput.errors.required).toBeVisible();
 
     await actionRow.timeInput.fill('10');
@@ -272,7 +272,7 @@ test.describe('cruise details section tests', () => {
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(portRow.nameInput);
+    await touchInput(portRow.nameInput);
     await expect(portRow.nameInput.errors.required).toBeVisible();
 
     await portRow.nameInput.fill('Jakaś nazwa');
@@ -332,7 +332,7 @@ test.describe('research equipments section tests', () => {
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
 
-    touchInput(equipmentRow.nameInput);
+    await touchInput(equipmentRow.nameInput);
     await expect(equipmentRow.nameInput.errors.required).toBeVisible();
 
     await equipmentRow.nameInput.fill('Jakiś sprzęt');
@@ -382,14 +382,25 @@ test.describe('SPUB report data section tests', () => {
     await formCPage.fillForm({ except: ['spubReportDataSection'] });
   });
 
-  test('missing data', async ({ formCPage }) => {
+  // test('missing data', async ({ formCPage }) => {
+  //   const spubReportDataSection = formCPage.sections.spubReportDataSection;
+
+  //   await formCPage.submitForm();
+  //   await expect(formCPage.submissionApprovedMessage).toBeHidden();
+
+  //   await spubReportDataSection.reportInput.fill('Jakiś raport');
+
+  //   await formCPage.submitForm({ expectedResult: 'valid' });
+  // });
+
+  test('missing data (optional)', async ({ formCPage }) => {
+    await formCPage.submitForm({ expectedResult: 'valid' });
+  });
+
+  test('with data (optional)', async ({ formCPage }) => {
     const spubReportDataSection = formCPage.sections.spubReportDataSection;
 
-    await formCPage.submitForm();
-    await expect(formCPage.submissionApprovedMessage).toBeHidden();
-
     await spubReportDataSection.reportInput.fill('Jakiś raport');
-
     await formCPage.submitForm({ expectedResult: 'valid' });
   });
 
@@ -413,11 +424,12 @@ test.describe('additional description section tests', () => {
     await formCPage.fillForm({ except: ['additionalDescriptionSection'] });
   });
 
-  test('missing description', async ({ formCPage }) => {
-    const additionalDescriptionSection = formCPage.sections.additionalDescriptionSection;
+  test('no description (optional)', async ({ formCPage }) => {
+    await formCPage.submitForm({ expectedResult: 'valid' });
+  });
 
-    await formCPage.submitForm();
-    await expect(formCPage.submissionApprovedMessage).toBeHidden();
+  test('with description (optional)', async ({ formCPage }) => {
+    const additionalDescriptionSection = formCPage.sections.additionalDescriptionSection;
 
     await additionalDescriptionSection.descriptionInput.fill('Jakiś opis');
 
