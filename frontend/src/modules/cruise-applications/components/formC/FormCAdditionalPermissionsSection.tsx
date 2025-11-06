@@ -139,6 +139,7 @@ export function FormCAdditionalPermissionsSection() {
               emptyTableMessage="Nie dodano żadnego pozwolenia."
               variant="form"
               disabled={isReadonly}
+              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             />
             <AppInputErrorsList errors={getErrors(field.state.meta)} />
           </>

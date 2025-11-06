@@ -27,6 +27,7 @@ type Props<T> = {
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   variant?: 'form' | 'table';
   disabled?: boolean;
+  errors?: string[];
 };
 
 export function AppTable<T>({
@@ -40,6 +41,7 @@ export function AppTable<T>({
   getRowId,
   variant = 'table',
   disabled = false,
+  errors,
 }: Props<T>) {
   const { width } = useWindowSize();
   const table = useReactTable<T>({
@@ -76,6 +78,7 @@ export function AppTable<T>({
       buttons={!disabled ? buttons : () => []}
       emptyTableMessage={emptyTableMessage}
       variant={variant}
+      errors={errors}
     />
   );
 }

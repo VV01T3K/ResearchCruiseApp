@@ -8,7 +8,7 @@ import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/core/lib/utils';
 
-export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }: TableProps<T>) {
+export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, errors }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   const defaultButtons: React.ReactNode[] = [
@@ -55,8 +55,14 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }
             ))}
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
-                <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
-                  {emptyTableMessage}
+                <td colSpan={table.getAllColumns().length} className="pb-0 text-center px-0">
+                  <div
+                    className={`pb-4 text-center py-3 rounded-lg border block w-full p-2.5 transition duration-300 ease-in-out ${
+                      errors ? 'bg-gray-50 border-danger ring-danger text-danger' : 'bg-gray-100 border-gray-300'
+                    }`}
+                  >
+                    {emptyTableMessage}
+                  </div>
                 </td>
               </tr>
             )}

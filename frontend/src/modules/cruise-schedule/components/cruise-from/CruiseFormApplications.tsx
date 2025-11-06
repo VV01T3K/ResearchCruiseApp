@@ -143,6 +143,7 @@ export function CruiseFormApplicationsSection() {
                     ]
               }
               emptyTableMessage="Brak załączonych zgłoszeń"
+              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             />
 
             <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
