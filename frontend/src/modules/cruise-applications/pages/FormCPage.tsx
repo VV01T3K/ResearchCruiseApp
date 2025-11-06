@@ -88,7 +88,7 @@ export function FormCPage() {
 
     if (!form.state.canSubmit) {
       toast.error(getFormErrorMessage(form));
-      navigateToFirstError();
+      navigateToFirstError(form);
       return;
     }
 
@@ -115,7 +115,7 @@ export function FormCPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -148,7 +148,7 @@ export function FormCPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError();
+          navigateToFirstError(form);
         },
         onSettled: () => {
           toast.dismiss(loading);

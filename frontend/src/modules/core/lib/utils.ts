@@ -90,8 +90,41 @@ export function getErrors(field: FieldMeta, hasFormBeenSubmitted: boolean = true
   return field.errors.map((error) => error!.toString());
 }
 
-export function navigateToFirstError() {
-  document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+function scrollToError(delay: number = 0): void {
+  const scroll = () => {
+    const errorElement = document.querySelector('[data-error="true"]');
+    errorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  if (delay > 0) {
+    setTimeout(scroll, delay);
+  } else {
+    scroll();
+  }
+}
+
+// it can be improved further to get rid of the small jump when expanding the accordion
+export function navigateToFirstError<TForm extends Record<string, unknown>>(
+  form?: ReactFormExtendedApi<TForm, undefined>
+): void {
+  const firstError = form ? getFirstFormError(form) : null;
+  const sectionNumber = firstError?.sectionNumber;
+
+  // Find and expand the accordion section containing the error
+  const accordionButtons = Array.from(document.querySelectorAll('h2 button[data-expanded]'));
+  const targetButton = accordionButtons.find((button) => {
+    const title = button.querySelector('span')?.textContent || '';
+    return title.includes(`${sectionNumber}.`);
+  });
+
+  const isExpanded = targetButton?.getAttribute('data-expanded') === 'true';
+
+  if (!isExpanded) {
+    (targetButton as HTMLButtonElement).click();
+    scrollToError(50);
+  } else {
+    scrollToError();
+  }
 }
 
 export function groupBy<T>(array: T[], key: (item: T) => string): [string, T[]][] {

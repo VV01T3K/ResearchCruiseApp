@@ -104,7 +104,7 @@ export function FormAPage() {
     if (!form.state.isValid) {
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form));
-      navigateToFirstError();
+      navigateToFirstError(form);
       return;
     }
 
@@ -120,7 +120,7 @@ export function FormAPage() {
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError();
+      navigateToFirstError(form);
       return;
     }
 
@@ -135,7 +135,7 @@ export function FormAPage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form);
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
@@ -158,7 +158,7 @@ export function FormAPage() {
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError();
+      navigateToFirstError(form);
       return;
     }
 
@@ -173,7 +173,7 @@ export function FormAPage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form);
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
