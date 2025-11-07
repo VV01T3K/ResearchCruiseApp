@@ -185,7 +185,11 @@ export function FormAPage() {
         <FormA context={context} />
       </AppLayout>
 
-      <AppModal title="Zapisz Formularz A" isOpen={isSaveDraftModalOpen} onClose={() => setIsSaveDraftModalOpen(false)}>
+      <AppModal
+        title="Zapisz wersję roboczą Formularza A"
+        isOpen={isSaveDraftModalOpen}
+        onClose={() => setIsSaveDraftModalOpen(false)}
+      >
         <div className="space-y-4">
           <form.Field
             name="note"
@@ -207,7 +211,7 @@ export function FormAPage() {
           <div className="flex justify-center gap-4">
             <AppButton className="gap-4" disabled={saveMutation.isPending} onClick={handleSavingDraft}>
               <FloppyFillIcon className="h-4 w-4" />
-              Zapisz
+              Zapisz wersję roboczą
             </AppButton>
           </div>
         </div>

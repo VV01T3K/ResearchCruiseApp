@@ -39,7 +39,7 @@ export function FormBActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disa
           disabled={disabled}
         >
           <FloppyFillIcon className="h-4 w-4" />
-          Zapisz
+          Zapisz wersję roboczą
         </AppButton>
       )}
       {!isReadonly && (
