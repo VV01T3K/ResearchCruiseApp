@@ -30,11 +30,10 @@ export function FormBResearchAreaSection() {
   return (
     <AppAccordion title="5. Rejony prowadzanego badań" expandedByDefault>
       <AppTable
-        data={formA.researchAreaDescriptions}
         columns={columns}
-        buttons={() => []}
+        data={formA.researchAreaDescriptions}
         emptyTableMessage="Nie dodano żadnego rejonu."
-        autoMarkEmptyWhenColumnsRequired
+        variant="form"
         disabled={isReadonly}
       />
     </AppAccordion>

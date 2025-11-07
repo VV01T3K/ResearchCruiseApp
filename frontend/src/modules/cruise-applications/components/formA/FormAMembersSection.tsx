@@ -30,7 +30,6 @@ export function FormAMembersSection() {
       },
       {
         header: 'Jednostka',
-        meta: { showRequiredAsterisk: true },
         accessorFn: (row) => row.ugUnitId,
         cell: ({ row }) => initValues.ugUnits.find((unit) => unit.id === row.original.ugUnitId)?.name,
         size: 50,
@@ -210,7 +209,7 @@ export function FormAMembersSection() {
               <AppTable
                 columns={getUgTeamsColumns(field)}
                 data={field.state.value}
-                autoMarkEmptyWhenColumnsRequired
+                showRequiredAsterisk
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"

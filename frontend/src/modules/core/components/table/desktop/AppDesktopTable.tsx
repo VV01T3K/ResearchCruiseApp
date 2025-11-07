@@ -4,12 +4,7 @@ import { AppTableClearFiltersButton } from '@/core/components/table/common/AppTa
 import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/core/components/table/desktop/AppDesktopTableHeader';
 
-export function AppDesktopTable<T>({
-  table,
-  buttons,
-  emptyTableMessage,
-  autoMarkEmptyWhenColumnsRequired,
-}: TableProps<T>) {
+export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequiredAsterisk }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
@@ -40,7 +35,7 @@ export function AppDesktopTable<T>({
             return (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <AppDesktopTableHeader key={header.id} header={header}>
+                  <AppDesktopTableHeader key={header.id} header={header} hasRows={table.getRowModel().rows.length > 0}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </AppDesktopTableHeader>
                 ))}
@@ -64,7 +59,7 @@ export function AppDesktopTable<T>({
             <tr>
               <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
                 {(() => {
-                  if (autoMarkEmptyWhenColumnsRequired) {
+                  if (showRequiredAsterisk) {
                     return (
                       <>
                         <span title="pole wymagane do wypełnienia">

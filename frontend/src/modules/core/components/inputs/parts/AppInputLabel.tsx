@@ -26,7 +26,6 @@ export function AppInputLabel({ name, value, className, showRequiredAsterisk }: 
     <label htmlFor={name} className={cn('block mb-2 text-sm font-medium text-gray-900', className)}>
       {/* Wrap the label text so hovering over the text (before the asterisk) shows the explanation */}
       <span
-        className="inline"
         title={showAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}
         {...(descId ? { 'aria-describedby': descId } : {})}
         tabIndex={showAsterisk ? 0 : undefined}

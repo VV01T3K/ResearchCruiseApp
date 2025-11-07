@@ -13,7 +13,7 @@ export function AppMobileTable<T>({
   buttons,
   emptyTableMessage,
   variant,
-  autoMarkEmptyWhenColumnsRequired,
+  showRequiredAsterisk,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
@@ -63,7 +63,7 @@ export function AppMobileTable<T>({
               <tr>
                 <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
                   {(() => {
-                    if (autoMarkEmptyWhenColumnsRequired) {
+                    if (showRequiredAsterisk) {
                       return (
                         <>
                           <span title="Pola oznaczone '*' są obowiązkowe">

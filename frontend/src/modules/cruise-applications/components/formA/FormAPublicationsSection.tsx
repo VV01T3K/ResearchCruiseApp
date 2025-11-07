@@ -51,7 +51,6 @@ export function FormAPublicationsSection() {
                   inlineLabel: getPublicationCategoryLabel(role),
                 }))}
                 required
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -78,7 +77,6 @@ export function FormAPublicationsSection() {
                   label="DOI"
                   placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
                   required
-                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -96,7 +94,6 @@ export function FormAPublicationsSection() {
                   label="Autorzy"
                   placeholder='np. "Kowalski J., Nowak A."'
                   required
-                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -114,7 +111,6 @@ export function FormAPublicationsSection() {
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
                   required
-                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -132,7 +128,6 @@ export function FormAPublicationsSection() {
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
                   required
-                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -158,7 +153,6 @@ export function FormAPublicationsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Rok"
                 required
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -185,7 +179,6 @@ export function FormAPublicationsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Punkty"
                 required
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}

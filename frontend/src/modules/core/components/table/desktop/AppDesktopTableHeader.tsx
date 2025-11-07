@@ -13,8 +13,9 @@ import { cn } from '@/core/lib/utils';
 type Props<TData, TValue> = {
   header: Header<TData, TValue>;
   children: React.ReactNode;
+  hasRows?: boolean;
 };
-export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props<TData, TValue>) {
+export function AppDesktopTableHeader<TData, TValue>({ header, children, hasRows = false }: Props<TData, TValue>) {
   const headerRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = React.useState(false);
@@ -36,6 +37,9 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
     setExpanded(!expanded);
   }
 
+  const showRequiredAsterisk =
+    hasRows && ((header.column.columnDef.meta as Record<string, boolean> | undefined)?.showRequiredAsterisk ?? false);
+
   return (
     <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }}>
       <div className="relative inline-block" ref={headerRef}>
@@ -46,12 +50,20 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
             className={cn(supportsDropdown ? 'cursor-pointer' : '', 'flex justify-center items-center gap-2')}
           >
             <AppTableFilterIcon header={header} />
-            <span>{children}</span>
+            <span>
+              {children}
+              {showRequiredAsterisk && <span className="ml-1 text-red-600 font-bold">*</span>}
+            </span>
             <AppTableSortingIcon header={header} />
           </AppButton>
         )}
 
-        {!supportsDropdown && <span>{children}</span>}
+        {!supportsDropdown && (
+          <span title={showRequiredAsterisk ? 'pole wymagane do wypełnienia' : undefined}>
+            {children}
+            {showRequiredAsterisk && <span className="ml-1 text-red-600 font-bold">*</span>}
+          </span>
+        )}
 
         <AnimatePresence>
           {expanded && (

@@ -33,7 +33,6 @@ export function FormAResearchTasksSection() {
       },
       {
         header: 'Zadanie',
-        meta: { showRequiredAsterisk: true },
         accessorFn: (row) => getTaskName(row.type),
         cell: ({ row }) => (
           <form.Field
@@ -85,7 +84,7 @@ export function FormAResearchTasksSection() {
               <AppTable
                 columns={getColumns(field)}
                 data={field.state.value}
-                autoMarkEmptyWhenColumnsRequired
+                showRequiredAsterisk
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"

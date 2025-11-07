@@ -34,7 +34,7 @@ export function FormBResearchTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
-        autoMarkEmptyWhenColumnsRequired
+        showRequiredAsterisk
         variant="form"
         disabled={isReadonly}
       />

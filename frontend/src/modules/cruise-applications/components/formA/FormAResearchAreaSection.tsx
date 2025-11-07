@@ -28,7 +28,6 @@ export function FormAResearchAreaSection() {
       },
       {
         header: 'Rejon prowadzenia badań',
-        meta: { showRequiredAsterisk: true },
         cell: ({ row }) => (
           <>
             <form.Field
@@ -110,7 +109,7 @@ export function FormAResearchAreaSection() {
             <AppTable
               columns={getColumns(field)}
               data={field.state.value}
-              autoMarkEmptyWhenColumnsRequired
+              showRequiredAsterisk
               buttons={() => [
                 <CruiseApplicationDropdownElementSelectorButton
                   key="new"

@@ -5,5 +5,5 @@ export type TableProps<T> = {
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
   emptyTableMessage?: string;
   variant?: 'form' | 'table';
-  autoMarkEmptyWhenColumnsRequired?: boolean;
+  showRequiredAsterisk?: boolean;
 };
