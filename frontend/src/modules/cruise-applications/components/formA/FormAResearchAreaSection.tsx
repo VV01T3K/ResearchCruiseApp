@@ -31,7 +31,7 @@ export function FormAResearchAreaSection() {
       },
       {
         header: 'Rejon prowadzenia badań',
-        meta: { required: true },
+        meta: { showRequiredAsterisk: true },
         cell: ({ row }) => (
           <>
             <form.Field
@@ -56,7 +56,7 @@ export function FormAResearchAreaSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   placeholder="Nazwa rejonu"
                   disabled={isReadonly}
-                  required
+                  showRequiredAsterisk
                 />
               )}
             />

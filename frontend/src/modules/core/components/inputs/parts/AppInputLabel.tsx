@@ -11,17 +11,11 @@ type Props = {
 export function AppInputLabel({ name, value, className, showRequiredAsterisk, disabled }: Props) {
   if (!value) return null;
 
-  // Normalize label text: if it already ends with '*' treat it as required and strip the star
-  let labelContent: React.ReactNode = value;
-  let showAsterisk = false;
+  // DEBUG: Log when AppInputLabel is called
 
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (trimmed.endsWith('*')) {
-      labelContent = trimmed.replace(/\*$/, '').trim();
-      showAsterisk = true;
-    }
-  }
+  // Normalize label text: if it already ends with '*' treat it as required and strip the star
+  const labelContent: React.ReactNode = value;
+  let showAsterisk = false;
 
   // Also show asterisk when `required` prop is passed
   if (showRequiredAsterisk) {

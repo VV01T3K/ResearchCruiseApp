@@ -32,7 +32,7 @@ export function ApplicationDetailsMembersSection() {
           value={parseInt(row.original.noOfEmployees)}
           minimum={0}
           className="mx-4"
-          required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -54,7 +54,7 @@ export function ApplicationDetailsMembersSection() {
           value={parseInt(row.original.noOfStudents)}
           minimum={0}
           className="mx-4"
-          required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -87,7 +87,7 @@ export function ApplicationDetailsMembersSection() {
           value={parseInt(row.original.noOfPersons)}
           minimum={0}
           className="mx-4"
-          required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -115,7 +115,13 @@ export function ApplicationDetailsMembersSection() {
         />
 
         <div className="col-span-2">
-          <AppNumberInput name="Punkty" value={parseInt(evaluation.ugUnitsPoints)} label="Punkty" required disabled />
+          <AppNumberInput
+            name="Punkty"
+            value={parseInt(evaluation.ugUnitsPoints)}
+            label="Punkty"
+            showRequiredAsterisk
+            disabled
+          />
         </div>
       </div>
     </AppAccordion>

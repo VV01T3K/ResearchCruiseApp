@@ -30,7 +30,7 @@ export function FormAMembersSection() {
       },
       {
         header: 'Jednostka',
-        meta: { required: true },
+        meta: { showRequiredAsterisk: true },
         accessorFn: (row) => row.ugUnitId,
         cell: ({ row }) => initValues.ugUnits.find((unit) => unit.id === row.original.ugUnitId)?.name,
         size: 50,

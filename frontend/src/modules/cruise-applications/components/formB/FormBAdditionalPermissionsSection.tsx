@@ -73,16 +73,19 @@ export function FormBAdditionalPermissionsSection() {
       },
       {
         id: 'scan',
-        header: ({ table }) => (
-          <span>
-            Skan
-            {table.getRowModel().rows.length > 0 && (
-              <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia">
-                *
-              </span>
-            )}
-          </span>
-        ),
+        header: ({ table }) => {
+          const showRequiredAsterisk = table.getRowModel().rows.length > 0;
+          return (
+            <span className="inline" title={showRequiredAsterisk ? 'pole wymagane do wypełnienia' : undefined}>
+              Skan
+              {showRequiredAsterisk && (
+                <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia">
+                  *
+                </span>
+              )}
+            </span>
+          );
+        },
         accessorFn: (row) => row.scan,
         enableColumnFilter: false,
         enableSorting: false,

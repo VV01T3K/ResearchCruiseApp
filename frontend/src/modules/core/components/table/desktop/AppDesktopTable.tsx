@@ -68,7 +68,10 @@ export function AppDesktopTable<T>({
                   const hasRequiredColumn = table
                     .getAllColumns()
                     .some((c) =>
-                      Boolean((c.columnDef as unknown as { meta?: { required?: boolean } })?.meta?.required)
+                      Boolean(
+                        (c.columnDef as unknown as { meta?: { showRequiredAsterisk?: boolean } })?.meta
+                          ?.showRequiredAsterisk
+                      )
                     );
                   if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn && !disabled) {
                     return (

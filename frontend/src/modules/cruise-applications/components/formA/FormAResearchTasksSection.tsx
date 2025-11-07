@@ -37,7 +37,7 @@ export function FormAResearchTasksSection() {
       },
       {
         header: 'Zadanie',
-        meta: { required: true },
+        meta: { showRequiredAsterisk: true },
         accessorFn: (row) => getTaskName(row.type),
         cell: ({ row }) => (
           <form.Field
