@@ -18,23 +18,23 @@ export function FormAActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
     <AppActionsSection>
       {!isReadonly && (
         <AppButton
-          className="gap-4 !justify-center w-36 lg:w-48"
+          className="gap-4 !justify-center w-48 lg:w-64"
           variant="primaryOutline"
           onClick={onSaveDraft}
           disabled={disabled}
         >
           <FloppyFillIcon className="h-4 w-4" />
-          Zapisz
+          Zapisz wersję roboczą
         </AppButton>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="gap-4 !justify-center w-36 lg:w-48" disabled={disabled}>
+        <AppButton type="submit" className="gap-4 !justify-center w-48 lg:w-64" disabled={disabled}>
           <SendFillIcon className="h-4 w-4" />
           Wyślij
         </AppButton>
       )}
       {isReadonly && (
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={onPrint} disabled={disabled}>
+        <AppButton className="gap-4 !justify-center w-48 lg:w-64" onClick={onPrint} disabled={disabled}>
           <PrinterFillIcon className="h-4 w-4" />
           Wydrukuj
         </AppButton>
