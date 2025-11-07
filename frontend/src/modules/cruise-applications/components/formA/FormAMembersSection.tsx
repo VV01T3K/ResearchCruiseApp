@@ -55,6 +55,7 @@ export function FormAMembersSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -83,6 +84,7 @@ export function FormAMembersSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -137,6 +139,7 @@ export function FormAMembersSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 containerClassName="mx-4"
                 required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -165,6 +168,7 @@ export function FormAMembersSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -205,6 +209,7 @@ export function FormAMembersSection() {
               <AppTable
                 columns={getUgTeamsColumns(field)}
                 data={field.state.value}
+                showRequiredAsterisk
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"

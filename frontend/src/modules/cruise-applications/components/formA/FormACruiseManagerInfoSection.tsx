@@ -21,6 +21,7 @@ export function FormACruiseManagerInfoSection() {
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Kierownik rejsu"
               required
+              showRequiredAsterisk
               placeholder="Wybierz kierownika rejsu"
               allOptions={initValues.cruiseManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
@@ -38,6 +39,7 @@ export function FormACruiseManagerInfoSection() {
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Zastępca kierownika rejsu"
+              showRequiredAsterisk
               placeholder="Wybierz zastępcę kierownika rejsu"
               allOptions={initValues.deputyManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
@@ -59,6 +61,7 @@ export function FormACruiseManagerInfoSection() {
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Rok"
               required
+              showRequiredAsterisk
               placeholder="Wybierz rok"
               allOptions={initValues.years.map((year) => ({
                 value: year,

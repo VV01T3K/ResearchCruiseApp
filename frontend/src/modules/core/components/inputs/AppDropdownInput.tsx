@@ -28,6 +28,7 @@ type Props = {
   errors?: string[];
   label?: React.ReactNode;
   required?: boolean;
+  showRequiredAsterisk?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
   allowEmptyOption?: boolean;
@@ -43,6 +44,7 @@ export function AppDropdownInput({
   errors,
   label,
   required,
+  showRequiredAsterisk,
   disabled,
   helper,
   allowEmptyOption = false,
@@ -95,7 +97,7 @@ export function AppDropdownInput({
 
   return (
     <div className="flex flex-col">
-      <AppInputLabel name={name} value={label} />
+      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className={cn(
           'relative inline-block',

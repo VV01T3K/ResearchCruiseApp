@@ -26,6 +26,7 @@ export function FormASupervisorInfoSection() {
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Adres e-mail przełożonego"
+              showRequiredAsterisk
               placeholder="Wprowadź adres e-mail przełożonego"
               type="email"
               disabled={isReadonly}

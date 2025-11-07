@@ -65,6 +65,7 @@ export function FormBContractsSection() {
           allowMultiple={true}
           label="Skany"
           maxSizeInMb={2}
+          showRequiredAsterisk
           disabled
         />
       ),

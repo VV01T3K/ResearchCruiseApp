@@ -26,6 +26,7 @@ export function ApplicationDetailsSPUBTasksSection() {
           name={`spubTasks[${row.index}].yearFrom`}
           value={parseInt(row.original.spubTask.yearFrom)}
           required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -41,6 +42,7 @@ export function ApplicationDetailsSPUBTasksSection() {
           name={`spubTasks[${row.index}].yearTo`}
           value={parseInt(row.original.spubTask.yearTo)}
           required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -52,7 +54,13 @@ export function ApplicationDetailsSPUBTasksSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppInput name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} required disabled />
+        <AppInput
+          name={`spubTasks[${row.index}].name`}
+          value={row.original.spubTask.name}
+          showRequiredAsterisk
+          required
+          disabled
+        />
       ),
       size: 50,
     },

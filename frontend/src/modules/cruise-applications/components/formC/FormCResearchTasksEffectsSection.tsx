@@ -112,6 +112,7 @@ export function FormCResearchTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
+        showRequiredAsterisk
         disabled={isReadonly}
       />
     </AppAccordion>

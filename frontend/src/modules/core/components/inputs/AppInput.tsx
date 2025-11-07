@@ -17,6 +17,7 @@ type Props = {
   errors?: string[];
   label?: React.ReactNode;
   required?: boolean;
+  showRequiredAsterisk?: boolean;
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
@@ -33,6 +34,7 @@ export function AppInput({
   errors,
   label,
   required,
+  showRequiredAsterisk,
   className,
   disabled,
   helper,
@@ -52,7 +54,7 @@ export function AppInput({
 
   return (
     <div className={cn('flex flex-col', containerClassName)}>
-      <AppInputLabel name={name} value={label} />
+      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
       <div className="flex relative">
         <InputElement

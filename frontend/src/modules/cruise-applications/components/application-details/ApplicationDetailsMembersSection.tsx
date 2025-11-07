@@ -33,6 +33,7 @@ export function ApplicationDetailsMembersSection() {
           minimum={0}
           className="mx-4"
           required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -55,6 +56,7 @@ export function ApplicationDetailsMembersSection() {
           minimum={0}
           className="mx-4"
           required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -88,6 +90,7 @@ export function ApplicationDetailsMembersSection() {
           minimum={0}
           className="mx-4"
           required
+          showRequiredAsterisk
           disabled
         />
       ),

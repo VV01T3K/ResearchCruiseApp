@@ -72,7 +72,16 @@ export function FormBAdditionalPermissionsSection() {
         size: 20,
       },
       {
-        header: 'Skan',
+        id: 'scan',
+        header: ({ table }) => {
+          const showRequiredAsterisk = table.getRowModel().rows.length > 0;
+          return (
+            <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
+              Skan
+              {showRequiredAsterisk && <span className="ml-1 text-red-600 font-bold">*</span>}
+            </span>
+          );
+        },
         accessorFn: (row) => row.scan,
         enableColumnFilter: false,
         enableSorting: false,

@@ -34,6 +34,7 @@ export function FormBResearchAreaSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego rejonu."
+        showRequiredAsterisk
         disabled={isReadonly}
       />
     </AppAccordion>

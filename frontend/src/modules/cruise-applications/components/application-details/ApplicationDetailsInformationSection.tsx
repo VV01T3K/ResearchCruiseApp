@@ -23,6 +23,7 @@ export function ApplicationDetailsInformationSection() {
           value={`${application.cruiseManagerFirstName} ${application.cruiseManagerLastName} (${application.cruiseManagerEmail})`}
           label="Kierownik:"
           required
+          showRequiredAsterisk
           disabled
         />
         <AppInput
@@ -30,6 +31,7 @@ export function ApplicationDetailsInformationSection() {
           value={`${application.deputyManagerFirstName} ${application.deputyManagerLastName} (${application.deputyManagerEmail})`}
           label="Zastępca kierownika:"
           required
+          showRequiredAsterisk
           disabled
         />
         <div className="grid grid-cols-1 gap-1">

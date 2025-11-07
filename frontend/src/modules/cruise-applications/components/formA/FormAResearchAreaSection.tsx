@@ -53,6 +53,7 @@ export function FormAResearchAreaSection() {
                   placeholder="Nazwa rejonu"
                   disabled={isReadonly}
                   required
+                  showRequiredAsterisk
                 />
               )}
             />
@@ -108,6 +109,7 @@ export function FormAResearchAreaSection() {
             <AppTable
               columns={getColumns(field)}
               data={field.state.value}
+              showRequiredAsterisk
               buttons={() => [
                 <CruiseApplicationDropdownElementSelectorButton
                   key="new"

@@ -39,6 +39,7 @@ export function ApplicationDetailsPublicationsSection() {
             value={row.original.publication.doi}
             label="DOI"
             required
+            showRequiredAsterisk
             disabled
           />
           <AppInput
@@ -46,6 +47,7 @@ export function ApplicationDetailsPublicationsSection() {
             value={row.original.publication.authors}
             label="Autorzy"
             required
+            showRequiredAsterisk
             disabled
           />
           <AppInput
@@ -53,6 +55,7 @@ export function ApplicationDetailsPublicationsSection() {
             value={row.original.publication.title}
             label="Tytuł"
             required
+            showRequiredAsterisk
             disabled
           />
           <AppInput
@@ -60,6 +63,7 @@ export function ApplicationDetailsPublicationsSection() {
             value={row.original.publication.magazine}
             label="Czasopismo"
             required
+            showRequiredAsterisk
             disabled
           />
         </div>
@@ -76,6 +80,7 @@ export function ApplicationDetailsPublicationsSection() {
           name={`publications[${row.index}].publication.year`}
           value={parseInt(row.original.publication.year)}
           required
+          showRequiredAsterisk
           disabled
         />
       ),
@@ -92,6 +97,7 @@ export function ApplicationDetailsPublicationsSection() {
           value={parseInt(row.original.publication.ministerialPoints)}
           minimum={0}
           required
+          showRequiredAsterisk
           disabled
         />
       ),

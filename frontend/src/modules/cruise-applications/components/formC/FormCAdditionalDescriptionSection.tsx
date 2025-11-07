@@ -27,6 +27,7 @@ export function FormCAdditionalDescriptionSection() {
             label="Dodatkowy opis"
             placeholder="Dodatkowy opis"
             required
+            showRequiredAsterisk
             disabled={isReadonly}
           />
         )}

@@ -21,6 +21,7 @@ type Props<T> = {
   columns: ColumnDef<T>[];
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
   emptyTableMessage?: string;
+  showRequiredAsterisk?: boolean;
   rowSelectionState?: RowSelectionState;
   setRowSelectionState?: OnChangeFn<RowSelectionState>;
   initialSortingState?: SortingState;
@@ -34,6 +35,7 @@ export function AppTable<T>({
   columns,
   buttons,
   emptyTableMessage,
+  showRequiredAsterisk = false,
   rowSelectionState,
   setRowSelectionState,
   initialSortingState,
@@ -75,6 +77,7 @@ export function AppTable<T>({
       table={table}
       buttons={!disabled ? buttons : () => []}
       emptyTableMessage={emptyTableMessage}
+      showRequiredAsterisk={showRequiredAsterisk}
       variant={variant}
     />
   );
