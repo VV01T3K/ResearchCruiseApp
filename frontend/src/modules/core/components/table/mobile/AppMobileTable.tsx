@@ -8,13 +8,7 @@ import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/core/lib/utils';
 
-export function AppMobileTable<T>({
-  table,
-  buttons,
-  emptyTableMessage,
-  variant,
-  showRequiredAsterisk,
-}: TableProps<T>) {
+export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, showRequiredAsterisk }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   const defaultButtons: React.ReactNode[] = [
