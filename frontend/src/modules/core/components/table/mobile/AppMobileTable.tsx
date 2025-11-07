@@ -8,7 +8,7 @@ import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/core/lib/utils';
 
-export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }: TableProps<T>) {
+export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, showRequiredAsterisk }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   const defaultButtons: React.ReactNode[] = [
@@ -56,7 +56,19 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant }
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
                 <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
-                  {emptyTableMessage}
+                  {(() => {
+                    if (showRequiredAsterisk) {
+                      return (
+                        <>
+                          <span title="Pole jest obowiązkowe do wypełnienia">
+                            {emptyTableMessage}
+                            <span className="ml-1 text-red-600 font-bold">*</span>
+                          </span>
+                        </>
+                      );
+                    }
+                    return emptyTableMessage;
+                  })()}
                 </td>
               </tr>
             )}

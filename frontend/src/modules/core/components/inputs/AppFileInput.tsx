@@ -16,6 +16,7 @@ type Props = {
   errors?: string[];
   label?: React.ReactNode;
   required?: boolean;
+  showRequiredAsterisk?: boolean;
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
@@ -46,6 +47,7 @@ export function AppFileInput({
   errors,
   label,
   required,
+  showRequiredAsterisk,
   allowMultiple,
   className,
   disabled,
@@ -128,7 +130,7 @@ export function AppFileInput({
 
   return (
     <div>
-      <AppInputLabel name={name} value={label} />
+      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex items-center justify-center w-full"
         onClick={() => inputRef.current?.click()}

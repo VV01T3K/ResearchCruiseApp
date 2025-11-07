@@ -4,7 +4,7 @@ import { AppTableClearFiltersButton } from '@/core/components/table/common/AppTa
 import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/core/components/table/desktop/AppDesktopTableHeader';
 
-export function AppDesktopTable<T>({ table, buttons, emptyTableMessage }: TableProps<T>) {
+export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequiredAsterisk }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
@@ -58,7 +58,19 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage }: TableP
           {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
             <tr>
               <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
-                {emptyTableMessage}
+                {(() => {
+                  if (showRequiredAsterisk) {
+                    return (
+                      <>
+                        <span title="Pole jest obowiązkowe do wypełnienia">
+                          {emptyTableMessage}
+                          <span className="ml-1 text-red-600 font-bold">*</span>
+                        </span>
+                      </>
+                    );
+                  }
+                  return emptyTableMessage;
+                })()}
               </td>
             </tr>
           )}

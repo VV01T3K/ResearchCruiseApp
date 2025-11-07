@@ -34,6 +34,7 @@ export function FormBResearchTasksSection() {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
+        showRequiredAsterisk
         variant="form"
         disabled={isReadonly}
       />

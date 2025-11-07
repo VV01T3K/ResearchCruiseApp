@@ -22,11 +22,13 @@ export function FormCSPUBReportDataSection() {
             value={field.state.value ?? ''}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
+            label="Dodatkowe dane do raportu SPUB"
             type="textarea"
             className="h-48"
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz dodatkowe dane do raportu SPUB"
             required
+            showRequiredAsterisk
             disabled={isReadonly}
           />
         )}

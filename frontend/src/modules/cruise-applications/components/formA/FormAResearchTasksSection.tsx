@@ -84,6 +84,7 @@ export function FormAResearchTasksSection() {
               <AppTable
                 columns={getColumns(field)}
                 data={field.state.value}
+                showRequiredAsterisk
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"

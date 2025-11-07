@@ -26,6 +26,7 @@ export function FormACruiseGoalSection() {
                 inlineLabel: cruiseGoal,
               }))}
               required
+              showRequiredAsterisk
               disabled={isReadonly}
             />
           )}
@@ -47,6 +48,7 @@ export function FormACruiseGoalSection() {
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}
                   required
+                  showRequiredAsterisk
                 />
               )}
             />
