@@ -62,7 +62,7 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequ
                   if (showRequiredAsterisk) {
                     return (
                       <>
-                        <span title="pole wymagane do wypełnienia">
+                        <span title="Pole jest obowiązkowe do wypełnienia">
                           {emptyTableMessage}
                           <span className="ml-1 text-red-600 font-bold">*</span>
                         </span>
