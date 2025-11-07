@@ -60,7 +60,7 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, 
                     if (showRequiredAsterisk) {
                       return (
                         <>
-                          <span title="Pola oznaczone '*' są obowiązkowe">
+                          <span title="Pole jest obowiązkowe do wypełnienia">
                             {emptyTableMessage}
                             <span className="ml-1 text-red-600 font-bold">*</span>
                           </span>

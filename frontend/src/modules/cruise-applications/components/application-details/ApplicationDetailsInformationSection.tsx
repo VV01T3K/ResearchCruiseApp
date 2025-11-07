@@ -15,9 +15,9 @@ export function ApplicationDetailsInformationSection() {
   return (
     <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <AppInput name="number" value={application.number} label="Numer zgłoszenia:" showRequiredAsterisk disabled />
-        <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" showRequiredAsterisk disabled />
-        <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" showRequiredAsterisk disabled />
+        <AppInput name="number" value={application.number} label="Numer zgłoszenia:" required disabled />
+        <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" required disabled />
+        <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" required disabled />
         <AppInput
           name="cruiseLeader"
           value={`${application.cruiseManagerFirstName} ${application.cruiseManagerLastName} (${application.cruiseManagerEmail})`}
@@ -49,8 +49,8 @@ export function ApplicationDetailsInformationSection() {
             Formularz C
           </AppLink>
         </div>
-        <AppInput name="status" value={application.status} label="Status zgłoszenia:" showRequiredAsterisk disabled />
-        <AppNumberInput name="points" value={application.points} label="Punkty:" showRequiredAsterisk disabled />
+        <AppInput name="status" value={application.status} label="Status zgłoszenia:" required disabled />
+        <AppNumberInput name="points" value={application.points} label="Punkty:" required disabled />
       </div>
     </AppAccordion>
   );

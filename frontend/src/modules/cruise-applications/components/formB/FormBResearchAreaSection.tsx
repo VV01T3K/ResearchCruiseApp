@@ -32,8 +32,9 @@ export function FormBResearchAreaSection() {
       <AppTable
         data={formA.researchAreaDescriptions}
         columns={columns}
+        buttons={() => []}
         emptyTableMessage="Nie dodano żadnego rejonu."
-        variant="form"
+        showRequiredAsterisk
         disabled={isReadonly}
       />
     </AppAccordion>

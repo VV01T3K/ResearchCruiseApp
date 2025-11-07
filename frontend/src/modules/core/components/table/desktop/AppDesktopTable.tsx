@@ -35,7 +35,7 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequ
             return (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <AppDesktopTableHeader key={header.id} header={header} hasRows={table.getRowModel().rows.length > 0}>
+                  <AppDesktopTableHeader key={header.id} header={header}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </AppDesktopTableHeader>
                 ))}
