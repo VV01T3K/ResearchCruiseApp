@@ -38,6 +38,7 @@ export function AppYearPickerInput({
   onBlur,
   errors,
   label,
+  required,
   showRequiredAsterisk,
   disabled,
   helper,
@@ -98,7 +99,7 @@ export function AppYearPickerInput({
       <div className="flex flex-col">
         <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className={cn()} ref={elementRef}>
-          <input type="hidden" name={name} value={value} disabled={disabled} />
+          <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
           <AppButton
             variant="plain"
             onClick={() => handleInputClick()}

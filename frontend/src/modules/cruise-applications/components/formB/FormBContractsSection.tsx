@@ -66,7 +66,7 @@ export function FormBContractsSection() {
           label="Skany"
           maxSizeInMb={2}
           showRequiredAsterisk
-          disabled={isReadonly}
+          disabled
         />
       ),
       size: 15,

@@ -76,13 +76,9 @@ export function FormBAdditionalPermissionsSection() {
         header: ({ table }) => {
           const showRequiredAsterisk = table.getRowModel().rows.length > 0;
           return (
-            <span className="inline" title={showRequiredAsterisk ? 'pole wymagane do wypełnienia' : undefined}>
+            <span title={showRequiredAsterisk ? 'pole wymagane do wypełnienia' : undefined}>
               Skan
-              {showRequiredAsterisk && (
-                <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia">
-                  *
-                </span>
-              )}
+              {showRequiredAsterisk && <span className="ml-1 text-red-600 font-bold">*</span>}
             </span>
           );
         },

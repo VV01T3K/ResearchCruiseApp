@@ -15,6 +15,7 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
+  required?: boolean;
   showRequiredAsterisk?: boolean;
   className?: string;
   disabled?: boolean;
@@ -45,6 +46,7 @@ export function AppFileInput({
   onChange,
   errors,
   label,
+  required,
   showRequiredAsterisk,
   allowMultiple,
   className,
@@ -128,7 +130,7 @@ export function AppFileInput({
 
   return (
     <div>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} disabled={disabled} />
+      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex items-center justify-center w-full"
         onClick={() => inputRef.current?.click()}
@@ -174,11 +176,11 @@ export function AppFileInput({
       </div>
 
       <input
-        id={name}
         type="file"
         name={name}
         ref={inputRef}
         multiple={allowMultiple}
+        required={required}
         disabled={disabled}
         className="hidden"
         onChange={handleChange}

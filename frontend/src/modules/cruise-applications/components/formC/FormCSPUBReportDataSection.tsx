@@ -18,7 +18,6 @@ export function FormCSPUBReportDataSection() {
         name="spubReportData"
         children={(field) => (
           <AppInput
-            label="Dodatkowe dane do raportu SPUB"
             name={field.name}
             value={field.state.value ?? ''}
             onChange={field.handleChange}

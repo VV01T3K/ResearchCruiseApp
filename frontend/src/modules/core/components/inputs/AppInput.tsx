@@ -16,6 +16,7 @@ type Props = {
   onChange?: (value: string) => void;
   errors?: string[];
   label?: React.ReactNode;
+  required?: boolean;
   showRequiredAsterisk?: boolean;
   className?: string;
   disabled?: boolean;
@@ -32,6 +33,7 @@ export function AppInput({
   onChange,
   errors,
   label,
+  required,
   showRequiredAsterisk,
   className,
   disabled,
@@ -52,7 +54,7 @@ export function AppInput({
 
   return (
     <div className={cn('flex flex-col', containerClassName)}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} disabled={disabled} />
+      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
       <div className="flex relative">
         <InputElement
@@ -62,6 +64,7 @@ export function AppInput({
           type={type}
           onBlur={onBlur}
           onChange={(evt) => onChange?.(evt.target.value)}
+          required={required}
           disabled={disabled}
           className={cn(
             className,

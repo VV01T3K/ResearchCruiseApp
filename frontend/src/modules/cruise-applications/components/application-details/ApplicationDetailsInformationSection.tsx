@@ -22,6 +22,7 @@ export function ApplicationDetailsInformationSection() {
           name="cruiseLeader"
           value={`${application.cruiseManagerFirstName} ${application.cruiseManagerLastName} (${application.cruiseManagerEmail})`}
           label="Kierownik:"
+          required
           showRequiredAsterisk
           disabled
         />
@@ -29,6 +30,7 @@ export function ApplicationDetailsInformationSection() {
           name="deputyManager"
           value={`${application.deputyManagerFirstName} ${application.deputyManagerLastName} (${application.deputyManagerEmail})`}
           label="Zastępca kierownika:"
+          required
           showRequiredAsterisk
           disabled
         />

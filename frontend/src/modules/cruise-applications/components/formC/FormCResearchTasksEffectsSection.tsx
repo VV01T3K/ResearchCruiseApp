@@ -20,7 +20,6 @@ export function FormCResearchTasksSection() {
     },
     {
       header: 'Zadanie',
-      meta: { required: true },
       accessorFn: (row) => getTaskName(row.type) ?? 'Nieznany typ',
       size: 15,
     },

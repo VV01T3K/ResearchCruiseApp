@@ -11,7 +11,6 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import React from 'react';
 
 import { AppDesktopTable } from '@/core/components/table/desktop/AppDesktopTable';
 import { AppMobileTable } from '@/core/components/table/mobile/AppMobileTable';
@@ -21,7 +20,7 @@ type Props<T> = {
   data: T[];
   columns: ColumnDef<T>[];
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
-  emptyTableMessage?: React.ReactNode;
+  emptyTableMessage?: string;
   autoMarkEmptyWhenColumnsRequired?: boolean;
   rowSelectionState?: RowSelectionState;
   setRowSelectionState?: OnChangeFn<RowSelectionState>;
@@ -80,7 +79,6 @@ export function AppTable<T>({
       emptyTableMessage={emptyTableMessage}
       autoMarkEmptyWhenColumnsRequired={autoMarkEmptyWhenColumnsRequired}
       variant={variant}
-      disabled={disabled}
     />
   );
 }

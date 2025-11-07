@@ -17,7 +17,6 @@ export function FormBResearchAreaSection() {
     },
     {
       header: 'Rejon prowadzenia badań',
-      meta: { required: true },
       cell: ({ row }) =>
         `${row.original.differentName ?? getResearchAreaName(formAInitValues.researchAreas, row.original.areaId!)!}`,
       size: 30,

@@ -9,7 +9,6 @@ export function AppDesktopTable<T>({
   buttons,
   emptyTableMessage,
   autoMarkEmptyWhenColumnsRequired,
-  disabled,
 }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
@@ -65,22 +64,12 @@ export function AppDesktopTable<T>({
             <tr>
               <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
                 {(() => {
-                  const hasRequiredColumn = table
-                    .getAllColumns()
-                    .some((c) =>
-                      Boolean(
-                        (c.columnDef as unknown as { meta?: { showRequiredAsterisk?: boolean } })?.meta
-                          ?.showRequiredAsterisk
-                      )
-                    );
-                  if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn && !disabled) {
+                  if (autoMarkEmptyWhenColumnsRequired) {
                     return (
                       <>
-                        <span className="inline" title="pole wymagane do wypełnienia">
+                        <span title="pole wymagane do wypełnienia">
                           {emptyTableMessage}
-                        </span>
-                        <span className="ml-1 text-red-600 font-bold" title="pole wymagane do wypełnienia">
-                          *
+                          <span className="ml-1 text-red-600 font-bold">*</span>
                         </span>
                       </>
                     );

@@ -14,7 +14,6 @@ export function AppMobileTable<T>({
   emptyTableMessage,
   variant,
   autoMarkEmptyWhenColumnsRequired,
-  disabled,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
@@ -64,19 +63,12 @@ export function AppMobileTable<T>({
               <tr>
                 <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
                   {(() => {
-                    const hasRequiredColumn = table
-                      .getAllColumns()
-                      .some((c) =>
-                        Boolean((c.columnDef as unknown as { meta?: { required?: boolean } })?.meta?.required)
-                      );
-                    if (autoMarkEmptyWhenColumnsRequired && hasRequiredColumn && !disabled) {
+                    if (autoMarkEmptyWhenColumnsRequired) {
                       return (
                         <>
-                          <span className="inline" title="Pola oznaczone '*' są obowiązkowe">
+                          <span title="Pola oznaczone '*' są obowiązkowe">
                             {emptyTableMessage}
-                          </span>
-                          <span className="ml-1 text-red-600 font-bold" title="Pola oznaczone '*' są obowiązkowe">
-                            *
+                            <span className="ml-1 text-red-600 font-bold">*</span>
                           </span>
                         </>
                       );
