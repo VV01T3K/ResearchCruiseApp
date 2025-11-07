@@ -25,7 +25,7 @@ export function FormACruiseGoalSection() {
                 value: index.toString(),
                 inlineLabel: cruiseGoal,
               }))}
-              required
+              showRequiredAsterisk
               disabled={isReadonly}
             />
           )}
@@ -46,7 +46,7 @@ export function FormACruiseGoalSection() {
                   label="Opis"
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}
-                  required
+                  showRequiredAsterisk
                 />
               )}
             />

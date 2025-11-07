@@ -29,7 +29,7 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
+  showRequiredAsterisk?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
   placeholder?: string;
@@ -53,7 +53,7 @@ export function AppDatePickerInput({
   onBlur,
   errors,
   label,
-  required,
+  showRequiredAsterisk,
   disabled,
   helper,
   placeholder = 'Wybierz datę',
@@ -140,9 +140,9 @@ export function AppDatePickerInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={name} value={label} required={required} />
+        <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div ref={inputRef}>
-          <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
+          <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
             variant="plain"
             onClick={handleInputClick}

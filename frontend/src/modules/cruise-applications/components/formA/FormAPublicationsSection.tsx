@@ -50,7 +50,7 @@ export function FormAPublicationsSection() {
                   value: role,
                   inlineLabel: getPublicationCategoryLabel(role),
                 }))}
-                required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -76,7 +76,7 @@ export function FormAPublicationsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="DOI"
                   placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
-                  required
+                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -93,7 +93,7 @@ export function FormAPublicationsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Autorzy"
                   placeholder='np. "Kowalski J., Nowak A."'
-                  required
+                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -110,7 +110,7 @@ export function FormAPublicationsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
-                  required
+                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -127,7 +127,7 @@ export function FormAPublicationsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
-                  required
+                  showRequiredAsterisk
                   disabled={isReadonly}
                 />
               )}
@@ -152,7 +152,7 @@ export function FormAPublicationsSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Rok"
-                required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
@@ -178,7 +178,7 @@ export function FormAPublicationsSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Punkty"
-                required
+                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}

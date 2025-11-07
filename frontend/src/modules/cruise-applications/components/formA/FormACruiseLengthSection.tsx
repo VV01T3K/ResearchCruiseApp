@@ -48,7 +48,7 @@ export function FormACruiseLengthSection() {
                   { value: 'precise', inlineLabel: 'Dokładny termin' },
                   { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
                 ]}
-                required
+                showRequiredAsterisk
               />
             </div>
           )}
@@ -65,7 +65,7 @@ export function FormACruiseLengthSection() {
                     errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Dokładny termin rozpoczęcia rejsu"
                     type="date"
-                    required
+                    showRequiredAsterisk
                     disabled={isReadonly}
                   />
                 )}
@@ -88,7 +88,7 @@ export function FormACruiseLengthSection() {
                         errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
-                        required
+                        showRequiredAsterisk
                         disabled={isReadonly}
                         selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
                         minimalDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
@@ -112,7 +112,7 @@ export function FormACruiseLengthSection() {
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
-                    required
+                    showRequiredAsterisk
                     disabled={isReadonly}
                   />
                 )}
@@ -132,7 +132,7 @@ export function FormACruiseLengthSection() {
                         errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                         maxValues={acceptablePeriod}
                         label="Optymalny okres, w którym miałby się odbywać rejs"
-                        required
+                        showRequiredAsterisk
                         disabled={isReadonly}
                       />
                     )}
@@ -158,7 +158,7 @@ export function FormACruiseLengthSection() {
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                       label="Liczba planowanych dób rejsowych"
-                      required
+                      showRequiredAsterisk
                       disabled={isReadonly}
                     />
                   )}
@@ -183,7 +183,7 @@ export function FormACruiseLengthSection() {
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                       label="Liczba planowanych godzin rejsowych"
-                      required
+                      showRequiredAsterisk
                       disabled={isReadonly}
                     />
                   )}
@@ -221,7 +221,7 @@ export function FormACruiseLengthSection() {
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Statek na potrzeby badań będzie wykorzystywany"
-                  required
+                  showRequiredAsterisk
                   allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
                     value: i.toString(),
                     inlineLabel: shipUsage,
@@ -255,7 +255,7 @@ export function FormACruiseLengthSection() {
                             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                             label="Inny sposób użycia"
                             placeholder="np. statek badawczy"
-                            required
+                            showRequiredAsterisk
                             disabled={isReadonly}
                           />
                         )}

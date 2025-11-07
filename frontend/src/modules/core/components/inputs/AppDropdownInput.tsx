@@ -27,7 +27,7 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
+  showRequiredAsterisk?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
   allowEmptyOption?: boolean;
@@ -42,7 +42,7 @@ export function AppDropdownInput({
   onBlur,
   errors,
   label,
-  required,
+  showRequiredAsterisk,
   disabled,
   helper,
   allowEmptyOption = false,
@@ -95,7 +95,7 @@ export function AppDropdownInput({
 
   return (
     <div className="flex flex-col">
-      <AppInputLabel name={name} value={label} required={required} />
+      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className={cn(
           'relative inline-block',
@@ -106,7 +106,7 @@ export function AppDropdownInput({
         )}
         ref={inputRef}
       >
-        <input type="hidden" name={name} value={selectedOption.value} required={required} disabled={disabled} />
+        <input type="hidden" name={name} value={selectedOption.value} disabled={disabled} />
         <AppButton
           variant="plain"
           onClick={() => {
