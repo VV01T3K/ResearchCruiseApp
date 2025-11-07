@@ -2,9 +2,12 @@ import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { createPortal } from 'react-dom';
+dayjs.extend(utc);
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppMonthPickerPopover } from '@/core/components/inputs/dates/AppMonthPickerPopover';
@@ -274,8 +277,8 @@ function getDateFromValue(value: string | undefined): Date | undefined {
   if (!value) {
     return undefined;
   }
-
-  return new Date(value);
+  const normalized = value.endsWith('Z') ? value : `${value}Z`;
+  return dayjs.utc(normalized).toDate();
 }
 
 function getValueFromDate(date: Date | undefined): string | undefined {
