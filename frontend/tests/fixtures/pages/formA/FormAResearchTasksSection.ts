@@ -36,13 +36,21 @@ export class FormAResearchTasksSection {
   // TODO: There are many types of inputs in this section, this requires more
   // complex handling, if one wanted to extensively check all the options.
   public authorInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(label:text("Autor"))');
-    return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
+    const actualIndex = index === 'first' ? 0 : index === 'last' ? -1 : index;
+    if (actualIndex === -1) {
+      // For 'last', we need to find all matching inputs and get the last one
+      return this.sectionDiv.locator('input[name^="researchTasks["][name$="].author"]').last();
+    }
+    return this.sectionDiv.locator(`input[name="researchTasks[${actualIndex}].author"]`);
   }
 
   public titleInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(:text("Tytuł"))');
-    return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
+    const actualIndex = index === 'first' ? 0 : index === 'last' ? -1 : index;
+    if (actualIndex === -1) {
+      // For 'last', we need to find all matching inputs and get the last one
+      return this.sectionDiv.locator('input[name^="researchTasks["][name$="].title"]').last();
+    }
+    return this.sectionDiv.locator(`input[name="researchTasks[${actualIndex}].title"]`);
   }
 
   public async defaultFill() {

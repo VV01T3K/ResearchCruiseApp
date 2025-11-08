@@ -18,9 +18,9 @@ export class FormACruiseGoalSection {
     this.page = formPage.page;
     this.sectionDiv = locateSectionDiv(formPage.page, '5. Cel rejsu');
     this.cruiseGoalDropdown = new FormDropdown(
-      this.sectionDiv.locator('button:below(label:text("Cel rejsu"))').first()
+      this.sectionDiv.locator('input[name="cruiseGoal"]').locator('..').locator('button').first()
     );
-    this.cruiseGoalDescriptionInput = this.sectionDiv.locator('input:below(:text("Opis"))').first();
+    this.cruiseGoalDescriptionInput = this.sectionDiv.locator('input[name="cruiseGoalDescription"]');
     this.noCruiseGoalChosenMessage = this.sectionDiv.getByText('Cel rejsu musi być jednym z dostępnych celów rejsu');
     this.noCruiseGoalDescriptionMessage = this.sectionDiv.getByText('Opis celu rejsu jest wymagany');
   }

@@ -68,19 +68,14 @@ export function AppMobileTable<T>({
                       errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
                     }`}
                   >
-                    {(() => {
-                      if (showRequiredAsterisk) {
-                        return (
-                          <>
-                            <span title="Pole jest obowiązkowe do wypełnienia">
-                              {emptyTableMessage}
-                              <span className="ml-1 text-red-600 font-bold">*</span>
-                            </span>
-                          </>
-                        );
-                      }
-                      return emptyTableMessage;
-                    })()}
+                    <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
+                      {emptyTableMessage}
+                    </span>
+                    {showRequiredAsterisk && (
+                      <span className="ml-1 text-red-600 font-bold" title="Pole jest obowiązkowe do wypełnienia">
+                        *
+                      </span>
+                    )}
                   </div>
                 </td>
               </tr>
