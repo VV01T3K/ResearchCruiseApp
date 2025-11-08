@@ -258,23 +258,60 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
         (optimalPeriod[0] >= acceptablePeriod[0] && optimalPeriod[1] <= acceptablePeriod[1])
       );
     }, 'Okres optymalny musi zawierać się w okresie akceptowalnym')
-    .refine((val) => {
-      const precisePeriodStart = val.precisePeriodStart;
-      const precisePeriodEnd = val.precisePeriodEnd;
-
-      return !precisePeriodStart || !precisePeriodEnd || precisePeriodStart <= precisePeriodEnd;
-    }, 'Dokładny okres musi być zgodny z okresem akceptowalnym i musi mieć poprawne daty')
-    .refine((val) => {
+    .superRefine((val, ctx) => {
       const precisePeriodStart = val.precisePeriodStart;
       const precisePeriodEnd = val.precisePeriodEnd;
       const acceptablePeriod = val.acceptablePeriod;
       const optimalPeriod = val.optimalPeriod;
-      return (
-        (!!precisePeriodStart && !!precisePeriodEnd) ||
-        (!!acceptablePeriod && !!optimalPeriod) ||
-        (!acceptablePeriod && !optimalPeriod && !precisePeriodStart && !precisePeriodEnd)
-      );
-    }, 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny');
+
+      const isPreciseMode = precisePeriodStart || precisePeriodEnd;
+      const isPeriodMode = acceptablePeriod || optimalPeriod;
+
+      if (isPreciseMode && !isPeriodMode) {
+        if (!precisePeriodStart) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodStart'],
+            message: 'Dokładny termin rozpoczęcia rejsu jest wymagany',
+          });
+        }
+        if (!precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Dokładny termin zakończenia rejsu jest wymagany',
+          });
+        }
+        if (precisePeriodStart && precisePeriodEnd && precisePeriodStart > precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
+          });
+        }
+      } else if (isPeriodMode && !isPreciseMode) {
+        if (!acceptablePeriod) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['acceptablePeriod'],
+            message: 'Dopuszczalny okres jest wymagany',
+          });
+        }
+        if (!optimalPeriod) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['optimalPeriod'],
+            message: 'Optymalny okres jest wymagany',
+          });
+        }
+      } else if (!isPreciseMode && !isPeriodMode) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['precisePeriodStart'],
+          message: 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny',
+        });
+      }
+    });
 
 export function getFormAValidationSchema(initValues: FormAInitValuesDto, blockades?: BlockadePeriodDto[]) {
   return ManagerAndDeputyManagerValidationSchema(initValues)
