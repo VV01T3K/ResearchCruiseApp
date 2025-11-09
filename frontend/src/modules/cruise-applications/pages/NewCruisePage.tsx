@@ -8,9 +8,9 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { getErrors, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
+import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { FormA } from '@/cruise-applications/components/formA/FormA';
-import { getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
+import { FORM_A_FIELD_TO_SECTION, getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
 import { useFormAInitValuesQuery, useSaveFormAMutation } from '@/cruise-applications/hooks/FormAApiHooks';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { useBlockadesQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
@@ -31,10 +31,11 @@ export function NewCruisePage() {
       cruiseManagerId: userContext.currentUser!.id,
       deputyManagerId: '',
       year: initialStateQuery.data.years[0],
-      acceptablePeriod: ['0', '24'],
-      optimalPeriod: ['0', '24'],
+      acceptablePeriod: '',
+      optimalPeriod: '',
       precisePeriodStart: '',
       precisePeriodEnd: '',
+      periodSelectionType: 'period',
       cruiseHours: '0',
       periodNotes: '',
       shipUsage: '',
@@ -84,8 +85,8 @@ export function NewCruisePage() {
     await form.validate('change');
     if (!form.state.isValid) {
       setIsSaveDraftModalOpen(false);
-      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-      navigateToFirstError();
+      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -101,7 +102,7 @@ export function NewCruisePage() {
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -117,7 +118,7 @@ export function NewCruisePage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -140,7 +141,7 @@ export function NewCruisePage() {
     if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -155,7 +156,7 @@ export function NewCruisePage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
@@ -189,7 +190,6 @@ export function NewCruisePage() {
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
                 errors={getErrors(field.state.meta)}
                 autoFocus
-                required
               />
             )}
           />

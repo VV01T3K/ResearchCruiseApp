@@ -146,9 +146,7 @@ export class FormCPage {
     this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });
     this.toastMessage = this.page.locator('#_rht_toaster');
     this.submissionApprovedMessage = this.toastMessage.getByText('Formularz został wysłany pomyślnie.');
-    this.validationErrorMessage = this.toastMessage.getByText(
-      'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.'
-    );
+    this.validationErrorMessage = this.toastMessage.filter({ hasText: /Formularz (błędny|zawiera błędy)/ });
   }
 
   public async fillForm({ except }: { except?: (keyof FormCPage['sections'])[] } = {}) {
@@ -171,7 +169,7 @@ export class FormCPage {
         break;
       case 'invalid':
         await expect(this.validationErrorMessage).toBeVisible();
-        await this.toastMessage.getByRole('button').click();
+        await this.toastMessage.getByRole('button').first().click();
         break;
     }
   }

@@ -26,8 +26,6 @@ export function FormCAdditionalDescriptionSection() {
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Dodatkowy opis"
             placeholder="Dodatkowy opis"
-            required
-            showRequiredAsterisk
             disabled={isReadonly}
           />
         )}

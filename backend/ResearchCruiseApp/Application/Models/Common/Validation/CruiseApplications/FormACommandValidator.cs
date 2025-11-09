@@ -18,9 +18,7 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
     {
         _fileInspector = fileInspector;
 
-        AddDraftValidation();
         AddNonDraftValidation();
-        AddCommonValidation();
     }
 
     private void AddDraftValidation()
@@ -58,6 +56,7 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
                 AddPublicationsNonDraftValidation();
                 AddSpubTasksNonDraftValidation();
                 AddSupervisorEmailNonDraftValidation();
+                AddCommonValidation();
             }
         );
     }

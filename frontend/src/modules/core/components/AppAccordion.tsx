@@ -19,6 +19,7 @@ export function AppAccordion({ title, children, expandedByDefault = undefined }:
           type="button"
           className="w-full flex justify-between items-center cursor-pointer px-4 py-4 bg-black/2 rounded-xl"
           onClick={() => setExpanded(!expanded)}
+          data-expanded={expanded}
         >
           <span className="font-semibold text-lg">{title}</span>
           <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>

@@ -42,7 +42,6 @@ export function CruiseFormBasicInformationSection() {
                 label={shipUnavailable ? 'Tytuł blokady' : 'Tytuł rejsu'}
                 placeholder="np. Rejs specjalny, Serwis silnika, Zmiana załogi..."
                 disabled={isReadonly}
-                required={field.form.getFieldValue('shipUnavailable')}
               />
             )}
           />

@@ -54,7 +54,6 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                required
                 showRequiredAsterisk
                 disabled={isReadonly}
               />
@@ -83,7 +82,6 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                required
                 showRequiredAsterisk
                 disabled={isReadonly}
               />
@@ -138,7 +136,6 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 containerClassName="mx-4"
-                required
                 showRequiredAsterisk
                 disabled={isReadonly}
               />
@@ -167,7 +164,6 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                required
                 showRequiredAsterisk
                 disabled={isReadonly}
               />
@@ -231,6 +227,7 @@ export function FormAMembersSection() {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </div>
@@ -277,6 +274,7 @@ export function FormAMembersSection() {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </div>

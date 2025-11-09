@@ -206,7 +206,6 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               onBlur={field.handleBlur}
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
-              required
             />
           )}
         />
@@ -222,7 +221,6 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               onBlur={field.handleBlur}
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
-              required
             />
           )}
         />
@@ -239,7 +237,6 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               onBlur={field.handleBlur}
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
-              required
             />
           )}
         />
@@ -258,7 +255,6 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               onBlur={field.handleBlur}
               onChange={field.handleChange}
               errors={getErrors(field.state.meta)}
-              required
             />
           )}
         />

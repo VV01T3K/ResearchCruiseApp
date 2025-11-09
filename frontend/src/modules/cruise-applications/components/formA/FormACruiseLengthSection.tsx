@@ -14,22 +14,53 @@ import { FormABlockadeWarning } from './FormABlockadeWarning';
 
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
-  const [periodSelectionType, setPeriodSelectionType] = useState<'precise' | 'period'>(
-    isReadonly ? (form.state.values.precisePeriodStart ? 'precise' : 'period') : 'period'
-  );
+
+  const [firstInteractionFields, setFirstInteractionFields] = useState<Set<string>>(() => new Set());
+
+  const periodSelectionType = form.state.values.periodSelectionType ?? 'period';
+
+  function handlePeriodFieldClick() {
+    if (!firstInteractionFields.has('acceptablePeriod') || !firstInteractionFields.has('optimalPeriod')) {
+      if (!firstInteractionFields.has('acceptablePeriod')) {
+        form.setFieldValue('acceptablePeriod', ['0', '24']);
+        form.validateField('acceptablePeriod', 'change');
+      }
+      if (!firstInteractionFields.has('optimalPeriod')) {
+        form.setFieldValue('optimalPeriod', ['0', '24']);
+        form.validateField('optimalPeriod', 'change');
+      }
+      setFirstInteractionFields(new Set(['acceptablePeriod', 'optimalPeriod']));
+    }
+  }
 
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
+    form.setFieldValue('periodSelectionType', value);
+    setFirstInteractionFields(new Set());
+
     if (value === 'precise') {
       form.setFieldValue('acceptablePeriod', '');
       form.setFieldValue('optimalPeriod', '');
+      form.setFieldMeta('acceptablePeriod', (prev) => ({ ...prev, errors: [] }));
+      form.setFieldMeta('optimalPeriod', (prev) => ({ ...prev, errors: [] }));
+      form.validateField('acceptablePeriod', 'change');
+      form.validateField('optimalPeriod', 'change');
+      form.validateField('precisePeriodStart', 'change');
+      form.validateField('precisePeriodEnd', 'change');
     } else {
       form.setFieldValue('precisePeriodStart', '');
       form.setFieldValue('precisePeriodEnd', '');
-      form.setFieldValue('acceptablePeriod', ['0', '24']);
-      form.setFieldValue('optimalPeriod', ['0', '24']);
-    }
+      form.setFieldMeta('precisePeriodStart', (prev) => ({ ...prev, errors: [] }));
+      form.setFieldMeta('precisePeriodEnd', (prev) => ({ ...prev, errors: [] }));
 
-    setPeriodSelectionType(value);
+      form.setFieldValue('acceptablePeriod', '');
+      form.setFieldValue('optimalPeriod', '');
+      form.setFieldMeta('acceptablePeriod', (prev) => ({ ...prev, errors: [] }));
+      form.setFieldMeta('optimalPeriod', (prev) => ({ ...prev, errors: [] }));
+      form.validateField('precisePeriodStart', 'change');
+      form.validateField('precisePeriodEnd', 'change');
+      form.validateField('acceptablePeriod', 'change');
+      form.validateField('optimalPeriod', 'change');
+    }
   }
 
   return (
@@ -48,7 +79,6 @@ export function FormACruiseLengthSection() {
                   { value: 'precise', inlineLabel: 'Dokładny termin' },
                   { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
                 ]}
-                required
                 showRequiredAsterisk
               />
             </div>
@@ -66,7 +96,6 @@ export function FormACruiseLengthSection() {
                     errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Dokładny termin rozpoczęcia rejsu"
                     type="date"
-                    required
                     showRequiredAsterisk
                     disabled={isReadonly}
                   />
@@ -90,7 +119,6 @@ export function FormACruiseLengthSection() {
                         errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
-                        required
                         showRequiredAsterisk
                         disabled={isReadonly}
                         selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
@@ -108,17 +136,18 @@ export function FormACruiseLengthSection() {
               <form.Field
                 name="acceptablePeriod"
                 children={(field) => (
-                  <CruiseApplicationPeriodInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                    label="Dopuszczalny okres, w którym miałby się odbywać rejs"
-                    required
-                    showRequiredAsterisk
-                    disabled={isReadonly}
-                  />
+                  <div onClick={handlePeriodFieldClick}>
+                    <CruiseApplicationPeriodInput
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      label="Dopuszczalny okres, w którym miałby się odbywać rejs"
+                      showRequiredAsterisk
+                      disabled={isReadonly}
+                    />
+                  </div>
                 )}
               />
 
@@ -128,18 +157,19 @@ export function FormACruiseLengthSection() {
                   <form.Field
                     name="optimalPeriod"
                     children={(field) => (
-                      <CruiseApplicationPeriodInput
-                        name={field.name}
-                        value={field.state.value}
-                        onChange={field.handleChange}
-                        onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                        maxValues={acceptablePeriod}
-                        label="Optymalny okres, w którym miałby się odbywać rejs"
-                        required
-                        showRequiredAsterisk
-                        disabled={isReadonly}
-                      />
+                      <div onClick={handlePeriodFieldClick}>
+                        <CruiseApplicationPeriodInput
+                          name={field.name}
+                          value={field.state.value}
+                          onChange={field.handleChange}
+                          onBlur={field.handleBlur}
+                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          maxValues={acceptablePeriod}
+                          label="Optymalny okres, w którym miałby się odbywać rejs"
+                          showRequiredAsterisk
+                          disabled={isReadonly}
+                        />
+                      </div>
                     )}
                   />
                 )}
@@ -163,7 +193,6 @@ export function FormACruiseLengthSection() {
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                       label="Liczba planowanych dób rejsowych"
-                      required
                       showRequiredAsterisk
                       disabled={isReadonly}
                     />
@@ -189,7 +218,6 @@ export function FormACruiseLengthSection() {
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                       label="Liczba planowanych godzin rejsowych"
-                      required
                       showRequiredAsterisk
                       disabled={isReadonly}
                     />
@@ -262,7 +290,6 @@ export function FormACruiseLengthSection() {
                             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                             label="Inny sposób użycia"
                             placeholder="np. statek badawczy"
-                            required
                             showRequiredAsterisk
                             disabled={isReadonly}
                           />

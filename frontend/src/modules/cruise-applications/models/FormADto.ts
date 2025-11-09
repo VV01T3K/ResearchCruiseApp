@@ -14,6 +14,7 @@ export type FormADto = {
   cruiseManagerId: string;
   deputyManagerId: string;
   year: string;
+  periodSelectionType?: 'precise' | 'period';
   acceptablePeriod: CruisePeriodType | '';
   optimalPeriod: CruisePeriodType | '';
   precisePeriodStart: string | '';

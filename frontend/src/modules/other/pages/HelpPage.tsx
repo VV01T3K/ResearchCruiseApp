@@ -65,7 +65,6 @@ export function HelpPage() {
                   onBlur={field.handleBlur}
                   onChange={field.handleChange}
                   label="Tytuł"
-                  required
                 />
               )}
             />
@@ -81,7 +80,6 @@ export function HelpPage() {
                   label="Wiadomość"
                   className="h-48"
                   type="textarea"
-                  required
                 />
               )}
             />

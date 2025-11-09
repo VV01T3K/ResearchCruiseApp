@@ -26,7 +26,6 @@ export function DidacticsResearchTaskDetails({ form, row, disabled, hasFormBeenS
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Opis zajęcia dydaktycznego"
             placeholder="Wprowadź opis zajęcia dydaktycznego"
-            required
             disabled={disabled}
           />
         )}

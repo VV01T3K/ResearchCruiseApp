@@ -15,7 +15,6 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   showRequiredAsterisk?: boolean;
   className?: string;
   disabled?: boolean;
@@ -46,7 +45,6 @@ export function AppFileInput({
   onChange,
   errors,
   label,
-  required,
   showRequiredAsterisk,
   allowMultiple,
   className,
@@ -180,7 +178,6 @@ export function AppFileInput({
         name={name}
         ref={inputRef}
         multiple={allowMultiple}
-        required={required}
         disabled={disabled}
         className="hidden"
         onChange={handleChange}

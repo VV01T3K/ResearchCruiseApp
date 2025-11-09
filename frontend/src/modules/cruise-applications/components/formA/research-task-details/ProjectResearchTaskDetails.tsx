@@ -29,7 +29,6 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
-            required
             disabled={disabled}
           />
         )}
@@ -45,7 +44,6 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
             onChange={field.handleChange}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Data rozpoczęcia"
-            required
             disabled={disabled}
           />
         )}
@@ -61,7 +59,6 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
             onChange={field.handleChange}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Data zakończenia"
-            required
             disabled={disabled}
           />
         )}
@@ -79,7 +76,6 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Kwota finansowania [zł]"
-            required
             disabled={disabled}
           />
         )}
@@ -97,7 +93,6 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Środki zabezpieczone na realizację rejsu [zł]"
-            required
             disabled={disabled}
           />
         )}

@@ -52,7 +52,6 @@ export function FormCContractsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Nazwa instytucji"
                   placeholder='np. "Uniwersytet Gdański"'
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -68,7 +67,6 @@ export function FormCContractsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Jednostka"
                   placeholder='np. "Wydział Biologii"'
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -84,7 +82,6 @@ export function FormCContractsSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Lokalizacja instytucji"
                   placeholder='np. "Gdańsk"'
-                  required
                   disabled={isReadonly}
                 />
               )}
@@ -108,7 +105,6 @@ export function FormCContractsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Opis"
                 placeholder='np. "Umowa o współpracy"'
-                required
                 disabled={isReadonly}
               />
             )}
@@ -220,6 +216,7 @@ export function FormCContractsSection() {
                 emptyTableMessage="Nie dodano żadnej umowy."
                 variant="form"
                 disabled={isReadonly}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </>
