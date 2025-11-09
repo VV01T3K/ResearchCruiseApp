@@ -18,10 +18,6 @@ internal class LongResearchEquipmentDtoProfile : Profile
             .ForMember(
                 dest => dest.Name,
                 options => options.MapFrom(src => src.ResearchEquipment.Name)
-            )
-            .ForMember(
-                dest => dest.Action,
-                options => options.MapFrom(src => ((int)src.Action).ToString())
             );
     }
 }
