@@ -382,16 +382,16 @@ test.describe('SPUB report data section tests', () => {
     await formCPage.fillForm({ except: ['spubReportDataSection'] });
   });
 
-  // test('missing data', async ({ formCPage }) => {
-  //   const spubReportDataSection = formCPage.sections.spubReportDataSection;
+  test.fixme('missing data', async ({ formCPage }) => {
+    const spubReportDataSection = formCPage.sections.spubReportDataSection;
 
-  //   await formCPage.submitForm();
-  //   await expect(formCPage.submissionApprovedMessage).toBeHidden();
+    await formCPage.submitForm();
+    await expect(formCPage.submissionApprovedMessage).toBeHidden();
 
-  //   await spubReportDataSection.reportInput.fill('Jakiś raport');
+    await spubReportDataSection.reportInput.fill('Jakiś raport');
 
-  //   await formCPage.submitForm({ expectedResult: 'valid' });
-  // });
+    await formCPage.submitForm({ expectedResult: 'valid' });
+  });
 
   test('missing data (optional)', async ({ formCPage }) => {
     await formCPage.submitForm({ expectedResult: 'valid' });
