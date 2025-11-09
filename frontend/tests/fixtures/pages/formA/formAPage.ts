@@ -87,9 +87,7 @@ export class FormAPage {
     this.submissionApprovedMessage = this.toastMessage.getByText(
       'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.'
     );
-    this.validationErrorMessage = this.toastMessage.getByText(
-      'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.'
-    );
+    this.validationErrorMessage = this.toastMessage.filter({ hasText: /Formularz (błędny|zawiera błędy)/ });
   }
 
   public async fillForm({ except }: { except?: (keyof FormAPage['sections'])[] } = {}) {
@@ -114,7 +112,7 @@ export class FormAPage {
         break;
       case 'invalid':
         await expect(this.validationErrorMessage, { message: message }).toBeVisible();
-        await this.toastMessage.getByRole('button').click();
+        await this.toastMessage.getByRole('button').first().click();
         break;
     }
   }

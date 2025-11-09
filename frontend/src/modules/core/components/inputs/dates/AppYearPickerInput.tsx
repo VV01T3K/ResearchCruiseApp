@@ -25,7 +25,6 @@ type Props = {
   onBlur?: () => void;
   errors?: string[];
   label?: React.ReactNode;
-  required?: boolean;
   showRequiredAsterisk?: boolean;
   disabled?: boolean;
   helper?: React.ReactNode;
@@ -38,7 +37,6 @@ export function AppYearPickerInput({
   onBlur,
   errors,
   label,
-  required,
   showRequiredAsterisk,
   disabled,
   helper,
@@ -99,7 +97,7 @@ export function AppYearPickerInput({
       <div className="flex flex-col">
         <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className={cn()} ref={elementRef}>
-          <input type="hidden" name={name} value={value} required={required} disabled={disabled} />
+          <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
             variant="plain"
             onClick={() => handleInputClick()}

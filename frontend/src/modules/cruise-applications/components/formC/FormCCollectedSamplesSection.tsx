@@ -31,7 +31,6 @@ const collectedSamplesColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz rodzaj materiału badawczego/próbek/danych"
-            required
             disabled={isReadonly}
           />
         )}
@@ -51,7 +50,6 @@ const collectedSamplesColumns = (
             onChange={(value) => field.handleChange(value.toString())}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
           />
         )}
@@ -72,7 +70,6 @@ const collectedSamplesColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz zakres analiz"
-            required
             disabled={isReadonly}
           />
         )}
@@ -93,7 +90,6 @@ const collectedSamplesColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz informacje o upublicznieniu danych"
-            required
             disabled={isReadonly}
           />
         )}

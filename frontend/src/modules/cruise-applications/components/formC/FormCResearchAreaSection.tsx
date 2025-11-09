@@ -54,7 +54,6 @@ export function FormCResearchAreaSection() {
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   placeholder="Nazwa rejonu"
                   disabled={isReadonly}
-                  required
                 />
               )}
             />
@@ -134,6 +133,7 @@ export function FormCResearchAreaSection() {
               emptyTableMessage="Nie dodano żadnego rejonu."
               variant="form"
               disabled={isReadonly}
+              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             />
             <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
           </>

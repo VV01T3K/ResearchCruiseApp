@@ -11,6 +11,20 @@ import { ResearchEquipmentDtoValidationSchema } from '@/cruise-applications/mode
 import { ShortResearchEquipmentDtoValidationSchema } from '@/cruise-applications/models/ShortResearchEquipmentDto';
 import { UGTeamDtoValidationSchema } from '@/cruise-applications/models/UGTeamDto';
 
+export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
+  isCruiseManagerPresent: 2,
+  permissions: 4,
+  ugTeams: 9,
+  guestTeams: 9,
+  crewMembers: 9,
+  shortResearchEquipments: 12,
+  longResearchEquipments: 12,
+  ports: 12,
+  cruiseDaysDetails: 13,
+  researchEquipments: 14,
+  shipEquipmentsIds: 15,
+};
+
 export function getFormBValidationSchema() {
   return z.object({
     isCruiseManagerPresent: z.enum(['true', 'false']),

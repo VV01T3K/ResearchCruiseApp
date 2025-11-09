@@ -42,7 +42,6 @@ const shortResearchEquipmentColumns = (
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
           />
         )}
@@ -72,7 +71,6 @@ const shortResearchEquipmentColumns = (
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  required
                   disabled={isReadonly}
                   selectionStartDate={state ? new Date(state) : undefined}
                   minimalDate={state ? new Date(state) : undefined}
@@ -101,7 +99,6 @@ const shortResearchEquipmentColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Nazwa sprzętu"
-            required
             disabled={isReadonly}
           />
         )}
@@ -179,7 +176,6 @@ const longResearchEquipmentColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Czas"
-            required
             disabled={isReadonly}
           />
         )}
@@ -203,7 +199,6 @@ const longResearchEquipmentColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Nazwa sprzętu"
-            required
             disabled={isReadonly}
           />
         )}
@@ -254,7 +249,6 @@ const portColumns = (
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
             type="datetime"
           />
@@ -285,7 +279,6 @@ const portColumns = (
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  required
                   disabled={isReadonly}
                   type="datetime"
                   selectionStartDate={state ? new Date(state) : undefined}
@@ -315,7 +308,6 @@ const portColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Nazwa portu"
-            required
             disabled={isReadonly}
           />
         )}

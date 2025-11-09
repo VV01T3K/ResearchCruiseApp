@@ -14,7 +14,6 @@ export function ReadOnlyOwnResearchTaskDetails({ data }: Props) {
         value={data.title}
         label="Roboczy tytuł projektu"
         placeholder="Wprowadź tytuł"
-        required
         disabled={true}
       />
 
@@ -22,7 +21,6 @@ export function ReadOnlyOwnResearchTaskDetails({ data }: Props) {
         name="researchTasks[].date"
         value={data.date}
         label="Przewidywany termin składania"
-        required
         disabled={true}
       />
 
@@ -31,7 +29,6 @@ export function ReadOnlyOwnResearchTaskDetails({ data }: Props) {
         value={data.magazine}
         label="Czasopismo"
         placeholder="Wprowadź czasopismo"
-        required
         disabled={true}
       />
 
@@ -41,7 +38,6 @@ export function ReadOnlyOwnResearchTaskDetails({ data }: Props) {
         minimum={0}
         step={10}
         label="Przewidywane punkty ministerialne"
-        required
         disabled={true}
       />
     </div>

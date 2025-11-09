@@ -28,7 +28,6 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
-            required
             disabled={disabled}
           />
         )}
@@ -44,7 +43,6 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             onChange={field.handleChange}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Przewidywany termin składania"
-            required
             disabled={disabled}
           />
         )}
@@ -61,7 +59,6 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Czasopismo"
             placeholder="Wprowadź czasopismo"
-            required
             disabled={disabled}
           />
         )}
@@ -79,7 +76,6 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Przewidywane punkty ministerialne"
-            required
             disabled={disabled}
           />
         )}

@@ -20,7 +20,6 @@ export function FormACruiseManagerInfoSection() {
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Kierownik rejsu"
-              required
               showRequiredAsterisk
               placeholder="Wybierz kierownika rejsu"
               allOptions={initValues.cruiseManagers.map(mapPersonToLabel)}
@@ -60,7 +59,6 @@ export function FormACruiseManagerInfoSection() {
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               label="Rok"
-              required
               showRequiredAsterisk
               placeholder="Wybierz rok"
               allOptions={initValues.years.map((year) => ({

@@ -33,7 +33,6 @@ const cruiseDayDetailsColumns = (
             onChange={(e) => field.setValue(e.toString())}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -58,7 +57,6 @@ const cruiseDayDetailsColumns = (
             onChange={(e) => field.setValue(e.toString())}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -83,7 +81,6 @@ const cruiseDayDetailsColumns = (
             onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -107,7 +104,6 @@ const cruiseDayDetailsColumns = (
             onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -131,7 +127,6 @@ const cruiseDayDetailsColumns = (
             onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            required
             disabled={isReadonly}
             placeholder="Pozycja"
           />

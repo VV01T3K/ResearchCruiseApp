@@ -4,13 +4,13 @@ import { AppTableClearFiltersButton } from '@/core/components/table/common/AppTa
 import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/core/components/table/desktop/AppDesktopTableHeader';
 
-export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequiredAsterisk }: TableProps<T>) {
+export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequiredAsterisk, errors }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
   return (
     <div className="w-full overflow-x-auto mt-4">
-      <table className="min-w-full table-fixed">
+      <table className="min-w-full table-fixed border-collapse">
         <colgroup>
           {table.getAllColumns().map((column) => (
             <col key={column.id} style={{ width: `${column.columnDef.size}%` }} />
@@ -57,20 +57,21 @@ export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequ
           ))}
           {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
-                {(() => {
-                  if (showRequiredAsterisk) {
-                    return (
-                      <>
-                        <span title="Pole jest obowiązkowe do wypełnienia">
-                          {emptyTableMessage}
-                          <span className="ml-1 text-red-600 font-bold">*</span>
-                        </span>
-                      </>
-                    );
-                  }
-                  return emptyTableMessage;
-                })()}
+              <td colSpan={table.getAllColumns().length} className="pb-0 text-center px-0">
+                <div
+                  className={`bg-gray-100 rounded-lg border p-2.5 ${
+                    errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
+                  }`}
+                >
+                  <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
+                    {emptyTableMessage}
+                  </span>
+                  {showRequiredAsterisk && (
+                    <span className="ml-1 text-red-600 font-bold" title="Pole jest obowiązkowe do wypełnienia">
+                      *
+                    </span>
+                  )}
+                </div>
               </td>
             </tr>
           )}

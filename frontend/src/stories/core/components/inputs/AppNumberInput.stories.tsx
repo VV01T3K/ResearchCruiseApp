@@ -28,12 +28,6 @@ export const Disabled: Story = {
   },
 };
 
-export const Required: Story = {
-  args: {
-    required: true,
-  },
-};
-
 export const WithErrors: Story = {
   args: {
     errors: ['Error message'],

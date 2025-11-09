@@ -5,5 +5,6 @@ export type TableProps<T> = {
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
   emptyTableMessage?: string;
   variant?: 'form' | 'table';
+  errors?: string[];
   showRequiredAsterisk?: boolean;
 };

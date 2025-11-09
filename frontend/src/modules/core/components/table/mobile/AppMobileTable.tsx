@@ -8,7 +8,14 @@ import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/core/components/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/core/lib/utils';
 
-export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, showRequiredAsterisk }: TableProps<T>) {
+export function AppMobileTable<T>({
+  table,
+  buttons,
+  emptyTableMessage,
+  variant,
+  showRequiredAsterisk,
+  errors,
+}: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
   const defaultButtons: React.ReactNode[] = [
@@ -55,20 +62,21 @@ export function AppMobileTable<T>({ table, buttons, emptyTableMessage, variant, 
             ))}
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
-                <td colSpan={table.getAllColumns().length} className="pb-4 text-center bg-gray-100 py-3 rounded-lg">
-                  {(() => {
-                    if (showRequiredAsterisk) {
-                      return (
-                        <>
-                          <span title="Pole jest obowiązkowe do wypełnienia">
-                            {emptyTableMessage}
-                            <span className="ml-1 text-red-600 font-bold">*</span>
-                          </span>
-                        </>
-                      );
-                    }
-                    return emptyTableMessage;
-                  })()}
+                <td colSpan={table.getAllColumns().length} className="pb-0 text-center px-0">
+                  <div
+                    className={`bg-gray-100 rounded-lg border p-2.5 ${
+                      errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
+                    }`}
+                  >
+                    <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
+                      {emptyTableMessage}
+                    </span>
+                    {showRequiredAsterisk && (
+                      <span className="ml-1 text-red-600 font-bold" title="Pole jest obowiązkowe do wypełnienia">
+                        *
+                      </span>
+                    )}
+                  </div>
                 </td>
               </tr>
             )}

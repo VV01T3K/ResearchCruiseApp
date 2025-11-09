@@ -26,7 +26,6 @@ export function ThesisResearchTaskDetails({ form, row, disabled, hasFormBeenSubm
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Autor"
             placeholder="Wprowadź autora"
-            required
             disabled={disabled}
           />
         )}
@@ -43,7 +42,6 @@ export function ThesisResearchTaskDetails({ form, row, disabled, hasFormBeenSubm
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Tytuł"
             placeholder="Wprowadź tytuł"
-            required
             disabled={disabled}
           />
         )}

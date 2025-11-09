@@ -14,6 +14,32 @@ import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
 import { getResearchAreaDescriptionDtoValidationSchema } from '../models/ResearchAreaDescriptionDto';
 
+export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
+  cruiseManagerId: 1,
+  deputyManagerId: 1,
+  year: 2,
+  acceptablePeriod: 2,
+  optimalPeriod: 2,
+  precisePeriodStart: 2,
+  precisePeriodEnd: 2,
+  cruiseHours: 2,
+  periodNotes: 2,
+  shipUsage: 2,
+  differentUsage: 2,
+  permissions: 3,
+  researchAreaDescriptions: 4,
+  cruiseGoal: 5,
+  cruiseGoalDescription: 5,
+  researchTasks: 6,
+  contracts: 7,
+  ugTeams: 8,
+  guestTeams: 8,
+  publications: 9,
+  spubTasks: 10,
+  supervisorEmail: 11,
+  note: 11,
+};
+
 const ManagerAndDeputyManagerValidationSchema = (initValues: FormAInitValuesDto) =>
   z
     .object({
@@ -93,12 +119,6 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
     });
   }
 
-  function convertFortnightToDate(fortnight: number, year: number) {
-    const month = Math.floor(fortnight / 2);
-    const day = fortnight % 2 === 0 ? 1 : 15;
-    return new Date(year, month, day);
-  }
-
   return z
     .object({
       year: z.string(),
@@ -135,46 +155,6 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
           break;
         }
       }
-    })
-    .superRefine(({ acceptablePeriod, year }, ctx) => {
-      const acceptableStart = convertFortnightToDate(+acceptablePeriod[0], +year),
-        acceptableEnd = convertFortnightToDate(+acceptablePeriod[1], +year);
-      for (const blockade of blockades || []) {
-        const blockadeStart = new Date(blockade.startDate),
-          blockadeEnd = new Date(blockade.endDate);
-        if (
-          (acceptableStart <= blockadeStart && acceptableEnd >= blockadeEnd) ||
-          (acceptableStart >= blockadeStart && acceptableStart <= blockadeEnd) ||
-          (acceptableEnd >= blockadeStart && acceptableEnd <= blockadeEnd)
-        ) {
-          ctx.addIssue({
-            code: 'custom',
-            message: `Okres akceptowalny rejsu koliduje z istniejącą blokadą`,
-            path: ['acceptablePeriod'],
-          });
-          break;
-        }
-      }
-    })
-    .superRefine(({ optimalPeriod, year }, ctx) => {
-      const optimalStart = convertFortnightToDate(+optimalPeriod[0], +year),
-        optimalEnd = convertFortnightToDate(+optimalPeriod[1], +year);
-      for (const blockade of blockades || []) {
-        const blockadeStart = new Date(blockade.startDate),
-          blockadeEnd = new Date(blockade.endDate);
-        if (
-          (optimalStart <= blockadeStart && optimalEnd >= blockadeEnd) ||
-          (optimalStart >= blockadeStart && optimalStart <= blockadeEnd) ||
-          (optimalEnd >= blockadeStart && optimalEnd <= blockadeEnd)
-        ) {
-          ctx.addIssue({
-            code: 'custom',
-            message: `Okres optymalny rejsu koliduje z istniejącą blokadą`,
-            path: ['optimalPeriod'],
-          });
-          break;
-        }
-      }
     });
 };
 
@@ -188,6 +168,7 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
           (val) => initValues.years.includes(val),
           'Rok musi być jednym z dostępnych lat: ' + initValues.years.join(', ')
         ),
+      periodSelectionType: z.enum(['precise', 'period']).optional(),
       acceptablePeriod: CruisePeriodValidationSchema.or(literal('')),
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
@@ -227,28 +208,76 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
       const optimalPeriod = val.optimalPeriod;
 
       return (
-        !acceptablePeriod ||
-        !optimalPeriod ||
+        acceptablePeriod === '' ||
+        optimalPeriod === '' ||
         (optimalPeriod[0] >= acceptablePeriod[0] && optimalPeriod[1] <= acceptablePeriod[1])
       );
     }, 'Okres optymalny musi zawierać się w okresie akceptowalnym')
-    .refine((val) => {
-      const precisePeriodStart = val.precisePeriodStart;
-      const precisePeriodEnd = val.precisePeriodEnd;
-
-      return !precisePeriodStart || !precisePeriodEnd || precisePeriodStart <= precisePeriodEnd;
-    }, 'Dokładny okres musi być zgodny z okresem akceptowalnym i musi mieć poprawne daty')
-    .refine((val) => {
+    .superRefine((val, ctx) => {
       const precisePeriodStart = val.precisePeriodStart;
       const precisePeriodEnd = val.precisePeriodEnd;
       const acceptablePeriod = val.acceptablePeriod;
       const optimalPeriod = val.optimalPeriod;
-      return (
-        (!!precisePeriodStart && !!precisePeriodEnd) ||
-        (!!acceptablePeriod && !!optimalPeriod) ||
-        (!acceptablePeriod && !optimalPeriod && !precisePeriodStart && !precisePeriodEnd)
-      );
-    }, 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny');
+      const periodSelectionType = val.periodSelectionType;
+
+      const hasPrecise = precisePeriodStart !== '' || precisePeriodEnd !== '';
+      const hasPeriods = acceptablePeriod !== '' || optimalPeriod !== '';
+
+      let effectiveMode = periodSelectionType;
+      if (!effectiveMode) {
+        if (hasPrecise && !hasPeriods) {
+          effectiveMode = 'precise';
+        } else if (hasPeriods && !hasPrecise) {
+          effectiveMode = 'period';
+        }
+      }
+
+      if (effectiveMode === 'precise') {
+        if (!precisePeriodStart) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodStart'],
+            message: 'Dokładny termin rozpoczęcia rejsu jest wymagany',
+          });
+        }
+        if (!precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Dokładny termin zakończenia rejsu jest wymagany',
+          });
+        }
+        if (precisePeriodStart && precisePeriodEnd && precisePeriodStart > precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
+          });
+        }
+      } else if (effectiveMode === 'period') {
+        if (acceptablePeriod === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['acceptablePeriod'],
+            message: 'Dopuszczalny okres jest wymagany',
+          });
+        }
+        if (optimalPeriod === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['optimalPeriod'],
+            message: 'Optymalny okres jest wymagany',
+          });
+        }
+      } else if (hasPrecise && hasPeriods) {
+        // Mixed mode - user has values in both sections
+        ctx.addIssue({
+          code: 'custom',
+          path: ['precisePeriodStart'],
+          message: 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny',
+        });
+      }
+    });
 
 export function getFormAValidationSchema(initValues: FormAInitValuesDto, blockades?: BlockadePeriodDto[]) {
   return ManagerAndDeputyManagerValidationSchema(initValues)

@@ -16,6 +16,7 @@ export class FormACruiseLengthSection {
   public readonly periodNotesInput: Locator;
   public readonly shipUsageDropdown: FormDropdown;
   public readonly alternativeShipUsageInput: Locator;
+  public readonly periodSelectionTypeDropdown: FormDropdown;
 
   public readonly invalidCruiseDurationMessage: Locator;
   public readonly emptyAlternativeShipUsageMessage: Locator;
@@ -39,6 +40,9 @@ export class FormACruiseLengthSection {
       this.sectionDiv.locator('button:below(:text("Statek na potrzeby badań będzie wykorzystywany"))').first()
     );
     this.alternativeShipUsageInput = this.sectionDiv.locator('input:below(:text("Inny sposób użycia"))').first();
+    this.periodSelectionTypeDropdown = new FormDropdown(
+      this.sectionDiv.locator('button:below(:text("Wybierz sposób określenia terminu rejsu"))').first()
+    );
     this.invalidCruiseDurationMessage = this.sectionDiv
       .getByText('Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)')
       .first();
@@ -52,5 +56,11 @@ export class FormACruiseLengthSection {
     await this.cruiseDaysIncreaseButton.click();
     await this.periodNotesInput.fill('Rejs planowany na okres letni.');
     await this.shipUsageDropdown.selectOption('całą dobę');
+
+    await this.periodSelectionTypeDropdown.selectOption('Okres dopuszczalny/optymalny');
+
+    const firstSlider = this.sectionDiv.getByRole('slider').first();
+    await firstSlider.waitFor({ state: 'visible' });
+    await firstSlider.click();
   }
 }

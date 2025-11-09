@@ -37,7 +37,6 @@ const researchEquipmentsColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz nazwę sprzętu / aparatury"
-            required
             disabled={isReadonly}
           />
         )}

@@ -1,10 +1,83 @@
-import { FieldMeta } from '@tanstack/react-form';
+import { FieldMeta, ReactFormExtendedApi } from '@tanstack/react-form';
 import clsx, { ClassValue } from 'clsx';
 import { createPortal } from 'react-dom';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
+}
+
+export interface FormError {
+  fieldName: string;
+  errorMessage: string;
+  sectionNumber?: number;
+}
+
+function getSectionNumberFromFieldName(
+  fieldName: string,
+  fieldToSectionMapping: Record<string, number>
+): number | undefined {
+  const directMatch = fieldToSectionMapping[fieldName];
+  if (directMatch) {
+    return directMatch;
+  }
+
+  // Handle array fields like "permissions[0].description" by extracting the base field name
+  const baseFieldName = fieldName.split('[')[0];
+  if (baseFieldName && baseFieldName !== fieldName) {
+    return fieldToSectionMapping[baseFieldName];
+  }
+
+  return undefined;
+}
+
+export function getFirstFormError<TForm extends Record<string, unknown>>(
+  form: ReactFormExtendedApi<TForm, undefined>,
+  fieldToSectionMapping: Record<string, number>
+): FormError | null {
+  const errors = (form.state as { fieldMeta: Record<string, { errors: unknown[] }> }).fieldMeta;
+
+  // Collect all errors with their section numbers
+  const allErrors: Array<{ fieldName: string; errorMessage: string; sectionNumber?: number }> = [];
+
+  for (const [fieldName, fieldMeta] of Object.entries(errors)) {
+    if (fieldMeta.errors && fieldMeta.errors.length > 0) {
+      const errorMessage = fieldMeta.errors[0]?.toString() || 'Błąd walidacji';
+      const sectionNumber = getSectionNumberFromFieldName(fieldName, fieldToSectionMapping);
+
+      allErrors.push({
+        fieldName,
+        errorMessage,
+        sectionNumber,
+      });
+    }
+  }
+
+  if (allErrors.length === 0) {
+    return null;
+  }
+
+  // Sort errors: first by section number (ascending), then put undefined sections at the end
+  allErrors.sort((a, b) => {
+    const aSection = a.sectionNumber ?? Infinity;
+    const bSection = b.sectionNumber ?? Infinity;
+    return aSection - bSection;
+  });
+
+  return allErrors[0];
+}
+
+export function getFormErrorMessage<TForm extends Record<string, unknown>>(
+  form: ReactFormExtendedApi<TForm, undefined>,
+  fieldToSectionMapping: Record<string, number>
+): string {
+  const firstError = getFirstFormError(form, fieldToSectionMapping);
+  if (firstError) {
+    return firstError.sectionNumber
+      ? `Formularz błędny w sekcji nr ${firstError.sectionNumber}:\n${firstError.errorMessage}`
+      : `Formularz zawiera błędy:\n ${firstError.errorMessage}`;
+  }
+  return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
 export function getErrors(field: FieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
@@ -15,8 +88,42 @@ export function getErrors(field: FieldMeta, hasFormBeenSubmitted: boolean = true
   return field.errors.map((error) => error!.toString());
 }
 
-export function navigateToFirstError() {
-  document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+function scrollToError(delay: number = 0): void {
+  const scroll = () => {
+    const errorElement = document.querySelector('[data-error="true"]');
+    errorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  if (delay > 0) {
+    setTimeout(scroll, delay);
+  } else {
+    scroll();
+  }
+}
+
+// it can be improved further to get rid of the small jump when expanding the accordion
+export function navigateToFirstError<TForm extends Record<string, unknown>>(
+  form: ReactFormExtendedApi<TForm, undefined> | undefined,
+  fieldToSectionMapping: Record<string, number>
+): void {
+  const firstError = form ? getFirstFormError(form, fieldToSectionMapping) : null;
+  const sectionNumber = firstError?.sectionNumber;
+
+  // Find and expand the accordion section containing the error
+  const accordionButtons = Array.from(document.querySelectorAll('h2 button[data-expanded]'));
+  const targetButton = accordionButtons.find((button) => {
+    const title = button.querySelector('span')?.textContent || '';
+    return title.includes(`${sectionNumber}.`);
+  });
+
+  const isExpanded = targetButton?.getAttribute('data-expanded') === 'true';
+
+  if (!isExpanded) {
+    (targetButton as HTMLButtonElement).click();
+    scrollToError(50);
+  } else {
+    scrollToError();
+  }
 }
 
 export function groupBy<T>(array: T[], key: (item: T) => string): [string, T[]][] {

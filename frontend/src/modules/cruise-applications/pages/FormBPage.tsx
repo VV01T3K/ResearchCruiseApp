@@ -5,9 +5,9 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { AppLayout } from '@/core/components/AppLayout';
-import { navigateToFirstError } from '@/core/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/core/lib/utils';
 import { FormB } from '@/cruise-applications/components/formB/FormB';
-import { getFormBValidationSchema } from '@/cruise-applications/helpers/FormBValidationSchema';
+import { FORM_B_FIELD_TO_SECTION, getFormBValidationSchema } from '@/cruise-applications/helpers/FormBValidationSchema';
 import { useCruiseForCruiseApplicationQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { useFormAInitValuesQuery, useFormAQuery } from '@/cruise-applications/hooks/FormAApiHooks';
 import {
@@ -74,8 +74,8 @@ export function FormBPage() {
     await form.validate('change');
 
     if (!form.state.canSubmit) {
-      toast.error('Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-      navigateToFirstError();
+      toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
       return;
     }
 
@@ -104,7 +104,7 @@ export function FormBPage() {
           toast.error(
             'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
           );
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -137,7 +137,7 @@ export function FormBPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
