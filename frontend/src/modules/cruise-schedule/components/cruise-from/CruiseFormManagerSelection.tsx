@@ -24,9 +24,26 @@ export function CruiseFormManagerSelectionSection() {
 }
 
 function CruiseFormManagerSelectionReadonly() {
+  const { form } = useCruiseForm();
+  const usersQuery = useUsersQuery();
+
+  const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
+  const selectedDeputyManagerId = useStore(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
+
+  const selectedUserIds = React.useMemo(() => {
+    const ids = new Set<string>();
+    if (selectedCruiseManagerId) ids.add(selectedCruiseManagerId);
+    if (selectedDeputyManagerId) ids.add(selectedDeputyManagerId);
+    return Array.from(ids);
+  }, [selectedCruiseManagerId, selectedDeputyManagerId]);
+
+  const selectedManagersAsOptions = React.useMemo(() => {
+    return getSelectedUsersForDropdown(usersQuery.data ?? [], selectedUserIds);
+  }, [usersQuery.data, selectedUserIds]);
+
   return (
     <CruiseFormManagerSelectionLayout
-      users={[]}
+      users={selectedManagersAsOptions}
       cruiseManagersNotAssignedToApplication={[]}
       isReadonly={true}
       showWarnings={false}
@@ -199,4 +216,14 @@ function getAllUsersForDropdown(
   const sortedUsers = [...assignedUsers, ...unassignedUsers];
 
   return sortedUsers.map(mapPersonToLabel);
+}
+
+function getSelectedUsersForDropdown(users: User[], selectedIds: string[]): AppDropdownInputOption[] {
+  const formUsers: FormUserDto[] = users.map((user) => ({
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+  }));
+  return formUsers.filter((user) => selectedIds.includes(user.id)).map(mapPersonToLabel);
 }
