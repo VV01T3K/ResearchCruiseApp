@@ -16,7 +16,7 @@ import {
   useFormAQuery,
   useUpdateFormAMutation,
 } from '@/cruise-applications/hooks/FormAApiHooks';
-import { FormADto } from '@/cruise-applications/models/FormADto';
+import { CruisePeriodType, FormADto } from '@/cruise-applications/models/FormADto';
 import { useBlockadesQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 
@@ -35,25 +35,40 @@ export function FormAPage() {
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
+  const normalizePeriod = (period: unknown): CruisePeriodType => {
+    if (Array.isArray(period) && period.length === 0) return '';
+    if (Array.isArray(period) && period.length === 2) return period as CruisePeriodType;
+    return (period ?? '') as CruisePeriodType;
+  };
+
   const form = useForm<FormADto>({
     defaultValues: formA.data
-      ? {
-          ...formA.data,
-          deputyManagerId: formA.data.deputyManagerId ?? '', // API might return null values for drafts
-          permissions: formA.data.permissions.map((p) => ({ ...p, scan: undefined })),
-          ...(formA.data.precisePeriodStart && formA.data.precisePeriodEnd
-            ? { acceptablePeriod: '', optimalPeriod: '' }
-            : {}),
-        }
+      ? (() => {
+          const normalizedAcceptable = normalizePeriod(formA.data.acceptablePeriod);
+          const normalizedOptimal = normalizePeriod(formA.data.optimalPeriod);
+
+          return {
+            ...formA.data,
+            deputyManagerId: formA.data.deputyManagerId ?? '', // API might return null values for drafts
+            permissions: formA.data.permissions.map((p) => ({ ...p, scan: undefined })),
+            acceptablePeriod: normalizedAcceptable,
+            optimalPeriod: normalizedOptimal,
+            precisePeriodStart: formA.data.precisePeriodStart ?? '',
+            precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
+            periodSelectionType:
+              formA.data.precisePeriodStart || formA.data.precisePeriodEnd ? ('precise' as const) : ('period' as const),
+          };
+        })()
       : {
           id: undefined,
           cruiseManagerId: userContext.currentUser!.id,
           deputyManagerId: '',
           year: initialStateQuery.data.years[0],
-          acceptablePeriod: ['0', '24'],
-          optimalPeriod: ['0', '24'],
+          acceptablePeriod: '',
+          optimalPeriod: '',
           precisePeriodStart: '',
           precisePeriodEnd: '',
+          periodSelectionType: 'period',
           cruiseHours: '0',
           periodNotes: '',
           shipUsage: '',
