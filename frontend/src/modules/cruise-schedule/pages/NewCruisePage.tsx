@@ -13,6 +13,15 @@ import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseF
 import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/cruise-schedule/hooks/CruisesApiHooks';
 import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 
+const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
+  startDate: 1,
+  endDate: 1,
+  'managersTeam.mainCruiseManagerId': 2,
+  'managersTeam.mainDeputyManagerId': 2,
+  cruiseApplicationsIds: 3,
+  title: 4,
+};
+
 export function NewCruisePage() {
   const cruiseApplicationsQuery = useCruiseApplicationsForCruiseQuery();
   const createCruiseMutation = useCreateCruiseMutation();
@@ -43,8 +52,8 @@ export function NewCruisePage() {
     setHasFormBeenSubmitted(true);
     form.validateAllFields('change');
     if (!form.state.isValid) {
-      toast.error(getFormErrorMessage(form));
-      navigateToFirstError();
+      toast.error(getFormErrorMessage(form, CRUISE_FIELD_TO_SECTION));
+      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
       return;
     }
 
@@ -60,7 +69,7 @@ export function NewCruisePage() {
       onError: (error) => {
         console.error(error);
         toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-        navigateToFirstError();
+        navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
       },
     });
   }

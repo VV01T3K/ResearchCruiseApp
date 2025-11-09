@@ -28,6 +28,15 @@ import {
 import { CruiseDto } from '@/cruise-schedule/models/CruiseDto';
 import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 
+const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
+  startDate: 1,
+  endDate: 1,
+  'managersTeam.mainCruiseManagerId': 2,
+  'managersTeam.mainDeputyManagerId': 2,
+  cruiseApplicationsIds: 3,
+  title: 4,
+};
+
 export function CruiseDetailsPage() {
   const { cruiseId } = getRouteApi('/cruises/$cruiseId/').useParams();
 
@@ -57,8 +66,8 @@ export function CruiseDetailsPage() {
   function handleCruiseUpdate() {
     form.validateAllFields('change');
     if (!form.state.isValid) {
-      toast.error(getFormErrorMessage(form));
-      navigateToFirstError();
+      toast.error(getFormErrorMessage(form, CRUISE_FIELD_TO_SECTION));
+      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
       return;
     }
 
@@ -75,7 +84,7 @@ export function CruiseDetailsPage() {
       onError: (error) => {
         console.error(error);
         toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-        navigateToFirstError();
+        navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
       },
     });
   }
