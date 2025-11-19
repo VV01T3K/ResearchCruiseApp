@@ -1,3 +1,23 @@
+## 2.2.0 - 2025-11-19
+#### Changes since *2.1.0*:
+* fix(build): add CRUISE_FIELD_TO_SECTION for form validation in CruiseDetailsPage and NewCruisePage
+* fix(cruises): displaying selected managers in Readonly CruiseForm (#249)
+* fix(formC): removed bug causing Invalid Action error in form C (#248)
+* feat(form A,B,C): naprawiono problemy z walidacja + drobne ulepszenia procesu walidacji
+* feat: drobne zmiany kosmetyczne ze spotkania
+* feat: displaying asterisks(*) in the required fields (#217)
+* fix: bugs with precise dates
+* chore(devcontainer): update postCreateCommand for frontend setup and add Playwright extension (#245)
+* fix(formB): deleted żurawik hydrograficzny dziobowy (#228)
+* feat: Dodatkowe dane w widoku zbiorczym wszystkich zgłoszeń #177
+* fix: playwright tests patch
+* feat(devcontainer): Small improvement to dev environment
+* chore(devcontainer): simple devcontainer config with docker-in-docker features
+* fix: update repository references in docker-compose and package.json
+* chore: comment out deploy-to-staging job in workflows
+* chore: expand authors
+* fix: change staging jwt secret
+
 ## 2.1.0 - 2025-09-25
 #### Changes since *2.0.0*:
 * feat: add support for multiple and custom research areas (#389)
