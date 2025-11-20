@@ -82,7 +82,7 @@ function Modal({ anchorRef, dropdownRef, children }: ModalProps) {
       ref={dropdownRef}
       tabIndex={-1}
     >
-      {children}
+      <div className="max-h-64 overflow-y-auto">{children}</div>
     </motion.div>
   );
 }
