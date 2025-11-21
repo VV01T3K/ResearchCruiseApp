@@ -33,7 +33,7 @@ export function ApplicationsPage() {
     },
     {
       header: 'Rok rejsu',
-      accessorFn: (row) => row.year,
+      accessorFn: (row) => row.year.toString(),
       size: 5,
     },
     {
