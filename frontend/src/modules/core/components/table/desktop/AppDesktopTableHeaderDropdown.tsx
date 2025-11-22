@@ -44,7 +44,7 @@ export function AppDesktopTableHeaderDropdown<TData, TValue>({
       ref={dropdownRef}
       style={{ top: top, left: left }}
     >
-      <div className="py-1 max-h-64 overflow-y-auto" role="none">
+      <div className="py-1" role="none">
         {supportsSort && <p>Sortowanie</p>}
         <AppTableListItem onClick={() => header.column.toggleSorting()} isRendered={supportsSort} expanded={expanded}>
           <AppTableSortingToggle header={header} />
