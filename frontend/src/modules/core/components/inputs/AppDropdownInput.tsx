@@ -191,7 +191,7 @@ function Modal({ dropdownRef, inputRef, children }: ModalProps) {
       aria-labelledby="menu-button"
       ref={dropdownRef}
     >
-      {children}
+      <div className="max-h-64 overflow-y-auto">{children}</div>
     </motion.div>
   );
 }

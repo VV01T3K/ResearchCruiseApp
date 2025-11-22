@@ -55,6 +55,7 @@ export function useFormAForSupervisorQuery({ cruiseId, supervisorCode }: Supervi
     select: (res) => {
       const dto = res.data as FormADto;
       dto.note ??= '';
+      dto.periodSelectionType = dto.precisePeriodEnd || dto.precisePeriodStart ? 'precise' : 'period';
       return dto;
     },
   });
