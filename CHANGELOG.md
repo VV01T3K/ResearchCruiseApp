@@ -1,3 +1,10 @@
+## 2.2.1 - 2025-11-23
+#### Changes since *2.2.0*:
+* fix: removed 2nd scroll in sort/filter dropdown + reduced max-height of this scrollable box
+* fix: FormA SupervisorPage shows now correct precise dates
+* fix: convert year to string in ApplicationsPage for correct data type in filtering
+* fix: add scrollable container for dropdown menu items and to dropdown items in AppPopover and AppDesktopTableHeaderDropdown
+
 ## 2.2.0 - 2025-11-19
 #### Changes since *2.1.0*:
 * fix(build): add CRUISE_FIELD_TO_SECTION for form validation in CruiseDetailsPage and NewCruisePage
