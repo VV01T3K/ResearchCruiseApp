@@ -72,7 +72,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             value={parseInt(field.state.value as string)}
             minimum={0}
             step={10}
-            onChange={field.handleChange}
+            onChange={(value: number) => field.handleChange(value.toString())}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Przewidywane punkty ministerialne"
