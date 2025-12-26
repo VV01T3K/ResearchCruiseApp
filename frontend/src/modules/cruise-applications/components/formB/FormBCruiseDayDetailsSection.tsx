@@ -196,7 +196,7 @@ export function FormBCruiseDayDetailsSection() {
       // Get current rows and add new rows from CSV
       const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
       form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
-      
+
       toast.dismiss(toastId);
       toast.success(`Wczytano ${rows.length} wierszy z pliku CSV.`);
     } catch (error) {

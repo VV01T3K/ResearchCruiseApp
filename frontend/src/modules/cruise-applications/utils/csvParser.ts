@@ -112,7 +112,6 @@ function parseCSVLine(line: string, delimiter: string): string[] {
   return result;
 }
 
-
 export async function readFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
