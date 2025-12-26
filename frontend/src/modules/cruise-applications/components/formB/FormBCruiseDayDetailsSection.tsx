@@ -1,5 +1,7 @@
 import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
+import { useRef } from 'react';
+import toast from 'react-hot-toast';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppButton } from '@/core/components/AppButton';
@@ -11,6 +13,7 @@ import { getErrors } from '@/core/lib/utils';
 import { useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { CruiseDayDetailsDto } from '@/cruise-applications/models/CruiseDayDetailsDto';
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
+import { parseCruiseDayDetailsFromCsv, readFileAsText } from '@/cruise-applications/utils/csvParser';
 
 const cruiseDayDetailsColumns = (
   form: ReactFormExtendedApi<FormBDto, undefined>,
@@ -178,6 +181,36 @@ const cruiseDayDetailsColumns = (
 
 export function FormBCruiseDayDetailsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCsvImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const toastId = toast.loading('Wczytywanie pliku CSV...');
+
+    try {
+      const csvContent = await readFileAsText(file);
+      const rows = parseCruiseDayDetailsFromCsv(csvContent);
+
+      // Get current rows and add new rows from CSV
+      const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
+      form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
+      
+      toast.dismiss(toastId);
+      toast.success(`Wczytano ${rows.length} wierszy z pliku CSV.`);
+    } catch (error) {
+      toast.dismiss(toastId);
+      const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
+      toast.error(`Błąd przy wczytywaniu pliku CSV: ${errorMessage}`);
+      console.error('CSV Import Error:', error);
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <AppAccordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
@@ -185,33 +218,51 @@ export function FormBCruiseDayDetailsSection() {
         name="cruiseDaysDetails"
         mode="array"
         children={(field) => (
-          <AppTable
-            data={field.state.value}
-            columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-            buttons={() => [
-              <AppButton
-                key="new"
-                onClick={() => {
-                  field.pushValue({
-                    number: '0',
-                    hours: '0',
-                    taskName: '',
-                    region: '',
-                    position: '',
-                    comment: '',
-                  });
-                  field.handleChange((prev) => prev);
-                  field.handleBlur();
-                }}
-                variant="primary"
-                disabled={isReadonly}
-              >
-                Dodaj
-              </AppButton>,
-            ]}
-            variant="form"
-            disabled={isReadonly}
-          />
+          <>
+            <input
+              type="file"
+              accept=".csv,.txt"
+              onChange={handleCsvImport}
+              ref={fileInputRef}
+              disabled={isReadonly}
+              className="hidden"
+            />
+            <AppTable
+              data={field.state.value}
+              columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              buttons={() => [
+                <AppButton
+                  key="new"
+                  onClick={() => {
+                    field.pushValue({
+                      number: '0',
+                      hours: '0',
+                      taskName: '',
+                      region: '',
+                      position: '',
+                      comment: '',
+                    });
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  }}
+                  variant="primary"
+                  disabled={isReadonly}
+                >
+                  Dodaj
+                </AppButton>,
+                <AppButton
+                  key="import"
+                  onClick={() => fileInputRef.current?.click()}
+                  variant="primaryOutline"
+                  disabled={isReadonly}
+                >
+                  Importuj z CSV
+                </AppButton>,
+              ]}
+              variant="form"
+              disabled={isReadonly}
+            />
+          </>
         )}
       />
     </AppAccordion>
