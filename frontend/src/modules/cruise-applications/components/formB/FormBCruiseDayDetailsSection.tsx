@@ -13,7 +13,11 @@ import { getErrors } from '@/core/lib/utils';
 import { useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { CruiseDayDetailsDto } from '@/cruise-applications/models/CruiseDayDetailsDto';
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
-import { parseCruiseDayDetailsFromCsv, readFileAsText } from '@/cruise-applications/utils/csvParser';
+import {
+  parseCruiseDayDetailsFromCsv,
+  parseCruiseDayDetailsFromFile,
+  readFileAsText,
+} from '@/cruise-applications/utils/csvParser';
 
 const cruiseDayDetailsColumns = (
   form: ReactFormExtendedApi<FormBDto, undefined>,
@@ -183,27 +187,36 @@ export function FormBCruiseDayDetailsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleCsvImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const toastId = toast.loading('Wczytywanie pliku CSV...');
+    const isXlsx = file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls');
+    const toastId = toast.loading(isXlsx ? 'Wczytywanie pliku XLSX...' : 'Wczytywanie pliku CSV...');
 
     try {
-      const csvContent = await readFileAsText(file);
-      const rows = parseCruiseDayDetailsFromCsv(csvContent);
+      let rows: CruiseDayDetailsDto[];
 
-      // Get current rows and add new rows from CSV
+      if (isXlsx) {
+        rows = await parseCruiseDayDetailsFromFile(file);
+      } else {
+        const csvContent = await readFileAsText(file);
+        rows = parseCruiseDayDetailsFromCsv(csvContent);
+      }
+
+      // Get current rows and add new rows from file
       const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
       form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
 
       toast.dismiss(toastId);
-      toast.success(`Wczytano ${rows.length} wierszy z pliku CSV.`);
+      const fileType = isXlsx ? 'XLSX' : 'CSV';
+      toast.success(`Wczytano ${rows.length} wierszy z pliku ${fileType}.`);
     } catch (error) {
       toast.dismiss(toastId);
       const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
-      toast.error(`Błąd przy wczytywaniu pliku CSV: ${errorMessage}`);
-      console.error('CSV Import Error:', error);
+      const fileType = isXlsx ? 'XLSX' : 'CSV';
+      toast.error(`Błąd przy wczytywaniu pliku ${fileType}: ${errorMessage}`);
+      console.error('File Import Error:', error);
     }
 
     // Reset file input
@@ -221,8 +234,8 @@ export function FormBCruiseDayDetailsSection() {
           <>
             <input
               type="file"
-              accept=".csv,.txt"
-              onChange={handleCsvImport}
+              accept=".csv,.txt,.xlsx,.xls"
+              onChange={handleFileImport}
               ref={fileInputRef}
               disabled={isReadonly}
               className="hidden"
@@ -256,7 +269,7 @@ export function FormBCruiseDayDetailsSection() {
                   variant="primaryOutline"
                   disabled={isReadonly}
                 >
-                  Importuj z CSV
+                  Importuj z CSV/XLSX
                 </AppButton>,
               ]}
               variant="form"
