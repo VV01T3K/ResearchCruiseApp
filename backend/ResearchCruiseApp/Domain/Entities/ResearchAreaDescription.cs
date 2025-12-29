@@ -15,7 +15,7 @@ public class ResearchAreaDescription
     public string? DifferentName { get; init; }
 
     [StringLength(10240)]
-    public string Info { get; init; } = "";
+    public string? Info { get; init; }
 
     public List<FormA> FormsA { get; init; } = [];
 
