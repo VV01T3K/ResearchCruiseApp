@@ -131,8 +131,8 @@ export class FormBPage {
 
     this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });
     this.toastMessage = this.page.getByTestId('toast-container');
-    this.submissionApprovedMessage = this.toastMessage.getByTestId('toast-success');
-    this.validationErrorMessage = this.toastMessage.getByTestId('toast-error');
+    this.submissionApprovedMessage = this.toastMessage.getByTestId('toast-success').first();
+    this.validationErrorMessage = this.toastMessage.getByTestId('toast-error').first();
   }
 
   public async fillForm({ except }: { except?: (keyof FormBPage['sections'])[] } = {}) {
