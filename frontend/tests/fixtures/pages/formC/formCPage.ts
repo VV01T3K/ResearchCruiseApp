@@ -144,7 +144,7 @@ export class FormCPage {
     } as const;
 
     this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });
-    this.toastMessage = this.page.locator('#_rht_toaster');
+    this.toastMessage = this.page.getByTestId('toast-container');
     this.submissionApprovedMessage = this.toastMessage.getByText('Formularz został wysłany pomyślnie.');
     this.validationErrorMessage = this.toastMessage.filter({ hasText: /Formularz (błędny|zawiera błędy)/ });
   }
