@@ -13,7 +13,7 @@ import { Result } from '@/user/models/Results';
 
 const validationSchema = z
   .object({
-    email: z.string().email('Niepoprawny adres e-mail'),
+    email: z.email('Niepoprawny adres e-mail'),
     firstname: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
     lastname: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
     password: z

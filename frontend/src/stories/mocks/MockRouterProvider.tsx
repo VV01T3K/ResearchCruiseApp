@@ -12,6 +12,5 @@ export function MockRouterProvider({ children }: Props) {
     routeTree: rootRoute,
   });
 
-  //@ts-expect-error The Custom router provider declares an expected type of Router, but here we don't want to use it
   return <RouterProvider router={router} defaultComponent={() => <>{children}</>} />;
 }

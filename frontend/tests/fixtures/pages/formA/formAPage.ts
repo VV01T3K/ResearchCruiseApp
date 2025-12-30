@@ -84,10 +84,8 @@ export class FormAPage {
 
     this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });
     this.toastMessage = this.page.getByTestId('toast-container');
-    this.submissionApprovedMessage = this.toastMessage.getByText(
-      'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.'
-    );
-    this.validationErrorMessage = this.toastMessage.filter({ hasText: /Formularz (błędny|zawiera błędy)/ });
+    this.submissionApprovedMessage = this.toastMessage.getByTestId('toast-success');
+    this.validationErrorMessage = this.toastMessage.getByTestId('toast-error');
   }
 
   public async fillForm({ except }: { except?: (keyof FormAPage['sections'])[] } = {}) {
@@ -105,6 +103,18 @@ export class FormAPage {
     message,
   }: { expectedResult?: 'valid' | 'invalid'; message?: string } = {}) {
     await this.submitButton.click();
+
+    // Wait for any toast to appear and log its content for debugging
+    const anyToast = this.toastMessage.locator('[data-testid^="toast-"]').first();
+    try {
+      await anyToast.waitFor({ state: 'visible', timeout: 5000 });
+      const testId = await anyToast.getAttribute('data-testid');
+      const toastType = testId?.replace('toast-', '');
+      const toastText = await anyToast.textContent();
+      console.log(`[FormA Toast] Type: ${toastType}, Text: ${toastText}`);
+    } catch {
+      console.log('[FormA Toast] No toast appeared within timeout');
+    }
 
     switch (expectedResult) {
       case 'valid':

@@ -10,7 +10,7 @@ export function AppToaster() {
         {(t) => (
           <ToastBar toast={t}>
             {({ icon, message }) => (
-              <div className="flex gap-2 items-center p-2">
+              <div className="flex gap-2 items-center p-2" data-testid={`toast-${t.type}`}>
                 <span className="scale-125">{icon}</span>
                 <span className="text-sm">{message}</span>
                 {t.type !== 'loading' && (

@@ -7,7 +7,7 @@ export type UGTeamDto = {
 };
 
 export const UGTeamDtoValidationSchema = z.object({
-  ugUnitId: z.string().uuid(),
+  ugUnitId: z.guid(),
   noOfEmployees: z.string().refine((val) => {
     const parsed = parseInt(val, 10);
     return !isNaN(parsed) && parsed >= 0;

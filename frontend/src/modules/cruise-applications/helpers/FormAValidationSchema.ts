@@ -74,7 +74,7 @@ const ShipUsageValidationSchema = z
   .object({
     shipUsage: z
       .enum(['0', '1', '2', '3', '4'], {
-        message: 'Wymagane jest wskazanie sposobu korzystania z statku',
+        error: 'Wymagane jest wskazanie sposobu korzystania z statku'
       })
       .optional(),
     differentUsage: z.string(),
@@ -92,7 +92,7 @@ const ShipUsageValidationSchema = z
 const CruiseGoalValidationSchema = z
   .object({
     cruiseGoal: z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational], {
-      message: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
+      error: 'Cel rejsu musi być jednym z dostępnych celów rejsu'
     }),
     cruiseGoalDescription: z.string().max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
   })
@@ -161,7 +161,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
 const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
   z
     .object({
-      id: z.string().uuid().optional(),
+      id: z.guid().optional(),
       year: z
         .string()
         .refine(
@@ -200,7 +200,7 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
       guestTeams: GuestTeamDtoValidationSchema.array(),
       publications: PublicationDtoValidationSchema.array(),
       spubTasks: SpubTaskDtoValidationSchema.array(),
-      supervisorEmail: z.string().email('Niepoprawny adres email'),
+      supervisorEmail: z.email('Niepoprawny adres email'),
       note: z.string().optional(),
     })
     .refine((val) => {
