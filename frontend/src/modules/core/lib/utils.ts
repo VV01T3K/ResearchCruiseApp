@@ -42,7 +42,8 @@ export function getFirstFormError(
 
   for (const [fieldName, fieldMeta] of Object.entries(errors)) {
     if (fieldMeta.errors && fieldMeta.errors.length > 0) {
-      const errorMessage = fieldMeta.errors[0]?.toString() || 'Błąd walidacji';
+      const error = fieldMeta.errors[0];
+      const errorMessage = extractErrorMessage(error) || 'Błąd walidacji';
       const sectionNumber = getSectionNumberFromFieldName(fieldName, fieldToSectionMapping);
 
       allErrors.push({
@@ -80,12 +81,13 @@ export function getFormErrorMessage(
   return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
-export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
-  if ((!hasFormBeenSubmitted && field.isPristine) || field.errors.length === 0) {
-    return undefined;
-  }
+const extractErrorMessage = (error: unknown): string =>
+  (error as { message?: string })?.message ?? String(error);
 
-  return field.errors.map((error: unknown) => String(error));
+export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
+  return (!hasFormBeenSubmitted && field.isPristine) || field.errors.length === 0
+    ? undefined
+    : field.errors.map(extractErrorMessage);
 }
 
 function scrollToError(delay: number = 0): void {
