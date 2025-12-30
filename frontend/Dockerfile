@@ -2,20 +2,20 @@ FROM node:22-alpine AS build
 
 ENV API_URL="/api"
 ENV GRAFANA_FARO_URL="/faro/collect"
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV BUN_INSTALL="/bun"
+ENV PATH="$BUN_INSTALL/bin:$PATH"
 ARG APP_ENVIRONMENT="development"
 ARG OTEL_SERVICE_NAME="research-cruise-app-frontend"
 ENV APP_ENVIRONMENT=$APP_ENVIRONMENT
 ENV OTEL_SERVICE_NAME=$OTEL_SERVICE_NAME
 
-RUN npm i -g corepack@latest
-RUN corepack enable
+RUN apk add --no-cache bash curl unzip
+RUN curl -fsSL https://bun.sh/install | bash
 WORKDIR /app
 COPY . .
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build
+RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache bun install --frozen-lockfile
+RUN bun run build
 
 FROM nginxinc/nginx-unprivileged:1.27-alpine
 USER root

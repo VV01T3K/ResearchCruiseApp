@@ -1,12 +1,12 @@
 {
   "name": "research-cruise-app-scripts",
   "scripts": {
-    "deps": "docker compose -f docker/docker-compose.infra.yml pull && cd frontend && pnpm install",
+    "deps": "docker compose -f docker/docker-compose.infra.yml pull && cd frontend && bun install",
     "db:up": "docker compose -f docker/docker-compose.infra.yml up -d db",
     "db:down": "docker compose -f docker/docker-compose.infra.yml down",
     "db:del": "bun db:down && (docker volume rm researchcruiseapp_researchcruiseapp-db || true) && rm admin.log || true",
     "dot:start": "cd backend && bun run start",
     "admin:pass": "bun db:del && sleep 5 && bun db:up && sleep 10 && temp=$(mktemp) && timeout -s KILL 20 bun dot:start | tee $temp; grep -i admin $temp > admin.log && rm $temp && echo '\nAdmin password info saved to root/admin.log'"
   },
-  "packageManager": "pnpm@10.11.0"
+  "packageManager": "bun@1.3.5"
 }
