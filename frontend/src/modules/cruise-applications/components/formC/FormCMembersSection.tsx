@@ -110,9 +110,7 @@ export function FormCMembersSection() {
     ];
   }
 
-  function getGuestTeams(
-    field: AnyFieldApi
-  ): ColumnDef<GuestTeamDto>[] {
+  function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamDto>[] {
     const tableField = field;
     return [
       {

@@ -1,6 +1,6 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { Row } from '@tanstack/react-table';
 
+import { AnyReactFormApi } from '@/core/lib/form';
 import { DidacticsResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/DidacticsResearchTaskDetails';
 import { OtherResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/OtherResearchTaskDetails';
 import { OwnResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/OwnResearchTaskDetails';
@@ -20,7 +20,7 @@ import {
 } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {
-  form: ReactFormExtendedApi<FormADto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>;
+  form: AnyReactFormApi<FormADto>;
   row: Row<ResearchTaskDto>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;

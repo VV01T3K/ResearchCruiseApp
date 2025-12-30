@@ -1,5 +1,4 @@
 import { AnyFieldApi } from '@tanstack/form-core';
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -8,13 +7,14 @@ import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
+import { AnyReactFormApi } from '@/core/lib/form';
 import { getErrors } from '@/core/lib/utils';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 import { CollectedSampleDto } from '@/cruise-applications/models/CollectedSampleDto';
 import { FormCDto } from '@/cruise-applications/models/FormCDto';
 
 const collectedSamplesColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>,
+  form: AnyReactFormApi<FormCDto>,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean

@@ -1,15 +1,15 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { Row } from '@tanstack/react-table';
 
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
+import { AnyReactFormApi } from '@/core/lib/form';
 import { getErrors } from '@/core/lib/utils';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { ProjectPreparationResearchTaskDto } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {
-  form: ReactFormExtendedApi<FormADto, any, any, any, any, any, any, any, any, any, any, any>;
+  form: AnyReactFormApi<FormADto>;
   row: Row<ProjectPreparationResearchTaskDto>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;

@@ -1,18 +1,16 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import React from 'react';
 
+import { AnyReactFormApi } from '@/core/lib/form';
 import { CruiseDto } from '@/cruise-applications/models/CruiseDto';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
 import { FormBInitValuesDto } from '@/cruise-applications/models/FormBInitValuesDto';
 
-// Use 'any' for validator type parameters to allow forms with or without validators
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FormBContextType = {
   formAInitValues: FormAInitValuesDto;
   formBInitValues: FormBInitValuesDto;
-  form: ReactFormExtendedApi<FormBDto, any, any, any, any, any, any, any, any, any, any, any>;
+  form: AnyReactFormApi<FormBDto>;
   formA: FormADto;
   cruise: CruiseDto;
   hasFormBeenSubmitted: boolean;

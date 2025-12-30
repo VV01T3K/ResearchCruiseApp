@@ -16,9 +16,7 @@ import { CruiseApplicationDropdownElementSelectorButton } from '../common/Cruise
 export function FormCResearchAreaSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getColumns(
-    field: AnyFieldApi
-  ): ColumnDef<ResearchAreaDescriptionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaDescriptionDto>[] {
     return [
       {
         header: 'Lp.',

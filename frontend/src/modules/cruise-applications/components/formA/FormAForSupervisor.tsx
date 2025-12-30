@@ -1,6 +1,5 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
-
 import { AppLayout } from '@/core/components/AppLayout';
+import { AnyReactFormApi } from '@/core/lib/form';
 import { FormAContractsSection } from '@/cruise-applications/components/formA/FormAContractsSection';
 import { FormACruiseGoalSection } from '@/cruise-applications/components/formA/FormACruiseGoalSection';
 import { FormACruiseLengthSection } from '@/cruise-applications/components/formA/FormACruiseLengthSection';
@@ -23,8 +22,7 @@ export function FormAForSupervisor({
   handleAcceptForm,
   handleDenyForm,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: ReactFormExtendedApi<FormADto, any, any, any, any, any, any, any, any, any, any, any>;
+  form: AnyReactFormApi<FormADto>;
   formInitValues: FormAInitValuesDto;
   handleAcceptForm: () => void;
   handleDenyForm: () => void;

@@ -16,9 +16,7 @@ import { SpubTaskDto } from '@/cruise-applications/models/SpubTaskDto';
 export function FormCSPUBTasksSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getColumns(
-    field: AnyFieldApi
-  ): ColumnDef<SpubTaskDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskDto>[] {
     return [
       {
         header: 'Lp.',

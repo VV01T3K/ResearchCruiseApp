@@ -31,10 +31,7 @@ function getSectionNumberFromFieldName(
   return undefined;
 }
 
-export function getFirstFormError(
-  form: AnyFormApi,
-  fieldToSectionMapping: Record<string, number>
-): FormError | null {
+export function getFirstFormError(form: AnyFormApi, fieldToSectionMapping: Record<string, number>): FormError | null {
   const errors = (form.state as { fieldMeta: Record<string, { errors: unknown[] }> }).fieldMeta;
 
   // Collect all errors with their section numbers
@@ -68,10 +65,7 @@ export function getFirstFormError(
   return allErrors[0];
 }
 
-export function getFormErrorMessage(
-  form: AnyFormApi,
-  fieldToSectionMapping: Record<string, number>
-): string {
+export function getFormErrorMessage(form: AnyFormApi, fieldToSectionMapping: Record<string, number>): string {
   const firstError = getFirstFormError(form, fieldToSectionMapping);
   if (firstError) {
     return firstError.sectionNumber
@@ -81,8 +75,7 @@ export function getFormErrorMessage(
   return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
-const extractErrorMessage = (error: unknown): string =>
-  (error as { message?: string })?.message ?? String(error);
+const extractErrorMessage = (error: unknown): string => (error as { message?: string })?.message ?? String(error);
 
 export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
   return (!hasFormBeenSubmitted && field.isPristine) || field.errors.length === 0

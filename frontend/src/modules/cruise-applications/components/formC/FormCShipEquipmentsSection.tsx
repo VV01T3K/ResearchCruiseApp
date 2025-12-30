@@ -1,17 +1,17 @@
 import { AnyFieldApi } from '@tanstack/form-core';
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppTable } from '@/core/components/table/AppTable';
+import { AnyReactFormApi } from '@/core/lib/form';
 import { getErrors } from '@/core/lib/utils';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { ShipEquipmentDto } from '@/cruise-applications/models/ShipEquipmentDto';
 
 const shipEquipmentColumns = (
-  form: ReactFormExtendedApi<FormCDto, any, any, any, any, any, any, any, any, any, any, any>,
+  form: AnyReactFormApi<FormCDto>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShipEquipmentDto>[] => [

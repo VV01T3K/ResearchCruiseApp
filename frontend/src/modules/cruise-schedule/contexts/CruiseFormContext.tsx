@@ -1,14 +1,12 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { createContext, use } from 'react';
 
+import { AnyReactFormApi } from '@/core/lib/form';
 import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
 import { CruiseDto } from '@/cruise-schedule/models/CruiseDto';
 import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 
-// Use 'any' for validator type parameters to allow forms with or without validators
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CruiseFromContextType = {
-  form: ReactFormExtendedApi<CruiseFormDto, any, any, any, any, any, any, any, any, any, any, any>;
+  form: AnyReactFormApi<CruiseFormDto>;
   cruise?: CruiseDto;
   cruiseApplications: CruiseApplicationDto[];
   isReadonly: boolean;
