@@ -1,5 +1,5 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppCalendar } from '@/core/components/calendar/AppCalendar';
