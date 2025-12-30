@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -12,7 +12,7 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "ResearchCruiseApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
 RUN apk add --no-cache curl icu-libs tzdata
 HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl",  "--fail", "http://localhost:8080/health" ]
