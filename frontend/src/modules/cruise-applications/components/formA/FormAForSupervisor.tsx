@@ -23,7 +23,8 @@ export function FormAForSupervisor({
   handleAcceptForm,
   handleDenyForm,
 }: {
-  form: ReactFormExtendedApi<FormADto, undefined>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: ReactFormExtendedApi<FormADto, any, any, any, any, any, any, any, any, any, any, any>;
   formInitValues: FormAInitValuesDto;
   handleAcceptForm: () => void;
   handleDenyForm: () => void;

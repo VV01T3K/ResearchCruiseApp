@@ -47,8 +47,8 @@ export function FormAPage() {
     return (period ?? '') as CruisePeriodType;
   };
 
-  const form = useForm<FormADto>({
-    defaultValues: formA.data
+  const form = useForm({
+    defaultValues: (formA.data
       ? (() => {
           const normalizedAcceptable = normalizePeriod(formA.data.acceptablePeriod);
           const normalizedOptimal = normalizePeriod(formA.data.optimalPeriod);
@@ -93,7 +93,7 @@ export function FormAPage() {
           spubTasks: [],
           supervisorEmail: '',
           note: '',
-        },
+        }) as FormADto,
     validators: {
       onChange: getFormAValidationSchema(initialStateQuery.data),
     },

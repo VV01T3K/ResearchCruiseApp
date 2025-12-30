@@ -25,7 +25,7 @@ export function NewCruisePage() {
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
-  const form = useForm<FormADto>({
+  const form = useForm({
     defaultValues: {
       id: undefined,
       cruiseManagerId: userContext.currentUser!.id,
@@ -52,7 +52,7 @@ export function NewCruisePage() {
       spubTasks: [],
       supervisorEmail: '',
       note: '',
-    },
+    } as FormADto,
     validators: {
       onChange: getFormAValidationSchema(initialStateQuery.data),
     },

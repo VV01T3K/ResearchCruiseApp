@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -8,7 +8,6 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
-import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { ResearchAreaDescriptionDto } from '@/cruise-applications/models/ResearchAreaDescriptionDto';
 import { getResearchAreaName } from '@/cruise-applications/models/ResearchAreaDto';
 
@@ -18,7 +17,7 @@ export function FormCResearchAreaSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getColumns(
-    field: FieldApi<FormCDto, 'researchAreaDescriptions', undefined, undefined, ResearchAreaDescriptionDto[]>
+    field: AnyFieldApi
   ): ColumnDef<ResearchAreaDescriptionDto>[] {
     return [
       {
@@ -87,7 +86,7 @@ export function FormCResearchAreaSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: ResearchAreaDescriptionDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}

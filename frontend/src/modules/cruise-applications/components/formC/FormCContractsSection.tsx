@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -11,14 +11,11 @@ import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 import { ContractDto, getContractCategoryName } from '@/cruise-applications/models/ContractDto';
-import { FormCDto } from '@/cruise-applications/models/FormCDto';
 
 export function FormCContractsSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getColumns(
-    field: FieldApi<FormCDto, 'contracts', undefined, undefined, ContractDto[]>
-  ): ColumnDef<ContractDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ContractDto>[] {
     return [
       {
         header: 'Lp.',
@@ -145,7 +142,7 @@ export function FormCContractsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: ContractDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -188,7 +185,7 @@ export function FormCContractsSection() {
                           description: '',
                           scans: [],
                         });
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: ContractDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -203,7 +200,7 @@ export function FormCContractsSection() {
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: ContractDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}

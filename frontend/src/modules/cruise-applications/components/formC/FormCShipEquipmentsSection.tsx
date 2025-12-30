@@ -1,3 +1,4 @@
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -10,7 +11,7 @@ import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { ShipEquipmentDto } from '@/cruise-applications/models/ShipEquipmentDto';
 
 const shipEquipmentColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
+  form: ReactFormExtendedApi<FormCDto, any, any, any, any, any, any, any, any, any, any, any>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShipEquipmentDto>[] => [
@@ -24,14 +25,14 @@ const shipEquipmentColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`shipEquipmentsIds`}
-        children={(field) => (
+        children={(field: AnyFieldApi) => (
           <AppCheckbox
             size="md"
             name={field.name}
             checked={field.state.value.includes(row.original.id)}
             onChange={(enable) =>
-              field.handleChange((prev) =>
-                enable ? [...prev, row.original.id] : prev.filter((id) => id !== row.original.id)
+              field.handleChange((prev: string[]) =>
+                enable ? [...prev, row.original.id] : prev.filter((id: string) => id !== row.original.id)
               )
             }
             onBlur={field.handleBlur}

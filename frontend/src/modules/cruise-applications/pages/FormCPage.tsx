@@ -30,9 +30,9 @@ export function FormCPage() {
   const cruise = useCruiseForCruiseApplicationQuery(applicationId);
   const updateMutation = useUpdateFormCMutation();
 
-  const form = useForm<FormCDto>({
+  const form = useForm({
     defaultValues:
-      formC.data ??
+      (formC.data ??
       ({
         shipUsage: formA.data.shipUsage, // Max length 1
         differentUsage: formA.data.differentUsage,
@@ -61,7 +61,7 @@ export function FormCPage() {
         spubReportData: '',
         additionalDescription: '',
         photos: [],
-      } as FormCDto),
+      })) as FormCDto,
     validators: {
       onChange: getFormCValidationSchema(formAInitValues.data),
     },

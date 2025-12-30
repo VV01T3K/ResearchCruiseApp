@@ -1,4 +1,5 @@
-import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
+import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -13,8 +14,8 @@ import { CollectedSampleDto } from '@/cruise-applications/models/CollectedSample
 import { FormCDto } from '@/cruise-applications/models/FormCDto';
 
 const collectedSamplesColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
-  field: FieldApi<FormCDto, 'collectedSamples', undefined, undefined, CollectedSampleDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<CollectedSampleDto>[] => [
@@ -130,7 +131,7 @@ export function FormCCollectedSamplesSection() {
                     analysis: '',
                     publishing: '',
                   } as CollectedSampleDto);
-                  field.handleChange((prev) => prev);
+                  field.handleChange((prev: CollectedSampleDto[]) => prev);
                   field.handleBlur();
                 }}
               >

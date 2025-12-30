@@ -1,4 +1,5 @@
-import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
+import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -13,8 +14,8 @@ import { CruiseDayDetailsDto } from '@/cruise-applications/models/CruiseDayDetai
 import { FormCDto } from '@/cruise-applications/models/FormCDto';
 
 const cruiseDayDetailsColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
-  field: FieldApi<FormCDto, 'cruiseDaysDetails', undefined, undefined, CruiseDayDetailsDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<CruiseDayDetailsDto>[] => [
@@ -165,7 +166,7 @@ const cruiseDayDetailsColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -200,7 +201,7 @@ export function FormCCruiseDayDetailsSection() {
                     position: '',
                     comment: '',
                   });
-                  field.handleChange((prev) => prev);
+                  field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
                   field.handleBlur();
                 }}
                 variant="primary"

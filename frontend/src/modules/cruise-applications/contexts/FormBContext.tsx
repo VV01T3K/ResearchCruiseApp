@@ -7,10 +7,12 @@ import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValues
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
 import { FormBInitValuesDto } from '@/cruise-applications/models/FormBInitValuesDto';
 
+// Use 'any' for validator type parameters to allow forms with or without validators
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FormBContextType = {
   formAInitValues: FormAInitValuesDto;
   formBInitValues: FormBInitValuesDto;
-  form: ReactFormExtendedApi<FormBDto, undefined>;
+  form: ReactFormExtendedApi<FormBDto, any, any, any, any, any, any, any, any, any, any, any>;
   formA: FormADto;
   cruise: CruiseDto;
   hasFormBeenSubmitted: boolean;

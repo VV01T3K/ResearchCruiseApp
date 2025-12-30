@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -10,15 +10,12 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
-import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { PermissionDto } from '@/cruise-applications/models/PermissionDto';
 
 export function FormCAdditionalPermissionsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
-  function getColumns(
-    field: FieldApi<FormCDto, 'permissions', undefined, undefined, PermissionDto[]>
-  ): ColumnDef<PermissionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<PermissionDto>[] {
     return [
       {
         header: 'Lp.',
@@ -101,7 +98,7 @@ export function FormCAdditionalPermissionsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: PermissionDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -128,7 +125,7 @@ export function FormCAdditionalPermissionsSection() {
                   key="permissions.add-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
-                    field.handleChange((prev) => prev);
+                    field.handleChange((prev: PermissionDto[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}

@@ -1,4 +1,5 @@
-import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
+import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -17,8 +18,8 @@ import { PortDto } from '@/cruise-applications/models/PortDto';
 import { ShortResearchEquipmentDto } from '@/cruise-applications/models/ShortResearchEquipmentDto';
 
 const shortResearchEquipmentColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
-  field: FieldApi<FormCDto, 'shortResearchEquipments', undefined, undefined, ShortResearchEquipmentDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentDto>[] => [
@@ -112,7 +113,7 @@ const shortResearchEquipmentColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: ShortResearchEquipmentDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -124,8 +125,8 @@ const shortResearchEquipmentColumns = (
 ];
 
 const longResearchEquipmentColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
-  field: FieldApi<FormCDto, 'longResearchEquipments', undefined, undefined, LongResearchEquipmentDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentDto>[] => [
@@ -212,7 +213,7 @@ const longResearchEquipmentColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: LongResearchEquipmentDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -224,8 +225,8 @@ const longResearchEquipmentColumns = (
 ];
 
 const portColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
-  field: FieldApi<FormCDto, 'ports', undefined, undefined, PortDto[]>,
+  form: ReactFormExtendedApi<FormCDto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<PortDto>[] => [
@@ -321,7 +322,7 @@ const portColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: PortDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -357,7 +358,7 @@ export function FormCCruiseDetailsSection() {
                       endDate: '',
                       name: '',
                     });
-                    field.handleChange((prev) => prev);
+                    field.handleChange((prev: ShortResearchEquipmentDto[]) => prev);
                     field.handleBlur();
                   }}
                 >
@@ -394,7 +395,7 @@ export function FormCCruiseDetailsSection() {
                         duration: '',
                         name: '',
                       });
-                      field.handleChange((prev) => prev);
+                      field.handleChange((prev: LongResearchEquipmentDto[]) => prev);
                       field.handleBlur();
                     },
                   }))}
@@ -429,7 +430,7 @@ export function FormCCruiseDetailsSection() {
                       endTime: '',
                       name: '',
                     });
-                    field.handleChange((prev) => prev);
+                    field.handleChange((prev: PortDto[]) => prev);
                     field.handleBlur();
                   }}
                 >

@@ -1,4 +1,4 @@
-import { FieldMeta, ReactFormExtendedApi } from '@tanstack/react-form';
+import { AnyFieldMeta, AnyFormApi } from '@tanstack/form-core';
 import clsx, { ClassValue } from 'clsx';
 import { createPortal } from 'react-dom';
 import { twMerge } from 'tailwind-merge';
@@ -31,8 +31,8 @@ function getSectionNumberFromFieldName(
   return undefined;
 }
 
-export function getFirstFormError<TForm extends Record<string, unknown>>(
-  form: ReactFormExtendedApi<TForm, undefined>,
+export function getFirstFormError(
+  form: AnyFormApi,
   fieldToSectionMapping: Record<string, number>
 ): FormError | null {
   const errors = (form.state as { fieldMeta: Record<string, { errors: unknown[] }> }).fieldMeta;
@@ -67,8 +67,8 @@ export function getFirstFormError<TForm extends Record<string, unknown>>(
   return allErrors[0];
 }
 
-export function getFormErrorMessage<TForm extends Record<string, unknown>>(
-  form: ReactFormExtendedApi<TForm, undefined>,
+export function getFormErrorMessage(
+  form: AnyFormApi,
   fieldToSectionMapping: Record<string, number>
 ): string {
   const firstError = getFirstFormError(form, fieldToSectionMapping);
@@ -80,12 +80,12 @@ export function getFormErrorMessage<TForm extends Record<string, unknown>>(
   return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
-export function getErrors(field: FieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
+export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
   if ((!hasFormBeenSubmitted && field.isPristine) || field.errors.length === 0) {
     return undefined;
   }
 
-  return field.errors.map((error) => error!.toString());
+  return field.errors.map((error: unknown) => String(error));
 }
 
 function scrollToError(delay: number = 0): void {
@@ -102,8 +102,8 @@ function scrollToError(delay: number = 0): void {
 }
 
 // it can be improved further to get rid of the small jump when expanding the accordion
-export function navigateToFirstError<TForm extends Record<string, unknown>>(
-  form: ReactFormExtendedApi<TForm, undefined> | undefined,
+export function navigateToFirstError(
+  form: AnyFormApi | undefined,
   fieldToSectionMapping: Record<string, number>
 ): void {
   const firstError = form ? getFirstFormError(form, fieldToSectionMapping) : null;

@@ -1,4 +1,3 @@
-import { FieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -14,16 +13,14 @@ import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
 import { useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { CrewMemberDto } from '@/cruise-applications/models/CrewMemberDto';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
 import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
 import { UGTeamDto } from '@/cruise-applications/models/UGTeamDto';
 
 export function FormBMembersSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormB();
 
-  function getUgTeamsColumns(
-    field: FieldApi<FormBDto, 'ugTeams', undefined, undefined, UGTeamDto[]>
-  ): ColumnDef<UGTeamDto>[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function getUgTeamsColumns(field: any): ColumnDef<UGTeamDto>[] {
     const tableField = field;
     return [
       {
@@ -55,7 +52,7 @@ export function FormBMembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev) => prev);
+                  tableField.handleChange((prev: UGTeamDto[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -82,7 +79,7 @@ export function FormBMembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev) => prev);
+                  tableField.handleChange((prev: UGTeamDto[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -101,9 +98,9 @@ export function FormBMembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: UGTeamDto[]) => prev);
                 field.handleBlur();
-                tableField.handleChange((prev) => prev);
+                tableField.handleChange((prev: UGTeamDto[]) => prev);
               }}
               disabled={isReadonly}
             />
@@ -114,9 +111,8 @@ export function FormBMembersSection() {
     ];
   }
 
-  function getGuestTeams(
-    field: FieldApi<FormBDto, 'guestTeams', undefined, undefined, GuestTeamDto[]>
-  ): ColumnDef<GuestTeamDto>[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function getGuestTeams(field: any): ColumnDef<GuestTeamDto>[] {
     const tableField = field;
     return [
       {
@@ -164,7 +160,7 @@ export function FormBMembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev) => prev);
+                  tableField.handleChange((prev: GuestTeamDto[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -183,9 +179,9 @@ export function FormBMembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: GuestTeamDto[]) => prev);
                 field.handleBlur();
-                tableField.handleChange((prev) => prev);
+                tableField.handleChange((prev: GuestTeamDto[]) => prev);
               }}
               disabled={isReadonly}
             />
@@ -196,9 +192,8 @@ export function FormBMembersSection() {
     ];
   }
 
-  function getCrewMembersColumns(
-    field: FieldApi<FormBDto, 'crewMembers', undefined, undefined, CrewMemberDto[]>
-  ): ColumnDef<CrewMemberDto>[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function getCrewMembersColumns(field: any): ColumnDef<CrewMemberDto>[] {
     return [
       {
         header: 'Lp.',
@@ -363,7 +358,7 @@ export function FormBMembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: CrewMemberDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -396,7 +391,7 @@ export function FormBMembersSection() {
                       content: unit.name,
                       onClick: () => {
                         field.pushValue({ ugUnitId: unit.id, noOfEmployees: '0', noOfStudents: '0' });
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: UGTeamDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -429,7 +424,7 @@ export function FormBMembersSection() {
                     variant="primary"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: '0' });
-                      field.handleChange((prev) => prev);
+                      field.handleChange((prev: GuestTeamDto[]) => prev);
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
@@ -443,7 +438,7 @@ export function FormBMembersSection() {
                       value: institution,
                       onClick: () => {
                         field.pushValue({ name: institution, noOfPersons: '0' });
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: GuestTeamDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -485,7 +480,7 @@ export function FormBMembersSection() {
                       documentExpiryDate: '',
                       institution: '',
                     });
-                    field.handleChange((prev) => prev);
+                    field.handleChange((prev: CrewMemberDto[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}

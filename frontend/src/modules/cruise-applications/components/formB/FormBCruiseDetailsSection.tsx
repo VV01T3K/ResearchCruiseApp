@@ -1,4 +1,3 @@
-import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -10,15 +9,15 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
-import { useFormB } from '@/cruise-applications/contexts/FormBContext';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
+import { FormBContextType, useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { LongResearchEquipmentDto } from '@/cruise-applications/models/LongResearchEquipmentDto';
 import { PortDto } from '@/cruise-applications/models/PortDto';
 import { ShortResearchEquipmentDto } from '@/cruise-applications/models/ShortResearchEquipmentDto';
 
 const shortResearchEquipmentColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'shortResearchEquipments', undefined, undefined, ShortResearchEquipmentDto[]>,
+  form: FormBContextType['form'],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentDto>[] => [
@@ -112,7 +111,7 @@ const shortResearchEquipmentColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: ShortResearchEquipmentDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -124,8 +123,9 @@ const shortResearchEquipmentColumns = (
 ];
 
 const longResearchEquipmentColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'longResearchEquipments', undefined, undefined, LongResearchEquipmentDto[]>,
+  form: FormBContextType['form'],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentDto>[] => [
@@ -212,7 +212,7 @@ const longResearchEquipmentColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: LongResearchEquipmentDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -224,8 +224,9 @@ const longResearchEquipmentColumns = (
 ];
 
 const portColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'ports', undefined, undefined, PortDto[]>,
+  form: FormBContextType['form'],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<PortDto>[] => [
@@ -321,7 +322,7 @@ const portColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: PortDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -357,7 +358,7 @@ export function FormBCruiseDetailsSection() {
                       endDate: '',
                       name: '',
                     });
-                    field.handleChange((prev) => prev);
+                    field.handleChange((prev: ShortResearchEquipmentDto[]) => prev);
                     field.handleBlur();
                   }}
                 >
@@ -394,7 +395,7 @@ export function FormBCruiseDetailsSection() {
                         duration: '',
                         name: '',
                       });
-                      field.handleChange((prev) => prev);
+                      field.handleChange((prev: LongResearchEquipmentDto[]) => prev);
                       field.handleBlur();
                     },
                   }))}
@@ -429,7 +430,7 @@ export function FormBCruiseDetailsSection() {
                       endTime: '',
                       name: '',
                     });
-                    field.handleChange((prev) => prev);
+                    field.handleChange((prev: PortDto[]) => prev);
                     field.handleBlur();
                   }}
                 >

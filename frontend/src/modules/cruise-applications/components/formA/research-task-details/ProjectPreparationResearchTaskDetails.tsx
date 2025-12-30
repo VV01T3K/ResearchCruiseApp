@@ -9,7 +9,7 @@ import { FormADto } from '@/cruise-applications/models/FormADto';
 import { ProjectPreparationResearchTaskDto } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {
-  form: ReactFormExtendedApi<FormADto, undefined>;
+  form: ReactFormExtendedApi<FormADto, any, any, any, any, any, any, any, any, any, any, any>;
   row: Row<ProjectPreparationResearchTaskDto>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;
@@ -41,7 +41,7 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             name={field.name}
             value={field.state.value as string}
             onBlur={field.handleBlur}
-            onChange={field.handleChange}
+            onChange={(value) => field.handleChange(value ?? '')}
             label="Przewidywany termin składania"
             disabled={disabled}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -56,7 +56,7 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             name={field.name}
             value={field.state.value as string}
             onBlur={field.handleBlur}
-            onChange={field.handleChange}
+            onChange={(value) => (field.handleChange as (value: string) => void)(value)}
             allOptions={[
               { value: 'true', inlineLabel: 'Tak' },
               { value: 'false', inlineLabel: 'Nie' },

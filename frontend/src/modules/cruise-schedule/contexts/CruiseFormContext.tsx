@@ -5,8 +5,10 @@ import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplica
 import { CruiseDto } from '@/cruise-schedule/models/CruiseDto';
 import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 
+// Use 'any' for validator type parameters to allow forms with or without validators
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CruiseFromContextType = {
-  form: ReactFormExtendedApi<CruiseFormDto, undefined>;
+  form: ReactFormExtendedApi<CruiseFormDto, any, any, any, any, any, any, any, any, any, any, any>;
   cruise?: CruiseDto;
   cruiseApplications: CruiseApplicationDto[];
   isReadonly: boolean;

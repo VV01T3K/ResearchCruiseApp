@@ -20,7 +20,7 @@ import {
 } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {
-  form: ReactFormExtendedApi<FormADto, undefined>;
+  form: ReactFormExtendedApi<FormADto, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined>;
   row: Row<ResearchTaskDto>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;

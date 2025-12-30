@@ -5,9 +5,11 @@ import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
 import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
+// Use 'any' for validator type parameters to allow forms with or without validators
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FormAContextType = {
   initValues: FormAInitValuesDto;
-  form: ReactFormExtendedApi<FormADto, undefined>;
+  form: ReactFormExtendedApi<FormADto, any, any, any, any, any, any, any, any, any, any, any>;
   hasFormBeenSubmitted: boolean;
   isReadonly: boolean;
   blockades?: BlockadePeriodDto[];

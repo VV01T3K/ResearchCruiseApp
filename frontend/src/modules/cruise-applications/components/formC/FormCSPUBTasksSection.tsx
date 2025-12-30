@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -11,14 +11,13 @@ import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteR
 import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
-import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { SpubTaskDto } from '@/cruise-applications/models/SpubTaskDto';
 
 export function FormCSPUBTasksSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getColumns(
-    field: FieldApi<FormCDto, 'spubTasks', undefined, undefined, SpubTaskDto[]>
+    field: AnyFieldApi
   ): ColumnDef<SpubTaskDto>[] {
     return [
       {
@@ -99,7 +98,7 @@ export function FormCSPUBTasksSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: SpubTaskDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
