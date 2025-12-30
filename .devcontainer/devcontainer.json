@@ -24,7 +24,6 @@
 		"vscode": {
 			"extensions": [
 				"esbenp.prettier-vscode",
-				"EditorConfig.EditorConfig",
 				"ahmadalli.vscode-nginx-conf",
 				"docker.docker",
 				"csharpier.csharpier-vscode",
