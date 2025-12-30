@@ -1,5 +1,5 @@
 import { ReactFormExtendedApi } from '@tanstack/react-form';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
@@ -17,7 +17,7 @@ const FormAContext = createContext<FormAContextType | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFormA() {
-  return useContext(FormAContext)!;
+  return use(FormAContext)!;
 }
 
 export function FormAProvider({ value, children }: { value: FormAContextType; children: React.ReactNode }) {

@@ -63,10 +63,12 @@ export function NewCruisePage() {
 
   // Update form validators when blockades change
   useEffect(() => {
-    form.options.validators = {
-      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-    };
-  }, [blockadesQuery.data, initialStateQuery.data, form.options]);
+    form.update({
+      validators: {
+        onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+      },
+    });
+  }, [blockadesQuery.data, initialStateQuery.data, form]);
 
   const context = {
     form,

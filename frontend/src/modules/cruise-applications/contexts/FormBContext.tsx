@@ -21,7 +21,7 @@ const FormBContext = React.createContext<FormBContextType | undefined>(undefined
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFormB() {
-  return React.useContext(FormBContext)!;
+  return React.use(FormBContext)!;
 }
 
 export function FormBProvider({ value, children }: { value: FormBContextType; children: React.ReactNode }) {

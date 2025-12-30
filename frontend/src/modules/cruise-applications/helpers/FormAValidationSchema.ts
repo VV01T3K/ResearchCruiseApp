@@ -74,7 +74,7 @@ const ShipUsageValidationSchema = z
   .object({
     shipUsage: z
       .enum(['0', '1', '2', '3', '4'], {
-        error: 'Wymagane jest wskazanie sposobu korzystania z statku'
+        error: 'Wymagane jest wskazanie sposobu korzystania z statku',
       })
       .optional(),
     differentUsage: z.string(),
@@ -92,7 +92,7 @@ const ShipUsageValidationSchema = z
 const CruiseGoalValidationSchema = z
   .object({
     cruiseGoal: z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational], {
-      error: 'Cel rejsu musi być jednym z dostępnych celów rejsu'
+      error: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
     }),
     cruiseGoalDescription: z.string().max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
   })

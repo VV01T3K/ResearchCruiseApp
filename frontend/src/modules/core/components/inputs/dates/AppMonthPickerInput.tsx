@@ -1,7 +1,7 @@
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { AppButton } from '@/core/components/AppButton';
@@ -42,7 +42,8 @@ export function AppMonthPickerInput({
 
   const inputRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
-  const removeSelectedDatePortalRef = React.useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
+  const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
 
   React.useEffect(() => {
     // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
@@ -99,19 +100,16 @@ export function AppMonthPickerInput({
               : placeholder}
             <span className="flex gap-2 items-center">
               <AppInputErrorTriangle errors={errors} />
-              <div ref={removeSelectedDatePortalRef}></div>
+              <div ref={portalContainerRef}></div>
               {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
             </span>
           </AppButton>
-          {selectedDate &&
-            removeSelectedDatePortalRef.current &&
-            !disabled &&
-            createPortal(
-              <AppButton variant="plain" onClick={handleResetSelection} className="inline-block p-0 hover:text-red-500">
-                <XLgIcon className="h-4 w-4" />
-              </AppButton>,
-              removeSelectedDatePortalRef.current!
-            )}
+          <RemoveSelectedDatePortal
+            selectedDate={selectedDate}
+            disabled={disabled}
+            portalContainer={portalContainer}
+            onResetSelection={handleResetSelection}
+          />
         </div>
         <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2 ' : '')}>
           <AppInputHelper helper={helper} />
@@ -177,5 +175,28 @@ function Modal({ dropdownRef, inputRef, children, className }: ModalProps) {
     >
       {children}
     </motion.div>
+  );
+}
+
+function RemoveSelectedDatePortal({
+  selectedDate,
+  disabled,
+  portalContainer,
+  onResetSelection,
+}: {
+  selectedDate: Date | undefined;
+  disabled?: boolean;
+  portalContainer: HTMLDivElement | null;
+  onResetSelection: (evt: React.MouseEvent) => void;
+}) {
+  if (!selectedDate || !portalContainer || disabled) {
+    return null;
+  }
+
+  return createPortal(
+    <AppButton variant="plain" onClick={onResetSelection} className="inline-block p-0 hover:text-red-500">
+      <XLgIcon className="h-4 w-4" />
+    </AppButton>,
+    portalContainer
   );
 }

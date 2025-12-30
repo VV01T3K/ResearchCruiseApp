@@ -12,6 +12,6 @@ export const ResearchEquipmentDtoValidationSchema = z.object({
   insuranceStartDate: z.string().nullable(),
   insuranceEndDate: z.string().nullable(),
   permission: z.enum(['true', 'false'], {
-      error: 'Pozwolenie jest wymagane'
-}),
+    error: 'Pozwolenie jest wymagane',
+  }),
 });

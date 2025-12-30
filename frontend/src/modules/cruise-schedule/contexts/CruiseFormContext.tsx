@@ -1,5 +1,5 @@
 import { ReactFormExtendedApi } from '@tanstack/react-form';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
 import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
 import { CruiseDto } from '@/cruise-schedule/models/CruiseDto';
@@ -17,7 +17,7 @@ const CruiseFormContext = createContext<CruiseFromContextType | undefined>(undef
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useCruiseForm() {
-  return useContext(CruiseFormContext)!;
+  return use(CruiseFormContext)!;
 }
 
 export function CruiseFormProvider({ value, children }: { value: CruiseFromContextType; children: React.ReactNode }) {

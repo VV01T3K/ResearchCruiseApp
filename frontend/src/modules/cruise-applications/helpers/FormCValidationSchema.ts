@@ -43,7 +43,7 @@ export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
 const ShipUsageValidationSchema = z
   .object({
     shipUsage: z.enum(['0', '1', '2', '3', '4'], {
-        error: 'Wymagane jest wskazanie sposobu korzystania z statku'
+      error: 'Wymagane jest wskazanie sposobu korzystania z statku',
     }),
     differentUsage: z.string(),
   })
