@@ -43,7 +43,7 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
           <AppButton
             variant="plain"
             onClick={() => handleHeaderClick()}
-            className={cn(supportsDropdown ? 'cursor-pointer' : '', 'flex justify-center items-center gap-2')}
+            className={cn(supportsDropdown ? 'cursor-pointer' : '', 'flex items-center justify-center gap-2')}
           >
             <AppTableFilterIcon header={header} />
             <span>{children}</span>

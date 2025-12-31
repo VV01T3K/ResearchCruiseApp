@@ -26,7 +26,7 @@ export function AppButton(props: Props) {
         variants[variant],
         sizes[size],
         className,
-        variant != 'plain' ? 'flex items-center justify-around ' : ''
+        variant != 'plain' ? 'flex items-center justify-around' : ''
       )}
       onClick={props.type === 'link' ? undefined : props.onClick}
       disabled={disabled}

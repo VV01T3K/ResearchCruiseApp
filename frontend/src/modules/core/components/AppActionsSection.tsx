@@ -21,8 +21,8 @@ export function AppActionsSection({ children }: Props) {
   return (
     <div
       className={cn(
-        'sticky bottom-4 flex gap-4 w-fit mx-auto rounded-2xl py-4 px-6 max-w-full',
-        isSticky ? 'backdrop-blur-xs bg-white/30 shadow-2xl' : ''
+        'sticky bottom-4 mx-auto flex w-fit max-w-full gap-4 rounded-2xl px-6 py-4',
+        isSticky ? 'bg-white/30 shadow-2xl backdrop-blur-xs' : ''
       )}
     >
       {children}

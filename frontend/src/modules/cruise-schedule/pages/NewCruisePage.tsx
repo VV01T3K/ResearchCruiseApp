@@ -76,11 +76,11 @@ export function NewCruisePage() {
 
   const buttons = (
     <>
-      <AppButton className="gap-4 !justify-center w-36 lg:w-64" variant="primaryOutline" onClick={() => form.reset()}>
+      <AppButton className="w-36 !justify-center gap-4 lg:w-64" variant="primaryOutline" onClick={() => form.reset()}>
         <ArrowClockwiseIcon className="h-4 w-4" />
         Wyczyść formularz
       </AppButton>
-      <AppButton className="gap-4 !justify-center w-36 lg:w-64" type="submit">
+      <AppButton className="w-36 !justify-center gap-4 lg:w-64" type="submit">
         <FloppyFillIcon className="h-4 w-4" />
         Zapisz
       </AppButton>

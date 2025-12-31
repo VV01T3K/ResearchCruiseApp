@@ -9,7 +9,7 @@
   }
 
   #root {
-    @apply flex flex-col relative;
+    @apply relative flex flex-col;
   }
 
   :root {

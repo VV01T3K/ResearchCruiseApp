@@ -181,7 +181,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex justify-around h-14">
+      <div className="flex h-14 justify-around">
         <form.Subscribe
           selector={(state) => [state.values.firstName, state.values.lastName]}
           children={([firstName, lastName]) => (
@@ -196,7 +196,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
         />
 
         {editMode && (
-          <div className="grid grid-cols-2 gap-1 max-w-48">
+          <div className="grid max-w-48 grid-cols-2 gap-1">
             <span>Stan Emaila:</span>
             <span className="flex">
               <AppBadge variant={user.emailConfirmed ? 'success' : 'danger'}>
@@ -292,13 +292,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
             <>
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>
                 {editMode ? (
-                  <div className="flex gap-4 items-center">
-                    <FloppyFillIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-4">
+                    <FloppyFillIcon className="h-4 w-4" />
                     <span>Zapisz</span>
                   </div>
                 ) : (
-                  <div className="flex gap-4 items-center">
-                    <PersonAddIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-4">
+                    <PersonAddIcon className="h-4 w-4" />
                     <span>Dodaj</span>
                   </div>
                 )}
@@ -312,13 +312,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
                   className="w-full"
                 >
                   {deletionConfirmed ? (
-                    <motion.div className="flex gap-4 items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <ExclamationTriangleFill className="w-4 h-4" />
+                    <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <ExclamationTriangleFill className="h-4 w-4" />
                       <span>Czy na pewno?</span>
                     </motion.div>
                   ) : (
-                    <div className="flex gap-4 items-center">
-                      <TrashFillIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <TrashFillIcon className="h-4 w-4" />
                       <span>Usuń</span>
                     </div>
                   )}
@@ -333,13 +333,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
                   className="w-full"
                 >
                   {!user.accepted ? (
-                    <div className="flex gap-4 items-center">
-                      <PersonFillCheckIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <PersonFillCheckIcon className="h-4 w-4" />
                       <span>Zaakceptuj konto użytkownika</span>
                     </div>
                   ) : (
-                    <div className="flex gap-4 items-center">
-                      <PersonFillSlashIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <PersonFillSlashIcon className="h-4 w-4" />
                       <span>Cofnij akceptację konta</span>
                     </div>
                   )}

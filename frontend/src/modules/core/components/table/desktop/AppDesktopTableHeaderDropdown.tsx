@@ -32,7 +32,7 @@ export function AppDesktopTableHeaderDropdown<TData, TValue>({
   return (
     <motion.div
       className={
-        'fixed origin-top-right w-56 rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
+        'fixed z-50 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
       }
       initial={{ opacity: 0, translateY: direction === 'up' ? '-10%' : '10%' }}
       animate={{ opacity: 1, translateY: '0' }}
@@ -50,7 +50,7 @@ export function AppDesktopTableHeaderDropdown<TData, TValue>({
           <AppTableSortingToggle header={header} />
         </AppTableListItem>
 
-        {supportsFilter && supportsSort && <hr className="h-px my-0.5 border-0 bg-gray-700" />}
+        {supportsFilter && supportsSort && <hr className="my-0.5 h-px border-0 bg-gray-700" />}
 
         {supportsFilter && <p>Filtrowanie</p>}
         {supportsFilter && <AppTableFilterList header={header} expanded={expanded} />}

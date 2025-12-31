@@ -117,7 +117,7 @@ function CruiseFormManagerSelectionLayout({
         </AnimatePresence>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+      <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.Field
           name="managersTeam.mainCruiseManagerId"
           children={(field) => (

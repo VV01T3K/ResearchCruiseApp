@@ -21,16 +21,16 @@ export function AppMobileTable<T>({
 
   const defaultButtons: React.ReactNode[] = [
     <AppButton key="openFilterModalBtn" onClick={() => setIsFilterModalOpen(true)} variant="primary">
-      <FunnelIcon className="w-8 h-8" />
+      <FunnelIcon className="h-8 w-8" />
     </AppButton>,
   ];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
   return (
     <>
-      <div className={cn('flex flex-wrap flex-col', variant === 'form' ? 'text-center' : '')} data-testid={testId}>
+      <div className={cn('flex flex-col flex-wrap', variant === 'form' ? 'text-center' : '')} data-testid={testId}>
         {allButtons.length > 0 && (
-          <div className="flex flex-col gap-4 m-4">
+          <div className="m-4 flex flex-col gap-4">
             {allButtons.map((x, id) => (
               // eslint-disable-next-line @eslint-react/no-array-index-key
               <div key={id} className="flex justify-end">
@@ -42,8 +42,8 @@ export function AppMobileTable<T>({
         <table className="w-full table-fixed">
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="odd:bg-gray-100 text-gray-800">
-                <td className="flex flex-col gap-2 justify-center items-center py-3">
+              <tr key={row.id} className="text-gray-800 odd:bg-gray-100">
+                <td className="flex flex-col items-center justify-center gap-2 py-3">
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <div key={cell.id} className={variants[variant ?? 'table']}>
@@ -63,9 +63,9 @@ export function AppMobileTable<T>({
             ))}
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
-                <td colSpan={table.getAllColumns().length} className="pb-0 text-center px-0">
+                <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                   <div
-                    className={`bg-gray-100 rounded-lg border p-2.5 ${
+                    className={`rounded-lg border bg-gray-100 p-2.5 ${
                       errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
                     }`}
                   >
@@ -73,7 +73,7 @@ export function AppMobileTable<T>({
                       {emptyTableMessage}
                     </span>
                     {showRequiredAsterisk && (
-                      <span className="ml-1 text-red-600 font-bold" title="Pole jest obowiązkowe do wypełnienia">
+                      <span className="ml-1 font-bold text-red-600" title="Pole jest obowiązkowe do wypełnienia">
                         *
                       </span>
                     )}

@@ -99,7 +99,7 @@ export function ApplicationDetailsMembersSection() {
 
   return (
     <AppAccordion title="5. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16">
+      <div className="grid grid-cols-1 gap-x-16 lg:grid-cols-2">
         <AppTable
           columns={ugTeamsColumns}
           data={evaluation.ugTeams}

@@ -137,9 +137,9 @@ export function AppNumberInput({
             onBlur={onBlur}
             disabled={disabled}
             className={cn(
-              'bg-gray-50 border border-gray-300 h-11 text-center text-gray-900 text-sm block w-full py-2.5',
+              'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
-              'focus:ring-primary focus:border-primary focus:shadow focus:outline-none transform:scale-105',
+              'focus:ring-primary focus:border-primary transform:scale-105 focus:shadow focus:outline-none',
               disabled ? 'rounded-lg bg-gray-200' : '',
               errors?.length ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
@@ -157,7 +157,7 @@ export function AppNumberInput({
           />
         )}
       </div>
-      <div className="flex flex-col justify-between mt-2 text-sm">
+      <div className="mt-2 flex flex-col justify-between text-sm">
         <AppInputHelper helper={helper} />
         <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
       </div>
@@ -183,12 +183,12 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
       onClick={() => handleClick()}
       disabled={disabled}
       className={cn(
-        'h-11 w-11 flex items-center justify-center',
+        'flex h-11 w-11 items-center justify-center',
         'text-gray-500',
         'transition duration-300 ease-in-out',
         'focus:ring-primary focus:border-primary focus:shadow focus:outline-none',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
-        'px-2 border border-collapse border-gray-300',
+        'disabled:cursor-not-allowed disabled:opacity-50',
+        'border-collapse border border-gray-300 px-2',
         side === 'left' ? 'rounded-l' : 'rounded-r',
         disabled ? 'bg-gray-300' : 'bg-gray-100 hover:text-gray-900'
       )}

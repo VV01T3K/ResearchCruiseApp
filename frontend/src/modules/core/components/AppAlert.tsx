@@ -19,18 +19,18 @@ export function AppAlert({ children, onClose, variant = 'primary', 'data-testid'
 
   return (
     <div
-      className={cn('flex items-center p-4 rounded-lg', variants[variant].containerClassName)}
+      className={cn('flex items-center rounded-lg p-4', variants[variant].containerClassName)}
       role="alert"
       data-testid={testId}
     >
-      <Icon className="h-6 w-6 mr-4" />
+      <Icon className="mr-4 h-6 w-6" />
       <span className="sr-only">{variants[variant].screenReaderMessage}</span>
       {children}
       {onClose && (
         <button
           type="button"
           className={cn(
-            'ms-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2  inline-flex items-center justify-center h-8 w-8 hover:cursor-pointer',
+            '-mx-1.5 -my-1.5 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg hover:cursor-pointer focus:ring-2',
             variants[variant].closeButtonClassName
           )}
           aria-label="Close"

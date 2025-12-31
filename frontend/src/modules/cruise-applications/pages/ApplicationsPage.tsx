@@ -126,7 +126,7 @@ export function ApplicationsPage() {
       accessorFn: (row) => row.status,
       cell: ({ row }) => (
         <>
-          <p className="italic text-right sm:text-center mb-2">
+          <p className="mb-2 text-right italic sm:text-center">
             {row.original.status}
             {row.original.status === CruiseApplicationStatus.Draft ? ` (${row.original.note})` : null}
           </p>
@@ -153,7 +153,7 @@ export function ApplicationsPage() {
             </AppGuard>
           )}
           {row.original.status === CruiseApplicationStatus.Undertaken && (
-            <div className="flex flex-col gap-2 items-center">
+            <div className="flex flex-col items-center gap-2">
               <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
                 <AppButton
                   className="ml-auto sm:mx-auto"
@@ -179,7 +179,7 @@ export function ApplicationsPage() {
         <>
           <AppButton type="link" href={`/applications/${row.original.id}/details`} className="flex gap-2">
             Szczegóły
-            <ZoomInIcon className="w-4 h-4" />
+            <ZoomInIcon className="h-4 w-4" />
           </AppButton>
         </>
       ),

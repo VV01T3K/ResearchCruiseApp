@@ -67,10 +67,10 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań">
         <div className="grid grid-cols-10 gap-x-4">
-          <div className="mb-4 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-4 font-semibold col-span-3 text-center">Treść pozwolenia</div>
-          <div className="mb-4 font-semibold col-span-3 text-center">Organ wydający</div>
-          <div className="mb-4 font-semibold col-span-3 text-center">Skan</div>
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Treść pozwolenia</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Organ wydający</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Skan</div>
           {values.permissions.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -86,9 +86,9 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="5. Rejony prowadzenia badań">
         <div className="grid grid-cols-9 gap-x-8">
-          <div className="mb-4 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-4 font-semibold col-span-4 text-center">Rejon prowadzenia badań</div>
-          <div className="mb-4 font-semibold col-span-4 text-center">Informacje dodatkowe</div>
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Rejon prowadzenia badań</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Informacje dodatkowe</div>
           {values.researchAreaDescriptions.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
@@ -116,10 +116,10 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="7. Zadania przypisane do rejsu - efekty rejsu">
         <div className="grid grid-cols-9 gap-x-8">
-          <div className="mb-4 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-4 font-semibold col-span-2 text-center">Zadanie</div>
-          <div className="mb-4 font-semibold col-span-3 text-center">Szczegóły</div>
-          <div className="mb-4 font-semibold col-span-3 text-center" />
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-4 text-center font-semibold">Zadanie</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Szczegóły</div>
+          <div className="col-span-3 mb-4 text-center font-semibold" />
           {values.researchTasksEffects.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
@@ -148,9 +148,9 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="8. Umowy regulujące współpracę, w ramach której zostały zrealizowane zadania badawcze">
         <div className="grid grid-cols-9 gap-x-8">
-          <span className="mb-2 font-semibold col-span-1 text-center">Lp.</span>
-          <span className="mb-2 font-semibold col-span-2 text-center">Kategoria</span>
-          <span className="mb-2 font-semibold col-span-6 text-center">Pozostałe szczegóły</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-2 mb-2 text-center font-semibold">Kategoria</span>
+          <span className="col-span-6 mb-2 text-center font-semibold">Pozostałe szczegóły</span>
           {values.contracts.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-1 grid place-items-center')}>
@@ -162,16 +162,16 @@ export function FormCPrintTemplate({ ref }: Props) {
               <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-6 flex flex-col')}>
                 <div className="font-semibold">Szczegóły</div>
                 <div className="mb-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span>Nazwa instytucji:</span>
                     <span>{x.institutionName}</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span>Jednostka:</span>
                     <span>{x.institutionUnit}</span>
                   </div>
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span>Lokalizacja instytucji:</span>
                     <span>{x.institutionLocalization}</span>
                   </div>
@@ -191,11 +191,11 @@ export function FormCPrintTemplate({ ref }: Props) {
       </PrintingPageSection>
 
       <PrintingPageSection title="9. Zespoły badawcze, które uczestniczyły w rejsie">
-        <div className="grid grid-cols-9 gap-x-8 mb-16">
-          <div className="mb-4 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-4 font-semibold col-span-3 text-center">Jednostka</div>
-          <div className="mb-4 font-semibold col-span-3 text-center">Liczba pracowników</div>
-          <div className="mb-4 font-semibold col-span-2 text-center">Liczba studentów</div>
+        <div className="mb-16 grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Jednostka</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Liczba pracowników</div>
+          <div className="col-span-2 mb-4 text-center font-semibold">Liczba studentów</div>
           {values.ugTeams.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -208,10 +208,10 @@ export function FormCPrintTemplate({ ref }: Props) {
           ))}
         </div>
 
-        <div className="grid grid-cols-9 gap-x-8 mb-16">
-          <div className="mb-4 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-4 font-semibold col-span-6 text-center">Instytucja</div>
-          <div className="mb-4 font-semibold col-span-2 text-center">Liczba osób</div>
+        <div className="mb-16 grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-6 mb-4 text-center font-semibold">Instytucja</div>
+          <div className="col-span-2 mb-4 text-center font-semibold">Liczba osób</div>
           {values.guestTeams.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -222,10 +222,10 @@ export function FormCPrintTemplate({ ref }: Props) {
         </div>
 
         <div className="grid grid-cols-9 gap-x-8">
-          <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-2 font-semibold col-span-2 text-center">Dane osobowe</div>
-          <div className="mb-2 font-semibold col-span-4 text-center">Dokument tożsamości</div>
-          <div className="mb-2 font-semibold col-span-2 text-center">Nazwa jednostki</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Dane osobowe</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Dokument tożsamości</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Nazwa jednostki</div>
           {formB.crewMembers.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -233,19 +233,19 @@ export function FormCPrintTemplate({ ref }: Props) {
                 {x.title} {x.firstName} {x.lastName}
               </div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4')}>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Miejsce urodzenia:</span>
                   <span>{x.birthPlace}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Data urodzenia:</span>
                   <span>{dayjs(x.birthDate).format('DD.MM.YYYY')}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Numer ID dokumentu:</span>
                   <span>{x.documentNumber}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Data ważności dokumentu:</span>
                   <span>{dayjs(x.documentExpiryDate).format('DD.MM.YYYY')}</span>
                 </div>
@@ -258,11 +258,11 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="10. Publikacje">
         <div className="grid grid-cols-9 gap-x-8">
-          <span className="mb-2 font-semibold col-span-1 text-center">Lp.</span>
-          <span className="mb-2 font-semibold col-span-1 text-center">Kategoria</span>
-          <span className="mb-2 font-semibold col-span-5 text-center">Informacje</span>
-          <span className="mb-2 font-semibold col-span-1 text-center">Rok wydania</span>
-          <span className="mb-2 font-semibold col-span-1 text-center">Punkty minister.</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Kategoria</span>
+          <span className="col-span-5 mb-2 text-center font-semibold">Informacje</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Rok wydania</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Punkty minister.</span>
           {formA.publications.map((x, i) => (
             <Fragment key={i}>
               <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</span>
@@ -270,19 +270,19 @@ export function FormCPrintTemplate({ ref }: Props) {
                 {getPublicationCategoryLabel(x.category)}
               </span>
               <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-5 px-4')}>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>DOI:</span>
                   <span>{x.doi}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Autorzy:</span>
                   <span>{x.authors}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Tytuł:</span>
                   <span>{x.title}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <span>Czasopismo:</span>
                   <span>{x.magazine}</span>
                 </div>
@@ -298,10 +298,10 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie">
         <div className="grid grid-cols-9 gap-x-8">
-          <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-2 font-semibold col-span-2 text-center">Rok rozpoczęcia</div>
-          <div className="mb-2 font-semibold col-span-2 text-center">Rok zakończenia</div>
-          <div className="mb-2 font-semibold col-span-4 text-center">Nazwa zadania</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rok rozpoczęcia</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rok zakończenia</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Nazwa zadania</div>
           {values.spubTasks.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -315,12 +315,12 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="12. Szczegóły rejsu">
         <div>
-          <h3 className="text-xl mb-2">Wystawienie sprzętu</h3>
+          <h3 className="mb-2 text-xl">Wystawienie sprzętu</h3>
           <div className="grid grid-cols-9 gap-x-8">
-            <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-            <div className="mb-2 font-semibold col-span-2 text-center">Od</div>
-            <div className="mb-2 font-semibold col-span-2 text-center">Do</div>
-            <div className="mb-2 font-semibold col-span-4 text-center">Nazwa sprzętu</div>
+            <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Od</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Do</div>
+            <div className="col-span-4 mb-2 text-center font-semibold">Nazwa sprzętu</div>
             {values.shortResearchEquipments.map((x, i) => (
               <Fragment key={i}>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -337,12 +337,12 @@ export function FormCPrintTemplate({ ref }: Props) {
         </div>
 
         <div>
-          <h3 className="text-xl mb-2">Pozostawienie lub zabranie sprzętu</h3>
+          <h3 className="mb-2 text-xl">Pozostawienie lub zabranie sprzętu</h3>
           <div className="grid grid-cols-9 gap-x-8">
-            <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-            <div className="mb-2 font-semibold col-span-2 text-center">Czynność</div>
-            <div className="mb-2 font-semibold col-span-2 text-center">Czas</div>
-            <div className="mb-2 font-semibold col-span-4 text-center">Nazwa sprzętu</div>
+            <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Czynność</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Czas</div>
+            <div className="col-span-4 mb-2 text-center font-semibold">Nazwa sprzętu</div>
             {values.longResearchEquipments.map((x, i) => (
               <Fragment key={i}>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -357,12 +357,12 @@ export function FormCPrintTemplate({ ref }: Props) {
         </div>
 
         <div>
-          <h3 className="text-xl mb-2">Wchodzenie lub wychodzenie z portu</h3>
+          <h3 className="mb-2 text-xl">Wchodzenie lub wychodzenie z portu</h3>
           <div className="grid grid-cols-9 gap-x-8">
-            <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-            <div className="mb-2 font-semibold col-span-2 text-center">Wejście</div>
-            <div className="mb-2 font-semibold col-span-2 text-center">Wyjście</div>
-            <div className="mb-2 font-semibold col-span-4 text-center">Nazwa portu</div>
+            <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Wejście</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Wyjście</div>
+            <div className="col-span-4 mb-2 text-center font-semibold">Nazwa portu</div>
             {values.ports.map((x, i) => (
               <Fragment key={i}>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -381,12 +381,12 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu">
         <div className="grid grid-cols-6 gap-x-8">
-          <div className="mb-2 font-semibold col-span-1 text-center">Dzień</div>
-          <div className="mb-2 font-semibold col-span-1 text-center">Liczba godzin</div>
-          <div className="mb-2 font-semibold col-span-1 text-center">Nazwa zadania</div>
-          <div className="mb-2 font-semibold col-span-1 text-center">Rejon zadania</div>
-          <div className="mb-2 font-semibold col-span-1 text-center">Pozycja</div>
-          <div className="mb-2 font-semibold col-span-1 text-center">Uwagi</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Dzień</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Liczba godzin</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Nazwa zadania</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Rejon zadania</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Pozycja</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Uwagi</div>
           {values.cruiseDaysDetails.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.number}</div>
@@ -402,10 +402,10 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu">
         <div className="grid grid-cols-9 gap-x-8">
-          <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-2 font-semibold col-span-3 text-center">Nazwa sprzętu / aparatury</div>
-          <div className="mb-2 font-semibold col-span-3 text-center">Data zgłoszenia do ubezpieczenia</div>
-          <div className="mb-2 font-semibold col-span-2 text-center">Zgoda opiekuna</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-3 mb-2 text-center font-semibold">Nazwa sprzętu / aparatury</div>
+          <div className="col-span-3 mb-2 text-center font-semibold">Data zgłoszenia do ubezpieczenia</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Zgoda opiekuna</div>
           {values.researchEquipments.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
@@ -426,8 +426,8 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="15. Elementy techniczne statku wykorzystywane podczas rejsu">
         <div className="grid grid-cols-9 gap-x-8">
-          <div className="mb-2 font-semibold col-span-7 text-center">Element</div>
-          <div className="mb-2 font-semibold col-span-2 text-center">W użyciu</div>
+          <div className="col-span-7 mb-2 text-center font-semibold">Element</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">W użyciu</div>
           {formBInitValues.shipEquipments.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-7 grid place-items-center')}>{x.name}</div>
@@ -441,10 +441,10 @@ export function FormCPrintTemplate({ ref }: Props) {
 
       <PrintingPageSection title="16. Lista próbek pobranych i poddanych analizie podczas rejsu">
         <div className="grid grid-cols-10 gap-x-8">
-          <div className="mb-2 font-semibold col-span-2 text-center">Rodzaj materiału badawczego</div>
-          <div className="mb-2 font-semibold col-span-1 text-center">Ilość</div>
-          <div className="mb-2 font-semibold col-span-4 text-center">Analizy przeprowadzone na zebranym materiale</div>
-          <div className="mb-2 font-semibold col-span-3 text-center">Publiczność danych</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rodzaj materiału badawczego</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Ilość</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Analizy przeprowadzone na zebranym materiale</div>
+          <div className="col-span-3 mb-2 text-center font-semibold">Publiczność danych</div>
           {values.collectedSamples.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.type}</div>
@@ -464,8 +464,8 @@ export function FormCPrintTemplate({ ref }: Props) {
         <div className="mx-6 text-justify">{values.additionalDescription}</div>
         <div className="text-center text-xl">Załączniki</div>
         <div className="grid grid-cols-9 gap-4">
-          <div className="mb-2 font-semibold col-span-1 text-center">Lp.</div>
-          <div className="mb-2 font-semibold col-span-8 text-center">Nazwa pliku</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-8 mb-2 text-center font-semibold">Nazwa pliku</div>
           {values.photos.map((x, i) => (
             <Fragment key={i}>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>

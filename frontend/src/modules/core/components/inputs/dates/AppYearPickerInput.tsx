@@ -109,14 +109,14 @@ export function AppYearPickerInput({
             variant="plain"
             onClick={() => handleInputClick()}
             className={cn(
-              'relative inline-flex gap-4 p-2.5 justify-between items-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full',
+              'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
               errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
             data-testid={buttonTestId}
           >
             {selectedYear ?? placeholder}
-            <span className="flex gap-2 items-center">
+            <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               <div ref={portalContainerRef}></div>
               {!selectedYear && <CalendarEventIcon className="h-4 w-4" />}
@@ -142,15 +142,15 @@ export function AppYearPickerInput({
               <AppButton
                 variant="plain"
                 onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
-                className="w-full rounded-lg grid place-items-center hover:bg-gray-100"
+                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </AppButton>
-              <span className="font-bold col-span-3 inline-flex gap-2 justify-center items-center">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
+              <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
               <AppButton
                 variant="plain"
                 onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
-                className="w-full rounded-lg grid place-items-center hover:bg-gray-100"
+                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
               >
                 <ChevronRightIcon className="h-5 w-5" />
               </AppButton>
@@ -164,7 +164,7 @@ export function AppYearPickerInput({
                     variant="plain"
                     onClick={() => handleSelectYear(year)}
                     className={cn(
-                      'rounded-lg grid place-items-center hover:bg-gray-100',
+                      'grid place-items-center rounded-lg hover:bg-gray-100',
                       year === selectedYear ? 'text-primary-500 font-bold' : ''
                     )}
                   >
@@ -196,7 +196,7 @@ function Modal({ dropdownRef, elementRef, children }: ModalProps) {
     <motion.div
       style={{ top: top, left: left }}
       className={cn(
-        'fixed origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
+        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
       )}
       initial={{ opacity: 0, translateY: '-10%' }}
       animate={{ opacity: 1, translateY: '0' }}

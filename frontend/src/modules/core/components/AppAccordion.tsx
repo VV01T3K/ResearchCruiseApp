@@ -27,13 +27,13 @@ export function AppAccordion({
       <h2 className="w-full">
         <button
           type="button"
-          className="w-full flex justify-between items-center cursor-pointer px-4 py-4 bg-black/2 rounded-xl"
+          className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4"
           onClick={() => setExpanded(!expanded)}
           data-expanded={expanded}
           data-testid={toggleTestId}
         >
-          <span className="font-semibold text-lg">{title}</span>
-          <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
+          <span className="text-lg font-semibold">{title}</span>
+          <span>{expanded ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}</span>
         </button>
       </h2>
       <AnimatePresence initial={false}>

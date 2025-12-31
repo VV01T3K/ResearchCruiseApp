@@ -8,8 +8,8 @@ export function AppTableFilterIcon<TData>({ header }: { header: Header<TData, un
   }
 
   if (header.column.getFilterValue()) {
-    return <FunnelFillIcon className="w-4 h-4" />;
+    return <FunnelFillIcon className="h-4 w-4" />;
   }
 
-  return <FunnelIcon className="w-4 h-4" />;
+  return <FunnelIcon className="h-4 w-4" />;
 }

@@ -134,12 +134,12 @@ export function CruiseApplicationPeriodInput({
 
       <div
         ref={rangerRef}
-        className="relative select-none h-1 bg-black/5 rounded-sm mt-4 mb-20 mx-8 touch-none"
+        className="relative mx-8 mt-4 mb-20 h-1 touch-none rounded-sm bg-black/5 select-none"
         onBlur={onBlur}
       >
         <span
           className={cn(
-            'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 z-0',
+            'absolute top-1/2 z-0 h-1 w-1 -translate-x-1/2 -translate-y-1/2 transform',
             !disabled ? 'bg-primary-800' : 'bg-gray-400'
           )}
           style={{
@@ -168,8 +168,8 @@ export function CruiseApplicationPeriodInput({
               aria-valuemax={rangerInstance.options.max}
               aria-valuenow={value}
               className={cn(
-                `absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 outline-none rounded-full duration-75 z-10`,
-                !disabled ? 'cursor-pointer bg-primary-800' : 'bg-gray-400',
+                `absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none`,
+                !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
                 isActive ? 'scale-125' : ''
               )}
               style={{
@@ -184,7 +184,7 @@ export function CruiseApplicationPeriodInput({
             <span
               key={`step-${position}`}
               className={cn(
-                'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-2.5 h-2.5 outline-none rounded-full bg-white border',
+                'absolute top-1/2 z-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full border bg-white outline-none',
                 !disabled ? 'border-primary-800' : 'border-gray-500'
               )}
               style={{ left: `${position}%` }}
@@ -195,7 +195,7 @@ export function CruiseApplicationPeriodInput({
           .map((position, i) => (
             <span
               key={`step-${position}-text`}
-              className="absolute top-1/2 transform -translate-x-1/2 translate-y-8 rotate-60 z-0 text-sm text-gray-800"
+              className="absolute top-1/2 z-0 -translate-x-1/2 translate-y-8 rotate-60 transform text-sm text-gray-800"
               style={{ left: `${position}%` }}
             >
               {months[i]}
@@ -204,7 +204,7 @@ export function CruiseApplicationPeriodInput({
       </div>
 
       <p className="text-center">Wybrano okres: {getExplanationForPeriod(values[0], values[1])}</p>
-      <div className="flex flex-col justify-between mt-2 text-sm">
+      <div className="mt-2 flex flex-col justify-between text-sm">
         <AppInputHelper helper={helper} />
         <AppInputErrorsList errors={errors} />
       </div>

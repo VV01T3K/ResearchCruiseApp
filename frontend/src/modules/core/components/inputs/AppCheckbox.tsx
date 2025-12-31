@@ -57,10 +57,10 @@ export function AppCheckbox({
           <div onClick={() => elementRef.current?.click()}>
             <div
               className={cn(
-                'flex items-center justify-center border border-gray-300 rounded-md transition-all duration-300',
+                'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
                 sizes[size],
                 checked && variants[variant][disabled ? 'disabled' : 'enabled'],
-                !checked && (disabled ? 'bg-gray-100' : 'hover:border-gray-400 bg-white'),
+                !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
                 disabled ? 'cursor-default' : 'cursor-pointer'
               )}
             >

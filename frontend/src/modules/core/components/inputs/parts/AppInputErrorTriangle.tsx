@@ -13,7 +13,7 @@ export function AppInputErrorTriangle({ errors, mode = 'inline' }: Props) {
 
   return (
     <ExclamationTriangleIcon
-      className={cn('w-5 h-5 text-danger', mode === 'absolute' ? 'absolute right-5 top-2.5' : '')}
+      className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-2.5 right-5' : '')}
     />
   );
 }

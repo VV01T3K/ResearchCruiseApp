@@ -71,7 +71,7 @@ export function FormACruiseLengthSection() {
     >
       <div className="space-y-4">
         <FormABlockadeWarning year={+form.state.values.year} blockades={blockades} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
               <AppDropdownInput

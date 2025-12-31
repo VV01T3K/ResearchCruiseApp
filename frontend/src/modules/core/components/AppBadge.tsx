@@ -5,7 +5,7 @@ type Props = {
 };
 
 export function AppBadge({ children, variant = 'primary' }: Props) {
-  return <span className={`text-xs me-2 px-2.5 py-1 rounded ${variants[variant]}`}>{children}</span>;
+  return <span className={`me-2 rounded px-2.5 py-1 text-xs ${variants[variant]}`}>{children}</span>;
 }
 
 const variants = {

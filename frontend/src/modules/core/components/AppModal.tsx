@@ -37,27 +37,27 @@ export function AppModal({ title, children, isOpen, onClose, className }: Props)
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md px-5"
+          className="fixed inset-0 z-50 flex items-center justify-center px-5 backdrop-blur-md"
           onClick={(e) => e.stopPropagation()}
         >
           <motion.div
             className={cn(
               className,
-              'bg-white rounded-lg shadow-lg w-full max-w-screen-sm p-4 max-h-[calc(100vh-var(--header-height))] mt-[var(--header-height)] overflow-y-auto'
+              'mt-[var(--header-height)] max-h-[calc(100vh-var(--header-height))] w-full max-w-screen-sm overflow-y-auto rounded-lg bg-white p-4 shadow-lg'
             )}
             ref={anchorRef}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
           >
-            <header className="flex justify-between items-center mb-4">
+            <header className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-bold">{title}</h2>
               <AppButton
                 onClick={onClose}
                 variant="plain"
-                className="text-gray-500 hover:text-gray-700 hover:cursor-pointer hover:bg-black/5 p-2 rounded-md"
+                className="rounded-md p-2 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
               >
-                <XLgIcon className="w-5 h-5" />
+                <XLgIcon className="h-5 w-5" />
               </AppButton>
             </header>
             <div>{children}</div>

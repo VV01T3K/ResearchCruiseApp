@@ -60,7 +60,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
 
   return (
     <>
-      <div className="inline-flex gap-4 items-center w-full px-4 py-2 ">
+      <div className="inline-flex w-full items-center gap-4 px-4 py-2">
         <div>
           <AppCheckbox name="toggleAll" checked={areAllChecked} onChange={(x) => toggleAll(x)} />
         </div>
@@ -98,7 +98,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
         disabled={!filterValue}
         expanded={expanded}
       >
-        <TrashIcon className="w-4 h-4 mr-2" />
+        <TrashIcon className="mr-2 h-4 w-4" />
         Wyczyść filtry
       </AppTableListItem>
     </>

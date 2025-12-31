@@ -90,7 +90,7 @@ export function AppMonthPickerInput({
             variant="plain"
             onClick={handleInputClick}
             className={cn(
-              'relative inline-flex gap-4 p-2.5 justify-between items-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full',
+              'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
               errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
@@ -98,7 +98,7 @@ export function AppMonthPickerInput({
             {selectedDate
               ? selectedDate.toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })
               : placeholder}
-            <span className="flex gap-2 items-center">
+            <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               <div ref={portalContainerRef}></div>
               {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
@@ -111,7 +111,7 @@ export function AppMonthPickerInput({
             onResetSelection={handleResetSelection}
           />
         </div>
-        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2 ' : '')}>
+        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
           <AppInputHelper helper={helper} />
           <AppInputErrorsList errors={errors} />
         </div>
@@ -161,7 +161,7 @@ function Modal({ dropdownRef, inputRef, children, className }: ModalProps) {
     <motion.div
       style={{ top: top, left: left }}
       className={cn(
-        'fixed origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50',
+        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden',
         className
       )}
       initial={{ opacity: 0, translateY: '-10%' }}

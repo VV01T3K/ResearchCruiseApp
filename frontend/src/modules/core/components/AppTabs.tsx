@@ -20,11 +20,11 @@ export function AppTabs({ children, tabNames }: Props) {
 
   return (
     <div>
-      <div className="flex text-center gap-8 ml-2 mr-2">
+      <div className="mr-2 ml-2 flex gap-8 text-center">
         {tabNames.map((tabName, index) => (
           <AppButton
             className={cn(
-              index === activeTab ? 'bg-primary text-white font-bold' : 'bg-gray-200 hover:bg-primary-200',
+              index === activeTab ? 'bg-primary font-bold text-white' : 'hover:bg-primary-200 bg-gray-200',
               'w-full rounded-full transition'
             )}
             variant="plain"

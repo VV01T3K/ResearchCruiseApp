@@ -24,15 +24,15 @@ export function AppMonthPicker({ selectedDate, onSelectMonth }: Props) {
         <AppButton
           variant="plain"
           onClick={() => setVisibleYear((prev) => prev - 1)}
-          className="w-full rounded-lg grid place-items-center hover:bg-gray-100"
+          className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
         >
           <ChevronLeftIcon className="h-5 w-5" />
         </AppButton>
-        <span className="font-bold col-span-3 inline-flex gap-2 justify-center items-center">{visibleYear}</span>
+        <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{visibleYear}</span>
         <AppButton
           variant="plain"
           onClick={() => setVisibleYear((prev) => prev + 1)}
-          className="w-full rounded-lg grid place-items-center hover:bg-gray-100"
+          className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
         >
           <ChevronRightIcon className="h-5 w-5" />
         </AppButton>
@@ -47,7 +47,7 @@ export function AppMonthPicker({ selectedDate, onSelectMonth }: Props) {
               selectedDate?.getFullYear() === visibleYear && selectedDate?.getMonth() === index
                 ? 'text-primary-500 font-bold'
                 : '',
-              'rounded-lg grid place-items-center hover:bg-gray-100'
+              'grid place-items-center rounded-lg hover:bg-gray-100'
             )}
           >
             {month}

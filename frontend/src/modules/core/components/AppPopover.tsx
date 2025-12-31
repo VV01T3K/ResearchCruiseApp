@@ -32,13 +32,13 @@ export function AppPopover({ children, modal, className, variant = 'plain' }: Pr
           variant={variant}
           onClick={() => setExpanded(!expanded)}
           className={cn(
-            'cursor-pointer text-sm gap-2',
-            'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
+            'cursor-pointer gap-2 text-sm',
+            'ring-2 ring-transparent focus:rounded-lg focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
             className
           )}
         >
           {children}
-          <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
+          <span>{expanded ? <ChevronUpIcon className="h-6 w-6" /> : <ChevronDownIcon className="h-6 w-6" />}</span>
         </AppButton>
       </div>
 
@@ -70,7 +70,7 @@ function Modal({ anchorRef, dropdownRef, children }: ModalProps) {
     <motion.div
       style={{ top: top, left: left, width: width }}
       className={cn(
-        'fixed origin-top-right w-(--width) rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
+        'fixed z-50 w-(--width) origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
       )}
       initial={{ opacity: 0, translateY: direction === 'up' ? '-10%' : '10%' }}
       animate={{ opacity: 1, translateY: '0' }}

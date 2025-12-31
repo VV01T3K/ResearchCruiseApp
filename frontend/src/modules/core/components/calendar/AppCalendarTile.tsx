@@ -51,7 +51,7 @@ function CalendarEventTiles({ date, eventsWithRows, tileWidth }: CalendarEventTi
       const daysLeft = (dateToUtcDay(event.end) - dateToUtcDay(date)) / (24 * 60 * 60 * 1000) + 1;
       const width = Math.min(daysInWeek, daysLeft) * tileWidth - 20;
       const textComponent = (
-        <div className="z-20 absolute truncate" style={{ maxWidth: width }}>
+        <div className="absolute z-20 truncate" style={{ maxWidth: width }}>
           {start ? event.title : ''}
         </div>
       );
@@ -96,15 +96,15 @@ export function AppCalendarTile({ date, eventsWithRows, currentMonth, tileWidth 
       className={cn(
         !isCurrentMonth ? 'bg-gray-100' : '',
         isToday ? '!bg-primary-100 !border-primary-500' : '',
-        'border rounded-xl border-gray-300 min-h-30 h-full hover:bg-gray-100 transition mb-3'
+        'mb-3 h-full min-h-30 rounded-xl border border-gray-300 transition hover:bg-gray-100'
       )}
     >
-      <div className="p-2 gap-1">
+      <div className="gap-1 p-2">
         <div className={cn(!isCurrentMonth ? 'text-gray-500' : '', isSunday ? 'text-red-500' : '', 'text-end')}>
           {date.getDate()}
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-1 mt-2 -m-2">
+      <div className="-m-2 mt-2 grid grid-cols-1 gap-1">
         <CalendarEventTiles date={date} eventsWithRows={eventsWithRows} tileWidth={tileWidth} />
       </div>
     </div>

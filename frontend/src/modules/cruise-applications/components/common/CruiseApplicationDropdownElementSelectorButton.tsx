@@ -54,7 +54,7 @@ export function CruiseApplicationDropdownElementSelectorButton({
           data-testid={testId}
         >
           <span>{children}</span>
-          <DropdownIcon className="w-5 h-5" />
+          <DropdownIcon className="h-5 w-5" />
         </AppButton>
       </div>
 
@@ -62,10 +62,10 @@ export function CruiseApplicationDropdownElementSelectorButton({
         {expanded && (
           <Modal dropdownRef={dropdownRef} elementRef={elementRef}>
             <div className="sticky top-0">
-              <SearchIcon className="w-5 h-5 absolute z-10 right-5 top-2.5" />
+              <SearchIcon className="absolute top-2.5 right-5 z-10 h-5 w-5" />
               <AppInput value={searchValue} onChange={setSearchValue} placeholder="Wyszukaj..." autoFocus />
             </div>
-            {filteredOptions.length === 0 && <div className="text-center text-gray-500 py-4">Brak wyników</div>}
+            {filteredOptions.length === 0 && <div className="py-4 text-center text-gray-500">Brak wyników</div>}
             {filteredOptions.length > 0 &&
               filteredOptions.map((option, i) => (
                 <AppButton
@@ -80,7 +80,7 @@ export function CruiseApplicationDropdownElementSelectorButton({
                   }
                   variant="plain"
                   className={cn(
-                    'w-full rounded-lg focus:inset-ring-2 inset-ring-blue-500 px-2',
+                    'w-full rounded-lg px-2 inset-ring-blue-500 focus:inset-ring-2',
                     option.onClick && 'hover:bg-gray-100'
                   )}
                   disabled={!option.onClick}
@@ -113,7 +113,7 @@ function Modal({ elementRef, dropdownRef, children }: ModalProps) {
     <motion.div
       style={{ top: top, left: left, width }}
       className={cn(
-        'fixed origin-top-right w-(--width) rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50 max-h-96 overflow-y-auto'
+        'fixed z-50 max-h-96 w-(--width) origin-top-right overflow-y-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
       )}
       ref={dropdownRef}
       initial={{ opacity: 0, translateY: direction === 'down' ? '-10%' : '10%' }}

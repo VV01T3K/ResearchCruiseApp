@@ -9,12 +9,12 @@ export function AppTableSortingIcon<TData>({ header }: { header: Header<TData, u
   }
 
   if (header.column.getIsSorted() === 'asc') {
-    return <ChevronDownIcon className="w-4 h-4" />;
+    return <ChevronDownIcon className="h-4 w-4" />;
   }
 
   if (header.column.getIsSorted() === 'desc') {
-    return <ChevronUpIcon className="w-4 h-4" />;
+    return <ChevronUpIcon className="h-4 w-4" />;
   }
 
-  return <ChevronExpandIcon className="w-4 h-4" />;
+  return <ChevronExpandIcon className="h-4 w-4" />;
 }

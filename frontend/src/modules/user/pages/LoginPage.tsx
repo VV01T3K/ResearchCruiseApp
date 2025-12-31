@@ -97,7 +97,7 @@ export function LoginPage() {
             )}
           />
 
-          <div className="flex flex-wrap items-center justify-end !mt-8">
+          <div className="!mt-8 flex flex-wrap items-center justify-end">
             <AppLink href="/forgotpassword">Zapomniałeś hasła?</AppLink>
           </div>
 
@@ -117,7 +117,7 @@ export function LoginPage() {
             />
 
             {signInResult && (
-              <p className="mt-2 text-danger text-sm text-center font-semibold">{errorMessages[signInResult]}</p>
+              <p className="text-danger mt-2 text-center text-sm font-semibold">{errorMessages[signInResult]}</p>
             )}
           </div>
 

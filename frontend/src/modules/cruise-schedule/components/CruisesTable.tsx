@@ -112,11 +112,11 @@ function ApplicationsCell({ applications }: ApplicationsCellProps) {
     return <AppBadge variant="info">Brak zgłoszeń</AppBadge>;
   }
   return (
-    <div className="flex flex-col gap-4 items-center text-balance">
+    <div className="flex flex-col items-center gap-4 text-balance">
       {applications.map((application) => (
         <div className="flex flex-col gap-2" key={application.id}>
           <AppButton type="link" href={`/applications/${application.id}/details`} variant="primaryOutline" size="sm">
-            <div className="flex items-center justify-around gap-2 w-full">
+            <div className="flex w-full items-center justify-around gap-2">
               <div>Zgłoszenie nr.{application.number}</div> <AppBadge>{application.points} pkt.</AppBadge>
             </div>
           </AppButton>
@@ -132,16 +132,16 @@ type ActionsCellProps = {
 };
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
-    <div className="grid grid-cols-1 gap-2 min-w-30">
+    <div className="grid min-w-30 grid-cols-1 gap-2">
       <AppButton variant="primary" type="link" href={`/cruises/${cruise.id}`}>
         Szczegóły
-        <ZoomInIcon className="ml-2 w-4 h-4" />
+        <ZoomInIcon className="ml-2 h-4 w-4" />
       </AppButton>
       <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {cruise.status === 'Nowy' && (
           <AppButton variant="dangerOutline" onClick={() => deleteCruise(cruise)}>
             Usuń
-            <TrashIcon className="w-4 h-4" />
+            <TrashIcon className="h-4 w-4" />
           </AppButton>
         )}
       </AppGuard>
