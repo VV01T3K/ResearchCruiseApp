@@ -97,12 +97,12 @@ export function AppDropdownInput({
           className={cn(
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
-            'p-2.5 ring-2 ring-transparent',
+            'p-2.5',
             'transition duration-300 ease-in-out',
             !disabled && 'cursor-pointer hover:border-gray-400',
-            !disabled && 'focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
+            !disabled && 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-inset',
             disabled && 'cursor-not-allowed bg-gray-200',
-            hasError && 'border-danger ring-danger text-danger focus:text-gray-900'
+            hasError && 'border-danger ring-danger text-danger ring-2 ring-inset focus:text-gray-900'
           )}
           data-testid={buttonTestId}
         >

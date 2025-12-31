@@ -29,14 +29,14 @@ export class FormACruiseLengthSection {
     // Cruise days input using data-testid
     const cruiseDaysContainer = this.sectionDiv.getByTestId('form-a-cruise-days');
     this.cruiseDaysInput = cruiseDaysContainer.getByTestId('form-a-cruise-days-input');
-    this.cruiseDaysDecreaseButton = cruiseDaysContainer.getByRole('button', { name: 'Decrease' });
-    this.cruiseDaysIncreaseButton = cruiseDaysContainer.getByRole('button', { name: 'Increase' });
+    this.cruiseDaysDecreaseButton = cruiseDaysContainer.getByRole('button').nth(0);
+    this.cruiseDaysIncreaseButton = cruiseDaysContainer.getByRole('button').nth(1);
 
     // Cruise hours input using data-testid
     const cruiseHoursContainer = this.sectionDiv.getByTestId('form-a-cruise-hours');
     this.cruiseHoursInput = cruiseHoursContainer.getByTestId('form-a-cruise-hours-input');
-    this.cruiseHoursDecreaseButton = cruiseHoursContainer.getByRole('button', { name: 'Decrease' });
-    this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button', { name: 'Increase' });
+    this.cruiseHoursDecreaseButton = cruiseHoursContainer.getByRole('button').nth(0);
+    this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button').nth(1);
 
     this.periodNotesInput = this.sectionDiv.getByTestId('form-a-period-notes-input');
     this.shipUsageDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-ship-usage-button'));

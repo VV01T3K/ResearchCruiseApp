@@ -261,7 +261,6 @@ export function FormACruiseLengthSection() {
                       label="Liczba planowanych godzin rejsowych"
                       showRequiredAsterisk
                       disabled={isReadonly}
-                      clampOnInput={true}
                       data-testid="form-a-cruise-hours"
                       data-testid-input="form-a-cruise-hours-input"
                       data-testid-errors="form-a-cruise-hours-errors"
