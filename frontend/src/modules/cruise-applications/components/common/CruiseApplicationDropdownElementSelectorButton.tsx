@@ -1,14 +1,11 @@
 /* eslint-disable @eslint-react/no-array-index-key */
+import { Popover } from '@base-ui/react/popover';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
 import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
-import { AnimatePresence, motion } from 'motion/react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { AppButton, AppButtonVariant } from '@/core/components/AppButton';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { useDropdown } from '@/core/hooks/DropdownHook';
-import { useOutsideClickDetection } from '@/core/hooks/OutsideClickDetectionHook';
 import { cn } from '@/core/lib/utils';
 
 type Props = {
@@ -32,36 +29,42 @@ export function CruiseApplicationDropdownElementSelectorButton({
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const elementRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const DropdownIcon = expanded ? ChevronUpIcon : ChevronDownIcon;
   const filteredOptions = options.filter((option) => option.value.toLowerCase().includes(searchValue.toLowerCase()));
 
-  useOutsideClickDetection({
-    refs: [elementRef, dropdownRef],
-    onOutsideClick: () => setExpanded(false),
-  });
-
   return (
-    <>
-      <div ref={elementRef}>
-        <AppButton
-          variant={variant}
-          onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-4"
-          disabled={disabled}
-          data-testid={testId}
-        >
-          <span>{children}</span>
-          <DropdownIcon className="h-5 w-5" />
-        </AppButton>
-      </div>
+    <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
+      <Popover.Trigger
+        render={
+          <button
+            className={cn(
+              'text-white outline-none hover:cursor-pointer disabled:cursor-default',
+              variants[variant],
+              'flex items-center gap-4'
+            )}
+            disabled={disabled}
+            data-testid={testId}
+          />
+        }
+      >
+        <span>{children}</span>
+        <span className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
+          <ChevronDownIcon className="h-5 w-5" />
+        </span>
+      </Popover.Trigger>
 
-      <AnimatePresence>
-        {expanded && (
-          <Modal dropdownRef={dropdownRef} elementRef={elementRef}>
-            <div className="sticky top-0">
+      <Popover.Portal>
+        <Popover.Positioner className="z-50" sideOffset={4} align="center">
+          <Popover.Popup
+            className={cn(
+              'w-[calc(var(--anchor-width)*1.5)] origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+              'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+              'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
+              'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
+              'max-h-96 overflow-y-auto'
+            )}
+          >
+            <div className="sticky top-0 bg-white">
               <SearchIcon className="absolute top-2.5 right-5 z-10 h-5 w-5" />
               <AppInput value={searchValue} onChange={setSearchValue} placeholder="Wyszukaj..." autoFocus />
             </div>
@@ -81,51 +84,36 @@ export function CruiseApplicationDropdownElementSelectorButton({
                   variant="plain"
                   className={cn(
                     'w-full rounded-lg px-2 inset-ring-blue-500 focus:inset-ring-2',
-                    option.onClick && 'hover:bg-gray-100'
+                    option.onClick && 'hover:bg-primary-50 transition-colors duration-150'
                   )}
                   disabled={!option.onClick}
                 >
                   {option.content ?? <span>{option.value}</span>}
                 </AppButton>
               ))}
-          </Modal>
-        )}
-      </AnimatePresence>
-    </>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 
-type ModalProps = {
-  elementRef: React.RefObject<HTMLDivElement | null>;
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-
-  children: React.ReactNode;
+const variants = {
+  plain: 'text-default',
+  primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
+  success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
+  danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
+  warning:
+    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-black disabled:text-warning-800',
+  info: 'rounded-lg bg-info hover:bg-info-400 active:bg-info disabled:bg-info-200',
+  primaryOutline:
+    'rounded-lg bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-white',
+  successOutline:
+    'rounded-lg bg-white hover:bg-success active:bg-success text-success hover:text-white border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-white',
+  dangerOutline:
+    'rounded-lg bg-white hover:bg-danger active:bg-danger text-danger hover:text-white border border-danger transition-all duration-300 disabled:border-danger-300 disabled:text-danger-400 disabled:hover:bg-white',
+  warningOutline:
+    'rounded-lg bg-white hover:bg-warning active:bg-warning text-warning-600 hover:text-black border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-500 disabled:hover:bg-white',
+  infoOutline:
+    'rounded-lg bg-white hover:bg-info active:bg-info text-info hover:text-white border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-white',
 };
-function Modal({ elementRef, dropdownRef, children }: ModalProps) {
-  const { top, left, width, direction } = useDropdown({
-    openingItemRef: elementRef,
-    dropdownRef,
-    dropdownPosition: 'center',
-    dropdownWidthMultiplier: 1.5,
-  });
-
-  return (
-    <motion.div
-      style={{ top: top, left: left, width }}
-      className={cn(
-        'fixed z-50 max-h-96 w-(--width) origin-top-right overflow-y-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
-      )}
-      ref={dropdownRef}
-      initial={{ opacity: 0, translateY: direction === 'down' ? '-10%' : '10%' }}
-      animate={{ opacity: 1, translateY: '0' }}
-      exit={{ opacity: 0, translateY: direction === 'down' ? '-10%' : '10%' }}
-      transition={{ ease: 'easeOut', duration: 0.2 }}
-      role="menu"
-      aria-orientation="vertical"
-      aria-labelledby="menu-button"
-      tabIndex={-1}
-    >
-      {children}
-    </motion.div>
-  );
-}

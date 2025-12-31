@@ -1,60 +1,45 @@
+import { Popover } from '@base-ui/react/popover';
 import { Header } from '@tanstack/react-table';
-import { motion } from 'motion/react';
-import React from 'react';
 
 import { AppTableFilterList } from '@/core/components/table/common/AppTableFilterList';
 import { AppTableListItem } from '@/core/components/table/common/AppTableListItem';
 import { AppTableSortingToggle } from '@/core/components/table/common/AppTableSortingToggle';
-import { useDropdown } from '@/core/hooks/DropdownHook';
+import { cn } from '@/core/lib/utils';
 
 type Props<TData, TValue> = {
   header: Header<TData, TValue>;
   capabilities: { supportsDropdown: boolean; supportsFilter: boolean; supportsSort: boolean };
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  headerRef: React.RefObject<HTMLDivElement | null>;
   expanded: boolean;
 };
-export function AppDesktopTableHeaderDropdown<TData, TValue>({
-  header,
-  capabilities,
-  dropdownRef,
-  headerRef,
-  expanded,
-}: Props<TData, TValue>) {
+export function AppDesktopTableHeaderDropdown<TData, TValue>({ header, capabilities, expanded }: Props<TData, TValue>) {
   const { supportsDropdown, supportsFilter, supportsSort } = capabilities;
-
-  const { top, left, direction } = useDropdown({ openingItemRef: headerRef, dropdownRef });
 
   if (!supportsDropdown) {
     return null;
   }
 
   return (
-    <motion.div
-      className={
-        'fixed z-50 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
-      }
-      initial={{ opacity: 0, translateY: direction === 'up' ? '-10%' : '10%' }}
-      animate={{ opacity: 1, translateY: '0' }}
-      exit={{ opacity: 0, translateY: direction === 'down' ? '-10%' : '10%' }}
-      transition={{ ease: 'easeOut', duration: 0.2 }}
-      role="menu"
-      aria-orientation="vertical"
-      aria-labelledby="menu-button"
-      ref={dropdownRef}
-      style={{ top: top, left: left }}
-    >
-      <div className="py-1" role="none">
-        {supportsSort && <p>Sortowanie</p>}
-        <AppTableListItem onClick={() => header.column.toggleSorting()} isRendered={supportsSort} expanded={expanded}>
-          <AppTableSortingToggle header={header} />
-        </AppTableListItem>
+    <Popover.Positioner className="z-50" sideOffset={4}>
+      <Popover.Popup
+        className={cn(
+          'w-56 origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+          'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+          'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
+          'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
+        )}
+      >
+        <div className="py-1">
+          {supportsSort && <p>Sortowanie</p>}
+          <AppTableListItem onClick={() => header.column.toggleSorting()} isRendered={supportsSort} expanded={expanded}>
+            <AppTableSortingToggle header={header} />
+          </AppTableListItem>
 
-        {supportsFilter && supportsSort && <hr className="my-0.5 h-px border-0 bg-gray-700" />}
+          {supportsFilter && supportsSort && <hr className="my-0.5 h-px border-0 bg-gray-700" />}
 
-        {supportsFilter && <p>Filtrowanie</p>}
-        {supportsFilter && <AppTableFilterList header={header} expanded={expanded} />}
-      </div>
-    </motion.div>
+          {supportsFilter && <p>Filtrowanie</p>}
+          {supportsFilter && <AppTableFilterList header={header} expanded={expanded} />}
+        </div>
+      </Popover.Popup>
+    </Popover.Positioner>
   );
 }
