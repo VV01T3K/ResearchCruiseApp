@@ -1,15 +1,12 @@
+import { Select } from '@base-ui/react/select';
+import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
-import { AppButton } from '@/core/components/AppButton';
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/core/components/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/core/components/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/core/components/inputs/parts/AppInputLabel';
-import { useDropdown } from '@/core/hooks/DropdownHook';
-import { useOutsideClickDetection } from '@/core/hooks/OutsideClickDetectionHook';
 import { cn } from '@/core/lib/utils';
 
 export type AppDropdownInputOption = {
@@ -37,6 +34,7 @@ type Props = {
   'data-testid-button'?: string;
   'data-testid-errors'?: string;
 };
+
 export function AppDropdownInput({
   name,
   value,
@@ -55,150 +53,111 @@ export function AppDropdownInput({
   'data-testid-button': buttonTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const inputRef = React.useRef<HTMLDivElement>(null);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-  const [expanded, setExpanded] = React.useState(false);
-  const selectedOptionIndex = allOptions.findIndex((option) => option.value === value);
-  const [selectedOption, setSelectedOption] = React.useState<AppDropdownInputOption>(() =>
-    selectedOptionIndex < 0 ? { value: defaultValue, inlineLabel: placeholder } : allOptions[selectedOptionIndex]
-  );
-  const allPossibleOptions = allowEmptyOption
-    ? [
+  const allPossibleOptions = React.useMemo(() => {
+    if (allowEmptyOption) {
+      return [
         {
           value: defaultValue,
-          inlineLabel: selectedOption.value !== defaultValue ? placeholder : undefined,
-          richLabel:
-            selectedOption.value !== defaultValue ? (
-              <span className="text-red-500">Usuń aktualny wybór</span>
-            ) : undefined,
+          inlineLabel: placeholder,
+          richLabel: value !== defaultValue ? <span className="text-red-500">Usuń aktualny wybór</span> : undefined,
         },
         ...allOptions,
-      ]
-    : allOptions;
-
-  React.useEffect(() => {
-    if (value !== selectedOption.value) {
-      const selectedOption = allOptions.find((option) => option.value === value);
-      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-      setSelectedOption(selectedOption ?? { value: defaultValue, inlineLabel: placeholder });
+      ];
     }
-  }, [allOptions, defaultValue, placeholder, selectedOption.value, value]);
+    return allOptions;
+  }, [allowEmptyOption, allOptions, defaultValue, placeholder, value]);
 
-  useOutsideClickDetection({
-    refs: [inputRef, dropdownRef],
-    onOutsideClick: () => {
-      setExpanded(false);
-      onBlur?.();
+  const selectedOption = allOptions.find((opt) => opt.value === value);
+  const hasError = errors && errors.length > 0;
+
+  const handleValueChange = React.useCallback(
+    (newValue: string | null) => {
+      onChange?.(newValue ?? defaultValue);
     },
-  });
-
-  function selectOption(option: AppDropdownInputOption) {
-    setSelectedOption(option);
-    setExpanded(false);
-    onChange?.(option.value);
-    onBlur?.();
-  }
+    [onChange, defaultValue]
+  );
 
   return (
     <div className="flex flex-col" data-testid={testId}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-      <div
-        className={cn(
-          'relative inline-block',
-          'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full',
-          'transition duration-300 ease-in-out',
-          disabled ? 'bg-gray-200' : '',
-          errors && errors.length > 0 ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
-        )}
-        ref={inputRef}
+
+      <Select.Root
+        name={name}
+        value={value}
+        onValueChange={handleValueChange}
+        disabled={disabled}
+        modal={false}
+        onOpenChange={(open) => {
+          if (!open) {
+            onBlur?.();
+          }
+        }}
       >
-        <input type="hidden" name={name} value={selectedOption.value} disabled={disabled} />
-        <AppButton
-          variant="plain"
-          onClick={() => {
-            if (disabled) return;
-            setExpanded(!expanded);
-          }}
+        <Select.Trigger
           className={cn(
-            'ring-2 ring-transparent w-full text-sm p-2.5',
-            !disabled &&
-              'cursor-pointer focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
-            'flex justify-between items-center'
+            'relative inline-flex items-center justify-between w-full',
+            'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg',
+            'p-2.5 ring-2 ring-transparent',
+            'transition duration-300 ease-in-out',
+            !disabled && 'cursor-pointer hover:border-gray-400',
+            !disabled && 'focus:ring-blue-500 focus:border-blue-500 focus:shadow focus:outline-none',
+            disabled && 'bg-gray-200 cursor-not-allowed',
+            hasError && 'border-danger ring-danger text-danger focus:text-gray-900'
           )}
-          disabled={disabled}
-          data-testid={buttonTestId}
+          data-testid={testId ? `${testId}-button` : undefined}
         >
-          {selectedOption.inlineLabel}
-          <span className="flex gap-2">
+          <Select.Value>{() => selectedOption?.inlineLabel ?? placeholder}</Select.Value>
+          <span className="flex gap-2 items-center">
             <AppInputErrorTriangle errors={errors} />
             {!disabled && (
-              <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
+              <Select.Icon className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
+                <ChevronDownIcon className="w-5 h-5" />
+              </Select.Icon>
             )}
           </span>
-        </AppButton>
-      </div>
-      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2 ' : '')}>
+        </Select.Trigger>
+
+        <Select.Portal>
+          <Select.Positioner className="z-50 min-w-[var(--anchor-width)]" sideOffset={4} alignItemWithTrigger={false}>
+            <Select.Popup
+              className={cn(
+                'w-full origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+                'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+                'data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[starting-style]:translate-y-1',
+                'data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:translate-y-1'
+              )}
+            >
+              <Select.List className="max-h-64 overflow-y-auto p-1 flex flex-col gap-1">
+                {allPossibleOptions
+                  .filter((opt) => opt.inlineLabel || opt.richLabel)
+                  .map((opt) => (
+                    <Select.Item
+                      key={`dropdown-option-${opt.value}`}
+                      value={opt.value}
+                      className={cn(
+                        'flex items-center justify-between gap-2 px-3 py-2 text-sm text-gray-700 rounded-md',
+                        'cursor-pointer select-none outline-none',
+                        'transition-all duration-150 ease-out',
+                        'data-[highlighted]:bg-primary-50 data-[highlighted]:text-gray-900',
+                        'data-[selected]:bg-primary-50 data-[selected]:font-medium data-[selected]:text-primary-800'
+                      )}
+                    >
+                      <Select.ItemText>{opt.richLabel ?? opt.inlineLabel}</Select.ItemText>
+                      <Select.ItemIndicator className="text-primary transition-transform duration-200 data-[ending-style]:scale-0">
+                        <CheckIcon className="w-4 h-4" />
+                      </Select.ItemIndicator>
+                    </Select.Item>
+                  ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+
+      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
         <AppInputHelper helper={helper} />
         <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
       </div>
-      <AnimatePresence>
-        {expanded && (
-          <Modal dropdownRef={dropdownRef} inputRef={inputRef}>
-            {allPossibleOptions
-              .filter((pv) => pv.inlineLabel)
-              .map((pv) => (
-                <AppButton
-                  key={`dropdown-option-${pv.value}`}
-                  variant="plain"
-                  className={cn(
-                    'inline-flex gap-4 items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-                    'ring-2 ring-transparent focus:ring-blue-500 focus:border-blue-500 focus:rounded-lg focus:shadow focus:outline-none',
-                    disabled ? 'opacity-50' : ''
-                  )}
-                  role="menuitem"
-                  onClick={() => selectOption(pv)}
-                  disabled={disabled}
-                >
-                  {pv.richLabel ?? pv.inlineLabel}
-                </AppButton>
-              ))}
-          </Modal>
-        )}
-      </AnimatePresence>
     </div>
-  );
-}
-
-type ModalProps = {
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  inputRef: React.RefObject<HTMLDivElement | null>;
-
-  children: React.ReactNode;
-};
-
-function Modal({ dropdownRef, inputRef, children }: ModalProps) {
-  const { top, left, width, direction } = useDropdown({
-    openingItemRef: inputRef,
-    dropdownRef,
-    dropdownPosition: 'left',
-  });
-
-  return (
-    <motion.div
-      style={{ top: top, left: left, width: width }}
-      className={cn(
-        'fixed origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50'
-      )}
-      initial={{ opacity: 0, translateY: '-10%' }}
-      animate={{ opacity: 1, translateY: '0' }}
-      exit={{ opacity: 0, translateY: direction === 'up' ? '10%' : '-10%' }}
-      transition={{ ease: 'easeOut', duration: 0.2 }}
-      role="menu"
-      aria-orientation="vertical"
-      aria-labelledby="menu-button"
-      ref={dropdownRef}
-    >
-      <div className="max-h-64 overflow-y-auto">{children}</div>
-    </motion.div>
   );
 }
