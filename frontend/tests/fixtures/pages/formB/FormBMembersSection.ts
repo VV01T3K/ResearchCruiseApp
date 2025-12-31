@@ -24,7 +24,9 @@ export class FormBMembersSection {
       variant: 'menu-with-buttons',
     });
     this.addNewGuestTeamButton = this.sectionDiv.getByTestId('form-b-add-guest-team-btn');
-    this.addHistoricalTeamDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-b-add-historical-guest-team-btn'));
+    this.addHistoricalTeamDropdown = new FormDropdown(
+      this.sectionDiv.getByTestId('form-b-add-historical-guest-team-btn')
+    );
     this.addPermissionButton = this.sectionDiv.getByTestId('form-b-add-crew-member-btn');
 
     // Section-level validation errors are exposed as an errors list; avoid matching exact text.
@@ -101,5 +103,5 @@ export class FormBMembersSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

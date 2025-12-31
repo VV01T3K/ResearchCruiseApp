@@ -39,11 +39,11 @@ export class FormACruiseLengthSection {
     this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button').nth(1);
 
     this.periodNotesInput = this.sectionDiv.getByTestId('form-a-period-notes-input');
-    this.shipUsageDropdown = new FormDropdown(
-      this.sectionDiv.getByTestId('form-a-ship-usage-button')
-    );
+    this.shipUsageDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-ship-usage-button'));
     this.alternativeShipUsageInput = this.sectionDiv.getByTestId('form-a-alternative-ship-usage-input');
-    this.periodSelectionTypeDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-period-selection-type-button'));
+    this.periodSelectionTypeDropdown = new FormDropdown(
+      this.sectionDiv.getByTestId('form-a-period-selection-type-button')
+    );
     this.invalidCruiseDurationMessage = this.sectionDiv.getByTestId('form-a-cruise-hours-errors');
     this.emptyAlternativeShipUsageMessage = this.sectionDiv.getByText(
       'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku'

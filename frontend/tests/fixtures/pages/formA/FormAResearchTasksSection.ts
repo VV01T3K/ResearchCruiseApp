@@ -22,7 +22,9 @@ export class FormAResearchTasksSection {
     this.addNewTaskDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-research-task-btn'), {
       variant: 'menu-with-buttons',
     });
-    this.addHistoricalTaskDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-historical-research-task-btn'));
+    this.addHistoricalTaskDropdown = new FormDropdown(
+      this.sectionDiv.getByTestId('form-a-add-historical-research-task-btn')
+    );
     this.noResearchTasksMessage = this.sectionDiv.getByTestId('form-a-research-tasks-errors');
     this.emptyAuthorMessage = this.sectionDiv.getByText('Autor nie może być pusty');
     this.emptyTitleMessage = this.sectionDiv.getByText('Tytuł nie może być pusty');

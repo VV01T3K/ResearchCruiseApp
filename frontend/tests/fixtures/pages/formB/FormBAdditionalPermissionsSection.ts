@@ -47,5 +47,5 @@ export class FormBAdditionalPermissionsSection {
     await fileChooser.setFiles(filePath);
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

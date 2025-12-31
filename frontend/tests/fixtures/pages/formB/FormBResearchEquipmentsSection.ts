@@ -27,9 +27,12 @@ export class FormBResearchEquipmentsSection {
       nameInput: new FormInput(rowLocator.getByTestId('research-equipment-name-input'), {
         errors: { required: rowLocator.getByTestId('research-equipment-name-errors') },
       }),
-      insuranceStartDateDropdown: new FormDropdown(rowLocator.getByTestId('research-equipment-insurance-start-button'), {
-        variant: 'datetime-picker',
-      }),
+      insuranceStartDateDropdown: new FormDropdown(
+        rowLocator.getByTestId('research-equipment-insurance-start-button'),
+        {
+          variant: 'datetime-picker',
+        }
+      ),
       insuranceEndDateDropdown: new FormDropdown(rowLocator.getByTestId('research-equipment-insurance-end-button'), {
         variant: 'datetime-picker',
       }),
@@ -37,5 +40,5 @@ export class FormBResearchEquipmentsSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

@@ -73,5 +73,5 @@ export class FormAPublicationsSection {
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
-  public async defaultFill() { } // Optional section
+  public async defaultFill() {} // Optional section
 }

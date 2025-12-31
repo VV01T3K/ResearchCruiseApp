@@ -43,5 +43,5 @@ export class FormAPermissionsSection {
     await (await this.executiveInput('last')).fill(executive);
   }
 
-  public async defaultFill() { } // Optional section
+  public async defaultFill() {} // Optional section
 }

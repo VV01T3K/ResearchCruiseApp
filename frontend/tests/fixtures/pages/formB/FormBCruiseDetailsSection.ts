@@ -84,5 +84,5 @@ export class FormBCruiseDetailsSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

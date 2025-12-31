@@ -1,6 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-
 /**
  * Locate a form section by its data-testid attribute.
  * Preferred method over locateSectionDiv.
