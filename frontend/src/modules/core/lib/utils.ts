@@ -105,13 +105,13 @@ export function navigateToFirstError(
   const sectionNumber = firstError?.sectionNumber;
 
   // Find and expand the accordion section containing the error
-  const accordionButtons = Array.from(document.querySelectorAll('h2 button[data-expanded]'));
+  const accordionButtons = Array.from(document.querySelectorAll('h2 button'));
   const targetButton = accordionButtons.find((button) => {
     const title = button.querySelector('span')?.textContent || '';
     return title.includes(`${sectionNumber}.`);
   });
 
-  const isExpanded = targetButton?.getAttribute('data-expanded') === 'true';
+  const isExpanded = targetButton?.hasAttribute('data-panel-open');
 
   if (!isExpanded) {
     (targetButton as HTMLButtonElement).click();
