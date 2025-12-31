@@ -16,5 +16,5 @@ export class FormCCruiseInfoSection {
     this.cruiseDetailsButton = this.sectionDiv.getByRole('button', { name: 'Pokaż szczegóły rejsu' });
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

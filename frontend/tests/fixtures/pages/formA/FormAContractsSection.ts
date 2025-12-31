@@ -14,10 +14,9 @@ export class FormAContractsSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-contracts-section');
-    this.addNewContractDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-contract-btn-button'),
-      { variant: 'menu-with-buttons' }
-    );
+    this.addNewContractDropdown = new FormDropdown(this.page.getByTestId('form-a-add-contract-btn-button'), {
+      variant: 'menu-with-buttons',
+    });
     this.addHistoricalContractDropdown = new FormDropdown(
       this.page.getByTestId('form-a-add-historical-contract-btn-button')
     );
@@ -60,5 +59,5 @@ export class FormAContractsSection {
     await fileChooser.setFiles(filePath);
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

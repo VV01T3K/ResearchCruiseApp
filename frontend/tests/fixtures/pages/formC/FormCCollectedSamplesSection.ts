@@ -39,5 +39,5 @@ export class FormCCollectedSamplesSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

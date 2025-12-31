@@ -24,15 +24,13 @@ export class FormAMembersSection {
       variant: 'menu-with-buttons',
     });
     this.addNewGuestTeamButton = this.page.getByTestId('form-a-add-guest-team-btn');
-    this.addHistoricalTeamDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-historical-team-btn')
-    );
-    this.noUGUnitsMessage = this.page.getByTestId('form-a-ug-teams-errors').getByText(
-      'Co najmniej jeden zespół UG jest wymagany'
-    );
-    this.invalidUGNofMembersMessage = this.page.getByTestId('form-a-ug-teams-errors').getByText(
-      'Zespół UG musi składać się z co najmniej jednej osoby'
-    );
+    this.addHistoricalTeamDropdown = new FormDropdown(this.page.getByTestId('form-a-add-historical-team-btn'));
+    this.noUGUnitsMessage = this.page
+      .getByTestId('form-a-ug-teams-errors')
+      .getByText('Co najmniej jeden zespół UG jest wymagany');
+    this.invalidUGNofMembersMessage = this.page
+      .getByTestId('form-a-ug-teams-errors')
+      .getByText('Zespół UG musi składać się z co najmniej jednej osoby');
     this.emptyGuestTeamNameMessage = this.sectionDiv.getByText('Instytucja jest wymagana');
     this.invalidGuestTeamCountMessage = this.sectionDiv.getByText('Liczba osób musi być liczbą większą od 0');
   }

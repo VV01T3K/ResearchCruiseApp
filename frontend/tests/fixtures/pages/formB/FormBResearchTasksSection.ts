@@ -14,5 +14,5 @@ export class FormBResearchTasksSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-research-tasks-section');
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

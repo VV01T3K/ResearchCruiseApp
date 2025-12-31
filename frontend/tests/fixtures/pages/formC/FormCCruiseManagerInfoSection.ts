@@ -14,5 +14,5 @@ export class FormCCruiseManagerInfoSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-cruise-manager-section');
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

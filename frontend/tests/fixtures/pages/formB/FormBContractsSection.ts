@@ -14,5 +14,5 @@ export class FormBContractsSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-contracts-section');
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

@@ -37,5 +37,5 @@ export class FormBResearchEquipmentsSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

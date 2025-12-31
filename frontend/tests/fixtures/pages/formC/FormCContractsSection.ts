@@ -60,5 +60,5 @@ export class FormCContractsSection {
     await fileChooser.setFiles(filePath);
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

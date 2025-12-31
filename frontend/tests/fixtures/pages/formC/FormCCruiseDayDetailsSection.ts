@@ -41,5 +41,5 @@ export class FormCCruiseDayDetailsSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

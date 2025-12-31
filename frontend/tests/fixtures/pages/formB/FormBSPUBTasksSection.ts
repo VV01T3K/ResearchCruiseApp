@@ -14,5 +14,5 @@ export class FormBSPUBTasksSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-spub-tasks-section');
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

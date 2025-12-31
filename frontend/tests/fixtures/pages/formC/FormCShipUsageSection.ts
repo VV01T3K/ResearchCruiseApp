@@ -14,5 +14,5 @@ export class FormCShipUsageSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-ship-usage-section');
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

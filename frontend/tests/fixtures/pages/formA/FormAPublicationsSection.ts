@@ -21,10 +21,9 @@ export class FormAPublicationsSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-publications-section');
-    this.addPublicationDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-publication-btn'),
-      { variant: 'menu-with-buttons' }
-    );
+    this.addPublicationDropdown = new FormDropdown(this.page.getByTestId('form-a-add-publication-btn'), {
+      variant: 'menu-with-buttons',
+    });
     this.addHistoricalPublicationDropdown = new FormDropdown(
       this.page.getByTestId('form-a-add-historical-publication-btn')
     );
@@ -68,5 +67,5 @@ export class FormAPublicationsSection {
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
-  public async defaultFill() { } // Optional section
+  public async defaultFill() {} // Optional section
 }

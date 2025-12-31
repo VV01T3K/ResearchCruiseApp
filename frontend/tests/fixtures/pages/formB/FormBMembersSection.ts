@@ -108,5 +108,5 @@ export class FormBMembersSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

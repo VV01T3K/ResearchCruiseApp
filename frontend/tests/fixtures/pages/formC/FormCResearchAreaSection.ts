@@ -20,5 +20,5 @@ export class FormCResearchAreaSection {
     this.additionalInfoInput = this.sectionDiv.locator('input:below(:text("Informacje dodatkowe"))').first();
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

@@ -43,5 +43,5 @@ export class FormASPUBTasksSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

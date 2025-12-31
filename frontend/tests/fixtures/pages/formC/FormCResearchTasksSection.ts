@@ -28,5 +28,5 @@ export class FormCResearchTasksSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

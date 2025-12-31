@@ -43,5 +43,5 @@ export class FormCSPUBTasksSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

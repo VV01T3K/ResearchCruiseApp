@@ -18,5 +18,5 @@ export class FormBCruiseManagerInfoSection {
     });
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

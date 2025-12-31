@@ -66,5 +66,5 @@ export class FormCMembersSection {
     };
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

@@ -43,9 +43,7 @@ export class FormACruiseLengthSection {
       this.sectionDiv.locator('button:below(:text("Statek na potrzeby badań będzie wykorzystywany"))').first()
     );
     this.alternativeShipUsageInput = this.sectionDiv.locator('input:below(:text("Inny sposób użycia"))').first();
-    this.periodSelectionTypeDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-period-selection-type-button')
-    );
+    this.periodSelectionTypeDropdown = new FormDropdown(this.page.getByTestId('form-a-period-selection-type-button'));
     this.invalidCruiseDurationMessage = this.page.getByTestId('form-a-cruise-hours-errors');
     this.emptyAlternativeShipUsageMessage = this.sectionDiv.getByText(
       'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku'

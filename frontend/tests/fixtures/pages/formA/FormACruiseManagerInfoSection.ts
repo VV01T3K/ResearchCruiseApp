@@ -17,12 +17,8 @@ export class FormACruiseManagerInfoSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-cruise-manager-section');
-    this.cruiseManagerDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-cruise-manager-button')
-    );
-    this.deputyManagerDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-deputy-manager-button')
-    );
+    this.cruiseManagerDropdown = new FormDropdown(this.page.getByTestId('form-a-cruise-manager-button'));
+    this.deputyManagerDropdown = new FormDropdown(this.page.getByTestId('form-a-deputy-manager-button'));
     this.yearDropdown = new FormDropdown(this.page.getByTestId('form-a-year-button'));
     this.missingDeputyManagerMessage = this.page.getByTestId('form-a-deputy-manager-errors');
   }

@@ -14,5 +14,5 @@ export class FormCCruiseGoalSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-cruise-goal-section');
   }
 
-  public async defaultFill() { }
+  public async defaultFill() {}
 }

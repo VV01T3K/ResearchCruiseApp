@@ -15,10 +15,9 @@ export class FormAResearchAreaSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-research-area-section');
-    this.addResearchAreaDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-research-area-btn'),
-      { variant: 'menu-with-buttons' }
-    );
+    this.addResearchAreaDropdown = new FormDropdown(this.page.getByTestId('form-a-add-research-area-btn'), {
+      variant: 'menu-with-buttons',
+    });
     this.noResearchAreasMessage = this.page.getByTestId('form-a-research-areas-errors');
   }
 
