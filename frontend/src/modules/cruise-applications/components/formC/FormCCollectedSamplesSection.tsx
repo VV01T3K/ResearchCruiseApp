@@ -128,6 +128,7 @@ export function FormCCollectedSamplesSection() {
             buttons={() => [
               <AppButton
                 key="new"
+                data-testid="form-c-add-sample-btn"
                 onClick={() => {
                   field.pushValue({
                     type: '',

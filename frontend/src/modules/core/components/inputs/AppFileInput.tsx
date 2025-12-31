@@ -25,6 +25,9 @@ type Props = {
   acceptedMimeTypes?: string[];
   allowMultiple?: boolean;
   'data-testid'?: string;
+  'data-testid-button'?: string;
+  'data-testid-input'?: string;
+  'data-testid-errors'?: string;
 } & (
   | {
       allowMultiple: true;
@@ -56,6 +59,9 @@ export function AppFileInput({
   maxSizeInMb = 2,
   acceptedMimeTypes,
   'data-testid': testId,
+  'data-testid-button': buttonTestId,
+  'data-testid-input': inputTestId,
+  'data-testid-errors': errorsTestId,
 }: Props) {
   const [files, setFiles] = React.useState<FileDto[]>(allowMultiple ? value : value ? [value] : []);
   const [notifications, setNotifications] = React.useState<string[]>([]);
@@ -146,7 +152,7 @@ export function AppFileInput({
             errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : '',
             className
           )}
-          data-testid={testId ? `${testId}-button` : undefined}
+          data-testid={buttonTestId}
         >
           <AnimatePresence>
             {!disabled && (
@@ -185,11 +191,11 @@ export function AppFileInput({
         className="hidden"
         onChange={handleChange}
         accept={acceptedMimeTypes?.join(',')}
-        data-testid={testId ? `${testId}-input` : undefined}
+        data-testid={inputTestId}
       />
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
         <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={testId ? `${testId}-errors` : undefined} />
+        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

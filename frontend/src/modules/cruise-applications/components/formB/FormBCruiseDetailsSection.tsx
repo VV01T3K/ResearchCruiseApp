@@ -36,7 +36,8 @@ const shortResearchEquipmentColumns = (
         name={`shortResearchEquipments[${row.index}].startDate`}
         children={(field) => (
           <AppDatePickerInput
-            data-testid="short-equipment-from"
+            data-testid-button="short-equipment-from-button"
+            data-testid-errors="short-equipment-from-errors"
             name={field.name}
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -66,7 +67,8 @@ const shortResearchEquipmentColumns = (
               }
               return (
                 <AppDatePickerInput
-                  data-testid="short-equipment-to"
+                  data-testid-button="short-equipment-to-button"
+                  data-testid-errors="short-equipment-to-errors"
                   name={field.name}
                   value={field.state.value}
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -94,7 +96,8 @@ const shortResearchEquipmentColumns = (
         name={`shortResearchEquipments[${row.index}].name`}
         children={(field) => (
           <AppInput
-            data-testid="short-equipment-name"
+            data-testid="short-equipment-name-input"
+            data-testid-errors="short-equipment-name-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -173,7 +176,8 @@ const longResearchEquipmentColumns = (
         name={`longResearchEquipments[${row.index}].duration`}
         children={(field) => (
           <AppInput
-            data-testid="long-equipment-duration"
+            data-testid="long-equipment-duration-input"
+            data-testid-errors="long-equipment-duration-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -197,7 +201,8 @@ const longResearchEquipmentColumns = (
         name={`longResearchEquipments[${row.index}].name`}
         children={(field) => (
           <AppInput
-            data-testid="long-equipment-name"
+            data-testid="long-equipment-name-input"
+            data-testid-errors="long-equipment-name-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -250,7 +255,8 @@ const portColumns = (
         name={`ports[${row.index}].startTime`}
         children={(field) => (
           <AppDatePickerInput
-            data-testid="port-from"
+            data-testid-button="port-from-button"
+            data-testid-errors="port-from-errors"
             name={field.name}
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -281,7 +287,8 @@ const portColumns = (
               }
               return (
                 <AppDatePickerInput
-                  data-testid="port-to"
+                  data-testid-button="port-to-button"
+                  data-testid-errors="port-to-errors"
                   name={field.name}
                   value={field.state.value}
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -310,7 +317,8 @@ const portColumns = (
         name={`ports[${row.index}].name`}
         children={(field) => (
           <AppInput
-            data-testid="port-name"
+            data-testid="port-name-input"
+            data-testid-errors="port-name-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}

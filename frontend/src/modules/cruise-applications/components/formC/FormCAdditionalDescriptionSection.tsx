@@ -31,6 +31,8 @@ export function FormCAdditionalDescriptionSection() {
             label="Dodatkowy opis"
             placeholder="Dodatkowy opis"
             disabled={isReadonly}
+            data-testid="form-c-description-input"
+            data-testid-errors="form-c-description-errors"
           />
         )}
       />
@@ -48,7 +50,8 @@ export function FormCAdditionalDescriptionSection() {
             allowMultiple
             maxSizeInMb={10}
             acceptedMimeTypes={['image/jpeg', 'image/png']}
-            data-testid="form-c-attachment-input"
+            data-testid-button="form-c-attachment-input-button"
+            data-testid-errors="form-c-attachment-input-errors"
           />
         )}
       />

@@ -30,7 +30,8 @@ export function FormASupervisorInfoSection() {
               placeholder="Wprowadź adres e-mail przełożonego"
               type="email"
               disabled={isReadonly}
-              data-testid="form-a-supervisor-email"
+              data-testid="form-a-supervisor-email-input"
+              data-testid-errors="form-a-supervisor-email-errors"
             />
           )}
         />

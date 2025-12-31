@@ -30,7 +30,8 @@ const researchEquipmentsColumns = (
         name={`researchEquipments[${row.index}].name`}
         children={(field) => (
           <AppInput
-            data-testid="research-equipment-name"
+            data-testid="research-equipment-name-input"
+            data-testid-errors="research-equipment-name-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}

@@ -149,7 +149,7 @@ export function FormAPublicationsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Rok"
                 disabled={isReadonly}
-                data-testid="form-a-publication-year-button"
+                data-testid-button="form-a-publication-year-button"
               />
             )}
           />
@@ -175,7 +175,7 @@ export function FormAPublicationsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Punkty"
                 disabled={isReadonly}
-                data-testid="form-a-publication-points-input"
+                data-testid-input="form-a-publication-points-input"
               />
             )}
           />

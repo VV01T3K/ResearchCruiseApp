@@ -127,6 +127,7 @@ export function FormCAdditionalPermissionsSection() {
               buttons={() => [
                 <AppButton
                   key="permissions.add-btn"
+                  data-testid="form-c-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
                     field.handleChange((prev: PermissionDto[]) => prev);

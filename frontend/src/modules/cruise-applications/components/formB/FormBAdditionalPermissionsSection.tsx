@@ -32,7 +32,8 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].description`}
             children={(field) => (
               <AppInput
-                data-testid="permission-description"
+                data-testid="permission-description-input"
+                data-testid-errors="permission-description-errors"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -56,7 +57,8 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].executive`}
             children={(field) => (
               <AppInput
-                data-testid="permission-executive"
+                data-testid="permission-executive-input"
+                data-testid-errors="permission-executive-errors"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -89,7 +91,8 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].scan`}
             children={(field) => (
               <AppFileInput
-                data-testid="permission-scan"
+                data-testid-button="permission-scan-button"
+                data-testid-errors="permission-scan-errors"
                 name={field.name}
                 value={field.state.value}
                 acceptedMimeTypes={['application/pdf']}

@@ -85,6 +85,7 @@ export function FormACruiseLengthSection() {
                 ]}
                 showRequiredAsterisk
                 data-testid="form-a-period-selection-type"
+                data-testid-button="form-a-period-selection-type-button"
               />
             </div>
           )}
@@ -201,6 +202,7 @@ export function FormACruiseLengthSection() {
                       showRequiredAsterisk
                       disabled={isReadonly}
                       data-testid="form-a-cruise-days"
+                      data-testid-input="form-a-cruise-days-input"
                     />
                   )}
                 />
@@ -227,6 +229,8 @@ export function FormACruiseLengthSection() {
                       showRequiredAsterisk
                       disabled={isReadonly}
                       data-testid="form-a-cruise-hours"
+                      data-testid-input="form-a-cruise-hours-input"
+                      data-testid-errors="form-a-cruise-hours-errors"
                     />
                   )}
                 />
@@ -247,7 +251,7 @@ export function FormACruiseLengthSection() {
                   label="Uwagi dotyczące terminu"
                   placeholder='np. "Rejs w okresie wakacyjnym"'
                   disabled={isReadonly}
-                  data-testid="form-a-period-notes"
+                  data-testid="form-a-period-notes-input"
                 />
               </div>
             )}
@@ -270,7 +274,7 @@ export function FormACruiseLengthSection() {
                     inlineLabel: shipUsage,
                   }))}
                   disabled={isReadonly}
-                  data-testid="form-a-ship-usage-button"
+                  data-testid-button="form-a-ship-usage-button"
                 />
               </div>
             )}

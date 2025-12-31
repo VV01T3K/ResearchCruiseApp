@@ -26,6 +26,8 @@ type Props = {
   maximum?: number;
   step?: number;
   'data-testid'?: string;
+  'data-testid-input'?: string;
+  'data-testid-errors'?: string;
 } & (
   | {
       type?: 'integer';
@@ -53,6 +55,8 @@ export function AppNumberInput({
   type = 'integer',
   precision = 2,
   'data-testid': testId,
+  'data-testid-input': inputTestId,
+  'data-testid-errors': errorsTestId,
 }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [stringValue, setStringValue] = React.useState(value.toString());
@@ -140,7 +144,7 @@ export function AppNumberInput({
               errors?.length ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
             ref={inputRef}
-            data-testid={testId ? `${testId}-input` : undefined}
+            data-testid={inputTestId}
           />
           <AppInputErrorTriangle errors={errors} mode={'absolute'} />
         </div>
@@ -155,7 +159,7 @@ export function AppNumberInput({
       </div>
       <div className="flex flex-col justify-between mt-2 text-sm">
         <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={testId ? `${testId}-errors` : undefined} />
+        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

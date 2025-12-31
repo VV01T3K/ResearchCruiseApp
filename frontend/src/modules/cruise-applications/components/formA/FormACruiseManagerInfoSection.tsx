@@ -24,7 +24,7 @@ export function FormACruiseManagerInfoSection() {
               placeholder="Wybierz kierownika rejsu"
               allOptions={initValues.cruiseManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
-              data-testid="form-a-cruise-manager"
+              data-testid-button="form-a-cruise-manager-button"
             />
           )}
         />
@@ -43,7 +43,8 @@ export function FormACruiseManagerInfoSection() {
               placeholder="Wybierz zastępcę kierownika rejsu"
               allOptions={initValues.deputyManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
-              data-testid="form-a-deputy-manager"
+              data-testid-button="form-a-deputy-manager-button"
+              data-testid-errors="form-a-deputy-manager-errors"
             />
           )}
         />
@@ -68,7 +69,7 @@ export function FormACruiseManagerInfoSection() {
                 inlineLabel: year,
               }))}
               disabled={isReadonly}
-              data-testid="form-a-year"
+              data-testid-button="form-a-year-button"
             />
           )}
         />

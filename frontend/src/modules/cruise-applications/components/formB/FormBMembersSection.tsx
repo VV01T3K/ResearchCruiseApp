@@ -134,7 +134,8 @@ export function FormBMembersSection() {
             name={`guestTeams[${row.index}].name`}
             children={(field) => (
               <AppInput
-                data-testid="guest-team-name"
+                data-testid="guest-team-name-input"
+                data-testid-errors="guest-team-name-errors"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -158,7 +159,8 @@ export function FormBMembersSection() {
             name={`guestTeams[${row.index}].noOfPersons`}
             children={(field) => (
               <AppNumberInput
-                data-testid="guest-team-people"
+                data-testid-input="guest-team-people-input"
+                data-testid-errors="guest-team-people-errors"
                 name={field.name}
                 value={parseInt(field.state.value)}
                 minimum={0}
@@ -217,7 +219,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].title`}
               children={(field) => (
                 <AppInput
-                  data-testid="crew-member-title"
+                  data-testid="crew-member-title-input"
+                  data-testid-errors="crew-member-title-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -233,7 +236,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].firstName`}
               children={(field) => (
                 <AppInput
-                  data-testid="crew-member-names"
+                  data-testid="crew-member-names-input"
+                  data-testid-errors="crew-member-names-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -250,7 +254,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].lastName`}
               children={(field) => (
                 <AppInput
-                  data-testid="crew-member-surname"
+                  data-testid="crew-member-surname-input"
+                  data-testid-errors="crew-member-surname-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -276,7 +281,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].birthPlace`}
               children={(field) => (
                 <AppInput
-                  data-testid="crew-member-birthplace"
+                  data-testid="crew-member-birthplace-input"
+                  data-testid-errors="crew-member-birthplace-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -292,7 +298,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].birthDate`}
               children={(field) => (
                 <AppDatePickerInput
-                  data-testid="crew-member-birthdate"
+                  data-testid-button="crew-member-birthdate-button"
+                  data-testid-errors="crew-member-birthdate-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={(e) => field.handleChange(e ?? '')}
@@ -308,7 +315,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].documentNumber`}
               children={(field) => (
                 <AppInput
-                  data-testid="crew-member-document-id"
+                  data-testid="crew-member-document-id-input"
+                  data-testid-errors="crew-member-document-id-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -324,7 +332,8 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].documentExpiryDate`}
               children={(field) => (
                 <AppDatePickerInput
-                  data-testid="crew-member-document-expiry"
+                  data-testid-button="crew-member-document-expiry-button"
+                  data-testid-errors="crew-member-document-expiry-errors"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={(e) => field.handleChange(e ?? '')}
@@ -349,7 +358,8 @@ export function FormBMembersSection() {
             name={`crewMembers[${row.index}].institution`}
             children={(field) => (
               <AppInput
-                data-testid="crew-member-institution"
+                data-testid="crew-member-institution-input"
+                data-testid-errors="crew-member-institution-errors"
                 name={field.name}
                 value={field.state.value as string}
                 onChange={field.handleChange}

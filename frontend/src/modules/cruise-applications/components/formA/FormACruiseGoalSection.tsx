@@ -27,7 +27,8 @@ export function FormACruiseGoalSection() {
               }))}
               showRequiredAsterisk
               disabled={isReadonly}
-              data-testid="form-a-cruise-goal"
+              data-testid-button="form-a-cruise-goal-button"
+              data-testid-errors="form-a-cruise-goal-errors"
             />
           )}
         />
@@ -48,7 +49,8 @@ export function FormACruiseGoalSection() {
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}
                   showRequiredAsterisk
-                  data-testid="form-a-cruise-goal-description"
+                  data-testid="form-a-cruise-goal-description-input"
+                  data-testid-errors="form-a-cruise-goal-description-errors"
                 />
               )}
             />
