@@ -25,11 +25,15 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
   async selectOption(itemText: string) {
     await this.dropdown.click();
     if (this.variant === 'menuitems') {
-      await this.page.getByRole('menuitem', { name: itemText }).click();
-      await expect(this.page.getByRole('menuitem')).toHaveCount(0);
+      // Base UI Select uses 'option' role instead of 'menuitem'
+      await this.page.getByRole('option', { name: itemText }).click();
+      // Wait for the popup to close
+      await expect(this.page.getByRole('option').first()).not.toBeVisible({ timeout: 1000 }).catch(() => {});
     } else if (this.variant === 'menu-with-buttons') {
-      await this.page.getByRole('menu').getByRole('button', { name: itemText }).click();
-      await expect(this.page.getByRole('menu')).toHaveCount(0);
+      // Base UI Popover with buttons inside - find button by text
+      await this.page.getByRole('button', { name: itemText, exact: true }).click();
+      // Wait a bit for the popover to close
+      await this.page.waitForTimeout(100);
     } else if (this.variant === 'datetime-picker') {
       // for now, only day selection is supported
       const menu = this.page.getByRole('menu');

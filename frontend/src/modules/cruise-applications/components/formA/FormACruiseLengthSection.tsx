@@ -223,9 +223,11 @@ export function FormACruiseLengthSection() {
                   children={(field) => (
                     <AppNumberInput
                       name={field.name}
-                      value={parseInt(cruiseHours) / 24}
+                      value={parseFloat(cruiseHours) / 24}
                       minimum={0}
                       maximum={60}
+                      step={0.25}
+                      type="float"
                       onChange={(x: number) => field.handleChange((x * 24).toString())}
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -250,7 +252,7 @@ export function FormACruiseLengthSection() {
                   children={(field) => (
                     <AppNumberInput
                       name={field.name}
-                      value={parseInt(cruiseHours)}
+                      value={parseFloat(cruiseHours)}
                       minimum={0}
                       maximum={1440}
                       onChange={(x: number) => field.handleChange(x.toString())}

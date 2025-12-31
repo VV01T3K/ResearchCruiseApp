@@ -29,14 +29,14 @@ export class FormACruiseLengthSection {
     // Cruise days input using data-testid
     const cruiseDaysContainer = this.sectionDiv.getByTestId('form-a-cruise-days');
     this.cruiseDaysInput = cruiseDaysContainer.getByTestId('form-a-cruise-days-input');
-    this.cruiseDaysDecreaseButton = cruiseDaysContainer.getByRole('button').nth(0);
-    this.cruiseDaysIncreaseButton = cruiseDaysContainer.getByRole('button').nth(1);
+    this.cruiseDaysDecreaseButton = cruiseDaysContainer.getByRole('button', { name: 'Decrease' });
+    this.cruiseDaysIncreaseButton = cruiseDaysContainer.getByRole('button', { name: 'Increase' });
 
     // Cruise hours input using data-testid
     const cruiseHoursContainer = this.sectionDiv.getByTestId('form-a-cruise-hours');
     this.cruiseHoursInput = cruiseHoursContainer.getByTestId('form-a-cruise-hours-input');
-    this.cruiseHoursDecreaseButton = cruiseHoursContainer.getByRole('button').nth(0);
-    this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button').nth(1);
+    this.cruiseHoursDecreaseButton = cruiseHoursContainer.getByRole('button', { name: 'Decrease' });
+    this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button', { name: 'Increase' });
 
     this.periodNotesInput = this.sectionDiv.getByTestId('form-a-period-notes-input');
     this.shipUsageDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-ship-usage-button'));
@@ -58,8 +58,35 @@ export class FormACruiseLengthSection {
 
     await this.periodSelectionTypeDropdown.selectOption('Okres dopuszczalny/optymalny');
 
-    const firstSlider = this.sectionDiv.getByRole('slider').first();
-    await firstSlider.waitFor({ state: 'visible' });
-    await firstSlider.click();
+    // When "Okres dopuszczalny/optymalny" is selected, there are TWO period inputs:
+    // 1. Acceptable period (dopuszczalny okres)
+    // 2. Optimal period (optymalny okres)
+    // Each period input has 2 sliders (start and end months)
+    
+    // Get all sliders - should have 4 total (2 for acceptable, 2 for optimal)
+    const allSliders = this.sectionDiv.getByRole('slider');
+    await allSliders.first().waitFor({ state: 'visible' });
+    
+    // Set acceptable period (first 2 sliders): January to June
+    await allSliders.nth(0).focus();
+    for (let i = 0; i < 2; i++) {
+      await this.page.keyboard.press('ArrowRight');
+    }
+    
+    await allSliders.nth(1).focus();
+    for (let i = 0; i < 12; i++) {
+      await this.page.keyboard.press('ArrowRight');
+    }
+    
+    // Set optimal period (last 2 sliders): March to May
+    await allSliders.nth(2).focus();
+    for (let i = 0; i < 4; i++) {
+      await this.page.keyboard.press('ArrowRight');
+    }
+    
+    await allSliders.nth(3).focus();
+    for (let i = 0; i < 10; i++) {
+      await this.page.keyboard.press('ArrowRight');
+    }
   }
 }
