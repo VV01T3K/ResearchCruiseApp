@@ -11,19 +11,29 @@ export class FormAPublicationsSection {
   public readonly addHistoricalPublicationDropdown: FormDropdown;
 
   public readonly errorsLocator: Locator;
+  public readonly emptyDoiMessage: Locator;
+  public readonly emptyTitleMessage: Locator;
+  public readonly emptyAuthorsMessage: Locator;
+  public readonly emptyMagazineMessage: Locator;
+  public readonly emptyYearMessage: Locator;
 
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-publications-section');
     this.addPublicationDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-publication-btn-button'),
+      this.page.getByTestId('form-a-add-publication-btn'),
       { variant: 'menu-with-buttons' }
     );
     this.addHistoricalPublicationDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-historical-publication-btn-button')
+      this.page.getByTestId('form-a-add-historical-publication-btn')
     );
     this.errorsLocator = this.page.getByTestId('form-a-publications-errors');
+    this.emptyDoiMessage = this.sectionDiv.getByText('DOI jest wymagane');
+    this.emptyTitleMessage = this.sectionDiv.getByText('Tytuł jest wymagany');
+    this.emptyAuthorsMessage = this.sectionDiv.getByText('Autorzy są wymagani');
+    this.emptyMagazineMessage = this.sectionDiv.getByText('Czasopismo jest wymagane');
+    this.emptyYearMessage = this.sectionDiv.getByText('Rok jest wymagany');
   }
 
   public doiInput(index: 'first' | 'last' | number) {

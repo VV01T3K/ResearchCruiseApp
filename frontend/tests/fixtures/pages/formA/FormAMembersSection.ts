@@ -27,8 +27,10 @@ export class FormAMembersSection {
     this.addHistoricalTeamDropdown = new FormDropdown(
       this.page.getByTestId('form-a-add-historical-team-btn')
     );
-    this.noUGUnitsMessage = this.page.getByTestId('form-a-ug-teams-errors');
-    this.invalidUGNofMembersMessage = this.sectionDiv.getByText(
+    this.noUGUnitsMessage = this.page.getByTestId('form-a-ug-teams-errors').getByText(
+      'Co najmniej jeden zespół UG jest wymagany'
+    );
+    this.invalidUGNofMembersMessage = this.page.getByTestId('form-a-ug-teams-errors').getByText(
       'Zespół UG musi składać się z co najmniej jednej osoby'
     );
     this.emptyGuestTeamNameMessage = this.sectionDiv.getByText('Instytucja jest wymagana');
