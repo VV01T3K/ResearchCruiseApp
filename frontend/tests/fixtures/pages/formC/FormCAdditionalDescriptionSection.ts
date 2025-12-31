@@ -13,13 +13,13 @@ export class FormCAdditionalDescriptionSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-additional-description-section');
-    this.descriptionInput = new FormInput(this.sectionDiv.getByRole('textbox'), {
+    this.descriptionInput = new FormInput(this.sectionDiv.getByTestId('form-c-description-input'), {
       errors: { tooLong: this.sectionDiv.getByText('Maksymalna długość to 10240 znaków') },
     });
   }
 
   public async sendAttachment(filePath: string | readonly string[]) {
-    const sendButton = this.sectionDiv.locator('div:below(:text("Załączniki"))').first();
+    const sendButton = this.sectionDiv.getByTestId('form-c-attachment-input-button');
 
     const fileChooserPromise = this.page.waitForEvent('filechooser');
     await sendButton.click();

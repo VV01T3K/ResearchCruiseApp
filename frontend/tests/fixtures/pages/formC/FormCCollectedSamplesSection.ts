@@ -13,7 +13,7 @@ export class FormCCollectedSamplesSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-collected-samples-section');
-    this.addSampleButton = this.sectionDiv.getByRole('button', { name: 'Dodaj próbkę' });
+    this.addSampleButton = this.sectionDiv.getByTestId('form-c-add-sample-btn');
   }
 
   public sampleRowLocator(index: 'first' | 'last' | number) {

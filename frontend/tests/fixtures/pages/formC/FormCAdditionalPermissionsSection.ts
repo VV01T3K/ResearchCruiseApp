@@ -13,7 +13,7 @@ export class FormCAdditionalPermissionsSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-additional-permissions-section');
-    this.addPermissionButton = this.sectionDiv.getByRole('button', { name: 'Dodaj pozwolenie' });
+    this.addPermissionButton = this.sectionDiv.getByTestId('form-c-add-permission-btn');
   }
 
   public permissionRowLocator(index: 'first' | 'last' | number) {

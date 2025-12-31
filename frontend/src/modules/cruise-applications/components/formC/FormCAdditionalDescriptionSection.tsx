@@ -48,6 +48,7 @@ export function FormCAdditionalDescriptionSection() {
             allowMultiple
             maxSizeInMb={10}
             acceptedMimeTypes={['image/jpeg', 'image/png']}
+            data-testid="form-c-attachment-input"
           />
         )}
       />

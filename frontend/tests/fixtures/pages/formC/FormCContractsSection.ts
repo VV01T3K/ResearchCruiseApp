@@ -15,11 +15,11 @@ export class FormCContractsSection {
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-contracts-section');
     this.addNewContractDropdown = new FormDropdown(
-      this.sectionDiv.locator('button', { hasText: 'Dodaj nowy kontrakt' }),
+      this.sectionDiv.getByTestId('form-c-add-new-contract-btn'),
       { variant: 'menu-with-buttons' }
     );
     this.addHistoricalContractDropdown = new FormDropdown(
-      this.sectionDiv.locator('button', { hasText: 'Dodaj historyczną umowę' })
+      this.sectionDiv.getByTestId('form-c-add-historical-contract-btn')
     );
   }
 

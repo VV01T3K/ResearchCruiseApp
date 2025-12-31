@@ -13,9 +13,7 @@ export class FormBCruiseManagerInfoSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-cruise-manager-section');
-    this.isManagerPresentCheckbox = this.sectionDiv.getByRole('checkbox', {
-      name: 'Czy kierownik jest obecny na rejsie?',
-    });
+    this.isManagerPresentCheckbox = this.sectionDiv.getByTestId('form-b-manager-present-checkbox');
   }
 
   public async defaultFill() {}
