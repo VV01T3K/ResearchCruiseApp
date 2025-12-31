@@ -1,10 +1,11 @@
 /* eslint-disable @eslint-react/no-array-index-key */
+import { Button } from '@base-ui/react/button';
 import { Popover } from '@base-ui/react/popover';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
 import { useState } from 'react';
 
-import { AppButton, AppButtonVariant } from '@/core/components/AppButton';
+import { AppButtonVariant } from '@/core/components/AppButton';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { cn } from '@/core/lib/utils';
 
@@ -40,7 +41,7 @@ export function CruiseApplicationDropdownElementSelectorButton({
             className={cn(
               'text-white outline-none hover:cursor-pointer disabled:cursor-default',
               variants[variant],
-              'flex items-center gap-4'
+              'flex items-center gap-4 px-5 py-2.5'
             )}
             disabled={disabled}
             data-testid={testId}
@@ -61,36 +62,37 @@ export function CruiseApplicationDropdownElementSelectorButton({
               'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
               'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
               'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
-              'max-h-96 overflow-y-auto'
+              'flex max-h-96 flex-col'
             )}
           >
-            <div className="sticky top-0 bg-white">
+            <div className="sticky top-0 shrink-0 bg-white">
               <SearchIcon className="absolute top-2.5 right-5 z-10 h-5 w-5" />
               <AppInput value={searchValue} onChange={setSearchValue} placeholder="Wyszukaj..." autoFocus />
             </div>
-            {filteredOptions.length === 0 && <div className="py-4 text-center text-gray-500">Brak wyników</div>}
-            {filteredOptions.length > 0 &&
-              filteredOptions.map((option, i) => (
-                <AppButton
-                  key={`${option.value}${i}`}
-                  onClick={
-                    option.onClick
-                      ? () => {
-                          option.onClick!();
-                          setExpanded(false);
-                        }
-                      : undefined
-                  }
-                  variant="plain"
-                  className={cn(
-                    'w-full rounded-lg px-2 inset-ring-blue-500 focus:inset-ring-2',
-                    option.onClick && 'hover:bg-primary-50 transition-colors duration-150'
-                  )}
-                  disabled={!option.onClick}
-                >
-                  {option.content ?? <span>{option.value}</span>}
-                </AppButton>
-              ))}
+            <div className="overflow-y-auto p-1">
+              {filteredOptions.length === 0 && <div className="py-4 text-center text-gray-500">Brak wyników</div>}
+              {filteredOptions.length > 0 &&
+                filteredOptions.map((option, i) => (
+                  <Button
+                    key={`${option.value}${i}`}
+                    onClick={
+                      option.onClick
+                        ? () => {
+                            option.onClick!();
+                            setExpanded(false);
+                          }
+                        : undefined
+                    }
+                    className={cn(
+                      'text-default block w-full rounded-lg px-2 py-1 text-left text-base font-semibold inset-ring-blue-500 outline-none hover:cursor-pointer focus:inset-ring-2 disabled:cursor-default',
+                      option.onClick && 'hover:bg-primary-50 transition-colors duration-150'
+                    )}
+                    disabled={!option.onClick}
+                  >
+                    {option.content ?? <span>{option.value}</span>}
+                  </Button>
+                ))}
+            </div>
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

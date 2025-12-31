@@ -104,7 +104,7 @@ export function AppDropdownInput({
             disabled && 'cursor-not-allowed bg-gray-200',
             hasError && 'border-danger ring-danger text-danger focus:text-gray-900'
           )}
-          data-testid={testId ? `${testId}-button` : undefined}
+          data-testid={buttonTestId}
         >
           <Select.Value>{() => selectedOption?.inlineLabel ?? placeholder}</Select.Value>
           <span className="flex items-center gap-2">

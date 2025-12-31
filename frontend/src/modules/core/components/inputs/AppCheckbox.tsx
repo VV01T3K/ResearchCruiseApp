@@ -1,3 +1,4 @@
+import { Checkbox } from '@base-ui/react/checkbox';
 import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import React from 'react';
 
@@ -35,46 +36,36 @@ export function AppCheckbox({
   disabled,
   helper,
 }: Props) {
-  const elementRef = React.useRef<HTMLInputElement>(null);
-
   return (
-    <>
-      <input
-        ref={elementRef}
-        type="checkbox"
-        name={name}
-        id={name}
-        className="hidden"
-        checked={checked}
-        onBlur={onBlur}
-        onChange={(evt) => onChange?.(evt.target.checked)}
-        disabled={disabled}
-      />
-      <div className={cn('flex flex-col', className)}>
-        <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
-          <AppInputLabel name={name} value={label} className="mb-0" />
+    <div className={cn('flex flex-col', className)}>
+      <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
+        <AppInputLabel name={name} value={label} className="mb-0" />
 
-          <div onClick={() => elementRef.current?.click()}>
-            <div
-              className={cn(
-                'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
-                sizes[size],
-                checked && variants[variant][disabled ? 'disabled' : 'enabled'],
-                !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
-                disabled ? 'cursor-default' : 'cursor-pointer'
-              )}
-            >
-              {checked && <CheckIcon />}
-            </div>
-          </div>
-        </div>
-
-        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-          <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} />
-        </div>
+        <Checkbox.Root
+          name={name}
+          checked={checked}
+          onCheckedChange={(checked) => onChange?.(checked === true)}
+          onBlur={onBlur}
+          disabled={disabled}
+          className={cn(
+            'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
+            sizes[size],
+            checked && variants[variant][disabled ? 'disabled' : 'enabled'],
+            !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
+            disabled ? 'cursor-default' : 'cursor-pointer'
+          )}
+        >
+          <Checkbox.Indicator>
+            <CheckIcon />
+          </Checkbox.Indicator>
+        </Checkbox.Root>
       </div>
-    </>
+
+      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+        <AppInputHelper helper={helper} />
+        <AppInputErrorsList errors={errors} />
+      </div>
+    </div>
   );
 }
 
