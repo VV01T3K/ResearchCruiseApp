@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from 'motion/react';
 import { useStore } from '@tanstack/react-form';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -226,7 +226,7 @@ export function FormACruiseLengthSection() {
                       value={parseFloat(cruiseHours) / 24}
                       minimum={0}
                       maximum={60}
-                      step={0.25}
+                      step={1}
                       type="float"
                       onChange={(x: number) => field.handleChange((x * 24).toString())}
                       onBlur={field.handleBlur}
@@ -261,6 +261,7 @@ export function FormACruiseLengthSection() {
                       label="Liczba planowanych godzin rejsowych"
                       showRequiredAsterisk
                       disabled={isReadonly}
+                      clampOnInput={true}
                       data-testid="form-a-cruise-hours"
                       data-testid-input="form-a-cruise-hours-input"
                       data-testid-errors="form-a-cruise-hours-errors"

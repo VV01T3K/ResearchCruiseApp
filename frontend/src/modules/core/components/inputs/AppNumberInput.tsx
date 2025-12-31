@@ -1,6 +1,7 @@
 import { NumberField } from '@base-ui/react/number-field';
 import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
+import { useRef } from 'react';
 
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/core/components/inputs/parts/AppInputErrorTriangle';
@@ -14,6 +15,7 @@ type Props = {
 
   onBlur?: () => void;
   onChange?: (value: number) => void;
+  onRawChange?: (value: string) => void;
   errors?: string[];
   label?: React.ReactNode;
   showRequiredAsterisk?: boolean;
@@ -23,6 +25,8 @@ type Props = {
   minimum?: number;
   maximum?: number;
   step?: number;
+  /** Whether to clamp the input value to min/max immediately as the user types. Defaults to true. Set to false to allow typing beyond limits. */
+  clampOnInput?: boolean;
   'data-testid'?: string;
   'data-testid-input'?: string;
   'data-testid-errors'?: string;
@@ -41,6 +45,7 @@ export function AppNumberInput({
   value,
   onBlur,
   onChange,
+  onRawChange,
   errors,
   label,
   showRequiredAsterisk,
@@ -50,12 +55,28 @@ export function AppNumberInput({
   minimum,
   maximum,
   step = 1,
+  clampOnInput = true,
   type = 'integer',
   precision = 2,
   'data-testid': testId,
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleRawChange = (rawValue: string) => {
+    onRawChange?.(rawValue);
+    if (clampOnInput && inputRef.current) {
+      const numValue = parseFloat(rawValue);
+      if (!isNaN(numValue)) {
+        if (maximum !== undefined && numValue > maximum) {
+          inputRef.current.value = maximum.toString();
+        } else if (minimum !== undefined && numValue < minimum) {
+          inputRef.current.value = minimum.toString();
+        }
+      }
+    }
+  };
   return (
     <NumberField.Root
       name={name}
@@ -91,7 +112,9 @@ export function AppNumberInput({
         )}
         <div className="relative w-full">
           <NumberField.Input
+            ref={inputRef}
             onBlur={onBlur}
+            onChange={(e) => handleRawChange(e.target.value)}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',

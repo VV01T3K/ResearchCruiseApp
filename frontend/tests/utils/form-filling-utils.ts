@@ -28,7 +28,9 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       // Base UI Select uses 'option' role instead of 'menuitem'
       await this.page.getByRole('option', { name: itemText }).click();
       // Wait for the popup to close
-      await expect(this.page.getByRole('option').first()).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+      await expect(this.page.getByRole('option').first())
+        .not.toBeVisible({ timeout: 1000 })
+        .catch(() => {});
     } else if (this.variant === 'menu-with-buttons') {
       // Base UI Popover with buttons inside - find button by text
       await this.page.getByRole('button', { name: itemText, exact: true }).click();
