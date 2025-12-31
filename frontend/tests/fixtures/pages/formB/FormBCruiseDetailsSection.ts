@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -14,7 +14,7 @@ export class FormBCruiseDetailsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '12. Szczegóły rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-cruise-details-section');
     this.addEquipmentButton = this.sectionDiv.getByRole('button', { name: 'Dodaj sprzęt' });
     this.addEquipmentActionDropdown = new FormDropdown(this.sectionDiv.getByRole('button', { name: 'Dodaj nowe' }), {
       variant: 'menu-with-buttons',
@@ -84,5 +84,5 @@ export class FormBCruiseDetailsSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

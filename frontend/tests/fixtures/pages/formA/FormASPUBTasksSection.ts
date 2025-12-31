@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -13,13 +13,10 @@ export class FormASPUBTasksSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(
-      formPage.page,
-      '10. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie'
-    );
-    this.addNewTaskButton = this.sectionDiv.getByRole('button', { name: 'Dodaj' }).first();
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-spub-tasks-section');
+    this.addNewTaskButton = this.page.getByTestId('form-a-add-spub-task-btn');
     this.addHistoricalTaskDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczne zadanie' })
+      this.page.getByTestId('form-a-add-historical-spub-task-btn-button')
     );
   }
 
@@ -46,5 +43,5 @@ export class FormASPUBTasksSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

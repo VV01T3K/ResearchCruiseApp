@@ -120,7 +120,11 @@ export function FormBAdditionalPermissionsSection() {
   }
 
   return (
-    <AppAccordion title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
+    <AppAccordion
+      title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań"
+      expandedByDefault
+      data-testid="form-b-additional-permissions-section"
+    >
       <form.Field
         name="permissions"
         mode="array"

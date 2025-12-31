@@ -7,4 +7,5 @@ export type TableProps<T> = {
   variant?: 'form' | 'table';
   errors?: string[];
   showRequiredAsterisk?: boolean;
+  'data-testid'?: string;
 };

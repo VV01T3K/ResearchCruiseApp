@@ -29,6 +29,7 @@ type Props<T> = {
   variant?: 'form' | 'table';
   disabled?: boolean;
   errors?: string[];
+  'data-testid'?: string;
 };
 
 export function AppTable<T>({
@@ -44,6 +45,7 @@ export function AppTable<T>({
   variant = 'table',
   disabled = false,
   errors,
+  'data-testid': testId,
 }: Props<T>) {
   'use no memo'; // Disable React Compiler memoization for TanStack Table compatibility
   const { width } = useWindowSize();
@@ -84,6 +86,7 @@ export function AppTable<T>({
       showRequiredAsterisk={showRequiredAsterisk}
       variant={variant}
       errors={errors}
+      data-testid={testId}
     />
   );
 }

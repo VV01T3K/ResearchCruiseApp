@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -19,15 +19,15 @@ export class FormAMembersSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '8. Zespoły badawcze, które miałyby uczestniczyć w rejsie');
-    this.addUGUnitDropdown = new FormDropdown(this.sectionDiv.getByRole('button', { name: 'Dodaj jednostkę UG' }), {
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-members-section');
+    this.addUGUnitDropdown = new FormDropdown(this.page.getByTestId('form-a-add-ug-unit-btn'), {
       variant: 'menu-with-buttons',
     });
-    this.addNewGuestTeamButton = this.sectionDiv.getByRole('button', { name: 'Dodaj nowy zespół' });
+    this.addNewGuestTeamButton = this.page.getByTestId('form-a-add-guest-team-btn');
     this.addHistoricalTeamDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczny zespół' })
+      this.page.getByTestId('form-a-add-historical-team-btn')
     );
-    this.noUGUnitsMessage = this.sectionDiv.getByText('Co najmniej jeden zespół UG jest wymagany');
+    this.noUGUnitsMessage = this.page.getByTestId('form-a-ug-teams-errors');
     this.invalidUGNofMembersMessage = this.sectionDiv.getByText(
       'Zespół UG musi składać się z co najmniej jednej osoby'
     );
@@ -36,7 +36,8 @@ export class FormAMembersSection {
   }
 
   public ugUnitRowLocator(index: 'first' | 'last' | number) {
-    const rowsLocator = this.sectionDiv.locator('table').nth(0).getByRole('row');
+    const table = this.page.getByTestId('form-a-ug-teams-table');
+    const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }
 
@@ -49,7 +50,8 @@ export class FormAMembersSection {
   }
 
   public guestTeamRowLocator(index: 'first' | 'last' | number) {
-    const rowsLocator = this.sectionDiv.locator('table').nth(1).getByRole('row');
+    const table = this.page.getByTestId('form-a-guest-teams-table');
+    const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }
 

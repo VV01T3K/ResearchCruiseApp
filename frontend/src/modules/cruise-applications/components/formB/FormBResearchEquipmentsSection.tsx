@@ -134,7 +134,11 @@ export function FormBResearchEquipmentsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
   return (
-    <AppAccordion title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu"
+      expandedByDefault
+      data-testid="form-b-research-equipments-section"
+    >
       <form.Field
         name="researchEquipments"
         mode="array"

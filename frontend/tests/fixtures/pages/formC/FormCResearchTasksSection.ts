@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -11,7 +11,7 @@ export class FormCResearchTasksSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '7. Zadania przypisane do rejsu - efekty rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-research-tasks-effects-section');
   }
 
   public taskRowLocator(index: 'first' | 'last' | number) {
@@ -28,5 +28,5 @@ export class FormCResearchTasksSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

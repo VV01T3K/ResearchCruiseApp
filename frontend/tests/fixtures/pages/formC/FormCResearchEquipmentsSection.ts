@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -12,7 +12,7 @@ export class FormCResearchEquipmentsSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '14. Lista sprzętu i aparatury badawczej użytej podczas rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-research-equipments-section');
     this.addEquipmentButton = this.sectionDiv.getByRole('button', { name: 'Dodaj sprzęt / aparaturę' });
   }
 
@@ -37,5 +37,5 @@ export class FormCResearchEquipmentsSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

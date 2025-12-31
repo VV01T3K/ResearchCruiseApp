@@ -196,7 +196,7 @@ export function FormAPublicationsSection() {
   }
 
   return (
-    <AppAccordion title="9. Publikacje" expandedByDefault>
+    <AppAccordion title="9. Publikacje" expandedByDefault data-testid="form-a-publications-section">
       <header className="text-center space-y-4 mb-8 max-w-2xl mx-auto">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
@@ -257,6 +257,7 @@ export function FormAPublicationsSection() {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
+                    data-testid="form-a-add-publication-btn"
                   >
                     Dodaj nową publikację
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -305,6 +306,7 @@ export function FormAPublicationsSection() {
                     )}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-historical-publication-btn"
                   >
                     Dodaj historyczną publikację
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -312,8 +314,9 @@ export function FormAPublicationsSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-publications-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />
             </>
           )}
         />

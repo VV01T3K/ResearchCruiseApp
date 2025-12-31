@@ -71,7 +71,11 @@ export function FormAResearchTasksSection() {
   }
 
   return (
-    <AppAccordion title="6. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
+    <AppAccordion
+      title="6. Zadania do zrealizowania w trakcie rejsu"
+      expandedByDefault
+      data-testid="form-a-research-tasks-section"
+    >
       <div>
         <form.Field
           name="researchTasks"
@@ -95,6 +99,7 @@ export function FormAResearchTasksSection() {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
+                    data-testid="form-a-add-research-task-btn"
                   >
                     Dodaj nowe efekty rejsu
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -123,6 +128,7 @@ export function FormAResearchTasksSection() {
                     ])}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-historical-research-task-btn"
                   >
                     Dodaj historyczne efekty rejsu
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -131,8 +137,12 @@ export function FormAResearchTasksSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-research-tasks-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-research-tasks-errors"
+              />
             </>
           )}
         />

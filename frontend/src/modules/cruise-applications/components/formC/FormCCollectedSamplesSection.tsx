@@ -113,7 +113,11 @@ export function FormCCollectedSamplesSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
-    <AppAccordion title="16. Lista próbek pobranych i poddanych analizie podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="16. Lista próbek pobranych i poddanych analizie podczas rejsu"
+      expandedByDefault
+      data-testid="form-c-collected-samples-section"
+    >
       <form.Field
         name="collectedSamples"
         mode="array"

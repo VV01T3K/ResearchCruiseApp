@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -12,7 +12,7 @@ export class FormBAdditionalPermissionsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '4. Dodatkowe pozwolenia do planowanych podczas rejsu badań');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-additional-permissions-section');
     this.addPermissionButton = this.sectionDiv.getByRole('button', { name: 'Dodaj pozwolenie' });
   }
 
@@ -47,5 +47,5 @@ export class FormBAdditionalPermissionsSection {
     await fileChooser.setFiles(filePath);
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

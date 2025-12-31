@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -18,7 +18,7 @@ export class FormCMembersSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '9. Zespoły badawcze, które uczestniczyły w rejsie');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-members-section');
     this.addUGUnitDropdown = new FormDropdown(this.sectionDiv.getByRole('button', { name: 'Dodaj jednostkę UG' }), {
       variant: 'menu-with-buttons',
     });
@@ -66,5 +66,5 @@ export class FormCMembersSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

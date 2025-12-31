@@ -106,7 +106,11 @@ export function FormCResearchTasksSection() {
   ];
 
   return (
-    <AppAccordion title="7. Zadania przypisane do rejsu - efekty rejsu" expandedByDefault>
+    <AppAccordion
+      title="7. Zadania przypisane do rejsu - efekty rejsu"
+      expandedByDefault
+      data-testid="form-c-research-tasks-effects-section"
+    >
       <AppTable
         data={form.state.values.researchTasksEffects}
         columns={columns}

@@ -260,7 +260,11 @@ export function FormCMembersSection() {
   ];
 
   return (
-    <AppAccordion title="9. Zespoły badawcze, które uczestniczyły w rejsie" expandedByDefault>
+    <AppAccordion
+      title="9. Zespoły badawcze, które uczestniczyły w rejsie"
+      expandedByDefault
+      data-testid="form-c-members-section"
+    >
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"

@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -16,17 +16,15 @@ export class FormACruiseManagerInfoSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '1. Kierownik zgłaszanego rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-cruise-manager-section');
     this.cruiseManagerDropdown = new FormDropdown(
-      this.sectionDiv.locator('button:below(:text("Kierownik rejsu"))').first()
+      this.page.getByTestId('form-a-cruise-manager-button')
     );
     this.deputyManagerDropdown = new FormDropdown(
-      this.sectionDiv.locator('button:below(:text("Zastępca kierownika rejsu"))').first()
+      this.page.getByTestId('form-a-deputy-manager-button')
     );
-    this.yearDropdown = new FormDropdown(this.sectionDiv.locator('button:below(:text("Rok"))').first());
-    this.missingDeputyManagerMessage = this.sectionDiv.getByText(
-      'Zastępca kierownika rejsu musi być jednym z dostępnych zastępców kierownika rejsu'
-    );
+    this.yearDropdown = new FormDropdown(this.page.getByTestId('form-a-year-button'));
+    this.missingDeputyManagerMessage = this.page.getByTestId('form-a-deputy-manager-errors');
   }
 
   public async defaultFill() {

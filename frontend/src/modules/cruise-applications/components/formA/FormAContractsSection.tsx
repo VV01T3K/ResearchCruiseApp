@@ -158,6 +158,7 @@ export function FormAContractsSection() {
     <AppAccordion
       title="7. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
       expandedByDefault
+      data-testid="form-a-contracts-section"
     >
       <div>
         <form.Field
@@ -191,6 +192,7 @@ export function FormAContractsSection() {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
+                    data-testid="form-a-add-contract-btn"
                   >
                     Dodaj nowy kontrakt
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -206,6 +208,7 @@ export function FormAContractsSection() {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-historical-contract-btn"
                   >
                     Dodaj historyczną umowę
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -214,8 +217,12 @@ export function FormAContractsSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-contracts-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-contracts-errors"
+              />
             </>
           )}
         />

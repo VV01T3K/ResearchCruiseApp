@@ -8,7 +8,7 @@ export function FormASupervisorInfoSection() {
   const { form, isReadonly, hasFormBeenSubmitted } = useFormA();
 
   return (
-    <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault>
+    <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault data-testid="form-a-supervisor-section">
       <div className="max-w-180 mx-auto space-y-4">
         <AppAlert variant="warning">
           <span className="text-sm text-center">
@@ -30,6 +30,7 @@ export function FormASupervisorInfoSection() {
               placeholder="Wprowadź adres e-mail przełożonego"
               type="email"
               disabled={isReadonly}
+              data-testid="form-a-supervisor-email"
             />
           )}
         />

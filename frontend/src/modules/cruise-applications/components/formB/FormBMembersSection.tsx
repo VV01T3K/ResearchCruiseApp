@@ -372,7 +372,11 @@ export function FormBMembersSection() {
   }
 
   return (
-    <AppAccordion title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+    <AppAccordion
+      title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie"
+      expandedByDefault
+      data-testid="form-b-members-section"
+    >
       <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field

@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -15,14 +15,15 @@ export class FormAPermissionsSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '3. Dodatkowe pozwolenia do planowanych podczas rejsu badań');
-    this.addPermissionButton = this.sectionDiv.getByRole('button', { name: 'Dodaj pozwolenie' });
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-permissions-section');
+    this.addPermissionButton = this.page.getByTestId('form-a-add-permission-btn');
     this.descriptionRequiredMessage = this.sectionDiv.getByText('Treść pozwolenia jest wymagana').first();
     this.executiveRequiredMessage = this.sectionDiv.getByText('Organ wydający jest wymagany').first();
   }
 
   public permissionRow(index: 'first' | 'last' | number) {
-    const rowsLocator = this.sectionDiv.getByRole('row');
+    const table = this.page.getByTestId('form-a-permissions-table');
+    const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }
 
@@ -42,5 +43,5 @@ export class FormAPermissionsSection {
     await (await this.executiveInput('last')).fill(executive);
   }
 
-  public async defaultFill() {} // Optional section
+  public async defaultFill() { } // Optional section
 }

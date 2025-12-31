@@ -33,6 +33,7 @@ type Props = {
   allowEmptyOption?: boolean;
   placeholder?: string;
   defaultValue?: string;
+  'data-testid'?: string;
 };
 export function AppDropdownInput({
   name,
@@ -48,6 +49,7 @@ export function AppDropdownInput({
   allowEmptyOption = false,
   placeholder = 'Wybierz',
   defaultValue = '',
+  'data-testid': testId,
 }: Props) {
   const inputRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -94,7 +96,7 @@ export function AppDropdownInput({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" data-testid={testId}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className={cn(
@@ -120,6 +122,7 @@ export function AppDropdownInput({
             'flex justify-between items-center'
           )}
           disabled={disabled}
+          data-testid={testId ? `${testId}-button` : undefined}
         >
           {selectedOption.inlineLabel}
           <span className="flex gap-2">
@@ -132,7 +135,7 @@ export function AppDropdownInput({
       </div>
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2 ' : '')}>
         <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} />
+        <AppInputErrorsList errors={errors} data-testid={testId ? `${testId}-errors` : undefined} />
       </div>
       <AnimatePresence>
         {expanded && (

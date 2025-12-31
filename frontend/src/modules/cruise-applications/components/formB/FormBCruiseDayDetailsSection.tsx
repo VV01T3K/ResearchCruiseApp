@@ -228,7 +228,11 @@ export function FormBCruiseDayDetailsSection() {
   };
 
   return (
-    <AppAccordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="13. Szczegółowy plan zadań do realizacji podczas rejsu"
+      expandedByDefault
+      data-testid="form-b-cruise-day-details-section"
+    >
       <form.Field
         name="cruiseDaysDetails"
         mode="array"

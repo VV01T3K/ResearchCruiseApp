@@ -15,6 +15,7 @@ type Props = {
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
+  'data-testid'?: string;
 };
 export function AppFloatingLabelInput({
   name,
@@ -27,6 +28,7 @@ export function AppFloatingLabelInput({
   className,
   disabled,
   helper,
+  'data-testid': testId,
 }: Props) {
   return (
     <div className={cn('relative z-0 w-full mb-5 group', className)}>
@@ -43,6 +45,7 @@ export function AppFloatingLabelInput({
         onBlur={onBlur}
         onChange={(evt) => onChange?.(evt.target.value)}
         disabled={disabled}
+        data-testid={testId}
       />
       <AppInputErrorTriangle errors={errors} mode="absolute" />
       <label

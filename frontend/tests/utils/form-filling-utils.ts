@@ -1,8 +1,20 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
+/**
+ * @deprecated Use page.getByTestId() with data-testid attributes instead.
+ * This function relies on fragile text-based selectors.
+ */
 export function locateSectionDiv(page: Page, title: string) {
   title = title.replace(/"/g, '\\"'); // escape double quotes
   return page.locator(`main form div:below(:text("${title}"))`).first();
+}
+
+/**
+ * Locate a form section by its data-testid attribute.
+ * Preferred method over locateSectionDiv.
+ */
+export function locateSectionByTestId(page: Page, testId: string) {
+  return page.getByTestId(testId);
 }
 
 type FormDropdownVartiant = 'menuitems' | 'menu-with-buttons' | 'datetime-picker';

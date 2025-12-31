@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -15,10 +15,10 @@ export class FormASupervisorInfoSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '11. Dane kontaktowe przełożonego');
-    this.supervisorEmailInput = this.sectionDiv.locator('input:below(:text("Adres e-mail przełożonego"))');
-    this.missingEmailMessage = this.sectionDiv.getByText('Niepoprawny adres email');
-    this.invalidEmailMessage = this.sectionDiv.getByText('Niepoprawny adres email');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-supervisor-section');
+    this.supervisorEmailInput = this.page.getByTestId('form-a-supervisor-email-input');
+    this.missingEmailMessage = this.page.getByTestId('form-a-supervisor-email-errors');
+    this.invalidEmailMessage = this.page.getByTestId('form-a-supervisor-email-errors');
   }
 
   public async defaultFill() {

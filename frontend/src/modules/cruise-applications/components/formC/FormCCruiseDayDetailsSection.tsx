@@ -181,7 +181,11 @@ export function FormCCruiseDayDetailsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
-    <AppAccordion title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu"
+      expandedByDefault
+      data-testid="form-c-cruise-day-details-section"
+    >
       <form.Field
         name="cruiseDaysDetails"
         mode="array"

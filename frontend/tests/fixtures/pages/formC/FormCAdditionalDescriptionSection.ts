@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -12,7 +12,7 @@ export class FormCAdditionalDescriptionSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '18. Krótki opis podsumowujący dany rejs');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-additional-description-section');
     this.descriptionInput = new FormInput(this.sectionDiv.getByRole('textbox'), {
       errors: { tooLong: this.sectionDiv.getByText('Maksymalna długość to 10240 znaków') },
     });

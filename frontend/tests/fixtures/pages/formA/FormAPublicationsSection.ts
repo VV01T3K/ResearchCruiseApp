@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -10,28 +10,20 @@ export class FormAPublicationsSection {
   public readonly addPublicationDropdown: FormDropdown;
   public readonly addHistoricalPublicationDropdown: FormDropdown;
 
-  public readonly emptyDoiMessage: Locator;
-  public readonly emptyTitleMessage: Locator;
-  public readonly emptyAuthorsMessage: Locator;
-  public readonly emptyMagazineMessage: Locator;
-  public readonly emptyYearMessage: Locator;
+  public readonly errorsLocator: Locator;
 
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '9. Publikacje');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-publications-section');
     this.addPublicationDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj nową publikację' }),
+      this.page.getByTestId('form-a-add-publication-btn-button'),
       { variant: 'menu-with-buttons' }
     );
     this.addHistoricalPublicationDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczną publikację' })
+      this.page.getByTestId('form-a-add-historical-publication-btn-button')
     );
-    this.emptyDoiMessage = this.sectionDiv.getByText('DOI jest wymagane');
-    this.emptyTitleMessage = this.sectionDiv.getByText('Tytuł jest wymagany');
-    this.emptyAuthorsMessage = this.sectionDiv.getByText('Autorzy są wymagani');
-    this.emptyMagazineMessage = this.sectionDiv.getByText('Czasopismo jest wymagane');
-    this.emptyYearMessage = this.sectionDiv.getByText('Rok jest wymagany');
+    this.errorsLocator = this.page.getByTestId('form-a-publications-errors');
   }
 
   public doiInput(index: 'first' | 'last' | number) {
@@ -66,5 +58,5 @@ export class FormAPublicationsSection {
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
-  public async defaultFill() {} // Optional section
+  public async defaultFill() { } // Optional section
 }

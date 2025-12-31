@@ -337,7 +337,7 @@ export function FormBCruiseDetailsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
   return (
-    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault>
+    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-b-cruise-details-section">
       <p className="text-xl text-center font-semibold">Czy w ramach rejsu planuje się:</p>
 
       <div className="mt-8">

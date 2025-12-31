@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -17,18 +17,18 @@ export class FormAResearchTasksSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '6. Zadania do zrealizowania w trakcie rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-research-tasks-section');
 
     this.addNewTaskDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj nowe efekty rejsu' }),
+      this.page.getByTestId('form-a-add-research-task-btn'),
       {
         variant: 'menu-with-buttons',
       }
     );
     this.addHistoricalTaskDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczne efekty rejsu' })
+      this.page.getByTestId('form-a-add-historical-research-task-btn')
     );
-    this.noResearchTasksMessage = this.sectionDiv.getByText('Co najmniej jedno zadanie badawcze jest wymagane');
+    this.noResearchTasksMessage = this.page.getByTestId('form-a-research-tasks-errors');
     this.emptyAuthorMessage = this.sectionDiv.getByText('Autor nie może być pusty');
     this.emptyTitleMessage = this.sectionDiv.getByText('Tytuł nie może być pusty');
   }

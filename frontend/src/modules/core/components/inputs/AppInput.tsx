@@ -22,6 +22,7 @@ type Props = {
   helper?: React.ReactNode;
   autoFocus?: boolean;
   containerClassName?: string;
+  'data-testid'?: string;
 };
 export function AppInput({
   name,
@@ -38,6 +39,7 @@ export function AppInput({
   helper,
   autoFocus,
   containerClassName,
+  'data-testid': testId,
 }: Props) {
   const InputElement = type === 'textarea' ? 'textarea' : 'input';
   const elementRef = React.useRef<HTMLInputElement & HTMLTextAreaElement>(null);
@@ -51,7 +53,7 @@ export function AppInput({
   }, [autoFocus, elementRef]);
 
   return (
-    <div className={cn('flex flex-col', containerClassName)}>
+    <div className={cn('flex flex-col', containerClassName)} data-testid={testId}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
       <div className="flex relative">
@@ -72,13 +74,14 @@ export function AppInput({
             errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
           )}
           ref={elementRef}
+          data-testid={testId ? `${testId}-input` : undefined}
         />
         <AppInputErrorTriangle errors={errors} mode="absolute" />
       </div>
 
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
         <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} />
+        <AppInputErrorsList errors={errors} data-testid={testId ? `${testId}-errors` : undefined} />
       </div>
     </div>
   );

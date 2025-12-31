@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -12,7 +12,7 @@ export class FormBCruiseDayDetailsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '13. Szczegółowy plan zadań do realizacji podczas rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-cruise-day-details-section');
     this.addTaskButton = this.sectionDiv.getByRole('button', { name: 'Dodaj' });
   }
 
@@ -41,5 +41,5 @@ export class FormBCruiseDayDetailsSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

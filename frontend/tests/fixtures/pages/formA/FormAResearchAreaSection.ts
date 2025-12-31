@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -14,16 +14,17 @@ export class FormAResearchAreaSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '4. Rejony prowadzenia badań');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-research-area-section');
     this.addResearchAreaDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj rejon' }).first(),
+      this.page.getByTestId('form-a-add-research-area-btn'),
       { variant: 'menu-with-buttons' }
     );
-    this.noResearchAreasMessage = this.sectionDiv.getByText('Co najmniej jeden rejon badań jest wymagany').first();
+    this.noResearchAreasMessage = this.page.getByTestId('form-a-research-areas-errors');
   }
 
   public researchAreaRowLocator(index: 'first' | 'last' | number) {
-    const rowsLocator = this.sectionDiv.getByRole('row');
+    const table = this.page.getByTestId('form-a-research-areas-table');
+    const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }
 
