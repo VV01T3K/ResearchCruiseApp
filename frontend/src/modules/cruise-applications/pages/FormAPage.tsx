@@ -41,10 +41,11 @@ export function FormAPage() {
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
-  const normalizePeriod = (period: unknown): CruisePeriodType => {
+  const normalizePeriod = (period: unknown): CruisePeriodType | '' => {
+    if (period === null || period === undefined) return '';
     if (Array.isArray(period) && period.length === 0) return '';
     if (Array.isArray(period) && period.length === 2) return period as CruisePeriodType;
-    return (period ?? '') as CruisePeriodType;
+    return '';
   };
 
   const form = useForm({
@@ -52,6 +53,17 @@ export function FormAPage() {
       ? (() => {
           const normalizedAcceptable = normalizePeriod(formA.data.acceptablePeriod);
           const normalizedOptimal = normalizePeriod(formA.data.optimalPeriod);
+
+          // Use stored periodSelectionType if available, otherwise infer from data
+          // (for backwards compatibility with drafts that don't have this field)
+          let periodSelectionType: 'precise' | 'period';
+          if (formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period') {
+            periodSelectionType = formA.data.periodSelectionType;
+          } else {
+            // Fallback: infer from data - if precise dates exist, use precise mode
+            const hasPreciseDates = !!(formA.data.precisePeriodStart || formA.data.precisePeriodEnd);
+            periodSelectionType = hasPreciseDates ? 'precise' : 'period';
+          }
 
           return {
             ...formA.data,
@@ -61,8 +73,7 @@ export function FormAPage() {
             optimalPeriod: normalizedOptimal,
             precisePeriodStart: formA.data.precisePeriodStart ?? '',
             precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
-            periodSelectionType:
-              formA.data.precisePeriodStart || formA.data.precisePeriodEnd ? ('precise' as const) : ('period' as const),
+            periodSelectionType,
             contracts: mapNullsToEmptyStrings(formA.data.contracts), // Map each null field to empty string so validation works
             researchTasks: mapNullsToEmptyStrings(formA.data.researchTasks),
           };

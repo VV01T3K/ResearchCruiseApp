@@ -24,19 +24,48 @@ type Props = {
 };
 
 /**
+ * Check if a value is an empty period (empty string, empty array, null, or undefined).
+ */
+function isEmptyPeriod(period: unknown): boolean {
+  if (period === null || period === undefined || period === '') return true;
+  if (Array.isArray(period) && period.length === 0) return true;
+  return false;
+}
+
+/**
  * Parse a CruisePeriodType value to [start, end] numbers.
  * Always returns [start, end] where start <= end.
+ * Handles arrays that might come from backend in any order (since HashSet doesn't preserve order).
  */
 function parsePeriod(period: CruisePeriodType | undefined, fallback: [number, number]): [number, number] {
-  if (!period || period.length !== 2) {
+  if (isEmptyPeriod(period)) {
     return fallback;
   }
-  const start = parseInt(period[0], 10);
-  const end = parseInt(period[1], 10);
-  if (isNaN(start) || isNaN(end)) {
+  if (!Array.isArray(period) || period.length !== 2) {
     return fallback;
   }
-  return start <= end ? [start, end] : [end, start];
+  const val1 = parseInt(period[0], 10);
+  const val2 = parseInt(period[1], 10);
+  if (isNaN(val1) || isNaN(val2)) {
+    return fallback;
+  }
+  // Always sort to ensure [start, end] order since backend HashSet doesn't preserve order
+  return val1 <= val2 ? [val1, val2] : [val2, val1];
+}
+
+/**
+ * Check if a period value is valid (has two valid numbers).
+ */
+function isValidPeriod(period: CruisePeriodType | undefined): boolean {
+  if (isEmptyPeriod(period)) {
+    return false;
+  }
+  if (!Array.isArray(period) || period.length !== 2) {
+    return false;
+  }
+  const val1 = parseInt(period[0], 10);
+  const val2 = parseInt(period[1], 10);
+  return !isNaN(val1) && !isNaN(val2);
 }
 
 /**
@@ -71,34 +100,48 @@ export function CruiseApplicationPeriodInput({
   // Parse maxValues bounds (defaults to full year: 0-24)
   const [minBound, maxBound] = parsePeriod(maxValues, [0, 24]);
 
-  // Parse and clamp the initial/current value
-  const getInitialValues = (): [number, number] => {
+  // Track previous bounds to detect changes
+  const prevBoundsRef = React.useRef({ minBound, maxBound });
+
+  // Compute slider values from external value prop
+  const computedSliderValues = React.useMemo((): [number, number] => {
+    if (!isValidPeriod(value)) {
+      // If external value is not valid, use full bounds
+      return [minBound, maxBound];
+    }
     const parsed = parsePeriod(value, [minBound, maxBound]);
     return clampToBounds(parsed, minBound, maxBound);
-  };
+  }, [value, minBound, maxBound]);
 
-  const [values, setValues] = React.useState<[number, number]>(getInitialValues);
+  // Internal state for slider UI - used during drag operations
+  const [localValues, setLocalValues] = React.useState<[number, number] | null>(null);
 
-  // Sync with external value changes (e.g., form reset or initial data load)
+  // The displayed slider values: use local state during interaction, otherwise computed from prop
+  const sliderValues = localValues ?? computedSliderValues;
+
+  // When bounds change, we need to clamp and notify parent
   React.useEffect(() => {
-    const parsed = parsePeriod(value, [minBound, maxBound]);
-    const clamped = clampToBounds(parsed, minBound, maxBound);
+    const prevBounds = prevBoundsRef.current;
+    if (prevBounds.minBound !== minBound || prevBounds.maxBound !== maxBound) {
+      prevBoundsRef.current = { minBound, maxBound };
 
-    // Only update if actually different to avoid loops
-    if (clamped[0] !== values[0] || clamped[1] !== values[1]) {
-      setValues(clamped);
+      // Clamp current values to new bounds
+      const currentValues = localValues ?? computedSliderValues;
+      const clamped = clampToBounds(currentValues, minBound, maxBound);
+
+      if (clamped[0] !== currentValues[0] || clamped[1] !== currentValues[1]) {
+        // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+        setLocalValues(null); // Reset local state
+        onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
+      }
     }
-  }, [value, minBound, maxBound]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [minBound, maxBound, localValues, computedSliderValues, onChange]);
 
-  // When maxValues change, clamp current values to new bounds
+  // Reset local state when external value changes (e.g., form reset)
   React.useEffect(() => {
-    const clamped = clampToBounds(values, minBound, maxBound);
-
-    if (clamped[0] !== values[0] || clamped[1] !== values[1]) {
-      setValues(clamped);
-      onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
-    }
-  }, [minBound, maxBound]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    setLocalValues(null);
+  }, [value]);
 
   const handleValueChange = (newValues: number | number[]) => {
     if (!Array.isArray(newValues) || newValues.length !== 2) {
@@ -116,7 +159,7 @@ export function CruiseApplicationPeriodInput({
     // Clamp to bounds (shouldn't be needed if slider is configured correctly, but safety check)
     const clamped = clampToBounds([start, end], minBound, maxBound);
 
-    setValues(clamped);
+    setLocalValues(clamped);
     onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
   };
 
@@ -125,10 +168,10 @@ export function CruiseApplicationPeriodInput({
   return (
     <div className="flex flex-col">
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-      <input type="hidden" name={name} value={values.join(',')} disabled={disabled} />
+      <input type="hidden" name={name} value={sliderValues.join(',')} disabled={disabled} />
 
       <Slider.Root
-        value={values}
+        value={sliderValues}
         onValueChange={handleValueChange}
         onBlur={onBlur}
         min={0}
@@ -183,7 +226,7 @@ export function CruiseApplicationPeriodInput({
         </Slider.Control>
       </Slider.Root>
 
-      <p className="text-center">Wybrano okres: {getExplanationForPeriod(values[0], values[1])}</p>
+      <p className="text-center">Wybrano okres: {getExplanationForPeriod(sliderValues[0], sliderValues[1])}</p>
       <div className="mt-2 flex flex-col justify-between text-sm">
         <AppInputHelper helper={helper} />
         <AppInputErrorsList errors={errors} />

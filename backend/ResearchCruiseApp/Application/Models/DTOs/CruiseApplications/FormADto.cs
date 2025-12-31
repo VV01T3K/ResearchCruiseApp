@@ -13,8 +13,14 @@ public class FormADto
     [StringLength(4)]
     public string Year { get; init; } = null!;
 
-    public HashSet<string>? AcceptablePeriod { get; init; }
-    public HashSet<string>? OptimalPeriod { get; init; }
+    public List<string>? AcceptablePeriod { get; init; }
+    public List<string>? OptimalPeriod { get; init; }
+
+    /// <summary>
+    /// Period selection type: "period" for slider-based selection, "precise" for exact date selection.
+    /// </summary>
+    [StringLength(16)]
+    public string? PeriodSelectionType { get; init; }
 
     public DateTime? PrecisePeriodStart { get; init; }
     public DateTime? PrecisePeriodEnd { get; init; }

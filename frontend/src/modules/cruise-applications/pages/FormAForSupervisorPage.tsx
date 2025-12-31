@@ -9,7 +9,7 @@ import {
   useFormAForSupervisorQuery,
   useSupervisorAnswerFormAMutation,
 } from '@/cruise-applications/hooks/FormAApiHooks';
-import { FormADto } from '@/cruise-applications/models/FormADto';
+import { CruisePeriodType, FormADto } from '@/cruise-applications/models/FormADto';
 
 export function FormAForSupervisorPage() {
   const { cruiseApplicationId, supervisorCode } = getRouteApi('/cruiseapproval').useSearch();
@@ -18,31 +18,66 @@ export function FormAForSupervisorPage() {
   const answerMutation = useSupervisorAnswerFormAMutation();
   const formA = useFormAForSupervisorQuery({ cruiseId: cruiseApplicationId, supervisorCode });
 
+  const normalizePeriod = (period: unknown): CruisePeriodType | '' => {
+    if (period === null || period === undefined) return '';
+    if (Array.isArray(period) && period.length === 0) return '';
+    if (Array.isArray(period) && period.length === 2) return period as CruisePeriodType;
+    return '';
+  };
+
   const form = useForm({
-    defaultValues: (formA.data ?? {
-      id: undefined,
-      cruiseManagerId: '',
-      deputyManagerId: '',
-      year: initialStateQuery.data.years[0],
-      acceptablePeriod: ['0', '24'],
-      optimalPeriod: ['0', '24'],
-      cruiseHours: '0',
-      periodNotes: '',
-      shipUsage: '',
-      differentUsage: '',
-      permissions: [],
-      researchAreaDescriptions: [],
-      cruiseGoal: '',
-      cruiseGoalDescription: '',
-      researchTasks: [],
-      contracts: [],
-      ugTeams: [],
-      guestTeams: [],
-      publications: [],
-      spubTasks: [],
-      supervisorEmail: '',
-      note: '',
-    }) as FormADto,
+    defaultValues: (formA.data
+      ? (() => {
+          const normalizedAcceptable = normalizePeriod(formA.data.acceptablePeriod);
+          const normalizedOptimal = normalizePeriod(formA.data.optimalPeriod);
+
+          // Use stored periodSelectionType if available, otherwise infer from data
+          // (for backwards compatibility with drafts that don't have this field)
+          let periodSelectionType: 'precise' | 'period';
+          if (formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period') {
+            periodSelectionType = formA.data.periodSelectionType;
+          } else {
+            // Fallback: infer from data - if precise dates exist, use precise mode
+            const hasPreciseDates = !!(formA.data.precisePeriodStart || formA.data.precisePeriodEnd);
+            periodSelectionType = hasPreciseDates ? 'precise' : 'period';
+          }
+
+          return {
+            ...formA.data,
+            acceptablePeriod: normalizedAcceptable,
+            optimalPeriod: normalizedOptimal,
+            precisePeriodStart: formA.data.precisePeriodStart ?? '',
+            precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
+            periodSelectionType,
+          };
+        })()
+      : {
+          id: undefined,
+          cruiseManagerId: '',
+          deputyManagerId: '',
+          year: initialStateQuery.data.years[0],
+          acceptablePeriod: ['0', '24'] as CruisePeriodType,
+          optimalPeriod: ['0', '24'] as CruisePeriodType,
+          precisePeriodStart: '',
+          precisePeriodEnd: '',
+          periodSelectionType: 'period' as const,
+          cruiseHours: '0',
+          periodNotes: '',
+          shipUsage: '',
+          differentUsage: '',
+          permissions: [],
+          researchAreaDescriptions: [],
+          cruiseGoal: '',
+          cruiseGoalDescription: '',
+          researchTasks: [],
+          contracts: [],
+          ugTeams: [],
+          guestTeams: [],
+          publications: [],
+          spubTasks: [],
+          supervisorEmail: '',
+          note: '',
+        }) as FormADto,
   });
 
   function handleAcceptForm() {
