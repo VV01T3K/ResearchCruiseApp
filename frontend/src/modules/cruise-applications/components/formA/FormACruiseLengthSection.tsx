@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useStore } from '@tanstack/react-form';
 import { useEffect, useRef } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -24,7 +25,10 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
-  const periodSelectionType = form.state.values.periodSelectionType ?? 'period';
+  const year = useStore(form.store, (state) => state.values.year);
+  const periodSelectionType = useStore(form.store, (state) => state.values.periodSelectionType ?? 'period');
+  const acceptablePeriod = useStore(form.store, (state) => state.values.acceptablePeriod);
+  const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
   const hasInitializedPeriodsRef = useRef(false);
 
   // Initialize period values when in period mode and values are empty
@@ -38,9 +42,6 @@ export function FormACruiseLengthSection() {
     if (hasInitializedPeriodsRef.current) {
       return;
     }
-
-    const acceptablePeriod = form.state.values.acceptablePeriod;
-    const optimalPeriod = form.state.values.optimalPeriod;
 
     const acceptableIsValid = isValidPeriod(acceptablePeriod);
     const optimalIsValid = isValidPeriod(optimalPeriod);
@@ -63,7 +64,7 @@ export function FormACruiseLengthSection() {
     }
 
     hasInitializedPeriodsRef.current = true;
-  }, [periodSelectionType, isReadonly, form]);
+  }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
     form.setFieldValue('periodSelectionType', value);
@@ -104,7 +105,7 @@ export function FormACruiseLengthSection() {
       data-testid="form-a-cruise-length-section"
     >
       <div className="space-y-4">
-        <FormABlockadeWarning year={+form.state.values.year} blockades={blockades} />
+        <FormABlockadeWarning year={+year} blockades={blockades} />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
