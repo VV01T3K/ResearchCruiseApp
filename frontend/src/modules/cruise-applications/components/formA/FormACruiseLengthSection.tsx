@@ -270,6 +270,7 @@ export function FormACruiseLengthSection() {
                     inlineLabel: shipUsage,
                   }))}
                   disabled={isReadonly}
+                  data-testid="form-a-ship-usage-button"
                 />
               </div>
             )}
@@ -300,6 +301,7 @@ export function FormACruiseLengthSection() {
                             placeholder="np. statek badawczy"
                             showRequiredAsterisk
                             disabled={isReadonly}
+                            data-testid="form-a-alternative-ship-usage-input"
                           />
                         )}
                       />

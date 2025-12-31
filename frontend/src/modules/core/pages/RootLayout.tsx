@@ -30,7 +30,7 @@ export function RootLayout() {
         </div>
       </div>
       <AppBackground />
-      <main className="flex-1" id="modal-root">
+      <main className="flex-1" id="modal-root" data-testid="main-content">
         <motion.div
           key={routerState.location.pathname}
           initial={{ opacity: 0 }}

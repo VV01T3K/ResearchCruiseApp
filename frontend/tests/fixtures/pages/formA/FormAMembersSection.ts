@@ -20,15 +20,15 @@ export class FormAMembersSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-members-section');
-    this.addUGUnitDropdown = new FormDropdown(this.page.getByTestId('form-a-add-ug-unit-btn'), {
+    this.addUGUnitDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-ug-unit-btn'), {
       variant: 'menu-with-buttons',
     });
-    this.addNewGuestTeamButton = this.page.getByTestId('form-a-add-guest-team-btn');
-    this.addHistoricalTeamDropdown = new FormDropdown(this.page.getByTestId('form-a-add-historical-team-btn'));
-    this.noUGUnitsMessage = this.page
+    this.addNewGuestTeamButton = this.sectionDiv.getByTestId('form-a-add-guest-team-btn');
+    this.addHistoricalTeamDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-historical-team-btn'));
+    this.noUGUnitsMessage = this.sectionDiv
       .getByTestId('form-a-ug-teams-errors')
       .getByText('Co najmniej jeden zespół UG jest wymagany');
-    this.invalidUGNofMembersMessage = this.page
+    this.invalidUGNofMembersMessage = this.sectionDiv
       .getByTestId('form-a-ug-teams-errors')
       .getByText('Zespół UG musi składać się z co najmniej jednej osoby');
     this.emptyGuestTeamNameMessage = this.sectionDiv.getByText('Instytucja jest wymagana');
@@ -36,7 +36,7 @@ export class FormAMembersSection {
   }
 
   public ugUnitRowLocator(index: 'first' | 'last' | number) {
-    const table = this.page.getByTestId('form-a-ug-teams-table');
+    const table = this.sectionDiv.getByTestId('form-a-ug-teams-table');
     const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }
@@ -50,7 +50,7 @@ export class FormAMembersSection {
   }
 
   public guestTeamRowLocator(index: 'first' | 'last' | number) {
-    const table = this.page.getByTestId('form-a-guest-teams-table');
+    const table = this.sectionDiv.getByTestId('form-a-guest-teams-table');
     const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }

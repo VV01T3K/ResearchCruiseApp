@@ -21,13 +21,13 @@ export class FormAPublicationsSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-publications-section');
-    this.addPublicationDropdown = new FormDropdown(this.page.getByTestId('form-a-add-publication-btn'), {
+    this.addPublicationDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-publication-btn'), {
       variant: 'menu-with-buttons',
     });
     this.addHistoricalPublicationDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-historical-publication-btn')
+      this.sectionDiv.getByTestId('form-a-add-historical-publication-btn')
     );
-    this.errorsLocator = this.page.getByTestId('form-a-publications-errors');
+    this.errorsLocator = this.sectionDiv.getByTestId('form-a-publications-errors');
     this.emptyDoiMessage = this.sectionDiv.getByText('DOI jest wymagane');
     this.emptyTitleMessage = this.sectionDiv.getByText('Tytuł jest wymagany');
     this.emptyAuthorsMessage = this.sectionDiv.getByText('Autorzy są wymagani');
@@ -36,36 +36,42 @@ export class FormAPublicationsSection {
   }
 
   public doiInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(:text("DOI"))');
+    const table = this.sectionDiv.getByTestId('form-a-publications-table');
+    const locator = table.getByTestId('form-a-publication-doi-input');
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
   public titleInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(:text("Tytuł"))');
+    const table = this.sectionDiv.getByTestId('form-a-publications-table');
+    const locator = table.getByTestId('form-a-publication-title-input');
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
   public authorsInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(:text("Autorzy"))');
+    const table = this.sectionDiv.getByTestId('form-a-publications-table');
+    const locator = table.getByTestId('form-a-publication-authors-input');
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
   public magazineInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(:text("Czasopismo"))');
+    const table = this.sectionDiv.getByTestId('form-a-publications-table');
+    const locator = table.getByTestId('form-a-publication-magazine-input');
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
   public chooseYearDropdown(index: 'first' | 'last' | number) {
-    const allLocator = this.sectionDiv.locator('button:below(:text("Rok"))');
+    const table = this.sectionDiv.getByTestId('form-a-publications-table');
+    const allLocator = table.getByTestId('form-a-publication-year-button');
     const singleLocator =
       index === 'first' ? allLocator.first() : index === 'last' ? allLocator.last() : allLocator.nth(index);
     return new FormDropdown(singleLocator, { variant: 'menu-with-buttons' });
   }
 
   public pointsInput(index: 'first' | 'last' | number) {
-    const locator = this.sectionDiv.locator('input:below(:text("Punkty"))');
+    const table = this.sectionDiv.getByTestId('form-a-publications-table');
+    const locator = table.getByTestId('form-a-publication-points-input');
     return index === 'first' ? locator.first() : index === 'last' ? locator.last() : locator.nth(index);
   }
 
-  public async defaultFill() {} // Optional section
+  public async defaultFill() { } // Optional section
 }

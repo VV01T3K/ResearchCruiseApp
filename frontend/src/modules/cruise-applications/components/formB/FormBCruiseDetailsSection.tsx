@@ -36,6 +36,7 @@ const shortResearchEquipmentColumns = (
         name={`shortResearchEquipments[${row.index}].startDate`}
         children={(field) => (
           <AppDatePickerInput
+            data-testid="short-equipment-from"
             name={field.name}
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -65,6 +66,7 @@ const shortResearchEquipmentColumns = (
               }
               return (
                 <AppDatePickerInput
+                  data-testid="short-equipment-to"
                   name={field.name}
                   value={field.state.value}
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -92,6 +94,7 @@ const shortResearchEquipmentColumns = (
         name={`shortResearchEquipments[${row.index}].name`}
         children={(field) => (
           <AppInput
+            data-testid="short-equipment-name"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -170,6 +173,7 @@ const longResearchEquipmentColumns = (
         name={`longResearchEquipments[${row.index}].duration`}
         children={(field) => (
           <AppInput
+            data-testid="long-equipment-duration"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -193,6 +197,7 @@ const longResearchEquipmentColumns = (
         name={`longResearchEquipments[${row.index}].name`}
         children={(field) => (
           <AppInput
+            data-testid="long-equipment-name"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -245,6 +250,7 @@ const portColumns = (
         name={`ports[${row.index}].startTime`}
         children={(field) => (
           <AppDatePickerInput
+            data-testid="port-from"
             name={field.name}
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -275,6 +281,7 @@ const portColumns = (
               }
               return (
                 <AppDatePickerInput
+                  data-testid="port-to"
                   name={field.name}
                   value={field.state.value}
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
@@ -303,6 +310,7 @@ const portColumns = (
         name={`ports[${row.index}].name`}
         children={(field) => (
           <AppInput
+            data-testid="port-name"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -352,6 +360,7 @@ export function FormBCruiseDetailsSection() {
               buttons={() => [
                 <AppButton
                   key="new"
+                  data-testid="form-b-add-short-equipment-btn"
                   onClick={() => {
                     field.pushValue({
                       startDate: '',
@@ -384,6 +393,7 @@ export function FormBCruiseDetailsSection() {
               buttons={() => [
                 <CruiseApplicationDropdownElementSelectorButton
                   key="new"
+                  data-testid="form-b-add-long-equipment-btn"
                   options={[
                     { value: 'Put', label: 'Pozostawienie' },
                     { value: 'Collect', label: 'Zabranie' },
@@ -424,6 +434,7 @@ export function FormBCruiseDetailsSection() {
               buttons={() => [
                 <AppButton
                   key="new"
+                  data-testid="form-b-add-port-btn"
                   onClick={() => {
                     field.pushValue({
                       startTime: '',

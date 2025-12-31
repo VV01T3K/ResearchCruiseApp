@@ -32,6 +32,7 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].description`}
             children={(field) => (
               <AppInput
+                data-testid="permission-description"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -55,6 +56,7 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].executive`}
             children={(field) => (
               <AppInput
+                data-testid="permission-executive"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -87,6 +89,7 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].scan`}
             children={(field) => (
               <AppFileInput
+                data-testid="permission-scan"
                 name={field.name}
                 value={field.state.value}
                 acceptedMimeTypes={['application/pdf']}
@@ -136,6 +139,7 @@ export function FormBAdditionalPermissionsSection() {
               buttons={() => [
                 <AppButton
                   key="permissions.add-btn"
+                  data-testid="form-b-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
                     field.handleChange((prev: PermissionDto[]) => prev);

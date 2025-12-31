@@ -47,6 +47,7 @@ export function FormBMembersSection() {
             name={`ugTeams[${row.index}].noOfEmployees`}
             children={(field) => (
               <AppNumberInput
+                data-testid="ug-team-employees"
                 name={field.name}
                 value={parseInt(field.state.value)}
                 minimum={0}
@@ -74,6 +75,7 @@ export function FormBMembersSection() {
             name={`ugTeams[${row.index}].noOfStudents`}
             children={(field) => (
               <AppNumberInput
+                data-testid="ug-team-students"
                 name={field.name}
                 value={parseInt(field.state.value)}
                 minimum={0}
@@ -132,6 +134,7 @@ export function FormBMembersSection() {
             name={`guestTeams[${row.index}].name`}
             children={(field) => (
               <AppInput
+                data-testid="guest-team-name"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -155,6 +158,7 @@ export function FormBMembersSection() {
             name={`guestTeams[${row.index}].noOfPersons`}
             children={(field) => (
               <AppNumberInput
+                data-testid="guest-team-people"
                 name={field.name}
                 value={parseInt(field.state.value)}
                 minimum={0}
@@ -213,6 +217,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].title`}
               children={(field) => (
                 <AppInput
+                  data-testid="crew-member-title"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -228,6 +233,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].firstName`}
               children={(field) => (
                 <AppInput
+                  data-testid="crew-member-names"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -244,6 +250,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].lastName`}
               children={(field) => (
                 <AppInput
+                  data-testid="crew-member-surname"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -269,6 +276,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].birthPlace`}
               children={(field) => (
                 <AppInput
+                  data-testid="crew-member-birthplace"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -284,6 +292,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].birthDate`}
               children={(field) => (
                 <AppDatePickerInput
+                  data-testid="crew-member-birthdate"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={(e) => field.handleChange(e ?? '')}
@@ -299,6 +308,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].documentNumber`}
               children={(field) => (
                 <AppInput
+                  data-testid="crew-member-document-id"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={field.handleChange}
@@ -314,6 +324,7 @@ export function FormBMembersSection() {
               name={`crewMembers[${row.index}].documentExpiryDate`}
               children={(field) => (
                 <AppDatePickerInput
+                  data-testid="crew-member-document-expiry"
                   name={field.name}
                   value={field.state.value as string}
                   onChange={(e) => field.handleChange(e ?? '')}
@@ -338,6 +349,7 @@ export function FormBMembersSection() {
             name={`crewMembers[${row.index}].institution`}
             children={(field) => (
               <AppInput
+                data-testid="crew-member-institution"
                 name={field.name}
                 value={field.state.value as string}
                 onChange={field.handleChange}
@@ -390,6 +402,7 @@ export function FormBMembersSection() {
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"
+                    data-testid="form-b-add-ug-unit-btn"
                     options={formAInitValues.ugUnits.map((unit) => ({
                       value: unit.name,
                       content: unit.name,
@@ -410,7 +423,10 @@ export function FormBMembersSection() {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-b-ug-teams-errors"
+              />
             </div>
           )}
         />
@@ -426,6 +442,7 @@ export function FormBMembersSection() {
                   <AppButton
                     key="new"
                     variant="primary"
+                    data-testid="form-b-add-guest-team-btn"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: '0' });
                       field.handleChange((prev: GuestTeamDto[]) => prev);
@@ -438,6 +455,7 @@ export function FormBMembersSection() {
                   </AppButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
+                    data-testid="form-b-add-historical-guest-team-btn"
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
                       onClick: () => {
@@ -457,7 +475,10 @@ export function FormBMembersSection() {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-b-guest-teams-errors"
+              />
             </div>
           )}
         />
@@ -473,6 +494,7 @@ export function FormBMembersSection() {
               buttons={() => [
                 <AppButton
                   key="crewMembers.add-btn"
+                  data-testid="form-b-add-crew-member-btn"
                   onClick={() => {
                     field.pushValue({
                       title: '',
@@ -497,7 +519,7 @@ export function FormBMembersSection() {
               disabled={isReadonly}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta)} />
+            <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-crew-members-errors" />
           </>
         )}
       />

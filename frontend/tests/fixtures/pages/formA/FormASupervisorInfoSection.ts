@@ -16,9 +16,9 @@ export class FormASupervisorInfoSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-supervisor-section');
-    this.supervisorEmailInput = this.page.getByTestId('form-a-supervisor-email-input');
-    this.missingEmailMessage = this.page.getByTestId('form-a-supervisor-email-errors');
-    this.invalidEmailMessage = this.page.getByTestId('form-a-supervisor-email-errors');
+    this.supervisorEmailInput = this.sectionDiv.getByTestId('form-a-supervisor-email-input');
+    this.missingEmailMessage = this.sectionDiv.getByTestId('form-a-supervisor-email-errors');
+    this.invalidEmailMessage = this.sectionDiv.getByTestId('form-a-supervisor-email-errors');
   }
 
   public async defaultFill() {

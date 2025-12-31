@@ -15,14 +15,14 @@ export class FormAResearchAreaSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-research-area-section');
-    this.addResearchAreaDropdown = new FormDropdown(this.page.getByTestId('form-a-add-research-area-btn'), {
+    this.addResearchAreaDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-research-area-btn'), {
       variant: 'menu-with-buttons',
     });
-    this.noResearchAreasMessage = this.page.getByTestId('form-a-research-areas-errors');
+    this.noResearchAreasMessage = this.sectionDiv.getByTestId('form-a-research-areas-errors');
   }
 
   public researchAreaRowLocator(index: 'first' | 'last' | number) {
-    const table = this.page.getByTestId('form-a-research-areas-table');
+    const table = this.sectionDiv.getByTestId('form-a-research-areas-table');
     const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }

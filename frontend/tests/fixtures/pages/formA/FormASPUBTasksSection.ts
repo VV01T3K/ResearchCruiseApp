@@ -14,9 +14,9 @@ export class FormASPUBTasksSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-spub-tasks-section');
-    this.addNewTaskButton = this.page.getByTestId('form-a-add-spub-task-btn');
+    this.addNewTaskButton = this.sectionDiv.getByTestId('form-a-add-spub-task-btn');
     this.addHistoricalTaskDropdown = new FormDropdown(
-      this.page.getByTestId('form-a-add-historical-spub-task-btn-button')
+      this.sectionDiv.getByTestId('form-a-add-historical-spub-task-btn-button')
     );
   }
 
@@ -43,5 +43,5 @@ export class FormASPUBTasksSection {
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

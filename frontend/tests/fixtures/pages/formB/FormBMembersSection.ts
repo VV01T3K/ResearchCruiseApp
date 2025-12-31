@@ -20,21 +20,17 @@ export class FormBMembersSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-members-section');
-    this.addUGUnitDropdown = new FormDropdown(this.sectionDiv.getByRole('button', { name: 'Dodaj jednostkę UG' }), {
+    this.addUGUnitDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-b-add-ug-unit-btn'), {
       variant: 'menu-with-buttons',
     });
-    this.addNewGuestTeamButton = this.sectionDiv.getByRole('button', { name: 'Dodaj nowy zespół' });
-    this.addHistoricalTeamDropdown = new FormDropdown(
-      this.sectionDiv.getByRole('button', { name: 'Dodaj historyczny zespół' })
-    );
-    this.addPermissionButton = this.sectionDiv.getByRole('button', { name: 'Dodaj pozwolenie' });
-    this.noUGUnitsMessage = this.sectionDiv.getByText('Co najmniej jeden zespół UG jest wymagany');
-    this.invalidUGNofMembersMessage = this.sectionDiv.getByText(
-      'Zespół UG musi składać się z co najmniej jednej osoby'
-    );
-    this.duplicateFacultyMessage = this.sectionDiv.getByText(
-      'Nie można dodać dwóch zespołów UG z tego samego wydziału'
-    );
+    this.addNewGuestTeamButton = this.sectionDiv.getByTestId('form-b-add-guest-team-btn');
+    this.addHistoricalTeamDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-b-add-historical-guest-team-btn'));
+    this.addPermissionButton = this.sectionDiv.getByTestId('form-b-add-crew-member-btn');
+
+    // Section-level validation errors are exposed as an errors list; avoid matching exact text.
+    this.noUGUnitsMessage = this.sectionDiv.getByTestId('form-b-ug-teams-errors');
+    this.invalidUGNofMembersMessage = this.sectionDiv.getByTestId('form-b-ug-teams-errors');
+    this.duplicateFacultyMessage = this.sectionDiv.getByTestId('form-b-ug-teams-errors');
   }
 
   public ugUnitRowLocator(index: 'first' | 'last' | number) {
@@ -59,11 +55,11 @@ export class FormBMembersSection {
   public guestTeamRow(index: 'first' | 'last' | number) {
     const rowLocator = this.guestTeamRowLocator(index);
     return {
-      teamNameInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
-        errors: { required: rowLocator.getByText('Instytucja jest wymagana') },
+      teamNameInput: new FormInput(rowLocator.getByTestId('guest-team-name-input'), {
+        errors: { required: rowLocator.getByTestId('guest-team-name-errors') },
       }),
-      noOfPeopleInput: new FormInput(rowLocator.getByRole('textbox').nth(1), {
-        errors: { invalidValue: rowLocator.getByText('Liczba osób musi być liczbą większą od 0') },
+      noOfPeopleInput: new FormInput(rowLocator.getByTestId('guest-team-people-input'), {
+        errors: { invalidValue: rowLocator.getByTestId('guest-team-people-errors') },
       }),
     };
   }
@@ -76,37 +72,34 @@ export class FormBMembersSection {
   public permissionRow(index: 'first' | 'last' | number) {
     const rowLocator = this.permissionRowLocator(index);
     return {
-      titleInput: new FormInput(rowLocator.locator('input:below(:text("Tytuł"))').first(), {
-        errors: { required: rowLocator.getByText('Tytuł jest wymagany') },
+      titleInput: new FormInput(rowLocator.getByTestId('crew-member-title-input'), {
+        errors: { required: rowLocator.getByTestId('crew-member-title-errors') },
       }),
-      namesInput: new FormInput(rowLocator.locator('input:below(:text("Imiona"))').first(), {
-        errors: { required: rowLocator.getByText('Imię jest wymagane') },
+      namesInput: new FormInput(rowLocator.getByTestId('crew-member-names-input'), {
+        errors: { required: rowLocator.getByTestId('crew-member-names-errors') },
       }),
-      surnameInput: new FormInput(rowLocator.locator('input:below(:text("Nazwisko"))').first(), {
-        errors: { required: rowLocator.getByText('Nazwisko jest wymagane') },
+      surnameInput: new FormInput(rowLocator.getByTestId('crew-member-surname-input'), {
+        errors: { required: rowLocator.getByTestId('crew-member-surname-errors') },
       }),
-      birthplaceInput: new FormInput(rowLocator.locator('input:below(:text("Miejsce urodzenia"))').first(), {
-        errors: { required: rowLocator.getByText('Miejsce urodzenia jest wymagane') },
+      birthplaceInput: new FormInput(rowLocator.getByTestId('crew-member-birthplace-input'), {
+        errors: { required: rowLocator.getByTestId('crew-member-birthplace-errors') },
       }),
-      documentIdInput: new FormInput(rowLocator.locator('input:below(:text("Numer ID dokumentu"))').first(), {
-        errors: { required: rowLocator.getByText('Numer dokumentu jest wymagany') },
+      documentIdInput: new FormInput(rowLocator.getByTestId('crew-member-document-id-input'), {
+        errors: { required: rowLocator.getByTestId('crew-member-document-id-errors') },
       }),
-      birthdayDropdown: new FormDropdown(rowLocator.locator('button:below(:text("Data urodzenia"))').first(), {
+      birthdayDropdown: new FormDropdown(rowLocator.getByTestId('crew-member-birthdate-button'), {
         variant: 'datetime-picker',
-        errors: { required: rowLocator.getByText('Data urodzenia jest wymagana') },
+        errors: { required: rowLocator.getByTestId('crew-member-birthdate-errors') },
       }),
-      documentExpirationDateDropdown: new FormDropdown(
-        rowLocator.locator('button:below(:text("Data ważności dokumentu"))').first(),
-        {
-          variant: 'datetime-picker',
-          errors: { required: rowLocator.getByText('Data ważności dokumentu jest wymagana') },
-        }
-      ),
-      unitNameInput: new FormInput(rowLocator.getByRole('textbox').nth(5), {
-        errors: { required: rowLocator.getByText('Instytucja jest wymagana') },
+      documentExpirationDateDropdown: new FormDropdown(rowLocator.getByTestId('crew-member-document-expiry-button'), {
+        variant: 'datetime-picker',
+        errors: { required: rowLocator.getByTestId('crew-member-document-expiry-errors') },
+      }),
+      unitNameInput: new FormInput(rowLocator.getByTestId('crew-member-institution-input'), {
+        errors: { required: rowLocator.getByTestId('crew-member-institution-errors') },
       }),
     };
   }
 
-  public async defaultFill() {}
+  public async defaultFill() { }
 }

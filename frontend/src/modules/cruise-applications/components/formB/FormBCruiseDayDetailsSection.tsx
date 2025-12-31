@@ -35,6 +35,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].number`}
         children={(field) => (
           <AppNumberInput
+            data-testid="cruise-day-number"
             name={field.name}
             value={parseInt(field.state.value, 10)}
             onChange={(e) => field.setValue(e.toString())}
@@ -59,6 +60,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].hours`}
         children={(field) => (
           <AppNumberInput
+            data-testid="cruise-day-hours"
             name={field.name}
             value={parseInt(field.state.value, 10)}
             onChange={(e) => field.setValue(e.toString())}
@@ -83,6 +85,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].taskName`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-task-name"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -106,6 +109,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].region`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-region"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -129,6 +133,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].position`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-position"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -152,6 +157,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].comment`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-comment"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -255,6 +261,7 @@ export function FormBCruiseDayDetailsSection() {
                   buttons.push(
                     <AppButton
                       key="new"
+                      data-testid="form-b-add-cruise-day-task-btn"
                       onClick={() => {
                         field.pushValue({
                           number: '0',

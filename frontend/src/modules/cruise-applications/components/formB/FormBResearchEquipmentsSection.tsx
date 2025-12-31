@@ -30,6 +30,7 @@ const researchEquipmentsColumns = (
         name={`researchEquipments[${row.index}].name`}
         children={(field) => (
           <AppInput
+            data-testid="research-equipment-name"
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
@@ -51,6 +52,7 @@ const researchEquipmentsColumns = (
           name={`researchEquipments[${row.index}].insuranceStartDate`}
           children={(field) => (
             <AppDatePickerInput
+              data-testid="research-equipment-insurance-start"
               name={field.name}
               value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e ?? '')}
@@ -72,6 +74,7 @@ const researchEquipmentsColumns = (
                 }
                 return (
                   <AppDatePickerInput
+                    data-testid="research-equipment-insurance-end"
                     name={field.name}
                     value={field.state.value ?? ''}
                     onChange={(e) => field.handleChange(e ?? '')}
@@ -149,6 +152,7 @@ export function FormBResearchEquipmentsSection() {
             buttons={() => [
               <AppButton
                 key="new"
+                data-testid="form-b-add-research-equipment-btn"
                 onClick={() => {
                   field.pushValue({
                     name: '',

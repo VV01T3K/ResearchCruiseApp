@@ -16,13 +16,13 @@ export class FormAPermissionsSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-permissions-section');
-    this.addPermissionButton = this.page.getByTestId('form-a-add-permission-btn');
+    this.addPermissionButton = this.sectionDiv.getByTestId('form-a-add-permission-btn');
     this.descriptionRequiredMessage = this.sectionDiv.getByText('Treść pozwolenia jest wymagana').first();
     this.executiveRequiredMessage = this.sectionDiv.getByText('Organ wydający jest wymagany').first();
   }
 
   public permissionRow(index: 'first' | 'last' | number) {
-    const table = this.page.getByTestId('form-a-permissions-table');
+    const table = this.sectionDiv.getByTestId('form-a-permissions-table');
     const rowsLocator = table.getByRole('row');
     return index === 'first' ? rowsLocator.nth(2) : index === 'last' ? rowsLocator.last() : rowsLocator.nth(2 + index);
   }
@@ -43,5 +43,5 @@ export class FormAPermissionsSection {
     await (await this.executiveInput('last')).fill(executive);
   }
 
-  public async defaultFill() {} // Optional section
+  public async defaultFill() { } // Optional section
 }

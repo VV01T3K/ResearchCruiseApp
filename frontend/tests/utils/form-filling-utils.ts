@@ -1,13 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-/**
- * @deprecated Use page.getByTestId() with data-testid attributes instead.
- * This function relies on fragile text-based selectors.
- */
-export function locateSectionDiv(page: Page, title: string) {
-  title = title.replace(/"/g, '\\"'); // escape double quotes
-  return page.locator(`main form div:below(:text("${title}"))`).first();
-}
 
 /**
  * Locate a form section by its data-testid attribute.
@@ -44,7 +36,7 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       const menu = this.page.getByRole('menu');
       await menu.getByRole('button', { name: itemText, exact: true }).click();
       // Click on main content area to close the datetime picker (triggers useOutsideClickDetection)
-      await this.page.locator('main').click({ position: { x: 1, y: 1 } });
+      await this.page.getByTestId('main-content').click({ position: { x: 1, y: 1 } });
       await expect(menu).toBeHidden();
     }
   }

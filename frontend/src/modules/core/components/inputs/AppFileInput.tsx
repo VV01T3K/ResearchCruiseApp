@@ -24,6 +24,7 @@ type Props = {
   maxSizeInMb?: number;
   acceptedMimeTypes?: string[];
   allowMultiple?: boolean;
+  'data-testid'?: string;
 } & (
   | {
       allowMultiple: true;
@@ -54,6 +55,7 @@ export function AppFileInput({
   emptyMessage = 'Brak plików',
   maxSizeInMb = 2,
   acceptedMimeTypes,
+  'data-testid': testId,
 }: Props) {
   const [files, setFiles] = React.useState<FileDto[]>(allowMultiple ? value : value ? [value] : []);
   const [notifications, setNotifications] = React.useState<string[]>([]);
@@ -127,7 +129,7 @@ export function AppFileInput({
   }
 
   return (
-    <div>
+    <div data-testid={testId}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex items-center justify-center w-full"
@@ -144,6 +146,7 @@ export function AppFileInput({
             errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : '',
             className
           )}
+          data-testid={testId ? `${testId}-button` : undefined}
         >
           <AnimatePresence>
             {!disabled && (
@@ -182,10 +185,11 @@ export function AppFileInput({
         className="hidden"
         onChange={handleChange}
         accept={acceptedMimeTypes?.join(',')}
+        data-testid={testId ? `${testId}-input` : undefined}
       />
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
         <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} />
+        <AppInputErrorsList errors={errors} data-testid={testId ? `${testId}-errors` : undefined} />
       </div>
     </div>
   );

@@ -17,10 +17,10 @@ export class FormACruiseGoalSection {
     this.formPage = formPage;
     this.page = formPage.page;
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-cruise-goal-section');
-    this.cruiseGoalDropdown = new FormDropdown(this.page.getByTestId('form-a-cruise-goal-button'));
-    this.cruiseGoalDescriptionInput = this.page.getByTestId('form-a-cruise-goal-description-input');
-    this.noCruiseGoalChosenMessage = this.page.getByTestId('form-a-cruise-goal-errors');
-    this.noCruiseGoalDescriptionMessage = this.page.getByTestId('form-a-cruise-goal-description-errors');
+    this.cruiseGoalDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-cruise-goal-button'));
+    this.cruiseGoalDescriptionInput = this.sectionDiv.getByTestId('form-a-cruise-goal-description-input');
+    this.noCruiseGoalChosenMessage = this.sectionDiv.getByTestId('form-a-cruise-goal-errors');
+    this.noCruiseGoalDescriptionMessage = this.sectionDiv.getByTestId('form-a-cruise-goal-description-errors');
   }
 
   public async defaultFill() {

@@ -36,6 +36,7 @@ type Props = {
   minimalDate?: Date;
   maximalDate?: Date;
   selectionStartDate?: Date;
+  'data-testid'?: string;
 } & (
   | {
       type?: 'date';
@@ -62,6 +63,7 @@ export function AppDatePickerInput({
   minimalDate,
   maximalDate,
   selectionStartDate,
+  'data-testid': testId,
 }: Props) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(() => getDateFromValue(value));
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
@@ -140,7 +142,7 @@ export function AppDatePickerInput({
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div ref={inputRef}>
           <input type="hidden" name={name} value={value} disabled={disabled} />
@@ -152,6 +154,7 @@ export function AppDatePickerInput({
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
               errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
+            data-testid={testId ? `${testId}-button` : undefined}
           >
             {selectedDate
               ? selectedDate.toLocaleDateString('pl-PL', {
@@ -177,7 +180,7 @@ export function AppDatePickerInput({
         </div>
         <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2 ' : '')}>
           <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} />
+          <AppInputErrorsList errors={errors} data-testid={testId ? `${testId}-errors` : undefined} />
         </div>
       </div>
       <AnimatePresence>

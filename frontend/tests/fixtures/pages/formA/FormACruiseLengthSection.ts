@@ -27,24 +27,24 @@ export class FormACruiseLengthSection {
     this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-cruise-length-section');
 
     // Cruise days input using data-testid
-    const cruiseDaysContainer = this.page.getByTestId('form-a-cruise-days');
+    const cruiseDaysContainer = this.sectionDiv.getByTestId('form-a-cruise-days');
     this.cruiseDaysInput = cruiseDaysContainer.getByTestId('form-a-cruise-days-input');
     this.cruiseDaysDecreaseButton = cruiseDaysContainer.getByRole('button').nth(0);
     this.cruiseDaysIncreaseButton = cruiseDaysContainer.getByRole('button').nth(1);
 
     // Cruise hours input using data-testid
-    const cruiseHoursContainer = this.page.getByTestId('form-a-cruise-hours');
+    const cruiseHoursContainer = this.sectionDiv.getByTestId('form-a-cruise-hours');
     this.cruiseHoursInput = cruiseHoursContainer.getByTestId('form-a-cruise-hours-input');
     this.cruiseHoursDecreaseButton = cruiseHoursContainer.getByRole('button').nth(0);
     this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button').nth(1);
 
-    this.periodNotesInput = this.page.getByTestId('form-a-period-notes-input');
+    this.periodNotesInput = this.sectionDiv.getByTestId('form-a-period-notes-input');
     this.shipUsageDropdown = new FormDropdown(
-      this.sectionDiv.locator('button:below(:text("Statek na potrzeby badań będzie wykorzystywany"))').first()
+      this.sectionDiv.getByTestId('form-a-ship-usage-button')
     );
-    this.alternativeShipUsageInput = this.sectionDiv.locator('input:below(:text("Inny sposób użycia"))').first();
-    this.periodSelectionTypeDropdown = new FormDropdown(this.page.getByTestId('form-a-period-selection-type-button'));
-    this.invalidCruiseDurationMessage = this.page.getByTestId('form-a-cruise-hours-errors');
+    this.alternativeShipUsageInput = this.sectionDiv.getByTestId('form-a-alternative-ship-usage-input');
+    this.periodSelectionTypeDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-period-selection-type-button'));
+    this.invalidCruiseDurationMessage = this.sectionDiv.getByTestId('form-a-cruise-hours-errors');
     this.emptyAlternativeShipUsageMessage = this.sectionDiv.getByText(
       'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku'
     );
