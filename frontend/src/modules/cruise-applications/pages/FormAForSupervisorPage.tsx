@@ -1,8 +1,8 @@
 import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import axios, { AxiosError } from 'axios';
-import toast from 'react-hot-toast';
 
+import { toast } from '@/core/components/layout/toast';
 import { FormAForSupervisor } from '@/cruise-applications/components/formA/FormAForSupervisor';
 import {
   useFormAForSupervisorInitValuesQuery,

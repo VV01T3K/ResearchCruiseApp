@@ -3,10 +3,10 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
+import { toast } from '@/core/components/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseFormValidationSchema';

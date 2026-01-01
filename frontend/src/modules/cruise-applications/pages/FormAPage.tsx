@@ -2,12 +2,12 @@ import { useForm, useStore } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
+import { toast } from '@/core/components/layout/toast';
 import {
   getErrors,
   getFormErrorMessage,

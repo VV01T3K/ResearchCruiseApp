@@ -2,9 +2,9 @@ import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 import { AppLayout } from '@/core/components/AppLayout';
+import { toast } from '@/core/components/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/core/lib/utils';
 import { FormC } from '@/cruise-applications/components/formC/FormC';
 import { FORM_C_FIELD_TO_SECTION, getFormCValidationSchema } from '@/cruise-applications/helpers/FormCValidationSchema';

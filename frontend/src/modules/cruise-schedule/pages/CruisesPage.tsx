@@ -1,13 +1,13 @@
 import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppTabs } from '@/core/components/AppTabs';
+import { toast } from '@/core/components/layout/toast';
 import { Role } from '@/core/models/Role';
 import { CruiseCalendar } from '@/cruise-schedule/components/CruiseCalendar';
 import { CruiseExportForm } from '@/cruise-schedule/components/CruiseExportForm';

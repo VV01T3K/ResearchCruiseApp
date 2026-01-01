@@ -7,11 +7,11 @@ import PencilIcon from 'bootstrap-icons/icons/pencil.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
+import { toast } from '@/core/components/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
