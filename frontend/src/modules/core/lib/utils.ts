@@ -75,7 +75,30 @@ export function getFormErrorMessage(form: AnyFormApi, fieldToSectionMapping: Rec
   return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
-const extractErrorMessage = (error: unknown): string => (error as { message?: string })?.message ?? String(error);
+const extractErrorMessage = (error: unknown): string => {
+  // Handle null/undefined
+  if (error == null) return 'Błąd walidacji';
+
+  // Handle string errors directly
+  if (typeof error === 'string') return error;
+
+  // Handle arrays of errors (form-level validation can store arrays of StandardSchemaV1Issue)
+  if (Array.isArray(error) && error.length > 0) {
+    return extractErrorMessage(error[0]);
+  }
+
+  // Handle StandardSchemaV1Issue and similar objects with message property
+  if (typeof error === 'object') {
+    const errorObj = error as Record<string, unknown>;
+
+    // Direct message property (StandardSchemaV1Issue format)
+    if (typeof errorObj.message === 'string') return errorObj.message;
+  }
+
+  // Fallback - but avoid [object Object]
+  const stringified = String(error);
+  return stringified === '[object Object]' ? 'Błąd walidacji' : stringified;
+};
 
 export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
   return (!hasFormBeenSubmitted && field.isPristine) || field.errors.length === 0
