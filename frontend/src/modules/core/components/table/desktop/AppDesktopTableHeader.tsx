@@ -18,7 +18,7 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
   const { supportsDropdown, supportsFilter, supportsSort } = getCapabilities(header);
 
   return (
-    <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }}>
+    <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }} className="px-3 py-3">
       <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
         <div className="relative inline-block">
           {supportsDropdown && (
@@ -26,20 +26,20 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
               render={
                 <button
                   className={cn(
-                    'text-default text-white outline-none hover:cursor-pointer disabled:cursor-default',
+                    'text-default outline-none hover:cursor-pointer disabled:cursor-default',
                     supportsDropdown ? 'cursor-pointer' : '',
-                    'flex items-center justify-center gap-2'
+                    'flex items-center justify-center gap-2 py-1'
                   )}
                 />
               }
             >
               <AppTableFilterIcon header={header} />
-              <span>{children}</span>
+              <span className="px-1">{children}</span>
               <AppTableSortingIcon header={header} />
             </Popover.Trigger>
           )}
 
-          {!supportsDropdown && <span>{children}</span>}
+          {!supportsDropdown && <span className="inline-block px-1 py-1 text-gray-800">{children}</span>}
 
           <Popover.Portal>
             <AppDesktopTableHeaderDropdown

@@ -55,7 +55,7 @@ export function AppDesktopTable<T>({
             <tr key={row.id} className="text-gray-800 odd:bg-gray-100">
               {row.getVisibleCells().map((cell) => {
                 return (
-                  <td key={cell.id} className="py-2 pr-2 text-center first:pl-2">
+                  <td key={cell.id} className="py-3 px-3 text-center">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 );

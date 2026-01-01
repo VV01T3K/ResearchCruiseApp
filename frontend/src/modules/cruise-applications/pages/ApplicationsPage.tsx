@@ -77,18 +77,18 @@ export function ApplicationsPage() {
       size: 20,
     },
     {
-      id: 'avatar',
-      header: undefined,
-      accessorFn: (row) => `${row.cruiseManagerFirstName} ${row.cruiseManagerLastName}`,
-      cell: (cell) => <AppAvatar fullName={cell.getValue() as string} variant="small" />,
-      enableColumnFilter: false,
-      enableSorting: false,
-      size: 5,
-    },
-    {
       header: 'Kierownik',
       accessorFn: (row) => `${row.cruiseManagerFirstName} ${row.cruiseManagerLastName}`,
-      size: 15,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <AppAvatar
+            fullName={`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}
+            variant="small"
+          />
+          <span>{`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}</span>
+        </div>
+      ),
+      size: 20,
     },
     {
       header: 'Formularze',
