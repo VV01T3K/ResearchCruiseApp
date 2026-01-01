@@ -23,12 +23,12 @@ export function AppLayout({
 }: Props) {
   return (
     <motion.div
-      className="relative min-h-[calc(100vh-var(--header-height))] w-full will-change-transform px-6 md:px-16"
+      className="relative min-h-[calc(100vh-var(--header-height))] w-full px-6 will-change-transform md:px-16"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className={cn('mx-auto rounded-xl bg-gray-50 py-4 px-8 md:py-8 md:px-16', variants[variant])}>
+      <div className={cn('mx-auto rounded-xl bg-gray-50 px-8 py-4 md:px-16 md:py-8', variants[variant])}>
         <header className="mb-8">
           {!disableBackButton && (
             <div className="p-4 md:p-0">
