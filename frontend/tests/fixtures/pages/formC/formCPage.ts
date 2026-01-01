@@ -181,7 +181,7 @@ export class FormCPage {
         break;
       case 'invalid':
         await expect(this.validationErrorMessage).toBeVisible();
-        await this.toastMessage.getByLabel('Close').click();
+        await this.toastMessage.getByLabel('Close').first().click();
         break;
     }
   }
