@@ -196,7 +196,7 @@ export function ApplicationsPage() {
 
   return (
     <>
-      <AppLayout title="Zgłoszenia">
+      <AppLayout title="Zgłoszenia" variant="wide">
         <AppTable
           data={applicationsQuery.data}
           columns={columns}

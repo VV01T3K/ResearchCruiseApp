@@ -21,14 +21,24 @@ export function AppLayout({
   disableBackButton = false,
   'data-testid': testId,
 }: Props) {
+  const useWidePadding = variant === 'wide';
   return (
     <motion.div
-      className="relative min-h-[calc(100vh-var(--header-height))] w-full px-6 will-change-transform md:px-16"
+      className={cn(
+        'relative min-h-[calc(100vh-var(--header-height))] w-full will-change-transform',
+        useWidePadding ? outerPaddingVariants[variant] : 'md:p-8'
+      )}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className={cn('mx-auto rounded-xl bg-gray-50 px-8 py-4 md:px-16 md:py-8', variants[variant])}>
+      <div
+        className={cn(
+          'mx-auto rounded-xl bg-gray-50',
+          useWidePadding ? innerPaddingVariants[variant] : 'pb-4 md:p-8',
+          variants[variant]
+        )}
+      >
         <header className="mb-8">
           {!disableBackButton && (
             <div className="p-4 md:p-0">
@@ -47,7 +57,22 @@ export function AppLayout({
 }
 
 const variants = {
-  default: 'max-w-[1920px]',
+  default: 'max-w-screen-2xl',
   narrow: 'max-w-2xl mt-[10vh] md:mt-[25zvh]',
-  defaultWithCentering: 'max-w-[1920px] mt-[10vh] md:mt-[20vh]',
+  defaultWithCentering: 'max-w-screen-2xl mt-[10vh] md:mt-[20vh]',
+  wide: 'max-w-full',
+};
+
+const outerPaddingVariants = {
+  default: '',
+  narrow: '',
+  defaultWithCentering: '',
+  wide: 'px-6 py-4 md:px-16 md:py-8',
+};
+
+const innerPaddingVariants = {
+  default: '',
+  narrow: '',
+  defaultWithCentering: '',
+  wide: 'px-8 py-4 md:px-16 md:py-8',
 };
