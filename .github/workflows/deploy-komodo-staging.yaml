@@ -1,0 +1,83 @@
+name: Build and deploy to Komodo staging
+
+on:
+  push:
+    branches:
+      - staging
+    paths-ignore:
+      - docs
+  pull_request:
+    branches:
+      - staging
+    paths-ignore:
+      - docs
+
+jobs:
+  build-and-push-images:
+    name: ${{ github.event_name == 'push' && 'Build and push images' || 'Build images' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        include:
+          - directory: frontend
+            build-args: |
+              APP_ENVIRONMENT=production
+          - directory: backend
+            build-args: ""
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/${{ matrix.directory }}
+          tags: type=raw,value=staging
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.directory }}
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build-args }}
+          provenance: false
+          sbom: false
+          cache-from: type=gha
+          cache-to: ${{ github.event_name == 'push' && 'type=gha,mode=max' || '' }}
+
+  trigger-komodo:
+    name: Trigger Komodo webhook
+    runs-on: ubuntu-latest
+    needs: build-and-push-images
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Komodo webhook
+        env:
+          KOMODO_WEBHOOK_URL: https://komodo_wb.wojtecs.com/listener/github/procedure/695bdc102652deb41b6ef3ec/__ANY__
+          KOMODO_WEBHOOK_SECRET: ${{ secrets.KOMODO_WEBHOOK_SECRET }}
+          CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
+        run: bash scripts/trigger-komodo-webhook.sh
