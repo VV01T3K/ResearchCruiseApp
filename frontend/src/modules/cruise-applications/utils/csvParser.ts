@@ -17,25 +17,11 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
     throw new Error('Plik CSV musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
   }
 
-  // Detect delimiter (comma or semicolon)
   const headerLine = lines[0];
   const delimiter = headerLine.includes(';') ? ';' : ',';
 
-  // Parse header
   let headers = parseCSVLine(headerLine, delimiter).map((h) => h.toLowerCase().trim());
   let headerRowIndex = 0;
-
-  // Helper function to find column index by multiple possible names
-  const findColumnIndex = (possibleNames: string[]): number => {
-    const normalizedNames = possibleNames.map((name) => name.toLowerCase());
-    for (const name of normalizedNames) {
-      const index = headers.indexOf(name);
-      if (index !== -1) {
-        return index;
-      }
-    }
-    return -1;
-  };
 
   let columnIndices: Record<string, number>;
   let foundColumnsCount = 0;
@@ -43,12 +29,40 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
   do {
     headers = parseCSVLine(lines[headerRowIndex], delimiter).map((h) => h.toLowerCase().trim());
 
+    const findColumnIndex = (possibleNames: string[]): number => {
+      const normalizedNames = possibleNames.map((name) => name.toLowerCase());
+      for (const name of normalizedNames) {
+        const index = headers.indexOf(name);
+        if (index !== -1) {
+          return index;
+        }
+      }
+      return -1;
+    };
+
+    const latHeaderIndex = headers.indexOf('lat');
+    const lonHeaderIndex = headers.indexOf('long');
+
+    const latDdIdx = latHeaderIndex !== -1 ? latHeaderIndex + 1 : -1;
+    const latMmIdx = latHeaderIndex !== -1 ? latHeaderIndex + 2 : -1;
+    const latDirIdx = latHeaderIndex !== -1 ? latHeaderIndex + 3 : -1;
+
+    const lonDdIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 1 : -1;
+    const lonMmIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 2 : -1;
+    const lonDirIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 3 : -1;
+
     columnIndices = {
-      number: findColumnIndex(['number', 'day', 'dzien', 'dd']),
-      hours: findColumnIndex(['hours', 'godziny', 'liczba godzin', 'mm.mmm']),
-      taskName: findColumnIndex(['taskname', 'task name', 'zadanie', 'nazwa zadania', 'nazwa_zadania', 'n', 'e']),
+      number: findColumnIndex(['number', 'day', 'dzien']),
+      hours: findColumnIndex(['hours', 'godziny', 'liczba godzin']),
+      taskName: findColumnIndex(['taskname', 'task name', 'zadanie', 'nazwa zadania', 'nazwa_zadania']),
       region: findColumnIndex(['region', 'rejon', 'rejon zadania', 'rejon_zadania']),
-      position: findColumnIndex(['position', 'pozycja', 'nazwa punktu']),
+      latDd: latDdIdx,
+      latMm: latMmIdx,
+      latDir: latDirIdx,
+      lonDd: lonDdIdx,
+      lonMm: lonMmIdx,
+      lonDir: lonDirIdx,
+      pointName: findColumnIndex(['nazwa punktu']),
       comment: findColumnIndex(['comment', 'uwagi', 'remarks', 'notatki']),
     };
 
@@ -87,12 +101,42 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
 
     const values = parseCSVLine(line, delimiter);
 
+    let positionString = '';
+    if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
+      const latDd = String(values[columnIndices.latDd] || '').trim();
+      const latMm = String(values[columnIndices.latMm] || '').trim();
+      const latDir = String(values[columnIndices.latDir] || '').trim();
+      positionString = `${latDd} ${latMm} ${latDir},`;
+    }
+
+    if (columnIndices.lonDd !== -1 && columnIndices.lonMm !== -1 && columnIndices.lonDir !== -1) {
+      const lonDd = String(values[columnIndices.lonDd] || '').trim();
+      const lonMm = String(values[columnIndices.lonMm] || '').trim();
+      const lonDir = String(values[columnIndices.lonDir] || '').trim();
+      if (positionString) {
+        positionString += ` ${lonDd} ${lonMm} ${lonDir}`;
+      } else {
+        positionString = `${lonDd} ${lonMm} ${lonDir}`;
+      }
+    }
+
+    if (columnIndices.pointName !== -1) {
+      const pointName = String(values[columnIndices.pointName] || '').trim();
+      if (pointName) {
+        if (positionString) {
+          positionString += ` - ${pointName}`;
+        } else {
+          positionString = pointName;
+        }
+      }
+    }
+
     const row: CruiseDayDetailsDto = {
       number: String(values[columnIndices.number] || '0').trim(),
       hours: String(values[columnIndices.hours] || '0').trim(),
       taskName: String(values[columnIndices.taskName] || '').trim(),
       region: String(values[columnIndices.region] || '').trim(),
-      position: String(values[columnIndices.position] || '').trim(),
+      position: positionString,
       comment: String(values[columnIndices.comment] || '').trim(),
     };
 
@@ -205,12 +249,29 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
         do {
           headers = (data[headerRowIndex] as unknown as string[]).map((h) => String(h).toLowerCase().trim());
 
+          const latHeaderIndex = headers.indexOf('lat');
+          const lonHeaderIndex = headers.indexOf('long');
+
+          const latDdIdx = latHeaderIndex !== -1 ? latHeaderIndex : -1;
+          const latMmIdx = latHeaderIndex !== -1 ? latHeaderIndex + 1 : -1;
+          const latDirIdx = latHeaderIndex !== -1 ? latHeaderIndex + 2 : -1;
+
+          const lonDdIdx = lonHeaderIndex !== -1 ? lonHeaderIndex : -1;
+          const lonMmIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 1 : -1;
+          const lonDirIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 2 : -1;
+
           columnIndices = {
-            number: findColumnIndex(['number', 'day', 'dzien', 'dd']),
-            hours: findColumnIndex(['hours', 'godziny', 'liczba godzin', 'mm.mmm']),
-            taskName: findColumnIndex(['taskname', 'task name', 'zadanie', 'nazwa zadania', 'nazwa_zadania', 'n']),
+            number: findColumnIndex(['number', 'day', 'dzien']),
+            hours: findColumnIndex(['hours', 'godziny', 'liczba godzin']),
+            taskName: findColumnIndex(['taskname', 'task name', 'zadanie', 'nazwa zadania', 'nazwa_zadania']),
             region: findColumnIndex(['region', 'rejon', 'rejon zadania', 'rejon_zadania']),
-            position: findColumnIndex(['position', 'pozycja', 'nazwa punktu']),
+            latDd: latDdIdx,
+            latMm: latMmIdx,
+            latDir: latDirIdx,
+            lonDd: lonDdIdx,
+            lonMm: lonMmIdx,
+            lonDir: lonDirIdx,
+            pointName: findColumnIndex(['nazwa punktu']),
             comment: findColumnIndex(['comment', 'uwagi', 'remarks', 'notatki']),
           };
 
@@ -243,9 +304,38 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
         for (let i = headerRowIndex + 1; i < data.length; i++) {
           const row = data[i] as unknown as unknown[];
 
-          // Skip empty rows
           if (!row || row.length === 0 || row.every((cell) => !cell)) {
             continue;
+          }
+
+          let positionString = '';
+          if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
+            const latDd = String(row[columnIndices.latDd] || '').trim();
+            const latMm = String(row[columnIndices.latMm] || '').trim();
+            const latDir = String(row[columnIndices.latDir] || '').trim();
+            positionString = `${latDd} ${latMm} ${latDir},`;
+          }
+
+          if (columnIndices.lonDd !== -1 && columnIndices.lonMm !== -1 && columnIndices.lonDir !== -1) {
+            const lonDd = String(row[columnIndices.lonDd] || '').trim();
+            const lonMm = String(row[columnIndices.lonMm] || '').trim();
+            const lonDir = String(row[columnIndices.lonDir] || '').trim();
+            if (positionString) {
+              positionString += ` ${lonDd} ${lonMm} ${lonDir}`;
+            } else {
+              positionString = `${lonDd} ${lonMm} ${lonDir}`;
+            }
+          }
+
+          if (columnIndices.pointName !== -1) {
+            const pointName = String(row[columnIndices.pointName] || '').trim();
+            if (pointName) {
+              if (positionString) {
+                positionString += ` - ${pointName}`;
+              } else {
+                positionString = pointName;
+              }
+            }
           }
 
           const cruiseDay: CruiseDayDetailsDto = {
@@ -253,7 +343,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
             hours: String(row[columnIndices.hours] || '0').trim(),
             taskName: String(row[columnIndices.taskName] || '').trim(),
             region: String(row[columnIndices.region] || '').trim(),
-            position: String(row[columnIndices.position] || '').trim(),
+            position: positionString,
             comment: String(row[columnIndices.comment] || '').trim(),
           };
 
@@ -298,4 +388,82 @@ export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseD
   }
 
   throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
+}
+
+function parsePositionString(position: string): {
+  latDd: string;
+  latMm: string;
+  latDir: string;
+  lonDd: string;
+  lonMm: string;
+  lonDir: string;
+  pointName: string;
+} {
+  const result = {
+    latDd: '',
+    latMm: '',
+    latDir: '',
+    lonDd: '',
+    lonMm: '',
+    lonDir: '',
+    pointName: '',
+  };
+
+  if (!position) return result;
+
+  const parts = position.split(' - ');
+  const coordinatesPart = parts[0];
+  result.pointName = parts[1] ? parts[1].trim() : '';
+
+  const coordParts = coordinatesPart.split(',');
+  if (coordParts.length >= 1) {
+    const latParts = coordParts[0].trim().split(/\s+/);
+    result.latDd = latParts[0] || '';
+    result.latMm = latParts[1] || '';
+    result.latDir = latParts[2] || '';
+  }
+
+  if (coordParts.length >= 2) {
+    const lonParts = coordParts[1].trim().split(/\s+/);
+    result.lonDd = lonParts[0] || '';
+    result.lonMm = lonParts[1] || '';
+    result.lonDir = lonParts[2] || '';
+  }
+
+  return result;
+}
+
+/**
+ * Exports CruiseDayDetailsDto array to XLSX file and triggers download
+ */
+export function exportCruiseDayDetailsToXlsx(data: CruiseDayDetailsDto[], fileName: string = 'rejsu-dane.xlsx'): void {
+  try {
+    const headers = ['LAT', '', '', 'LONG', '', '', 'Nazwa Punktu'];
+
+    const exportRows = data.map((row) => {
+      const position = parsePositionString(row.position);
+      return [
+        position.latDd,
+        position.latMm,
+        position.latDir,
+        position.lonDd,
+        position.lonMm,
+        position.lonDir,
+        position.pointName,
+      ];
+    });
+
+    const allData = [headers, ...exportRows];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(allData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Dane');
+
+    XLSX.writeFile(workbook, fileName);
+    toast.success(`Plik ${fileName} został pobierany`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
+    toast.error(`Błąd podczas eksportowania do XLSX: ${errorMessage}`);
+    console.error('XLSX Export Error:', error);
+  }
 }

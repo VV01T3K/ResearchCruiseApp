@@ -14,6 +14,7 @@ import { useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { CruiseDayDetailsDto } from '@/cruise-applications/models/CruiseDayDetailsDto';
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
 import {
+  exportCruiseDayDetailsToXlsx,
   parseCruiseDayDetailsFromCsv,
   parseCruiseDayDetailsFromFile,
   readFileAsText,
@@ -270,6 +271,21 @@ export function FormBCruiseDayDetailsSection() {
                   disabled={isReadonly}
                 >
                   Importuj z CSV/XLSX
+                </AppButton>,
+                <AppButton
+                  key="download"
+                  onClick={() => {
+                    const data = field.state.value;
+                    if (data && data.length > 0) {
+                      exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
+                    } else {
+                      toast.error('Brak danych do pobrania');
+                    }
+                  }}
+                  variant="primaryOutline"
+                  disabled={isReadonly || !field.state.value || field.state.value.length === 0}
+                >
+                  Pobierz XLSX
                 </AppButton>,
               ]}
               variant="form"
