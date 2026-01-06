@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
+      - staging
   pull_request:
     branches:
       - main
-      - staging
 
 jobs:
   test:
@@ -19,33 +19,33 @@ jobs:
         working-directory: frontend
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: "10"
-        package_json_file: frontend/package.json
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10"
+          package_json_file: frontend/package.json
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "22"
-        cache: "pnpm"
-        cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-    
-    - name: Install Playwright Browsers
-      run: pnpm playwright install --with-deps
-    
-    - name: Run Playwright tests
-      run: pnpm run test
-    
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: test-results
-        path: frontend/test-results/
-        retention-days: 30
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: pnpm playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: pnpm run test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results
+          path: frontend/test-results/
+          retention-days: 30
