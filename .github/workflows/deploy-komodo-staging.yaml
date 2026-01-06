@@ -14,7 +14,7 @@ on:
 
 jobs:
   build-and-push-images:
-    name: ${{ github.event_name == 'push' && 'Build and push images' || 'Build images' }}
+    name: Build and push images
     runs-on: ubuntu-latest
 
     permissions:
