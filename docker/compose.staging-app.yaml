@@ -6,11 +6,8 @@ services:
       - Database__SeedAutomatically=true
       - Database__MigrateAutomatically=true
       - Database__LogUserPasswordsWhenSeeding=true
-      - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
+      - ConnectionStrings__Database=Server=researchcruiseapp-db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=https://cruise.wsiwiec.com
-    depends_on:
-      db:
-        condition: service_healthy
     networks:
       - researchcruiseapp-network
   frontend:
@@ -28,30 +25,8 @@ services:
       caddy.route.import: crowdsec
       caddy.route.reverse_proxy: "{{upstreams 8080}}"
 
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: researchcruiseapp-db
-    environment:
-      SA_PASSWORD: "p@ssw0rd"
-      ACCEPT_EULA: "Y"
-    expose:
-      - 1433
-    volumes:
-      - researchcruiseapp-db:/var/opt/mssql
-    healthcheck:
-      test: /opt/mssql-tools*/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -C -Q "SELECT 1" || exit 1
-      interval: 3s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
-    networks:
-      - researchcruiseapp-network
-
-volumes:
-  researchcruiseapp-db:
-
-
 networks:
   researchcruiseapp-network:
+    external: true
   proxy:
     external: true
