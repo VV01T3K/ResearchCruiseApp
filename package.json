@@ -8,8 +8,5 @@
     "dot:start": "cd backend && bun run start",
     "admin:pass": "bun db:del && sleep 5 && bun db:up && sleep 10 && temp=$(mktemp) && timeout -s KILL 20 bun dot:start | tee $temp; grep -i admin $temp > admin.log && rm $temp && echo '\nAdmin password info saved to root/admin.log'"
   },
-  "packageManager": "pnpm@10.11.0",
-  "dependencies": {
-    "xlsx": "^0.18.5"
-  }
+  "packageManager": "pnpm@10.11.0"
 }

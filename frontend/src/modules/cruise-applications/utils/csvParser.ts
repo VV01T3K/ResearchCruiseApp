@@ -71,24 +71,6 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
     headerRowIndex++;
   } while (foundColumnsCount === 0 && headerRowIndex < lines.length);
   headerRowIndex--;
-  // Log missing columns as warnings instead of throwing errors
-  const missingColumns = Object.entries(columnIndices)
-    .filter(([, index]) => index === -1)
-    .map(([key]) => key);
-
-  const polishNames: Record<string, string> = {
-    number: 'dzień',
-    hours: 'godziny',
-    taskName: 'nazwa zadania',
-    region: 'rejon',
-    position: 'pozycja',
-    comment: 'uwagi',
-  };
-
-  if (missingColumns.length > 0) {
-    const translatedMissing = missingColumns.map((key) => polishNames[key] || key).join(', ');
-    toast(`Plik CSV nie zawiera kolumn: ${translatedMissing}. Zostaną one wypełnione pustymi wartościami.`);
-  }
 
   const rows: CruiseDayDetailsDto[] = [];
 
@@ -280,24 +262,6 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
           headerRowIndex++;
         } while (foundColumnsCount === 0 && headerRowIndex < data.length);
         headerRowIndex--;
-
-        const missingColumns = Object.entries(columnIndices)
-          .filter(([, index]) => index === -1)
-          .map(([key]) => key);
-
-        const polishNames: Record<string, string> = {
-          number: 'dzień',
-          hours: 'godziny',
-          taskName: 'nazwa zadania',
-          region: 'rejon',
-          position: 'pozycja',
-          comment: 'uwagi',
-        };
-
-        if (missingColumns.length > 0) {
-          const translatedMissing = missingColumns.map((key) => polishNames[key] || key).join(', ');
-          toast(`Plik XLSX nie zawiera kolumn: ${translatedMissing}. Zostaną one wypełnione pustymi wartościami.`);
-        }
 
         const rows: CruiseDayDetailsDto[] = [];
 

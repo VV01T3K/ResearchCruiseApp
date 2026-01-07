@@ -244,52 +244,61 @@ export function FormBCruiseDayDetailsSection() {
             <AppTable
               data={field.state.value}
               columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  onClick={() => {
-                    field.pushValue({
-                      number: '0',
-                      hours: '0',
-                      taskName: '',
-                      region: '',
-                      position: '',
-                      comment: '',
-                    });
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }}
-                  variant="primary"
-                  disabled={isReadonly}
-                >
-                  Dodaj
-                </AppButton>,
-                <AppButton
-                  key="import"
-                  onClick={() => fileInputRef.current?.click()}
-                  variant="primaryOutline"
-                  disabled={isReadonly}
-                >
-                  Importuj z CSV/XLSX
-                </AppButton>,
-                <AppButton
-                  key="download"
-                  onClick={() => {
-                    const data = field.state.value;
-                    if (data && data.length > 0) {
-                      exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
-                    } else {
-                      toast.error('Brak danych do pobrania');
-                    }
-                  }}
-                  variant="primaryOutline"
-                  disabled={isReadonly || !field.state.value || field.state.value.length === 0}
-                >
-                  Pobierz XLSX
-                </AppButton>,
-              ]}
+              buttons={() => {
+                const buttons = [];
+                if (!isReadonly) {
+                  buttons.push(
+                    <AppButton
+                      key="new"
+                      onClick={() => {
+                        field.pushValue({
+                          number: '0',
+                          hours: '0',
+                          taskName: '',
+                          region: '',
+                          position: '',
+                          comment: '',
+                        });
+                        field.handleChange((prev) => prev);
+                        field.handleBlur();
+                      }}
+                      variant="primary"
+                      disabled={isReadonly}
+                    >
+                      Dodaj
+                    </AppButton>
+                  );
+                  buttons.push(
+                    <AppButton
+                      key="import"
+                      onClick={() => fileInputRef.current?.click()}
+                      variant="primaryOutline"
+                      disabled={isReadonly}
+                    >
+                      Importuj z CSV/XLSX
+                    </AppButton>
+                  );
+                }
+                buttons.push(
+                  <AppButton
+                    key="download"
+                    onClick={() => {
+                      const data = field.state.value;
+                      if (data && data.length > 0) {
+                        exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
+                      } else {
+                        toast.error('Brak danych do pobrania');
+                      }
+                    }}
+                    variant="primaryOutline"
+                    disabled={!field.state.value || field.state.value.length === 0}
+                  >
+                    Pobierz XLSX
+                  </AppButton>
+                );
+                return buttons;
+              }}
               variant="form"
-              disabled={isReadonly}
             />
           </>
         )}
