@@ -81,7 +81,8 @@
     "vite": "^6.0.11",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "xlsx": "^0.18.5"
   },
   "eslintConfig": {
     "extends": [

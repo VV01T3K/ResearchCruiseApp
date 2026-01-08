@@ -70,7 +70,7 @@ const variants = {
   info: 'rounded-lg bg-info hover:bg-info-400 active:bg-info disabled:bg-info-200',
 
   primaryOutline:
-    'rounded-lg bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-white',
+    'rounded-lg bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-white',
   successOutline:
     'rounded-lg bg-white hover:bg-success active:bg-success text-success hover:text-white border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-white',
   dangerOutline:
