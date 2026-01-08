@@ -205,3 +205,14 @@ export function removeEmptyValues<T extends object>(obj: T, excludeKeys: (keyof 
       })
   ) as T;
 }
+
+export const mapNullsToEmptyStrings = <T>(obj: T): T => {
+  if (obj === null || obj === undefined) return '' as unknown as T;
+  if (Array.isArray(obj)) return obj.map((item) => mapNullsToEmptyStrings(item)) as unknown as T;
+  if (typeof obj === 'object' && !(obj instanceof Date)) {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>).map(([key, value]) => [key, mapNullsToEmptyStrings(value)])
+    ) as unknown as T;
+  }
+  return obj;
+};

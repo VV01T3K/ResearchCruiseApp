@@ -18,6 +18,7 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
     {
         _fileInspector = fileInspector;
 
+        AddDraftValidation();
         AddNonDraftValidation();
     }
 

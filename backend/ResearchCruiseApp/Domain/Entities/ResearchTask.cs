@@ -63,6 +63,8 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
             ?? 0 + FinancingAmount?.GetHashCode()
             ?? 0 + Description?.GetHashCode()
             ?? 0 + FinancingApproved?.GetHashCode()
+            ?? 0 + SecuredAmount?.GetHashCode()
+            ?? 0 + MinisterialPoints?.GetHashCode()
             ?? 0;
     }
 
@@ -79,7 +81,9 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
             && other.EndDate == EndDate
             && other.FinancingAmount == FinancingAmount
             && other.Description == Description
-            && other.FinancingApproved == FinancingApproved;
+            && other.FinancingApproved == FinancingApproved
+            && other.SecuredAmount == SecuredAmount
+            && other.MinisterialPoints == MinisterialPoints;
     }
 
     public static Expression<Func<ResearchTask, bool>> EqualsByExpression(ResearchTask? other)
@@ -96,6 +100,8 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
             && other.EndDate == researchTask.EndDate
             && other.FinancingAmount == researchTask.FinancingAmount
             && other.Description == researchTask.Description
-            && other.FinancingApproved == researchTask.FinancingApproved;
+            && other.FinancingApproved == researchTask.FinancingApproved
+            && other.SecuredAmount == researchTask.SecuredAmount
+            && other.MinisterialPoints == researchTask.MinisterialPoints;
     }
 }
