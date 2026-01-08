@@ -10,16 +10,16 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
     public string Category { get; init; } = null!;
 
     [StringLength(1024)]
-    public string InstitutionName { get; init; } = null!;
+    public string? InstitutionName { get; init; }
 
     [StringLength(1024)]
-    public string InstitutionUnit { get; init; } = null!;
+    public string? InstitutionUnit { get; init; }
 
     [StringLength(1024)]
-    public string InstitutionLocalization { get; init; } = null!;
+    public string? InstitutionLocalization { get; init; }
 
     [StringLength(10240)]
-    public string Description { get; init; } = null!;
+    public string? Description { get; init; }
 
     public List<ContractFile> Files { get; init; } = [];
 
@@ -32,11 +32,11 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
     public override int GetHashCode()
     {
         var hashCode =
-            Category.GetHashCode()
-            + InstitutionName.GetHashCode()
-            + InstitutionUnit.GetHashCode()
-            + InstitutionLocalization.GetHashCode()
-            + Description.GetHashCode();
+            Category.GetHashCode() + InstitutionName?.GetHashCode()
+            ?? 0 + InstitutionUnit?.GetHashCode()
+            ?? 0 + InstitutionLocalization?.GetHashCode()
+            ?? 0 + Description?.GetHashCode()
+            ?? 0;
 
         foreach (var file in Files)
         {
