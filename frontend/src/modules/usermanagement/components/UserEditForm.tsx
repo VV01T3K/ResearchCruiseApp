@@ -1,4 +1,5 @@
 import { useForm } from '@tanstack/react-form';
+import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
@@ -21,6 +22,7 @@ import { User } from '@/core/models/User';
 import {
   useAcceptUserMutation,
   useDeleteUserMutation,
+  useInitiatePasswordResetMutation,
   useNewUserMutation,
   useUnAcceptUserMutation,
   useUpdateUserMutation,
@@ -66,12 +68,15 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       }
     });
 
+  const [passwordResetSent, setPasswordResetSent] = React.useState(false);
+
   const mutationContext = { editMode, setSubmitError };
   const addNewUserMutation = useNewUserMutation(mutationContext);
   const updateUserMutation = useUpdateUserMutation(mutationContext);
   const deleteUserMutation = useDeleteUserMutation(mutationContext);
   const acceptUserMutation = useAcceptUserMutation(mutationContext);
   const unAcceptUserMutation = useUnAcceptUserMutation(mutationContext);
+  const initiatePasswordResetMutation = useInitiatePasswordResetMutation(mutationContext);
 
   const form = useForm({
     defaultValues: {
@@ -158,6 +163,20 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
         })
         .catch(() => {});
     }
+  }
+
+  async function handleInitiatePasswordReset() {
+    if (!editMode) {
+      throw new Error('This method should be called only for existing users');
+    }
+
+    await initiatePasswordResetMutation
+      .mutateAsync(user.email, {
+        onSuccess: () => {
+          setPasswordResetSent(true);
+        },
+      })
+      .catch(() => {});
   }
 
   return (
@@ -322,6 +341,27 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
                     <div className="flex gap-4 items-center">
                       <PersonFillSlashIcon className="w-4 h-4" />
                       <span>Cofnij akceptację konta</span>
+                    </div>
+                  )}
+                </AppButton>
+              )}
+
+              {editMode && (
+                <AppButton
+                  variant={passwordResetSent ? 'success' : 'primaryOutline'}
+                  disabled={!!submitError || initiatePasswordResetMutation.isPending || passwordResetSent}
+                  onClick={() => handleInitiatePasswordReset()}
+                  className="w-full"
+                >
+                  {passwordResetSent ? (
+                    <motion.div className="flex gap-4 items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <EnvelopeFillIcon className="w-4 h-4" />
+                      <span>Link do zmiany hasła wysłany</span>
+                    </motion.div>
+                  ) : (
+                    <div className="flex gap-4 items-center">
+                      <EnvelopeFillIcon className="w-4 h-4" />
+                      <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}
                 </AppButton>
