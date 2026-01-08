@@ -12,8 +12,8 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251230233402_InitialNetUpdate")]
-    partial class InitialNetUpdate
+    [Migration("20260108234837_NetUpdate")]
+    partial class NetUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -386,22 +386,18 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(10240)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InstitutionLocalization")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("InstitutionName")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("InstitutionUnit")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
@@ -1431,7 +1427,6 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Info")
-                        .IsRequired()
                         .HasMaxLength(10240)
                         .HasColumnType("nvarchar(max)");
 

@@ -1424,7 +1424,6 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Info")
-                        .IsRequired()
                         .HasMaxLength(10240)
                         .HasColumnType("nvarchar(max)");
 
