@@ -8,7 +8,13 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppInput } from '@/core/components/inputs/AppInput';
-import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
+import {
+  getErrors,
+  getFormErrorMessage,
+  mapNullsToEmptyStrings,
+  navigateToFirstError,
+  removeEmptyValues,
+} from '@/core/lib/utils';
 import { FormA } from '@/cruise-applications/components/formA/FormA';
 import { FORM_A_FIELD_TO_SECTION, getFormAValidationSchema } from '@/cruise-applications/helpers/FormAValidationSchema';
 import {
@@ -57,6 +63,8 @@ export function FormAPage() {
             precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
             periodSelectionType:
               formA.data.precisePeriodStart || formA.data.precisePeriodEnd ? ('precise' as const) : ('period' as const),
+            contracts: mapNullsToEmptyStrings(formA.data.contracts), // Map each null field to empty string so validation works
+            researchTasks: mapNullsToEmptyStrings(formA.data.researchTasks),
           };
         })()
       : {
