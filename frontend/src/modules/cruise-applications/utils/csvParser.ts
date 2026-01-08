@@ -25,6 +25,8 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
 
   let columnIndices: Record<string, number>;
   let foundColumnsCount = 0;
+  let latHeaderIndex = -1;
+  let lonHeaderIndex = -1;
 
   do {
     headers = parseCSVLine(lines[headerRowIndex], delimiter).map((h) => h.toLowerCase().trim());
@@ -40,8 +42,8 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
       return -1;
     };
 
-    const latHeaderIndex = headers.indexOf('lat');
-    const lonHeaderIndex = headers.indexOf('long');
+    latHeaderIndex = findColumnIndex(['lat', 'latitude']);
+    lonHeaderIndex = findColumnIndex(['long', 'longitude']);
 
     const latDdIdx = latHeaderIndex !== -1 ? latHeaderIndex + 1 : -1;
     const latMmIdx = latHeaderIndex !== -1 ? latHeaderIndex + 2 : -1;
@@ -71,6 +73,15 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
     headerRowIndex++;
   } while (foundColumnsCount === 0 && headerRowIndex < lines.length);
   headerRowIndex--;
+
+  if (
+    (latHeaderIndex !== -1 || lonHeaderIndex !== -1 || columnIndices.pointName !== -1) &&
+    !(latHeaderIndex !== -1 && lonHeaderIndex !== -1 && columnIndices.pointName !== -1)
+  ) {
+    throw new Error(
+      'Jeśli jedna z kolumn latitude(LAT), longitude(LONG) lub "Nazwa Punktu" jest obecna, wszystkie trzy muszą być obecne'
+    );
+  }
 
   const rows: CruiseDayDetailsDto[] = [];
 
@@ -227,12 +238,14 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
 
         let columnIndices: Record<string, number>;
         let foundColumnsCount = 0;
+        let latHeaderIndex = -1;
+        let lonHeaderIndex = -1;
 
         do {
           headers = (data[headerRowIndex] as unknown as string[]).map((h) => String(h).toLowerCase().trim());
 
-          const latHeaderIndex = headers.indexOf('lat');
-          const lonHeaderIndex = headers.indexOf('long');
+          latHeaderIndex = findColumnIndex(['lat', 'latitude']);
+          lonHeaderIndex = findColumnIndex(['long', 'longitude']);
 
           const latDdIdx = latHeaderIndex !== -1 ? latHeaderIndex : -1;
           const latMmIdx = latHeaderIndex !== -1 ? latHeaderIndex + 1 : -1;
@@ -262,6 +275,18 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
           headerRowIndex++;
         } while (foundColumnsCount === 0 && headerRowIndex < data.length);
         headerRowIndex--;
+
+        if (
+          (latHeaderIndex !== -1 || lonHeaderIndex !== -1 || columnIndices.pointName !== -1) &&
+          !(latHeaderIndex !== -1 && lonHeaderIndex !== -1 && columnIndices.pointName !== -1)
+        ) {
+          reject(
+            new Error(
+              'Jeśli jedna z kolumn Latitude(LAT), longitude(LONG) lub "Nazwa Punktu" jest obecna, wszystkie trzy muszą być obecne'
+            )
+          );
+          return;
+        }
 
         const rows: CruiseDayDetailsDto[] = [];
 
