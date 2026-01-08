@@ -20,7 +20,8 @@ internal class YearBasedKeyGenerator : IYearBasedKeyGenerator
             entities
                 .Where(e => e.Number.StartsWith(currentYear))
                 .MaxBy(e => int.Parse(e.Number[ordinalNumberStartIdx..]))
-                ?.Number[ordinalNumberStartIdx..] ?? "0";
+                ?.Number[ordinalNumberStartIdx..]
+            ?? "0";
 
         return $"{currentYear}/{int.Parse(maxCurrentYearOrdinalNumber) + 1}";
     }
