@@ -166,22 +166,26 @@ const cruiseDayDetailsColumns = (
     ),
     size: 20,
   },
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <AppTableDeleteRowButton
-          onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev) => prev);
-            field.handleBlur();
-          }}
-          disabled={isReadonly}
-        />
-      </div>
-    ),
-    size: 10,
-  },
+  ...(!isReadonly
+    ? [
+        {
+          id: 'actions',
+          cell: ({ row }) => (
+            <div className="flex justify-end">
+              <AppTableDeleteRowButton
+                onClick={() => {
+                  field.removeValue(row.index);
+                  field.handleChange((prev) => prev);
+                  field.handleBlur();
+                }}
+                disabled={isReadonly}
+              />
+            </div>
+          ),
+          size: 10,
+        } as ColumnDef<CruiseDayDetailsDto>,
+      ]
+    : []),
 ];
 
 export function FormBCruiseDayDetailsSection() {
