@@ -106,6 +106,24 @@ export function useUnAcceptUserMutation({ editMode, setSubmitError }: Props) {
   });
 }
 
+export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: Props) {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      if (!editMode) {
+        throw new Error('This method should be called only for existing users');
+      }
+      return await client.post('/account/forgotPassword', { email });
+    },
+    onError: async (error) => {
+      if (isAxiosError(error)) {
+        setSubmitError(error.response?.data);
+      } else {
+        setSubmitError('Wystąpił błąd podczas inicjowania zmiany hasła');
+      }
+    },
+  });
+}
+
 export function useUsersQuery() {
   return useSuspenseQuery({
     queryKey: ['users'],
