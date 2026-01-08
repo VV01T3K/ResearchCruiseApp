@@ -45,13 +45,13 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
     latHeaderIndex = findColumnIndex(['lat', 'latitude']);
     lonHeaderIndex = findColumnIndex(['long', 'longitude']);
 
-    const latDdIdx = latHeaderIndex !== -1 ? latHeaderIndex + 1 : -1;
-    const latMmIdx = latHeaderIndex !== -1 ? latHeaderIndex + 2 : -1;
-    const latDirIdx = latHeaderIndex !== -1 ? latHeaderIndex + 3 : -1;
+    const latDdIdx = latHeaderIndex !== -1 ? latHeaderIndex : -1;
+    const latMmIdx = latHeaderIndex !== -1 ? latHeaderIndex + 1 : -1;
+    const latDirIdx = latHeaderIndex !== -1 ? latHeaderIndex + 2 : -1;
 
-    const lonDdIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 1 : -1;
-    const lonMmIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 2 : -1;
-    const lonDirIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 3 : -1;
+    const lonDdIdx = lonHeaderIndex !== -1 ? lonHeaderIndex : -1;
+    const lonMmIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 1 : -1;
+    const lonDirIdx = lonHeaderIndex !== -1 ? lonHeaderIndex + 2 : -1;
 
     columnIndices = {
       number: findColumnIndex(['number', 'day', 'dzien']),

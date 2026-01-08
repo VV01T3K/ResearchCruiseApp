@@ -205,7 +205,6 @@ export function FormBCruiseDayDetailsSection() {
         rows = parseCruiseDayDetailsFromCsv(csvContent);
       }
 
-      // Get current rows and add new rows from file
       const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
       form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
 
@@ -220,7 +219,6 @@ export function FormBCruiseDayDetailsSection() {
       console.error('File Import Error:', error);
     }
 
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
