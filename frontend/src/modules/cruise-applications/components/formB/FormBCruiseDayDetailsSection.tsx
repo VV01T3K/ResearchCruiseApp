@@ -279,23 +279,25 @@ export function FormBCruiseDayDetailsSection() {
                     </AppButton>
                   );
                 }
-                buttons.push(
-                  <AppButton
-                    key="download"
-                    onClick={() => {
-                      const data = field.state.value;
-                      if (data && data.length > 0) {
-                        exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
-                      } else {
-                        toast.error('Brak danych do pobrania');
-                      }
-                    }}
-                    variant="primaryOutline"
-                    disabled={!field.state.value || field.state.value.length === 0}
-                  >
-                    Pobierz XLSX
-                  </AppButton>
-                );
+                if (field.state.value && field.state.value.length > 0) {
+                  buttons.push(
+                    <AppButton
+                      key="download"
+                      onClick={() => {
+                        const data = field.state.value;
+                        if (data && data.length > 0) {
+                          exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
+                        } else {
+                          toast.error('Brak danych do pobrania');
+                        }
+                      }}
+                      variant="primaryOutline"
+                      disabled={!field.state.value || field.state.value.length === 0}
+                    >
+                      Pobierz XLSX
+                    </AppButton>
+                  );
+                }
                 return buttons;
               }}
               variant="form"
