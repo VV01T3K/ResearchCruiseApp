@@ -3,11 +3,11 @@ services:
     container_name: researchcruiseapp-backend
     image: ghcr.io/vv01t3k/researchcruiseapp/backend:staging
     environment:
-      - Database__SeedAutomatically=true
-      - Database__MigrateAutomatically=true
-      - Database__LogUserPasswordsWhenSeeding=true
-      - ConnectionStrings__Database=Server=researchcruiseapp-db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
-      - FrontendUrl=https://cruise.wsiwiec.com
+      - Database__SeedAutomatically=${DATABASE_SEED_AUTOMATICALLY:-true}
+      - Database__MigrateAutomatically=${DATABASE_MIGRATE_AUTOMATICALLY:-true}
+      - Database__LogUserPasswordsWhenSeeding=${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-true}
+      - ConnectionStrings__Database=Server=${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
+      - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
     networks:
       - researchcruiseapp-network
   frontend:
@@ -21,7 +21,7 @@ services:
       - researchcruiseapp-network
       - proxy
     labels:
-      caddy: cruise.wsiwiec.com
+      caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       caddy.route.import: crowdsec
       caddy.route.reverse_proxy: "{{upstreams 8080}}"
 
