@@ -5,6 +5,10 @@ on:
     paths-ignore:
       - docs
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   frontend-checks:
     name: Frontend checks
