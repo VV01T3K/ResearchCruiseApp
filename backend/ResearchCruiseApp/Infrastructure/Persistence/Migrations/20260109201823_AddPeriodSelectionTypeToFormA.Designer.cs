@@ -12,7 +12,7 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251231175336_AddPeriodSelectionTypeToFormA")]
+    [Migration("20260109201823_AddPeriodSelectionTypeToFormA")]
     partial class AddPeriodSelectionTypeToFormA
     {
         /// <inheritdoc />
@@ -386,22 +386,18 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(10240)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InstitutionLocalization")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("InstitutionName")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("InstitutionUnit")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
@@ -1435,7 +1431,6 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Info")
-                        .IsRequired()
                         .HasMaxLength(10240)
                         .HasColumnType("nvarchar(max)");
 

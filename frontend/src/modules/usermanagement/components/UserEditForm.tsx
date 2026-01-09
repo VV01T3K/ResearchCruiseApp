@@ -354,13 +354,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
                   className="w-full"
                 >
                   {passwordResetSent ? (
-                    <motion.div className="flex gap-4 items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeFillIcon className="w-4 h-4" />
+                    <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <EnvelopeFillIcon className="h-4 w-4" />
                       <span>Link do zmiany hasła wysłany</span>
                     </motion.div>
                   ) : (
-                    <div className="flex gap-4 items-center">
-                      <EnvelopeFillIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <EnvelopeFillIcon className="h-4 w-4" />
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}
