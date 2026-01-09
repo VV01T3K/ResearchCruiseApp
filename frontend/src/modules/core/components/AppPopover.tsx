@@ -24,7 +24,7 @@ export function AppPopover({ children, modal, className, variant = 'plain' }: Pr
               'text-white outline-none hover:cursor-pointer disabled:cursor-default',
               variants[variant],
               'flex cursor-pointer items-center gap-2 text-sm',
-              'ring-2 ring-transparent focus:rounded-lg focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
+              'ring-transparent focus:rounded-lg focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
               className
             )}
           />
