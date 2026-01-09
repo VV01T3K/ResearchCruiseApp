@@ -2,15 +2,18 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
 COPY ["./ResearchCruiseApp/ResearchCruiseApp.csproj", "ResearchCruiseApp/"]
 RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj"
+
 COPY . .
 WORKDIR "/src/ResearchCruiseApp"
-RUN dotnet build "ResearchCruiseApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ResearchCruiseApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ResearchCruiseApp.csproj" \
+    -c $BUILD_CONFIGURATION \
+    -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
@@ -21,5 +24,5 @@ EXPOSE 8080
 EXPOSE 8081
 
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "ResearchCruiseApp.dll"]
