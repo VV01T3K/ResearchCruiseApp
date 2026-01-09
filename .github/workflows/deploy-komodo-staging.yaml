@@ -12,6 +12,10 @@ on:
     paths-ignore:
       - docs
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-push-images:
     name: Build and push images
