@@ -100,9 +100,6 @@ export function CruiseApplicationPeriodInput({
   // Parse maxValues bounds (defaults to full year: 0-24)
   const [minBound, maxBound] = parsePeriod(maxValues, [0, 24]);
 
-  // Track previous bounds to detect changes
-  const prevBoundsRef = React.useRef({ minBound, maxBound });
-
   // Compute slider values from external value prop
   const computedSliderValues = React.useMemo((): [number, number] => {
     if (!isValidPeriod(value)) {
@@ -121,21 +118,16 @@ export function CruiseApplicationPeriodInput({
 
   // When bounds change, we need to clamp and notify parent
   React.useEffect(() => {
-    const prevBounds = prevBoundsRef.current;
-    if (prevBounds.minBound !== minBound || prevBounds.maxBound !== maxBound) {
-      prevBoundsRef.current = { minBound, maxBound };
+    // Clamp current values to new bounds
+    const currentValues = localValues ?? computedSliderValues;
+    const clamped = clampToBounds(currentValues, minBound, maxBound);
 
-      // Clamp current values to new bounds
-      const currentValues = localValues ?? computedSliderValues;
-      const clamped = clampToBounds(currentValues, minBound, maxBound);
-
-      if (clamped[0] !== currentValues[0] || clamped[1] !== currentValues[1]) {
-        // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-        setLocalValues(null); // Reset local state
-        onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
-      }
+    const valueChanged =
+      !isValidPeriod(value) || clamped[0].toString() !== value?.[0] || clamped[1].toString() !== value?.[1];
+    if (valueChanged) {
+      onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
     }
-  }, [minBound, maxBound, localValues, computedSliderValues, onChange]);
+  }, [minBound, maxBound, localValues, computedSliderValues, onChange, value]);
 
   // Reset local state when external value changes (e.g., form reset)
   React.useEffect(() => {
