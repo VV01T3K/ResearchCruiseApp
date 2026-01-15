@@ -16,6 +16,7 @@ import { AppBadge } from '@/core/components/AppBadge';
 import { AppButton } from '@/core/components/AppButton';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
+import { toast } from '@/core/components/layout/toast';
 import { getErrors } from '@/core/lib/utils';
 import { getRoleLabel, Role } from '@/core/models/Role';
 import { User } from '@/core/models/User';
@@ -94,21 +95,39 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       }
 
       if (editMode) {
+        const loading = toast.loading('Zapisywanie zmian...');
         await updateUserMutation
           .mutateAsync(
             { userId: user.id, data: value },
             {
-              onSuccess: async () => {
+              onSuccess: () => {
                 close();
+                toast.success('Zaaktualizowano użytkownika');
+              },
+              onError: (err) => {
+                console.error(err);
+                toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+              },
+              onSettled: () => {
+                toast.dismiss(loading);
               },
             }
           )
           .catch(() => {});
       } else {
+        const loading = toast.loading('Dodawanie użytkownika...');
         await addNewUserMutation
           .mutateAsync(value, {
-            onSuccess: async () => {
+            onSuccess: () => {
               close();
+              toast.success('Utworzono nowego użytkownika');
+            },
+            onError: (err) => {
+              console.error(err);
+              toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+            },
+            onSettled: () => {
+              toast.dismiss(loading);
             },
           })
           .catch(() => {});
@@ -131,11 +150,19 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       setDeletionConfirmed(true);
       return;
     }
-
+    const loading = toast.loading('Usuwanie użytkownika...');
     await deleteUserMutation
       .mutateAsync(user.id, {
-        onSuccess: async () => {
+        onSuccess: () => {
           close();
+          toast.success('Użytkownik został usunięty');
+        },
+        onError: (err) => {
+          console.error(err);
+          toast.error('Nie udało się usunąć użytkownika');
+        },
+        onSettled: () => {
+          toast.dismiss(loading);
         },
       })
       .catch(() => {});
@@ -147,18 +174,36 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
     }
 
     if (!user.accepted) {
+      const loading = toast.loading('Akceptowanie konta użytkownika...');
       await acceptUserMutation
         .mutateAsync(user.id, {
           onSuccess: () => {
             user.accepted = true;
+            toast.success('Zaakceptowano konto użytkownika');
+          },
+          onError: (err) => {
+            console.error(err);
+            toast.error('Nie udało się zaakceptować konta użytkownika');
+          },
+          onSettled: () => {
+            toast.dismiss(loading); // ?????????
           },
         })
         .catch(() => {});
     } else {
+      const loading = toast.loading('Cofanie akceptacji konta użytkownika...');
       await unAcceptUserMutation
         .mutateAsync(user.id, {
           onSuccess: () => {
             user.accepted = false;
+            toast.success('Cofnięto akceptację konta użytkownika');
+          },
+          onError: (err) => {
+            console.error(err);
+            toast.error('Nie udało się cofnąć akceptacji konta użytkownika');
+          },
+          onSettled: () => {
+            toast.dismiss(loading);
           },
         })
         .catch(() => {});
@@ -328,7 +373,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               {editMode && (
                 <AppButton
                   variant={!user.accepted ? 'success' : 'danger'}
-                  disabled={!!submitError}
+                  disabled={!!submitError || acceptUserMutation.isPending || unAcceptUserMutation.isPending}
                   onClick={() => handleAccountAcceptanceToggle()}
                   className="w-full"
                 >

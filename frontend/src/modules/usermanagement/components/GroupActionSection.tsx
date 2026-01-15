@@ -48,6 +48,7 @@ export function GroupActionSection({ selectedUsers, allowToRemoveUsers, close }:
   }
 
   async function handleAcceptSelectedUsers() {
+    // TODO: probably need refactor - await blocks everything + close() is called x times + add toast
     for (const user of selectedUsers.filter((user) => !user.accepted)) {
       await acceptUserMutation
         .mutateAsync(user.id, {
