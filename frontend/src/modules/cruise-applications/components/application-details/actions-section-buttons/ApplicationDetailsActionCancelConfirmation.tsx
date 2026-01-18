@@ -21,7 +21,14 @@ export function ApplicationDetailsActionCancelConfirmation({ onReject, setConfir
         >
           Anuluj
         </AppButton>
-        <AppButton className="w-36 !justify-center gap-4 lg:w-48" variant="danger" onClick={onReject}>
+        <AppButton
+          className="w-36 !justify-center gap-4 lg:w-48"
+          variant="danger"
+          onClick={() => {
+            onReject();
+            setConfirmationMode(false);
+          }}
+        >
           <TrashFillIcon className="h-4 w-4" />
           Potwierdź odrzucenie
         </AppButton>
