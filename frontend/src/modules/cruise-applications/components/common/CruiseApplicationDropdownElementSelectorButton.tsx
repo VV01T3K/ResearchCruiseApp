@@ -97,7 +97,8 @@ export function CruiseApplicationDropdownElementSelectorButton({
                         }
                         className={cn(
                           'text-default block w-full rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 outline-none disabled:cursor-default disabled:opacity-50',
-                          option.onClick && 'hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200'
+                          option.onClick &&
+                            'data-[highlighted]:bg-primary-50 hover:bg-primary-50 active:bg-primary-100 hover:cursor-pointer data-[highlighted]:text-gray-900'
                         )}
                         disabled={!option.onClick}
                       >
