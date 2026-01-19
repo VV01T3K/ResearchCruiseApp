@@ -1,13 +1,13 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
+import { AnyReactFormApi } from '@/core/lib/form';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
 import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
 export type FormAContextType = {
   initValues: FormAInitValuesDto;
-  form: ReactFormExtendedApi<FormADto, undefined>;
+  form: AnyReactFormApi<FormADto>;
   hasFormBeenSubmitted: boolean;
   isReadonly: boolean;
   blockades?: BlockadePeriodDto[];
@@ -17,7 +17,7 @@ const FormAContext = createContext<FormAContextType | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFormA() {
-  return useContext(FormAContext)!;
+  return use(FormAContext)!;
 }
 
 export function FormAProvider({ value, children }: { value: FormAContextType; children: React.ReactNode }) {

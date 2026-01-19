@@ -1,15 +1,15 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { Row } from '@tanstack/react-table';
 
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
+import { AnyReactFormApi } from '@/core/lib/form';
 import { getErrors } from '@/core/lib/utils';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { OwnResearchTaskDto } from '@/cruise-applications/models/ResearchTaskDto';
 
 type Props = {
-  form: ReactFormExtendedApi<FormADto, undefined>;
+  form: AnyReactFormApi<FormADto>;
   row: Row<OwnResearchTaskDto>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;
@@ -40,7 +40,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             name={field.name}
             value={field.state.value as string}
             onBlur={field.handleBlur}
-            onChange={field.handleChange}
+            onChange={(value) => field.handleChange(value ?? '')}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Przewidywany termin składania"
             disabled={disabled}
@@ -72,7 +72,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             value={parseInt(field.state.value as string)}
             minimum={0}
             step={10}
-            onChange={(value: number) => field.handleChange(value.toString())}
+            onChange={(value) => field.handleChange(String(value))}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Przewidywane punkty ministerialne"

@@ -11,7 +11,7 @@ import { useForgotPasswordMutation } from '@/user/hooks/UserApiHooks';
 import { Result } from '@/user/models/Results';
 
 const validationSchema = z.object({
-  email: z.string().email('Niepoprawny adres e-mail').or(z.literal('')),
+  email: z.email('Niepoprawny adres e-mail').or(z.literal('')),
 });
 
 export function ForgotPasswordPage() {

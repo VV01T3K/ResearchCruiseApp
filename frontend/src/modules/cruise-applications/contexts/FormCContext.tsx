@@ -1,6 +1,6 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import React from 'react';
 
+import { AnyReactFormApi } from '@/core/lib/form';
 import { CruiseDto } from '@/cruise-applications/models/CruiseDto';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
@@ -11,7 +11,7 @@ import { FormCDto } from '@/cruise-applications/models/FormCDto';
 export type FormCContextType = {
   formAInitValues: FormAInitValuesDto;
   formBInitValues: FormBInitValuesDto;
-  form: ReactFormExtendedApi<FormCDto, undefined>;
+  form: AnyReactFormApi<FormCDto>;
   formA: FormADto;
   formB: FormBDto;
   cruise: CruiseDto;
@@ -23,7 +23,7 @@ const FormCContext = React.createContext<FormCContextType | undefined>(undefined
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFormC() {
-  return React.useContext(FormCContext)!;
+  return React.use(FormCContext)!;
 }
 
 export function FormCProvider({ value, children }: { value: FormCContextType; children: React.ReactNode }) {

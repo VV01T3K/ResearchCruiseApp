@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
@@ -12,35 +12,25 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDto } from '@/cruise-applications/models/CruiseApplicationDto';
 import { useCruiseForm } from '@/cruise-schedule/contexts/CruiseFormContext';
-import { CruiseFormDto } from '@/cruise-schedule/models/CruiseFormDto';
 
 export function CruiseFormApplicationsSection() {
   const { form, cruiseApplications, isReadonly, hasFormBeenSubmitted } = useCruiseForm();
   const [expanded, setExpanded] = React.useState(false);
 
-  function handleAddApplication(
-    field: FieldApi<CruiseFormDto, 'cruiseApplicationsIds', undefined, undefined, string[]>,
-    id: string
-  ) {
+  function handleAddApplication(field: AnyFieldApi, id: string) {
     field.pushValue(id);
-    field.handleChange((prev) => prev);
+    field.handleChange((prev: string[]) => prev);
     field.handleBlur();
   }
 
-  function handleRemoveApplication(
-    field: FieldApi<CruiseFormDto, 'cruiseApplicationsIds', undefined, undefined, string[]>,
-    id: string
-  ) {
+  function handleRemoveApplication(field: AnyFieldApi, id: string) {
     const index = field.state.value.indexOf(id);
     field.removeValue(index);
-    field.handleChange((prev) => prev);
+    field.handleChange((prev: string[]) => prev);
     field.handleBlur();
   }
 
-  function getColumns(
-    field: FieldApi<CruiseFormDto, 'cruiseApplicationsIds', undefined, undefined, string[]>,
-    attached: boolean
-  ): ColumnDef<CruiseApplicationDto>[] {
+  function getColumns(field: AnyFieldApi, attached: boolean): ColumnDef<CruiseApplicationDto>[] {
     return [
       {
         header: 'Numer',

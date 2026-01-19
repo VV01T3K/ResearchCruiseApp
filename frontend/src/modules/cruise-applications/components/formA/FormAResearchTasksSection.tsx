@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -10,7 +10,6 @@ import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applica
 import { ResearchTaskThumbnail } from '@/cruise-applications/components/common/research-task-thumbnails/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/cruise-applications/components/formA/research-task-details/ResearchTaskDetails';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
-import { FormADto } from '@/cruise-applications/models/FormADto';
 import {
   getEmptyTask,
   getTaskName,
@@ -22,9 +21,7 @@ import {
 export function FormAResearchTasksSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(
-    field: FieldApi<FormADto, 'researchTasks', undefined, undefined, ResearchTaskDto[]>
-  ): ColumnDef<ResearchTaskDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskDto>[] {
     return [
       {
         header: 'Lp.',
@@ -61,7 +58,7 @@ export function FormAResearchTasksSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: ResearchTaskDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -92,7 +89,7 @@ export function FormAResearchTasksSection() {
                       value: getTaskName(type),
                       onClick: () => {
                         field.pushValue(getEmptyTask(type));
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: ResearchTaskDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -119,7 +116,7 @@ export function FormAResearchTasksSection() {
                         content: <ResearchTaskThumbnail task={task} />,
                         onClick: () => {
                           field.pushValue(task);
-                          field.handleChange((prev) => prev);
+                          field.handleChange((prev: ResearchTaskDto[]) => prev);
                           field.handleBlur();
                         },
                       })),

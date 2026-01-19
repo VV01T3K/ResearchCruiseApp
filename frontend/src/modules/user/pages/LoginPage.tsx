@@ -12,7 +12,7 @@ import { useUserContext } from '@/user/hooks/UserContextHook';
 import { SignInResult } from '@/user/models/Results';
 
 const validationSchema = z.object({
-  email: z.string().email('Nieprawidłowy adres email').or(z.literal('')),
+  email: z.email('Nieprawidłowy adres email').or(z.literal('')),
   password: z.string().nonempty('Hasło nie może być puste').or(z.literal('')),
 });
 

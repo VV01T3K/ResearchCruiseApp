@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
 
 import { CompanyInfoCard } from '@/other/components/CompanyInfoCard';

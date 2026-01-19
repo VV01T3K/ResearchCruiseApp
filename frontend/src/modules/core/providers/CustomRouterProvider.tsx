@@ -12,6 +12,8 @@ const router = createRouter({
   },
   history: createBrowserHistory(),
   defaultPendingComponent: AppLoader,
+  defaultPreload: 'intent',
+  scrollRestoration: true,
 });
 
 declare module '@tanstack/react-router' {

@@ -1,6 +1,6 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import React from 'react';
 
+import { AnyReactFormApi } from '@/core/lib/form';
 import { CruiseDto } from '@/cruise-applications/models/CruiseDto';
 import { FormADto } from '@/cruise-applications/models/FormADto';
 import { FormAInitValuesDto } from '@/cruise-applications/models/FormAInitValuesDto';
@@ -10,7 +10,7 @@ import { FormBInitValuesDto } from '@/cruise-applications/models/FormBInitValues
 export type FormBContextType = {
   formAInitValues: FormAInitValuesDto;
   formBInitValues: FormBInitValuesDto;
-  form: ReactFormExtendedApi<FormBDto, undefined>;
+  form: AnyReactFormApi<FormBDto>;
   formA: FormADto;
   cruise: CruiseDto;
   hasFormBeenSubmitted: boolean;
@@ -21,7 +21,7 @@ const FormBContext = React.createContext<FormBContextType | undefined>(undefined
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFormB() {
-  return React.useContext(FormBContext)!;
+  return React.use(FormBContext)!;
 }
 
 export function FormBProvider({ value, children }: { value: FormBContextType; children: React.ReactNode }) {

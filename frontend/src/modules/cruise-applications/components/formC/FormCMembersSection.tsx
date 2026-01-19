@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -13,16 +13,13 @@ import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 import { CrewMemberDto } from '@/cruise-applications/models/CrewMemberDto';
-import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { GuestTeamDto } from '@/cruise-applications/models/GuestTeamDto';
 import { UGTeamDto } from '@/cruise-applications/models/UGTeamDto';
 
 export function FormCMembersSection() {
   const { form, formB, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getUgTeamsColumns(
-    field: FieldApi<FormCDto, 'ugTeams', undefined, undefined, UGTeamDto[]>
-  ): ColumnDef<UGTeamDto>[] {
+  function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UGTeamDto>[] {
     const tableField = field;
     return [
       {
@@ -54,7 +51,7 @@ export function FormCMembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev) => prev);
+                  tableField.handleChange((prev: UGTeamDto[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -81,7 +78,7 @@ export function FormCMembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev) => prev);
+                  tableField.handleChange((prev: UGTeamDto[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -100,9 +97,9 @@ export function FormCMembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: UGTeamDto[]) => prev);
                 field.handleBlur();
-                tableField.handleChange((prev) => prev);
+                tableField.handleChange((prev: UGTeamDto[]) => prev);
               }}
               disabled={isReadonly}
             />
@@ -113,9 +110,7 @@ export function FormCMembersSection() {
     ];
   }
 
-  function getGuestTeams(
-    field: FieldApi<FormCDto, 'guestTeams', undefined, undefined, GuestTeamDto[]>
-  ): ColumnDef<GuestTeamDto>[] {
+  function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamDto>[] {
     const tableField = field;
     return [
       {
@@ -163,7 +158,7 @@ export function FormCMembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev) => prev);
+                  tableField.handleChange((prev: GuestTeamDto[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -182,9 +177,9 @@ export function FormCMembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: GuestTeamDto[]) => prev);
                 field.handleBlur();
-                tableField.handleChange((prev) => prev);
+                tableField.handleChange((prev: GuestTeamDto[]) => prev);
               }}
               disabled={isReadonly}
             />

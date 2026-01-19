@@ -30,38 +30,36 @@ export function FormCPage() {
   const cruise = useCruiseForCruiseApplicationQuery(applicationId);
   const updateMutation = useUpdateFormCMutation();
 
-  const form = useForm<FormCDto>({
-    defaultValues:
-      formC.data ??
-      ({
-        shipUsage: formA.data.shipUsage, // Max length 1
-        differentUsage: formA.data.differentUsage,
-        permissions: formB.data.permissions,
-        researchAreaDescriptions: formA.data.researchAreaDescriptions,
-        ugTeams: formB.data.ugTeams,
-        guestTeams: formB.data.guestTeams,
-        researchTasksEffects: formA.data.researchTasks.map(
-          (task) =>
-            ({
-              ...task,
-              done: 'false',
-              managerConditionMet: 'false',
-              deputyConditionMet: 'false',
-            }) as ResearchTaskEffectDto
-        ),
-        contracts: formA.data.contracts,
-        spubTasks: formA.data.spubTasks,
-        shortResearchEquipments: formB.data.shortResearchEquipments,
-        longResearchEquipments: formB.data.longResearchEquipments,
-        ports: formB.data.ports,
-        cruiseDaysDetails: formB.data.cruiseDaysDetails,
-        researchEquipments: formB.data.researchEquipments,
-        shipEquipmentsIds: formB.data.shipEquipmentsIds,
-        collectedSamples: [],
-        spubReportData: '',
-        additionalDescription: '',
-        photos: [],
-      } as FormCDto),
+  const form = useForm({
+    defaultValues: (formC.data ?? {
+      shipUsage: formA.data.shipUsage, // Max length 1
+      differentUsage: formA.data.differentUsage,
+      permissions: formB.data.permissions,
+      researchAreaDescriptions: formA.data.researchAreaDescriptions,
+      ugTeams: formB.data.ugTeams,
+      guestTeams: formB.data.guestTeams,
+      researchTasksEffects: formA.data.researchTasks.map(
+        (task) =>
+          ({
+            ...task,
+            done: 'false',
+            managerConditionMet: 'false',
+            deputyConditionMet: 'false',
+          }) as ResearchTaskEffectDto
+      ),
+      contracts: formA.data.contracts,
+      spubTasks: formA.data.spubTasks,
+      shortResearchEquipments: formB.data.shortResearchEquipments,
+      longResearchEquipments: formB.data.longResearchEquipments,
+      ports: formB.data.ports,
+      cruiseDaysDetails: formB.data.cruiseDaysDetails,
+      researchEquipments: formB.data.researchEquipments,
+      shipEquipmentsIds: formB.data.shipEquipmentsIds,
+      collectedSamples: [],
+      spubReportData: '',
+      additionalDescription: '',
+      photos: [],
+    }) as FormCDto,
     validators: {
       onChange: getFormCValidationSchema(formAInitValues.data),
     },

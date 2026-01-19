@@ -39,7 +39,7 @@ export const ProjectPreparationResearchTaskDtoValidationSchema = z.object({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
   financingApproved: z.enum(['true', 'false'], {
-    message: 'Wymagane jest wskazanie czy finansowanie zostało zatwierdzone',
+    error: 'Wymagane jest wskazanie czy finansowanie zostało zatwierdzone',
   }),
 });
 
@@ -107,7 +107,7 @@ export const OwnResearchTaskDtoValidationSchema = z.object({
       return !isNaN(parsed) && parsed >= 0;
     },
     {
-      message: 'Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0',
+      error: 'Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0',
     }
   ),
 });

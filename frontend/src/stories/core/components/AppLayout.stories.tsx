@@ -1,5 +1,5 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppLayout } from '@/core/components/AppLayout';
 import AppBackground from '@/core/components/layout/AppBackground';
