@@ -35,6 +35,8 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].number`}
         children={(field) => (
           <AppNumberInput
+            data-testid-input="cruise-day-number-input"
+            data-testid-errors="cruise-day-number-errors"
             name={field.name}
             value={parseInt(field.state.value, 10)}
             onChange={(e) => field.setValue(e.toString())}
@@ -59,6 +61,8 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].hours`}
         children={(field) => (
           <AppNumberInput
+            data-testid-input="cruise-day-hours-input"
+            data-testid-errors="cruise-day-hours-errors"
             name={field.name}
             value={parseInt(field.state.value, 10)}
             onChange={(e) => field.setValue(e.toString())}
@@ -83,6 +87,8 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].taskName`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-task-name-input"
+            data-testid-errors="cruise-day-task-name-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -106,6 +112,8 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].region`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-region-input"
+            data-testid-errors="cruise-day-region-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -129,6 +137,8 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].position`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-position-input"
+            data-testid-errors="cruise-day-position-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -152,6 +162,8 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].comment`}
         children={(field) => (
           <AppInput
+            data-testid="cruise-day-comment-input"
+            data-testid-errors="cruise-day-comment-errors"
             name={field.name}
             value={field.state.value}
             onChange={field.setValue}
@@ -228,7 +240,11 @@ export function FormBCruiseDayDetailsSection() {
   };
 
   return (
-    <AppAccordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="13. Szczegółowy plan zadań do realizacji podczas rejsu"
+      expandedByDefault
+      data-testid="form-b-cruise-day-details-section"
+    >
       <form.Field
         name="cruiseDaysDetails"
         mode="array"
@@ -251,6 +267,7 @@ export function FormBCruiseDayDetailsSection() {
                   buttons.push(
                     <AppButton
                       key="new"
+                      data-testid="form-b-add-cruise-day-task-btn"
                       onClick={() => {
                         field.pushValue({
                           number: '0',

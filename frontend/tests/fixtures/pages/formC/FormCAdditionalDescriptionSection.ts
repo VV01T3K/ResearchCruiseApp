@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -12,14 +12,14 @@ export class FormCAdditionalDescriptionSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '18. Krótki opis podsumowujący dany rejs');
-    this.descriptionInput = new FormInput(this.sectionDiv.getByRole('textbox'), {
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-additional-description-section');
+    this.descriptionInput = new FormInput(this.sectionDiv.getByTestId('form-c-description-input'), {
       errors: { tooLong: this.sectionDiv.getByText('Maksymalna długość to 10240 znaków') },
     });
   }
 
   public async sendAttachment(filePath: string | readonly string[]) {
-    const sendButton = this.sectionDiv.locator('div:below(:text("Załączniki"))').first();
+    const sendButton = this.sectionDiv.getByTestId('form-c-attachment-input-button');
 
     const fileChooserPromise = this.page.waitForEvent('filechooser');
     await sendButton.click();

@@ -29,6 +29,9 @@ type Props = {
   disabled?: boolean;
   helper?: React.ReactNode;
   placeholder?: string;
+  'data-testid'?: string;
+  'data-testid-button'?: string;
+  'data-testid-errors'?: string;
 };
 export function AppYearPickerInput({
   name,
@@ -41,6 +44,9 @@ export function AppYearPickerInput({
   disabled,
   helper,
   placeholder = 'Wybierz rok',
+  'data-testid': testId,
+  'data-testid-button': buttonTestId,
+  'data-testid-errors': errorsTestId,
 }: Props) {
   const [selectedYear, setSelectedYear] = React.useState<number | undefined>(value);
   const [visibleDecade, setVisibleDecade] = React.useState<{ from: number; to: number }>(() => {
@@ -95,7 +101,7 @@ export function AppYearPickerInput({
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className={cn()} ref={elementRef}>
           <input type="hidden" name={name} value={value} disabled={disabled} />
@@ -107,6 +113,7 @@ export function AppYearPickerInput({
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
               errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
+            data-testid={buttonTestId}
           >
             {selectedYear ?? placeholder}
             <span className="flex gap-2 items-center">
@@ -124,7 +131,7 @@ export function AppYearPickerInput({
         </div>
         <div className={cn('flex flex-row justify-between text-sm', errors || helper ? 'mt-2' : '')}>
           <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} />
+          <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
         </div>
       </div>
 

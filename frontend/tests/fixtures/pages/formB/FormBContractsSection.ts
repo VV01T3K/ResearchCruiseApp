@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -11,10 +11,7 @@ export class FormBContractsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(
-      formPage.page,
-      '8. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze'
-    );
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-contracts-section');
   }
 
   public async defaultFill() {}

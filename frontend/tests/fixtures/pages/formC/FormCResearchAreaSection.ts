@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -13,7 +13,7 @@ export class FormCResearchAreaSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '5. Rejon prowadzenia badań');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-research-area-section');
     this.researchAreaDropdown = new FormDropdown(
       this.sectionDiv.locator('button:below(:text("Rejon prowadzenia badań"))').first()
     );

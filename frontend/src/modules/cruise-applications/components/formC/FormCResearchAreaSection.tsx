@@ -97,7 +97,7 @@ export function FormCResearchAreaSection() {
   }
 
   return (
-    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault>
+    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault data-testid="form-c-research-area-section">
       <form.Field
         name="researchAreaDescriptions"
         mode="array"

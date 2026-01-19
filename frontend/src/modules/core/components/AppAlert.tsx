@@ -11,13 +11,18 @@ type Props = {
 
   onClose?: () => void;
   variant?: keyof typeof variants;
+  'data-testid'?: string;
 };
 
-export function AppAlert({ children, onClose, variant = 'primary' }: Props) {
+export function AppAlert({ children, onClose, variant = 'primary', 'data-testid': testId }: Props) {
   const Icon = variants[variant].icon;
 
   return (
-    <div className={cn('flex items-center p-4 rounded-lg', variants[variant].containerClassName)} role="alert">
+    <div
+      className={cn('flex items-center p-4 rounded-lg', variants[variant].containerClassName)}
+      role="alert"
+      data-testid={testId}
+    >
       <Icon className="h-6 w-6 mr-4" />
       <span className="sr-only">{variants[variant].screenReaderMessage}</span>
       {children}

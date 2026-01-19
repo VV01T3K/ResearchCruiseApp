@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -12,11 +12,8 @@ export class FormBResearchEquipmentsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(
-      formPage.page,
-      '14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu'
-    );
-    this.addEquipmentButton = this.sectionDiv.getByRole('button', { name: 'Dodaj sprzęt / aparaturę' });
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-research-equipments-section');
+    this.addEquipmentButton = this.sectionDiv.getByTestId('form-b-add-research-equipment-btn');
   }
 
   public equipmentRowLocator(index: 'first' | 'last' | number) {
@@ -27,14 +24,17 @@ export class FormBResearchEquipmentsSection {
   public equipmentRow(index: 'first' | 'last' | number) {
     const rowLocator = this.equipmentRowLocator(index);
     return {
-      nameInput: new FormInput(rowLocator.locator('td').nth(1).getByRole('textbox').first(), {
-        errors: { required: rowLocator.getByText('Nazwa jest wymagana') },
+      nameInput: new FormInput(rowLocator.getByTestId('research-equipment-name-input'), {
+        errors: { required: rowLocator.getByTestId('research-equipment-name-errors') },
       }),
-      insuranceStartDateDropdown: new FormDropdown(rowLocator.locator('td').nth(2).getByRole('button').first(), {
-        variant: 'menu-with-buttons',
-      }),
-      insuranceEndDateDropdown: new FormDropdown(rowLocator.locator('td').nth(3).getByRole('button').first(), {
-        variant: 'menu-with-buttons',
+      insuranceStartDateDropdown: new FormDropdown(
+        rowLocator.getByTestId('research-equipment-insurance-start-button'),
+        {
+          variant: 'datetime-picker',
+        }
+      ),
+      insuranceEndDateDropdown: new FormDropdown(rowLocator.getByTestId('research-equipment-insurance-end-button'), {
+        variant: 'datetime-picker',
       }),
       permissionCheckbox: rowLocator.locator('td').nth(4).getByRole('checkbox').first(),
     };

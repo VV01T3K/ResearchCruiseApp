@@ -82,7 +82,7 @@ export class FormAPage {
       supervisorInfoSection: new FormASupervisorInfoSection(this),
     } as const;
 
-    this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });
+    this.submitButton = this.page.getByTestId('form-submit-btn');
     this.toastMessage = this.page.getByTestId('toast-container');
     this.submissionApprovedMessage = this.toastMessage.getByTestId('toast-success').first();
     this.validationErrorMessage = this.toastMessage.getByTestId('toast-error').first();

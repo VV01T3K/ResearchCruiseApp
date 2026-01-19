@@ -63,7 +63,7 @@ export function FormBPublicationsSection() {
   ];
 
   return (
-    <AppAccordion title="10. Publikacje" expandedByDefault>
+    <AppAccordion title="10. Publikacje" expandedByDefault data-testid="form-b-publications-section">
       <header className="text-center space-y-4 mb-8 max-w-2xl mx-auto">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>

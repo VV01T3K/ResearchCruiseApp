@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -13,16 +13,12 @@ export class FormAContractsSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(
-      formPage.page,
-      '7. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze'
-    );
-    this.addNewContractDropdown = new FormDropdown(
-      this.sectionDiv.locator('button', { hasText: 'Dodaj nowy kontrakt' }),
-      { variant: 'menu-with-buttons' }
-    );
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-contracts-section');
+    this.addNewContractDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-add-contract-btn-button'), {
+      variant: 'menu-with-buttons',
+    });
     this.addHistoricalContractDropdown = new FormDropdown(
-      this.sectionDiv.locator('button', { hasText: 'Dodaj historyczną umowę' })
+      this.sectionDiv.getByTestId('form-a-add-historical-contract-btn-button')
     );
   }
 

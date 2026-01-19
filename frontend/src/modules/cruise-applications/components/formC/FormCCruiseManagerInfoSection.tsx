@@ -6,7 +6,7 @@ export function FormCCruiseManagerInfoSection() {
   const { formA, formAInitValues } = useFormC();
 
   return (
-    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault>
+    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-c-cruise-manager-section">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <AppDropdownInput
           name="cruiseManager"

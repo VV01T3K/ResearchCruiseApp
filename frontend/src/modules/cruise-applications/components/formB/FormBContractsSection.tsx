@@ -77,6 +77,7 @@ export function FormBContractsSection() {
     <AppAccordion
       title="8. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
       expandedByDefault
+      data-testid="form-b-contracts-section"
     >
       <AppTable
         data={formA.contracts}

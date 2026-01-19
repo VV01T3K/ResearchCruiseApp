@@ -111,7 +111,11 @@ export function FormCAdditionalPermissionsSection() {
   }
 
   return (
-    <AppAccordion title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań" expandedByDefault>
+    <AppAccordion
+      title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań"
+      expandedByDefault
+      data-testid="form-c-additional-permissions-section"
+    >
       <form.Field
         name="permissions"
         mode="array"
@@ -123,6 +127,7 @@ export function FormCAdditionalPermissionsSection() {
               buttons={() => [
                 <AppButton
                   key="permissions.add-btn"
+                  data-testid="form-c-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
                     field.handleChange((prev: PermissionDto[]) => prev);
