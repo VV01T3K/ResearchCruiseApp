@@ -96,41 +96,28 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
 
       if (editMode) {
         const loading = toast.loading('Zapisywanie zmian...');
-        await updateUserMutation
-          .mutateAsync(
-            { userId: user.id, data: value },
-            {
-              onSuccess: () => {
-                close();
-                toast.success('Zaaktualizowano użytkownika');
-              },
-              onError: (err) => {
-                console.error(err);
-                toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-              },
-              onSettled: () => {
-                toast.dismiss(loading);
-              },
-            }
-          )
-          .catch(() => {});
+        try {
+          await updateUserMutation.mutateAsync({ userId: user.id, data: value });
+          toast.dismiss(loading);
+          close();
+          toast.success('Zaktualizowano użytkownika');
+        } catch (err) {
+          toast.dismiss(loading);
+          console.error(err);
+          toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        }
       } else {
         const loading = toast.loading('Dodawanie użytkownika...');
-        await addNewUserMutation
-          .mutateAsync(value, {
-            onSuccess: () => {
-              close();
-              toast.success('Utworzono nowego użytkownika');
-            },
-            onError: (err) => {
-              console.error(err);
-              toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            },
-            onSettled: () => {
-              toast.dismiss(loading);
-            },
-          })
-          .catch(() => {});
+        try {
+          await addNewUserMutation.mutateAsync(value);
+          toast.dismiss(loading);
+          close();
+          toast.success('Utworzono nowego użytkownika');
+        } catch (err) {
+          toast.dismiss(loading);
+          console.error(err);
+          toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        }
       }
     },
   });
@@ -151,21 +138,16 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       return;
     }
     const loading = toast.loading('Usuwanie użytkownika...');
-    await deleteUserMutation
-      .mutateAsync(user.id, {
-        onSuccess: () => {
-          close();
-          toast.success('Użytkownik został usunięty');
-        },
-        onError: (err) => {
-          console.error(err);
-          toast.error('Nie udało się usunąć użytkownika');
-        },
-        onSettled: () => {
-          toast.dismiss(loading);
-        },
-      })
-      .catch(() => {});
+    try {
+      await deleteUserMutation.mutateAsync(user.id);
+      toast.dismiss(loading);
+      close();
+      toast.success('Użytkownik został usunięty');
+    } catch (err) {
+      toast.dismiss(loading);
+      console.error(err);
+      toast.error('Nie udało się usunąć użytkownika');
+    }
   }
 
   async function handleAccountAcceptanceToggle() {
@@ -175,38 +157,28 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
 
     if (!user.accepted) {
       const loading = toast.loading('Akceptowanie konta użytkownika...');
-      await acceptUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: () => {
-            user.accepted = true;
-            toast.success('Zaakceptowano konto użytkownika');
-          },
-          onError: (err) => {
-            console.error(err);
-            toast.error('Nie udało się zaakceptować konta użytkownika');
-          },
-          onSettled: () => {
-            toast.dismiss(loading); // ?????????
-          },
-        })
-        .catch(() => {});
+      try {
+        await acceptUserMutation.mutateAsync(user.id);
+        toast.dismiss(loading);
+        close();
+        toast.success('Zaakceptowano konto użytkownika');
+      } catch (err) {
+        toast.dismiss(loading);
+        console.error(err);
+        toast.error('Nie udało się zaakceptować konta użytkownika');
+      }
     } else {
       const loading = toast.loading('Cofanie akceptacji konta użytkownika...');
-      await unAcceptUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: () => {
-            user.accepted = false;
-            toast.success('Cofnięto akceptację konta użytkownika');
-          },
-          onError: (err) => {
-            console.error(err);
-            toast.error('Nie udało się cofnąć akceptacji konta użytkownika');
-          },
-          onSettled: () => {
-            toast.dismiss(loading);
-          },
-        })
-        .catch(() => {});
+      try {
+        await unAcceptUserMutation.mutateAsync(user.id);
+        toast.dismiss(loading);
+        close();
+        toast.success('Cofnięto akceptację konta użytkownika');
+      } catch (err) {
+        toast.dismiss(loading);
+        console.error(err);
+        toast.error('Nie udało się cofnąć akceptacji konta użytkownika');
+      }
     }
   }
 

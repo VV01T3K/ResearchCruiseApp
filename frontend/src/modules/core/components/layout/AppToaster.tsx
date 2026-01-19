@@ -64,7 +64,7 @@ function ToastList() {
 
 export function AppToaster() {
   return (
-    <Toast.Provider toastManager={toastManager}>
+    <Toast.Provider toastManager={toastManager} limit={5}>
       <Toast.Portal>
         <Toast.Viewport
           data-testid="toast-container"
