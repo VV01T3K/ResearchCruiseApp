@@ -1,4 +1,3 @@
-import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 import { useRef } from 'react';
 import toast from 'react-hot-toast';
@@ -10,9 +9,8 @@ import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
-import { useFormB } from '@/cruise-applications/contexts/FormBContext';
+import { FormBContextType, useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { CruiseDayDetailsDto } from '@/cruise-applications/models/CruiseDayDetailsDto';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
 import {
   exportCruiseDayDetailsToXlsx,
   parseCruiseDayDetailsFromCsv,
@@ -21,8 +19,9 @@ import {
 } from '@/cruise-applications/utils/csvParser';
 
 const cruiseDayDetailsColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
-  field: FieldApi<FormBDto, 'cruiseDaysDetails', undefined, undefined, CruiseDayDetailsDto[]>,
+  form: FormBContextType['form'],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<CruiseDayDetailsDto>[] => [
@@ -175,7 +174,7 @@ const cruiseDayDetailsColumns = (
               <AppTableDeleteRowButton
                 onClick={() => {
                   field.removeValue(row.index);
-                  field.handleChange((prev) => prev);
+                  field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
                   field.handleBlur();
                 }}
                 disabled={isReadonly}
@@ -261,7 +260,7 @@ export function FormBCruiseDayDetailsSection() {
                           position: '',
                           comment: '',
                         });
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
                         field.handleBlur();
                       }}
                       variant="primary"

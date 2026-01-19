@@ -1,13 +1,19 @@
 import config from '@config';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Outlet, ScrollRestoration, useRouterState } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { Outlet, useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
+import { lazy, Suspense } from 'react';
 
 import AppBackground from '@/core/components/layout/AppBackground';
 import { AppNavbar } from '@/core/components/layout/AppNavbar';
 import { AppNetworkDisconnectAlert } from '@/core/components/layout/AppNetworkDisconnectAlert';
 import { AppToaster } from '@/core/components/layout/AppToaster';
+
+const TanStackRouterDevtools = config.dev
+  ? lazy(() => import('@tanstack/react-router-devtools').then((m) => ({ default: m.TanStackRouterDevtools })))
+  : () => null;
+const ReactQueryDevtools = config.dev
+  ? lazy(() => import('@tanstack/react-query-devtools').then((m) => ({ default: m.ReactQueryDevtools })))
+  : () => null;
 
 export function RootLayout() {
   const routerState = useRouterState();
@@ -36,10 +42,11 @@ export function RootLayout() {
         </motion.div>
       </main>
       <div id="fab-root">
-        {config.dev && <TanStackRouterDevtools />}
-        {config.dev && <ReactQueryDevtools />}
+        <Suspense>
+          <TanStackRouterDevtools />
+          <ReactQueryDevtools />
+        </Suspense>
       </div>
-      <ScrollRestoration />
     </>
   );
 }

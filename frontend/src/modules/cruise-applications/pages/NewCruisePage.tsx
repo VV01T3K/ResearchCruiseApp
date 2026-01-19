@@ -25,7 +25,7 @@ export function NewCruisePage() {
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
-  const form = useForm<FormADto>({
+  const form = useForm({
     defaultValues: {
       id: undefined,
       cruiseManagerId: userContext.currentUser!.id,
@@ -52,7 +52,7 @@ export function NewCruisePage() {
       spubTasks: [],
       supervisorEmail: '',
       note: '',
-    },
+    } as FormADto,
     validators: {
       onChange: getFormAValidationSchema(initialStateQuery.data),
     },
@@ -63,10 +63,12 @@ export function NewCruisePage() {
 
   // Update form validators when blockades change
   useEffect(() => {
-    form.options.validators = {
-      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-    };
-  }, [blockadesQuery.data, initialStateQuery.data, form.options]);
+    form.update({
+      validators: {
+        onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+      },
+    });
+  }, [blockadesQuery.data, initialStateQuery.data, form]);
 
   const context = {
     form,

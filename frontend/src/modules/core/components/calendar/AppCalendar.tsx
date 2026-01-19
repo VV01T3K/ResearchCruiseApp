@@ -47,7 +47,7 @@ export function AppCalendar({ events, buttons }: Props) {
 
   React.useEffect(() => {
     updateTileWidth();
-  }, [calendarRef.current?.clientWidth]);
+  }, []);
 
   React.useEffect(() => {
     window.addEventListener('resize', updateTileWidth);

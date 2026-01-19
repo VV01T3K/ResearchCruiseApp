@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 
@@ -10,7 +10,7 @@ import { getErrors } from '@/core/lib/utils';
 // Zod validation schema
 const validationSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
   age: z.number().min(18, 'Must be at least 18 years old'),
 });
 

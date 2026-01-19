@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppInputErrorTriangle } from '@/core/components/inputs/parts/AppInputErrorTriangle';
 

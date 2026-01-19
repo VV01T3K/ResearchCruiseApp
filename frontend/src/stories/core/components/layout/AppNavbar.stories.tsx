@@ -1,6 +1,6 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import { MockUserContextProvider } from '@stories/mocks/MockUserContextProvider';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppNavbar } from '@/core/components/layout/AppNavbar';
 

@@ -18,8 +18,8 @@ export function FormAForSupervisorPage() {
   const answerMutation = useSupervisorAnswerFormAMutation();
   const formA = useFormAForSupervisorQuery({ cruiseId: cruiseApplicationId, supervisorCode });
 
-  const form = useForm<FormADto>({
-    defaultValues: formA.data ?? {
+  const form = useForm({
+    defaultValues: (formA.data ?? {
       id: undefined,
       cruiseManagerId: '',
       deputyManagerId: '',
@@ -42,7 +42,7 @@ export function FormAForSupervisorPage() {
       spubTasks: [],
       supervisorEmail: '',
       note: '',
-    },
+    }) as FormADto,
   });
 
   function handleAcceptForm() {

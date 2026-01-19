@@ -44,10 +44,10 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
 
   const validationSchema = z
     .object({
-      email: z.string().email('Niepoprawny adres email').or(z.literal('')),
+      email: z.email('Niepoprawny adres email').or(z.literal('')),
       firstName: z.string().nonempty('Imię nie może być puste').or(z.literal('')),
       lastName: z.string().nonempty('Nazwisko nie może być puste').or(z.literal('')),
-      role: z.nativeEnum(Role).or(z.literal('')),
+      role: z.enum(Role).or(z.literal('')),
     })
     .superRefine(({ email }, ctx) => {
       if (!editMode && allUsers.some((user) => user.email === email)) {

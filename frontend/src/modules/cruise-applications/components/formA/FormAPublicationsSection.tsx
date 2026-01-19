@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -12,7 +12,6 @@ import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteR
 import { getErrors, groupBy } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
-import { FormADto } from '@/cruise-applications/models/FormADto';
 import {
   getPublicationCategoryLabel,
   PublicationCategory,
@@ -22,9 +21,7 @@ import {
 export function FormAPublicationsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(
-    field: FieldApi<FormADto, 'publications', undefined, undefined, PublicationDto[]>
-  ): ColumnDef<PublicationDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<PublicationDto>[] {
     return [
       {
         header: 'Lp.',
@@ -186,7 +183,7 @@ export function FormAPublicationsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: PublicationDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -254,7 +251,7 @@ export function FormAPublicationsSection() {
                           year: '',
                           ministerialPoints: '0',
                         });
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: PublicationDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -300,7 +297,7 @@ export function FormAPublicationsSection() {
                           ),
                           onClick: () => {
                             field.pushValue(publication);
-                            field.handleChange((prev) => prev);
+                            field.handleChange((prev: PublicationDto[]) => prev);
                             field.handleBlur();
                           },
                         })),

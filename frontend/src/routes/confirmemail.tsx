@@ -8,7 +8,7 @@ export const Route = createFileRoute('/confirmemail')({
   component: ConfirmEmailPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({
-    userId: z.string().uuid().optional(),
+    userId: z.guid().optional(),
     code: z.string().optional(),
   }),
 });

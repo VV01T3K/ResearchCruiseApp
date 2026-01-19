@@ -49,7 +49,7 @@ export function CruiseApplicationPeriodInput({
     return [0, 24];
   });
 
-  React.useMemo(() => {
+  React.useEffect(() => {
     if (!maxValues) {
       return;
     }
@@ -74,6 +74,7 @@ export function CruiseApplicationPeriodInput({
     }
 
     if (changed) {
+      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect -- Intentional sync with external constraints
       setValues(tmpValues);
       onChange?.(tmpValues.map((v) => v.toString()) as CruisePeriodType);
     }

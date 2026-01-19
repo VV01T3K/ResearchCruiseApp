@@ -11,6 +11,6 @@ export const FileDtoValidationSchema = z.object(
     content: z.string().nonempty('Zawartość pliku nie może być pusta'),
   },
   {
-    message: 'Plik jest wymagany',
+    error: 'Plik jest wymagany',
   }
 );

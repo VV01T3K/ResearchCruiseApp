@@ -44,7 +44,7 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         services.AddFactories();
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
 
         services
             .AddScoped<ICruiseApplicationsService, CruiseApplicationsService>()

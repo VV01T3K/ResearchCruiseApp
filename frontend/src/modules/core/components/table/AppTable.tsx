@@ -45,7 +45,9 @@ export function AppTable<T>({
   disabled = false,
   errors,
 }: Props<T>) {
+  'use no memo'; // Disable React Compiler memoization for TanStack Table compatibility
   const { width } = useWindowSize();
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<T>({
     columns,
     data,

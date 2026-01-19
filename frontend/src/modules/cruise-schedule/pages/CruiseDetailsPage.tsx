@@ -56,8 +56,8 @@ export function CruiseDetailsPage() {
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
 
-  const form = useForm<CruiseFormDto>({
-    defaultValues: mapCruiseToForm(cruiseQuery.data),
+  const form = useForm({
+    defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormDto,
     validators: {
       onChange: getCruiseFormValidationSchema(),
     },

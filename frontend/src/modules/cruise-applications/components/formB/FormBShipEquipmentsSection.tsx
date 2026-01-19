@@ -1,16 +1,14 @@
-import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppTable } from '@/core/components/table/AppTable';
 import { getErrors } from '@/core/lib/utils';
-import { useFormB } from '@/cruise-applications/contexts/FormBContext';
-import { FormBDto } from '@/cruise-applications/models/FormBDto';
+import { FormBContextType, useFormB } from '@/cruise-applications/contexts/FormBContext';
 import { ShipEquipmentDto } from '@/cruise-applications/models/ShipEquipmentDto';
 
 const shipEquipmentColumns = (
-  form: ReactFormExtendedApi<FormBDto, undefined>,
+  form: FormBContextType['form'],
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShipEquipmentDto>[] => [

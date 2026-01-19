@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -8,7 +8,6 @@ import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
-import { FormADto } from '@/cruise-applications/models/FormADto';
 import { ResearchAreaDescriptionDto } from '@/cruise-applications/models/ResearchAreaDescriptionDto';
 import { getResearchAreaName } from '@/cruise-applications/models/ResearchAreaDto';
 
@@ -17,9 +16,7 @@ import { CruiseApplicationDropdownElementSelectorButton } from '../common/Cruise
 export function FormAResearchAreaSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(
-    field: FieldApi<FormADto, 'researchAreaDescriptions', undefined, undefined, ResearchAreaDescriptionDto[]>
-  ): ColumnDef<ResearchAreaDescriptionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaDescriptionDto>[] {
     return [
       {
         header: 'Lp.',
@@ -86,7 +83,7 @@ export function FormAResearchAreaSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: ResearchAreaDescriptionDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -120,7 +117,7 @@ export function FormAResearchAreaSection() {
                         differentName: area.id != '' ? null : '',
                         info: '',
                       });
-                      field.handleChange((prev) => prev);
+                      field.handleChange((prev: ResearchAreaDescriptionDto[]) => prev);
                       field.handleBlur();
                     },
                   }))}

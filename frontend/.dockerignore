@@ -28,3 +28,20 @@ dist-ssr
 Dockerfile
 .git
 .gitignore
+
+# Tests
+test-results
+tests
+*.spec.ts
+
+# Storybook (not part of production build)
+.storybook
+src/stories
+**/*.stories.*
+
+# Documentation
+README.md
+*.md
+
+# Environment files
+.env*
