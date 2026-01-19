@@ -28,7 +28,11 @@ export function FormBResearchTasksSection() {
   ];
 
   return (
-    <AppAccordion title="7. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
+    <AppAccordion
+      title="7. Zadania do zrealizowania w trakcie rejsu"
+      expandedByDefault
+      data-testid="form-b-research-tasks-section"
+    >
       <AppTable
         data={formA.researchTasks}
         columns={columns}

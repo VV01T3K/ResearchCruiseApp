@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 import { loginTest as test } from './fixtures/fixtures';
 
 test('login page is accessible', async ({ loginPage }) => {
-  await expect(loginPage.page.getByText('Logowanie')).toBeVisible();
+  await expect(loginPage.page.getByTestId('login-page-title')).toBeVisible();
 });
 
 test('login with valid credentials', async ({ loginPage }) => {

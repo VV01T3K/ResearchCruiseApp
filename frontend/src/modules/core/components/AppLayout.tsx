@@ -10,9 +10,17 @@ type Props = {
   description?: string;
   variant?: keyof typeof variants;
   disableBackButton?: boolean;
+  'data-testid'?: string;
 };
 
-export function AppLayout({ title, children, description, variant = 'default', disableBackButton = false }: Props) {
+export function AppLayout({
+  title,
+  children,
+  description,
+  variant = 'default',
+  disableBackButton = false,
+  'data-testid': testId,
+}: Props) {
   return (
     <motion.div
       className="md:p-8 w-full min-h-[calc(100vh-var(--header-height))] relative will-change-transform"
@@ -27,7 +35,9 @@ export function AppLayout({ title, children, description, variant = 'default', d
               <AppPreviousPageButton />
             </div>
           )}
-          <h1 className="text-3xl font-bold text-center pt-8 md:pt-0 mb-2">{title}</h1>
+          <h1 className="text-3xl font-bold text-center pt-8 md:pt-0 mb-2" data-testid={testId}>
+            {title}
+          </h1>
           {description ? <p className="text-gray-600 font-semibold text-center">{description}</p> : null}
         </header>
         {children}

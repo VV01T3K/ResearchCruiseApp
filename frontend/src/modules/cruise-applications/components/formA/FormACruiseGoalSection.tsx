@@ -9,7 +9,7 @@ export function FormACruiseGoalSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
   return (
-    <AppAccordion title="5. Cel rejsu" expandedByDefault>
+    <AppAccordion title="5. Cel rejsu" expandedByDefault data-testid="form-a-cruise-goal-section">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <form.Field
           name="cruiseGoal"
@@ -27,6 +27,8 @@ export function FormACruiseGoalSection() {
               }))}
               showRequiredAsterisk
               disabled={isReadonly}
+              data-testid-button="form-a-cruise-goal-button"
+              data-testid-errors="form-a-cruise-goal-errors"
             />
           )}
         />
@@ -47,6 +49,8 @@ export function FormACruiseGoalSection() {
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}
                   showRequiredAsterisk
+                  data-testid="form-a-cruise-goal-description-input"
+                  data-testid-errors="form-a-cruise-goal-description-errors"
                 />
               )}
             />

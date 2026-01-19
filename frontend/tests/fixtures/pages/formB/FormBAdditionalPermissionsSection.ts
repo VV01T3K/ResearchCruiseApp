@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -12,8 +12,8 @@ export class FormBAdditionalPermissionsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '4. Dodatkowe pozwolenia do planowanych podczas rejsu badań');
-    this.addPermissionButton = this.sectionDiv.getByRole('button', { name: 'Dodaj pozwolenie' });
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-additional-permissions-section');
+    this.addPermissionButton = this.sectionDiv.getByTestId('form-b-add-permission-btn');
   }
 
   public permissionRowLocator(index: 'first' | 'last' | number) {
@@ -24,22 +24,22 @@ export class FormBAdditionalPermissionsSection {
   public permissionRow(index: 'first' | 'last' | number) {
     const rowLocator = this.permissionRowLocator(index);
     return {
-      descriptionInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
-        errors: { required: rowLocator.getByText('Treść pozwolenia jest wymagana') },
+      descriptionInput: new FormInput(rowLocator.getByTestId('permission-description-input'), {
+        errors: { required: rowLocator.getByTestId('permission-description-errors') },
       }),
-      executiveInput: new FormInput(rowLocator.getByRole('textbox').nth(1), {
-        errors: { required: rowLocator.getByText('Organ wydający jest wymagany') },
+      executiveInput: new FormInput(rowLocator.getByTestId('permission-executive-input'), {
+        errors: { required: rowLocator.getByTestId('permission-executive-errors') },
       }),
       scanFileInput: {
         send: async (filePath: string) => this.sendScan(rowLocator, filePath),
-        errors: { required: rowLocator.getByText('Plik jest wymagany') },
+        errors: { required: rowLocator.getByTestId('permission-scan-errors') },
       },
       deleteButton: rowLocator.locator('td').nth(4).getByRole('button').first(),
     };
   }
 
   async sendScan(rowLocator: Locator, filePath: string) {
-    const sendButton = rowLocator.getByRole('cell', { name: 'Kliknij lub przeciągnij plik' });
+    const sendButton = rowLocator.getByTestId('permission-scan-button');
 
     const fileChooserPromise = this.page.waitForEvent('filechooser');
     await sendButton.click();

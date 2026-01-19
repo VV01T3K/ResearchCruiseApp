@@ -10,7 +10,7 @@ export function FormCShipUsageSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   return (
-    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault>
+    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-c-ship-usage-section">
       <form.Field
         name="shipUsage"
         children={(field) => (

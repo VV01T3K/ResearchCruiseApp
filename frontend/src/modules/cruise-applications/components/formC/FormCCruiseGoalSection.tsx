@@ -7,7 +7,7 @@ export function FormCCruiseGoalSection() {
   const { formA, formAInitValues } = useFormC();
 
   return (
-    <AppAccordion title="6. Cel rejsu" expandedByDefault>
+    <AppAccordion title="6. Cel rejsu" expandedByDefault data-testid="form-c-cruise-goal-section">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
           <AppDropdownInput

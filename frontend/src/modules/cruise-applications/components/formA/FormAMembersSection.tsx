@@ -190,7 +190,11 @@ export function FormAMembersSection() {
   }
 
   return (
-    <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+    <AppAccordion
+      title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie"
+      expandedByDefault
+      data-testid="form-a-members-section"
+    >
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
         <form.Field
           name="ugTeams"
@@ -215,6 +219,7 @@ export function FormAMembersSection() {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-ug-unit-btn"
                   >
                     Dodaj jednostkę UG
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -223,8 +228,12 @@ export function FormAMembersSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-ug-teams-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-ug-teams-errors"
+              />
             </div>
           )}
         />
@@ -247,6 +256,7 @@ export function FormAMembersSection() {
                     }}
                     className="flex items-center gap-4"
                     disabled={isReadonly}
+                    data-testid="form-a-add-guest-team-btn"
                   >
                     Dodaj nowy zespół
                   </AppButton>,
@@ -262,6 +272,7 @@ export function FormAMembersSection() {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-historical-team-btn"
                   >
                     Dodaj historyczny zespół
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -270,8 +281,12 @@ export function FormAMembersSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-guest-teams-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-guest-teams-errors"
+              />
             </div>
           )}
         />

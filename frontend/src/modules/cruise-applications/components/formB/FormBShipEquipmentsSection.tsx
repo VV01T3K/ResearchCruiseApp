@@ -47,7 +47,11 @@ export function FormBShipEquipmentsSection() {
   const { form, formBInitValues, hasFormBeenSubmitted, isReadonly } = useFormB();
 
   return (
-    <AppAccordion title="15. Elementy techniczne statku wykorzystywane podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="15. Elementy techniczne statku wykorzystywane podczas rejsu"
+      expandedByDefault
+      data-testid="form-b-ship-equipments-section"
+    >
       <form.Field
         name="shipEquipmentsIds"
         children={() => (

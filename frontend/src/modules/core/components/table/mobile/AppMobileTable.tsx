@@ -15,6 +15,7 @@ export function AppMobileTable<T>({
   variant,
   showRequiredAsterisk,
   errors,
+  'data-testid': testId,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
@@ -27,7 +28,7 @@ export function AppMobileTable<T>({
 
   return (
     <>
-      <div className={cn('flex flex-wrap flex-col', variant === 'form' ? 'text-center' : '')}>
+      <div className={cn('flex flex-wrap flex-col', variant === 'form' ? 'text-center' : '')} data-testid={testId}>
         {allButtons.length > 0 && (
           <div className="flex flex-col gap-4 m-4">
             {allButtons.map((x, id) => (

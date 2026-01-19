@@ -96,7 +96,7 @@ export function FormAResearchAreaSection() {
   }
 
   return (
-    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault>
+    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault data-testid="form-a-research-area-section">
       <form.Field
         name="researchAreaDescriptions"
         mode="array"
@@ -123,6 +123,7 @@ export function FormAResearchAreaSection() {
                   }))}
                   variant="primary"
                   disabled={isReadonly}
+                  data-testid="form-a-add-research-area-btn"
                 >
                   Dodaj rejon
                 </CruiseApplicationDropdownElementSelectorButton>,
@@ -131,8 +132,12 @@ export function FormAResearchAreaSection() {
               variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              data-testid="form-a-research-areas-table"
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+            <AppInputErrorsList
+              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              data-testid="form-a-research-areas-errors"
+            />
           </>
         )}
       />

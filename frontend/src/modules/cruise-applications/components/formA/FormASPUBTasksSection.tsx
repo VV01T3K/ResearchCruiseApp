@@ -112,6 +112,7 @@ export function FormASPUBTasksSection() {
     <AppAccordion
       title="10. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
       expandedByDefault
+      data-testid="form-a-spub-tasks-section"
     >
       <div>
         <form.Field
@@ -131,6 +132,7 @@ export function FormASPUBTasksSection() {
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
+                    data-testid="form-a-add-spub-task-btn"
                   >
                     Dodaj
                   </AppButton>,
@@ -147,6 +149,7 @@ export function FormASPUBTasksSection() {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-historical-spub-task-btn"
                   >
                     Dodaj historyczne zadanie
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -155,8 +158,12 @@ export function FormASPUBTasksSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-spub-tasks-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-spub-tasks-errors"
+              />
             </>
           )}
         />

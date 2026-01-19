@@ -28,7 +28,12 @@ export function FormAActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
         </AppButton>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="gap-4 !justify-center w-48 lg:w-64" disabled={disabled}>
+        <AppButton
+          type="submit"
+          className="gap-4 !justify-center w-48 lg:w-64"
+          disabled={disabled}
+          data-testid="form-submit-btn"
+        >
           <SendFillIcon className="h-4 w-4" />
           Wyślij
         </AppButton>

@@ -73,6 +73,7 @@ export function FormAPublicationsSection() {
                   label="DOI"
                   placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
                   disabled={isReadonly}
+                  data-testid="form-a-publication-doi-input"
                 />
               )}
             />
@@ -89,6 +90,7 @@ export function FormAPublicationsSection() {
                   label="Autorzy"
                   placeholder='np. "Kowalski J., Nowak A."'
                   disabled={isReadonly}
+                  data-testid="form-a-publication-authors-input"
                 />
               )}
             />
@@ -105,6 +107,7 @@ export function FormAPublicationsSection() {
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
                   disabled={isReadonly}
+                  data-testid="form-a-publication-title-input"
                 />
               )}
             />
@@ -121,6 +124,7 @@ export function FormAPublicationsSection() {
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
                   disabled={isReadonly}
+                  data-testid="form-a-publication-magazine-input"
                 />
               )}
             />
@@ -145,6 +149,7 @@ export function FormAPublicationsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Rok"
                 disabled={isReadonly}
+                data-testid-button="form-a-publication-year-button"
               />
             )}
           />
@@ -170,6 +175,7 @@ export function FormAPublicationsSection() {
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Punkty"
                 disabled={isReadonly}
+                data-testid-input="form-a-publication-points-input"
               />
             )}
           />
@@ -196,7 +202,7 @@ export function FormAPublicationsSection() {
   }
 
   return (
-    <AppAccordion title="9. Publikacje" expandedByDefault>
+    <AppAccordion title="9. Publikacje" expandedByDefault data-testid="form-a-publications-section">
       <header className="text-center space-y-4 mb-8 max-w-2xl mx-auto">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
@@ -257,6 +263,7 @@ export function FormAPublicationsSection() {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
+                    data-testid="form-a-add-publication-btn"
                   >
                     Dodaj nową publikację
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -305,6 +312,7 @@ export function FormAPublicationsSection() {
                     )}
                     variant="primaryOutline"
                     disabled={isReadonly}
+                    data-testid="form-a-add-historical-publication-btn"
                   >
                     Dodaj historyczną publikację
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -312,8 +320,9 @@ export function FormAPublicationsSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-publications-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />
             </>
           )}
         />

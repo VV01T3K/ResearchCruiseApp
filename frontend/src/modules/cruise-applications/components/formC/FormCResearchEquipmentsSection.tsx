@@ -137,7 +137,11 @@ export function FormCResearchEquipmentsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
-    <AppAccordion title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu" expandedByDefault>
+    <AppAccordion
+      title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
+      expandedByDefault
+      data-testid="form-c-research-equipments-section"
+    >
       <form.Field
         name="researchEquipments"
         mode="array"

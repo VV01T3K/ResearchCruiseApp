@@ -8,7 +8,11 @@ export function FormCAdditionalDescriptionSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
   return (
-    <AppAccordion title="18. Krótki opis podsumowujący dany rejs" expandedByDefault>
+    <AppAccordion
+      title="18. Krótki opis podsumowujący dany rejs"
+      expandedByDefault
+      data-testid="form-c-additional-description-section"
+    >
       <header className="text-center text-sm space-y-4 mb-8 max-w-2xl mx-auto">
         Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia w
         osobnych plikach
@@ -27,6 +31,8 @@ export function FormCAdditionalDescriptionSection() {
             label="Dodatkowy opis"
             placeholder="Dodatkowy opis"
             disabled={isReadonly}
+            data-testid="form-c-description-input"
+            data-testid-errors="form-c-description-errors"
           />
         )}
       />
@@ -44,6 +50,8 @@ export function FormCAdditionalDescriptionSection() {
             allowMultiple
             maxSizeInMb={10}
             acceptedMimeTypes={['image/jpeg', 'image/png']}
+            data-testid-button="form-c-attachment-input-button"
+            data-testid-errors="form-c-attachment-input-errors"
           />
         )}
       />
