@@ -64,7 +64,7 @@ export function LoginPage() {
   }
 
   return (
-    <AppLayout title="Logowanie" variant="narrow" disableBackButton>
+    <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
       <form onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.Field
@@ -77,6 +77,7 @@ export function LoginPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta)}
                 label="E-mail"
+                data-testid="login-email-input"
               />
             )}
           />
@@ -91,6 +92,7 @@ export function LoginPage() {
                 onChange={field.handleChange}
                 errors={getErrors(field.state.meta)}
                 label="Hasło"
+                data-testid="login-password-input"
               />
             )}
           />
@@ -103,7 +105,12 @@ export function LoginPage() {
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
+                <AppButton
+                  type="submit"
+                  className="w-full"
+                  disabled={!canSubmit || isSubmitting}
+                  data-testid="login-submit-btn"
+                >
                   Zaloguj
                 </AppButton>
               )}

@@ -64,7 +64,11 @@ export function FormACruiseLengthSection() {
   }
 
   return (
-    <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
+    <AppAccordion
+      title="2. Czas trwania zgłaszanego rejsu"
+      expandedByDefault
+      data-testid="form-a-cruise-length-section"
+    >
       <div className="space-y-4">
         <FormABlockadeWarning year={+form.state.values.year} blockades={blockades} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -80,6 +84,8 @@ export function FormACruiseLengthSection() {
                   { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
                 ]}
                 showRequiredAsterisk
+                data-testid="form-a-period-selection-type"
+                data-testid-button="form-a-period-selection-type-button"
               />
             </div>
           )}
@@ -195,6 +201,8 @@ export function FormACruiseLengthSection() {
                       label="Liczba planowanych dób rejsowych"
                       showRequiredAsterisk
                       disabled={isReadonly}
+                      data-testid="form-a-cruise-days"
+                      data-testid-input="form-a-cruise-days-input"
                     />
                   )}
                 />
@@ -220,6 +228,9 @@ export function FormACruiseLengthSection() {
                       label="Liczba planowanych godzin rejsowych"
                       showRequiredAsterisk
                       disabled={isReadonly}
+                      data-testid="form-a-cruise-hours"
+                      data-testid-input="form-a-cruise-hours-input"
+                      data-testid-errors="form-a-cruise-hours-errors"
                     />
                   )}
                 />
@@ -240,6 +251,7 @@ export function FormACruiseLengthSection() {
                   label="Uwagi dotyczące terminu"
                   placeholder='np. "Rejs w okresie wakacyjnym"'
                   disabled={isReadonly}
+                  data-testid="form-a-period-notes-input"
                 />
               </div>
             )}
@@ -262,6 +274,7 @@ export function FormACruiseLengthSection() {
                     inlineLabel: shipUsage,
                   }))}
                   disabled={isReadonly}
+                  data-testid-button="form-a-ship-usage-button"
                 />
               </div>
             )}
@@ -292,6 +305,7 @@ export function FormACruiseLengthSection() {
                             placeholder="np. statek badawczy"
                             showRequiredAsterisk
                             disabled={isReadonly}
+                            data-testid="form-a-alternative-ship-usage-input"
                           />
                         )}
                       />

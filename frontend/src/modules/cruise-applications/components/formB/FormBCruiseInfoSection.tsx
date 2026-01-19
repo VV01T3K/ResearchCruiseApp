@@ -11,7 +11,7 @@ export function FormBCruiseInfoSection() {
   const { cruise } = useFormB();
 
   return (
-    <AppAccordion title="1. Informacje o rejsie" expandedByDefault>
+    <AppAccordion title="1. Informacje o rejsie" expandedByDefault data-testid="form-b-cruise-info-section">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2">
           <span className="font-semibold ">Numer rejsu:</span>

@@ -87,7 +87,11 @@ export function FormAPermissionsSection() {
   }
 
   return (
-    <AppAccordion title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
+    <AppAccordion
+      title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"
+      expandedByDefault
+      data-testid="form-a-permissions-section"
+    >
       <div>
         <form.Field
           name="permissions"
@@ -106,6 +110,7 @@ export function FormAPermissionsSection() {
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
+                    data-testid="form-a-add-permission-btn"
                   >
                     Dodaj pozwolenie
                   </AppButton>,
@@ -114,8 +119,9 @@ export function FormAPermissionsSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta)}
+                data-testid="form-a-permissions-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-permissions-errors" />
             </>
           )}
         />

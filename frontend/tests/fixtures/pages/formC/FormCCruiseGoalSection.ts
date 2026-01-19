@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -11,7 +11,7 @@ export class FormCCruiseGoalSection {
   constructor(formPage: FormCPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '6. Cel rejsu');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-c-cruise-goal-section');
   }
 
   public async defaultFill() {}

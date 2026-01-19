@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormBPage } from './formBPage';
 
@@ -14,12 +14,12 @@ export class FormBCruiseDetailsSection {
   constructor(formPage: FormBPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '12. Szczegóły rejsu');
-    this.addEquipmentButton = this.sectionDiv.getByRole('button', { name: 'Dodaj sprzęt' });
-    this.addEquipmentActionDropdown = new FormDropdown(this.sectionDiv.getByRole('button', { name: 'Dodaj nowe' }), {
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-b-cruise-details-section');
+    this.addEquipmentButton = this.sectionDiv.getByTestId('form-b-add-short-equipment-btn');
+    this.addEquipmentActionDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-b-add-long-equipment-btn'), {
       variant: 'menu-with-buttons',
     });
-    this.addPortButton = this.sectionDiv.getByRole('button', { name: 'Dodaj port' });
+    this.addPortButton = this.sectionDiv.getByTestId('form-b-add-port-btn');
   }
 
   public equipmentRowLocator(index: 'first' | 'last' | number) {
@@ -30,16 +30,16 @@ export class FormBCruiseDetailsSection {
   public equipmentRow(index: 'first' | 'last' | number) {
     const rowLocator = this.equipmentRowLocator(index);
     return {
-      fromDateDropdown: new FormDropdown(rowLocator.locator('td').nth(1).getByRole('button').first(), {
+      fromDateDropdown: new FormDropdown(rowLocator.getByTestId('short-equipment-from-button'), {
         variant: 'datetime-picker',
-        errors: { required: rowLocator.getByText('Data rozpoczęcia jest wymagana') },
+        errors: { required: rowLocator.getByTestId('short-equipment-from-errors') },
       }),
-      toDateDropdown: new FormDropdown(rowLocator.locator('td').nth(2).getByRole('button').first(), {
+      toDateDropdown: new FormDropdown(rowLocator.getByTestId('short-equipment-to-button'), {
         variant: 'datetime-picker',
-        errors: { required: rowLocator.getByText('Data zakończenia jest wymagana') },
+        errors: { required: rowLocator.getByTestId('short-equipment-to-errors') },
       }),
-      nameInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
-        errors: { required: rowLocator.getByText('Nazwa sprzętu jest wymagana') },
+      nameInput: new FormInput(rowLocator.getByTestId('short-equipment-name-input'), {
+        errors: { required: rowLocator.getByTestId('short-equipment-name-errors') },
       }),
     };
   }
@@ -53,11 +53,11 @@ export class FormBCruiseDetailsSection {
     const rowLocator = this.equipmentActionRowLocator(index);
     return {
       actionDropdown: new FormDropdown(rowLocator.getByRole('button').nth(0)),
-      timeInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
-        errors: { required: rowLocator.getByText('Czas trwania jest wymagany') },
+      timeInput: new FormInput(rowLocator.getByTestId('long-equipment-duration-input'), {
+        errors: { required: rowLocator.getByTestId('long-equipment-duration-errors') },
       }),
-      nameInput: new FormInput(rowLocator.getByRole('textbox').nth(1), {
-        errors: { required: rowLocator.getByText('Nazwa jest wymagana') },
+      nameInput: new FormInput(rowLocator.getByTestId('long-equipment-name-input'), {
+        errors: { required: rowLocator.getByTestId('long-equipment-name-errors') },
       }),
     };
   }
@@ -70,16 +70,16 @@ export class FormBCruiseDetailsSection {
   public portRow(index: 'first' | 'last' | number) {
     const rowLocator = this.portRowLocator(index);
     return {
-      fromDateDropdown: new FormDropdown(rowLocator.locator('td').nth(1).getByRole('button').first(), {
+      fromDateDropdown: new FormDropdown(rowLocator.getByTestId('port-from-button'), {
         variant: 'datetime-picker',
-        errors: { required: rowLocator.getByText('Czas rozpoczęcia jest wymagany') },
+        errors: { required: rowLocator.getByTestId('port-from-errors') },
       }),
-      toDateDropdown: new FormDropdown(rowLocator.locator('td').nth(2).getByRole('button').first(), {
+      toDateDropdown: new FormDropdown(rowLocator.getByTestId('port-to-button'), {
         variant: 'datetime-picker',
-        errors: { required: rowLocator.getByText('Czas zakończenia jest wymagany') },
+        errors: { required: rowLocator.getByTestId('port-to-errors') },
       }),
-      nameInput: new FormInput(rowLocator.getByRole('textbox').nth(0), {
-        errors: { required: rowLocator.getByText('Nazwa jest wymagana') },
+      nameInput: new FormInput(rowLocator.getByTestId('port-name-input'), {
+        errors: { required: rowLocator.getByTestId('port-name-errors') },
       }),
     };
   }

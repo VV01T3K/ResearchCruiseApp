@@ -7,19 +7,30 @@ type Props = {
   title: string;
   children: React.ReactNode;
   expandedByDefault?: true | undefined;
+  'data-testid'?: string;
+  'data-testid-toggle'?: string;
+  'data-testid-content'?: string;
 };
 
-export function AppAccordion({ title, children, expandedByDefault = undefined }: Props) {
+export function AppAccordion({
+  title,
+  children,
+  expandedByDefault = undefined,
+  'data-testid': testId,
+  'data-testid-toggle': toggleTestId,
+  'data-testid-content': contentTestId,
+}: Props) {
   const [expanded, setExpanded] = React.useState<boolean>(!!expandedByDefault);
 
   return (
-    <>
+    <div data-testid={testId}>
       <h2 className="w-full">
         <button
           type="button"
           className="w-full flex justify-between items-center cursor-pointer px-4 py-4 bg-black/2 rounded-xl"
           onClick={() => setExpanded(!expanded)}
           data-expanded={expanded}
+          data-testid={toggleTestId}
         >
           <span className="font-semibold text-lg">{title}</span>
           <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
@@ -33,11 +44,12 @@ export function AppAccordion({ title, children, expandedByDefault = undefined }:
             exit={{ opacity: 0, height: 0 }}
             transition={{ ease: 'easeOut' }}
             className="px-4"
+            data-testid={contentTestId}
           >
             {children}
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

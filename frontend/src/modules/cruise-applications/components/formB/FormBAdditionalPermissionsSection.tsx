@@ -32,6 +32,8 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].description`}
             children={(field) => (
               <AppInput
+                data-testid="permission-description-input"
+                data-testid-errors="permission-description-errors"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -55,6 +57,8 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].executive`}
             children={(field) => (
               <AppInput
+                data-testid="permission-executive-input"
+                data-testid-errors="permission-executive-errors"
                 name={field.name}
                 value={field.state.value}
                 onChange={field.handleChange}
@@ -87,6 +91,8 @@ export function FormBAdditionalPermissionsSection() {
             name={`permissions[${row.index}].scan`}
             children={(field) => (
               <AppFileInput
+                data-testid-button="permission-scan-button"
+                data-testid-errors="permission-scan-errors"
                 name={field.name}
                 value={field.state.value}
                 acceptedMimeTypes={['application/pdf']}
@@ -120,7 +126,11 @@ export function FormBAdditionalPermissionsSection() {
   }
 
   return (
-    <AppAccordion title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
+    <AppAccordion
+      title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań"
+      expandedByDefault
+      data-testid="form-b-additional-permissions-section"
+    >
       <form.Field
         name="permissions"
         mode="array"
@@ -132,6 +142,7 @@ export function FormBAdditionalPermissionsSection() {
               buttons={() => [
                 <AppButton
                   key="permissions.add-btn"
+                  data-testid="form-b-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
                     field.handleChange((prev: PermissionDto[]) => prev);

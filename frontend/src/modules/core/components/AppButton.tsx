@@ -9,13 +9,14 @@ type Props = {
   className?: string;
   disabled?: boolean;
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
+  'data-testid'?: string;
 } & (
   | { type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type']; onClick?: (evt: React.MouseEvent) => void }
   | ({ type: 'link' } & Omit<AppLinkProps, 'variant'>)
 );
 export type AppButtonVariant = keyof typeof variants;
 export function AppButton(props: Props) {
-  const { children, className, disabled, role, variant = 'primary', size = 'md' } = props;
+  const { children, className, disabled, role, variant = 'primary', size = 'md', 'data-testid': testId } = props;
 
   const button = (
     <button
@@ -30,6 +31,7 @@ export function AppButton(props: Props) {
       onClick={props.type === 'link' ? undefined : props.onClick}
       disabled={disabled}
       role={role}
+      data-testid={testId}
     >
       {children}
     </button>

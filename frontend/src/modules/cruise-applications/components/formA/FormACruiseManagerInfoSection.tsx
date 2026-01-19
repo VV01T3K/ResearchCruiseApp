@@ -8,7 +8,7 @@ export function FormACruiseManagerInfoSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
   return (
-    <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault>
+    <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-a-cruise-manager-section">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <form.Field
           name="cruiseManagerId"
@@ -24,6 +24,7 @@ export function FormACruiseManagerInfoSection() {
               placeholder="Wybierz kierownika rejsu"
               allOptions={initValues.cruiseManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
+              data-testid-button="form-a-cruise-manager-button"
             />
           )}
         />
@@ -42,6 +43,8 @@ export function FormACruiseManagerInfoSection() {
               placeholder="Wybierz zastępcę kierownika rejsu"
               allOptions={initValues.deputyManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
+              data-testid-button="form-a-deputy-manager-button"
+              data-testid-errors="form-a-deputy-manager-errors"
             />
           )}
         />
@@ -66,6 +69,7 @@ export function FormACruiseManagerInfoSection() {
                 inlineLabel: year,
               }))}
               disabled={isReadonly}
+              data-testid-button="form-a-year-button"
             />
           )}
         />

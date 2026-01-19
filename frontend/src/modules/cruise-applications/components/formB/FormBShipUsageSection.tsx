@@ -7,7 +7,7 @@ export function FormBShipUsageSection() {
   const { formA, formAInitValues } = useFormB();
 
   return (
-    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault>
+    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-b-ship-usage-section">
       <div className="grid grid-cols-1 gap-4">
         <AppDropdownInput
           name="shipUsage"

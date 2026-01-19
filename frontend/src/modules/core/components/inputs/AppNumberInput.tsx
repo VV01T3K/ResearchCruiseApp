@@ -25,6 +25,9 @@ type Props = {
   minimum?: number;
   maximum?: number;
   step?: number;
+  'data-testid'?: string;
+  'data-testid-input'?: string;
+  'data-testid-errors'?: string;
 } & (
   | {
       type?: 'integer';
@@ -51,6 +54,9 @@ export function AppNumberInput({
   step = 1,
   type = 'integer',
   precision = 2,
+  'data-testid': testId,
+  'data-testid-input': inputTestId,
+  'data-testid-errors': errorsTestId,
 }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [stringValue, setStringValue] = React.useState(value.toString());
@@ -112,7 +118,7 @@ export function AppNumberInput({
   }
 
   return (
-    <div className={cn(className, 'flex flex-col')}>
+    <div className={cn(className, 'flex flex-col')} data-testid={testId}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div className="flex items-center">
         {!disabled && (
@@ -138,6 +144,7 @@ export function AppNumberInput({
               errors?.length ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
             ref={inputRef}
+            data-testid={inputTestId}
           />
           <AppInputErrorTriangle errors={errors} mode={'absolute'} />
         </div>
@@ -152,7 +159,7 @@ export function AppNumberInput({
       </div>
       <div className="flex flex-col justify-between mt-2 text-sm">
         <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} />
+        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

@@ -21,8 +21,15 @@ type Props = {
   children: React.ReactNode;
 
   disabled?: boolean;
+  'data-testid'?: string;
 };
-export function CruiseApplicationDropdownElementSelectorButton({ variant, options, children, disabled }: Props) {
+export function CruiseApplicationDropdownElementSelectorButton({
+  variant,
+  options,
+  children,
+  disabled,
+  'data-testid': testId,
+}: Props) {
   const [expanded, setExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const elementRef = useRef<HTMLDivElement>(null);
@@ -44,6 +51,7 @@ export function CruiseApplicationDropdownElementSelectorButton({ variant, option
           onClick={() => setExpanded(!expanded)}
           className="flex items-center gap-4"
           disabled={disabled}
+          data-testid={testId}
         >
           <span>{children}</span>
           <DropdownIcon className="w-5 h-5" />

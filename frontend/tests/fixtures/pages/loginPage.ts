@@ -23,9 +23,9 @@ export class LoginPage {
 
     this.mockLoginResult('success');
 
-    this.emailInput = this.page.getByRole('textbox', { name: 'E-mail' });
-    this.passwordInput = this.page.getByRole('textbox', { name: 'Hasło' });
-    this.submitButton = this.page.getByRole('button', { name: 'Zaloguj' });
+    this.emailInput = this.page.getByTestId('login-email-input');
+    this.passwordInput = this.page.getByTestId('login-password-input');
+    this.submitButton = this.page.getByTestId('login-submit-btn');
     this.incorrectEmailOrPasswordMessage = this.page.getByText('Podano błędne hasło lub użytkownik nie istnieje');
     this.invalidEmailMessage = this.page.getByText('Nieprawidłowy adres email');
   }

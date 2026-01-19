@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -16,13 +16,11 @@ export class FormACruiseGoalSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '5. Cel rejsu');
-    this.cruiseGoalDropdown = new FormDropdown(
-      this.sectionDiv.locator('input[name="cruiseGoal"]').locator('..').locator('button').first()
-    );
-    this.cruiseGoalDescriptionInput = this.sectionDiv.locator('input[name="cruiseGoalDescription"]');
-    this.noCruiseGoalChosenMessage = this.sectionDiv.getByText('Cel rejsu musi być jednym z dostępnych celów rejsu');
-    this.noCruiseGoalDescriptionMessage = this.sectionDiv.getByText('Opis celu rejsu jest wymagany');
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-cruise-goal-section');
+    this.cruiseGoalDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-cruise-goal-button'));
+    this.cruiseGoalDescriptionInput = this.sectionDiv.getByTestId('form-a-cruise-goal-description-input');
+    this.noCruiseGoalChosenMessage = this.sectionDiv.getByTestId('form-a-cruise-goal-errors');
+    this.noCruiseGoalDescriptionMessage = this.sectionDiv.getByTestId('form-a-cruise-goal-description-errors');
   }
 
   public async defaultFill() {

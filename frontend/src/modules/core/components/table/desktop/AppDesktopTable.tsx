@@ -4,12 +4,19 @@ import { AppTableClearFiltersButton } from '@/core/components/table/common/AppTa
 import { TableProps } from '@/core/components/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/core/components/table/desktop/AppDesktopTableHeader';
 
-export function AppDesktopTable<T>({ table, buttons, emptyTableMessage, showRequiredAsterisk, errors }: TableProps<T>) {
+export function AppDesktopTable<T>({
+  table,
+  buttons,
+  emptyTableMessage,
+  showRequiredAsterisk,
+  errors,
+  'data-testid': testId,
+}: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
   return (
-    <div className="w-full overflow-x-auto mt-4">
+    <div className="w-full overflow-x-auto mt-4" data-testid={testId}>
       <table className="min-w-full table-fixed border-collapse">
         <colgroup>
           {table.getAllColumns().map((column) => (

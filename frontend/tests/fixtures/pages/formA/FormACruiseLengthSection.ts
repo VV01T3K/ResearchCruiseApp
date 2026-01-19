@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, locateSectionDiv } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormAPage } from './formAPage';
 
@@ -24,28 +24,27 @@ export class FormACruiseLengthSection {
   constructor(formPage: FormAPage) {
     this.formPage = formPage;
     this.page = formPage.page;
-    this.sectionDiv = locateSectionDiv(formPage.page, '2. Czas trwania zgłaszanego rejsu');
-    const cruiseDaysInputDiv = this.sectionDiv.locator('div:below(:text("Liczba planowanych dób rejsowych"))').first();
-    this.cruiseDaysInput = cruiseDaysInputDiv.getByRole('textbox');
-    this.cruiseDaysDecreaseButton = cruiseDaysInputDiv.getByRole('button').nth(0);
-    this.cruiseDaysIncreaseButton = cruiseDaysInputDiv.getByRole('button').nth(1);
-    const cruiseHoursInputDiv = this.sectionDiv
-      .locator('div:below(:text("Liczba planowanych godzin rejsowych"))')
-      .first();
-    this.cruiseHoursInput = cruiseHoursInputDiv.getByRole('textbox');
-    this.cruiseHoursDecreaseButton = cruiseHoursInputDiv.getByRole('button').nth(0);
-    this.cruiseHoursIncreaseButton = cruiseHoursInputDiv.getByRole('button').nth(1);
-    this.periodNotesInput = this.sectionDiv.locator('input:below(:text("Uwagi dotyczące terminu"))').first();
-    this.shipUsageDropdown = new FormDropdown(
-      this.sectionDiv.locator('button:below(:text("Statek na potrzeby badań będzie wykorzystywany"))').first()
-    );
-    this.alternativeShipUsageInput = this.sectionDiv.locator('input:below(:text("Inny sposób użycia"))').first();
+    this.sectionDiv = locateSectionByTestId(formPage.page, 'form-a-cruise-length-section');
+
+    // Cruise days input using data-testid
+    const cruiseDaysContainer = this.sectionDiv.getByTestId('form-a-cruise-days');
+    this.cruiseDaysInput = cruiseDaysContainer.getByTestId('form-a-cruise-days-input');
+    this.cruiseDaysDecreaseButton = cruiseDaysContainer.getByRole('button').nth(0);
+    this.cruiseDaysIncreaseButton = cruiseDaysContainer.getByRole('button').nth(1);
+
+    // Cruise hours input using data-testid
+    const cruiseHoursContainer = this.sectionDiv.getByTestId('form-a-cruise-hours');
+    this.cruiseHoursInput = cruiseHoursContainer.getByTestId('form-a-cruise-hours-input');
+    this.cruiseHoursDecreaseButton = cruiseHoursContainer.getByRole('button').nth(0);
+    this.cruiseHoursIncreaseButton = cruiseHoursContainer.getByRole('button').nth(1);
+
+    this.periodNotesInput = this.sectionDiv.getByTestId('form-a-period-notes-input');
+    this.shipUsageDropdown = new FormDropdown(this.sectionDiv.getByTestId('form-a-ship-usage-button'));
+    this.alternativeShipUsageInput = this.sectionDiv.getByTestId('form-a-alternative-ship-usage-input');
     this.periodSelectionTypeDropdown = new FormDropdown(
-      this.sectionDiv.locator('button:below(:text("Wybierz sposób określenia terminu rejsu"))').first()
+      this.sectionDiv.getByTestId('form-a-period-selection-type-button')
     );
-    this.invalidCruiseDurationMessage = this.sectionDiv
-      .getByText('Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)')
-      .first();
+    this.invalidCruiseDurationMessage = this.sectionDiv.getByTestId('form-a-cruise-hours-errors');
     this.emptyAlternativeShipUsageMessage = this.sectionDiv.getByText(
       'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku'
     );
