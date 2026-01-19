@@ -2,10 +2,11 @@ type Props = {
   children: React.ReactNode;
 
   variant?: keyof typeof variants;
+  className?: string;
 };
 
-export function AppBadge({ children, variant = 'primary' }: Props) {
-  return <span className={`me-2 rounded px-2.5 py-1 text-xs ${variants[variant]}`}>{children}</span>;
+export function AppBadge({ children, variant = 'primary', className = '' }: Props) {
+  return <span className={`me-2 rounded px-2.5 py-1 text-xs ${variants[variant]} ${className}`}>{children}</span>;
 }
 
 const variants = {
