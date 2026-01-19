@@ -16,9 +16,6 @@ public class FormADto
     public List<string>? AcceptablePeriod { get; init; }
     public List<string>? OptimalPeriod { get; init; }
 
-    /// <summary>
-    /// Period selection type: "period" for slider-based selection, "precise" for exact date selection.
-    /// </summary>
     [StringLength(16)]
     public string? PeriodSelectionType { get; init; }
 

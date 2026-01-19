@@ -18,39 +18,21 @@ export function FormAForSupervisorPage() {
   const answerMutation = useSupervisorAnswerFormAMutation();
   const formA = useFormAForSupervisorQuery({ cruiseId: cruiseApplicationId, supervisorCode });
 
-  const normalizePeriod = (period: unknown): CruisePeriodType | '' => {
-    if (period === null || period === undefined) return '';
-    if (Array.isArray(period) && period.length === 0) return '';
-    if (Array.isArray(period) && period.length === 2) return period as CruisePeriodType;
-    return '';
-  };
-
   const form = useForm({
     defaultValues: (formA.data
-      ? (() => {
-          const normalizedAcceptable = normalizePeriod(formA.data.acceptablePeriod);
-          const normalizedOptimal = normalizePeriod(formA.data.optimalPeriod);
-
-          // Use stored periodSelectionType if available, otherwise infer from data
-          // (for backwards compatibility with drafts that don't have this field)
-          let periodSelectionType: 'precise' | 'period';
-          if (formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period') {
-            periodSelectionType = formA.data.periodSelectionType;
-          } else {
-            // Fallback: infer from data - if precise dates exist, use precise mode
-            const hasPreciseDates = !!(formA.data.precisePeriodStart || formA.data.precisePeriodEnd);
-            periodSelectionType = hasPreciseDates ? 'precise' : 'period';
-          }
-
-          return {
-            ...formA.data,
-            acceptablePeriod: normalizedAcceptable,
-            optimalPeriod: normalizedOptimal,
-            precisePeriodStart: formA.data.precisePeriodStart ?? '',
-            precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
-            periodSelectionType,
-          };
-        })()
+      ? {
+          ...formA.data,
+          acceptablePeriod: formA.data.acceptablePeriod ?? '',
+          optimalPeriod: formA.data.optimalPeriod ?? '',
+          precisePeriodStart: formA.data.precisePeriodStart ?? '',
+          precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
+          periodSelectionType:
+            formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period'
+              ? formA.data.periodSelectionType
+              : formA.data.precisePeriodStart || formA.data.precisePeriodEnd
+                ? 'precise'
+                : 'period',
+        }
       : {
           id: undefined,
           cruiseManagerId: '',

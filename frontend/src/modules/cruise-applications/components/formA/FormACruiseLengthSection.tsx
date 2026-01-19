@@ -1,6 +1,5 @@
 import { useStore } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
@@ -9,93 +8,22 @@ import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
-import { CruisePeriodType } from '@/cruise-applications/models/FormADto';
 
 import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodInput';
 import { FormABlockadeWarning } from './FormABlockadeWarning';
-
-/**
- * Check if a period value is valid (array with two string values).
- */
-function isValidPeriod(period: unknown): period is CruisePeriodType {
-  if (!Array.isArray(period) || period.length !== 2) return false;
-  return typeof period[0] === 'string' && typeof period[1] === 'string' && period[0] !== '' && period[1] !== '';
-}
 
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
   const year = useStore(form.store, (state) => state.values.year);
   const periodSelectionType = useStore(form.store, (state) => state.values.periodSelectionType ?? 'period');
-  const acceptablePeriod = useStore(form.store, (state) => state.values.acceptablePeriod);
-  const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
-  const hasInitializedPeriodsRef = useRef(false);
-
-  // Initialize period values when in period mode and values are empty
-  // This runs on mount and when periodSelectionType changes
-  useEffect(() => {
-    if (periodSelectionType !== 'period' || isReadonly) {
-      return;
-    }
-
-    // Skip if already initialized during this session
-    if (hasInitializedPeriodsRef.current) {
-      return;
-    }
-
-    const acceptableIsValid = isValidPeriod(acceptablePeriod);
-    const optimalIsValid = isValidPeriod(optimalPeriod);
-
-    // If both are already valid (e.g., loaded from draft), don't override them
-    if (acceptableIsValid && optimalIsValid) {
-      hasInitializedPeriodsRef.current = true;
-      return;
-    }
-
-    // Initialize empty/invalid periods to full range
-    if (!acceptableIsValid) {
-      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
-    }
-    if (!optimalIsValid) {
-      // If acceptable period is valid, use it as the initial optimal period bounds
-      // Otherwise use full range
-      const newOptimal = acceptableIsValid ? (acceptablePeriod as CruisePeriodType) : (['0', '24'] as CruisePeriodType);
-      form.setFieldValue('optimalPeriod', newOptimal);
-    }
-
-    hasInitializedPeriodsRef.current = true;
-  }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
     form.setFieldValue('periodSelectionType', value);
-    hasInitializedPeriodsRef.current = false;
-
-    if (value === 'precise') {
-      form.setFieldValue('acceptablePeriod', '');
-      form.setFieldValue('optimalPeriod', '');
-      form.setFieldMeta('acceptablePeriod', (prev) => ({ ...prev, errors: [] }));
-      form.setFieldMeta('optimalPeriod', (prev) => ({ ...prev, errors: [] }));
-      form.validateField('acceptablePeriod', 'change');
-      form.validateField('optimalPeriod', 'change');
-      form.validateField('precisePeriodStart', 'change');
-      form.validateField('precisePeriodEnd', 'change');
-    } else {
-      form.setFieldValue('precisePeriodStart', '');
-      form.setFieldValue('precisePeriodEnd', '');
-      form.setFieldMeta('precisePeriodStart', (prev) => ({ ...prev, errors: [] }));
-      form.setFieldMeta('precisePeriodEnd', (prev) => ({ ...prev, errors: [] }));
-
-      // Initialize period values to full range when switching to period mode
-      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
-      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
-      form.setFieldMeta('acceptablePeriod', (prev) => ({ ...prev, errors: [] }));
-      form.setFieldMeta('optimalPeriod', (prev) => ({ ...prev, errors: [] }));
-      form.validateField('precisePeriodStart', 'change');
-      form.validateField('precisePeriodEnd', 'change');
-      form.validateField('acceptablePeriod', 'change');
-      form.validateField('optimalPeriod', 'change');
-      hasInitializedPeriodsRef.current = true;
-    }
+    form.setFieldValue('acceptablePeriod', '');
+    form.setFieldValue('optimalPeriod', '');
+    form.setFieldValue('precisePeriodStart', '');
+    form.setFieldValue('precisePeriodEnd', '');
   }
 
   return (

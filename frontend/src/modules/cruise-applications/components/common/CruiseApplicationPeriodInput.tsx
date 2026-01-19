@@ -23,66 +23,18 @@ type Props = {
   helper?: React.ReactNode;
 };
 
-/**
- * Check if a value is an empty period (empty string, empty array, null, or undefined).
- */
-function isEmptyPeriod(period: unknown): boolean {
-  if (period === null || period === undefined || period === '') return true;
-  if (Array.isArray(period) && period.length === 0) return true;
-  return false;
-}
-
-/**
- * Parse a CruisePeriodType value to [start, end] numbers.
- * Always returns [start, end] where start <= end.
- * Handles arrays that might come from backend in any order (since HashSet doesn't preserve order).
- */
 function parsePeriod(period: CruisePeriodType | undefined, fallback: [number, number]): [number, number] {
-  if (isEmptyPeriod(period)) {
-    return fallback;
-  }
-  if (!Array.isArray(period) || period.length !== 2) {
-    return fallback;
-  }
+  if (!Array.isArray(period) || period.length !== 2) return fallback;
   const val1 = parseInt(period[0], 10);
   const val2 = parseInt(period[1], 10);
-  if (isNaN(val1) || isNaN(val2)) {
-    return fallback;
-  }
-  // Always sort to ensure [start, end] order since backend HashSet doesn't preserve order
+  if (isNaN(val1) || isNaN(val2)) return fallback;
   return val1 <= val2 ? [val1, val2] : [val2, val1];
 }
 
-/**
- * Check if a period value is valid (has two valid numbers).
- */
-function isValidPeriod(period: CruisePeriodType | undefined): boolean {
-  if (isEmptyPeriod(period)) {
-    return false;
-  }
-  if (!Array.isArray(period) || period.length !== 2) {
-    return false;
-  }
-  const val1 = parseInt(period[0], 10);
-  const val2 = parseInt(period[1], 10);
-  return !isNaN(val1) && !isNaN(val2);
-}
-
-/**
- * Clamp values to be within min/max bounds.
- */
 function clampToBounds(values: [number, number], min: number, max: number): [number, number] {
-  const [start, end] = values;
-  const clampedStart = Math.max(min, Math.min(start, max));
-  const clampedEnd = Math.max(min, Math.min(end, max));
-
-  // Ensure start <= end and they're not equal (need at least 1 fortnight range)
-  if (clampedStart >= clampedEnd) {
-    // If clamping made them equal or inverted, use the full allowed range
-    return [min, max];
-  }
-
-  return [clampedStart, clampedEnd];
+  const clampedStart = Math.max(min, Math.min(values[0], max));
+  const clampedEnd = Math.max(min, Math.min(values[1], max));
+  return clampedStart >= clampedEnd ? [min, max] : [clampedStart, clampedEnd];
 }
 
 export function CruiseApplicationPeriodInput({
@@ -97,62 +49,18 @@ export function CruiseApplicationPeriodInput({
   disabled,
   helper,
 }: Props) {
-  // Parse maxValues bounds (defaults to full year: 0-24)
   const [minBound, maxBound] = parsePeriod(maxValues, [0, 24]);
 
-  // Compute slider values from external value prop
-  const computedSliderValues = React.useMemo((): [number, number] => {
-    if (!isValidPeriod(value)) {
-      // If external value is not valid, use full bounds
-      return [minBound, maxBound];
-    }
+  const sliderValues = React.useMemo((): [number, number] => {
     const parsed = parsePeriod(value, [minBound, maxBound]);
     return clampToBounds(parsed, minBound, maxBound);
   }, [value, minBound, maxBound]);
 
-  // Internal state for slider UI - used during drag operations
-  const [localValues, setLocalValues] = React.useState<[number, number] | null>(null);
-
-  // The displayed slider values: use local state during interaction, otherwise computed from prop
-  const sliderValues = localValues ?? computedSliderValues;
-
-  // When bounds change, we need to clamp and notify parent
-  React.useEffect(() => {
-    // Clamp current values to new bounds
-    const currentValues = localValues ?? computedSliderValues;
-    const clamped = clampToBounds(currentValues, minBound, maxBound);
-
-    const valueChanged =
-      !isValidPeriod(value) || clamped[0].toString() !== value?.[0] || clamped[1].toString() !== value?.[1];
-    if (valueChanged) {
-      onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
-    }
-  }, [minBound, maxBound, localValues, computedSliderValues, onChange, value]);
-
-  // Reset local state when external value changes (e.g., form reset)
-  React.useEffect(() => {
-    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setLocalValues(null);
-  }, [value]);
-
   const handleValueChange = (newValues: number | number[]) => {
-    if (!Array.isArray(newValues) || newValues.length !== 2) {
-      return;
-    }
-
-    // Base UI Slider always provides sorted values for range slider
+    if (!Array.isArray(newValues) || newValues.length !== 2) return;
     const [start, end] = newValues as [number, number];
-
-    // Don't allow zero-width ranges
-    if (start === end) {
-      return;
-    }
-
-    // Clamp to bounds (shouldn't be needed if slider is configured correctly, but safety check)
-    const clamped = clampToBounds([start, end], minBound, maxBound);
-
-    setLocalValues(clamped);
-    onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
+    if (start === end) return;
+    onChange?.([start.toString(), end.toString()] as CruisePeriodType);
   };
 
   const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);

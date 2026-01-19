@@ -18,10 +18,7 @@ function ToastIcon({ type }: { type?: string }) {
   return null;
 }
 
-// CSS-based progress bar that uses animation-play-state to pause
-// This syncs with Base UI's internal timer since both use the [data-expanded] attribute
 function ToastProgress({ type }: { type?: string }) {
-  // Don't show progress for loading toasts
   if (type === 'loading') return null;
 
   const progressColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-gray-400';

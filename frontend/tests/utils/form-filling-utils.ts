@@ -25,30 +25,22 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
   async selectOption(itemText: string) {
     await this.dropdown.click();
     if (this.variant === 'menuitems') {
-      // Base UI Select uses 'option' role instead of 'menuitem'
       await this.page.getByRole('option', { name: itemText }).click();
-      // Wait for the popup to close
       await expect(this.page.getByRole('option').first())
         .not.toBeVisible({ timeout: 1000 })
         .catch(() => {});
     } else if (this.variant === 'menu-with-buttons') {
-      // Base UI Popover with buttons inside - find button by text
-      // For year pickers with role="menu", scope to the last (most recently opened) menu
-      // For regular popovers, search all visible buttons (should be unique when popover is open)
       const menu = this.page.getByRole('menu');
       const menuCount = await menu.count();
 
       if (menuCount > 0) {
-        // Year picker with role="menu" - scope to last menu to avoid ambiguity
         await menu.last().getByRole('button', { name: itemText, exact: true }).click();
       } else {
-        // Regular popover without role="menu" - find first visible button with matching text
         const button = this.page
           .getByRole('button', { name: itemText, exact: true })
           .and(this.page.locator(':visible'));
         await button.first().click();
       }
-      // Wait a bit for the popover to close
       await this.page.waitForTimeout(100);
     } else if (this.variant === 'datetime-picker') {
       // for now, only day selection is supported

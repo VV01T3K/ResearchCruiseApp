@@ -23,9 +23,6 @@ public class FormA : Entity
     [StringLength(1024)]
     public string? OptimalPeriodEnd { get; init; }
 
-    /// <summary>
-    /// Period selection type: "period" for slider-based selection, "precise" for exact date selection.
-    /// </summary>
     [StringLength(16)]
     public string? PeriodSelectionType { get; init; }
 

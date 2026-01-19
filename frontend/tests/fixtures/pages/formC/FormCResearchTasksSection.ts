@@ -23,8 +23,6 @@ export class FormCResearchTasksSection {
     const rowLocator = this.taskRowLocator(index);
     const cellLocator = rowLocator.locator('td').nth(3);
 
-    // The cell contains 3 checkboxes in order: done, managerConditionMet, deputyConditionMet
-    // Base UI renders checkboxes with role="checkbox"
     const checkboxes = cellLocator.getByRole('checkbox');
 
     return {
