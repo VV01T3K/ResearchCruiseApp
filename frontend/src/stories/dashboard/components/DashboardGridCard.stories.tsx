@@ -1,5 +1,5 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
 
 import { DashboardGrid } from '@/dashboard/components/DashboardGrid';

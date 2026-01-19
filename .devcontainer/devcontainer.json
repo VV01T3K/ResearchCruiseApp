@@ -24,7 +24,6 @@
 		"vscode": {
 			"extensions": [
 				"esbenp.prettier-vscode",
-				"EditorConfig.EditorConfig",
 				"ahmadalli.vscode-nginx-conf",
 				"docker.docker",
 				"csharpier.csharpier-vscode",
@@ -34,7 +33,7 @@
 			]
 		}
 	},
-	"postCreateCommand": "(cd backend && dotnet restore && dotnet restore) && (cd frontend && pnpm install && sudo /usr/local/bin/bun x playwright install --with-deps chromium && pnpm exec playwright install)"
+	"postCreateCommand": "(cd backend && dotnet restore && dotnet tool restore) && (cd frontend && bun install && bun x playwright install --with-deps chromium)"
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.

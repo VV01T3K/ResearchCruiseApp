@@ -29,9 +29,11 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       await expect(this.page.getByRole('menu')).toHaveCount(0);
     } else if (this.variant === 'datetime-picker') {
       // for now, only day selection is supported
-      await this.page.getByRole('menu').getByRole('button', { name: itemText, exact: true }).click();
-      await this.page.keyboard.press('Escape'); // to close the datetime picker
-      await expect(this.page.getByRole('menu')).toHaveCount(0);
+      const menu = this.page.getByRole('menu');
+      await menu.getByRole('button', { name: itemText, exact: true }).click();
+      // Click on main content area to close the datetime picker (triggers useOutsideClickDetection)
+      await this.page.locator('main').click({ position: { x: 1, y: 1 } });
+      await expect(menu).toBeHidden();
     }
   }
 }

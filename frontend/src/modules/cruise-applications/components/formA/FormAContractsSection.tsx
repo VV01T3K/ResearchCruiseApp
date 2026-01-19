@@ -1,4 +1,4 @@
-import { FieldApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -11,14 +11,11 @@ import { getErrors } from '@/core/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
 import { ContractDto, getContractCategoryName } from '@/cruise-applications/models/ContractDto';
-import { FormADto } from '@/cruise-applications/models/FormADto';
 
 export function FormAContractsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(
-    field: FieldApi<FormADto, 'contracts', undefined, undefined, ContractDto[]>
-  ): ColumnDef<ContractDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ContractDto>[] {
     return [
       {
         header: 'Lp.',
@@ -145,7 +142,7 @@ export function FormAContractsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev) => prev);
+                field.handleChange((prev: ContractDto[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -188,7 +185,7 @@ export function FormAContractsSection() {
                           description: '',
                           scans: [],
                         });
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: ContractDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -203,7 +200,7 @@ export function FormAContractsSection() {
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
-                        field.handleChange((prev) => prev);
+                        field.handleChange((prev: ContractDto[]) => prev);
                         field.handleBlur();
                       },
                     }))}

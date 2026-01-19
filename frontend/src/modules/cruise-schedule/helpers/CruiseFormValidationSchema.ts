@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 const CruiseDatesValidationSchema = z
   .object({
-    startDate: z.string().datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),
-    endDate: z.string().datetime('Wymagane jest wskazanie daty zakończenia rejsu'),
+    startDate: z.iso.datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),
+    endDate: z.iso.datetime('Wymagane jest wskazanie daty zakończenia rejsu'),
   })
   .superRefine(({ startDate, endDate }, ctx) => {
     if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
@@ -38,7 +38,7 @@ const ManagerAndDeputyValidationSchema = z.object({
 });
 
 const CruiseApplicationsValidationSchema = z.object({
-  cruiseApplicationsIds: z.array(z.string().uuid()),
+  cruiseApplicationsIds: z.array(z.guid()),
 });
 
 const CustomCruiseValidationSchema = z

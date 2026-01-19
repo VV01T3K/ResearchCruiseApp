@@ -7,7 +7,7 @@ export const Route = createFileRoute('/cruiseapproval')({
   component: FormAForSupervisorPage,
   validateSearch: z
     .object({
-      cruiseApplicationId: z.string().uuid(),
+      cruiseApplicationId: z.guid(),
       supervisorCode: z.string(),
     })
     .catch({

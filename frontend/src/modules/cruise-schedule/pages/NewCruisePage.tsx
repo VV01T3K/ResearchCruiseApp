@@ -31,7 +31,7 @@ export function NewCruisePage() {
 
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
 
-  const form = useForm<CruiseFormDto>({
+  const form = useForm({
     defaultValues: {
       startDate: '',
       endDate: '',
@@ -42,7 +42,7 @@ export function NewCruisePage() {
       cruiseApplicationsIds: [],
       title: '',
       shipUnavailable: search.blockade ?? false,
-    },
+    } as CruiseFormDto,
     validators: {
       onChange: getCruiseFormValidationSchema(),
     },

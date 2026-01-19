@@ -1,4 +1,4 @@
-import { FieldApi, ReactFormExtendedApi } from '@tanstack/react-form';
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -8,14 +8,15 @@ import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/core/components/table/AppTable';
 import { AppTableDeleteRowButton } from '@/core/components/table/AppTableDeleteRowButton';
+import { AnyReactFormApi } from '@/core/lib/form';
 import { getErrors } from '@/core/lib/utils';
 import { useFormC } from '@/cruise-applications/contexts/FormCContext';
 import { FormCDto } from '@/cruise-applications/models/FormCDto';
 import { ResearchEquipmentDto } from '@/cruise-applications/models/ResearchEquipmentDto';
 
 const researchEquipmentsColumns = (
-  form: ReactFormExtendedApi<FormCDto, undefined>,
-  field: FieldApi<FormCDto, 'researchEquipments', undefined, undefined, ResearchEquipmentDto[]>,
+  form: AnyReactFormApi<FormCDto>,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ResearchEquipmentDto>[] => [
@@ -29,7 +30,7 @@ const researchEquipmentsColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`researchEquipments[${row.index}].name`}
-        children={(field) => (
+        children={(field: AnyFieldApi) => (
           <AppInput
             name={field.name}
             value={field.state.value}
@@ -50,7 +51,7 @@ const researchEquipmentsColumns = (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.Field
           name={`researchEquipments[${row.index}].insuranceStartDate`}
-          children={(field) => (
+          children={(field: AnyFieldApi) => (
             <AppDatePickerInput
               name={field.name}
               value={field.state.value ?? ''}
@@ -64,12 +65,13 @@ const researchEquipmentsColumns = (
         />
         <form.Field
           name={`researchEquipments[${row.index}].insuranceEndDate`}
-          children={(field) => (
+          children={(field: AnyFieldApi) => (
             <form.Subscribe
-              selector={(state) => state.values.researchEquipments[row.index].insuranceStartDate}
-              children={(state) => {
-                if (state && field.state.value && state > field.state.value) {
-                  field.handleChange(state);
+              selector={(state: { values: FormCDto }) => state.values.researchEquipments[row.index].insuranceStartDate}
+              children={(insuranceStartDate) => {
+                const startDate = insuranceStartDate ?? undefined;
+                if (startDate && field.state.value && startDate > field.state.value) {
+                  field.handleChange(startDate);
                 }
                 return (
                   <AppDatePickerInput
@@ -80,8 +82,8 @@ const researchEquipmentsColumns = (
                     errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
-                    selectionStartDate={state ? new Date(state) : undefined}
-                    minimalDate={state ? new Date(state) : undefined}
+                    selectionStartDate={startDate ? new Date(startDate) : undefined}
+                    minimalDate={startDate ? new Date(startDate) : undefined}
                   />
                 );
               }}
@@ -97,7 +99,7 @@ const researchEquipmentsColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`researchEquipments[${row.index}].permission`}
-        children={(field) => (
+        children={(field: AnyFieldApi) => (
           <AppCheckbox
             size="md"
             name={field.name}
@@ -120,7 +122,7 @@ const researchEquipmentsColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev) => prev);
+            field.handleChange((prev: ResearchEquipmentDto[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
