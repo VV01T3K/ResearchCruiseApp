@@ -19,8 +19,6 @@ RUN dotnet publish "ResearchCruiseApp.csproj" \
 
 FROM dhi.io/aspnetcore:10.0-alpine3.22
 
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-
 # Copying curl binary is a workaround for hardened images, maybe we should change the healthcheck to work differently
 COPY --from=build /usr/bin/curl /usr/bin/curl
 
