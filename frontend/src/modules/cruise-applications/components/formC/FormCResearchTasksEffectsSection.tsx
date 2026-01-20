@@ -35,7 +35,7 @@ export function FormCResearchTasksSection() {
           <form.Subscribe
             selector={(state) => state.values.researchTasksEffects[row.index].done}
             children={(taskDone) => (
-              <div className="flex justify-center items-center gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <form.Field
                   name={`researchTasksEffects[${row.index}].done`}
                   children={(field) => (

@@ -21,11 +21,7 @@ internal class FormADtoProfile : Profile
                 options =>
                     options.MapFrom(src =>
                         src.AcceptablePeriodBeg != null && src.AcceptablePeriodEnd != null
-                            ? new HashSet<string>
-                            {
-                                src.AcceptablePeriodBeg,
-                                src.AcceptablePeriodEnd,
-                            }
+                            ? new List<string> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }
                             : null
                     )
             )
@@ -34,7 +30,7 @@ internal class FormADtoProfile : Profile
                 options =>
                     options.MapFrom(src =>
                         src.OptimalPeriodBeg != null && src.OptimalPeriodEnd != null
-                            ? new HashSet<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }
+                            ? new List<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }
                             : null
                     )
             )
@@ -69,22 +65,38 @@ internal class FormADtoProfile : Profile
             .ForMember(
                 dest => dest.AcceptablePeriodBeg,
                 options =>
-                    options.MapFrom(src => src.AcceptablePeriod!.Select(int.Parse).Min().ToString())
+                    options.MapFrom(src =>
+                        src.AcceptablePeriod != null && src.AcceptablePeriod.Count == 2
+                            ? src.AcceptablePeriod[0]
+                            : null
+                    )
             )
             .ForMember(
                 dest => dest.AcceptablePeriodEnd,
                 options =>
-                    options.MapFrom(src => src.AcceptablePeriod!.Select(int.Parse).Max().ToString())
+                    options.MapFrom(src =>
+                        src.AcceptablePeriod != null && src.AcceptablePeriod.Count == 2
+                            ? src.AcceptablePeriod[1]
+                            : null
+                    )
             )
             .ForMember(
                 dest => dest.OptimalPeriodBeg,
                 options =>
-                    options.MapFrom(src => src.OptimalPeriod!.Select(int.Parse).Min().ToString())
+                    options.MapFrom(src =>
+                        src.OptimalPeriod != null && src.OptimalPeriod.Count == 2
+                            ? src.OptimalPeriod[0]
+                            : null
+                    )
             )
             .ForMember(
                 dest => dest.OptimalPeriodEnd,
                 options =>
-                    options.MapFrom(src => src.OptimalPeriod!.Select(int.Parse).Max().ToString())
+                    options.MapFrom(src =>
+                        src.OptimalPeriod != null && src.OptimalPeriod.Count == 2
+                            ? src.OptimalPeriod[1]
+                            : null
+                    )
             )
             .ForMember(dest => dest.ResearchAreaDescriptions, options => options.Ignore()) // Member requires complex logic
             .ForMember(dest => dest.Permissions, options => options.Ignore()) // Member requires complex logic

@@ -10,7 +10,7 @@ export function FormACruiseGoalSection() {
 
   return (
     <AppAccordion title="5. Cel rejsu" expandedByDefault data-testid="form-a-cruise-goal-section">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <form.Field
           name="cruiseGoal"
           children={(field) => (

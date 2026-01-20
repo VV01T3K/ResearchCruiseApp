@@ -7,9 +7,9 @@ export function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption {
     value: person.id,
     inlineLabel: `${person.firstName} ${person.lastName} (${person.email})`,
     richLabel: (
-      <div className="w-full flex gap-4">
+      <div className="flex w-full gap-4">
         <AppAvatar fullName={`${person.firstName} ${person.lastName}`} variant="small" />
-        <div className="flex flex-col justify-center flex-1">
+        <div className="flex flex-1 flex-col justify-center">
           <div className="font-semibold">
             {person.firstName} {person.lastName}
           </div>

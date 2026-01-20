@@ -7,7 +7,7 @@ import AppBackground from '@/core/components/layout/AppBackground';
 const meta = {
   component: AppModal,
   args: {
-    children: <div className="min-h-80 bg-gray-100 rounded-2xl" />,
+    children: <div className="min-h-80 rounded-2xl bg-gray-100" />,
     onClose: fn(),
   },
   decorators: [

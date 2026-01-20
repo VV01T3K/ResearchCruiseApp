@@ -21,24 +21,34 @@ export function AppLayout({
   disableBackButton = false,
   'data-testid': testId,
 }: Props) {
+  const useWidePadding = variant === 'wide';
   return (
     <motion.div
-      className="md:p-8 w-full min-h-[calc(100vh-var(--header-height))] relative will-change-transform"
+      className={cn(
+        'relative min-h-[calc(100vh-var(--header-height))] w-full will-change-transform',
+        useWidePadding ? outerPaddingVariants[variant] : 'md:p-8'
+      )}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className={cn('mx-auto pb-4 md:p-8 bg-gray-50 rounded-xl', variants[variant])}>
+      <div
+        className={cn(
+          'mx-auto rounded-xl bg-gray-50',
+          useWidePadding ? innerPaddingVariants[variant] : 'pb-4 md:p-8',
+          variants[variant]
+        )}
+      >
         <header className="mb-8">
           {!disableBackButton && (
             <div className="p-4 md:p-0">
               <AppPreviousPageButton />
             </div>
           )}
-          <h1 className="text-3xl font-bold text-center pt-8 md:pt-0 mb-2" data-testid={testId}>
+          <h1 className="mb-2 pt-8 text-center text-3xl font-bold md:pt-0" data-testid={testId}>
             {title}
           </h1>
-          {description ? <p className="text-gray-600 font-semibold text-center">{description}</p> : null}
+          {description ? <p className="text-center font-semibold text-gray-600">{description}</p> : null}
         </header>
         {children}
       </div>
@@ -50,4 +60,19 @@ const variants = {
   default: 'max-w-screen-2xl',
   narrow: 'max-w-2xl mt-[10vh] md:mt-[25zvh]',
   defaultWithCentering: 'max-w-screen-2xl mt-[10vh] md:mt-[20vh]',
+  wide: 'max-w-full',
+};
+
+const outerPaddingVariants = {
+  default: '',
+  narrow: '',
+  defaultWithCentering: '',
+  wide: 'px-6 py-4 md:px-16 md:py-8',
+};
+
+const innerPaddingVariants = {
+  default: '',
+  narrow: '',
+  defaultWithCentering: '',
+  wide: 'px-8 py-4 md:px-16 md:py-8',
 };

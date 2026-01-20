@@ -17,7 +17,7 @@ export function AppTableListItem({ isRendered, disabled, expanded, onClick, chil
     <AppButton
       variant="plain"
       className={cn(
-        'inline-flex gap-4 items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+        'inline-flex w-full items-center gap-4 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900',
         disabled ? 'opacity-50' : ''
       )}
       role="menuitem"

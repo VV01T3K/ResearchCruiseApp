@@ -23,6 +23,9 @@ public class FormA : Entity
     [StringLength(1024)]
     public string? OptimalPeriodEnd { get; init; }
 
+    [StringLength(16)]
+    public string? PeriodSelectionType { get; init; }
+
     public DateTime? PrecisePeriodStart { get; init; }
     public DateTime? PrecisePeriodEnd { get; init; }
 

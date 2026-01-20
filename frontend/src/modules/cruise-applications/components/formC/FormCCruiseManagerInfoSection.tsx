@@ -7,7 +7,7 @@ export function FormCCruiseManagerInfoSection() {
 
   return (
     <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-c-cruise-manager-section">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <AppDropdownInput
           name="cruiseManager"
           value={formA.cruiseManagerId}

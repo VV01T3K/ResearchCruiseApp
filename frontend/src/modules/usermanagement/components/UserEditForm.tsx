@@ -16,6 +16,7 @@ import { AppBadge } from '@/core/components/AppBadge';
 import { AppButton } from '@/core/components/AppButton';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
+import { toast } from '@/core/components/layout/toast';
 import { getErrors } from '@/core/lib/utils';
 import { getRoleLabel, Role } from '@/core/models/Role';
 import { User } from '@/core/models/User';
@@ -94,24 +95,29 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       }
 
       if (editMode) {
-        await updateUserMutation
-          .mutateAsync(
-            { userId: user.id, data: value },
-            {
-              onSuccess: async () => {
-                close();
-              },
-            }
-          )
-          .catch(() => {});
+        const loading = toast.loading('Zapisywanie zmian...');
+        try {
+          await updateUserMutation.mutateAsync({ userId: user.id, data: value });
+          toast.dismiss(loading);
+          close();
+          toast.success('Zaktualizowano użytkownika');
+        } catch (err) {
+          toast.dismiss(loading);
+          console.error(err);
+          toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        }
       } else {
-        await addNewUserMutation
-          .mutateAsync(value, {
-            onSuccess: async () => {
-              close();
-            },
-          })
-          .catch(() => {});
+        const loading = toast.loading('Dodawanie użytkownika...');
+        try {
+          await addNewUserMutation.mutateAsync(value);
+          toast.dismiss(loading);
+          close();
+          toast.success('Utworzono nowego użytkownika');
+        } catch (err) {
+          toast.dismiss(loading);
+          console.error(err);
+          toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        }
       }
     },
   });
@@ -131,14 +137,17 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       setDeletionConfirmed(true);
       return;
     }
-
-    await deleteUserMutation
-      .mutateAsync(user.id, {
-        onSuccess: async () => {
-          close();
-        },
-      })
-      .catch(() => {});
+    const loading = toast.loading('Usuwanie użytkownika...');
+    try {
+      await deleteUserMutation.mutateAsync(user.id);
+      toast.dismiss(loading);
+      close();
+      toast.success('Użytkownik został usunięty');
+    } catch (err) {
+      toast.dismiss(loading);
+      console.error(err);
+      toast.error('Nie udało się usunąć użytkownika');
+    }
   }
 
   async function handleAccountAcceptanceToggle() {
@@ -147,21 +156,29 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
     }
 
     if (!user.accepted) {
-      await acceptUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: () => {
-            user.accepted = true;
-          },
-        })
-        .catch(() => {});
+      const loading = toast.loading('Akceptowanie konta użytkownika...');
+      try {
+        await acceptUserMutation.mutateAsync(user.id);
+        toast.dismiss(loading);
+        close();
+        toast.success('Zaakceptowano konto użytkownika');
+      } catch (err) {
+        toast.dismiss(loading);
+        console.error(err);
+        toast.error('Nie udało się zaakceptować konta użytkownika');
+      }
     } else {
-      await unAcceptUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: () => {
-            user.accepted = false;
-          },
-        })
-        .catch(() => {});
+      const loading = toast.loading('Cofanie akceptacji konta użytkownika...');
+      try {
+        await unAcceptUserMutation.mutateAsync(user.id);
+        toast.dismiss(loading);
+        close();
+        toast.success('Cofnięto akceptację konta użytkownika');
+      } catch (err) {
+        toast.dismiss(loading);
+        console.error(err);
+        toast.error('Nie udało się cofnąć akceptacji konta użytkownika');
+      }
     }
   }
 
@@ -181,7 +198,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex justify-around h-14">
+      <div className="flex h-14 justify-around">
         <form.Subscribe
           selector={(state) => [state.values.firstName, state.values.lastName]}
           children={([firstName, lastName]) => (
@@ -196,7 +213,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
         />
 
         {editMode && (
-          <div className="grid grid-cols-2 gap-1 max-w-48">
+          <div className="grid max-w-48 grid-cols-2 gap-1">
             <span>Stan Emaila:</span>
             <span className="flex">
               <AppBadge variant={user.emailConfirmed ? 'success' : 'danger'}>
@@ -292,13 +309,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
             <>
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>
                 {editMode ? (
-                  <div className="flex gap-4 items-center">
-                    <FloppyFillIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-4">
+                    <FloppyFillIcon className="h-4 w-4" />
                     <span>Zapisz</span>
                   </div>
                 ) : (
-                  <div className="flex gap-4 items-center">
-                    <PersonAddIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-4">
+                    <PersonAddIcon className="h-4 w-4" />
                     <span>Dodaj</span>
                   </div>
                 )}
@@ -312,13 +329,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
                   className="w-full"
                 >
                   {deletionConfirmed ? (
-                    <motion.div className="flex gap-4 items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <ExclamationTriangleFill className="w-4 h-4" />
+                    <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <ExclamationTriangleFill className="h-4 w-4" />
                       <span>Czy na pewno?</span>
                     </motion.div>
                   ) : (
-                    <div className="flex gap-4 items-center">
-                      <TrashFillIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <TrashFillIcon className="h-4 w-4" />
                       <span>Usuń</span>
                     </div>
                   )}
@@ -328,18 +345,18 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
               {editMode && (
                 <AppButton
                   variant={!user.accepted ? 'success' : 'danger'}
-                  disabled={!!submitError}
+                  disabled={!!submitError || acceptUserMutation.isPending || unAcceptUserMutation.isPending}
                   onClick={() => handleAccountAcceptanceToggle()}
                   className="w-full"
                 >
                   {!user.accepted ? (
-                    <div className="flex gap-4 items-center">
-                      <PersonFillCheckIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <PersonFillCheckIcon className="h-4 w-4" />
                       <span>Zaakceptuj konto użytkownika</span>
                     </div>
                   ) : (
-                    <div className="flex gap-4 items-center">
-                      <PersonFillSlashIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <PersonFillSlashIcon className="h-4 w-4" />
                       <span>Cofnij akceptację konta</span>
                     </div>
                   )}
@@ -354,13 +371,13 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
                   className="w-full"
                 >
                   {passwordResetSent ? (
-                    <motion.div className="flex gap-4 items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeFillIcon className="w-4 h-4" />
+                    <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <EnvelopeFillIcon className="h-4 w-4" />
                       <span>Link do zmiany hasła wysłany</span>
                     </motion.div>
                   ) : (
-                    <div className="flex gap-4 items-center">
-                      <EnvelopeFillIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-4">
+                      <EnvelopeFillIcon className="h-4 w-4" />
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}

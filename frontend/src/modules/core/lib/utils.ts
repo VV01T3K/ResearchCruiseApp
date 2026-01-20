@@ -75,7 +75,18 @@ export function getFormErrorMessage(form: AnyFormApi, fieldToSectionMapping: Rec
   return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
 }
 
-const extractErrorMessage = (error: unknown): string => (error as { message?: string })?.message ?? String(error);
+const extractErrorMessage = (error: unknown): string => {
+  if (error == null) return 'Błąd walidacji';
+  if (typeof error === 'string') return error;
+  if (Array.isArray(error) && error.length > 0) {
+    return extractErrorMessage(error[0]);
+  }
+  if (typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string') {
+    return (error as { message: string }).message;
+  }
+  const stringified = String(error);
+  return stringified === '[object Object]' ? 'Błąd walidacji' : stringified;
+};
 
 export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {
   return (!hasFormBeenSubmitted && field.isPristine) || field.errors.length === 0
@@ -105,13 +116,13 @@ export function navigateToFirstError(
   const sectionNumber = firstError?.sectionNumber;
 
   // Find and expand the accordion section containing the error
-  const accordionButtons = Array.from(document.querySelectorAll('h2 button[data-expanded]'));
+  const accordionButtons = Array.from(document.querySelectorAll('h2 button'));
   const targetButton = accordionButtons.find((button) => {
     const title = button.querySelector('span')?.textContent || '';
     return title.includes(`${sectionNumber}.`);
   });
 
-  const isExpanded = targetButton?.getAttribute('data-expanded') === 'true';
+  const isExpanded = targetButton?.hasAttribute('data-panel-open');
 
   if (!isExpanded) {
     (targetButton as HTMLButtonElement).click();

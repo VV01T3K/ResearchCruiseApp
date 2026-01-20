@@ -48,11 +48,11 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
         >
           <div
             className={cn(
-              'flex flex-col items-center justify-center p-4 relative',
+              'relative flex flex-col items-center justify-center p-4',
               fileInPreview?.content.startsWith('data:application/pdf') ? 'h-220' : ''
             )}
           >
-            <object data={fileInPreview?.content} className="h-full w-full flex items-center justify-center">
+            <object data={fileInPreview?.content} className="flex h-full w-full items-center justify-center">
               Nie można wyświetlić podglądu pliku
             </object>
           </div>
@@ -76,17 +76,17 @@ function AppFileListElement({ file, setFileInPreview, onRemove, disabled }: File
   return (
     <div
       className={cn(
-        'flex flex-row items-center justify-between  mx-4 my-2 p-2 rounded-lg border border-gray-200',
-        disabled ? 'bg-gray-100 ' : 'bg-white'
+        'mx-4 my-2 flex flex-row items-center justify-between rounded-lg border border-gray-200 p-2',
+        disabled ? 'bg-gray-100' : 'bg-white'
       )}
     >
-      <div className="truncate hover:text-primary duration-300 ease-in-out" onClick={() => setFileInPreview(file)}>
+      <div className="hover:text-primary truncate duration-300 ease-in-out" onClick={() => setFileInPreview(file)}>
         {file.name}
       </div>
 
-      <div className="flex flex-row items-center gap-2 mr-2">
-        {onRemove && !disabled && <XIcon className="w-8 h-8" onClick={() => onRemove!(file)} />}
-        <DownloadIcon className="w-6 h-6" onClick={() => linkRef.current?.click()} />
+      <div className="mr-2 flex flex-row items-center gap-2">
+        {onRemove && !disabled && <XIcon className="h-8 w-8" onClick={() => onRemove!(file)} />}
+        <DownloadIcon className="h-6 w-6" onClick={() => linkRef.current?.click()} />
       </div>
 
       <a ref={linkRef} download={file.name} href={file.content} className="hidden" />

@@ -338,7 +338,7 @@ export function FormCCruiseDetailsSection() {
 
   return (
     <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-c-cruise-details-section">
-      <p className="text-xl text-center font-semibold">Czy w ramach rejsu wystąpiło:</p>
+      <p className="text-center text-xl font-semibold">Czy w ramach rejsu wystąpiło:</p>
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wystawienie sprzętu</p>

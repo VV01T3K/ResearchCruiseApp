@@ -58,7 +58,7 @@ export function AppInput({
     <div className={cn('flex flex-col', containerClassName)}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
-      <div className="flex relative">
+      <div className="relative flex">
         <InputElement
           name={name}
           value={value}
@@ -69,9 +69,9 @@ export function AppInput({
           disabled={disabled}
           className={cn(
             className,
-            'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5',
-            'transition duration-300 ease-in-out resize-none',
-            'focus:ring-blue-500 focus:border-blue-500 focus:shadow focus:outline-none',
+            'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
+            'resize-none transition duration-300 ease-in-out',
+            'focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
             disabled ? 'bg-gray-200' : '',
             errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
           )}

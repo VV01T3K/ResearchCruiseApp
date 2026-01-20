@@ -9,7 +9,7 @@ export function ApplicationDetailsActionCancel({ setConfirmationMode }: Props) {
   return (
     <>
       <AppButton
-        className="gap-4 !justify-center w-36 lg:w-48"
+        className="w-36 !justify-center gap-4 lg:w-48"
         variant="danger"
         onClick={() => setConfirmationMode(true)}
       >

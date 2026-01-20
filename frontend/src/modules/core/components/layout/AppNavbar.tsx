@@ -30,7 +30,7 @@ export function AppNavbar() {
   return (
     <motion.header
       id="header"
-      className="bg-primary px-2 sm:px-4 md:px-6 lg:px-8 py-4 flex justify-between items-center z-50 h-[var(--header-height)]"
+      className="bg-primary z-50 flex h-[var(--header-height)] items-center justify-between px-2 py-4 sm:px-4 md:px-6 lg:px-8"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
@@ -38,9 +38,9 @@ export function AppNavbar() {
       <div>
         <motion.div
           whileHover={{ scale: 1.1, translateX: '5%' }}
-          className="flex-col sm:flex-row sm:flex items-end sm:font-thin"
+          className="flex-col items-end sm:flex sm:flex-row sm:font-thin"
         >
-          <AppLink href="/" title="Strona Główna" className="text-white pr-4 sm:text-2xl hover:no-underline">
+          <AppLink href="/" title="Strona Główna" className="pr-4 text-white hover:no-underline sm:text-2xl">
             Portal rejsów badawczych R/V Oceanograf
           </AppLink>
           <AppLink href={`${packageJson.repository}/releases/latest`} variant="white" className="text-xs">
@@ -54,12 +54,12 @@ export function AppNavbar() {
             <UGLogoIcon />
           </AppLink>
         </motion.div>
-        <motion.div className="w-6 inline-grid place-items-center" whileHover={{ scale: 1.3 }}>
-          <AppButton onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="text-white p-0">
+        <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
+          <AppButton onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="p-0 text-white">
             <BroadcastIcon />
           </AppButton>
         </motion.div>
-        <motion.div className="w-6 inline-grid place-items-center" whileHover={{ scale: 1.3 }}>
+        <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
           <AppLink
             href="https://outlook.com/ug.edu.pl"
             target="_blank"
@@ -72,7 +72,7 @@ export function AppNavbar() {
         <AnimatePresence>
           {userContext.currentUser && (
             <motion.div
-              className="w-6 inline-grid place-items-center"
+              className="inline-grid w-6 place-items-center"
               whileHover={{ scale: 1.3 }}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -82,7 +82,7 @@ export function AppNavbar() {
                 onClick={() => onSignOutButtonClicked()}
                 title="Wyloguj"
                 variant="plain"
-                className="text-white p-0"
+                className="p-0 text-white"
               >
                 <BoxArrowRightIcon />
               </AppButton>

@@ -15,13 +15,20 @@ export function ApplicationDetailsActionCancelConfirmation({ onReject, setConfir
         </div>
         <AppButton
           type="submit"
-          className="gap-4 !justify-center w-36 lg:w-48"
+          className="w-36 !justify-center gap-4 lg:w-48"
           variant="primary"
           onClick={() => setConfirmationMode(false)}
         >
           Anuluj
         </AppButton>
-        <AppButton className="gap-4 !justify-center w-36 lg:w-48" variant="danger" onClick={onReject}>
+        <AppButton
+          className="w-36 !justify-center gap-4 lg:w-48"
+          variant="danger"
+          onClick={() => {
+            onReject();
+            setConfirmationMode(false);
+          }}
+        >
           <TrashFillIcon className="h-4 w-4" />
           Potwierdź odrzucenie
         </AppButton>

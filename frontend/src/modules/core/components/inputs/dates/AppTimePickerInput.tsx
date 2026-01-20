@@ -91,7 +91,7 @@ export function AppDatePickerTimeInput({
             variant="plain"
             onClick={handleInputClick}
             className={cn(
-              'relative inline-flex gap-4 justify-between items-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full',
+              'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
               disabled ? 'bg-gray-200' : '',
               errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
@@ -99,7 +99,7 @@ export function AppDatePickerTimeInput({
             <span className="w-full">{time ? formatTime(time) : placeholder}</span>
           </AppButton>
         </div>
-        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2 ' : '')}>
+        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
           <AppInputHelper helper={helper} />
           <AppInputErrorsList errors={errors} />
         </div>
@@ -109,7 +109,7 @@ export function AppDatePickerTimeInput({
           <Modal dropdownRef={dropdownRef} inputRef={inputRef}>
             <div className="flex flex-col gap-2 p-2">
               <div className="flex gap-2 pb-2">
-                <div className="h-40 overflow-y-auto flex flex-col rounded-4xl mx-2 bg-gray-100 pt-1 pb-1">
+                <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-gray-100 pt-1 pb-1">
                   {Array.from({ length: 24 }).map((_, i) => {
                     const isAllowed = i >= (minimalTime?.hours ?? 0) && i <= (maximalTime?.hours ?? 23);
                     if (!isAllowed) {
@@ -136,7 +136,7 @@ export function AppDatePickerTimeInput({
                     );
                   })}
                 </div>
-                <div className="h-40 overflow-y-auto flex flex-col rounded-4xl mx-2 bg-gray-100 pt-1 pb-1">
+                <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-gray-100 pt-1 pb-1">
                   {Array.from({ length: 60 / minuteStep }).map((_, i) => {
                     const minutes = i * minuteStep;
                     const totalMinutes = timeToMinutes({ hours: (time?.hours || minimalTime?.hours) ?? 0, minutes });
@@ -202,7 +202,7 @@ function Modal({ dropdownRef, inputRef, children, className }: ModalProps) {
     <motion.div
       style={{ top: top, left: left }}
       className={cn(
-        'fixed origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50',
+        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden',
         className
       )}
       initial={{ opacity: 0, translateY: '-10%' }}

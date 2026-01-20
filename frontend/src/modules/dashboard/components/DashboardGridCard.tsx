@@ -24,10 +24,10 @@ export function DashboardGridCard({ name, className, Icon, description, href }: 
           <motion.div
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className="p-4 relative w-full h-full bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)] rounded-xl flex flex-col justify-around items-center overflow-hidden"
+            className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-white p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
           >
             <Icon className="h-1/2" />
-            <h3 className="text-md md:text-lg xl:text-xl font-semibold text-primary">{name}</h3>
+            <h3 className="text-md text-primary font-semibold md:text-lg xl:text-xl">{name}</h3>
             <div className={cn('absolute inset-0', isHovered ? 'bg-black/[.03]' : 'bg-transparent')} />
           </motion.div>
         </AppLink>
@@ -39,7 +39,7 @@ export function DashboardGridCard({ name, className, Icon, description, href }: 
     <div key={name} className={className}>
       <AppLink href={href} className="hover:no-underline">
         <motion.div
-          className="p-4 relative w-full h-full bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)] rounded-xl flex flex-col justify-between overflow-hidden"
+          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-white p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >
@@ -62,7 +62,7 @@ export function DashboardGridCard({ name, className, Icon, description, href }: 
             >
               <Icon />
             </motion.div>
-            <motion.h3 className="text-md md:text-lg xl:text-xl font-semibold text-primary">{name}</motion.h3>
+            <motion.h3 className="text-md text-primary font-semibold md:text-lg xl:text-xl">{name}</motion.h3>
           </motion.div>
 
           <AnimatePresence>

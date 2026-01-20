@@ -110,7 +110,7 @@ export function FormAResearchTasksSection() {
                         {
                           value: type,
                           content: (
-                            <div className="w-full rounded-lg text-center text-gray-500 text-sm px-2 my-2">
+                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
                               {getTaskName(type as ResearchTaskType)}
                             </div>
                           ),

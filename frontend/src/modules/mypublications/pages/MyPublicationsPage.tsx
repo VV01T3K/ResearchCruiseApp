@@ -59,7 +59,7 @@ export function MyPublicationsPage() {
     {
       accessorFn: (row) => row.title,
       header: 'Tytuł',
-      cell: (cell) => <p className="font-bold pr-4">{cell.getValue() as string}</p>,
+      cell: (cell) => <p className="pr-4 font-bold">{cell.getValue() as string}</p>,
       size: 25,
     },
     {
@@ -96,7 +96,7 @@ export function MyPublicationsPage() {
           size="xs"
           onClick={() => deleteOwnPublicationMutation.mutateAsync(cell.row.original.id).catch(() => {})}
         >
-          <TrashIcon className="h-3 w-3 mr-2" />
+          <TrashIcon className="mr-2 h-3 w-3" />
           Usuń
         </AppButton>
       ),
@@ -124,7 +124,7 @@ export function MyPublicationsPage() {
               target="_blank"
             >
               Przejdź do repozytorium BG
-              <ExternalLinkIcon className="h-4 w-4 ml-2" />
+              <ExternalLinkIcon className="ml-2 h-4 w-4" />
             </AppButton>,
             <AppButton
               key="removeAllPublications"
@@ -132,7 +132,7 @@ export function MyPublicationsPage() {
               onClick={() => setIsDeleteAllModalOpen(true)}
               disabled={!ownPublicationsQuery.data?.length || deleteAllOwnPublicationsMutation.isPending}
             >
-              <TrashIcon className="h-4 w-4 mr-2" />
+              <TrashIcon className="mr-2 h-4 w-4" />
               Usuń wszystkie publikacje
             </AppButton>,
             <AppButton
@@ -141,7 +141,7 @@ export function MyPublicationsPage() {
               onClick={() => deleteSelectedPublications()}
               disabled={!Object.keys(selectedPublications).length || deleteOwnPublicationMutation.isPending}
             >
-              <TrashIcon className="h-4 w-4 mr-2" />
+              <TrashIcon className="mr-2 h-4 w-4" />
               Usuń zaznaczone publikacje
             </AppButton>,
             ...defaultButtons,
@@ -154,7 +154,7 @@ export function MyPublicationsPage() {
         title="Czy na pewno chcesz usunąć wszystkie publikacje?"
       >
         Usunięcie publikacji jest nieodwracalne.
-        <div className="flex flex-row gap-4 mt-4">
+        <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="dangerOutline"
             className="basis-2/3"

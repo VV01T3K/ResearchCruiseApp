@@ -8,7 +8,7 @@ export function FormBCruiseGoalSection() {
 
   return (
     <AppAccordion title="6. Cel rejsu" expandedByDefault data-testid="form-b-cruise-goal-section">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div>
           <AppDropdownInput
             name="cruiseGoal"

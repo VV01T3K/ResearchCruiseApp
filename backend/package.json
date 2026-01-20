@@ -4,6 +4,8 @@
   "scripts": {
     "dev": "bun run watch",
     "start": "dotnet run --project ResearchCruiseApp",
-    "watch": "dotnet watch run --project ResearchCruiseApp"
+    "watch": "dotnet watch run --project ResearchCruiseApp",
+    "format": "dotnet csharpier check .",
+    "format:fix": "dotnet csharpier format ."
   }
 }

@@ -3,10 +3,10 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
+import { toast } from '@/core/components/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { CruiseFrom } from '@/cruise-schedule/components/cruise-from/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/cruise-schedule/helpers/CruiseFormValidationSchema';
@@ -76,11 +76,11 @@ export function NewCruisePage() {
 
   const buttons = (
     <>
-      <AppButton className="gap-4 !justify-center w-36 lg:w-64" variant="primaryOutline" onClick={() => form.reset()}>
+      <AppButton className="w-36 !justify-center gap-4 lg:w-64" variant="primaryOutline" onClick={() => form.reset()}>
         <ArrowClockwiseIcon className="h-4 w-4" />
         Wyczyść formularz
       </AppButton>
-      <AppButton className="gap-4 !justify-center w-36 lg:w-64" type="submit">
+      <AppButton className="w-36 !justify-center gap-4 lg:w-64" type="submit">
         <FloppyFillIcon className="h-4 w-4" />
         Zapisz
       </AppButton>
