@@ -16,7 +16,7 @@ RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
 COPY . .
 RUN bun run build
 
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+FROM dhi.io/nginx:1.29-alpine3.23
 
 ARG API_URL="http://backend:8080/"
 ARG GRAFANA_FARO_URL="http://0.0.0.0:12347/"
@@ -25,7 +25,7 @@ ENV API_URL=$API_URL \
     GRAFANA_FARO_URL=$GRAFANA_FARO_URL
 
 WORKDIR /app
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build --chown=nginx:nginx /app/dist /app/
 
 EXPOSE 8080

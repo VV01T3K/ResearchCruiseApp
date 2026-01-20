@@ -1,4 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+FROM dhi.io/dotnet:10.0-sdk-alpine3.22 AS build
+
+RUN apk add --no-cache curl
 
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -15,14 +17,15 @@ RUN dotnet publish "ResearchCruiseApp.csproj" \
     --no-restore \
     /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
-
-RUN apk add --no-cache curl icu-libs tzdata
+FROM dhi.io/aspnetcore:10.0-alpine3.22
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
-HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl",  "--fail", "http://localhost:8080/health" ]
-USER $APP_UID
+# Copying curl binary is a workaround for hardened images, maybe we should change the healthcheck to work differently
+COPY --from=build /usr/bin/curl /usr/bin/curl
+
+HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl", "--fail", "http://localhost:8080/health" ]
+# USER $APP_UID // nedeed for images from mcr but not for dhi.io
 EXPOSE 8080
 EXPOSE 8081
 
