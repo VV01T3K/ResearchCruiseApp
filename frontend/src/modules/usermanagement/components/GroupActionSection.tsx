@@ -48,6 +48,7 @@ export function GroupActionSection({ selectedUsers, allowToRemoveUsers, close }:
   }
 
   async function handleAcceptSelectedUsers() {
+    // TODO: probably need refactor - await blocks everything + close() is called x times + add toast
     for (const user of selectedUsers.filter((user) => !user.accepted)) {
       await acceptUserMutation
         .mutateAsync(user.id, {
@@ -90,13 +91,13 @@ export function GroupActionSection({ selectedUsers, allowToRemoveUsers, close }:
           onClick={() => handleDeleteSelectedUsers()}
         >
           {deletionConfirmed ? (
-            <motion.div className="flex gap-4 items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <ExclamationTriangleFillIcon className="w-4 h-4" />
+            <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <ExclamationTriangleFillIcon className="h-4 w-4" />
               <span>Na pewno?</span>
             </motion.div>
           ) : (
-            <div className="flex gap-4 items-center">
-              <TrashFillIcon className="w-4 h-4" />
+            <div className="flex items-center gap-4">
+              <TrashFillIcon className="h-4 w-4" />
               <span>Usuń zaznaczonych użytkowników</span>
             </div>
           )}
@@ -106,23 +107,23 @@ export function GroupActionSection({ selectedUsers, allowToRemoveUsers, close }:
       <div className="mt-4">
         <AppButton
           variant="success"
-          className="w-full mt-4"
+          className="mt-4 w-full"
           disabled={acceptUserMutation.isPending || !!submitError}
           onClick={handleAcceptSelectedUsers}
         >
-          <div className="flex gap-4 items-center">
-            <PersonFillCheckIcon className="w-4 h-4" />
+          <div className="flex items-center gap-4">
+            <PersonFillCheckIcon className="h-4 w-4" />
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </AppButton>
         <AppButton
           variant="danger"
-          className="w-full mt-4"
+          className="mt-4 w-full"
           disabled={unAcceptUserMutation.isPending || !!submitError}
           onClick={handleUnAcceptSelectedUsers}
         >
-          <div className="flex gap-4 items-center">
-            <PersonFillSlashIcon className="w-4 h-4" />
+          <div className="flex items-center gap-4">
+            <PersonFillSlashIcon className="h-4 w-4" />
             <span>Usuń akceptację zaznaczonych użytkowników</span>
           </div>
         </AppButton>

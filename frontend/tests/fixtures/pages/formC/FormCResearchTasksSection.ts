@@ -21,10 +21,14 @@ export class FormCResearchTasksSection {
 
   public taskRow(index: 'first' | 'last' | number) {
     const rowLocator = this.taskRowLocator(index);
+    const cellLocator = rowLocator.locator('td').nth(3);
+
+    const checkboxes = cellLocator.getByRole('checkbox');
+
     return {
-      doneCheckbox: rowLocator.locator('td').nth(3).getByText('Zrealizowane'),
-      managerConditionMetCheckbox: rowLocator.locator('td').nth(3).getByText('Czy naliczyć punkty kierownikowi?'),
-      deputyConditionMetCheckbox: rowLocator.locator('td').nth(3).getByText('Czy naliczyć punkty zastępcy?'),
+      doneCheckbox: checkboxes.nth(0),
+      managerConditionMetCheckbox: checkboxes.nth(1),
+      deputyConditionMetCheckbox: checkboxes.nth(2),
     };
   }
 

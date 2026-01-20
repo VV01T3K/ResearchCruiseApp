@@ -12,13 +12,13 @@ export function FormBCruiseInfoSection() {
 
   return (
     <AppAccordion title="1. Informacje o rejsie" expandedByDefault data-testid="form-b-cruise-info-section">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2">
-          <span className="font-semibold ">Numer rejsu:</span>
-          <span className="flex gap-4 h-fit">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-0 md:col-span-2 md:grid-cols-2 md:gap-2">
+          <span className="font-semibold">Numer rejsu:</span>
+          <span className="flex h-fit gap-4">
             {cruise.number} <CruiseStatusBadge status={cruise.status} />
           </span>
-          <span className="font-semibold mt-4 md:mt-0">Terminy rozpoczęcia i zakończenia:</span>
+          <span className="mt-4 font-semibold md:mt-0">Terminy rozpoczęcia i zakończenia:</span>
           <span className="inline-flex gap-2 text-nowrap">
             <time dateTime={dayjs(cruise.startDate).toISOString()}>
               {dayjs(cruise.startDate).format('DD.MM.YYYY HH:mm')}

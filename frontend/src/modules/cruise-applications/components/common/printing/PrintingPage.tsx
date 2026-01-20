@@ -7,8 +7,8 @@ type Props = {
 };
 export function PrintingPage({ ref, title, children }: Props) {
   return (
-    <div ref={ref} className="not-print:hidden bg-white mx-auto w-[21cm]">
-      <h1 className="text-3xl text-center pt-[1cm]">{title}</h1>
+    <div ref={ref} className="mx-auto w-[21cm] bg-white not-print:hidden">
+      <h1 className="pt-[1cm] text-center text-3xl">{title}</h1>
       {children}
     </div>
   );

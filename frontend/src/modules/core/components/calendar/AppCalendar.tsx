@@ -86,26 +86,26 @@ export function AppCalendar({ events, buttons }: Props) {
     currentMonth.year * 12 + currentMonth.month > previousMonth.year * 12 + previousMonth.month ? 'right' : 'left';
 
   return (
-    <div className="flex flex-col p-4 gap-4">
-      <div className="flex justify-center items-center w-full">
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex w-full items-center justify-center">
         <AppButton variant="plain" onClick={() => handleMonthChange(-1)}>
-          <ChevronLeftIcon className="w-8 h-8" />
+          <ChevronLeftIcon className="h-8 w-8" />
         </AppButton>
         <AppMonthPickerPopover
           value={currentMonth}
           onChange={setCurrentMonth}
           renderDate={({ month, year }) => (
-            <div className="text-2xl text-center w-50">
+            <div className="w-50 text-center text-2xl">
               {months[month]} {year}
             </div>
           )}
         />
 
         <AppButton variant="plain" onClick={() => handleMonthChange(1)}>
-          <ChevronRightIcon className="w-8 h-8" />
+          <ChevronRightIcon className="h-8 w-8" />
         </AppButton>
       </div>
-      <div className="flex justify-end flex-wrap gap-4 my-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
+      <div className="my-4 flex flex-wrap justify-end gap-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={currentMonth.month + currentMonth.year * 12}
@@ -116,7 +116,7 @@ export function AppCalendar({ events, buttons }: Props) {
         >
           <div ref={calendarRef} className="grid grid-cols-7 gap-1">
             {weekDays.map((day) => (
-              <div key={day} className="text-center truncate">
+              <div key={day} className="truncate text-center">
                 {day}
               </div>
             ))}

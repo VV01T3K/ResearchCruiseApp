@@ -15,7 +15,7 @@ export function CruiseFormBasicInformationSection() {
     <AppAccordion title={`1. Podstawowe informacje o ${shipUnavailable ? 'blokadzie' : 'rejsie'}`} expandedByDefault>
       <>
         {cruise && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="flex gap-4">
               <div className="font-bold">Numer rejsu:</div>
               <div>{cruise.number}</div>
@@ -29,7 +29,7 @@ export function CruiseFormBasicInformationSection() {
           </div>
         )}
         {!cruise && <AppAlert>Numer i status rejsu będą dostępne po jego utworzeniu</AppAlert>}
-        <div className="flex flex-col space-y-2 mt-2">
+        <div className="mt-2 flex flex-col space-y-2">
           <form.Field
             name="title"
             children={(field) => (

@@ -1,13 +1,13 @@
 import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppGuard } from '@/core/components/AppGuard';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
 import { AppTabs } from '@/core/components/AppTabs';
+import { toast } from '@/core/components/layout/toast';
 import { Role } from '@/core/models/Role';
 import { CruiseCalendar } from '@/cruise-schedule/components/CruiseCalendar';
 import { CruiseExportForm } from '@/cruise-schedule/components/CruiseExportForm';
@@ -47,19 +47,19 @@ export function CruisesPage() {
     <AppGuard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton type="link" href="/cruises/new">
         Nowy rejs
-        <PlusLgIcon className="ml-2 w-6 h-6" />
+        <PlusLgIcon className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
     <AppGuard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
         Nowa blokada
-        <PlusLgIcon className="ml-2 w-6 h-6" />
+        <PlusLgIcon className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
     <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport
-        <BoxArrowUpRightIcon className="ml-2 w-4 h-4" />
+        <BoxArrowUpRightIcon className="ml-2 h-4 w-4" />
       </AppButton>
     </AppGuard>,
   ];
@@ -79,7 +79,7 @@ export function CruisesPage() {
         onClose={() => setCruiseSelectedForDeletion(undefined)}
       >
         Usunięcie rejsu jest nieodwracalne.
-        <div className="flex flex-row gap-4 mt-4">
+        <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="danger"
             className="basis-2/3"

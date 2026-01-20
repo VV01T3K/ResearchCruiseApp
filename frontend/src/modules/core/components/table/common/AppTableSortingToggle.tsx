@@ -10,8 +10,8 @@ export function AppTableSortingToggle<TData>({ header }: { header: Header<TData,
 
   if (header.column.getIsSorted() === 'desc') {
     return (
-      <span className="flex gap-2 items-center">
-        <XIcon className="w-4 h-4" />
+      <span className="flex items-center gap-2">
+        <XIcon className="h-4 w-4" />
         Usuń sortowanie
       </span>
     );
@@ -19,8 +19,8 @@ export function AppTableSortingToggle<TData>({ header }: { header: Header<TData,
 
   if (header.column.getIsSorted() === 'asc') {
     return (
-      <span className="flex gap-2 items-center">
-        <SortUpIcon className="w-4 h-4" />
+      <span className="flex items-center gap-2">
+        <SortUpIcon className="h-4 w-4" />
         Sortuj rosnąco
       </span>
     );
@@ -28,8 +28,8 @@ export function AppTableSortingToggle<TData>({ header }: { header: Header<TData,
 
   // header.column.getIsSorted() === false
   return (
-    <span className="flex gap-2 items-center">
-      <SortDownIcon className="w-4 h-4" />
+    <span className="flex items-center gap-2">
+      <SortDownIcon className="h-4 w-4" />
       Sortuj malejąco
     </span>
   );

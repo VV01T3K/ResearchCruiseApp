@@ -19,7 +19,7 @@ export function AppMobileTableFilterForm<T>({ table }: Props<T>) {
     <div className="flex flex-col gap-8">
       <AppTableClearFiltersButton table={table} />
       {table.getHeaderGroups().map((headerGroup) => (
-        <div key={headerGroup.id} className="flex flex-col gap-4 ">
+        <div key={headerGroup.id} className="flex flex-col gap-4">
           {headerGroup.headers.map((header) => (
             <Fragment key={header.id}>
               <FormElement header={header} />
@@ -41,9 +41,9 @@ function FormElement<T>({ header }: FormElementProps<T>) {
   }
 
   return (
-    <div className="flex justify-between border-b border-gray-300 pb-4 w-full">
+    <div className="flex w-full justify-between border-b border-gray-300 pb-4">
       <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>
-      <div className="flex flex-col gap-2 w-120">
+      <div className="flex w-120 flex-col gap-2">
         {supportsSort && <SortFormElement header={header} />}
         {supportsFilter && <FilterFormElement header={header} />}
       </div>
@@ -54,7 +54,7 @@ function FormElement<T>({ header }: FormElementProps<T>) {
 function SortFormElement<T>({ header }: FormElementProps<T>) {
   return (
     <div
-      className={cn('flex gap-2 items-center justify-end', header.column.getIsSorted() ? 'font-bold' : '')}
+      className={cn('flex items-center justify-end gap-2', header.column.getIsSorted() ? 'font-bold' : '')}
       onClick={() => header.column.toggleSorting()}
     >
       <AppTableSortingToggle header={header} />
@@ -73,7 +73,7 @@ function FilterFormElement<T>({ header }: FormElementProps<T>) {
   return (
     <div ref={anchorRef}>
       <div
-        className={cn('flex gap-2 items-center justify-end', header.column.getIsFiltered() ? 'font-bold' : '')}
+        className={cn('flex items-center justify-end gap-2', header.column.getIsFiltered() ? 'font-bold' : '')}
         onClick={() => setExpanded(!expanded)}
       >
         {expanded ? 'Ukryj filtry' : 'Pokaż filtry'}

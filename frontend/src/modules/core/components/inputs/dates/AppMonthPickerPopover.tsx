@@ -43,13 +43,13 @@ export function AppMonthPickerPopover({ value, onChange, renderDate }: Props) {
         <AppButton
           variant="plain"
           onClick={handleInputClick}
-          className={cn('relative inline-flex gap-4 justify-between items-center text-sm rounded-lg w-full')}
+          className={cn('relative inline-flex w-full items-center justify-between gap-4 rounded-lg text-sm')}
         >
           {renderDate
             ? renderDate(value)
             : new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}
           <span className="flex gap-2">
-            <span>{expanded ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}</span>
+            <span>{expanded ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}</span>
           </span>
         </AppButton>
       </div>
@@ -82,7 +82,7 @@ function Modal({ dropdownRef, inputRef, children, className }: ModalProps) {
     <motion.div
       style={{ top: top, left: left }}
       className={cn(
-        'fixed origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden z-50',
+        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden',
         className
       )}
       initial={{ opacity: 0, translateY: '-10%' }}

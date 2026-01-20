@@ -60,7 +60,7 @@ export function FormAPublicationsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <form.Field
               name={`publications[${row.index}].doi`}
               children={(field) => (
@@ -203,7 +203,7 @@ export function FormAPublicationsSection() {
 
   return (
     <AppAccordion title="9. Publikacje" expandedByDefault data-testid="form-a-publications-section">
-      <header className="text-center space-y-4 mb-8 max-w-2xl mx-auto">
+      <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
         </h3>
@@ -275,7 +275,7 @@ export function FormAPublicationsSection() {
                           {
                             value: category,
                             content: (
-                              <div className="w-full rounded-lg text-center text-gray-500 text-sm px-2 my-2">
+                              <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
                                 {getPublicationCategoryLabel(category as PublicationCategory)}
                               </div>
                             ),
@@ -284,7 +284,7 @@ export function FormAPublicationsSection() {
                         ...publications.map((publication) => ({
                           value: JSON.stringify(publication),
                           content: (
-                            <div className="w-full rounded-lg hover:bg-gray-100 focus:inset-ring-2 inset-ring-blue-500 px-2 cursor-pointer">
+                            <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-blue-500 hover:bg-gray-100 focus:inset-ring-2">
                               <div>
                                 <strong>DOI:</strong> {publication.doi}
                               </div>

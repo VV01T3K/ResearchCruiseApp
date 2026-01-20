@@ -25,13 +25,13 @@ export function AppAvatar({ fullName, className, variant = 'default' }: Props) {
   return (
     <div
       className={cn(
-        'relative inline-flex items-center justify-center  overflow-hidden bg-[var(--color)] rounded-full',
+        'relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--color)]',
         variants[variant],
         className
       )}
       style={{ '--color': color } as React.CSSProperties}
     >
-      <span className="text-gray-50 font-bold">{parts.map((name) => name.charAt(0).toUpperCase()).join('')}</span>
+      <span className="font-bold text-gray-50">{parts.map((name) => name.charAt(0).toUpperCase()).join('')}</span>
     </div>
   );
 }

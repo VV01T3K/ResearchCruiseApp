@@ -13,7 +13,7 @@ export function FormCAdditionalDescriptionSection() {
       expandedByDefault
       data-testid="form-c-additional-description-section"
     >
-      <header className="text-center text-sm space-y-4 mb-8 max-w-2xl mx-auto">
+      <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center text-sm">
         Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia w
         osobnych plikach
       </header>

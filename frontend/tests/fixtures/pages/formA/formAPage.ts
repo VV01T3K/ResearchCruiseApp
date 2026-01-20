@@ -122,7 +122,7 @@ export class FormAPage {
         break;
       case 'invalid':
         await expect(this.validationErrorMessage, { message: message }).toBeVisible();
-        await this.toastMessage.getByRole('button').first().click();
+        await this.toastMessage.getByLabel('Close').first().click();
         break;
     }
   }

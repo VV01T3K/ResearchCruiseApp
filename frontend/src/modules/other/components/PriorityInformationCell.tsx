@@ -10,7 +10,7 @@ export function PriorityInformationCell({
   className?: string;
 }) {
   return (
-    <td className={cn('p-4 border-b border-r first:border-l border-slate-600', className)} colSpan={colSpan}>
+    <td className={cn('border-r border-b border-slate-600 p-4 first:border-l', className)} colSpan={colSpan}>
       <p className="block text-sm text-slate-800">{children}</p>
     </td>
   );

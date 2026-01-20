@@ -195,7 +195,7 @@ export function FormAMembersSection() {
       expandedByDefault
       data-testid="form-a-members-section"
     >
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
+      <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.Field
           name="ugTeams"
           mode="array"

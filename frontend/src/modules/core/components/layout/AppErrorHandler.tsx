@@ -25,7 +25,7 @@ export function AppErrorHandler({ error }: ErrorComponentProps) {
           <div className="h-60">
             <EmojiSmileUpsideDownIcon />
           </div>
-          <div className="flex justify-center items-center gap-2 text-lg">
+          <div className="flex items-center justify-center gap-2 text-lg">
             <div>Opis błędu: </div>
             <div className="font-semibold">{error.message}</div>
           </div>

@@ -37,7 +37,7 @@ export function ConfirmEmailPage() {
         <div className="h-60">
           {result === 'success' ? <CheckLgIcon className="text-success" /> : <XLgIcon className="text-danger" />}
         </div>
-        <div className="text-gray-600 text-center">
+        <div className="text-center text-gray-600">
           {result === 'success' && (
             <>Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto</>
           )}
@@ -49,7 +49,7 @@ export function ConfirmEmailPage() {
           )}
         </div>
       </div>
-      <AppButton type="link" href="/login" className="w-full mt-6">
+      <AppButton type="link" href="/login" className="mt-6 w-full">
         Wróć do logowania
       </AppButton>
     </AppLayout>

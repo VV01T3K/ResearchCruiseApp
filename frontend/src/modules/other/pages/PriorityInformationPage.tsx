@@ -5,14 +5,14 @@ import { PriorityInformationRow } from '@/other/components/PriorityInformationRo
 export function PriorityInformationPage() {
   return (
     <AppLayout title="Informacje o priorytetyzacji">
-      <div className="relative flex flex-col w-full h-full text-gray-700 bg-clip-border px-5">
-        <table className="w-full text-left table-auto">
+      <div className="relative flex h-full w-full flex-col bg-clip-border px-5 text-gray-700">
+        <table className="w-full table-auto text-left">
           <thead>
             <tr>
-              <th className="p-4 border border-slate-600 text-center bg-slate-300 text-lg">
+              <th className="border border-slate-600 bg-slate-300 p-4 text-center text-lg">
                 <p className="block">Rodzaj zadania z formularza</p>
               </th>
-              <th className="p-4 border border-slate-600 text-center bg-slate-300 text-lg">
+              <th className="border border-slate-600 bg-slate-300 p-4 text-center text-lg">
                 <p className="block">Przyznawane punkty</p>
               </th>
             </tr>
