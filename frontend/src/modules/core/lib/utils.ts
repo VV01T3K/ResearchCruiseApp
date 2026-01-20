@@ -76,10 +76,16 @@ export function getFormErrorMessage(form: AnyFormApi, fieldToSectionMapping: Rec
 }
 
 const extractErrorMessage = (error: unknown): string => {
-  if (typeof error === 'object' && error !== null && 'message' in error) {
+  if (error == null) return 'Błąd walidacji';
+  if (typeof error === 'string') return error;
+  if (Array.isArray(error) && error.length > 0) {
+    return extractErrorMessage(error[0]);
+  }
+  if (typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string') {
     return (error as { message: string }).message;
   }
-  return 'Błąd walidacji';
+  const stringified = String(error);
+  return stringified === '[object Object]' ? 'Błąd walidacji' : stringified;
 };
 
 export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = true): string[] | undefined {

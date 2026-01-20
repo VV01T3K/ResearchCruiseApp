@@ -1,5 +1,6 @@
 import { useStore } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
@@ -8,22 +9,61 @@ import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
+import { CruisePeriodType } from '@/cruise-applications/models/FormADto';
 
 import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodInput';
 import { FormABlockadeWarning } from './FormABlockadeWarning';
+
+function isValidPeriod(period: unknown): period is CruisePeriodType {
+  return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
+}
 
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
   const year = useStore(form.store, (state) => state.values.year);
   const periodSelectionType = useStore(form.store, (state) => state.values.periodSelectionType ?? 'period');
+  const acceptablePeriod = useStore(form.store, (state) => state.values.acceptablePeriod);
+  const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
+  const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
+  const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
+
+  const savedPeriodValuesRef = useRef<{ acceptable: CruisePeriodType; optimal: CruisePeriodType } | null>(null);
+  const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
+
+  useEffect(() => {
+    if (periodSelectionType !== 'period' || isReadonly) return;
+
+    if (!isValidPeriod(acceptablePeriod)) {
+      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
+    }
+    if (!isValidPeriod(optimalPeriod)) {
+      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
+    }
+  }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
+    if (periodSelectionType === 'period' && isValidPeriod(acceptablePeriod) && isValidPeriod(optimalPeriod)) {
+      savedPeriodValuesRef.current = { acceptable: acceptablePeriod, optimal: optimalPeriod };
+    } else if (periodSelectionType === 'precise' && (precisePeriodStart || precisePeriodEnd)) {
+      savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
+    }
+
     form.setFieldValue('periodSelectionType', value);
-    form.setFieldValue('acceptablePeriod', '');
-    form.setFieldValue('optimalPeriod', '');
-    form.setFieldValue('precisePeriodStart', '');
-    form.setFieldValue('precisePeriodEnd', '');
+
+    if (value === 'period') {
+      const restored = savedPeriodValuesRef.current;
+      form.setFieldValue('acceptablePeriod', restored?.acceptable ?? (['0', '24'] as CruisePeriodType));
+      form.setFieldValue('optimalPeriod', restored?.optimal ?? (['0', '24'] as CruisePeriodType));
+      form.setFieldValue('precisePeriodStart', '');
+      form.setFieldValue('precisePeriodEnd', '');
+    } else {
+      const restored = savedPreciseValuesRef.current;
+      form.setFieldValue('acceptablePeriod', '');
+      form.setFieldValue('optimalPeriod', '');
+      form.setFieldValue('precisePeriodStart', restored?.start ?? '');
+      form.setFieldValue('precisePeriodEnd', restored?.end ?? '');
+    }
   }
 
   return (
