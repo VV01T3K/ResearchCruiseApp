@@ -27,7 +27,7 @@ export function FormCPublicationsSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="grid grid-cols-2 gap-x-4 min-w-80 md:min-w-0 md:text-left md:gap-0 md:mx-32">
+        <div className="grid min-w-80 grid-cols-2 gap-x-4 md:mx-32 md:min-w-0 md:gap-0 md:text-left">
           <div className="font-semibold">DOI:</div>
           <div className="text-center">{row.original.doi}</div>
           <div className="font-semibold">Autorzy:</div>
@@ -64,7 +64,7 @@ export function FormCPublicationsSection() {
 
   return (
     <AppAccordion title="10. Publikacje" expandedByDefault data-testid="form-c-publications-section">
-      <header className="text-center space-y-4 mb-8 max-w-2xl mx-auto">
+      <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
         </h3>

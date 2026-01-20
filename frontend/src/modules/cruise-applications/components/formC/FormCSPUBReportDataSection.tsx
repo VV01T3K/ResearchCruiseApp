@@ -12,7 +12,7 @@ export function FormCSPUBReportDataSection() {
       expandedByDefault
       data-testid="form-c-spub-report-data-section"
     >
-      <header className="text-center text-sm space-y-4 mb-8 max-w-2xl mx-auto">
+      <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center text-sm">
         Wpisać czy podczas rejsu były pozyskane dane do ekspertyzy lub do oceny oddziaływań na środowisko przy
         współpracy z otoczeniem gospodarczym i biznesowym lub w celach popularnonaukowych, edukacyjnych,
         reprezentacyjnych, lub odbywając szkolenie doskonalące z wykonywania prac z wykorzystaniem aparatury

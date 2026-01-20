@@ -6,7 +6,7 @@ type Props = {
 };
 export function ReadOnlyThesisResearchTaskDetails({ data }: Props) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <AppInput
         name="researchTasks[].author"
         value={data.author}

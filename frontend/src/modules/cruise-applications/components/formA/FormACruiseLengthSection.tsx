@@ -1,5 +1,6 @@
+import { useStore } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
@@ -8,58 +9,60 @@ import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
+import { CruisePeriodType } from '@/cruise-applications/models/FormADto';
 
 import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodInput';
 import { FormABlockadeWarning } from './FormABlockadeWarning';
 
+function isValidPeriod(period: unknown): period is CruisePeriodType {
+  return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
+}
+
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
-  const [firstInteractionFields, setFirstInteractionFields] = useState<Set<string>>(() => new Set());
+  const year = useStore(form.store, (state) => state.values.year);
+  const periodSelectionType = useStore(form.store, (state) => state.values.periodSelectionType ?? 'period');
+  const acceptablePeriod = useStore(form.store, (state) => state.values.acceptablePeriod);
+  const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
+  const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
+  const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
 
-  const periodSelectionType = form.state.values.periodSelectionType ?? 'period';
+  const savedPeriodValuesRef = useRef<{ acceptable: CruisePeriodType; optimal: CruisePeriodType } | null>(null);
+  const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
 
-  function handlePeriodFieldClick() {
-    if (!firstInteractionFields.has('acceptablePeriod') || !firstInteractionFields.has('optimalPeriod')) {
-      if (!firstInteractionFields.has('acceptablePeriod')) {
-        form.setFieldValue('acceptablePeriod', ['0', '24']);
-        form.validateField('acceptablePeriod', 'change');
-      }
-      if (!firstInteractionFields.has('optimalPeriod')) {
-        form.setFieldValue('optimalPeriod', ['0', '24']);
-        form.validateField('optimalPeriod', 'change');
-      }
-      setFirstInteractionFields(new Set(['acceptablePeriod', 'optimalPeriod']));
+  useEffect(() => {
+    if (periodSelectionType !== 'period' || isReadonly) return;
+
+    if (!isValidPeriod(acceptablePeriod)) {
+      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
     }
-  }
+    if (!isValidPeriod(optimalPeriod)) {
+      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
+    }
+  }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
-    form.setFieldValue('periodSelectionType', value);
-    setFirstInteractionFields(new Set());
+    if (periodSelectionType === 'period' && isValidPeriod(acceptablePeriod) && isValidPeriod(optimalPeriod)) {
+      savedPeriodValuesRef.current = { acceptable: acceptablePeriod, optimal: optimalPeriod };
+    } else if (periodSelectionType === 'precise' && (precisePeriodStart || precisePeriodEnd)) {
+      savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
+    }
 
-    if (value === 'precise') {
-      form.setFieldValue('acceptablePeriod', '');
-      form.setFieldValue('optimalPeriod', '');
-      form.setFieldMeta('acceptablePeriod', (prev) => ({ ...prev, errors: [] }));
-      form.setFieldMeta('optimalPeriod', (prev) => ({ ...prev, errors: [] }));
-      form.validateField('acceptablePeriod', 'change');
-      form.validateField('optimalPeriod', 'change');
-      form.validateField('precisePeriodStart', 'change');
-      form.validateField('precisePeriodEnd', 'change');
-    } else {
+    form.setFieldValue('periodSelectionType', value);
+
+    if (value === 'period') {
+      const restored = savedPeriodValuesRef.current;
+      form.setFieldValue('acceptablePeriod', restored?.acceptable ?? (['0', '24'] as CruisePeriodType));
+      form.setFieldValue('optimalPeriod', restored?.optimal ?? (['0', '24'] as CruisePeriodType));
       form.setFieldValue('precisePeriodStart', '');
       form.setFieldValue('precisePeriodEnd', '');
-      form.setFieldMeta('precisePeriodStart', (prev) => ({ ...prev, errors: [] }));
-      form.setFieldMeta('precisePeriodEnd', (prev) => ({ ...prev, errors: [] }));
-
+    } else {
+      const restored = savedPreciseValuesRef.current;
       form.setFieldValue('acceptablePeriod', '');
       form.setFieldValue('optimalPeriod', '');
-      form.setFieldMeta('acceptablePeriod', (prev) => ({ ...prev, errors: [] }));
-      form.setFieldMeta('optimalPeriod', (prev) => ({ ...prev, errors: [] }));
-      form.validateField('precisePeriodStart', 'change');
-      form.validateField('precisePeriodEnd', 'change');
-      form.validateField('acceptablePeriod', 'change');
-      form.validateField('optimalPeriod', 'change');
+      form.setFieldValue('precisePeriodStart', restored?.start ?? '');
+      form.setFieldValue('precisePeriodEnd', restored?.end ?? '');
     }
   }
 
@@ -70,8 +73,8 @@ export function FormACruiseLengthSection() {
       data-testid="form-a-cruise-length-section"
     >
       <div className="space-y-4">
-        <FormABlockadeWarning year={+form.state.values.year} blockades={blockades} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FormABlockadeWarning year={+year} blockades={blockades} />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
               <AppDropdownInput
@@ -142,18 +145,16 @@ export function FormACruiseLengthSection() {
               <form.Field
                 name="acceptablePeriod"
                 children={(field) => (
-                  <div onClick={handlePeriodFieldClick}>
-                    <CruiseApplicationPeriodInput
-                      name={field.name}
-                      value={field.state.value}
-                      onChange={field.handleChange}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Dopuszczalny okres, w którym miałby się odbywać rejs"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                    />
-                  </div>
+                  <CruiseApplicationPeriodInput
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    label="Dopuszczalny okres, w którym miałby się odbywać rejs"
+                    showRequiredAsterisk
+                    disabled={isReadonly}
+                  />
                 )}
               />
 
@@ -163,19 +164,17 @@ export function FormACruiseLengthSection() {
                   <form.Field
                     name="optimalPeriod"
                     children={(field) => (
-                      <div onClick={handlePeriodFieldClick}>
-                        <CruiseApplicationPeriodInput
-                          name={field.name}
-                          value={field.state.value}
-                          onChange={field.handleChange}
-                          onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                          maxValues={acceptablePeriod}
-                          label="Optymalny okres, w którym miałby się odbywać rejs"
-                          showRequiredAsterisk
-                          disabled={isReadonly}
-                        />
-                      </div>
+                      <CruiseApplicationPeriodInput
+                        name={field.name}
+                        value={field.state.value}
+                        onChange={field.handleChange}
+                        onBlur={field.handleBlur}
+                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                        maxValues={acceptablePeriod}
+                        label="Optymalny okres, w którym miałby się odbywać rejs"
+                        showRequiredAsterisk
+                        disabled={isReadonly}
+                      />
                     )}
                   />
                 )}
@@ -192,9 +191,11 @@ export function FormACruiseLengthSection() {
                   children={(field) => (
                     <AppNumberInput
                       name={field.name}
-                      value={parseInt(cruiseHours) / 24}
+                      value={parseFloat(cruiseHours) / 24}
                       minimum={0}
                       maximum={60}
+                      step={1}
+                      type="float"
                       onChange={(x: number) => field.handleChange((x * 24).toString())}
                       onBlur={field.handleBlur}
                       errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -219,7 +220,7 @@ export function FormACruiseLengthSection() {
                   children={(field) => (
                     <AppNumberInput
                       name={field.name}
-                      value={parseInt(cruiseHours)}
+                      value={parseFloat(cruiseHours)}
                       minimum={0}
                       maximum={1440}
                       onChange={(x: number) => field.handleChange(x.toString())}

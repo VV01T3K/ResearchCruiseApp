@@ -1,7 +1,5 @@
+import { Collapsible } from '@base-ui/react/collapsible';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
-import { AnimatePresence, motion } from 'motion/react';
-import React from 'react';
 
 type Props = {
   title: string;
@@ -20,36 +18,25 @@ export function AppAccordion({
   'data-testid-toggle': toggleTestId,
   'data-testid-content': contentTestId,
 }: Props) {
-  const [expanded, setExpanded] = React.useState<boolean>(!!expandedByDefault);
-
   return (
-    <div data-testid={testId}>
+    <Collapsible.Root defaultOpen={!!expandedByDefault} data-testid={testId}>
       <h2 className="w-full">
-        <button
-          type="button"
-          className="w-full flex justify-between items-center cursor-pointer px-4 py-4 bg-black/2 rounded-xl"
-          onClick={() => setExpanded(!expanded)}
-          data-expanded={expanded}
+        <Collapsible.Trigger
+          className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 outline-none"
           data-testid={toggleTestId}
         >
-          <span className="font-semibold text-lg">{title}</span>
-          <span>{expanded ? <ChevronUpIcon className="w-6 h-6" /> : <ChevronDownIcon className="w-6 h-6" />}</span>
-        </button>
+          <span className="text-lg font-semibold">{title}</span>
+          <span className="transition-transform duration-300 data-[panel-open]:rotate-180">
+            <ChevronDownIcon className="h-6 w-6" />
+          </span>
+        </Collapsible.Trigger>
       </h2>
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ ease: 'easeOut' }}
-            className="px-4"
-            data-testid={contentTestId}
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      <Collapsible.Panel
+        className="overflow-hidden px-4 transition-all duration-300 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0"
+        data-testid={contentTestId}
+      >
+        {children}
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 }

@@ -9,10 +9,30 @@
   }
 
   #root {
-    @apply flex flex-col relative;
+    @apply relative flex flex-col;
   }
 
   :root {
     --header-height: 4.5rem;
   }
+}
+
+/* Toast progress bar animation - 5000ms matches TOAST_TIMEOUT in AppToaster.tsx */
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.toast-progress-bar {
+  transform-origin: left;
+  animation: toast-progress 5000ms linear forwards;
+}
+
+/* Pause progress bar when any ancestor has data-expanded (viewport or toast is hovered/focused) */
+[data-expanded] .toast-progress-bar {
+  animation-play-state: paused;
 }

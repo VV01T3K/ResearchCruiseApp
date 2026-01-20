@@ -16,7 +16,7 @@ export function AppDesktopTable<T>({
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
 
   return (
-    <div className="w-full overflow-x-auto mt-4" data-testid={testId}>
+    <div className="mt-4 w-full overflow-x-auto" data-testid={testId}>
       <table className="min-w-full table-fixed border-collapse">
         <colgroup>
           {table.getAllColumns().map((column) => (
@@ -34,7 +34,7 @@ export function AppDesktopTable<T>({
                     .reduce((a, b) => a + b, 0)
                 )}
               >
-                <div className="flex justify-end flex-wrap gap-4 mb-4">{allButtons}</div>
+                <div className="mb-4 flex flex-wrap justify-end gap-4">{allButtons}</div>
               </th>
             </tr>
           )}
@@ -52,10 +52,10 @@ export function AppDesktopTable<T>({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="odd:bg-gray-100 text-gray-800">
+            <tr key={row.id} className="text-gray-800 odd:bg-gray-100">
               {row.getVisibleCells().map((cell) => {
                 return (
-                  <td key={cell.id} className="text-center py-2 first:pl-2 pr-2">
+                  <td key={cell.id} className="px-3 py-3 text-center">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 );
@@ -64,9 +64,9 @@ export function AppDesktopTable<T>({
           ))}
           {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan={table.getAllColumns().length} className="pb-0 text-center px-0">
+              <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                 <div
-                  className={`bg-gray-100 rounded-lg border p-2.5 ${
+                  className={`rounded-lg border bg-gray-100 p-2.5 ${
                     errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
                   }`}
                 >
@@ -74,7 +74,7 @@ export function AppDesktopTable<T>({
                     {emptyTableMessage}
                   </span>
                   {showRequiredAsterisk && (
-                    <span className="ml-1 text-red-600 font-bold" title="Pole jest obowiązkowe do wypełnienia">
+                    <span className="ml-1 font-bold text-red-600" title="Pole jest obowiązkowe do wypełnienia">
                       *
                     </span>
                   )}

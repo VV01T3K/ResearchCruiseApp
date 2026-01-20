@@ -1,4 +1,4 @@
-import { Ranger, useRanger } from '@tanstack/react-ranger';
+import { Slider } from '@base-ui/react/slider';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
@@ -23,6 +23,20 @@ type Props = {
   helper?: React.ReactNode;
 };
 
+function parsePeriod(period: CruisePeriodType | undefined, fallback: [number, number]): [number, number] {
+  if (!Array.isArray(period) || period.length !== 2) return fallback;
+  const val1 = parseInt(period[0], 10);
+  const val2 = parseInt(period[1], 10);
+  if (isNaN(val1) || isNaN(val2)) return fallback;
+  return val1 <= val2 ? [val1, val2] : [val2, val1];
+}
+
+function clampToBounds(values: [number, number], min: number, max: number): [number, number] {
+  const clampedStart = Math.max(min, Math.min(values[0], max));
+  const clampedEnd = Math.max(min, Math.min(values[1], max));
+  return clampedStart >= clampedEnd ? [min, max] : [clampedStart, clampedEnd];
+}
+
 export function CruiseApplicationPeriodInput({
   name,
   value,
@@ -35,176 +49,85 @@ export function CruiseApplicationPeriodInput({
   disabled,
   helper,
 }: Props) {
-  const rangerRef = React.useRef<HTMLDivElement>(null);
+  const [minBound, maxBound] = parsePeriod(maxValues, [0, 24]);
 
-  const [values, setValues] = React.useState(() => {
-    if (value?.length === 2) {
-      return [parseInt(value[0]), parseInt(value[1])];
-    }
+  const sliderValues = React.useMemo((): [number, number] => {
+    const parsed = parsePeriod(value, [minBound, maxBound]);
+    return clampToBounds(parsed, minBound, maxBound);
+  }, [value, minBound, maxBound]);
 
-    if (maxValues?.length === 2) {
-      return [parseInt(maxValues[0]), parseInt(maxValues[1])];
-    }
+  const handleValueChange = (newValues: number | number[]) => {
+    if (!Array.isArray(newValues) || newValues.length !== 2) return;
+    const [start, end] = newValues as [number, number];
+    if (start === end) return;
+    onChange?.([start.toString(), end.toString()] as CruisePeriodType);
+  };
 
-    return [0, 24];
-  });
-
-  React.useEffect(() => {
-    if (!maxValues) {
-      return;
-    }
-
-    const intMaxValues = maxValues.map((x) => parseInt(x)).sort((a, b) => a - b);
-    const tmpValues = [...values].sort((a, b) => a - b);
-    let changed = false;
-
-    if (values[0] < intMaxValues[0]) {
-      tmpValues[0] = intMaxValues[0];
-      changed = true;
-    }
-    if (values[1] > intMaxValues[1]) {
-      tmpValues[1] = intMaxValues[1];
-      changed = true;
-    }
-
-    if (tmpValues[0] >= tmpValues[1]) {
-      tmpValues[0] = intMaxValues[0];
-      tmpValues[1] = intMaxValues[1];
-      changed = true;
-    }
-
-    if (changed) {
-      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect -- Intentional sync with external constraints
-      setValues(tmpValues);
-      onChange?.(tmpValues.map((v) => v.toString()) as CruisePeriodType);
-    }
-  }, [maxValues, onChange, values]);
-
-  const rangerInstance = useRanger<HTMLDivElement>({
-    getRangerElement: () => rangerRef.current,
-    values,
-    min: 0,
-    max: 24,
-    stepSize: 1,
-    onDrag: (instance: Ranger<HTMLDivElement>) => {
-      const sortedValues = instance.sortedValues as number[];
-
-      if (sortedValues[0] === sortedValues[1]) {
-        return;
-      }
-
-      if (values[0] === sortedValues[0] && values[1] === sortedValues[1]) {
-        return;
-      }
-
-      if (values[0] > sortedValues[1] || values[1] < sortedValues[0]) {
-        return;
-      }
-
-      if (maxValues && sortedValues[0] < parseInt(maxValues[0])) {
-        return;
-      }
-
-      if (maxValues && sortedValues[1] > parseInt(maxValues[1])) {
-        return;
-      }
-
-      setValues(sortedValues);
-      onChange?.(sortedValues.map((v) => v.toString()) as CruisePeriodType);
-    },
-  });
-
-  const stepPositions = Array.from(Array(25).keys()).map((i) => rangerInstance.getPercentageForValue(i));
-
-  function getWidth() {
-    return (
-      rangerInstance.getPercentageForValue(Math.max(...values)) -
-      rangerInstance.getPercentageForValue(Math.min(...values))
-    );
-  }
-
-  function getLeft() {
-    return rangerInstance.getPercentageForValue(Math.min(...values));
-  }
+  const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);
 
   return (
     <div className="flex flex-col">
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-      <input type="hidden" name={name} value={values.join(',')} disabled={disabled} />
+      <input type="hidden" name={name} value={sliderValues.join(',')} disabled={disabled} />
 
-      <div
-        ref={rangerRef}
-        className="relative select-none h-1 bg-black/5 rounded-sm mt-4 mb-20 mx-8 touch-none"
+      <Slider.Root
+        value={sliderValues}
+        onValueChange={handleValueChange}
         onBlur={onBlur}
+        min={0}
+        max={24}
+        step={1}
+        disabled={disabled}
+        className="relative mx-8 mt-4 mb-20 touch-none select-none"
       >
-        <span
-          className={cn(
-            'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 z-0',
-            !disabled ? 'bg-primary-800' : 'bg-gray-400'
-          )}
-          style={{
-            left: `${getLeft() + getWidth() / 2}%`,
-            width: `${getWidth()}%`,
-          }}
-        />
-        {rangerInstance
-          .handles()
-          .map(({ value, onKeyDownHandler, onMouseDownHandler, onTouchStart, isActive }, index) => (
-            <button
-              // eslint-disable-next-line @eslint-react/no-array-index-key
-              key={index}
-              type="button"
-              onKeyDown={onKeyDownHandler}
-              onMouseDown={onMouseDownHandler}
-              onTouchStart={(evt) => {
-                document.body.style.overflow = 'hidden';
-                onTouchStart(evt);
-              }}
-              onTouchEnd={() => {
-                document.body.style.overflow = '';
-              }}
-              role="slider"
-              aria-valuemin={rangerInstance.options.min}
-              aria-valuemax={rangerInstance.options.max}
-              aria-valuenow={value}
-              className={cn(
-                `absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 outline-none rounded-full duration-75 z-10`,
-                !disabled ? 'cursor-pointer bg-primary-800' : 'bg-gray-400',
-                isActive ? 'scale-125' : ''
-              )}
-              style={{
-                left: `${rangerInstance.getPercentageForValue(value)}%`,
-              }}
-              disabled={disabled}
-            />
-          ))}
-        {stepPositions
-          .filter((_, i) => i % 2 == 0)
-          .map((position) => (
-            <span
-              key={`step-${position}`}
-              className={cn(
-                'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-2.5 h-2.5 outline-none rounded-full bg-white border',
-                !disabled ? 'border-primary-800' : 'border-gray-500'
-              )}
-              style={{ left: `${position}%` }}
-            />
-          ))}
-        {stepPositions
-          .filter((_, i) => i % 2 == 0)
-          .map((position, i) => (
-            <span
-              key={`step-${position}-text`}
-              className="absolute top-1/2 transform -translate-x-1/2 translate-y-8 rotate-60 z-0 text-sm text-gray-800"
-              style={{ left: `${position}%` }}
-            >
-              {months[i]}
-            </span>
-          ))}
-      </div>
+        <Slider.Control className="relative flex w-full items-center">
+          <Slider.Track className="relative h-1 w-full rounded-sm bg-black/5">
+            <Slider.Indicator className={cn('absolute h-1 rounded-sm', !disabled ? 'bg-primary-800' : 'bg-gray-400')} />
+            {stepPositions
+              .filter((_, i) => i % 2 === 0)
+              .map((position) => (
+                <span
+                  key={`step-${position}`}
+                  className={cn(
+                    'absolute top-1/2 z-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full border bg-white outline-none',
+                    !disabled ? 'border-primary-800' : 'border-gray-500'
+                  )}
+                  style={{ left: `${position}%` }}
+                />
+              ))}
+            {stepPositions
+              .filter((_, i) => i % 2 === 0)
+              .map((position, idx) => (
+                <span
+                  key={`step-${position}-text`}
+                  className="absolute top-1/2 z-0 -translate-x-1/2 translate-y-8 rotate-60 transform text-sm text-gray-800"
+                  style={{ left: `${position}%` }}
+                >
+                  {months[idx]}
+                </span>
+              ))}
+          </Slider.Track>
+          <Slider.Thumb
+            index={0}
+            className={cn(
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
+              !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
+              'data-[dragging]:scale-125'
+            )}
+          />
+          <Slider.Thumb
+            index={1}
+            className={cn(
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
+              !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
+              'data-[dragging]:scale-125'
+            )}
+          />
+        </Slider.Control>
+      </Slider.Root>
 
-      <p className="text-center">Wybrano okres: {getExplanationForPeriod(values[0], values[1])}</p>
-      <div className="flex flex-col justify-between mt-2 text-sm">
+      <p className="text-center">Wybrano okres: {getExplanationForPeriod(sliderValues[0], sliderValues[1])}</p>
+      <div className="mt-2 flex flex-col justify-between text-sm">
         <AppInputHelper helper={helper} />
         <AppInputErrorsList errors={errors} />
       </div>

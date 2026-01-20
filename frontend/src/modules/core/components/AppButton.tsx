@@ -1,3 +1,5 @@
+import { Button } from '@base-ui/react/button';
+
 import { AppLink, Props as AppLinkProps } from '@/core/components/AppLink';
 import { cn } from '@/core/lib/utils';
 
@@ -19,14 +21,14 @@ export function AppButton(props: Props) {
   const { children, className, disabled, role, variant = 'primary', size = 'md', 'data-testid': testId } = props;
 
   const button = (
-    <button
+    <Button
       type={props.type === 'link' ? 'button' : (props.type ?? 'button')}
       className={cn(
         'text-white outline-none hover:cursor-pointer disabled:cursor-default',
         variants[variant],
         sizes[size],
         className,
-        variant != 'plain' ? 'flex items-center justify-around ' : ''
+        variant != 'plain' ? 'flex items-center justify-around' : ''
       )}
       onClick={props.type === 'link' ? undefined : props.onClick}
       disabled={disabled}
@@ -34,7 +36,7 @@ export function AppButton(props: Props) {
       data-testid={testId}
     >
       {children}
-    </button>
+    </Button>
   );
 
   if (props.type === 'link') {

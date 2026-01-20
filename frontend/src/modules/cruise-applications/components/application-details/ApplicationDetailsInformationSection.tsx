@@ -14,7 +14,7 @@ export function ApplicationDetailsInformationSection() {
 
   return (
     <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <AppInput name="number" value={application.number} label="Numer zgłoszenia:" disabled />
         <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
         <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" disabled />

@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { client } from '@/core/lib/api';
@@ -71,12 +71,16 @@ export function useDeleteUserMutation({ editMode, setSubmitError }: Props) {
 }
 
 export function useAcceptUserMutation({ editMode, setSubmitError }: Props) {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId: string) => {
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
       return await client.patch(`/users/unaccepted/${userId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: async (error) => {
       if (isAxiosError(error)) {
@@ -89,12 +93,16 @@ export function useAcceptUserMutation({ editMode, setSubmitError }: Props) {
 }
 
 export function useUnAcceptUserMutation({ editMode, setSubmitError }: Props) {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId: string) => {
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
       return await client.patch(`/users/${userId}/deactivate`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: async (error) => {
       if (isAxiosError(error)) {

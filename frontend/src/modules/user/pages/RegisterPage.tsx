@@ -171,7 +171,7 @@ export function RegisterPage() {
               )}
             />
 
-            {result && <p className="mt-2 text-danger text-sm text-center font-semibold">{errorMessages[result]}</p>}
+            {result && <p className="text-danger mt-2 text-center text-sm font-semibold">{errorMessages[result]}</p>}
           </div>
 
           <p className="!mt-8">

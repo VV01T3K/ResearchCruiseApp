@@ -138,17 +138,17 @@ export function AppFileInput({
     <div data-testid={testId}>
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
-        className="flex items-center justify-center w-full"
+        className="flex w-full items-center justify-center"
         onClick={() => inputRef.current?.click()}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
       >
         <label
           className={cn(
-            'flex flex-col items-center justify-center w-full border-2 border-gray-300 text-gray-500',
-            'border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 overflow-x-auto',
-            'duration-200 ease-in-out transition-all min-h-10',
-            disabled ? 'bg-gray-200 hover:bg-gray-200 cursor-pointer' : '',
+            'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
+            'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
+            'min-h-10 transition-all duration-200 ease-in-out',
+            disabled ? 'cursor-pointer bg-gray-200 hover:bg-gray-200' : '',
             errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : '',
             className
           )}
@@ -162,11 +162,11 @@ export function AppFileInput({
                 exit={{ opacity: 0, height: 0 }}
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
-                  <CloudUploadIcon className="w-8 h-8 mb-4" />
+                  <CloudUploadIcon className="mb-4 h-8 w-8" />
                   {uploadMessage}
                   {notifications && notifications.length > 0 && (
-                    <div className="bg-danger-100 text-danger-900 rounded mx-2 p-1 mt-1">
-                      <ul className="list-disc list-inside">
+                    <div className="bg-danger-100 text-danger-900 mx-2 mt-1 rounded p-1">
+                      <ul className="list-inside list-disc">
                         {notifications.map((notification) => (
                           <li key={notification}>{notification}</li>
                         ))}

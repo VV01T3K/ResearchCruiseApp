@@ -18,7 +18,7 @@ export function FormAActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
     <AppActionsSection>
       {!isReadonly && (
         <AppButton
-          className="gap-4 !justify-center w-48 lg:w-64"
+          className="w-48 !justify-center gap-4 lg:w-64"
           variant="primaryOutline"
           onClick={onSaveDraft}
           disabled={disabled}
@@ -30,7 +30,7 @@ export function FormAActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
       {!isReadonly && (
         <AppButton
           type="submit"
-          className="gap-4 !justify-center w-48 lg:w-64"
+          className="w-48 !justify-center gap-4 lg:w-64"
           disabled={disabled}
           data-testid="form-submit-btn"
         >
@@ -39,7 +39,7 @@ export function FormAActionsSection({ onSaveDraft, onPrint, disabled }: Props) {
         </AppButton>
       )}
       {isReadonly && (
-        <AppButton className="gap-4 !justify-center w-48 lg:w-64" onClick={onPrint} disabled={disabled}>
+        <AppButton className="w-48 !justify-center gap-4 lg:w-64" onClick={onPrint} disabled={disabled}>
           <PrinterFillIcon className="h-4 w-4" />
           Wydrukuj
         </AppButton>

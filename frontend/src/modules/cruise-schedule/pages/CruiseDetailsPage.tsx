@@ -7,11 +7,11 @@ import PencilIcon from 'bootstrap-icons/icons/pencil.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
-import toast from 'react-hot-toast';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppModal } from '@/core/components/AppModal';
+import { toast } from '@/core/components/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/core/lib/utils';
 import { useCruiseApplicationsQuery } from '@/cruise-applications/hooks/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/cruise-applications/models/CruiseApplicationDto';
@@ -94,7 +94,7 @@ export function CruiseDetailsPage() {
       return (
         <>
           <AppButton
-            className="gap-4 !justify-center w-36 lg:w-48"
+            className="w-36 !justify-center gap-4 lg:w-48"
             variant="primaryOutline"
             onClick={() => {
               form.reset();
@@ -105,14 +105,14 @@ export function CruiseDetailsPage() {
             Anuluj
           </AppButton>
           <AppButton
-            className="gap-4 !justify-center w-36 lg:w-48"
+            className="w-36 !justify-center gap-4 lg:w-48"
             variant="primaryOutline"
             onClick={() => form.reset()}
           >
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
           </AppButton>
-          <AppButton className="gap-4 !justify-center w-36 lg:w-48" onClick={handleCruiseUpdate}>
+          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={handleCruiseUpdate}>
             <FloppyFillIcon className="h-4 w-4" />
             Zapisz rejs
           </AppButton>
@@ -125,7 +125,7 @@ export function CruiseDetailsPage() {
         return (
           <>
             <AppButton
-              className="gap-4 !justify-center w-36 lg:w-64"
+              className="w-36 !justify-center gap-4 lg:w-64"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
             >
@@ -133,7 +133,7 @@ export function CruiseDetailsPage() {
               Edytuj
             </AppButton>
             <AppButton
-              className="gap-4 !justify-center w-36 lg:w-64"
+              className="w-36 !justify-center gap-4 lg:w-64"
               onClick={() => setIsConfirmAcceptanceModalOpen(true)}
             >
               <CheckLgIcon className="h-4 w-4" />
@@ -145,7 +145,7 @@ export function CruiseDetailsPage() {
         return (
           <>
             <AppButton
-              className="gap-4 !justify-center w-32 lg:w-40"
+              className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
             >
@@ -153,7 +153,7 @@ export function CruiseDetailsPage() {
               Edytuj
             </AppButton>
             <AppButton
-              className="gap-4 !justify-center w-32 lg:w-40"
+              className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setIsConfirmRevertModalOpen(true)}
             >
@@ -161,14 +161,14 @@ export function CruiseDetailsPage() {
               Cofnij status
             </AppButton>
             <AppButton
-              className="gap-4 !justify-center w-32 lg:w-40"
+              className="w-32 !justify-center gap-4 lg:w-40"
               variant="dangerOutline"
               onClick={() => setIsConfirmDeletionModalOpen(true)}
             >
               <TrashIcon className="h-4 w-4" />
               Usuń rejs
             </AppButton>
-            <AppButton className="gap-4 !justify-center w-32 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
+            <AppButton className="w-32 !justify-center gap-4 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
               <CheckLgIcon className="h-4 w-4" />
               Zakończ rejs
             </AppButton>
@@ -178,7 +178,7 @@ export function CruiseDetailsPage() {
         return (
           <>
             <AppButton
-              className="gap-4 !justify-center w-36 lg:w-48"
+              className="w-36 !justify-center gap-4 lg:w-48"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
             >
@@ -186,7 +186,7 @@ export function CruiseDetailsPage() {
               Edytuj
             </AppButton>
             <AppButton
-              className="gap-4 !justify-center w-36 lg:w-48"
+              className="w-36 !justify-center gap-4 lg:w-48"
               variant="dangerOutline"
               onClick={() => setIsConfirmRevertModalOpen(true)}
             >
@@ -227,7 +227,7 @@ export function CruiseDetailsPage() {
         isOpen={isConfirmAcceptanceModalOpen}
         onClose={() => setIsConfirmAcceptanceModalOpen(false)}
       >
-        <div className="flex flex-row gap-4 mt-8">
+        <div className="mt-8 flex flex-row gap-4">
           <AppButton
             variant="primary"
             className="basis-2/3"
@@ -258,7 +258,7 @@ export function CruiseDetailsPage() {
         onClose={() => setIsConfirmDeletionModalOpen(false)}
       >
         Do wszystkich kierowników zgłoszeń i ich zastępców zostanie wysłane powiadomienie o anulowaniu rejsu.
-        <div className="flex flex-row gap-4 mt-4">
+        <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="danger"
             className="basis-2/3"
@@ -288,7 +288,7 @@ export function CruiseDetailsPage() {
         isOpen={isConfirmEndModalOpen}
         onClose={() => setIsConfirmEndModalOpen(false)}
       >
-        <div className="flex flex-row gap-4 mt-8">
+        <div className="mt-8 flex flex-row gap-4">
           <AppButton
             variant="primary"
             className="basis-2/3"
@@ -324,7 +324,7 @@ export function CruiseDetailsPage() {
         {cruiseQuery.data?.status === 'Zakończony' && (
           <>Status rejsu zostanie zmieniony z "Zakończony" na "Potwierdzony".</>
         )}
-        <div className="flex flex-row gap-4 mt-4">
+        <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="dangerOutline"
             className="basis-2/3"
