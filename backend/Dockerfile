@@ -18,6 +18,9 @@ RUN dotnet publish "ResearchCruiseApp.csproj" \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
 RUN apk add --no-cache curl icu-libs tzdata
+
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl",  "--fail", "http://localhost:8080/health" ]
 USER $APP_UID
 EXPOSE 8080
