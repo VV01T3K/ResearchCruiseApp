@@ -1,0 +1,14 @@
+:8080 {
+    root * /app
+    file_server
+    try_files {path} /index.html
+
+    handle /api/* {
+        reverse_proxy {$API_URL}
+    }
+
+    handle /faro/* {
+        reverse_proxy {$GRAFANA_FARO_URL}
+        log_skip
+    }
+}

@@ -16,16 +16,13 @@ RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
 COPY . .
 RUN bun run build
 
-FROM dhi.io/nginx:1.29-alpine3.23
+FROM dhi.io/caddy:2-debian13
 
-ARG API_URL="http://backend:8080/"
-ARG GRAFANA_FARO_URL="http://0.0.0.0:12347/"
-
-ENV API_URL=$API_URL \
-    GRAFANA_FARO_URL=$GRAFANA_FARO_URL
+ENV API_URL="http://backend:8080" \
+    GRAFANA_FARO_URL="http://grafana-agent:12345"
 
 WORKDIR /app
-COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/default.conf.template
-COPY --from=build --chown=nginx:nginx /app/dist /app/
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /app/dist /app/
 
 EXPOSE 8080
