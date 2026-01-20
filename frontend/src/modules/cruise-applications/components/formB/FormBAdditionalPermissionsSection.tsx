@@ -1,3 +1,4 @@
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -14,8 +15,7 @@ import { PermissionDto } from '@/cruise-applications/models/PermissionDto';
 export function FormBAdditionalPermissionsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function getColumns(field: any): ColumnDef<PermissionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<PermissionDto>[] {
     return [
       {
         header: 'Lp.',

@@ -1,3 +1,4 @@
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -16,8 +17,7 @@ import { ShortResearchEquipmentDto } from '@/cruise-applications/models/ShortRes
 
 const shortResearchEquipmentColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentDto>[] => [
@@ -130,8 +130,7 @@ const shortResearchEquipmentColumns = (
 
 const longResearchEquipmentColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentDto>[] => [
@@ -235,8 +234,7 @@ const longResearchEquipmentColumns = (
 
 const portColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<PortDto>[] => [

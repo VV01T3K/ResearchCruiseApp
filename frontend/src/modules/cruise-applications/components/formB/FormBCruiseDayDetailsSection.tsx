@@ -1,3 +1,4 @@
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 import { useRef } from 'react';
 import toast from 'react-hot-toast';
@@ -20,8 +21,7 @@ import {
 
 const cruiseDayDetailsColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<CruiseDayDetailsDto>[] => [
