@@ -2,6 +2,20 @@ using ResearchCruiseApp.Application;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Web.Configuration;
 
+if (args.Contains("--healthcheck"))
+{
+    using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+    try
+    {
+        var response = await client.GetAsync("http://localhost:8080/health");
+        return response.IsSuccessStatusCode ? 0 : 1;
+    }
+    catch
+    {
+        return 1;
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenTelemetry(builder.Configuration);
@@ -23,3 +37,5 @@ var app = builder.Build();
 await app.Configure();
 
 app.Run();
+
+return 0;

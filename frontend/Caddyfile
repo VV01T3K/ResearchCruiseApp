@@ -1,0 +1,20 @@
+:8080 {
+    encode zstd gzip
+
+    handle /api/* {
+        uri strip_prefix /api
+        reverse_proxy {$API_URL}
+    }
+
+    handle /faro/* {
+        uri strip_prefix /faro
+        reverse_proxy {$GRAFANA_FARO_URL}
+        log_skip
+    }
+
+    handle {
+        root * /app
+        file_server
+        try_files {path} /index.html
+    }
+}

@@ -17,9 +17,9 @@ RUN dotnet publish "ResearchCruiseApp.csproj" \
 
 FROM dhi.io/aspnetcore:10.0-alpine3.22
 
-# no curl in hardened image - needs another approach for health checks
-# HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl", "--fail", "http://localhost:8080/health" ]
-# USER $APP_UID // nedeed for images from mcr but not for dhi.io
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=10 \
+    CMD ["dotnet", "ResearchCruiseApp.dll", "--healthcheck"]
+# USER $APP_UID // needed for images from mcr but not for dhi.io
 EXPOSE 8080
 EXPOSE 8081
 

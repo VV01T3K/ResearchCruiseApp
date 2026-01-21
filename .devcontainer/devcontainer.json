@@ -24,12 +24,12 @@
 		"vscode": {
 			"extensions": [
 				"esbenp.prettier-vscode",
-				"ahmadalli.vscode-nginx-conf",
 				"docker.docker",
 				"csharpier.csharpier-vscode",
 				"ms-dotnettools.csharp",
 				"cweijan.vscode-mysql-client2",
-				"ms-playwright.playwright"
+				"ms-playwright.playwright",
+				"matthewpi.caddyfile-support"
 			]
 		}
 	},
