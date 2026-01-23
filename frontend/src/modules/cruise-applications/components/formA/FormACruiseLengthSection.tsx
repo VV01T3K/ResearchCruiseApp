@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
+import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
@@ -18,6 +19,13 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
   return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
 }
 
+function getCurrentFortnight(): number {
+  const today = new Date();
+  const yearStart = new Date(today.getFullYear(), 0, 1);
+  const daysIntoYear = Math.floor((today.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.floor(daysIntoYear / 14);
+}
+
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
@@ -27,6 +35,9 @@ export function FormACruiseLengthSection() {
   const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
   const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
+  const allowPastDates = useStore(form.store, (state) => state.values.allowPastDates ?? false);
+
+  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight();
 
   const savedPeriodValuesRef = useRef<{ acceptable: CruisePeriodType; optimal: CruisePeriodType } | null>(null);
   const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
@@ -107,6 +118,7 @@ export function FormACruiseLengthSection() {
                     type="date"
                     showRequiredAsterisk
                     disabled={isReadonly}
+                    minimalDate={allowPastDates ? undefined : new Date()}
                   />
                 )}
               />
@@ -154,6 +166,7 @@ export function FormACruiseLengthSection() {
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                     showRequiredAsterisk
                     disabled={isReadonly}
+                    minPeriodValue={minPeriodValue}
                   />
                 )}
               />
@@ -174,6 +187,7 @@ export function FormACruiseLengthSection() {
                         label="Optymalny okres, w którym miałby się odbywać rejs"
                         showRequiredAsterisk
                         disabled={isReadonly}
+                        minPeriodValue={minPeriodValue}
                       />
                     )}
                   />
@@ -181,6 +195,22 @@ export function FormACruiseLengthSection() {
               />
             </>
           )}
+
+          <form.Field
+            name="allowPastDates"
+            children={(field) => (
+              <div className="lg:col-span-2">
+                <AppCheckbox
+                  name={field.name}
+                  checked={field.state.value ?? false}
+                  onChange={field.handleChange}
+                  onBlur={field.handleBlur}
+                  label="Zezwól na wybór dat z przeszłości"
+                  disabled={isReadonly}
+                />
+              </div>
+            )}
+          />
 
           <form.Subscribe
             selector={(state) => state.values.cruiseHours}

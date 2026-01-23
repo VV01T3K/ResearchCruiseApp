@@ -14,6 +14,7 @@ type Props = {
   value: CruisePeriodType | undefined;
 
   maxValues?: CruisePeriodType;
+  minPeriodValue?: number;
   onChange?: (value: CruisePeriodType) => void;
   onBlur?: () => void;
   errors?: string[];
@@ -45,6 +46,7 @@ export function CruiseApplicationPeriodInput({
   name,
   value,
   maxValues,
+  minPeriodValue = 0,
   onChange,
   onBlur,
   errors,
@@ -53,7 +55,7 @@ export function CruiseApplicationPeriodInput({
   disabled,
   helper,
 }: Props) {
-  const [minBound, maxBound] = parsePeriod(maxValues, [0, 24]);
+  const [minBound, maxBound] = parsePeriod(maxValues, [minPeriodValue, 24]);
 
   const sliderValues = React.useMemo((): [number, number] => {
     const parsed = parsePeriod(value, [minBound, maxBound]);
@@ -76,9 +78,7 @@ export function CruiseApplicationPeriodInput({
     if (start === end) return;
     onChange?.([start.toString(), end.toString()] as CruisePeriodType);
   };
-
   const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);
-
   return (
     <div className="flex flex-col">
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
