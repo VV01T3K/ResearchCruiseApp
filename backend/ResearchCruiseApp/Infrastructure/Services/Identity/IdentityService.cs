@@ -341,7 +341,11 @@ public class IdentityService(
         if (user is null)
             return Error.ForbiddenOperation();
 
-        if (updateUserFormDto.Email is not null && updateUserFormDto.Email != user.Email && await UserWithEmailExists(updateUserFormDto.Email))
+        if (
+            updateUserFormDto.Email is not null
+            && updateUserFormDto.Email != user.Email
+            && await UserWithEmailExists(updateUserFormDto.Email)
+        )
             return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
 
         user.EmailConfirmed =
