@@ -51,7 +51,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       role: z.enum(Role).or(z.literal('')),
     })
     .superRefine(({ email }, ctx) => {
-      if (!editMode && allUsers.some((user) => user.email === email)) {
+      if (allUsers.some((u) => u.email === email && (!editMode || u.id !== user?.id))) {
         return ctx.addIssue({
           code: 'custom',
           message: 'Użytkownik o podanym adresie e-mail już istnieje',
