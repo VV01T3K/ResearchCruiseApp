@@ -35,6 +35,7 @@ export function FormACruiseLengthSection() {
   const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
   const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
+
   const [allowPastDates, setAllowPastDates] = useState(false);
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight();
