@@ -1,5 +1,7 @@
-import { Tabs } from '@base-ui/react/tabs';
+import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 
+import { AppButton } from '@/core/components/AppButton';
 import { cn } from '@/core/lib/utils';
 
 type Props = {
@@ -7,32 +9,46 @@ type Props = {
   tabNames: string[];
 };
 export function AppTabs({ children, tabNames }: Props) {
+  const [activeTab, setActiveTab] = useState(0);
+  const [previousTab, setPreviousTab] = useState(-1);
+
   if (tabNames.length !== children.length) {
     throw new Error('The number of tab names must match the number of tab children');
   }
 
+  const animateDirection = activeTab > previousTab ? 'right' : 'left';
+
   return (
-    <Tabs.Root defaultValue={0}>
-      <Tabs.List className="mr-2 ml-2 flex gap-8 text-center">
+    <div>
+      <div className="mr-2 ml-2 flex gap-8 text-center">
         {tabNames.map((tabName, index) => (
-          <Tabs.Tab
-            key={tabName}
-            value={index}
+          <AppButton
             className={cn(
-              'w-full rounded-full transition-colors duration-300 outline-none',
-              'data-[selected]:bg-primary data-[selected]:font-bold data-[selected]:text-white',
-              'data-[unselected]:hover:bg-primary-200 data-[unselected]:bg-gray-200'
+              index === activeTab ? 'bg-primary font-bold text-white' : 'hover:bg-primary-200 bg-gray-200',
+              'w-full rounded-full transition'
             )}
+            variant="plain"
+            onClick={() => {
+              setPreviousTab(activeTab);
+              setActiveTab(index);
+            }}
+            key={tabName}
           >
             {tabName}
-          </Tabs.Tab>
+          </AppButton>
         ))}
-      </Tabs.List>
-      {tabNames.map((tabName, index) => (
-        <Tabs.Panel key={tabName} value={index}>
-          {children[index]}
-        </Tabs.Panel>
-      ))}
-    </Tabs.Root>
+      </div>
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          exit={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+        >
+          {children[activeTab]}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }
