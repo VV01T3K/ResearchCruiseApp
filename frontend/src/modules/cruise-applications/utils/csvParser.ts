@@ -1,6 +1,6 @@
-import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 
+import { toast } from '@/core/components/layout/toast';
 import { CruiseDayDetailsDto } from '@/cruise-applications/models/CruiseDayDetailsDto';
 
 /**
