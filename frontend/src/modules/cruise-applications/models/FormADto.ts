@@ -19,7 +19,6 @@ export type FormADto = {
   optimalPeriod: CruisePeriodType | '';
   precisePeriodStart: string | '';
   precisePeriodEnd: string | '';
-  allowPastDates?: boolean;
   cruiseHours: string;
   periodNotes: string;
   shipUsage?: string;

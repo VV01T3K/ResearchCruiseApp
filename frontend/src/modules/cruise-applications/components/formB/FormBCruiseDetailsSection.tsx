@@ -1,7 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppButton } from '@/core/components/AppButton';
+import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
@@ -19,7 +21,8 @@ const shortResearchEquipmentColumns = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
-  isReadonly: boolean
+  isReadonly: boolean,
+  allowPastDates: boolean
 ): ColumnDef<ShortResearchEquipmentDto>[] => [
   {
     header: 'Lp.',
@@ -44,6 +47,7 @@ const shortResearchEquipmentColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
+            minimalDate={allowPastDates ? undefined : new Date()}
           />
         )}
       />
@@ -238,7 +242,8 @@ const portColumns = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
-  isReadonly: boolean
+  isReadonly: boolean,
+  allowPastDates: boolean
 ): ColumnDef<PortDto>[] => [
   {
     header: 'Lp.',
@@ -264,6 +269,7 @@ const portColumns = (
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             type="datetime"
+            minimalDate={allowPastDates ? undefined : new Date()}
           />
         )}
       />
@@ -352,18 +358,28 @@ const portColumns = (
 export function FormBCruiseDetailsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
+  const [includeShortResearchEquipments, setIncludeShortResearchEquipments] = useState(false);
+  const [includePorts, setIncludePorts] = useState(false);
+
   return (
     <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-b-cruise-details-section">
       <p className="text-center text-xl font-semibold">Czy w ramach rejsu planuje się:</p>
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wystawienie sprzętu</p>
+
         <form.Field
           name="shortResearchEquipments"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={shortResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={shortResearchEquipmentColumns(
+                form,
+                field,
+                hasFormBeenSubmitted,
+                isReadonly,
+                includeShortResearchEquipments
+              )}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -387,6 +403,14 @@ export function FormBCruiseDetailsSection() {
             />
           )}
         />
+        {!isReadonly && (
+          <AppCheckbox
+            name="includeShortResearchEquipments"
+            checked={includeShortResearchEquipments}
+            onChange={setIncludeShortResearchEquipments}
+            label="Zezwól na wybór dat z przeszłości"
+          />
+        )}
       </div>
 
       <div className="mt-8">
@@ -432,12 +456,13 @@ export function FormBCruiseDetailsSection() {
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
+
         <form.Field
           name="ports"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly, includePorts)}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -461,6 +486,14 @@ export function FormBCruiseDetailsSection() {
             />
           )}
         />
+        {!isReadonly && (
+          <AppCheckbox
+            name="includePorts"
+            checked={includePorts}
+            onChange={setIncludePorts}
+            label="Zezwól na wybór dat z przeszłości"
+          />
+        )}
       </div>
     </AppAccordion>
   );

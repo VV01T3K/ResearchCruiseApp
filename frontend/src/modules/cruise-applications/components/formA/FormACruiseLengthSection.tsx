@@ -1,6 +1,6 @@
 import { useStore } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
@@ -35,7 +35,7 @@ export function FormACruiseLengthSection() {
   const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
   const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
-  const allowPastDates = useStore(form.store, (state) => state.values.allowPastDates ?? false);
+  const [allowPastDates, setAllowPastDates] = useState(false);
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight();
 
@@ -195,22 +195,16 @@ export function FormACruiseLengthSection() {
               />
             </>
           )}
-
-          <form.Field
-            name="allowPastDates"
-            children={(field) => (
-              <div className="lg:col-span-2">
-                <AppCheckbox
-                  name={field.name}
-                  checked={field.state.value ?? false}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  label="Zezwól na wybór dat z przeszłości"
-                  disabled={isReadonly}
-                />
-              </div>
-            )}
-          />
+          {!isReadonly && (
+            <div className="lg:col-span-2">
+              <AppCheckbox
+                name="allowPastDates"
+                checked={allowPastDates}
+                onChange={setAllowPastDates}
+                label="Zezwól na wybór dat z przeszłości"
+              />
+            </div>
+          )}
 
           <form.Subscribe
             selector={(state) => state.values.cruiseHours}
