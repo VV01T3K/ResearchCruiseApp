@@ -11,4 +11,5 @@ export type CruiseFormDto = {
   status?: string;
   title?: string;
   shipUnavailable: boolean;
+  allowPastDates?: boolean;
 };
