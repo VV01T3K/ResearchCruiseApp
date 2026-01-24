@@ -19,11 +19,15 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
   return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
 }
 
-function getCurrentFortnight(): number {
+function getCurrentFortnight(year: string): number {
   const today = new Date();
+  // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
+  if(today.getFullYear()<parseInt(year, 10)){
+    return 0;
+  }
   const yearStart = new Date(today.getFullYear(), 0, 1);
   const daysIntoYear = Math.floor((today.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.floor(daysIntoYear / 14);
+  return Math.min(Math.floor(daysIntoYear / 14), 24);
 }
 
 export function FormACruiseLengthSection() {
@@ -36,9 +40,33 @@ export function FormACruiseLengthSection() {
   const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
 
-  const [allowPastDates, setAllowPastDates] = useState(false);
+  // Initialize checkbox state based on whether saved start date is in the past
+  const [allowPastDates, setAllowPastDates] = useState(() => {
+    const currentFortnight = getCurrentFortnight(year);
 
-  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight();
+    // Check if precisePeriodStart is in the past
+    if (precisePeriodStart) {
+      const startDate = new Date(precisePeriodStart);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (startDate < today) {
+        return true;
+      }
+    }
+
+    // Check if acceptablePeriod start is in the past (fortnight-based)
+    if (isValidPeriod(acceptablePeriod)) {
+      const acceptableStart = parseInt(acceptablePeriod[0], 10);
+      if (acceptableStart < currentFortnight) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+
+
+  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
   const savedPeriodValuesRef = useRef<{ acceptable: CruisePeriodType; optimal: CruisePeriodType } | null>(null);
   const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
