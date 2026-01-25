@@ -22,7 +22,7 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
 function getCurrentFortnight(year: string): number {
   const today = new Date();
   // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
-  if(today.getFullYear()<parseInt(year, 10)){
+  if (today.getFullYear() < parseInt(year, 10)) {
     return 0;
   }
   const yearStart = new Date(today.getFullYear(), 0, 1);
@@ -64,7 +64,6 @@ export function FormACruiseLengthSection() {
 
     return false;
   });
-
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 

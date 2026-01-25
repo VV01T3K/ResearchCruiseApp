@@ -206,12 +206,12 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
     .refine((val) => {
       const acceptablePeriod = val.acceptablePeriod;
       const optimalPeriod = val.optimalPeriod;
-      
 
       return (
         acceptablePeriod === '' ||
         optimalPeriod === '' ||
-        (parseInt(optimalPeriod[0], 10) >= parseInt(acceptablePeriod[0], 10) && parseInt(optimalPeriod[1], 10) <= parseInt(acceptablePeriod[1], 10))
+        (parseInt(optimalPeriod[0], 10) >= parseInt(acceptablePeriod[0], 10) &&
+          parseInt(optimalPeriod[1], 10) <= parseInt(acceptablePeriod[1], 10))
       );
     }, 'Okres optymalny musi zawierać się w okresie akceptowalnym')
     .superRefine((val, ctx) => {
