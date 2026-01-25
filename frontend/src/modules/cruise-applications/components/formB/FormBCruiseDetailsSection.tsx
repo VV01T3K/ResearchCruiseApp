@@ -403,14 +403,21 @@ export function FormBCruiseDetailsSection() {
             />
           )}
         />
-        {!isReadonly && (
-          <AppCheckbox
-            name="includeShortResearchEquipments"
-            checked={includeShortResearchEquipments}
-            onChange={setIncludeShortResearchEquipments}
-            label="Zezwól na wybór dat z przeszłości"
-          />
-        )}
+        <form.Subscribe
+          selector={(state) => state.values.shortResearchEquipments}
+          children={(shortEquipments) => (
+            <>
+              {!isReadonly && shortEquipments.length > 0 && (
+                <AppCheckbox
+                  name="includeShortResearchEquipments"
+                  checked={includeShortResearchEquipments}
+                  onChange={setIncludeShortResearchEquipments}
+                  label="Zezwól na wybór dat z przeszłości"
+                />
+              )}
+            </>
+          )}
+        />
       </div>
 
       <div className="mt-8">
@@ -486,14 +493,21 @@ export function FormBCruiseDetailsSection() {
             />
           )}
         />
-        {!isReadonly && (
-          <AppCheckbox
-            name="includePorts"
-            checked={includePorts}
-            onChange={setIncludePorts}
-            label="Zezwól na wybór dat z przeszłości"
-          />
-        )}
+        <form.Subscribe
+          selector={(state) => state.values.ports}
+          children={(ports) => (
+            <>
+              {!isReadonly && ports.length > 0 && (
+                <AppCheckbox
+                  name="includePorts"
+                  checked={includePorts}
+                  onChange={setIncludePorts}
+                  label="Zezwól na wybór dat z przeszłości"
+                />
+              )}
+            </>
+          )}
+        />
       </div>
     </AppAccordion>
   );
