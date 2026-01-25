@@ -1,3 +1,4 @@
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -13,8 +14,7 @@ import { ResearchEquipmentDto } from '@/cruise-applications/models/ResearchEquip
 
 const researchEquipmentsColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
+  field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ResearchEquipmentDto>[] => [

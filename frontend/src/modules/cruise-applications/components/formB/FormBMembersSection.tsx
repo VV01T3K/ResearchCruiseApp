@@ -1,3 +1,4 @@
+import { AnyFieldApi } from '@tanstack/form-core';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
@@ -19,8 +20,7 @@ import { UGTeamDto } from '@/cruise-applications/models/UGTeamDto';
 export function FormBMembersSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormB();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function getUgTeamsColumns(field: any): ColumnDef<UGTeamDto>[] {
+  function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UGTeamDto>[] {
     const tableField = field;
     return [
       {
@@ -113,8 +113,7 @@ export function FormBMembersSection() {
     ];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function getGuestTeams(field: any): ColumnDef<GuestTeamDto>[] {
+  function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamDto>[] {
     const tableField = field;
     return [
       {
@@ -198,8 +197,7 @@ export function FormBMembersSection() {
     ];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function getCrewMembersColumns(field: any): ColumnDef<CrewMemberDto>[] {
+  function getCrewMembersColumns(field: AnyFieldApi): ColumnDef<CrewMemberDto>[] {
     return [
       {
         header: 'Lp.',
