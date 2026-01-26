@@ -6,7 +6,7 @@ services:
       Database__SeedAutomatically: ${DATABASE_SEED_AUTOMATICALLY:-true}
       Database__MigrateAutomatically: ${DATABASE_MIGRATE_AUTOMATICALLY:-true}
       Database__LogUserPasswordsWhenSeeding: ${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-true}
-      ConnectionStrings__Database: Server:${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
+      ConnectionStrings__Database: Server=${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
       FrontendUrl: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       UseOtlpExporter: true
       OtlpExporterEndpoint: http://alloy:4318
