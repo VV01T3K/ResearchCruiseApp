@@ -1,0 +1,75 @@
+services:
+  grafana:
+    container_name: researchcruiseapp-grafana
+    image: grafana/grafana:12.0.0
+    volumes:
+      - ./config/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+      - ./config/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./config/grafana-dashboards:/etc/dashboards:ro
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    labels:
+      caddy: https://grafana_cruise.wsiwiec.com
+      caddy.route.import: crowdsec
+      caddy.route.reverse_proxy: "{{upstreams 3000}}"
+    networks:
+      - proxy
+      - researchcruiseapp-network
+    depends_on:
+      loki:
+        condition: service_started
+      tempo:
+        condition: service_started
+      alloy:
+        condition: service_started
+      prometheus:
+        condition: service_started
+  alloy:
+    container_name: researchcruiseapp-alloy
+    image: grafana/alloy:v1.8.3
+    volumes:
+      - ./config/config.alloy:/etc/alloy/config.alloy:ro
+    networks:
+      - researchcruiseapp-network
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_started
+
+  loki:
+    container_name: researchcruiseapp-loki
+    image: grafana/loki:3.4.2
+    networks:
+      - researchcruiseapp-network
+
+  tempo:
+    container_name: researchcruiseapp-tempo
+    image: grafana/tempo:2.7.1
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo.yaml:ro
+    command:
+      - --config.file=/etc/tempo.yaml
+    depends_on:
+      prometheus:
+        condition: service_started
+    networks:
+      - researchcruiseapp-network
+
+  prometheus:
+    container_name: researchcruiseapp-prometheus
+    image: prom/prometheus:v3.3.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+    networks:
+      - researchcruiseapp-network
+
+networks:
+  researchcruiseapp-network:
+    external: true
+  proxy:
+    external: true
