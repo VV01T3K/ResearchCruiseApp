@@ -3,11 +3,13 @@ services:
     container_name: researchcruiseapp-backend
     image: ghcr.io/vv01t3k/researchcruiseapp/backend:staging
     environment:
-      - Database__SeedAutomatically=${DATABASE_SEED_AUTOMATICALLY:-true}
-      - Database__MigrateAutomatically=${DATABASE_MIGRATE_AUTOMATICALLY:-true}
-      - Database__LogUserPasswordsWhenSeeding=${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-true}
-      - ConnectionStrings__Database=Server=${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
-      - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
+      Database__SeedAutomatically: ${DATABASE_SEED_AUTOMATICALLY:-true}
+      Database__MigrateAutomatically: ${DATABASE_MIGRATE_AUTOMATICALLY:-true}
+      Database__LogUserPasswordsWhenSeeding: ${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-true}
+      ConnectionStrings__Database: Server=${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
+      FrontendUrl: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
+      UseOtlpExporter: true
+      OtlpExporterEndpoint: http://alloy:4318
     networks:
       - researchcruiseapp-network
   frontend:
@@ -15,6 +17,8 @@ services:
       - backend
     container_name: researchcruiseapp-frontend
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
+    environment:
+      GRAFANA_FARO_URL: http://alloy:12347/
     expose:
       - 8080
     networks:
