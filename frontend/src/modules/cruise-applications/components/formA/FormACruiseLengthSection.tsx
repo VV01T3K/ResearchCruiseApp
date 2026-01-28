@@ -20,14 +20,14 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
 }
 
 function getCurrentFortnight(year: string): number {
-  const today = new Date();
+  const today = new Date(2026,1,21);
   // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
   if (today.getFullYear() < parseInt(year, 10)) {
     return 0;
   }
-  const yearStart = new Date(today.getFullYear(), 0, 1);
-  const daysIntoYear = Math.floor((today.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.min(Math.floor(daysIntoYear / 14), 24);
+  const month = today.getMonth();
+  const day = today.getDate();
+  return month * 2 + (day > 15 ? 1 : 0);
 }
 
 export function FormACruiseLengthSection() {
