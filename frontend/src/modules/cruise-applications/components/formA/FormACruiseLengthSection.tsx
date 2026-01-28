@@ -20,7 +20,7 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
 }
 
 function getCurrentFortnight(year: string): number {
-  const today = new Date(2026,1,21);
+  const today = new Date();
   // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
   if (today.getFullYear() < parseInt(year, 10)) {
     return 0;
