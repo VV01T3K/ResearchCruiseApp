@@ -54,13 +54,23 @@ export function FormASPUBTasksSection() {
           <form.Field
             name={`spubTasks[${row.index}].yearTo`}
             children={(field) => (
-              <AppYearPickerInput
-                name={field.name}
-                value={field.state.value ? parseInt(field.state.value) : undefined}
-                onChange={(e) => field.handleChange(e?.toString() ?? '')}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                disabled={isReadonly}
+              <form.Subscribe
+                selector={(state) => state.values.spubTasks[row.index].yearFrom}
+                children={(yearFrom) => {
+                  if (yearFrom && field.state.value && parseInt(yearFrom) > parseInt(field.state.value)) {
+                    field.handleChange(yearFrom);
+                  }
+                  return (
+                    <AppYearPickerInput
+                      name={field.name}
+                      value={field.state.value ? parseInt(field.state.value) : undefined}
+                      onChange={(e) => field.handleChange(e?.toString() ?? '')}
+                      onBlur={field.handleBlur}
+                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      disabled={isReadonly}
+                    />
+                  );
+                }}
               />
             )}
           />
