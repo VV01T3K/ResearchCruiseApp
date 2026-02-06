@@ -171,7 +171,13 @@ export function FormACruiseLengthSection() {
                         showRequiredAsterisk
                         disabled={isReadonly}
                         selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
-                        minimalDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
+                        minimalDate={
+                          precisePeriodStart && !allowPastDates
+                            ? new Date(precisePeriodStart)
+                            : allowPastDates
+                              ? undefined
+                              : new Date()
+                        }
                       />
                     )}
                   />
