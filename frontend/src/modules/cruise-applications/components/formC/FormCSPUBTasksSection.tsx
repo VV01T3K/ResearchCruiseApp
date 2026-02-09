@@ -31,6 +31,14 @@ export function FormCSPUBTasksSection() {
         cell: ({ row }) => (
           <form.Field
             name={`spubTasks[${row.index}].yearFrom`}
+            listeners={{
+              onChange: ({ value }) => {
+                const yearTo = form.getFieldValue(`spubTasks[${row.index}].yearTo`);
+                if (value && yearTo && parseInt(value) > parseInt(yearTo)) {
+                  form.setFieldValue(`spubTasks[${row.index}].yearTo`, value);
+                }
+              },
+            }}
             children={(field) => (
               <AppYearPickerInput
                 name={field.name}
@@ -54,23 +62,13 @@ export function FormCSPUBTasksSection() {
           <form.Field
             name={`spubTasks[${row.index}].yearTo`}
             children={(field) => (
-              <form.Subscribe
-                selector={(state) => state.values.spubTasks[row.index].yearFrom}
-                children={(yearFrom) => {
-                  if (yearFrom && field.state.value && parseInt(yearFrom) > parseInt(field.state.value)) {
-                    field.handleChange(yearFrom);
-                  }
-                  return (
-                    <AppYearPickerInput
-                      name={field.name}
-                      value={field.state.value ? parseInt(field.state.value) : undefined}
-                      onChange={(e) => field.handleChange(e?.toString() ?? '')}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      disabled={isReadonly}
-                    />
-                  );
-                }}
+              <AppYearPickerInput
+                name={field.name}
+                value={field.state.value ? parseInt(field.state.value) : undefined}
+                onChange={(e) => field.handleChange(e?.toString() ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
               />
             )}
           />
