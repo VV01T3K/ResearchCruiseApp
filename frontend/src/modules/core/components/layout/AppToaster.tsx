@@ -18,18 +18,6 @@ function ToastIcon({ type }: { type?: string }) {
   return null;
 }
 
-function ToastProgress({ type }: { type?: string }) {
-  if (type === 'loading') return null;
-
-  const progressColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-gray-400';
-
-  return (
-    <div className="absolute right-0 bottom-0 left-0 h-1 bg-gray-100">
-      <div className={`toast-progress-bar h-full w-full ${progressColor}`} />
-    </div>
-  );
-}
-
 function ToastList() {
   const { toasts } = Toast.useToastManager();
 
@@ -54,7 +42,6 @@ function ToastList() {
           )}
         </div>
       </Toast.Content>
-      <ToastProgress type={t.type} />
     </Toast.Root>
   ));
 }
