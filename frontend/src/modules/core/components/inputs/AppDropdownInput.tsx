@@ -118,16 +118,16 @@ export function AppDropdownInput({
         </Select.Trigger>
 
         <Select.Portal>
-          <Select.Positioner className="z-50 min-w-[var(--anchor-width)]" sideOffset={4} alignItemWithTrigger={false}>
+          <Select.Positioner className="z-50 w-[var(--anchor-width)]" sideOffset={4} alignItemWithTrigger={false}>
             <Select.Popup
               className={cn(
-                'w-full origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+                'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/10',
                 'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
                 'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
                 'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
               )}
             >
-              <Select.List className="flex max-h-64 flex-col gap-1 overflow-y-auto p-1">
+              <Select.List className="flex max-h-64 flex-col overflow-y-auto">
                 {allPossibleOptions
                   .filter((opt) => opt.inlineLabel || opt.richLabel)
                   .map((opt) => (
@@ -135,7 +135,7 @@ export function AppDropdownInput({
                       key={`dropdown-option-${opt.value}`}
                       value={opt.value}
                       className={cn(
-                        'flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm text-gray-700',
+                        'flex items-center justify-between gap-2 border-b border-gray-200 px-3 py-2 text-sm text-gray-700 last:border-b-0',
                         'cursor-pointer outline-none select-none',
                         'transition-all duration-150 ease-out',
                         'data-[highlighted]:bg-primary-50 data-[highlighted]:text-gray-900',

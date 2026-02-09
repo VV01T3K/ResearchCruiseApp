@@ -66,6 +66,7 @@ public class FormAInitValuesDtosFactory(
         {
             Years = GetYears(),
             ShipUsages = GetShipUsages(),
+            StandardSpubTasks = GetStandardSpubTasks(),
             ResearchAreas = await GetResearchAreas(cancellationToken),
             CruiseGoals = GetCruiseGoals(),
             UgUnits = await GetUgUnits(cancellationToken),
@@ -108,6 +109,11 @@ public class FormAInitValuesDtosFactory(
     private static List<string> GetShipUsages()
     {
         return FormAValuesConstants.ShipUsages;
+    }
+
+    private static List<string> GetStandardSpubTasks()
+    {
+        return FormAValuesConstants.StandardSpubTasks;
     }
 
     private async Task<List<ResearchAreaDto>> GetResearchAreas(CancellationToken cancellationToken)
