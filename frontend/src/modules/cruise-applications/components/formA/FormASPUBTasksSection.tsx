@@ -31,6 +31,14 @@ export function FormASPUBTasksSection() {
         cell: ({ row }) => (
           <form.Field
             name={`spubTasks[${row.index}].yearFrom`}
+            listeners={{
+              onChange: ({ value }) => {
+                const yearTo = form.getFieldValue(`spubTasks[${row.index}].yearTo`);
+                if (value && yearTo && parseInt(value) > parseInt(yearTo)) {
+                  form.setFieldValue(`spubTasks[${row.index}].yearTo`, value);
+                }
+              },
+            }}
             children={(field) => (
               <AppYearPickerInput
                 name={field.name}
