@@ -1,6 +1,8 @@
 import { useStore } from '@tanstack/react-form';
+import { useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
+import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { getErrors } from '@/core/lib/utils';
 import { useCruiseForm } from '@/cruise-schedule/contexts/CruiseFormContext';
@@ -10,6 +12,10 @@ export function CruiseFormDateSelectionSection() {
 
   const cruiseStart = useStore(form.store, (state) => state.values.startDate);
   const cruiseStartDate = cruiseStart !== '' ? new Date(cruiseStart) : undefined;
+
+  const [allowPastDates, setAllowPastDates] = useState(false);
+
+  const minimalDateForStartDate = allowPastDates ? undefined : new Date();
 
   return (
     <AppAccordion title="2. Termin rejsu" expandedByDefault>
@@ -29,6 +35,7 @@ export function CruiseFormDateSelectionSection() {
                 type="datetime"
                 minuteStep={30}
                 disabled={isReadonly}
+                minimalDate={minimalDateForStartDate}
               />
             )}
           />
@@ -52,6 +59,16 @@ export function CruiseFormDateSelectionSection() {
               />
             )}
           />
+          {!isReadonly && (
+            <div className="lg:col-span-2">
+              <AppCheckbox
+                name="allowPastDates"
+                checked={allowPastDates}
+                onChange={setAllowPastDates}
+                label="Zezwól na wybór dat z przeszłości"
+              />
+            </div>
+          )}
         </div>
       </div>
     </AppAccordion>

@@ -14,6 +14,7 @@ type Props = {
   value: CruisePeriodType | undefined;
 
   maxValues?: CruisePeriodType;
+  minPeriodValue?: number;
   onChange?: (value: CruisePeriodType) => void;
   onBlur?: () => void;
   errors?: string[];
@@ -34,7 +35,7 @@ function parsePeriod(period: CruisePeriodType | undefined, fallback: [number, nu
 function clampToBounds(values: [number, number], min: number, max: number): [number, number] {
   const clampedStart = Math.max(min, Math.min(values[0], max));
   const clampedEnd = Math.max(min, Math.min(values[1], max));
-  return clampedStart >= clampedEnd ? [min, max] : [clampedStart, clampedEnd];
+  return clampedStart >= clampedEnd ? [clampedStart, Math.min(clampedStart + 1, max)] : [clampedStart, clampedEnd];
 }
 
 function isValidPeriod(period: unknown): period is CruisePeriodType {
@@ -45,6 +46,7 @@ export function CruiseApplicationPeriodInput({
   name,
   value,
   maxValues,
+  minPeriodValue = 0,
   onChange,
   onBlur,
   errors,
@@ -53,7 +55,7 @@ export function CruiseApplicationPeriodInput({
   disabled,
   helper,
 }: Props) {
-  const [minBound, maxBound] = parsePeriod(maxValues, [0, 24]);
+  const [minBound, maxBound] = parsePeriod(maxValues, [minPeriodValue, 24]);
 
   const sliderValues = React.useMemo((): [number, number] => {
     const parsed = parsePeriod(value, [minBound, maxBound]);
@@ -72,13 +74,11 @@ export function CruiseApplicationPeriodInput({
 
   const handleValueChange = (newValues: number | number[]) => {
     if (!Array.isArray(newValues) || newValues.length !== 2) return;
-    const [start, end] = newValues as [number, number];
-    if (start === end) return;
-    onChange?.([start.toString(), end.toString()] as CruisePeriodType);
+    const clamped = clampToBounds(newValues as [number, number], minBound, maxBound);
+    if (clamped[0] === clamped[1]) return;
+    onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
   };
-
   const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);
-
   return (
     <div className="flex flex-col">
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
