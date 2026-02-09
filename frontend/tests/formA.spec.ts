@@ -404,15 +404,14 @@ test.describe('SPUB tasks section tests', () => {
     await spubTasksSection.addNewTaskButton.click();
     const taskRow = spubTasksSection.taskRow('first');
 
-    await touchInput(taskRow.nameInput);
-    await expect(taskRow.nameInput.errors.required).toBeVisible();
-
-    await taskRow.nameInput.fill('Jakieś zadanie');
-    await expect(taskRow.nameInput.errors.required).toBeHidden();
-
     await formAPage.submitForm({ expectedResult: 'invalid' });
+    await expect(taskRow.nameDropdown.errors.required).toBeVisible();
     await expect(taskRow.startYearDropdown.errors.required).toBeVisible();
     await expect(taskRow.endYearDropdown.errors.required).toBeVisible();
+
+    await taskRow.nameDropdown.dropdown.click();
+    await formAPage.page.getByRole('option').first().click();
+    await expect(taskRow.nameDropdown.errors.required).toBeHidden();
 
     await taskRow.startYearDropdown.selectOption('2023');
     await expect(taskRow.startYearDropdown.errors.required).toBeHidden();
