@@ -35,7 +35,7 @@ function parsePeriod(period: CruisePeriodType | undefined, fallback: [number, nu
 function clampToBounds(values: [number, number], min: number, max: number): [number, number] {
   const clampedStart = Math.max(min, Math.min(values[0], max));
   const clampedEnd = Math.max(min, Math.min(values[1], max));
-  return clampedStart >= clampedEnd ? [min, max] : [clampedStart, clampedEnd];
+  return clampedStart >= clampedEnd ? [clampedStart, Math.min(clampedStart + 1, max)] : [clampedStart, clampedEnd];
 }
 
 function isValidPeriod(period: unknown): period is CruisePeriodType {
