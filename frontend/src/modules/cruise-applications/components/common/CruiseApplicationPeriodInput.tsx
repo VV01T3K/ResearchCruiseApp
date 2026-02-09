@@ -88,8 +88,8 @@ export function CruiseApplicationPeriodInput({
         value={sliderValues}
         onValueChange={handleValueChange}
         onBlur={onBlur}
-        min={0}
-        max={24}
+        min={minBound}
+        max={maxBound}
         step={1}
         disabled={disabled}
         className="relative mx-8 mt-4 mb-20 touch-none select-none"
