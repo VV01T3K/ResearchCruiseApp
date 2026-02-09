@@ -37,6 +37,14 @@ const shortResearchEquipmentColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`shortResearchEquipments[${row.index}].startDate`}
+        listeners={{
+          onChange: ({ value }) => {
+            const endDate = form.getFieldValue(`shortResearchEquipments[${row.index}].endDate`);
+            if (value && endDate && value > endDate) {
+              form.setFieldValue(`shortResearchEquipments[${row.index}].endDate`, value);
+            }
+          },
+        }}
         children={(field) => (
           <AppDatePickerInput
             data-testid-button="short-equipment-from-button"
@@ -65,25 +73,20 @@ const shortResearchEquipmentColumns = (
         children={(field) => (
           <form.Subscribe
             selector={(state) => state.values.shortResearchEquipments[row.index].startDate}
-            children={(state) => {
-              if (state && field.state.value && state > field.state.value) {
-                field.handleChange(state);
-              }
-              return (
-                <AppDatePickerInput
-                  data-testid-button="short-equipment-to-button"
-                  data-testid-errors="short-equipment-to-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(newValue) => field.handleChange(newValue ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  disabled={isReadonly}
-                  selectionStartDate={state ? new Date(state) : undefined}
-                  minimalDate={state ? new Date(state) : undefined}
-                />
-              );
-            }}
+            children={(startDate) => (
+              <AppDatePickerInput
+                data-testid-button="short-equipment-to-button"
+                data-testid-errors="short-equipment-to-errors"
+                name={field.name}
+                value={field.state.value}
+                onChange={(newValue) => field.handleChange(newValue ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+                selectionStartDate={startDate ? new Date(startDate) : undefined}
+                minimalDate={startDate ? new Date(startDate) : undefined}
+              />
+            )}
           />
         )}
       />
@@ -258,6 +261,14 @@ const portColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`ports[${row.index}].startTime`}
+        listeners={{
+          onChange: ({ value }) => {
+            const endTime = form.getFieldValue(`ports[${row.index}].endTime`);
+            if (value && endTime && value > endTime) {
+              form.setFieldValue(`ports[${row.index}].endTime`, value);
+            }
+          },
+        }}
         children={(field) => (
           <AppDatePickerInput
             data-testid-button="port-from-button"
@@ -287,26 +298,21 @@ const portColumns = (
         children={(field) => (
           <form.Subscribe
             selector={(state) => state.values.ports[row.index].startTime}
-            children={(state) => {
-              if (state > field.state.value && field.state.value !== '') {
-                field.handleChange(state);
-              }
-              return (
-                <AppDatePickerInput
-                  data-testid-button="port-to-button"
-                  data-testid-errors="port-to-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(newValue) => field.handleChange(newValue ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  disabled={isReadonly}
-                  type="datetime"
-                  selectionStartDate={state ? new Date(state) : undefined}
-                  minimalDate={state ? new Date(state) : undefined}
-                />
-              );
-            }}
+            children={(startTime) => (
+              <AppDatePickerInput
+                data-testid-button="port-to-button"
+                data-testid-errors="port-to-errors"
+                name={field.name}
+                value={field.state.value}
+                onChange={(newValue) => field.handleChange(newValue ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+                type="datetime"
+                selectionStartDate={startTime ? new Date(startTime) : undefined}
+                minimalDate={startTime ? new Date(startTime) : undefined}
+              />
+            )}
           />
         )}
       />
