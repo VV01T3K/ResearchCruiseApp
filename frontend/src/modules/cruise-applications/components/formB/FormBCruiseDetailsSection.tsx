@@ -1,7 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppButton } from '@/core/components/AppButton';
+import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
@@ -19,7 +21,8 @@ const shortResearchEquipmentColumns = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
-  isReadonly: boolean
+  isReadonly: boolean,
+  allowPastDates: boolean
 ): ColumnDef<ShortResearchEquipmentDto>[] => [
   {
     header: 'Lp.',
@@ -34,6 +37,14 @@ const shortResearchEquipmentColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`shortResearchEquipments[${row.index}].startDate`}
+        listeners={{
+          onChange: ({ value }) => {
+            const endDate = form.getFieldValue(`shortResearchEquipments[${row.index}].endDate`);
+            if (value && endDate && value > endDate) {
+              form.setFieldValue(`shortResearchEquipments[${row.index}].endDate`, value);
+            }
+          },
+        }}
         children={(field) => (
           <AppDatePickerInput
             data-testid-button="short-equipment-from-button"
@@ -44,6 +55,7 @@ const shortResearchEquipmentColumns = (
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
+            minimalDate={allowPastDates ? undefined : new Date()}
           />
         )}
       />
@@ -61,25 +73,20 @@ const shortResearchEquipmentColumns = (
         children={(field) => (
           <form.Subscribe
             selector={(state) => state.values.shortResearchEquipments[row.index].startDate}
-            children={(state) => {
-              if (state && field.state.value && state > field.state.value) {
-                field.handleChange(state);
-              }
-              return (
-                <AppDatePickerInput
-                  data-testid-button="short-equipment-to-button"
-                  data-testid-errors="short-equipment-to-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(newValue) => field.handleChange(newValue ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  disabled={isReadonly}
-                  selectionStartDate={state ? new Date(state) : undefined}
-                  minimalDate={state ? new Date(state) : undefined}
-                />
-              );
-            }}
+            children={(startDate) => (
+              <AppDatePickerInput
+                data-testid-button="short-equipment-to-button"
+                data-testid-errors="short-equipment-to-errors"
+                name={field.name}
+                value={field.state.value}
+                onChange={(newValue) => field.handleChange(newValue ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+                selectionStartDate={startDate ? new Date(startDate) : undefined}
+                minimalDate={startDate ? new Date(startDate) : undefined}
+              />
+            )}
           />
         )}
       />
@@ -238,7 +245,8 @@ const portColumns = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
-  isReadonly: boolean
+  isReadonly: boolean,
+  allowPastDates: boolean
 ): ColumnDef<PortDto>[] => [
   {
     header: 'Lp.',
@@ -253,6 +261,14 @@ const portColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`ports[${row.index}].startTime`}
+        listeners={{
+          onChange: ({ value }) => {
+            const endTime = form.getFieldValue(`ports[${row.index}].endTime`);
+            if (value && endTime && value > endTime) {
+              form.setFieldValue(`ports[${row.index}].endTime`, value);
+            }
+          },
+        }}
         children={(field) => (
           <AppDatePickerInput
             data-testid-button="port-from-button"
@@ -264,6 +280,7 @@ const portColumns = (
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             type="datetime"
+            minimalDate={allowPastDates ? undefined : new Date()}
           />
         )}
       />
@@ -281,26 +298,21 @@ const portColumns = (
         children={(field) => (
           <form.Subscribe
             selector={(state) => state.values.ports[row.index].startTime}
-            children={(state) => {
-              if (state > field.state.value && field.state.value !== '') {
-                field.handleChange(state);
-              }
-              return (
-                <AppDatePickerInput
-                  data-testid-button="port-to-button"
-                  data-testid-errors="port-to-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(newValue) => field.handleChange(newValue ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  disabled={isReadonly}
-                  type="datetime"
-                  selectionStartDate={state ? new Date(state) : undefined}
-                  minimalDate={state ? new Date(state) : undefined}
-                />
-              );
-            }}
+            children={(startTime) => (
+              <AppDatePickerInput
+                data-testid-button="port-to-button"
+                data-testid-errors="port-to-errors"
+                name={field.name}
+                value={field.state.value}
+                onChange={(newValue) => field.handleChange(newValue ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+                type="datetime"
+                selectionStartDate={startTime ? new Date(startTime) : undefined}
+                minimalDate={startTime ? new Date(startTime) : undefined}
+              />
+            )}
           />
         )}
       />
@@ -352,18 +364,28 @@ const portColumns = (
 export function FormBCruiseDetailsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
+  const [includeShortResearchEquipments, setIncludeShortResearchEquipments] = useState(false);
+  const [includePorts, setIncludePorts] = useState(false);
+
   return (
     <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-b-cruise-details-section">
       <p className="text-center text-xl font-semibold">Czy w ramach rejsu planuje się:</p>
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wystawienie sprzętu</p>
+
         <form.Field
           name="shortResearchEquipments"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={shortResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={shortResearchEquipmentColumns(
+                form,
+                field,
+                hasFormBeenSubmitted,
+                isReadonly,
+                includeShortResearchEquipments
+              )}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -385,6 +407,21 @@ export function FormBCruiseDetailsSection() {
               variant="form"
               disabled={isReadonly}
             />
+          )}
+        />
+        <form.Subscribe
+          selector={(state) => state.values.shortResearchEquipments}
+          children={(shortEquipments) => (
+            <>
+              {!isReadonly && shortEquipments.length > 0 && (
+                <AppCheckbox
+                  name="includeShortResearchEquipments"
+                  checked={includeShortResearchEquipments}
+                  onChange={setIncludeShortResearchEquipments}
+                  label="Zezwól na wybór dat z przeszłości"
+                />
+              )}
+            </>
           )}
         />
       </div>
@@ -432,12 +469,13 @@ export function FormBCruiseDetailsSection() {
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
+
         <form.Field
           name="ports"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly, includePorts)}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -459,6 +497,21 @@ export function FormBCruiseDetailsSection() {
               variant="form"
               disabled={isReadonly}
             />
+          )}
+        />
+        <form.Subscribe
+          selector={(state) => state.values.ports}
+          children={(ports) => (
+            <>
+              {!isReadonly && ports.length > 0 && (
+                <AppCheckbox
+                  name="includePorts"
+                  checked={includePorts}
+                  onChange={setIncludePorts}
+                  label="Zezwól na wybór dat z przeszłości"
+                />
+              )}
+            </>
           )}
         />
       </div>
