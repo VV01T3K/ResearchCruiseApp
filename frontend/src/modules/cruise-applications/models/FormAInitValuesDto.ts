@@ -11,6 +11,7 @@ export type FormAInitValuesDto = {
   deputyManagers: FormUserDto[];
   years: string[];
   shipUsages: string[];
+  standardSpubTasks: string[];
   researchAreas: ResearchAreaDto[];
   cruiseGoals: string[];
   historicalResearchTasks: ResearchTaskDto[];

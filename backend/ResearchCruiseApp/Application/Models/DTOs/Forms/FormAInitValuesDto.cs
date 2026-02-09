@@ -15,6 +15,8 @@ public class FormAInitValuesDto
 
     public List<string> ShipUsages { get; set; } = [];
 
+    public List<string> StandardSpubTasks { get; set; } = [];
+
     public List<ResearchAreaDto> ResearchAreas { get; set; } = [];
 
     public List<string> CruiseGoals { get; set; } = [];
