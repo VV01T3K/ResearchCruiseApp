@@ -74,9 +74,9 @@ export function CruiseApplicationPeriodInput({
 
   const handleValueChange = (newValues: number | number[]) => {
     if (!Array.isArray(newValues) || newValues.length !== 2) return;
-    const [start, end] = newValues as [number, number];
-    if (start === end) return;
-    onChange?.([start.toString(), end.toString()] as CruisePeriodType);
+    const clamped = clampToBounds(newValues as [number, number], minBound, maxBound);
+    if (clamped[0] === clamped[1]) return;
+    onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
   };
   const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);
   return (
@@ -88,8 +88,8 @@ export function CruiseApplicationPeriodInput({
         value={sliderValues}
         onValueChange={handleValueChange}
         onBlur={onBlur}
-        min={minBound}
-        max={maxBound}
+        min={0}
+        max={24}
         step={1}
         disabled={disabled}
         className="relative mx-8 mt-4 mb-20 touch-none select-none"
