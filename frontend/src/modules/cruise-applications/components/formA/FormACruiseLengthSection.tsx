@@ -1,8 +1,9 @@
 import { useStore } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
+import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
 import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
@@ -18,6 +19,17 @@ function isValidPeriod(period: unknown): period is CruisePeriodType {
   return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
 }
 
+function getCurrentFortnight(year: string): number {
+  const today = new Date();
+  // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
+  if (today.getFullYear() < parseInt(year, 10)) {
+    return 0;
+  }
+  const month = today.getMonth();
+  const day = today.getDate();
+  return month * 2 + (day > 15 ? 1 : 0);
+}
+
 export function FormACruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
@@ -27,6 +39,33 @@ export function FormACruiseLengthSection() {
   const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
   const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
+
+  // Initialize checkbox state based on whether saved start date is in the past
+  const [allowPastDates, setAllowPastDates] = useState(() => {
+    const currentFortnight = getCurrentFortnight(year);
+
+    // Check if precisePeriodStart is in the past
+    if (precisePeriodStart) {
+      const startDate = new Date(precisePeriodStart);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (startDate < today) {
+        return true;
+      }
+    }
+
+    // Check if acceptablePeriod start is in the past (fortnight-based)
+    if (isValidPeriod(acceptablePeriod)) {
+      const acceptableStart = parseInt(acceptablePeriod[0], 10);
+      if (acceptableStart < currentFortnight) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+
+  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
   const savedPeriodValuesRef = useRef<{ acceptable: CruisePeriodType; optimal: CruisePeriodType } | null>(null);
   const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
@@ -107,6 +146,7 @@ export function FormACruiseLengthSection() {
                     type="date"
                     showRequiredAsterisk
                     disabled={isReadonly}
+                    minimalDate={allowPastDates ? undefined : new Date()}
                   />
                 )}
               />
@@ -131,7 +171,13 @@ export function FormACruiseLengthSection() {
                         showRequiredAsterisk
                         disabled={isReadonly}
                         selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
-                        minimalDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
+                        minimalDate={
+                          precisePeriodStart && !allowPastDates
+                            ? new Date(precisePeriodStart)
+                            : allowPastDates
+                              ? undefined
+                              : new Date()
+                        }
                       />
                     )}
                   />
@@ -154,6 +200,7 @@ export function FormACruiseLengthSection() {
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                     showRequiredAsterisk
                     disabled={isReadonly}
+                    minPeriodValue={minPeriodValue}
                   />
                 )}
               />
@@ -174,12 +221,23 @@ export function FormACruiseLengthSection() {
                         label="Optymalny okres, w którym miałby się odbywać rejs"
                         showRequiredAsterisk
                         disabled={isReadonly}
+                        minPeriodValue={minPeriodValue}
                       />
                     )}
                   />
                 )}
               />
             </>
+          )}
+          {!isReadonly && (
+            <div className="lg:col-span-2">
+              <AppCheckbox
+                name="allowPastDates"
+                checked={allowPastDates}
+                onChange={setAllowPastDates}
+                label="Zezwól na wybór dat z przeszłości"
+              />
+            </div>
           )}
 
           <form.Subscribe

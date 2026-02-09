@@ -163,13 +163,13 @@ export interface FileRoutesByFullPath {
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
-  '/applications/': typeof ApplicationsIndexRoute
-  '/cruises/': typeof CruisesIndexRoute
+  '/applications': typeof ApplicationsIndexRoute
+  '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
   '/applications/$applicationId/formA': typeof ApplicationsApplicationIdFormARoute
   '/applications/$applicationId/formB': typeof ApplicationsApplicationIdFormBRoute
   '/applications/$applicationId/formC': typeof ApplicationsApplicationIdFormCRoute
-  '/cruises/$cruiseId/': typeof CruisesCruiseIdIndexRoute
+  '/cruises/$cruiseId': typeof CruisesCruiseIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -238,13 +238,13 @@ export interface FileRouteTypes {
     | '/resetpassword'
     | '/usermanagement'
     | '/cruises/new'
-    | '/applications/'
-    | '/cruises/'
+    | '/applications'
+    | '/cruises'
     | '/applications/$applicationId/details'
     | '/applications/$applicationId/formA'
     | '/applications/$applicationId/formB'
     | '/applications/$applicationId/formC'
-    | '/cruises/$cruiseId/'
+    | '/cruises/$cruiseId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -423,14 +423,14 @@ declare module '@tanstack/react-router' {
     '/cruises/': {
       id: '/cruises/'
       path: '/cruises'
-      fullPath: '/cruises/'
+      fullPath: '/cruises'
       preLoaderRoute: typeof CruisesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/applications/': {
       id: '/applications/'
       path: '/applications'
-      fullPath: '/applications/'
+      fullPath: '/applications'
       preLoaderRoute: typeof ApplicationsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -444,7 +444,7 @@ declare module '@tanstack/react-router' {
     '/cruises/$cruiseId/': {
       id: '/cruises/$cruiseId/'
       path: '/cruises/$cruiseId'
-      fullPath: '/cruises/$cruiseId/'
+      fullPath: '/cruises/$cruiseId'
       preLoaderRoute: typeof CruisesCruiseIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }

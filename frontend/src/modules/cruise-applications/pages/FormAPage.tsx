@@ -47,8 +47,8 @@ export function FormAPage() {
           ...formA.data,
           deputyManagerId: formA.data.deputyManagerId ?? '',
           permissions: formA.data.permissions.map((p) => ({ ...p, scan: undefined })),
-          acceptablePeriod: formA.data.acceptablePeriod ?? '',
-          optimalPeriod: formA.data.optimalPeriod ?? '',
+          acceptablePeriod: formA.data.acceptablePeriod?.length === 0 ? '' : (formA.data.acceptablePeriod ?? ''),
+          optimalPeriod: formA.data.optimalPeriod?.length === 0 ? '' : (formA.data.optimalPeriod ?? ''),
           precisePeriodStart: formA.data.precisePeriodStart ?? '',
           precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
           periodSelectionType:
