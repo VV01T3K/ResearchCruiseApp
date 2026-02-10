@@ -122,7 +122,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
     },
   });
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
     form.handleSubmit();
