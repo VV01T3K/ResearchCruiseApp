@@ -31,7 +31,7 @@ type Props = {
   };
 };
 export function FormC({ context }: Props) {
-  function onSubmit(evt: React.FormEvent<HTMLFormElement>) {
+  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
     evt.preventDefault();
     context.onSubmit();
   }

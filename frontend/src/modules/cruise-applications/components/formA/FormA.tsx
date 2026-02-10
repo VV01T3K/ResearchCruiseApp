@@ -32,7 +32,7 @@ export function FormA({ context }: Props) {
 
   const handlePrint = useReactToPrint({});
 
-  function onSubmit(evt: React.FormEvent<HTMLFormElement>) {
+  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
     evt.preventDefault();
     context.onSubmit();
   }
