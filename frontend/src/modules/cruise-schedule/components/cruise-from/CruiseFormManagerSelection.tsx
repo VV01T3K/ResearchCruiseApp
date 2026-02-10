@@ -230,4 +230,3 @@ function getAllUsersForDropdown(
 
   return sortedUsers.map(mapPersonToLabel);
 }
-
