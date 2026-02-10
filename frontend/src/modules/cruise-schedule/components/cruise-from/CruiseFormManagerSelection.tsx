@@ -34,7 +34,7 @@ function CruiseFormManagerSelectionReadonly() {
     if (cruise && selectedCruiseManagerId) {
       options.push(
         mapPersonToLabel({
-          id: cruise.mainCruiseManagerId,
+          id: selectedCruiseManagerId,
           firstName: cruise.mainCruiseManagerFirstName,
           lastName: cruise.mainCruiseManagerLastName,
           email: '',
@@ -44,7 +44,7 @@ function CruiseFormManagerSelectionReadonly() {
     if (cruise && selectedDeputyManagerId && selectedDeputyManagerId !== selectedCruiseManagerId) {
       options.push(
         mapPersonToLabel({
-          id: cruise.mainDeputyManagerId,
+          id: selectedDeputyManagerId,
           firstName: cruise.mainDeputyManagerFirstName,
           lastName: cruise.mainDeputyManagerLastName,
           email: '',
