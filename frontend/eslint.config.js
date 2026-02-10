@@ -36,6 +36,7 @@ export default tseslint.config(
       'no-duplicate-imports': 'error',
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
+      '@typescript-eslint/no-deprecated': 'warn',
     },
   }
 );
