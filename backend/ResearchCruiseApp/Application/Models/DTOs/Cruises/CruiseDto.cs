@@ -18,6 +18,10 @@ public class CruiseDto
 
     public Guid MainDeputyManagerId { get; set; }
 
+    public string MainDeputyManagerFirstName { get; set; } = null!;
+
+    public string MainDeputyManagerLastName { get; set; } = null!;
+
     public List<CruiseApplicationShortInfoDto> CruiseApplicationsShortInfo { get; set; } = [];
 
     public string Status { get; init; } = null!;
