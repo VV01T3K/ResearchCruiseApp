@@ -24,9 +24,12 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
   let headerRowIndex = 0;
 
   let columnIndices: Record<string, number>;
+
+  /* eslint-disable no-useless-assignment */
   let foundColumnsCount = 0;
   let latHeaderIndex = -1;
   let lonHeaderIndex = -1;
+  /* eslint-enable no-useless-assignment */
 
   do {
     headers = parseCSVLine(lines[headerRowIndex], delimiter).map((h) => h.toLowerCase().trim());
