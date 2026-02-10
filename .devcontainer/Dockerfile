@@ -1,14 +1,15 @@
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+FROM mcr.microsoft.com/devcontainers/base:trixie
 
-# Fix expired Yarn GPG key that breaks docker-in-docker feature
-# See: https://github.com/devcontainers/features/issues/1543
-RUN rm -f /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs 
 
-COPY --from=oven/bun /usr/local/bin/bun /usr/local/bin/bun
-RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
+USER vscode
 
-RUN wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install -y dotnet-sdk-10.0
+RUN curl https://mise.run/zsh | sh
+ENV PATH="/home/vscode/.local/bin:${PATH}"
+
+RUN mise exec bun@latest -- bunx playwright install --with-deps chromium
+
+RUN mise use -g claude@latest codex@latest opencode@latest
+RUN mise use -g dotnet@latest
+COPY mise.toml /tmp/mise.toml
+RUN cd /tmp && mise trust && mise install

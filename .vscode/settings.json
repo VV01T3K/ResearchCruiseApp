@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        ".mise-setup-done": true
+    },
+    "dotnetAcquisitionExtension.allowInvalidPaths": true,
+    "dotnetAcquisitionExtension.existingDotnetPath": [
+        "/home/vscode/.local/share/mise/shims/dotnet"
+    ],
+    "dotnetAcquisitionExtension.sharedExistingDotnetPath": "/home/vscode/.local/share/mise/shims/dotnet"
+}

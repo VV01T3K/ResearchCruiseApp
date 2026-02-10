@@ -2,40 +2,46 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/php
 {
 	"name": "DEV-ResearchCruiseApp",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile",
+		"context": ".."
 	},
+	// "features": {
+	// 	"ghcr.io/devcontainers/features/docker-in-docker:2": {
+	// 		"moby": false,
+	// 		"azureDnsAutoDetection": false
+	// 	}
+	// },
 	"containerEnv": {
-		"DOTNET_CLI_TELEMETRY_OPTOUT": "1"
-	},
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-	// Configure tool-specific properties.
-	// "customizations": {},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [
-	// 	8080
-	// ],
-	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+		"DO_NOT_TRACK": "1",
+		"DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+		"TURBO_TELEMETRY_DISABLED": "1"
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"esbenp.prettier-vscode",
+				"hverlin.mise-vscode",
 				"ahmadalli.vscode-nginx-conf",
-				"docker.docker",
 				"csharpier.csharpier-vscode",
 				"ms-dotnettools.csharp",
-				"cweijan.vscode-mysql-client2",
-				"ms-playwright.playwright"
+				"ms-playwright.playwright",
+				"tamasfe.even-better-toml",
+				// "TypeScriptTeam.native-preview",
+				"oxc.oxc-vscode",
+				"vitest.explorer",
+				"Anthropic.claude-code",
+				"bradlc.vscode-tailwindcss",
+				// "stivo.tailwind-fold",
+				"Graphite.gti-vscode",
+				"bierner.markdown-mermaid",
+				"yzhang.markdown-all-in-one",
+				"CodeRabbit.coderabbit-vscode",
+				"tamasfe.even-better-toml",
+				"openai.chatgpt",
+				"sst-dev.opencode",
+				"docker.docker"
 			]
 		}
 	},
-	"postCreateCommand": "(cd backend && dotnet restore && dotnet tool restore) && (cd frontend && bun install && bun x playwright install --with-deps chromium)"
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"postCreateCommand": "(rm .mise-setup-done || true) && mise trust && mise install"
 }

@@ -133,7 +133,7 @@ Porządek w repozytorium utrzymywany jest przez liderów obu podzespołów, któ
 - Typst - narzędzie do tworzenia dokumentacji projektu
 - Visual Studio Code - środowisko programistyczne do pracy nad kodem front-endu
 - JetBrains Rider - środowisko programistyczne do pracy nad kodem backendu
-- `pnpm`, `bun`, `node` - narzędzia do budowania i uruchamiania aplikacji frontendowej
+- `bun`, `node` - narzędzia do budowania i uruchamiania aplikacji frontendowej
 - `React`, biblioteki TanStack, `react.motion` i inne - framework i biblioteki do tworzenia aplikacji frontendowej
 - `.NET Core`, `dotnet` - framework i narzędzie do tworzenia aplikacji backendowej
 - Microsoft SQL Server - baza danych wykorzystywana w aplikacji

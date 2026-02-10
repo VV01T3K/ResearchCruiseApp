@@ -277,5 +277,4 @@ __pycache__/
 out
 gen
 
-# Visual Studio Code options directory
-.vscode/
+.mise-setup-done
