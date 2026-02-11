@@ -2,5 +2,7 @@
     "files.exclude": {
         ".mise-setup-done": true
     },
-    "csharp.suppressDotnetInstallWarning": true
+    "csharp.suppressDotnetInstallWarning": true,
+    "typescript.experimental.useTsgo": true,
+    "oxc.typeAware": true
 }
