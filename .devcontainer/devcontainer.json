@@ -43,5 +43,5 @@
 			]
 		}
 	},
-	"postCreateCommand": "(rm .mise-setup-done || true) && mise trust && mise install"
+	"onCreateCommand": "(rm .mise-setup-done || true) && mise trust && mise install"
 }
