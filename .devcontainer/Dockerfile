@@ -10,6 +10,5 @@ ENV PATH="/home/vscode/.local/bin:${PATH}"
 RUN mise exec bun@latest -- bunx playwright install --with-deps chromium
 
 RUN mise use -g claude@latest codex@latest opencode@latest
-# RUN mise use -g dotnet@latest
 COPY mise.toml /tmp/mise.toml
-RUN cd /tmp && mise trust && mise install && rm .mise-setup-done
+RUN cd /tmp && mise trust && mise install
