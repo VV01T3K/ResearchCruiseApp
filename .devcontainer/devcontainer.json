@@ -6,12 +6,12 @@
 		"dockerfile": "Dockerfile",
 		"context": ".."
 	},
-	// "features": {
-	// 	"ghcr.io/devcontainers/features/docker-in-docker:2": {
-	// 		"moby": false,
-	// 		"azureDnsAutoDetection": false
-	// 	}
-	// },
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": false,
+			"azureDnsAutoDetection": false
+		}
+	},
 	"containerEnv": {
 		"DO_NOT_TRACK": "1",
 		"DOTNET_CLI_TELEMETRY_OPTOUT": "1",
