@@ -1,3 +1,31 @@
+## 2.3.0 - 2026-02-11
+#### Changes since *2.2.1*:
+* feat: add deputy manager name fields to CruiseDto and update UI (#298)
+* refactor: remove toast progress bar (#297)
+* chore: update frontend dependencies (#296)
+* fix: update SPUB tasks section tests to use dropdown for task name input
+* feat: add standard SPUB tasks dropdown to Form A (#294)
+* feat: prevent accidental selection of the past dates (#289)
+* feat: add staging-otel docker compose configuration for backend and frontend services
+* fix: correct formatting of ConnectionStrings__Database in docker compose file
+* feat(grafana): add Grafana service with datasource and dashboard provisioning for Komodo env
+* fix: remove expired Yarn GPG key to restore docker-in-docker functionality
+* fix: prevent duplicate email conflicts in user management (#288)
+* refactor(ui): revert one Tabs to before base-ui
+* chore: update dependencies and swap last react-toast import
+* fix: add migration to fix prod db state (#287)
+* fix(slider): add validation for period input and synchronize clamped values with form state
+* fix: ensure DOTNET_SYSTEM_GLOBALIZATION_INVARIANT is set for consistent behavior (#281)
+* refactor(ui): implement partial headless component architecture (#277)
+* fix: generated password always passes validation rules (#279)
+* chore: change playwright locators to use more data-testid (#276)
+* chore: update (almost) all dependencies to latest version (#271)
+* feat(ci/cd): update and streamline workflows (#270)
+* feat: add additional button for admins for initializing password change process (#268)
+* fix: enable saving drafts by making section 7 columns nullable and fixing validation, ministerialPoints type, and entity Equals method (#265)
+* feat(FormB): add csv parsing in section 13 (#262)
+* feat(ci/cd): add/update CI/CD pipeline configuration for self hosted Komo.do staging deployment (#266)
+
 ## 2.2.1 - 2025-11-23
 #### Changes since *2.2.0*:
 * fix: removed 2nd scroll in sort/filter dropdown + reduced max-height of this scrollable box
