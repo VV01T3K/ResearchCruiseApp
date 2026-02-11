@@ -20,6 +20,11 @@ internal class CruiseDtosFactory(
         cruiseDto.MainCruiseManagerFirstName = mainCruiseManager?.FirstName ?? string.Empty;
         cruiseDto.MainCruiseManagerLastName = mainCruiseManager?.LastName ?? string.Empty;
 
+        var mainDeputyManager = await identityService.GetUserDtoById(cruise.MainDeputyManagerId);
+
+        cruiseDto.MainDeputyManagerFirstName = mainDeputyManager?.FirstName ?? string.Empty;
+        cruiseDto.MainDeputyManagerLastName = mainDeputyManager?.LastName ?? string.Empty;
+
         cruiseDto.CruiseApplicationsShortInfo = cruise
             .CruiseApplications.Select(cruiseApplicationShortInfoDtosFactory.Create)
             .ToList();
