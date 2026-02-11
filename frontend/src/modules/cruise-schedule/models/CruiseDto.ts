@@ -17,6 +17,8 @@ export type CruiseDto = {
   mainCruiseManagerFirstName: string;
   mainCruiseManagerLastName: string;
   mainDeputyManagerId: string;
+  mainDeputyManagerFirstName: string;
+  mainDeputyManagerLastName: string;
   cruiseApplicationsShortInfo: CruiseApplicationShortInfoDto[];
   status: CruiseStatus;
   title?: string;
