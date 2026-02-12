@@ -8,6 +8,7 @@ import packageJson from 'package.json';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLink } from '@/core/components/AppLink';
+import { SessionTimer } from '@/core/components/SessionTimer';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 
 export function AppNavbar() {
@@ -72,20 +73,24 @@ export function AppNavbar() {
         <AnimatePresence>
           {userContext.currentUser && (
             <motion.div
-              className="inline-grid w-6 place-items-center"
-              whileHover={{ scale: 1.3 }}
+              className="flex items-center gap-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
             >
-              <AppButton
-                onClick={() => onSignOutButtonClicked()}
-                title="Wyloguj"
-                variant="plain"
-                className="p-0 text-white"
-              >
-                <BoxArrowRightIcon />
-              </AppButton>
+              {userContext.sessionExpirationDate && (
+                <SessionTimer expirationDate={userContext.sessionExpirationDate} onRefresh={userContext.refreshUser} />
+              )}
+              <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
+                <AppButton
+                  onClick={() => onSignOutButtonClicked()}
+                  title="Wyloguj"
+                  variant="plain"
+                  className="p-0 text-white"
+                >
+                  <BoxArrowRightIcon />
+                </AppButton>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

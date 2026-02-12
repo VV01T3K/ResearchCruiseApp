@@ -95,12 +95,13 @@ export function UserContextProvider({ children }: Props) {
   const context = React.useMemo<UserContextType>(
     () => ({
       currentUser: profileQuery.data,
+      sessionExpirationDate: authDetails?.expirationDate,
       signIn,
       signOut,
       refreshUser,
       isInRole,
     }),
-    [isInRole, profileQuery.data, refreshUser, signIn, signOut]
+    [isInRole, profileQuery.data, authDetails?.expirationDate, refreshUser, signIn, signOut]
   );
 
   React.useEffect(() => {
@@ -137,6 +138,25 @@ export function UserContextProvider({ children }: Props) {
 
     return () => clearInterval(timeoutId);
   }, [context, authDetails]);
+
+  React.useEffect(() => {
+    if (!authDetails?.expirationDate) {
+      return;
+    }
+
+    const checkExpiration = () => {
+      if (new Date() >= authDetails.expirationDate) {
+        signOut();
+      }
+    };
+
+    checkExpiration();
+
+    // Check every 5 seconds
+    const interval = setInterval(checkExpiration, 5000);
+
+    return () => clearInterval(interval);
+  }, [authDetails?.expirationDate, signOut]);
 
   return <UserContext value={context}>{children}</UserContext>;
 }

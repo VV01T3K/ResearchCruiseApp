@@ -31,7 +31,12 @@ export function useLoginMutation({ updateAuthDetails }: Props) {
       return client.post('/account/login', { email, password });
     },
     onSuccess: async ({ data }) => {
-      updateAuthDetails(data as AuthDetails);
+      const authDetails: AuthDetails = {
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        expirationDate: new Date(data.expirationDate),
+      };
+      updateAuthDetails(authDetails);
     },
     onError: () => {
       updateAuthDetails(undefined);
@@ -50,7 +55,12 @@ export function useRefreshTokenMutation({ updateAuthDetails }: Props) {
       });
     },
     onSuccess: async ({ data }) => {
-      updateAuthDetails(data as AuthDetails);
+      const authDetails: AuthDetails = {
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        expirationDate: new Date(data.expirationDate),
+      };
+      updateAuthDetails(authDetails);
     },
     onError: () => {
       updateAuthDetails(undefined);
