@@ -1,4 +1,4 @@
-import XCircleIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
+import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import ClockIcon from 'bootstrap-icons/icons/clock.svg?react';
 import React from 'react';
 
@@ -87,7 +87,7 @@ export function SessionTimer({ expirationDate, onRefresh }: Props) {
             variant="plain"
             className="ml-1 p-0 opacity-70 transition-opacity hover:opacity-100"
           >
-            <XCircleIcon className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <ArrowClockwiseIcon className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </AppButton>
         </div>
       )}

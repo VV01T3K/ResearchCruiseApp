@@ -68,14 +68,14 @@ export function UserContextProvider({ children }: Props) {
   }, [updateAuthDetails]);
 
   const refreshUser = React.useCallback(async () => {
-    setAuthDetails(getStoredAuthDetails()); // Sync state with storage in case it changed in another tab
-    if (authDetails) {
-      await refreshTokenMutateAsync(authDetails);
+    const currentAuthDetails = getStoredAuthDetails();
+    if (currentAuthDetails) {
+      await refreshTokenMutateAsync(currentAuthDetails);
       return;
     }
 
     await signOut();
-  }, [authDetails, signOut, refreshTokenMutateAsync]);
+  }, [refreshTokenMutateAsync, signOut]);
 
   const isInRole = React.useCallback(
     (allowedRoles: Role | Role[]) => {
