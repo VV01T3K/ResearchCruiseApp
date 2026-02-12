@@ -77,7 +77,7 @@ export function SessionTimer({ expirationDate, onRefresh }: Props) {
     >
       <div title="Czas wygaśnięcia sesji" className="flex items-center gap-2">
         <ClockIcon className="h-4 w-4" />
-        <span>{state.timeRemaining}</span>
+        <span className="text-md text-primary font-mono">{state.timeRemaining}</span>
       </div>
       {onRefresh && (
         <div title="Odśwież licznik sesji" className="flex items-center">
