@@ -71,7 +71,7 @@ export function FormBPage() {
 
     await form.validate('change');
 
-    if (!form.state.canSubmit) {
+    if (!form.state.isValid) {
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
       navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
       return;
