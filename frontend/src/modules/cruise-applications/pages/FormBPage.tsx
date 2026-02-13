@@ -112,6 +112,17 @@ export function FormBPage() {
   }
 
   async function handleDraftSave() {
+    const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
+    const hasCommentTooLong = cruiseDaysDetails?.some((day) => day.comment && day.comment.length > 1024);
+
+    if (hasCommentTooLong) {
+      setHasFormBeenSubmitted(true);
+      await form.validate('change');
+      toast.error('Formularz błędny w sekcji nr 13:\nUwagi nie mogą być dłuższe niż 1024 znaków');
+      navigateToFirstError(form, { cruiseDaysDetails: 13 });
+      return;
+    }
+
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     await updateMutation.mutateAsync(
       {
