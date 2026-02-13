@@ -6,15 +6,15 @@ public class PublicationDto
 
     public string Category { get; init; } = null!;
 
-    public string Doi { get; init; } = null!;
+    public string? Doi { get; init; }
 
-    public string Authors { get; init; } = null!;
+    public string? Authors { get; init; }
 
-    public string Title { get; init; } = null!;
+    public string? Title { get; init; }
 
-    public string Magazine { get; init; } = null!;
+    public string? Magazine { get; init; }
 
-    public string Year { get; init; } = null!;
+    public string? Year { get; init; }
 
     public string MinisterialPoints { get; init; } = null!;
 }

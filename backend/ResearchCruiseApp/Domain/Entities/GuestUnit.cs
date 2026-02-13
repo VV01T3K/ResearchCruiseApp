@@ -7,7 +7,7 @@ namespace ResearchCruiseApp.Domain.Entities;
 public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<GuestUnit>
 {
     [StringLength(1024)]
-    public string Name { get; init; } = null!;
+    public string? Name { get; init; }
 
     public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];
 
@@ -19,7 +19,7 @@ public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<G
 
     public override int GetHashCode()
     {
-        return Name.GetHashCode();
+        return Name?.GetHashCode() ?? 0;
     }
 
     public bool Equals(GuestUnit? other)
