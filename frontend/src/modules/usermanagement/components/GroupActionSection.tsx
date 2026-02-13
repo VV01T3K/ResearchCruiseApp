@@ -7,6 +7,8 @@ import React from 'react';
 
 import { AppAlert } from '@/core/components/AppAlert';
 import { AppButton } from '@/core/components/AppButton';
+import { toast } from '@/core/components/layout/toast';
+import { Role } from '@/core/models/Role';
 import { User } from '@/core/models/User';
 import {
   useAcceptUserMutation,
@@ -16,12 +18,13 @@ import {
 
 type Props = {
   selectedUsers: User[];
+  allUsers: User[];
 
   allowToRemoveUsers: boolean;
 
   close: () => void;
 };
-export function GroupActionSection({ selectedUsers, allowToRemoveUsers, close }: Props) {
+export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers, close }: Props) {
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
 
@@ -33,6 +36,14 @@ export function GroupActionSection({ selectedUsers, allowToRemoveUsers, close }:
   async function handleDeleteSelectedUsers() {
     if (!deletionConfirmed) {
       setDeletionConfirmed(true);
+      return;
+    }
+
+    const selectedIds = new Set(selectedUsers.map((u) => u.id));
+    const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
+    if (remainingAdmins.length === 0) {
+      toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć conajmniej jeden admin');
+      setDeletionConfirmed(false);
       return;
     }
 
