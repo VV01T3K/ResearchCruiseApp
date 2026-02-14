@@ -324,6 +324,12 @@ public class IdentityService(
         return roleManager.Roles.Select(role => role.Name).ToListAsync(cancellationToken);
     }
 
+    public async Task<int> GetUsersCountInRole(string roleName)
+    {
+        var usersInRole = await userManager.GetUsersInRoleAsync(roleName);
+        return usersInRole.Count;
+    }
+
     public async Task<Result> DeleteUser(Guid userId)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());

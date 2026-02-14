@@ -42,7 +42,7 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
     const selectedIds = new Set(selectedUsers.map((u) => u.id));
     const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
     if (remainingAdmins.length === 0) {
-      toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć conajmniej jeden admin');
+      toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin');
       setDeletionConfirmed(false);
       return;
     }

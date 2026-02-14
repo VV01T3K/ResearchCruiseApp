@@ -47,6 +47,9 @@ public interface IIdentityService
     Task<IList<string>> GetCurrentUserRoleNames();
 
     Task<List<string?>> GetAllRoleNames(CancellationToken cancellationToken);
+
+    Task<int> GetUsersCountInRole(string roleName);
+
     Task<Result> DeleteUser(Guid userId);
     Task<Result> UpdateUser(Guid userId, UpdateUserFormDto updateUserFormDto);
 }

@@ -1,4 +1,5 @@
 using MediatR;
+using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 
@@ -16,6 +17,16 @@ public class ToggleUserRoleHandler(IIdentityService identityService)
 
         if (!rolesNames.Contains(request.RoleToggleDto.RoleName))
             return Error.InvalidArgument("Rola nie istnieje");
+
+        if (
+            !request.RoleToggleDto.AddRole
+            && request.RoleToggleDto.RoleName == RoleName.Administrator
+        )
+        {
+            var adminCount = await identityService.GetUsersCountInRole(RoleName.Administrator);
+            if (adminCount <= 1)
+                return Error.Conflict("Nie można usunąć roli ostatniego administratora");
+        }
 
         var result = request.RoleToggleDto.AddRole
             ? await identityService.AddRoleToUser(request.UserId, request.RoleToggleDto.RoleName)
