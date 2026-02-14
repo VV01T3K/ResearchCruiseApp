@@ -46,7 +46,12 @@ export function FormAPage() {
       ? {
           ...formA.data,
           deputyManagerId: formA.data.deputyManagerId ?? '',
-          permissions: formA.data.permissions.map((p) => ({ ...p, scan: undefined })),
+          permissions: formA.data.permissions.map((p) => ({
+            ...p,
+            description: p.description ?? '',
+            executive: p.executive ?? '',
+            scan: undefined,
+          })),
           acceptablePeriod: formA.data.acceptablePeriod?.length === 0 ? '' : (formA.data.acceptablePeriod ?? ''),
           optimalPeriod: formA.data.optimalPeriod?.length === 0 ? '' : (formA.data.optimalPeriod ?? ''),
           precisePeriodStart: formA.data.precisePeriodStart ?? '',
@@ -59,6 +64,9 @@ export function FormAPage() {
                 : 'period',
           contracts: mapNullsToEmptyStrings(formA.data.contracts),
           researchTasks: mapNullsToEmptyStrings(formA.data.researchTasks),
+          guestTeams: mapNullsToEmptyStrings(formA.data.guestTeams),
+          publications: mapNullsToEmptyStrings(formA.data.publications),
+          spubTasks: mapNullsToEmptyStrings(formA.data.spubTasks),
         }
       : {
           id: undefined,
