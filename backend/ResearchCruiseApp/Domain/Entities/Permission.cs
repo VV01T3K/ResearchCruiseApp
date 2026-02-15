@@ -48,11 +48,7 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
 
     public override int GetHashCode()
     {
-        return Description?.GetHashCode()
-            ?? 0 + Executive?.GetHashCode()
-            ?? 0 + ScanName?.GetHashCode()
-            ?? 0 + ScanContent?.GetHashCode()
-            ?? 0;
+        return HashCode.Combine(Description, Executive, ScanName, ScanContent?.Length);
     }
 
     public bool Equals(Permission? other)

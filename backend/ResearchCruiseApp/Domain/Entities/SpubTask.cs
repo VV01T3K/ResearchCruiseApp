@@ -23,7 +23,7 @@ public class SpubTask : Entity, IEquatable<SpubTask>, IEquatableByExpression<Spu
 
     public override int GetHashCode()
     {
-        return YearFrom?.GetHashCode() ?? 0 + YearTo?.GetHashCode() ?? 0 + Name?.GetHashCode() ?? 0;
+        return HashCode.Combine(YearFrom, YearTo, Name);
     }
 
     public bool Equals(SpubTask? other)

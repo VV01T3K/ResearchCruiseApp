@@ -19,7 +19,7 @@ public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<G
 
     public override int GetHashCode()
     {
-        return Name?.GetHashCode() ?? 0;
+        return HashCode.Combine(Name);
     }
 
     public bool Equals(GuestUnit? other)

@@ -35,12 +35,7 @@ public class CruiseDayDetails
 
     public override int GetHashCode()
     {
-        return Number.GetHashCode()
-            + Hours.GetHashCode()
-            + TaskName.GetHashCode()
-            + Region.GetHashCode()
-            + Position.GetHashCode()
-            + Comment.GetHashCode();
+        return HashCode.Combine(Number, Hours, TaskName, Region, Position, Comment);
     }
 
     public bool Equals(CruiseDayDetails? other)

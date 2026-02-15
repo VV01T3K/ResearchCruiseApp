@@ -35,11 +35,7 @@ public class Publication : Entity, IEquatable<Publication>, IEquatableByExpressi
 
     public override int GetHashCode()
     {
-        return Category.GetHashCode() + Doi?.GetHashCode()
-            ?? 0 + Authors?.GetHashCode() + Title?.GetHashCode()
-            ?? 0 + Magazine?.GetHashCode()
-            ?? 0 + Year?.GetHashCode()
-            ?? 0 + MinisterialPoints.GetHashCode();
+        return HashCode.Combine(Category, Doi, Authors, Title, Magazine, Year, MinisterialPoints);
     }
 
     public bool Equals(Publication? other)

@@ -17,7 +17,7 @@ public class Port : Entity, IEquatable<Port>, IEquatableByExpression<Port>
 
     public override int GetHashCode()
     {
-        return Name.GetHashCode();
+        return HashCode.Combine(Name);
     }
 
     public bool Equals(Port? other)
