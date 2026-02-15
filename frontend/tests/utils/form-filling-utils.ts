@@ -44,8 +44,23 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       await this.page.waitForTimeout(100);
     } else if (this.variant === 'datetime-picker') {
       // for now, only day selection is supported
-      const menu = this.page.getByRole('menu');
-      await menu.getByRole('button', { name: itemText, exact: true }).click();
+      const menu = this.page.getByRole('menu').last();
+      const dayButtons = menu.getByRole('button', { name: itemText, exact: true });
+      const dayButtonsCount = await dayButtons.count();
+      let selected = false;
+
+      for (let i = 0; i < dayButtonsCount; i++) {
+        const dayButton = dayButtons.nth(i);
+        if (await dayButton.isEnabled()) {
+          await dayButton.click();
+          selected = true;
+          break;
+        }
+      }
+
+      if (!selected) {
+        throw new Error(`Could not find enabled datetime-picker day button: ${itemText}`);
+      }
       // Click on main content area to close the datetime picker (triggers useOutsideClickDetection)
       await this.page.getByTestId('main-content').click({ position: { x: 1, y: 1 } });
       await expect(menu).toBeHidden();
