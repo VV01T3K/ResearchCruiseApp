@@ -74,7 +74,7 @@ export function AppNavbar() {
           {userContext.currentUser && (
             <motion.div className="flex items-center gap-4" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
               {userContext.sessionExpirationDate && (
-                <SessionStatusBadge expirationDate={userContext.sessionExpirationDate} />
+                <SessionStatusBadge expirationDate={userContext.sessionExpirationDate} onRefresh={userContext.refreshUser} />
               )}
               <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
                 <AppButton

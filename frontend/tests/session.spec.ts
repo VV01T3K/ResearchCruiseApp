@@ -133,4 +133,26 @@ test.describe('session expiration and refresh', () => {
     // Session badge should disappear as sessionExpirationDate becomes undefined
     await expect(badge).toBeHidden({ timeout: 10_000 });
   });
+
+  test('manual refresh button calls refresh endpoint and extends session', async ({ page }) => {
+    const extendedAuth = getAuthDetailsPayloadMs(24 * 60 * 60 * 1000);
+    await setupAuthMocks(page, {
+      refreshResponse: { status: 200, body: extendedAuth },
+    });
+
+    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
+
+    const refreshBtn = page.getByTestId('session-refresh-btn');
+    await expect(refreshBtn).toBeVisible();
+
+    const refreshPromise = page.waitForRequest(
+      (req) => req.url().includes('/account/refresh') && req.method() === 'POST'
+    );
+
+    await refreshBtn.click();
+    const refreshRequest = await refreshPromise;
+    const body = refreshRequest.postDataJSON();
+    expect(body).toHaveProperty('accessToken');
+    expect(body).toHaveProperty('refreshToken');
+  });
 });

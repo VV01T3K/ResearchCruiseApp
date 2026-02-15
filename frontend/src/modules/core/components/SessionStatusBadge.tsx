@@ -1,8 +1,10 @@
+import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import ClockIcon from 'bootstrap-icons/icons/clock.svg?react';
 import React from 'react';
 
 type Props = {
   expirationDate: Date;
+  onRefresh: () => Promise<void>;
 };
 
 function getRemainingMs(expirationDate: Date): number {
@@ -28,8 +30,9 @@ function formatTimeRemaining(remainingMs: number): string {
   return `Sesja: ${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-export function SessionStatusBadge({ expirationDate }: Props) {
+export function SessionStatusBadge({ expirationDate, onRefresh }: Props) {
   const [nowTs, setNowTs] = React.useState(() => Date.now());
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
 
   React.useEffect(() => {
     const remainingMs = expirationDate.getTime() - nowTs;
@@ -42,6 +45,15 @@ export function SessionStatusBadge({ expirationDate }: Props) {
 
     return () => clearTimeout(timeoutId);
   }, [expirationDate, nowTs]);
+
+  async function handleRefresh() {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([onRefresh(), new Promise((r) => setTimeout(r, 600))]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }
 
   const remainingMs = getRemainingMs(expirationDate);
   const isWarning = remainingMs <= 1000 * 60 * 5;
@@ -58,6 +70,18 @@ export function SessionStatusBadge({ expirationDate }: Props) {
       <span data-testid="session-status-value" className="font-mono">
         {formatTimeRemaining(remainingMs)}
       </span>
+      <button
+        data-testid="session-refresh-btn"
+        title="Odśwież sesję"
+        onClick={handleRefresh}
+        disabled={isRefreshing}
+        className="hover:opacity-70 disabled:opacity-40"
+      >
+        <ArrowClockwiseIcon
+          className="h-4 w-4"
+          style={isRefreshing ? { animation: 'spin 0.5s linear infinite' } : undefined}
+        />
+      </button>
     </div>
   );
 }
