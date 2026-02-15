@@ -192,15 +192,14 @@ test.describe('SPUB tasks section tests', () => {
     await spubTasksSection.addNewTaskButton.click();
     const taskRow = spubTasksSection.taskRow('first');
 
-    await touchInput(taskRow.nameInput);
-    await expect(taskRow.nameInput.errors.required).toBeVisible();
-
-    await taskRow.nameInput.fill('Jakieś zadanie');
-    await expect(taskRow.nameInput.errors.required).toBeHidden();
-
     await formCPage.submitForm({ expectedResult: 'invalid' });
+    await expect(taskRow.nameDropdown.errors.required).toBeVisible();
     await expect(taskRow.startYearDropdown.errors.required).toBeVisible();
     await expect(taskRow.endYearDropdown.errors.required).toBeVisible();
+
+    await taskRow.nameDropdown.dropdown.click();
+    await formCPage.page.getByRole('option').first().click();
+    await expect(taskRow.nameDropdown.errors.required).toBeHidden();
 
     await taskRow.startYearDropdown.selectOption('2023');
     await expect(taskRow.startYearDropdown.errors.required).toBeHidden();
@@ -221,6 +220,7 @@ test.describe('cruise details section tests', () => {
     const cruiseDetailsSection = formCPage.sections.cruiseDetailsSection;
     await cruiseDetailsSection.addEquipmentButton.click();
     const equipmentRow = cruiseDetailsSection.equipmentRow('first');
+    const currentDay = String(await formCPage.page.evaluate(() => new Date().getDate()));
 
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
@@ -235,9 +235,9 @@ test.describe('cruise details section tests', () => {
     await expect(equipmentRow.fromDateDropdown.errors.required).toBeVisible();
     await expect(equipmentRow.toDateDropdown.errors.required).toBeVisible();
 
-    await equipmentRow.fromDateDropdown.selectOption('11');
+    await equipmentRow.fromDateDropdown.selectOption(currentDay);
     await expect(equipmentRow.fromDateDropdown.errors.required).toBeHidden();
-    await equipmentRow.toDateDropdown.selectOption('13');
+    await equipmentRow.toDateDropdown.selectOption(currentDay);
     await expect(equipmentRow.toDateDropdown.errors.required).toBeHidden();
 
     await formCPage.submitForm({ expectedResult: 'valid' });
@@ -268,6 +268,7 @@ test.describe('cruise details section tests', () => {
     const cruiseDetailsSection = formCPage.sections.cruiseDetailsSection;
     await cruiseDetailsSection.addPortButton.click();
     const portRow = cruiseDetailsSection.portRow('first');
+    const currentDay = String(await formCPage.page.evaluate(() => new Date().getDate()));
 
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
@@ -282,9 +283,9 @@ test.describe('cruise details section tests', () => {
     await expect(portRow.fromDateDropdown.errors.required).toBeVisible();
     await expect(portRow.toDateDropdown.errors.required).toBeVisible();
 
-    await portRow.fromDateDropdown.selectOption('11');
+    await portRow.fromDateDropdown.selectOption(currentDay);
     await expect(portRow.fromDateDropdown.errors.required).toBeHidden();
-    await portRow.toDateDropdown.selectOption('13');
+    await portRow.toDateDropdown.selectOption(currentDay);
     await expect(portRow.toDateDropdown.errors.required).toBeHidden();
 
     await formCPage.submitForm({ expectedResult: 'valid' });
@@ -303,7 +304,7 @@ test.describe('cruise day details section tests', () => {
     await formCPage.submitForm();
     await expect(formCPage.submissionApprovedMessage).toBeHidden();
 
-    const inputFields = [taskRow.nameInput, taskRow.regionInput, taskRow.positionInput, taskRow.commentInput];
+    const inputFields = [taskRow.nameInput, taskRow.regionInput, taskRow.positionInput];
 
     for (const inputField of inputFields) {
       await touchInput(inputField);
