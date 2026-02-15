@@ -50,6 +50,8 @@ export function SessionStatusBadge({ expirationDate, onRefresh }: Props) {
     setIsRefreshing(true);
     try {
       await Promise.all([onRefresh(), new Promise((r) => setTimeout(r, 600))]);
+    } catch {
+      // Refresh failure is handled upstream (e.g. provider sign-out flow).
     } finally {
       setIsRefreshing(false);
     }
