@@ -53,19 +53,23 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
 
     public override int GetHashCode()
     {
-        return Type.GetHashCode() + Title?.GetHashCode()
-            ?? 0 + Magazine?.GetHashCode()
-            ?? 0 + Author?.GetHashCode()
-            ?? 0 + Institution?.GetHashCode()
-            ?? 0 + Date?.GetHashCode()
-            ?? 0 + StartDate?.GetHashCode()
-            ?? 0 + EndDate?.GetHashCode()
-            ?? 0 + FinancingAmount?.GetHashCode()
-            ?? 0 + Description?.GetHashCode()
-            ?? 0 + FinancingApproved?.GetHashCode()
-            ?? 0 + SecuredAmount?.GetHashCode()
-            ?? 0 + MinisterialPoints?.GetHashCode()
-            ?? 0;
+        return HashCode.Combine(
+            Type,
+            Title,
+            Magazine,
+            Author,
+            Institution,
+            Date,
+            StartDate,
+            HashCode.Combine(
+                EndDate,
+                FinancingAmount,
+                Description,
+                FinancingApproved,
+                SecuredAmount,
+                MinisterialPoints
+            )
+        );
     }
 
     public bool Equals(ResearchTask? other)

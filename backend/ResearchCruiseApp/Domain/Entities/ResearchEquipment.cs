@@ -28,7 +28,7 @@ public class ResearchEquipment
 
     public override int GetHashCode()
     {
-        return Name.GetHashCode();
+        return HashCode.Combine(Name);
     }
 
     public bool Equals(ResearchEquipment? other)

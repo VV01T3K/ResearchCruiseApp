@@ -151,15 +151,17 @@ export function FormASPUBTasksSection() {
                   </AppButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
-                    options={initValues.historicalSpubTasks.map((task) => ({
-                      value: JSON.stringify(task),
-                      content: `${task.name} (${task.yearFrom} - ${task.yearTo})`,
-                      onClick: () => {
-                        field.pushValue(task);
-                        field.handleChange((prev: SpubTaskDto[]) => prev);
-                        field.handleBlur();
-                      },
-                    }))}
+                    options={initValues.historicalSpubTasks
+                      .filter((task) => task.name && task.yearFrom && task.yearTo) // dont show options with empty fields
+                      .map((task) => ({
+                        value: JSON.stringify(task),
+                        content: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,
+                        onClick: () => {
+                          field.pushValue(task);
+                          field.handleChange((prev: SpubTaskDto[]) => prev);
+                          field.handleBlur();
+                        },
+                      }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
                     data-testid="form-a-add-historical-spub-task-btn"

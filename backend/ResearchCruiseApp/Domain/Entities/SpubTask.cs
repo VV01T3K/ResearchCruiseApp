@@ -7,13 +7,13 @@ namespace ResearchCruiseApp.Domain.Entities;
 public class SpubTask : Entity, IEquatable<SpubTask>, IEquatableByExpression<SpubTask>
 {
     [StringLength(1024)]
-    public string Name { get; init; } = null!;
+    public string? Name { get; init; }
 
     [StringLength(1024)]
-    public string YearFrom { get; init; } = null!;
+    public string? YearFrom { get; init; }
 
     [StringLength(1024)]
-    public string YearTo { get; init; } = null!;
+    public string? YearTo { get; init; }
 
     public List<FormASpubTask> FormASpubTasks { get; init; } = [];
 
@@ -23,7 +23,7 @@ public class SpubTask : Entity, IEquatable<SpubTask>, IEquatableByExpression<Spu
 
     public override int GetHashCode()
     {
-        return YearFrom.GetHashCode() + YearTo.GetHashCode() + Name.GetHashCode();
+        return HashCode.Combine(YearFrom, YearTo, Name);
     }
 
     public bool Equals(SpubTask? other)

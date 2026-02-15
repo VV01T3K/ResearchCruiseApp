@@ -31,16 +31,21 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
 
     public override int GetHashCode()
     {
-        var hashCode =
-            Category.GetHashCode() + InstitutionName?.GetHashCode()
-            ?? 0 + InstitutionUnit?.GetHashCode()
-            ?? 0 + InstitutionLocalization?.GetHashCode()
-            ?? 0 + Description?.GetHashCode()
-            ?? 0;
-
-        foreach (var file in Files)
+        var hashCode = HashCode.Combine(
+            Category,
+            InstitutionName,
+            InstitutionUnit,
+            InstitutionLocalization,
+            Description
+        );
+        if (Files != null)
         {
-            hashCode += file.FileName!.GetHashCode() + file.FileContent!.GetHashCode();
+            var sortedFiles = Files.OrderBy(f => f.FileName).ToList();
+
+            foreach (var file in sortedFiles)
+            {
+                hashCode = HashCode.Combine(hashCode, file.FileName, file.FileContent?.Length);
+            }
         }
 
         return hashCode;

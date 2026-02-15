@@ -94,10 +94,11 @@ export function getErrors(field: AnyFieldMeta, hasFormBeenSubmitted: boolean = t
     : field.errors.map(extractErrorMessage);
 }
 
-function scrollToError(delay: number = 0): void {
+function scrollToError(delay: number = 0, fallbackElement?: Element | null): void {
   const scroll = () => {
     const errorElement = document.querySelector('[data-error="true"]');
-    errorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const targetElement = errorElement ?? fallbackElement;
+    targetElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   if (delay > 0) {
@@ -114,21 +115,24 @@ export function navigateToFirstError(
 ): void {
   const firstError = form ? getFirstFormError(form, fieldToSectionMapping) : null;
   const sectionNumber = firstError?.sectionNumber;
+  const fieldElement =
+    firstError?.fieldName !== undefined ? document.getElementsByName(firstError.fieldName).item(0) : null;
 
   // Find and expand the accordion section containing the error
-  const accordionButtons = Array.from(document.querySelectorAll('h2 button'));
+  const accordionButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('h2 button'));
   const targetButton = accordionButtons.find((button) => {
     const title = button.querySelector('span')?.textContent || '';
     return title.includes(`${sectionNumber}.`);
   });
 
   const isExpanded = targetButton?.hasAttribute('data-panel-open');
+  const fallbackElement = fieldElement ?? targetButton;
 
-  if (!isExpanded) {
-    (targetButton as HTMLButtonElement).click();
-    scrollToError(50);
+  if (targetButton instanceof HTMLButtonElement && !isExpanded) {
+    targetButton.click();
+    scrollToError(150, fallbackElement);
   } else {
-    scrollToError();
+    scrollToError(0, fallbackElement);
   }
 }
 

@@ -10,10 +10,10 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
     private byte[]? _scanContent;
 
     [StringLength(10240)]
-    public string Description { get; init; } = null!;
+    public string? Description { get; init; }
 
     [StringLength(1024)]
-    public string Executive { get; init; } = null!;
+    public string? Executive { get; init; }
 
     [StringLength(1024)]
     public string? ScanName
@@ -48,9 +48,7 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
 
     public override int GetHashCode()
     {
-        return Description.GetHashCode() + Executive.GetHashCode() + ScanName?.GetHashCode()
-            ?? 0 + ScanContent?.GetHashCode()
-            ?? 0;
+        return HashCode.Combine(Description, Executive, ScanName, ScanContent?.Length);
     }
 
     public bool Equals(Permission? other)
