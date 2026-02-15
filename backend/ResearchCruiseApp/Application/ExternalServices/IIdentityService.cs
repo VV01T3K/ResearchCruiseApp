@@ -40,13 +40,22 @@ public interface IIdentityService
 
     Task<Result> AddRoleToUser(Guid userId, string roleName);
 
-    Task<Result> RemoveRoleFromUser(Guid userId, string roleName);
+    Task<Result> RemoveRoleFromUser(
+        Guid userId,
+        string roleName,
+        CancellationToken cancellationToken = default
+    );
 
     Task<IList<string>> GetUserRolesNames(Guid userId);
 
     Task<IList<string>> GetCurrentUserRoleNames();
 
     Task<List<string?>> GetAllRoleNames(CancellationToken cancellationToken);
-    Task<Result> DeleteUser(Guid userId);
-    Task<Result> UpdateUser(Guid userId, UpdateUserFormDto updateUserFormDto);
+
+    Task<Result> DeleteUser(Guid userId, CancellationToken cancellationToken = default);
+    Task<Result> UpdateUser(
+        Guid userId,
+        UpdateUserFormDto updateUserFormDto,
+        CancellationToken cancellationToken = default
+    );
 }
