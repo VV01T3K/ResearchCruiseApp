@@ -178,6 +178,7 @@ public class FormAInitValuesDtosFactory(
                     formAGuestUnit.GuestUnit.Name
                 ) ?? []
             )
+            .OfType<string>()
             .Distinct()
             .ToList();
 
