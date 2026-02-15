@@ -46,28 +46,32 @@ export function SessionTimer({ expirationDate, onRefresh }: Props) {
     isWarning: false,
   });
 
-  const updateTimer = React.useCallback(() => {
-    const now = new Date();
-    const expiryTime = expirationDate instanceof Date ? expirationDate.getTime() : new Date(expirationDate).getTime();
-    const diff = expiryTime - now.getTime();
-
-    if (diff <= 0) {
-      dispatch({ type: 'EXPIRED' });
-      return;
-    }
-
-    const minutes = Math.floor(diff / 1000 / 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-
-    dispatch({ type: 'UPDATE', minutes, seconds });
-  }, [expirationDate]);
+  const expirationDateRef = React.useRef(expirationDate);
+  expirationDateRef.current = expirationDate;
 
   React.useEffect(() => {
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
+    const tick = () => {
+      const now = new Date();
+      const expDate = expirationDateRef.current;
+      const expiryTime = expDate instanceof Date ? expDate.getTime() : new Date(expDate).getTime();
+      const diff = expiryTime - now.getTime();
+
+      if (diff <= 0) {
+        dispatch({ type: 'EXPIRED' });
+        return;
+      }
+
+      const minutes = Math.floor(diff / 1000 / 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      dispatch({ type: 'UPDATE', minutes, seconds });
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
 
     return () => clearInterval(interval);
-  }, [updateTimer]);
+  }, []);
 
   return (
     <div
