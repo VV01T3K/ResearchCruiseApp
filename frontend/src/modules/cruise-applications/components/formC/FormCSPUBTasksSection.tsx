@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
 import { AppButton } from '@/core/components/AppButton';
-import { AppInput } from '@/core/components/inputs/AppInput';
+import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppYearPickerInput } from '@/core/components/inputs/dates/AppYearPickerInput';
 import { AppInputErrorsList } from '@/core/components/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/core/components/table/AppTable';
@@ -84,12 +84,16 @@ export function FormCSPUBTasksSection() {
           <form.Field
             name={`spubTasks[${row.index}].name`}
             children={(field) => (
-              <AppInput
+              <AppDropdownInput
                 name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
+                value={field.state.value as string}
+                onChange={(e) => field.handleChange(e as string)}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                allOptions={formAInitValues?.standardSpubTasks.map((taskName) => ({
+                  value: taskName,
+                  inlineLabel: taskName,
+                }))}
                 disabled={isReadonly}
               />
             )}
