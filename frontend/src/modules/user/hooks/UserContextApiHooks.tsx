@@ -9,6 +9,29 @@ type Props = {
   updateAuthDetails: (newAuthDetails: AuthDetails | undefined) => Promise<void>;
 };
 
+type AuthDetailsResponse = {
+  accessToken?: unknown;
+  refreshToken?: unknown;
+  expirationDate?: unknown;
+};
+
+function parseAuthDetails(data: AuthDetailsResponse): AuthDetails | undefined {
+  if (typeof data.accessToken !== 'string' || typeof data.refreshToken !== 'string') {
+    return undefined;
+  }
+
+  const expirationDate = new Date(String(data.expirationDate ?? ''));
+  if (!Number.isFinite(expirationDate.getTime())) {
+    return undefined;
+  }
+
+  return {
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    expirationDate,
+  };
+}
+
 /* Returns NULL when no access token has been set or profile couldn't be fetched  */
 export function useProfileQuery() {
   return useSuspenseQuery({
@@ -31,12 +54,8 @@ export function useLoginMutation({ updateAuthDetails }: Props) {
       return client.post('/account/login', { email, password });
     },
     onSuccess: async ({ data }) => {
-      const authDetails: AuthDetails = {
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        expirationDate: new Date(data.expirationDate),
-      };
-      updateAuthDetails(authDetails);
+      const authDetails = parseAuthDetails(data as AuthDetailsResponse);
+      await updateAuthDetails(authDetails);
     },
     onError: () => {
       updateAuthDetails(undefined);
@@ -55,12 +74,8 @@ export function useRefreshTokenMutation({ updateAuthDetails }: Props) {
       });
     },
     onSuccess: async ({ data }) => {
-      const authDetails: AuthDetails = {
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        expirationDate: new Date(data.expirationDate),
-      };
-      updateAuthDetails(authDetails);
+      const authDetails = parseAuthDetails(data as AuthDetailsResponse);
+      await updateAuthDetails(authDetails);
     },
     onError: () => {
       updateAuthDetails(undefined);

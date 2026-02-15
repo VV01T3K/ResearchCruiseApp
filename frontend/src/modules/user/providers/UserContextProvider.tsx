@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import React from 'react';
 
+import { toast } from '@/core/components/layout/toast';
 import { client, setAuthToken } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
 import { UserContext, UserContextType } from '@/user/contexts/UserContext';
@@ -13,12 +14,19 @@ import { getStoredAuthDetails, setStoredAuthDetails } from '@/user/services/Stor
 type Props = {
   children: React.ReactNode;
 };
+
+function getRefreshLeadTimeMs(remainingMs: number): number {
+  return Math.min(1000 * 60 * 2, Math.max(15000, Math.floor(remainingMs * 0.2)));
+}
+
 export function UserContextProvider({ children }: Props) {
   const queryClient = useQueryClient();
 
   const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(() => getStoredAuthDetails());
   setAuthToken(authDetails);
   const profileQuery = useProfileQuery();
+
+  const refreshInFlightRef = React.useRef<Promise<unknown> | null>(null);
 
   const updateAuthDetails = React.useCallback(
     async (newAuthDetails: AuthDetails | undefined) => {
@@ -68,13 +76,23 @@ export function UserContextProvider({ children }: Props) {
   }, [updateAuthDetails]);
 
   const refreshUser = React.useCallback(async () => {
-    const currentAuthDetails = getStoredAuthDetails();
-    if (currentAuthDetails) {
-      await refreshTokenMutateAsync(currentAuthDetails);
+    if (refreshInFlightRef.current) {
+      await refreshInFlightRef.current;
       return;
     }
 
-    await signOut();
+    const currentAuthDetails = getStoredAuthDetails();
+    if (!currentAuthDetails) {
+      await signOut();
+      return;
+    }
+
+    const refreshPromise = refreshTokenMutateAsync(currentAuthDetails).finally(() => {
+      refreshInFlightRef.current = null;
+    });
+
+    refreshInFlightRef.current = refreshPromise;
+    await refreshPromise;
   }, [refreshTokenMutateAsync, signOut]);
 
   const isInRole = React.useCallback(
@@ -101,7 +119,7 @@ export function UserContextProvider({ children }: Props) {
       refreshUser,
       isInRole,
     }),
-    [isInRole, profileQuery.data, authDetails?.expirationDate, refreshUser, signIn, signOut]
+    [authDetails?.expirationDate, isInRole, profileQuery.data, refreshUser, signIn, signOut]
   );
 
   React.useEffect(() => {
@@ -125,38 +143,54 @@ export function UserContextProvider({ children }: Props) {
   }, [context]);
 
   React.useEffect(() => {
-    const timeoutId = setInterval(
-      async () => {
-        if (!authDetails) {
-          return;
-        }
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== 'authDetails') {
+        return;
+      }
 
-        await context.refreshUser();
-      },
-      1000 * 60 * 30
-    );
+      setAuthDetails(getStoredAuthDetails());
+    };
 
-    return () => clearInterval(timeoutId);
-  }, [context, authDetails]);
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   React.useEffect(() => {
     if (!authDetails?.expirationDate) {
       return;
     }
 
-    const checkExpiration = () => {
-      if (new Date() >= authDetails.expirationDate) {
-        signOut();
-      }
+    const remainingMs = authDetails.expirationDate.getTime() - Date.now();
+
+    if (remainingMs <= 0) {
+      toast.error('Sesja wygasła. Zaloguj się ponownie.');
+      void signOut();
+      return;
+    }
+
+    const refreshLeadMs = getRefreshLeadTimeMs(remainingMs);
+    const refreshDelayMs = Math.max(0, remainingMs - refreshLeadMs);
+    const warningDelayMs = Math.max(0, remainingMs - 1000 * 60);
+
+    const refreshTimeoutId = setTimeout(() => {
+      void refreshUser().catch(() => undefined);
+    }, refreshDelayMs);
+
+    const warningTimeoutId = setTimeout(() => {
+      toast.error('Sesja wygaśnie za mniej niż 1 minutę.');
+    }, warningDelayMs);
+
+    const expireTimeoutId = setTimeout(() => {
+      toast.error('Sesja wygasła. Zaloguj się ponownie.');
+      void signOut();
+    }, remainingMs);
+
+    return () => {
+      clearTimeout(refreshTimeoutId);
+      clearTimeout(warningTimeoutId);
+      clearTimeout(expireTimeoutId);
     };
-
-    checkExpiration();
-
-    // Check every 5 seconds
-    const interval = setInterval(checkExpiration, 5000);
-
-    return () => clearInterval(interval);
-  }, [authDetails?.expirationDate, signOut]);
+  }, [authDetails?.expirationDate, refreshUser, signOut]);
 
   return <UserContext value={context}>{children}</UserContext>;
 }
