@@ -16,6 +16,7 @@ import {
   useRevertFormBToEditMutation,
   useUpdateFormBMutation,
 } from '@/cruise-applications/hooks/FormBApiHooks';
+import { CruiseDayDetailsDtoValidationSchema } from '@/cruise-applications/models/CruiseDayDetailsDto';
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
 
 export function FormBPage() {
@@ -113,7 +114,9 @@ export function FormBPage() {
 
   async function handleDraftSave() {
     const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
-    const hasCommentTooLong = cruiseDaysDetails?.some((day) => day.comment && day.comment.length > 1024);
+    const hasCommentTooLong = cruiseDaysDetails?.some(
+      (day) => !CruiseDayDetailsDtoValidationSchema.shape.comment.safeParse(day.comment).success
+    );
 
     if (hasCommentTooLong) {
       setHasFormBeenSubmitted(true);
