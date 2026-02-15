@@ -21,7 +21,8 @@ public class ToggleUserRoleHandler(IIdentityService identityService)
             ? await identityService.AddRoleToUser(request.UserId, request.RoleToggleDto.RoleName)
             : await identityService.RemoveRoleFromUser(
                 request.UserId,
-                request.RoleToggleDto.RoleName
+                request.RoleToggleDto.RoleName,
+                cancellationToken
             );
 
         return result;

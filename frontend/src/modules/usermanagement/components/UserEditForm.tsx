@@ -137,6 +137,14 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
       setDeletionConfirmed(true);
       return;
     }
+
+    const remainingAdmins = allUsers.filter((u) => u.id !== user.id && u.roles.includes(Role.Administrator));
+    if (remainingAdmins.length === 0) {
+      toast.error('Musi istnieć co najmniej jeden admin');
+      setDeletionConfirmed(false);
+      return;
+    }
+
     const loading = toast.loading('Usuwanie użytkownika...');
     try {
       await deleteUserMutation.mutateAsync(user.id);

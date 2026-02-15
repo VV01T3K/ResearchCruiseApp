@@ -17,8 +17,10 @@ public class UpdateUserCommandHandler(IIdentityService identityService)
         )
             return Error.InvalidArgument("Rola nie istnieje");
 
-        var result = await identityService.UpdateUser(request.UserId, request.UpdateUserFormDto);
-
-        return result;
+        return await identityService.UpdateUser(
+            request.UserId,
+            request.UpdateUserFormDto,
+            cancellationToken
+        );
     }
 }
