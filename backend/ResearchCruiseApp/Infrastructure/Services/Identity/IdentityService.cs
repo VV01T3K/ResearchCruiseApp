@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NeoSmart.Utils;
+using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
+using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.Account;
 using ResearchCruiseApp.Application.Models.DTOs.Users;
@@ -22,7 +24,8 @@ public class IdentityService(
     IRandomGenerator randomGenerator,
     ICurrentUserService currentUserService,
     IMapper mapper,
-    IConfiguration configuration
+    IConfiguration configuration,
+    IUnitOfWork unitOfWork
 ) : IIdentityService
 {
     public async Task<UserDto?> GetUserDtoById(Guid id)
@@ -287,14 +290,21 @@ public class IdentityService(
         return result.ToApplicationResult();
     }
 
-    public async Task<Result> RemoveRoleFromUser(Guid userId, string roleName)
+    public async Task<Result> RemoveRoleFromUser(
+        Guid userId,
+        string roleName,
+        CancellationToken cancellationToken = default
+    )
     {
-        var user = await userManager.FindByIdAsync(userId.ToString());
-        if (user is null)
-            return Error.ResourceNotFound();
+        if (roleName != RoleName.Administrator)
+            return await RemoveRoleFromUserCore(userId, roleName);
 
-        var result = await userManager.RemoveFromRoleAsync(user, roleName);
-        return result.ToApplicationResult();
+        return await ExecuteAdminInvariantGuarded(
+            userId,
+            "Nie można usunąć roli ostatniego administratora",
+            () => RemoveRoleFromUserCore(userId, roleName),
+            cancellationToken
+        );
     }
 
     public async Task<IList<string>> GetUserRolesNames(Guid userId)
@@ -324,13 +334,48 @@ public class IdentityService(
         return roleManager.Roles.Select(role => role.Name).ToListAsync(cancellationToken);
     }
 
-    public async Task<int> GetUsersCountInRole(string roleName)
+    public async Task<Result> DeleteUser(Guid userId, CancellationToken cancellationToken = default)
     {
-        var usersInRole = await userManager.GetUsersInRoleAsync(roleName);
-        return usersInRole.Count;
+        var userRoles = await GetUserRolesNames(userId);
+        if (!userRoles.Contains(RoleName.Administrator))
+            return await DeleteUserCore(userId);
+
+        return await ExecuteAdminInvariantGuarded(
+            userId,
+            "Nie można usunąć ostatniego administratora",
+            () => DeleteUserCore(userId),
+            cancellationToken
+        );
     }
 
-    public async Task<Result> DeleteUser(Guid userId)
+    public async Task<Result> UpdateUser(
+        Guid userId,
+        UpdateUserFormDto updateUserFormDto,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (updateUserFormDto.Role is null || updateUserFormDto.Role == RoleName.Administrator)
+            return await UpdateUserCore(userId, updateUserFormDto);
+
+        return await ExecuteAdminInvariantGuarded(
+            userId,
+            "Nie można zmienić roli ostatniego administratora",
+            () => UpdateUserCore(userId, updateUserFormDto),
+            cancellationToken
+        );
+    }
+
+    private async Task<Result> RemoveRoleFromUserCore(Guid userId, string roleName)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var result = await userManager.RemoveFromRoleAsync(user, roleName);
+        return result.ToApplicationResult();
+    }
+
+    private async Task<Result> DeleteUserCore(Guid userId)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
@@ -341,7 +386,37 @@ public class IdentityService(
         return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
     }
 
-    public async Task<Result> UpdateUser(Guid userId, UpdateUserFormDto updateUserFormDto)
+    private async Task<int> GetUsersCountInRole(string roleName)
+    {
+        var usersInRole = await userManager.GetUsersInRoleAsync(roleName);
+        return usersInRole.Count;
+    }
+
+    private async Task<Result> ExecuteAdminInvariantGuarded(
+        Guid userId,
+        string conflictMessage,
+        Func<Task<Result>> mutation,
+        CancellationToken cancellationToken
+    )
+    {
+        return await unitOfWork.ExecuteIsolated(
+            async () =>
+            {
+                var userRoles = await GetUserRolesNames(userId);
+                if (userRoles.Contains(RoleName.Administrator))
+                {
+                    var adminCount = await GetUsersCountInRole(RoleName.Administrator);
+                    if (adminCount <= 1)
+                        return Error.Conflict(conflictMessage);
+                }
+
+                return await mutation();
+            },
+            cancellationToken
+        );
+    }
+
+    private async Task<Result> UpdateUserCore(Guid userId, UpdateUserFormDto updateUserFormDto)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)

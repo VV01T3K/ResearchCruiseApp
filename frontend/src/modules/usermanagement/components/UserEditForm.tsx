@@ -140,7 +140,7 @@ export function UserEditForm({ user, allUsers, allowedRoles, allowToRemoveUsers,
 
     const remainingAdmins = allUsers.filter((u) => u.id !== user.id && u.roles.includes(Role.Administrator));
     if (remainingAdmins.length === 0) {
-      toast.error('Musi istnieć conajmniej jeden admin');
+      toast.error('Musi istnieć co najmniej jeden admin');
       setDeletionConfirmed(false);
       return;
     }
