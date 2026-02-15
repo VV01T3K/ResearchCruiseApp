@@ -1,4 +1,4 @@
-import BackgroundImageUrl from '@assets/background.jpg';
+import BackgroundImageUrl from '@assets/background.webp';
 import { useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 

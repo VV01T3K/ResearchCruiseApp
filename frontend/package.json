@@ -5,9 +5,9 @@
   "repository": "https://github.com/VV01T3K/ResearchCruiseApp",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsgo -b && vite build",
-    "preview": "vite preview",
+    "dev": "bun --bun vite",
+    "build": "tsc -b && bun --bun vite build",
+    "preview": "bun --bun vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "playwright test",

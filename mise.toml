@@ -29,3 +29,64 @@ experimental = true
 
 [settings.npm]
 package_manager = "bun"
+
+
+[tasks."backend:start"]
+description = "Start the backend"
+depends = ["db:wait"]
+dir = "backend"
+run = "bun run start"
+
+[tasks."db:up"]
+description = "Start the database container"
+run = "docker compose -f docker/docker-compose.infra.yml up -d db"
+
+[tasks."db:down"]
+description = "Stop the database container"
+run = "docker compose -f docker/docker-compose.infra.yml down"
+
+[tasks."db:wait"]
+description = "Wait for the database to be ready"
+depends = ["db:up"]
+run = """
+  echo 'Waiting for database...'
+  until [ "$(docker inspect --format='{% raw %}{{.State.Health.Status}}{% endraw %}' researchcruiseapp-db 2>/dev/null)" = "healthy" ]; do
+    sleep 1
+  done
+  echo 'Database is ready'
+"""
+
+[tasks."db:del"]
+description = "Delete the database volume and admin log"
+depends = ["db:down"]
+run = """
+  docker volume rm researchcruiseapp_researchcruiseapp-db 2>/dev/null || true
+  rm -f admin.log
+"""
+
+[tasks."admin:password"]
+description = "Reset database and capture admin password"
+depends = ["db:del"]
+run = '''
+  mise run db:wait
+  fifo=$(mktemp -u)
+  mkfifo "$fifo"
+  trap 'rm -f "$fifo"' EXIT
+  mise run backend:start > "$fifo" 2>&1 &
+  pid=$!
+  while IFS= read -r line; do
+    echo "$line"
+    if echo "$line" | grep -qi admin; then
+      email=$(echo "$line" | grep -oP '[\w.+-]+@[\w.-]+')
+      pass=$(echo "$line" | grep -oP '(?<=- ).*')
+      printf 'Email:\n%s\nPassword:\n%s\n' "$email" "$pass" > admin.log
+      echo 'Admin password info saved to admin.log'
+      kill $pid 2>/dev/null
+      break
+    fi
+  done < "$fifo"
+'''
+
+[tasks."admin"]
+description = "Alias for Reset database and capture admin password"
+depends = ["admin:password"]
