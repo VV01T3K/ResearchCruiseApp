@@ -99,9 +99,9 @@ run = '''
   trap 'cleanup 129' HUP
   trap 'cleanup 131' QUIT
   if command -v setsid >/dev/null 2>&1; then
-    setsid mise run backend:start > "$fifo" 2>&1 &
+    setsid sh -c 'cd backend && ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://127.0.0.1:0 dotnet run --no-launch-profile --project ResearchCruiseApp' > "$fifo" 2>&1 &
   else
-    mise run backend:start > "$fifo" 2>&1 &
+    sh -c 'cd backend && ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://127.0.0.1:0 dotnet run --no-launch-profile --project ResearchCruiseApp' > "$fifo" 2>&1 &
   fi
   pid=$!
   while IFS= read -r line; do
