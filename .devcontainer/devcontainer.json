@@ -43,5 +43,5 @@
 			]
 		}
 	},
-	"onCreateCommand": "(rm .mise-setup-done || true) && mise trust && mise install && (cd frontend && bun install)"
+	"onCreateCommand": "(rm .mise-setup-done || true) && mise trust && mise install && (cd frontend && mise exec bun@latest -- bun install)"
 }
