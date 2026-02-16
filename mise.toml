@@ -67,26 +67,42 @@ run = """
 [tasks."admin:password"]
 description = "Reset database and capture admin password"
 depends = ["db:del"]
+alias = "admin"
 run = '''
   mise run db:wait
   fifo=$(mktemp -u)
   mkfifo "$fifo"
-  trap 'rm -f "$fifo"' EXIT
-  mise run backend:start > "$fifo" 2>&1 &
+  cleanup() {
+    status=${1:-$?}
+    trap - EXIT INT TERM HUP QUIT
+    if [ -n "${pid:-}" ] && kill -0 "$pid" 2>/dev/null; then
+      kill -TERM -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
+      wait "$pid" 2>/dev/null || true
+    fi
+    rm -f "$fifo"
+    exit "$status"
+  }
+  trap 'cleanup' EXIT
+  trap 'cleanup 130' INT
+  trap 'cleanup 143' TERM
+  trap 'cleanup 129' HUP
+  trap 'cleanup 131' QUIT
+  if command -v setsid >/dev/null 2>&1; then
+    setsid mise run backend:start > "$fifo" 2>&1 &
+  else
+    mise run backend:start > "$fifo" 2>&1 &
+  fi
   pid=$!
   while IFS= read -r line; do
     echo "$line"
     if echo "$line" | grep -qi admin; then
       email=$(echo "$line" | grep -oP '[\w.+-]+@[\w.-]+')
       pass=$(echo "$line" | grep -oP '(?<=- ).*')
-      printf 'Email:\n%s\nPassword:\n%s\n' "$email" "$pass" > admin.log
+      printf 'Email:\n%s\nPassword:\n%s' "$email" "$pass" > admin.log
       echo 'Admin password info saved to admin.log'
-      kill $pid 2>/dev/null
+      kill -TERM -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
+      wait "$pid" 2>/dev/null || true
       break
     fi
   done < "$fifo"
 '''
-
-[tasks."admin"]
-description = "Alias for Reset database and capture admin password"
-depends = ["admin:password"]
