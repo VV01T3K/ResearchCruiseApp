@@ -15,7 +15,8 @@ preinstall = '''
   command -v node &> /dev/null || echo "Node.js is not installed. Please install Node.js to continue."
 '''
 postinstall = '''
-  (cd frontend && bun pm pkg set packageManager=bun@$(bun --version) && test -d node_modules || bun install) || true
+  (bun pm pkg set packageManager=bun@$(bun --version)) || true
+  (cd frontend && bun pm pkg set packageManager=bun@$(bun --version) && bun install) || true
   if [ ! -f .mise-setup-done ]; then
     (cd backend && dotnet restore; dotnet tool restore) || true
     (cd frontend && bunx playwright install --with-deps chromium) || true

@@ -4,5 +4,6 @@
     "dev": "bun --parallel run dev:frontend dev:backend",
     "dev:frontend": "cd frontend && bun run dev",
     "dev:backend": "cd backend && bun run dev"
-  }
+  },
+  "packageManager": "bun@1.3.9"
 }
