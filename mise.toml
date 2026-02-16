@@ -11,10 +11,27 @@ bun = "1.3.9"
 dotnet = "10.0"
 
 [hooks]
-preinstall = '''
+preinstall = "mise run preinstall"
+postinstall = "mise run postinstall"
+
+[settings]
+experimental = true
+
+[settings.npm]
+package_manager = "bun"
+
+
+[tasks."preinstall"]
+description = "Check for required tools before installation"
+run = '''
   command -v node &> /dev/null || echo "Node.js is not installed. Please install Node.js to continue."
 '''
-postinstall = '''
+
+[tasks."postinstall"]
+description = "Perform post-installation setup"
+dir = "."
+run = '''
+  (bun pm pkg set packageManager=bun@$(bun --version)) || true
   (bun pm pkg set packageManager=bun@$(bun --version)) || true
   (cd frontend && bun pm pkg set packageManager=bun@$(bun --version) && bun install) || true
   if [ ! -f .mise-setup-done ]; then
@@ -23,12 +40,6 @@ postinstall = '''
     echo 'mise setup complete' > .mise-setup-done
   fi
 '''
-
-[settings]
-experimental = true
-
-[settings.npm]
-package_manager = "bun"
 
 
 [tasks."backend:start"]
