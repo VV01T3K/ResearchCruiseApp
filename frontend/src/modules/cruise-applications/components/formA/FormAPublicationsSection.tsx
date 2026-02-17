@@ -269,47 +269,56 @@ export function FormAPublicationsSection() {
                   </CruiseApplicationDropdownElementSelectorButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
-                    options={groupBy(initValues.historicalPublications, (x) => x.category).flatMap(
-                      ([category, publications]) => [
-                        ...[
-                          {
-                            value: category,
-                            content: (
-                              <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
-                                {getPublicationCategoryLabel(category as PublicationCategory)}
-                              </div>
-                            ),
-                          },
-                        ],
-                        ...publications.map((publication) => ({
-                          value: JSON.stringify(publication),
+                    // dont show options with empty fields
+                    options={groupBy(
+                      initValues.historicalPublications.filter(
+                        (publication) =>
+                          publication.doi &&
+                          publication.authors &&
+                          publication.title &&
+                          publication.magazine &&
+                          publication.year
+                      ),
+                      (x) => x.category
+                    ).flatMap(([category, publications]) => [
+                      ...[
+                        {
+                          value: category,
                           content: (
-                            <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-blue-500 hover:bg-gray-100 focus:inset-ring-2">
-                              <div>
-                                <strong>DOI:</strong> {publication.doi}
-                              </div>
-                              <div>
-                                <strong>Autorzy:</strong> {publication.authors}
-                              </div>
-                              <div>
-                                <strong>Tytuł:</strong> {publication.title}
-                              </div>
-                              <div>
-                                <strong>Czasopismo:</strong> {publication.magazine}
-                              </div>
-                              <div>
-                                <strong>Rok:</strong> {publication.year}
-                              </div>
+                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                              {getPublicationCategoryLabel(category as PublicationCategory)}
                             </div>
                           ),
-                          onClick: () => {
-                            field.pushValue(publication);
-                            field.handleChange((prev: PublicationDto[]) => prev);
-                            field.handleBlur();
-                          },
-                        })),
-                      ]
-                    )}
+                        },
+                      ],
+                      ...publications.map((publication) => ({
+                        value: JSON.stringify(publication),
+                        content: (
+                          <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-blue-500 hover:bg-gray-100 focus:inset-ring-2">
+                            <div>
+                              <strong>DOI:</strong> {publication.doi}
+                            </div>
+                            <div>
+                              <strong>Autorzy:</strong> {publication.authors}
+                            </div>
+                            <div>
+                              <strong>Tytuł:</strong> {publication.title}
+                            </div>
+                            <div>
+                              <strong>Czasopismo:</strong> {publication.magazine}
+                            </div>
+                            <div>
+                              <strong>Rok:</strong> {publication.year}
+                            </div>
+                          </div>
+                        ),
+                        onClick: () => {
+                          field.pushValue(publication);
+                          field.handleChange((prev: PublicationDto[]) => prev);
+                          field.handleBlur();
+                        },
+                      })),
+                    ])}
                     variant="primaryOutline"
                     disabled={isReadonly}
                     data-testid="form-a-add-historical-publication-btn"

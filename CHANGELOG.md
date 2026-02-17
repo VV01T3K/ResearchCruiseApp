@@ -1,3 +1,13 @@
+## 2.3.1 - 2026-02-17
+#### Changes since *2.3.0*:
+* fix: improve comment validation error handling in handleDraftSave function
+* fix: correct Comment field length in CruiseDayDetailsDto to 1024
+* fix: add restart policy to all services in Docker Compose files for komodo staging
+* fix: fix test regression
+* feat: prevent deletion of last admin (#305)
+* feat: replace input with dropdown for SPUB tasks and update comment validation (#304)
+* fix: make form fields nullable to allow saving drafts with incomplete data (#307)
+
 ## 2.3.0 - 2026-02-11
 #### Changes since *2.2.1*:
 * feat: add deputy manager name fields to CruiseDto and update UI (#298)

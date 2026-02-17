@@ -32,7 +32,10 @@ export function CruiseApplicationDropdownElementSelectorButton({
   const [expanded, setExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
-  const filteredOptions = options.filter((option) => option.value.toLowerCase().includes(searchValue.toLowerCase()));
+  const filteredOptions = options.filter(
+    (option) =>
+      option.value && option.value.trim().length > 0 && option.value.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   return (
     <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>

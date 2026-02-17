@@ -10,19 +10,19 @@ public class Publication : Entity, IEquatable<Publication>, IEquatableByExpressi
     public string Category { get; init; } = null!;
 
     [StringLength(1024)]
-    public string Doi { get; init; } = null!;
+    public string? Doi { get; init; }
 
     [StringLength(1024)]
-    public string Authors { get; init; } = null!;
+    public string? Authors { get; init; }
 
     [StringLength(1024)]
-    public string Title { get; init; } = null!;
+    public string? Title { get; init; }
 
     [StringLength(1024)]
-    public string Magazine { get; init; } = null!;
+    public string? Magazine { get; init; }
 
     [StringLength(1024)]
-    public string Year { get; init; } = null!;
+    public string? Year { get; init; }
 
     [StringLength(1024)]
     public string MinisterialPoints { get; init; } = null!;
@@ -35,13 +35,7 @@ public class Publication : Entity, IEquatable<Publication>, IEquatableByExpressi
 
     public override int GetHashCode()
     {
-        return Category.GetHashCode()
-            + Doi.GetHashCode()
-            + Authors.GetHashCode()
-            + Title.GetHashCode()
-            + Magazine.GetHashCode()
-            + Year.GetHashCode()
-            + MinisterialPoints.GetHashCode();
+        return HashCode.Combine(Category, Doi, Authors, Title, Magazine, Year, MinisterialPoints);
     }
 
     public bool Equals(Publication? other)

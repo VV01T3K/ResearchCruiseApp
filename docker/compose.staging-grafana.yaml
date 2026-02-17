@@ -2,6 +2,7 @@ services:
   grafana:
     container_name: researchcruiseapp-grafana
     image: grafana/grafana:12.0.0
+    restart: unless-stopped
     volumes:
       - ./config/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
       - ./config/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
@@ -28,6 +29,7 @@ services:
   alloy:
     container_name: researchcruiseapp-alloy
     image: grafana/alloy:v1.8.3
+    restart: unless-stopped
     volumes:
       - ./config/config.alloy:/etc/alloy/config.alloy:ro
     networks:
@@ -41,12 +43,14 @@ services:
   loki:
     container_name: researchcruiseapp-loki
     image: grafana/loki:3.4.2
+    restart: unless-stopped
     networks:
       - researchcruiseapp-network
 
   tempo:
     container_name: researchcruiseapp-tempo
     image: grafana/tempo:2.7.1
+    restart: unless-stopped
     volumes:
       - ./config/tempo.yaml:/etc/tempo.yaml:ro
     command:
@@ -60,6 +64,7 @@ services:
   prometheus:
     container_name: researchcruiseapp-prometheus
     image: prom/prometheus:v3.3.1
+    restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus

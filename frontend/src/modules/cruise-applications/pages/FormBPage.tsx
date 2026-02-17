@@ -16,6 +16,7 @@ import {
   useRevertFormBToEditMutation,
   useUpdateFormBMutation,
 } from '@/cruise-applications/hooks/FormBApiHooks';
+import { CruiseDayDetailsDtoValidationSchema } from '@/cruise-applications/models/CruiseDayDetailsDto';
 import { FormBDto } from '@/cruise-applications/models/FormBDto';
 
 export function FormBPage() {
@@ -71,7 +72,7 @@ export function FormBPage() {
 
     await form.validate('change');
 
-    if (!form.state.canSubmit) {
+    if (!form.state.isValid) {
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
       navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
       return;
@@ -112,6 +113,19 @@ export function FormBPage() {
   }
 
   async function handleDraftSave() {
+    const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
+    const commentError = cruiseDaysDetails
+      ?.map((day) => CruiseDayDetailsDtoValidationSchema.shape.comment.safeParse(day.comment))
+      .find((result) => !result.success);
+
+    if (commentError && !commentError.success) {
+      setHasFormBeenSubmitted(true);
+      await form.validate('change');
+      toast.error(`Formularz błędny w sekcji nr 13:\n${commentError.error.issues[0].message}`);
+      navigateToFirstError(form, { cruiseDaysDetails: 13 });
+      return;
+    }
+
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     await updateMutation.mutateAsync(
       {

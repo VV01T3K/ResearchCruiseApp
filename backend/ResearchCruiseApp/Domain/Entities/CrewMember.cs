@@ -36,14 +36,16 @@ public class CrewMember : Entity, IEquatable<CrewMember>, IEquatableByExpression
 
     public override int GetHashCode()
     {
-        return Title.GetHashCode()
-            + FirstName.GetHashCode()
-            + LastName.GetHashCode()
-            + BirthPlace.GetHashCode()
-            + BirthDate.GetHashCode()
-            + DocumentNumber.GetHashCode()
-            + DocumentExpiryDate.GetHashCode()
-            + Institution.GetHashCode();
+        return HashCode.Combine(
+            Title,
+            FirstName,
+            LastName,
+            BirthPlace,
+            BirthDate,
+            DocumentNumber,
+            DocumentExpiryDate,
+            Institution
+        );
     }
 
     public bool Equals(CrewMember? other)

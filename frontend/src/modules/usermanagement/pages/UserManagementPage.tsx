@@ -176,6 +176,7 @@ export function UserManagementPage() {
       >
         <GroupActionSection
           selectedUsers={usersQuery.data.filter((user) => selectedUsers[user.id])}
+          allUsers={usersQuery.data}
           allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
           close={() => handleModalClose()}
         />

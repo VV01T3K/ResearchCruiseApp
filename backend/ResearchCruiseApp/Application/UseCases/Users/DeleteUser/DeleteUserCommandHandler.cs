@@ -15,8 +15,6 @@ public class DeleteUserCommandHandler(
         if (!await userPermissionVerifier.CanUserDeleteOtherUsers(request.Id))
             return Error.ForbiddenOperation();
 
-        var result = await identityService.DeleteUser(request.Id);
-
-        return result;
+        return await identityService.DeleteUser(request.Id, cancellationToken);
     }
 }

@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { FormDropdown, FormInput, locateSectionByTestId } from '@tests/utils/form-filling-utils';
+import { FormDropdown, locateSectionByTestId } from '@tests/utils/form-filling-utils';
 
 import { FormCPage } from './formCPage';
 
@@ -36,7 +36,7 @@ export class FormCSPUBTasksSection {
         variant: 'menu-with-buttons',
         errors: { required: rowLocator.getByText('Rok zakończenia jest wymagany') },
       }),
-      nameInput: new FormInput(rowLocator.locator('td').nth(3).getByRole('textbox').first(), {
+      nameDropdown: new FormDropdown(rowLocator.locator('td').nth(3).getByRole('combobox').first(), {
         errors: { required: rowLocator.getByText('Nazwa jest wymagana') },
       }),
       deleteButton: rowLocator.locator('td').nth(4).getByRole('button'),
