@@ -9,6 +9,7 @@ graphite = "latest"
 github-cli = "latest"
 bun = "1.3.9"
 dotnet = "10.0"
+"npm:turbo" = "latest"
 
 [hooks]
 preinstall = "mise run preinstall"

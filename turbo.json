@@ -1,0 +1,26 @@
+{
+  "$schema": "https://turborepo.dev/schema.v2.json",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["API_URL", "APP_ENVIRONMENT", "OTEL_SERVICE_NAME", "GRAFANA_FARO_URL"]
+    },
+    "lint": {},
+    "format": {},
+    "check": {},
+    "check:ci": {},
+    "test": {},
+    "storybook": {
+      "cache": false,
+      "persistent": true
+    },
+    "build-storybook": {
+      "outputs": ["storybook-static/**"]
+    }
+  }
+}

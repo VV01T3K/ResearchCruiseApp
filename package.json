@@ -6,11 +6,16 @@
     "backend"
   ],
   "scripts": {
-    "dev": "bun run --workspaces --parallel dev",
-    "lint": "bun run --workspaces --sequential lint",
-    "format": "bun run --workspaces --sequential format",
-    "check": "bun run --workspaces --sequential check",
-    "check:ci": "bun run --workspaces --parallel check:ci"
+    "dev": "turbo run dev",
+    "dev:tui": "turbo run dev --ui=tui",
+    "build": "turbo run build",
+    "lint": "turbo run lint --continue",
+    "format": "turbo run format --continue",
+    "check": "turbo run check",
+    "check:ci": "turbo run check:ci"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.9"
   },
   "packageManager": "bun@1.3.9"
 }
