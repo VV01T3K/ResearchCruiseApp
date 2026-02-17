@@ -1,12 +1,87 @@
 {
-    "files.exclude": {
-        ".mise-setup-done": true
-    },
-    "csharp.suppressDotnetInstallWarning": true,
-    "typescript.experimental.useTsgo": true,
-    "oxc.typeAware": true,
-    "oxc.unusedDisableDirectives": "deny",
-    "oxc.enable": true,
-    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
-    "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution"
+  "files.exclude": {
+    ".mise-setup-done": true,
+    "**/.turbo/": true
+    // "node_modules/": true,
+    // "AGENTS.md": true,
+    // ".agents/": true,
+    // ".cursor/": true
+  },
+  "csharp.suppressDotnetInstallWarning": true,
+  "oxc.path.oxfmt": "frontend/node_modules/.bin/oxfmt",
+  "oxc.path.oxlint": "frontend/node_modules/.bin/oxlint",
+  "oxc.path.tsgolint": "frontend/node_modules/.bin/tsgolint",
+  "oxc.configPath": "frontend/.oxlintrc.json",
+  "oxc.fmt.configPath": "frontend/.oxfmtrc.json",
+  "oxc.tsConfigPath": "frontend/tsconfig.json",
+  "typescript.experimental.useTsgo": true,
+  "oxc.typeAware": true,
+  "oxc.unusedDisableDirectives": "deny",
+  "oxc.enable": true,
+  "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+  "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution",
+  "editor.tabSize": 3,
+  "css.lint.unknownAtRules": "ignore",
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true,
+    ".claude/**": true,
+    ".agents/**": true,
+    ".cursor/**": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true,
+    "**/bun.lock": true,
+    "**/_generated/**": true,
+    "**/betterAuth/generatedSchema.ts": true,
+    ".claude/**": true,
+    ".agents/**": true,
+    ".cursor/**": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true,
+    "**/bun.lock": true,
+    "**/_generated/**": true,
+    "**/betterAuth/generatedSchema.ts": true,
+    ".claude/**": true,
+    ".agents/**": true,
+    ".cursor/**": true
+  },
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json5]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "oxc.fixKind": "safe_fix_or_suggestion"
 }
