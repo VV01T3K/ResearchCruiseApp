@@ -1,20 +1,20 @@
 {
   "name": "frontend",
-  "private": true,
   "version": "2.3.0",
+  "private": true,
   "repository": "https://github.com/VV01T3K/ResearchCruiseApp",
   "type": "module",
   "scripts": {
     "dev": "bun --bun vite",
-    "build": "tsc -b && bun --bun vite build",
+    "build": "tsgo -b && bun --bun vite build",
     "preview": "bun --bun vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "lint": "oxlint --type-aware --type-check --fix",
+    "lint": "oxlint --type-aware --type-check --fix && eslint --fix",
     "format": "oxfmt",
-    "check": "oxfmt && oxlint --type-aware --type-check --fix && tsgo --noEmit"
+    "check": "oxfmt && oxlint --type-aware --type-check --fix && eslint --fix && tsgo --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
@@ -35,12 +35,12 @@
     "react-dom": "^19.2.4",
     "react-to-print": "^3.2.0",
     "tailwind-merge": "^3.4.0",
-    "zod": "^4.3.6",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
-    "@eslint-react/eslint-plugin": "^2.12.2",
+    "@eslint-react/eslint-plugin": "^2.13.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.58.2",
     "@storybook/addon-docs": "^10.2.8",
@@ -56,38 +56,23 @@
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "^7.0.0-dev.20260210.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260216.1",
     "@vitejs/plugin-react-swc": "^4.2.3",
-    "eslint": "^9.39.2",
-    "eslint-plugin-react-dom": "^2.12.4",
+    "eslint": "^10.0.0",
+    "eslint-plugin-oxlint": "^1.48.0",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-hooks-extra": "^2.12.4",
-    "eslint-plugin-react-naming-convention": "^2.12.4",
     "eslint-plugin-react-refresh": "^0.5.0",
-    "eslint-plugin-react-rsc": "^2.12.4",
-    "eslint-plugin-react-web-api": "^2.12.4",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-storybook": "^10.2.8",
     "globals": "^17.3.0",
-    "install": "^0.13.0",
-    "npm-run-all": "^4.1.5",
-    "oxfmt": "^0.31.0",
-    "oxlint": "^1.46.0",
-    "oxlint-tsgolint": "^0.11.5",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
+    "oxfmt": "^0.33.0",
+    "oxlint": "^1.48.0",
+    "oxlint-tsgolint": "^0.14.0",
     "storybook": "^10.2.8",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0",
+    "typescript-eslint": "^8.56.0",
     "vite": "^7.3.1",
     "vite-plugin-svgr": "^4.5.0",
     "vite-tsconfig-paths": "^6.1.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended"
-    ]
   },
   "packageManager": "bun@1.3.9"
 }

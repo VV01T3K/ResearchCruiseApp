@@ -8,12 +8,7 @@
   "experimentalSortImports": {},
   "experimentalSortPackageJson": true,
   "experimentalTailwindcss": {
-    "functions": [
-      "clsx",
-      "cn",
-      "cva",
-      "tw"
-    ]
+    "functions": ["clsx", "cn", "cva", "tw"]
   },
   "ignorePatterns": [
     "dist",
@@ -30,7 +25,7 @@
     ".cursor/**",
     ".turbo",
     "**/routeTree.gen.ts",
-    "**/bun.lock",
+    "**/bun.lock"
     // "**/_generated/**",
   ]
 }
