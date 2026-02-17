@@ -23,12 +23,14 @@ package_manager = "bun"
 
 [tasks."preinstall"]
 description = "Check for required tools before installation"
+hide = true
 run = '''
   command -v node &> /dev/null || echo "Node.js is not installed. Please install Node.js to continue."
 '''
 
 [tasks."postinstall"]
 description = "Perform post-installation setup"
+hide = true
 dir = "."
 run = '''
   (bun pm pkg set packageManager=bun@$(bun --version)) || true
@@ -42,12 +44,6 @@ run = '''
 '''
 
 
-[tasks."backend:start"]
-description = "Start the backend"
-depends = ["db:wait"]
-dir = "backend"
-run = "bun run start"
-
 [tasks."db:up"]
 description = "Start the database container"
 run = "docker compose -f docker/docker-compose.infra.yml up -d db"
@@ -58,6 +54,7 @@ run = "docker compose -f docker/docker-compose.infra.yml down"
 
 [tasks."db:wait"]
 description = "Wait for the database to be ready"
+hide = true
 depends = ["db:up"]
 run = """
   echo 'Waiting for database...'
@@ -68,52 +65,57 @@ run = """
 """
 
 [tasks."db:del"]
-description = "Delete the database volume and admin log"
+description = "Delete the database volume and seed credentials log"
 depends = ["db:down"]
 run = """
   docker volume rm researchcruiseapp_researchcruiseapp-db 2>/dev/null || true
-  rm -f admin.log
+  rm -f credentials.log 2>/dev/null || true
 """
 
-[tasks."admin:password"]
-description = "Reset database and capture admin password"
+[tasks."seed:credentials"]
+description = "Reset database and capture seed user credentials"
 depends = ["db:del"]
-alias = "admin"
+alias = "creds"
+dir = "backend"
 run = '''
   mise run db:wait
-  fifo=$(mktemp -u)
-  mkfifo "$fifo"
+
+  echo "Starting backend to capture seed credentials..."
+  LOG=$(mktemp)
+
   cleanup() {
-    status=${1:-$?}
-    trap - EXIT INT TERM HUP QUIT
-    if [ -n "${pid:-}" ] && kill -0 "$pid" 2>/dev/null; then
-      kill -TERM -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
-      wait "$pid" 2>/dev/null || true
+    echo "Shutting down backend..."
+    if [ -n "$PORT" ]; then
+      lsof -ti:"$PORT" | xargs kill -9 2>/dev/null || true
     fi
-    rm -f "$fifo"
-    exit "$status"
+    kill -9 "$DOTNET_PID" 2>/dev/null
+    kill "$TAIL_PID" 2>/dev/null
+    rm -f "$LOG"
   }
-  trap 'cleanup' EXIT
-  trap 'cleanup 130' INT
-  trap 'cleanup 143' TERM
-  trap 'cleanup 129' HUP
-  trap 'cleanup 131' QUIT
-  if command -v setsid >/dev/null 2>&1; then
-    setsid sh -c 'cd backend && ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://127.0.0.1:0 dotnet run --no-launch-profile --project ResearchCruiseApp' > "$fifo" 2>&1 &
-  else
-    sh -c 'cd backend && ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://127.0.0.1:0 dotnet run --no-launch-profile --project ResearchCruiseApp' > "$fifo" 2>&1 &
-  fi
-  pid=$!
-  while IFS= read -r line; do
-    echo "$line"
-    if echo "$line" | grep -qi admin; then
-      email=$(echo "$line" | grep -oP '[\w.+-]+@[\w.-]+')
-      pass=$(echo "$line" | grep -oP '(?<=- ).*')
-      printf 'Email:\n%s\nPassword:\n%s' "$email" "$pass" > admin.log
-      echo 'Admin password info saved to admin.log'
-      kill -TERM -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
-      wait "$pid" 2>/dev/null || true
+  trap cleanup EXIT
+
+  bun run start > "$LOG" 2>&1 &
+  DOTNET_PID=$!
+
+  tail -f "$LOG" &
+  TAIL_PID=$!
+
+  while kill -0 "$DOTNET_PID" 2>/dev/null; do
+    if grep -q "Application started" "$LOG" 2>/dev/null; then
       break
     fi
-  done < "$fifo"
+    sleep 0.5
+  done
+
+  PORT=$(grep -oP 'Now listening on: http://localhost:\K[0-9]+' "$LOG" 2>/dev/null)
+
+  if grep -q "Seed User Created:" "$LOG" 2>/dev/null; then
+    grep -oP 'Seed User Created: \K.*' "$LOG" | awk -F ' - ' '
+      NR>1 { printf "\n" }
+      { printf "Email:    %s\nPassword: %s\n", $1, $2 }
+    ' > ../credentials.log
+    echo "Users credentials saved to credentials.log"
+  else
+    echo "Warning: users credentials not found in output"
+  fi
 '''
