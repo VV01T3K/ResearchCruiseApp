@@ -1,11 +1,12 @@
 {
-  "name": "research-cruise-app-backend",
+  "name": "backend",
   "private": true,
   "scripts": {
-    "dev": "bun run watch",
+    "dev": "dotnet watch run --project ResearchCruiseApp",
     "start": "dotnet run --project ResearchCruiseApp",
-    "watch": "dotnet watch run --project ResearchCruiseApp",
-    "format": "dotnet csharpier check .",
-    "format:fix": "dotnet csharpier format ."
+    "lint": "dotnet format ResearchCruiseApp.sln --severity info --exclude-diagnostics IDE0130",
+    "format": "dotnet csharpier format .",
+    "check": "bun run format && bun run lint",
+    "check:ci": "dotnet csharpier check . && dotnet format ResearchCruiseApp.sln --verify-no-changes --severity info --exclude-diagnostics IDE0130"
   }
 }

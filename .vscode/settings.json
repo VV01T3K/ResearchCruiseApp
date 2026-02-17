@@ -5,5 +5,8 @@
     "csharp.suppressDotnetInstallWarning": true,
     "typescript.experimental.useTsgo": true,
     "oxc.typeAware": true,
-    "oxc.unusedDisableDirectives": "deny"
+    "oxc.unusedDisableDirectives": "deny",
+    "oxc.enable": true,
+    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+    "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution"
 }

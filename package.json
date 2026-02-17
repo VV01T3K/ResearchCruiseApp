@@ -1,9 +1,16 @@
 {
-  "name": "research-cruise-app-scripts",
+  "name": "research-cruise-app",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "dev": "bun --parallel run dev:frontend dev:backend",
-    "dev:frontend": "cd frontend && bun run dev",
-    "dev:backend": "cd backend && bun run dev"
+    "dev": "bun run --workspaces --parallel dev",
+    "lint": "bun run --workspaces --sequential lint",
+    "format": "bun run --workspaces --sequential format",
+    "check": "bun run --workspaces --sequential check",
+    "check:ci": "bun run --workspaces --parallel check:ci"
   },
   "packageManager": "bun@1.3.9"
 }

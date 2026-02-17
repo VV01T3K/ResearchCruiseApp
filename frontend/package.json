@@ -14,7 +14,8 @@
     "test:ui": "playwright test --ui",
     "lint": "oxlint --type-aware --type-check --fix && eslint --fix",
     "format": "oxfmt",
-    "check": "oxfmt && oxlint --type-aware --type-check --fix && eslint --fix && tsgo --noEmit"
+    "check": "oxfmt && oxlint --type-aware --type-check --fix && eslint --fix && tsgo --noEmit",
+    "check:ci": "oxfmt --check && oxlint --type-aware --type-check && eslint && tsgo --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",

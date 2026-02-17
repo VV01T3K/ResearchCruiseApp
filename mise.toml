@@ -9,8 +9,6 @@ graphite = "latest"
 github-cli = "latest"
 bun = "1.3.9"
 dotnet = "10.0"
-"npm:oxlint" = "latest"
-"npm:oxfmt" = "latest"
 
 [hooks]
 preinstall = "mise run preinstall"
@@ -36,13 +34,13 @@ hide = true
 dir = "."
 run = '''
   (bun pm pkg set packageManager=bun@$(bun --version)) || true
-  (bun pm pkg set packageManager=bun@$(bun --version)) || true
-  (cd frontend && bun pm pkg set packageManager=bun@$(bun --version) && bun install) || true
-  if [ ! -f .mise-setup-done ]; then
-    (cd backend && dotnet restore; dotnet tool restore) || true
-    (cd frontend && bunx playwright install --with-deps chromium) || true
-    echo 'mise setup complete' > .mise-setup-done
-  fi
+  (cd frontend && bun pm pkg set packageManager=bun@$(bun --version)) || true
+  test -f .mise-setup-done && exit 0
+  
+  bun install
+  (cd backend && dotnet restore; dotnet tool restore) || true
+  (cd frontend && bunx playwright install --with-deps chromium) || true
+  echo 'mise setup complete' > .mise-setup-done
 '''
 
 
