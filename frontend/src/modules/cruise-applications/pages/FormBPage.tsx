@@ -114,14 +114,14 @@ export function FormBPage() {
 
   async function handleDraftSave() {
     const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
-    const hasCommentTooLong = cruiseDaysDetails?.some(
-      (day) => !CruiseDayDetailsDtoValidationSchema.shape.comment.safeParse(day.comment).success
-    );
+    const commentError = cruiseDaysDetails
+      ?.map((day) => CruiseDayDetailsDtoValidationSchema.shape.comment.safeParse(day.comment))
+      .find((result) => !result.success);
 
-    if (hasCommentTooLong) {
+    if (commentError && !commentError.success) {
       setHasFormBeenSubmitted(true);
       await form.validate('change');
-      toast.error('Formularz błędny w sekcji nr 13:\nUwagi nie mogą być dłuższe niż 1024 znaków');
+      toast.error(`Formularz błędny w sekcji nr 13:\n${commentError.error.issues[0].message}`);
       navigateToFirstError(form, { cruiseDaysDetails: 13 });
       return;
     }
