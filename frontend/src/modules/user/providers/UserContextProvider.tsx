@@ -20,7 +20,9 @@ export function UserContextProvider({ children }: Props) {
 
   const [initialRefreshPending, setInitialRefreshPending] = React.useState(() => {
     const stored = getStoredAuthDetails();
-    return !!stored && stored.accessTokenExpirationDate <= new Date() && stored.refreshTokenExpirationDate > new Date();
+    const needsRefresh =
+      !!stored && stored.accessTokenExpirationDate <= new Date() && stored.refreshTokenExpirationDate > new Date();
+    return needsRefresh;
   });
   const setReadyOnceRef = React.useRef<(value: boolean) => void>(() => {});
 
@@ -146,10 +148,15 @@ export function UserContextProvider({ children }: Props) {
 
           try {
             if (!refreshPromiseRef.current) {
-              refreshPromiseRef.current = refreshUserRef.current().catch((err) => {
-                refreshPromiseRef.current = null;
-                throw err;
-              });
+              refreshPromiseRef.current = refreshUserRef
+                .current()
+                .then(() => {
+                  refreshPromiseRef.current = null;
+                })
+                .catch((err) => {
+                  refreshPromiseRef.current = null;
+                  throw err;
+                });
             }
             await refreshPromiseRef.current;
 
@@ -180,10 +187,15 @@ export function UserContextProvider({ children }: Props) {
     const stored = getStoredAuthDetails();
     if (stored && stored.accessTokenExpirationDate <= new Date()) {
       if (!refreshPromiseRef.current) {
-        refreshPromiseRef.current = refreshUserRef.current().catch((err) => {
-          refreshPromiseRef.current = null;
-          throw err;
-        });
+        refreshPromiseRef.current = refreshUserRef
+          .current()
+          .then(() => {
+            refreshPromiseRef.current = null;
+          })
+          .catch((err) => {
+            refreshPromiseRef.current = null;
+            throw err;
+          });
       }
       refreshPromiseRef.current
         .then(
