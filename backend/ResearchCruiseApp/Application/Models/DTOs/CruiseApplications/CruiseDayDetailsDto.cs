@@ -21,6 +21,6 @@ public class CruiseDayDetailsDto
     [StringLength(1024)]
     public string Position { get; init; } = null!;
 
-    [StringLength(10240)]
+    [StringLength(1024)]
     public string Comment { get; init; } = null!;
 }
