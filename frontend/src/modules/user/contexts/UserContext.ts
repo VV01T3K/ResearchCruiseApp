@@ -7,6 +7,7 @@ import { SignInResult } from '@/user/models/Results';
 export type UserContextType = {
   currentUser?: User | undefined;
   sessionExpirationDate?: Date | undefined;
+  isReady: boolean;
 
   isInRole: (allowedRoles: Role[] | Role) => boolean;
 

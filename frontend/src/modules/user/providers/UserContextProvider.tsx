@@ -1,8 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import React from 'react';
 
-import { toast } from '@/core/components/layout/toast';
 import { client, setAuthToken } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
 import { UserContext, UserContextType } from '@/user/contexts/UserContext';
@@ -14,19 +12,31 @@ import { getStoredAuthDetails, setStoredAuthDetails } from '@/user/services/Stor
 type Props = {
   children: React.ReactNode;
 };
-
-function getRefreshLeadTimeMs(remainingMs: number): number {
-  return Math.min(1000 * 60 * 2, Math.max(15000, Math.floor(remainingMs * 0.2)));
-}
-
 export function UserContextProvider({ children }: Props) {
   const queryClient = useQueryClient();
 
   const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(() => getStoredAuthDetails());
-  setAuthToken(authDetails);
-  const profileQuery = useProfileQuery();
+  const [isReady, setIsReady] = React.useState(false);
 
-  const refreshInFlightRef = React.useRef<Promise<unknown> | null>(null);
+  const [initialRefreshPending, setInitialRefreshPending] = React.useState(() => {
+    const stored = getStoredAuthDetails();
+    return !!stored && stored.accessTokenExpirationDate <= new Date() && stored.refreshTokenExpirationDate > new Date();
+  });
+  const setReadyOnceRef = React.useRef<(value: boolean) => void>(() => {});
+
+  React.useLayoutEffect(() => {
+    setReadyOnceRef.current = (ready: boolean) => {
+      setIsReady(ready);
+    };
+  }, []);
+
+  const accessTokenValid = authDetails ? authDetails.accessTokenExpirationDate > new Date() : false;
+  if (accessTokenValid) {
+    setAuthToken(authDetails);
+  } else {
+    setAuthToken(undefined);
+  }
+  const profileQuery = useProfileQuery();
 
   const updateAuthDetails = React.useCallback(
     async (newAuthDetails: AuthDetails | undefined) => {
@@ -76,23 +86,14 @@ export function UserContextProvider({ children }: Props) {
   }, [updateAuthDetails]);
 
   const refreshUser = React.useCallback(async () => {
-    if (refreshInFlightRef.current) {
-      await refreshInFlightRef.current;
-      return;
-    }
-
     const currentAuthDetails = getStoredAuthDetails();
-    if (!currentAuthDetails) {
-      await signOut();
+
+    if (currentAuthDetails) {
+      await refreshTokenMutateAsync(currentAuthDetails);
       return;
     }
 
-    const refreshPromise = refreshTokenMutateAsync(currentAuthDetails).finally(() => {
-      refreshInFlightRef.current = null;
-    });
-
-    refreshInFlightRef.current = refreshPromise;
-    await refreshPromise;
+    await signOut();
   }, [refreshTokenMutateAsync, signOut]);
 
   const isInRole = React.useCallback(
@@ -113,84 +114,131 @@ export function UserContextProvider({ children }: Props) {
   const context = React.useMemo<UserContextType>(
     () => ({
       currentUser: profileQuery.data,
-      sessionExpirationDate: authDetails?.expirationDate,
+      sessionExpirationDate: authDetails?.refreshTokenExpirationDate,
+      isReady,
       signIn,
       signOut,
       refreshUser,
       isInRole,
     }),
-    [authDetails?.expirationDate, isInRole, profileQuery.data, refreshUser, signIn, signOut]
+    [isReady, isInRole, profileQuery.data, authDetails?.refreshTokenExpirationDate, refreshUser, signIn, signOut]
   );
 
+  // Refs keep the interceptor stable while accessing latest functions
+  const refreshUserRef = React.useRef(refreshUser);
   React.useEffect(() => {
-    const interceptorId = createAuthRefreshInterceptor(
-      client,
-      async (failedRequest) => {
-        await context.refreshUser();
+    refreshUserRef.current = refreshUser;
+  }, [refreshUser]);
+  const refreshPromiseRef = React.useRef<Promise<void> | null>(null);
 
-        failedRequest.response.config.headers['Authorization'] = `Bearer ${getStoredAuthDetails()?.accessToken}`;
-        return failedRequest;
-      },
-      {
-        statusCodes: [401],
-        pauseInstanceWhileRefreshing: true,
+  React.useEffect(() => {
+    const interceptorId = client.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        // Rule 1: Never intercept refresh requests
+        if (error.config?.url?.includes('/account/refresh')) {
+          return Promise.reject(error);
+        }
+
+        // Rule 2: Only retry once per failed request
+        if (error.response?.status === 401 && !error.config?._retry) {
+          error.config._retry = true;
+
+          try {
+            if (!refreshPromiseRef.current) {
+              refreshPromiseRef.current = refreshUserRef.current().catch((err) => {
+                refreshPromiseRef.current = null;
+                throw err;
+              });
+            }
+            await refreshPromiseRef.current;
+
+            const updatedToken = getStoredAuthDetails()?.accessToken;
+            if (updatedToken) {
+              error.config.headers['Authorization'] = `Bearer ${updatedToken}`;
+              return client(error.config);
+            }
+          } catch (refreshError) {
+            return Promise.reject(refreshError);
+          }
+        }
+
+        return Promise.reject(error);
       }
     );
 
     return () => {
       client.interceptors.response.eject(interceptorId);
     };
-  }, [context]);
-
-  React.useEffect(() => {
-    const onStorage = (event: StorageEvent) => {
-      if (event.key !== 'authDetails') {
-        return;
-      }
-
-      setAuthDetails(getStoredAuthDetails());
-    };
-
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
+  const initRefreshRef = React.useRef(false);
   React.useEffect(() => {
-    if (!authDetails?.expirationDate) {
+    if (initRefreshRef.current) return;
+    initRefreshRef.current = true;
+
+    const stored = getStoredAuthDetails();
+    if (stored && stored.accessTokenExpirationDate <= new Date()) {
+      if (!refreshPromiseRef.current) {
+        refreshPromiseRef.current = refreshUserRef.current().catch((err) => {
+          refreshPromiseRef.current = null;
+          throw err;
+        });
+      }
+      refreshPromiseRef.current
+        .then(
+          () => queryClient.invalidateQueries({ queryKey: ['userProfile'] }),
+          () => {} // refresh failure is handled inside refreshUser (signs out)
+        )
+        .finally(() => {
+          setInitialRefreshPending(false);
+        });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    }
+  }, [queryClient]);
+
+  const readyRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!readyRef.current && !profileQuery.isLoading && !profileQuery.isPending && !initialRefreshPending) {
+      readyRef.current = true;
+      setReadyOnceRef.current(true);
+    }
+  }, [profileQuery.isLoading, profileQuery.isPending, initialRefreshPending]);
+
+  React.useEffect(() => {
+    const timeoutId = setInterval(
+      async () => {
+        if (!authDetails) {
+          return;
+        }
+
+        await context.refreshUser();
+      },
+      1000 * 60 * 30
+    );
+
+    return () => clearInterval(timeoutId);
+  }, [context, authDetails]);
+
+  React.useEffect(() => {
+    if (!authDetails?.refreshTokenExpirationDate) {
       return;
     }
 
-    const remainingMs = authDetails.expirationDate.getTime() - Date.now();
-
-    if (remainingMs <= 0) {
-      toast.error('Sesja wygasła. Zaloguj się ponownie.');
-      void signOut();
-      return;
-    }
-
-    const refreshLeadMs = getRefreshLeadTimeMs(remainingMs);
-    const refreshDelayMs = Math.max(0, remainingMs - refreshLeadMs);
-    const warningDelayMs = Math.max(0, remainingMs - 1000 * 60);
-
-    const refreshTimeoutId = setTimeout(() => {
-      void refreshUser().catch(() => undefined);
-    }, refreshDelayMs);
-
-    const warningTimeoutId = setTimeout(() => {
-      toast.error('Sesja wygaśnie za mniej niż 1 minutę.');
-    }, warningDelayMs);
-
-    const expireTimeoutId = setTimeout(() => {
-      toast.error('Sesja wygasła. Zaloguj się ponownie.');
-      void signOut();
-    }, remainingMs);
-
-    return () => {
-      clearTimeout(refreshTimeoutId);
-      clearTimeout(warningTimeoutId);
-      clearTimeout(expireTimeoutId);
+    const checkExpiration = () => {
+      if (new Date() >= authDetails.refreshTokenExpirationDate) {
+        signOut();
+      }
     };
-  }, [authDetails?.expirationDate, refreshUser, signOut]);
+
+    checkExpiration();
+
+    // Check every 5 seconds
+    const interval = setInterval(checkExpiration, 5000);
+
+    return () => clearInterval(interval);
+  }, [authDetails?.refreshTokenExpirationDate, signOut]);
 
   return <UserContext value={context}>{children}</UserContext>;
 }

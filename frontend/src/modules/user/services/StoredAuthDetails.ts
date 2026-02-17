@@ -8,14 +8,14 @@ export function getStoredAuthDetails(): AuthDetails | undefined {
   }
 
   const authDetails = JSON.parse(data, (key: string, value: unknown) => {
-    if (key === 'expirationDate') {
+    if (key === 'accessTokenExpirationDate' || key === 'refreshTokenExpirationDate') {
       return new Date(value as string);
     }
 
     return value;
   }) as AuthDetails;
 
-  if (authDetails.expirationDate < new Date()) {
+  if (authDetails.refreshTokenExpirationDate < new Date()) {
     setStoredAuthDetails(undefined);
     return undefined;
   }
