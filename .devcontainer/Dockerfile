@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends nodejs
 
 USER vscode
 
-RUN curl https://mise.run/zsh | sh
+RUN curl https://mise.run | sh
 ENV PATH="/home/vscode/.local/bin:${PATH}"
 
 RUN mise exec bun@latest -- bunx playwright install --with-deps chromium
