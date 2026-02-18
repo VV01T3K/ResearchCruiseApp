@@ -1,5 +1,6 @@
 export type AuthDetails = {
   accessToken: string;
   refreshToken: string;
-  expirationDate: Date;
+  accessTokenExpirationDate: Date;
+  refreshTokenExpirationDate: Date;
 };
