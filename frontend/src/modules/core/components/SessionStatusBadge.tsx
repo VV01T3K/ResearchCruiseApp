@@ -3,7 +3,7 @@ import ClockIcon from 'bootstrap-icons/icons/clock.svg?react';
 import React from 'react';
 
 type Props = {
-  expirationDate: Date;
+  refreshTokenExpirationDate: Date;
   onRefresh: () => Promise<void>;
 };
 
@@ -13,7 +13,7 @@ function getRemainingMs(expirationDate: Date): number {
 
 function formatTimeRemaining(remainingMs: number): string {
   if (remainingMs <= 0) {
-    return 'Sesja wygasła';
+    return 'Sesja wygasł';
   }
 
   const totalSeconds = Math.floor(remainingMs / 1000);
@@ -30,12 +30,12 @@ function formatTimeRemaining(remainingMs: number): string {
   return `Sesja: ${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-export function SessionStatusBadge({ expirationDate, onRefresh }: Props) {
+export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Props) {
   const [nowTs, setNowTs] = React.useState(() => Date.now());
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
   React.useEffect(() => {
-    const remainingMs = expirationDate.getTime() - nowTs;
+    const remainingMs = refreshTokenExpirationDate.getTime() - nowTs;
     if (remainingMs <= 0) {
       return;
     }
@@ -44,7 +44,7 @@ export function SessionStatusBadge({ expirationDate, onRefresh }: Props) {
     const timeoutId = setTimeout(() => setNowTs(Date.now()), refreshEveryMs);
 
     return () => clearTimeout(timeoutId);
-  }, [expirationDate, nowTs]);
+  }, [refreshTokenExpirationDate, nowTs]);
 
   async function handleRefresh() {
     setIsRefreshing(true);
@@ -57,7 +57,7 @@ export function SessionStatusBadge({ expirationDate, onRefresh }: Props) {
     }
   }
 
-  const remainingMs = getRemainingMs(expirationDate);
+  const remainingMs = getRemainingMs(refreshTokenExpirationDate);
   const isWarning = remainingMs <= 1000 * 60 * 5;
 
   return (

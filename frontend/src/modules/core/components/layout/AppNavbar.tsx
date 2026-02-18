@@ -78,9 +78,9 @@ export function AppNavbar() {
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
             >
-              {userContext.sessionExpirationDate && (
+              {userContext.refreshTokenExpirationDate && (
                 <SessionStatusBadge
-                  expirationDate={userContext.sessionExpirationDate}
+                  refreshTokenExpirationDate={userContext.refreshTokenExpirationDate}
                   onRefresh={userContext.refreshUser}
                 />
               )}

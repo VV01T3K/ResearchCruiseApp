@@ -34,11 +34,15 @@ export function UserContextProvider({ children }: Props) {
   }, []);
 
   const accessTokenValid = authDetails ? authDetails.accessTokenExpirationDate > new Date() : false;
-  if (accessTokenValid) {
-    setAuthToken(authDetails);
-  } else {
-    setAuthToken(undefined);
-  }
+
+  React.useLayoutEffect(() => {
+    if (accessTokenValid) {
+      setAuthToken(authDetails);
+    } else {
+      setAuthToken(undefined);
+    }
+  }, [accessTokenValid, authDetails]);
+
   const profileQuery = useProfileQuery();
 
   const updateAuthDetails = React.useCallback(
@@ -117,14 +121,24 @@ export function UserContextProvider({ children }: Props) {
   const context = React.useMemo<UserContextType>(
     () => ({
       currentUser: profileQuery.data,
-      sessionExpirationDate: authDetails?.refreshTokenExpirationDate,
+      accessTokenExpirationDate: authDetails?.accessTokenExpirationDate,
+      refreshTokenExpirationDate: authDetails?.refreshTokenExpirationDate,
       isReady,
       signIn,
       signOut,
       refreshUser,
       isInRole,
     }),
-    [isReady, isInRole, profileQuery.data, authDetails?.refreshTokenExpirationDate, refreshUser, signIn, signOut]
+    [
+      isReady,
+      isInRole,
+      profileQuery.data,
+      authDetails?.accessTokenExpirationDate,
+      authDetails?.refreshTokenExpirationDate,
+      refreshUser,
+      signIn,
+      signOut,
+    ]
   );
 
   // Refs keep the interceptor stable while accessing latest functions
