@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
+import { SessionExpirationWarning } from '@/core/components/SessionExpirationWarning';
 import { client, setAuthToken } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
 import { UserContext, UserContextType } from '@/user/contexts/UserContext';
@@ -252,5 +253,16 @@ export function UserContextProvider({ children }: Props) {
     return () => clearInterval(interval);
   }, [authDetails?.refreshTokenExpirationDate, signOut]);
 
-  return <UserContext value={context}>{children}</UserContext>;
+  return (
+    <UserContext value={context}>
+      {children}
+      {authDetails?.refreshTokenExpirationDate && (
+        <SessionExpirationWarning
+          expirationDate={authDetails.refreshTokenExpirationDate}
+          onRefreshSession={refreshUser}
+          onSignOut={signOut}
+        />
+      )}
+    </UserContext>
+  );
 }

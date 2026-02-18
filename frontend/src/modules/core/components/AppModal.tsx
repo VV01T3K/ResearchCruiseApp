@@ -11,10 +11,11 @@ type Props = {
   onClose: () => void;
 
   className?: string;
+  dismissible?: boolean;
 };
-export function AppModal({ title, children, isOpen, onClose, className }: Props) {
+export function AppModal({ title, children, isOpen, onClose, className, dismissible = true }: Props) {
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && dismissible && onClose()}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 backdrop-blur-md transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <Dialog.Popup
@@ -28,13 +29,15 @@ export function AppModal({ title, children, isOpen, onClose, className }: Props)
         >
           <header className="mb-4 flex items-center justify-between">
             <Dialog.Title className="text-xl font-bold">{title}</Dialog.Title>
-            <Dialog.Close
-              render={
-                <button className="rounded-md p-2 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700" />
-              }
-            >
-              <XLgIcon className="h-5 w-5" />
-            </Dialog.Close>
+            {dismissible && (
+              <Dialog.Close
+                render={
+                  <button className="rounded-md p-2 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700" />
+                }
+              >
+                <XLgIcon className="h-5 w-5" />
+              </Dialog.Close>
+            )}
           </header>
           <div>{children}</div>
         </Dialog.Popup>
