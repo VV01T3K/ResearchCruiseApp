@@ -1,6 +1,4 @@
 #let template(name, version, created_at, doc) = {
-  set text(lang: "pl")
-  
   set text(
     font: "New Computer Modern",
     size: 12pt,
@@ -10,11 +8,11 @@
     #context [
       #set par(justify: false)
 
-      #text(size: 30pt)[
+      #text(size: 25pt)[
         *ResearchCruiseApp*
       ]
 
-      #text(size: 25pt)[
+      #text(size: 20pt)[
         #name
       ]
     ]
@@ -24,7 +22,7 @@
     #grid(
       columns: (1fr, 1fr),
       gutter: 1em,
-      [Wersja dokumentu], [#version],
+      [Wersja], [#version],
       [Data utworzenia obecnej wersji], [#datetime.today().display()],
       [Data utworzenia dokumentu], [#created_at.display()],
     )
@@ -33,11 +31,12 @@
 
     #grid(
       columns: (auto, 1fr, auto),
-      gutter: 15pt,
-      [Wojciech Siwiec], [], [s197815],
-      [Paweł Narwojsz], [], [s197977],
-      [Filip Pudlak], [], [s198157],
-      [Bartosz Łyskanowski], [], [s198051],
+      gutter: 10pt,
+      [Stanisław Nieradko], [], [s193044],
+      [Krzysztof Nasuta], [], [s193328],
+      [Paweł Pstrągowski], [], [s193473],
+      [Bartłomiej Krawisz], [], [s193319],
+      [Filip Dawidowski], [], [s193433],
     )
   ]
 
@@ -56,7 +55,7 @@
       #line(length: 100%)
       #grid(
         columns: (auto, 1fr, auto),
-        [Wersja dokumentu #version utworzona #datetime.today().display().],
+        [Wersja #version utworzona #datetime.today().display().],
         [],
         [#counter(page).display(
             "1/1",

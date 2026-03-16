@@ -1,143 +1,163 @@
 #import "template.typ": template
-#show: template.with("Organizacja i infrastruktura projektu", "1.0.1", datetime(day: 18, month: 3, year: 2025))
+#show: template.with("Organizacja i infrastruktura projektu", "1.0.0", datetime(day: 15, month: 3, year: 2026))
 
 = 1. Opis projektu i produktu
 
 == Nazwa projektu
 
-ResearchCruiseApp
+Portal wspierający obsługę rejsów dla biura Armatora Wydział Oceanografii i Geografii UG - *ResearchCruiseApp*
 
 == Adresowany problem
 
-Projekt ResearchCruiseApp dostosowany jest do zarządzania rejsami badawczymi statku badawczego "Oceanograf" należącego do Instytutu Oceanografii Uniwersytetu Gdańskiego. Aplikacja ma na celu usprawnienie procesów związanych z rezerwacją, obsługą i organizacją rejsów badawczych, a także umożliwienie efektywnej komunikacji między różnymi interesariuszami. Prace na aplikacją zostały rozpoczęte w zeszłym roku jako projekt grupowy oraz inżynierski poprzedniego zespołu.
-Są one kontynuowane przez obecny zespół w ramach własnego projektu grupowego oraz dwóch prac inżynierskich.
+Projekt *ResearchCruiseApp* został opracowany z myślą o zarządzaniu rejsami badawczymi statku „Oceanograf”, należącego do Instytutu Oceanografii Uniwersytetu Gdańskiego. Celem aplikacji jest usprawnienie procesów związanych z rezerwacją, organizacją i obsługą rejsów badawczych, a także zapewnienie efektywnej komunikacji pomiędzy różnymi uczestnikami tych działań. Istotnym elementem systemu jest także interaktywny kalendarz, który w przejrzysty sposób prezentuje harmonogram rejsów. Prace nad aplikacją rozpoczęły poprzednie zespoły dwa lata temu, a obecnie są przez nas kontynuowane w ramach projektu grupowego oraz dwóch prac inżynierskich.
 
 == Obszar zastosowania i rynek
 
-Aplikacja została utworzona dla konkretnego klienta, którym jest biuro armatora Uniwersytetu Gdańskiego. Obejmuje ona zarządzanie rejsami badawczymi, obsługę zgłoszeń oraz komunikację między różnymi interesariuszami. Aplikacja ma na celu usprawnienie procesów administracyjnych związanych z organizacją rejsów badawczych. Może ona zostać wykorzystana przez innych klientów z branży morskiej, takich jak instytucje naukowe, ale z uwagi na dostosowanie do konkretnego klienta, wymagałoby to pewnych zmian i nie jest obecnie planowane.
+Aplikacja została opracowana na potrzeby biura armatora Uniwersytetu Gdańskiego. Jej funkcjonalność obejmuje planowanie działania statku na kolejne lata, przechowywanie danych z formularzy w jednej aplikacji zamiast papierowych dokumentów, zarządzanie rejsami badawczymi, obsługę zgłoszeń oraz komunikację pomiędzy różnymi interesariuszami zaangażowanymi w organizację rejsów. Głównym celem systemu jest usprawnienie procesów administracyjnych związanych z planowaniem i realizacją rejsów badawczych.
 
-== Zakres projektu
+== Prace nad projektem
 
-=== Do zakresu pracy nad projektem należą następujące zadania
+=== Zadania do wykonania wskazane przez promotora:
 
-- Przepisanie aplikacji frontendowej z użyciem frameworku React i języka TypeScript.
-- Utrzymywanie i rozwijanie aplikacji backendowej napisanej w frameworku ASP.NET Core.
-- Implementacja nowych funkcjonalności zgodnie z wymaganiami klienta.
+- Utrzymanie istniejącego kodu
+- Uzgodnienie zakresu funkcjonalności z klientem
+- Projekt, implementacja kolejnych funkcjonalności frontendowych z użyciem frameworku React i języka TypeScript oraz backendowych z użyciem ASP.NET Core
+- Testowanie i wdrożenie kolejnych funkcjonalności
 - Naprawa zgłoszonych błędów.
 
-=== Do ograniczeń związanych z projektem należy
+=== Ograniczenia związane z projektem
 
-- Jako silnik bazodanowy wykorzystywany jest Microsoft SQL Server.
+-  Silnik bazodanowy wymuszony przez klienta - Microsoft SQL Server.
 
 === Inne współpracujące systemy
 
-Aplikacja obecnie nie współpracuje z innymi systemami, jednakże w przyszłości planowane jest dodanie integracji z Active Directory / SSO Uniwersytetu Gdańskiego w celu ułatwienia zarządzania użytkownikami oraz procesem logowania.
+Aplikacja obecnie nie współpracuje z innymi systemami.
+
+// Jednakże w przyszłości planowane jest dodanie integracji z Active Directory / SSO Uniwersytetu Gdańskiego w celu ułatwienia zarządzania użytkownikami oraz procesem logowania.
+
+=== Istotne terminy wydarzeń
+
+- Przejęcie projektu w październiku 2025 r.
+- 14.11.2025 wdrożenie wersji 2.1.0 aplikacji na serwer UG​
+- Wdrożenie wersji 2.2.0 i 2.2.1 w grudniu 2025 r.​
+- Przygotowane wersje 2.3.0 i 2.3.1 do wdrożenia w marcu 2026 r.
+- Spotkania z promotorem średnio co dwa tygodnie w celu kontrolowania postępów prac oraz uzyskania wskazówek do dalszego rozwoju
+- Spotkania z klientem średnio co trzy miesiące w celu przedstawienia aktualnego działania systemu i zebrania opinii użytkowników
 
 == Główne etapy projektu
 
-- Zbieranie wymagań projektowych i przekazanie projektu od poprzedniego zespołu
-- Przepisanie aplikacji frontendowej
-- Implementacja kluczowych funkcjonalności (m. in. formularz C) oraz naprawa zgłoszonych błędów
-- Automatyzacja testowania i wdrażania
+Celem projektu jest dalszy rozwój i utrzymanie portalu, który powstał w ramach poprzedniego projektu. Realizowane i rozwijane są wybrane funkcjonalności służące obsłudze i planowaniu rejsów morskich jednostek badawczych, które obsługuje Biuro Armatora. W chwili obecnej zaimplementowana została podstawowa funkcjonalność w następujących obszarach: zbieranie podstawowych danych o załogach, planach badawczych i rejsach, wspieranie planowania harmonogramu rejsów, obsługa realizacji rejsów i raportowanych wyników naukowych. W następnych jednostkach wdrożeniowych planowane jest dalsze rozwijanie istniejących modułów systemu, wprowadzanie nowych funkcjonalności wynikających z potrzeb użytkowników oraz poprawa stabilności i użyteczności aplikacji.
 
-=== Terminy
-
-Ukończenie pracy nad formularzem C: 7 kwietnia 2025
-
-Ukończenie pracy nad projektem: grudzień 2025
 
 = 2. Interesariusze i użytkownicy
 
 === Interesariusze
 
-Możemy wyróżnić następujące grupy interesariuszy:
 - *Administratorzy systemu* - osoby zarządzające całością aplikacji
-- *Biuro armatora Uniwersytetu Gdańskiego* - pracownicy odpowiedzialni za organizację rejsami
+- *Biuro armatora Uniwersytetu Gdańskiego* - pracownicy odpowiedzialni za organizację rejsów
 - *Kierownicy rejsów* - osoby odpowiedzialne za zarządzanie konkretnymi rejsami
-- *Przełożeni* - osoby odpowiedzialne za zatwierdzanie rejsów, nie posiadają jednak dostępu do reszty aplikacji
+- *Przełożeni* - osoby odpowiedzialne za zatwierdzanie rejsów, nie mają dostępu do pozostałych funkcji aplikacji
+- *Załoga statku* - członkowie załogi jednostki badawczej
 - *Goście zewnętrzni* - osoby, które mogą przeglądać dane aplikacji
 
 === Użytkownicy końcowi
 
-Aplikacja obsługuje cztery typy użytkowników:
+Aplikacja obsługuje pięć typów użytkowników:
 - *Administrator*:
   Ma pełny dostęp do wszystkich danych i funkcjonalności aplikacji. Odpowiada za zarządzanie użytkownikami, konfigurację systemu oraz nadzorowanie poprawności działania aplikacji.
 - *Armator*:
   Ma pełny dostęp do danych związanych z organizacją rejsów. Może zarządzać zgłoszeniami i rejsami. Posiada ograniczone możliwości zarządzania użytkownikami.
 - *Kierownik rejsu*:
   Posiada dostęp wyłącznie do danych związanych z własnymi rejsami oraz zgłoszeniami, w których pełni rolę zastępcy. Nie posiada możliwości zarządzania innymi użytkownikami ani modyfikowania ogólnych danych rejsowych.
+- *Załoga statku*:
+  Posiada dostęp do wszystkich formularzy związanych z obsługą rejsów oraz do harmonogramu rejsów.
 - *Gość*:
   Posiada tylko możliwość przeglądania danych bez możliwości edycji.
 
 === Dodatkowe wymagania użytkowników
 
-- Bezpieczny dostęp do aplikacji.
-- Dane prywatne przechowywane w bazie danych powinny być zabezpieczone przed nieautoryzowanym dostępem oraz przechowywane zgodnie z obowiązującymi przepisami prawa.
-- Aplikacja powinna gwarantować braku utraty danych nawet w przypadku awarii systemu.
-- Interfejs aplikacji powinien być intuicyjny i łatwy w obsłudze, aby użytkownicy mogli szybko i sprawnie wykonywać swoje zadania.
+- Dostęp do aplikacji powinien być odpowiednio zabezpieczony i dostępny wyłącznie dla uprawnionych użytkowników.
+
+- Dane prywatne przechowywane w bazie danych muszą być chronione przed nieautoryzowanym dostępem oraz przetwarzane zgodnie z obowiązującymi przepisami prawa.
+
+- System powinien zapewniać ochronę przed utratą danych, także w sytuacjach awarii lub nieprawidłowego działania systemu.
+
+- Interfejs użytkownika powinien być zaprojektowany w sposób intuicyjny i przejrzysty, aby umożliwić użytkownikom szybkie i efektywne wykonywanie powierzonych zadań.
 
 = 3. Zespół
 
-Przy projekcie pracują wspólnie dwa zespoły składające się łącznie z 5 osób. Każdy zespół będzie końcowo odpowiedzialny za określone obszary projektu, jednakże w początkowej fazie prac wszyscy członkowie pracują wspólnie nad przejęciem projektu od poprzednich zespołów, poprawą jakości kodu oraz naprawą zgłoszonych błędów.
+Prace nad projektem realizowane są przez dwa dwuosobowe zespoły. Docelowo każdy z nich odpowiada za wybrane obszary systemu. W początkowym etapie wszyscy członkowie zespołów współpracują jednak przy przejmowaniu projektu od poprzedniej grupy, poprawie jakości istniejącego kodu oraz usuwaniu zgłoszonych błędów.
 
-== Zespół 1: Rozwój portalu wspierającego obsługę rejsów dla biura Armatora Wydział Oceanografii i Geografii UG
+== Organizacja pracy zespołu
 
-- Stanisław Nieradko (_193044_): Lider zarówno podzespołu oraz całości projektu. Odpowiedzialny za całokształt prac włączając w to architekturę oraz implementację przepisanego frontendu, utrzymanie backendu oraz zarządzanie zespołem.
-- Bartłomiej Krawisz (_193319_): Docelowo odpowiedzialny za rozplanowanie i implementację strategii testowania projektu. W początkowej fazie współpracuje wraz z resztą zespołu nad refaktoryzacją kodu front-endu.
-- Paweł Pstrągowski (_193473_): Odpowiedzialny za implementację zaplanowanych funkcjonalności. W początkowej fazie współpracuje wraz z resztą zespołu nad refaktoryzacją kodu front-endu.
+Oba podzespoły komunikują się za pomocą platformy Discord oraz uczestniczą w spotkaniach z klientem i promotorem na platformie Teams. Dodatkowo do zarządzania zadaniami wykorzystywany jest system GitHub Issues, który umożliwia zespołowi śledzenie zgłoszonych problemów oraz planowanie prac nad ich rozwiązaniem. Członkowie zespołu mogą przypisywać zadania, komentować postępy oraz dokumentować wprowadzone zmiany. Takie rozwiązanie wspiera asynchroniczny model pracy, umożliwiając efektywną współpracę zespołu niezależnie od czasu pracy poszczególnych członków. Praca zespołu odbywa się w modelu rozproszonym.
+
+== Zespół 1: Realizacja funkcjonalnych wymagań dla portalu wspierającego obsługę rejsów Biura Armatora Wydział Oceanografii i Geografii UG.
+
+- Paweł Narwojsz (s197977\@student.pg.edu.pl): Lider podzespołu, posiadający umiejętności związane z technologią .NET i React. Odpowiedzialny za całokształt prac widocznych dla klienta, włączając w to architekturę projektu oraz za implementację zaplanowanych funkcjonalności. Współpracuje z resztą zespołu przy testowaniu i poprawianiu istniejących elementów systemu. Odpowiada także za wprowadzanie i klasyfikowanie zgłoszonych zadań oraz nadzorowanie backlogu projektowego.
+
+- Filip Pudlak (s198157\@student.pg.edu.pl): Posiada umiejętności związane z technologią .NET i React. Odpowiedzialny za całokształt prac widocznych dla klienta oraz za implementację zaplanowanych funkcjonalności. Współpracuje z resztą zespołu przy testowaniu i poprawianiu istniejących elementów systemu. Uczestniczy w zgłaszaniu i usuwaniu błędów oraz w procesie refaktoryzacji kodu w celu poprawy jego jakości i czytelności.
 
 == Zespół 2: Realizacja niefunkcjonalnych wymagań dla portalu wspierającego obsługę rejsów Biura Armatora Wydział Oceanografii i Geografii UG.
 
-- Krzysztof Nasuta (_193328_): Lider podzespołu. Odpowiedzialny za rozwój DevOps, utrzymanie backendu oraz planowanie i refaktoryzację kodu frontend.
-- Filip Dawidowski (_193433_): Odpowiedzialny za implementację zaplanowanych funkcjonalności. W początkowej fazie współpracuje wraz z resztą zespołu nad refaktoryzacją kodu front-endu.
+- Wojciech Siwiec (s197815\@student.pg.edu.pl): Lider i koordynator całego projektu. Odpowiedzialny za rozwój DevOps, utrzymanie backendu. W swojej pracy wykorzystuje znajomość nowoczesnych technologii i narzędzi, wdrażając rozwiązania usprawniające proces wytwarzania i pracę całego zespołu. Współpracuje z resztą zespołu przy testowaniu i poprawianiu istniejących elementów systemu.
 
-Oba podzespoły utrzymują komunikację za pomocą platformy Discord na której odbywają się regularne spotkania oraz wymiana informacji. Wszelkie plany lub zmiany w kodzie odbywają się po wcześniejszej konsultacji z pozostałymi członkami zespołu w formie zdalnej.
+- Bartosz Łyskanowski (s198051\@student.pg.edu.pl): Posiada umiejętności związane z analizą i bazami danych. Odpowiedzialny za implementację zaplanowanych funkcjonalności. Współpracuje z resztą zespołu przy testowaniu i poprawianiu istniejących elementów systemu. Uczestniczy w zgłaszaniu i usuwaniu błędów oraz w procesie refaktoryzacji kodu w celu poprawy jego jakości i czytelności.
 
-Dane kontaktowe członków zespołu:
-
-#align(horizon + center)[
-  #grid(
-    columns: (auto, 10pt, auto, 10pt, auto),
-    gutter: 20pt,
-    [*Imię i nazwisko*], [], [*Adres e-mail*], [], [*Nick na Discordzie*],
-    [Stanisław Nieradko], [], [s193044\@student.pg.edu.pl], [], [KanarekLife],
-    [Krzysztof Nasuta], [], [s193328\@student.pg.edu.pl], [], [nasus.],
-    [Paweł Pstrągowski], [], [s193473\@student.pg.edu.pl], [], [oenea],
-    [Bartłomiej Krawisz], [], [s193319\@student.pg.edu.pl], [], [ketrab20],
-    [Filip Dawidowski], [], [s193433\@student.pg.edu.pl], [], [fil6164],
-  )
-]
+#pagebreak()
 
 = 4. Komunikacja w zespole i z interesariuszami
 
-Komunikacja w zespole odbywa się za pomocą komunikatora Discord, gdzie odbywają się regularne spotkania oraz wymiana informacji. Wszelkie plany lub zmiany w kodzie odbywają się po wcześniejszej konsultacji z pozostałymi członkami zespołu w formie zdalnej. Spotkania mają miejsce średnio trzy razy w tygodniu, w zależności od potrzeb projektu oraz postępu prac.
+Komunikacja wewnątrz zespołu odbywa się za pośrednictwem aplikacji Discord, która służy do bieżącej wymiany informacji, dyskusji technicznych oraz szybkiego uzgadniania decyzji projektowych.
 
-Komunikacja z opiekunem projektu odbywa się za pomocą platformy Teams w formie spotkań online mających miejsce średnio raz co dwa lub trzy tygodnie. Podczas tych spotkań omawiane są postępy prac, plany na przyszłość oraz wszelkie problemy napotkane podczas realizacji projektu. Wszelkie ważne decyzje dotyczące projektu oraz komunikacji z klientem są konsultowane z opiekunem projektu.
+Komunikacja z opiekunem projektu odbywa się za pomocą platformy Teams w trakcie regularnych spotkań online, organizowanych średnio co dwa tygodnie. Podczas spotkań omawiane są postępy prac, planowane działania, napotkane problemy oraz kierunki dalszego rozwoju systemu. Wszystkie istotne decyzje projektowe są konsultowane z opiekunem.
 
-Komunikacja z klientem odbywa się w nieregularnych interwałach za pomocą spotkań na platformie Teams oraz przy pomocy systemu _Issues_ na platformie GitHub. Z uwagi na specyfikę projektu, komunikacja nie musi być na bieżąco, także większość informacji zbierana jest w trakcie spotkań lub w formie zgłoszeń na platformie GitHub, gdzie klient może zgłaszać błędy, propozycje zmian oraz nowe funkcjonalności. Na podstawie tej komunikacji zespół projektowy wraz z opiekunem projektu podejmuje decyzje dotyczące dalszego rozwoju aplikacji.
+Komunikacja z klientem realizowana jest średnio co trzy miesiące na platformie Teams. Klient może zgłaszać błędy, propozycje zmian oraz nowe wymagania funkcjonalne, które zazwyczaj przesyła w formie dokumentu w Wordzie. Zgłoszenia te są analizowane przez nasz zespół, a następnie wprowadzane do GitHub Issues, który umożliwia śledzenie zgłoszonych problemów, planowanie prac oraz monitorowanie postępów. To rozwiązanie wspiera asynchroniczny model pracy i umożliwia efektywną współpracę niezależnie od czasu pracy poszczególnych członków zespołu.
 
 = 5. Współdzielenie dokumentów i kodu
 
-Dokumentacja projektu jest tworzona przy pomocy narzędzia #link("https://typst.app/")[typst]. Kod tworzący dokument przechowywany jest wraz z resztą kodu projektu w repozytorium Git hostowanym na opisanej dalej platformie GitHub.
+Dokumentacja projektu jest tworzona przy pomocy narzędzia #link("https://typst.app/")[`typst`]. Kod tworzący dokument przechowywany jest wraz z resztą kodu projektu w repozytorium Git hostowanym na opisanej dalej platformie GitHub.
 
-Repozytorium projektu przechowywane jest na platformie GitHub pod adresem #link("https://github.com/KanarekLife/ResearchCruiseApp")[`https://github.com/KanarekLife/ResearchCruiseApp`]. Repozytorium bazowane jest na uprzednim repozytorium, które zostało przekazane przez poprzedni zespół projektowy. Wszelkie zmiany w kodzie oraz dokumentacji są dokonywane za pomocą systemu kontroli wersji git oraz podlegają recenzji kodu przez pozostałych członków zespołu. W aktualnej fazie projektu najważniejszą gałęzią jest `task/frontend-refactor` w której odbywa się refaktoryzacja kodu front-endu. Gałąź `main` jest gałęzią produkcyjną, która zawiera najnowszą wersję aplikacji niezawierającą jednak najnowszych zmian i poprawek.
+Repozytorium projektu przechowywane jest na platformie GitHub pod adresem #link("https://github.com/VV01T3K/ResearchCruiseApp")[`https://github.com/VV01T3K/ResearchCruiseApp`]. Repozytorium bazowane jest na uprzednim repozytorium, które zostało przekazane przez poprzedni zespół projektowy. Wszelkie zmiany w kodzie oraz dokumentacji są dokonywane za pomocą systemu kontroli wersji git oraz podlegają recenzji kodu przez pozostałych członków zespołu. Gałąź `main` jest gałęzią produkcyjną, która zawiera najnowszą wersję aplikacji.
 
-Porządek w repozytorium utrzymywany jest przez liderów obu podzespołów, którzy odpowiedzialni są za zarządzanie gałęziami oraz recenzję kodu. Wszelkie zmiany w kodzie muszą być zatwierdzone przez obu liderów zespołów przed scaleniem z gałęzią główną. Wszelkie zmiany w dokumentacji podlegają temu samemu procesowi co zmiany w kodzie. Szablon dokumentacji projektu jest dostępny w pliku `docs/template.typ`. Aktualne wersje dokumentów przechowywane są w folderze `docs` w repozytorium projektu obok ich plików źródłowych `.typ`, dzięki czemu są wersjonowane.
+Utrzymanie porządku w repozytorium jest głównym zadaniem lidera projektu, jak i członków tworzących poszczególne gałęzie. Zmiany w kodzie muszą być zatwierdzone przez przynajmniej jednego z członków zespołu przed scaleniem z gałęzią główną. Dokumentacja projektowa jest nadzorowana przez wszystkich członków zespołu w czasie wolnym. Szablon dokumentacji znajduje się w pliku `docs/template.typ`, a aktualne wersje dokumentów są przechowywane w katalogu `docs` w repozytorium (nazewnictwo po angielsku zgodne z tytułem zadania `*.pdf`) oraz pliki źródłowe `*.typ`, co umożliwia ich wersjonowanie (wersję samego dokumentu należy zmienić ręcznie).
 
-= 6. Narzędzia
 
-- GitHub - platforma do hostowania repozytorium kodu
-- Git - system kontroli wersji
-- Discord - platforma do komunikacji w zespole
-- Microsoft Teams - platforma do komunikacji z opiekunem projektu oraz klientem
-- Typst - narzędzie do tworzenia dokumentacji projektu
-- Visual Studio Code - środowisko programistyczne do pracy nad kodem front-endu
-- JetBrains Rider - środowisko programistyczne do pracy nad kodem backendu
-- `pnpm`, `bun`, `node` - narzędzia do budowania i uruchamiania aplikacji frontendowej
-- `React`, biblioteki TanStack, `react.motion` i inne - framework i biblioteki do tworzenia aplikacji frontendowej
-- `.NET Core`, `dotnet` - framework i narzędzie do tworzenia aplikacji backendowej
-- Microsoft SQL Server - baza danych wykorzystywana w aplikacji
-- Docker Compose - narzędzie do zarządzania kontenerami Docker
-- Docker - narzędzie do uruchamiania aplikacji w kontenerach
+= 6. Narzędzia i technologie wykorzystane w projekcie
 
-Testowanie aktualnie odbywa się ręcznie, jednakże planowane jest wdrożenie testów jednostkowych oraz integracyjnych w celu zapewnienia jakości kodu oraz uniknięcia błędów w przyszłości.
+== Kontrola wersji i zarządzanie kodem
+- *Git* – system kontroli wersji.
+- *GitHub* – platforma do hostowania repozytorium kodu, zarządzania zadaniami (Issues) i dyskusji.
+
+== Komunikacja i współpraca zespołowa
+- *Discord* – platforma do bieżącej komunikacji w zespole.
+- *Microsoft Teams* – platforma do komunikacji z opiekunem projektu oraz klientem.
+
+== Dokumentacja projektu
+- *Typst* – narzędzie do tworzenia dokumentacji projektowej.
+
+== Środowisko programistyczne
+- *Visual Studio Code* – środowisko do pracy nad kodem front-endu i back-endu.
+
+== Technologie frontendowe
+- *pnpm*, *bun*, *Node.js* – narzędzia do zarządzania zależnościami, budowania i uruchamiania aplikacji frontendowej.
+- *React* oraz biblioteki takie jak *TanStack* i *React Motion* – framework i biblioteki wykorzystywane do tworzenia interfejsu użytkownika.
+
+== Technologie backendowe
+- *.NET Core* oraz narzędzie *dotnet* – framework i środowisko do tworzenia oraz uruchamiania aplikacji backendowej.
+
+== Baza danych
+- *Microsoft SQL Server* – system zarządzania bazą danych wykorzystywany w aplikacji.
+
+== Konteneryzacja i uruchamianie środowiska
+- *Docker* – narzędzie do uruchamiania aplikacji w kontenerach.
+- *Docker Compose* – narzędzie do zarządzania wieloma kontenerami oraz konfiguracją środowiska.
+
+== Testowanie
+- *Playwright* - framework do automatyzacji testów aplikacji webowych
+
+== Obserwowalność
+- *Grafana* - platforma służąca do wizualizacji danych, monitorowania systemów i analizy metryk w czasie rzeczywistym
+
+== Narzędzia AI
+- *Greptile* - agent do przeglądu kodu, który automatycznie analizuje i weryfikuje jego jakość przy każdym pull requestcie na GitHubie.
