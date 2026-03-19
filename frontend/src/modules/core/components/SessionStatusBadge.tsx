@@ -13,7 +13,7 @@ function getRemainingMs(expirationDate: Date): number {
 
 function formatTimeRemaining(remainingMs: number): string {
   if (remainingMs <= 0) {
-    return 'Sesja wygasł';
+    return 'Sesja wygasła';
   }
 
   const totalSeconds = Math.floor(remainingMs / 1000);
