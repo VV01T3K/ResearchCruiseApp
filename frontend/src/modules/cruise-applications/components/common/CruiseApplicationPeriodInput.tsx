@@ -37,7 +37,7 @@ function clampToBounds(values: [number, number], min: number, max: number): [num
   const clampedEnd = Math.max(min, Math.min(values[1], max));
 
   if (clampedStart < clampedEnd) return [clampedStart, clampedEnd];
-  if (max <= min) return [min, max];
+  if (max <= min) return [min, max === min ? min + 1 : max];
   return clampedStart >= max ? [max - 1, max] : [clampedStart, Math.min(clampedStart + 1, max)];
 }
 
