@@ -35,7 +35,10 @@ function parsePeriod(period: CruisePeriodType | undefined, fallback: [number, nu
 function clampToBounds(values: [number, number], min: number, max: number): [number, number] {
   const clampedStart = Math.max(min, Math.min(values[0], max));
   const clampedEnd = Math.max(min, Math.min(values[1], max));
-  return clampedStart >= clampedEnd ? [clampedStart, Math.min(clampedStart + 1, max)] : [clampedStart, clampedEnd];
+
+  if (clampedStart < clampedEnd) return [clampedStart, clampedEnd];
+  if (max <= min) return [min, max];
+  return clampedStart >= max ? [max - 1, max] : [clampedStart, Math.min(clampedStart + 1, max)];
 }
 
 function isValidPeriod(period: unknown): period is CruisePeriodType {
@@ -68,6 +71,7 @@ export function CruiseApplicationPeriodInput({
     const valueChanged =
       !isValidPeriod(value) || clamped[0].toString() !== value[0] || clamped[1].toString() !== value[1];
     if (valueChanged) {
+      if (clamped[0] === clamped[1]) return;
       onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
     }
   }, [minBound, maxBound, sliderValues, onChange, value]);
