@@ -86,6 +86,9 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
         CancellationToken cancellationToken
     )
     {
+        if (ids.Count == 0)
+            return Task.FromResult(new List<Cruise>());
+
         return DbContext
             .Cruises.IncludeCruiseApplications()
             .Where(cruise =>
