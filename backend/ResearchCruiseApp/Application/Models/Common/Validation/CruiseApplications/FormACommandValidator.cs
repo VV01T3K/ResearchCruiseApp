@@ -99,6 +99,7 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
 
                 RuleFor(command => command.FormADto)
                     .Must(HasEnoughPrecisePeriodForCruise)
+                    .When(command => uint.TryParse(command.FormADto.CruiseHours, out _))
                     .WithMessage(
                         "Dokładny okres rejsu musi być równy lub dłuższy niż liczba planowanych godzin rejsowych."
                     );
@@ -133,6 +134,7 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
 
                 RuleFor(command => command.FormADto)
                     .Must(HasEnoughPeriodsForCruise)
+                    .When(command => uint.TryParse(command.FormADto.CruiseHours, out _))
                     .WithMessage(
                         "Okres dopuszczalny i optymalny muszą być równe lub dłuższe niż liczba planowanych godzin rejsowych."
                     );
