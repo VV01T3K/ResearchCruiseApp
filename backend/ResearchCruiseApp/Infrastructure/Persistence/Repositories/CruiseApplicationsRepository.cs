@@ -144,6 +144,9 @@ internal class CruiseApplicationsRepository
         CancellationToken cancellationToken
     )
     {
+        if (ids.Count == 0)
+            return Task.FromResult(new List<CruiseApplication>());
+
         return DbContext
             .CruiseApplications.Where(cruiseApplication => ids.Contains(cruiseApplication.Id))
             .ToListAsync(cancellationToken);
