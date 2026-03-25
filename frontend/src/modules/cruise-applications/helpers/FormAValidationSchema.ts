@@ -132,8 +132,6 @@ const CruiseGoalValidationSchema = z
   });
 
 const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
-  console.log('Blockades:', blockades);
-
   type OverlappingBlockade = {
     title: string;
     start: Date;
@@ -194,20 +192,15 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
     if (Number.isNaN(rangeStart.getTime()) || Number.isNaN(rangeEnd.getTime()) || rangeEnd <= rangeStart) {
       return { canFitCruise: true, overlappingBlockades: [] };
     }
-    console.log('analyzeCruiseSlot: not naN dates, blockades:', blockades?.length ?? 0);
     if (cruiseDurationDays <= 0) {
       return { canFitCruise: true, overlappingBlockades: [] };
     }
-    console.log('analyzeCruiseSlot: cruise duration days:', cruiseDurationDays);
     if ((rangeEnd.getTime() - rangeStart.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
       return { canFitCruise: false, overlappingBlockades: [] };
     }
-    console.log('analyzeCruiseSlot: enough time, blockades available:', blockades?.length ?? 0);
     if (!blockades || blockades.length === 0) {
-      console.log('analyzeCruiseSlot: no blockades, returning canFitCruise=true');
       return { canFitCruise: true, overlappingBlockades: [] };
     }
-    console.log('analyzeCruiseSlot: blockades exist, count:', blockades.length);
     const overlappingBlockades = getOverlappingBlockades(rangeStart, rangeEnd);
     const merged = getMergedOverlappingBlockades(overlappingBlockades);
     if (merged.length === 0) {
@@ -215,7 +208,6 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
     }
 
     let freeSlotStart = rangeStart;
-    console.log('analyzeCruiseSlot: free slot start:', freeSlotStart);
     for (const blockade of merged) {
       const freeDays = (blockade.start.getTime() - freeSlotStart.getTime()) / DAY_IN_MILLISECONDS;
       if (freeDays >= cruiseDurationDays) {
@@ -256,30 +248,20 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
       cruiseHours: z.string(),
     })
     .superRefine(({ periodSelectionType, precisePeriodStart, precisePeriodEnd, cruiseHours }, ctx) => {
-      console.log(
-        'BlockadeCollision superRefine called. Blockades available:',
-        blockades?.length ?? 0,
-        'periodSelectionType:',
-        periodSelectionType
-      );
       if (periodSelectionType === 'period') {
-        console.log('Period mode, skipping blockade check');
         return;
       }
       if (!precisePeriodStart || !precisePeriodEnd) {
-        console.log('Missing period dates, skipping blockade check');
         return;
       }
 
       const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, cruiseHours);
-      console.log('Slot analysis result:', slotAnalysis);
 
       if (!slotAnalysis.canFitCruise) {
-        console.log('Adding blockade validation error');
         ctx.addIssue({
           code: 'custom',
           message:
-            'Rejs nie może się odbyć w podanym terminie czas pomiędzy blokadami jest krótszy niż wybrany czas rejsu.',
+            'Rejs nie może się odbyć w podanym terminie czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
           path: ['precisePeriodEnd'],
         });
       }
@@ -434,7 +416,6 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
     });
 
 export function getFormAValidationSchema(initValues: FormAInitValuesDto, blockades?: BlockadePeriodDto[]) {
-  console.log('getFormAValidationSchema called with blockades:', blockades?.length ?? 0, 'blockades:', blockades);
   return ManagerAndDeputyManagerValidationSchema(initValues)
     .and(ShipUsageValidationSchema)
     .and(CruiseGoalValidationSchema)

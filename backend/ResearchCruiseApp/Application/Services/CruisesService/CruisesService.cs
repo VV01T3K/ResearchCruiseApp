@@ -149,7 +149,6 @@ internal class CruisesService(
         if ((end - freeSlotStart).TotalDays >= cruiseDurationDays)
             return false;
 
-        // No free slot large enough, so selected period conflicts with blockades.
         return true;
     }
 }

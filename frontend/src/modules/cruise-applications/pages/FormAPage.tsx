@@ -96,38 +96,26 @@ export function FormAPage() {
           note: '',
         }) as FormADto,
     validators: {
-      onChange: getFormAValidationSchema(initialStateQuery.data, undefined),
+      onChange: getFormAValidationSchema(initialStateQuery.data),
     },
   });
 
   const year = useStore(form.store, (state) => state.values.year);
   const blockadesQuery = useBlockadesQuery(+year);
 
-  console.log(
-    'FormAPage render: year=',
-    year,
-    'blockades query status=',
-    blockadesQuery.status,
-    'blockades count=',
-    blockadesQuery.data?.length ?? 0
-  );
-
   useEffect(() => {
-    console.log('FormAPage useEffect: updating validators with blockades', blockadesQuery.data?.length ?? 0);
     const newValidators = {
       onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
     };
     form.update({
       validators: newValidators,
     });
-    console.log('Validators updated via form.update()');
 
     // Re-validate the fields that depend on blockades if form has been submitted
     if (hasFormBeenSubmitted) {
-      console.log('Re-validating form fields due to blockade change');
       form.validate('change');
     }
-  }, [blockadesQuery.data, blockadesQuery.status, initialStateQuery.data, hasFormBeenSubmitted]);
+  }, [blockadesQuery.data, blockadesQuery.status, initialStateQuery.data, hasFormBeenSubmitted, form]);
 
   const context = {
     form,
@@ -183,16 +171,12 @@ export function FormAPage() {
   }
 
   async function handleSubmit() {
-    console.log('handleSubmit called, current blockades:', blockadesQuery.data?.length ?? 0);
-
-    // Ensure validators are updated with the latest blockades BEFORE validation
     const currentValidators = {
       onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
     };
     form.update({
       validators: currentValidators,
     });
-    console.log('Validators updated right before validation via form.update()');
 
     setHasFormBeenSubmitted(true);
     await form.validate('change');
