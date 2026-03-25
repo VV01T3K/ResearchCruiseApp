@@ -1,8 +1,9 @@
 import { useStore } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { AppAccordion } from '@/core/components/AppAccordion';
+import { AppAlert } from '@/core/components/AppAlert';
 import { AppCheckbox } from '@/core/components/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/core/components/inputs/AppDropdownInput';
 import { AppInput } from '@/core/components/inputs/AppInput';
@@ -10,13 +11,52 @@ import { AppNumberInput } from '@/core/components/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/core/components/inputs/dates/AppDatePickerInput';
 import { getErrors } from '@/core/lib/utils';
 import { useFormA } from '@/cruise-applications/contexts/FormAContext';
+import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/cruise-applications/helpers/periodUtils';
 import { CruisePeriodType } from '@/cruise-applications/models/FormADto';
+import { BlockadePeriodDto } from '@/cruise-schedule/models/CruiseDto';
 
 import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodInput';
 import { FormABlockadeWarning } from './FormABlockadeWarning';
 
 function isValidPeriod(period: unknown): period is CruisePeriodType {
   return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
+}
+
+type OverlappingBlockade = {
+  title: string;
+  start: Date;
+  end: Date;
+};
+
+function getOverlappingBlockadesForRange(
+  blockades: BlockadePeriodDto[] | undefined,
+  rangeStart: string,
+  rangeEnd: string
+): OverlappingBlockade[] {
+  if (!blockades || blockades.length === 0 || !rangeStart || !rangeEnd) {
+    return [];
+  }
+
+  const start = new Date(rangeStart);
+  const end = new Date(rangeEnd);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
+    return [];
+  }
+
+  return blockades
+    .map((b) => ({
+      title: b.title,
+      start: new Date(b.startDate),
+      end: new Date(b.endDate),
+    }))
+    .filter((b) => !Number.isNaN(b.start.getTime()) && !Number.isNaN(b.end.getTime()))
+    .filter((b) => b.end > start && b.start < end)
+    .map((b) => ({
+      title: b.title?.trim() ? b.title : 'Bez tytułu',
+      start: b.start < start ? start : b.start,
+      end: b.end > end ? end : b.end,
+    }))
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
 }
 
 function getCurrentFortnight(year: string): number {
@@ -28,6 +68,23 @@ function getCurrentFortnight(year: string): number {
   const month = today.getMonth();
   const day = today.getDate();
   return month * 2 + (day > 15 ? 1 : 0);
+}
+
+function getOverlappingBlockadesForPeriod(
+  blockades: BlockadePeriodDto[] | undefined,
+  year: string,
+  period: CruisePeriodType | ''
+): OverlappingBlockade[] {
+  const parsedPeriodRange = parsePeriodRangeInput(year, period, isValidPeriod);
+  if (!parsedPeriodRange) {
+    return [];
+  }
+
+  return getOverlappingBlockadesForRange(
+    blockades,
+    getPeriodEdgeDateString(parsedPeriodRange.parsedYear, parsedPeriodRange.startEdge),
+    getPeriodEdgeDateString(parsedPeriodRange.parsedYear, parsedPeriodRange.endEdge)
+  );
 }
 
 export function FormACruiseLengthSection() {
@@ -66,6 +123,20 @@ export function FormACruiseLengthSection() {
   });
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
+
+  const overlappingPreciseBlockades = useMemo(
+    () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
+    [blockades, precisePeriodStart, precisePeriodEnd]
+  );
+  const overlappingAcceptablePeriodBlockades = useMemo(
+    () => getOverlappingBlockadesForPeriod(blockades, year, acceptablePeriod),
+    [blockades, year, acceptablePeriod]
+  );
+
+  const overlappingBlockadesForCurrentSelection = useMemo(
+    () => (periodSelectionType === 'period' ? overlappingAcceptablePeriodBlockades : overlappingPreciseBlockades),
+    [periodSelectionType, overlappingAcceptablePeriodBlockades, overlappingPreciseBlockades]
+  );
 
   const savedPeriodValuesRef = useRef<{ acceptable: CruisePeriodType; optimal: CruisePeriodType } | null>(null);
   const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
@@ -229,6 +300,28 @@ export function FormACruiseLengthSection() {
               />
             </>
           )}
+
+          {overlappingBlockadesForCurrentSelection.length > 0 && (
+            <div className="lg:col-span-2" data-testid="form-a-blockade-period-warning">
+              <AppAlert variant="warning">
+                <div>
+                  <span className="font-bold">Utrudniające blokady w wybranym zakresie:</span>
+                  <div className="mt-2 space-y-1" data-testid="form-a-blockade-collision-errors">
+                    {overlappingBlockadesForCurrentSelection.map((blockade) => (
+                      <div
+                        key={`${blockade.title}-${blockade.start.toISOString()}-${blockade.end.toISOString()}`}
+                        className="text-sm"
+                      >
+                        <span className="font-bold">{blockade.title}</span>:{' '}
+                        {blockade.start.toLocaleDateString('pl-PL')} - {blockade.end.toLocaleDateString('pl-PL')}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </AppAlert>
+            </div>
+          )}
+
           {!isReadonly && (
             <div className="lg:col-span-2">
               <AppCheckbox

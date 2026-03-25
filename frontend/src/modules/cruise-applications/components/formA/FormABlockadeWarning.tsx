@@ -30,9 +30,6 @@ export function FormABlockadeWarning({ year, blockades }: Props) {
                   </div>
                 ))}
               </div>
-              <div className="mt-2 text-sm">
-                W okresach blokady nie można składać zgłoszeń formularza A. Proszę wybrać inne terminy.
-              </div>
             </div>
           </AppAlert>
         </motion.div>
