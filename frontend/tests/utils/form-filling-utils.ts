@@ -47,20 +47,33 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       const menu = this.page.getByRole('menu').last();
       const dayButtons = menu.getByRole('button', { name: itemText, exact: true });
       const dayButtonsCount = await dayButtons.count();
-      let selected = false;
 
-      for (let i = 0; i < dayButtonsCount; i++) {
-        const dayButton = dayButtons.nth(i);
-        if (await dayButton.isEnabled()) {
-          await dayButton.click();
-          selected = true;
-          break;
-        }
+      if (dayButtonsCount === 0) {
+        throw new Error(`Could not find datetime-picker day button with text: ${itemText}`);
       }
 
-      if (!selected) {
+      let indexToClick = 0;
+
+      if (dayButtonsCount === 2) {
+        const dayNumber = parseInt(itemText, 10);
+        if (dayNumber > 15) {
+          // e.g. 26. First "26" is prev month day, second is current month day
+          indexToClick = 1;
+        } else {
+          // e.g. 2. First "2" is current month day, second is next month day
+          indexToClick = 0;
+        }
+      } else if (dayButtonsCount > 2) {
+        throw new Error(`Unexpected number of datetime-picker day buttons (${dayButtonsCount}) for day: ${itemText}`);
+      }
+
+      const dayButton = dayButtons.nth(indexToClick);
+      if (await dayButton.isEnabled()) {
+        await dayButton.click();
+      } else {
         throw new Error(`Could not find enabled datetime-picker day button: ${itemText}`);
       }
+
       // Click on main content area to close the datetime picker (triggers useOutsideClickDetection)
       await this.page.getByTestId('main-content').click({ position: { x: 1, y: 1 } });
       await expect(menu).toBeHidden();
