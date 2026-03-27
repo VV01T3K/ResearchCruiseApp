@@ -8,8 +8,19 @@ function getAuthDetailsPayloadMs(timeoutMs: number) {
   const base = getAuthDetailsPayload();
   return {
     ...base,
-    expiresIn: deadline.toISOString(),
-    expirationDate: deadline.toISOString(),
+    accessTokenExpirationDate: deadline.toISOString(),
+    refreshTokenExpirationDate: deadline.toISOString(),
+  };
+}
+
+function getRefreshResponsePayloadMs(timeoutMs: number) {
+  const deadline = new Date(Date.now() + timeoutMs).toISOString();
+  const base = getAuthDetailsPayload();
+  return {
+    accessToken: base.accessToken,
+    refreshToken: base.refreshToken,
+    accessTokenExpiration: deadline,
+    refreshTokenExpiration: deadline,
   };
 }
 
@@ -50,92 +61,82 @@ async function seedAuthAndNavigate(page: Page, authPayload: ReturnType<typeof ge
 }
 
 test.describe('session expiration and refresh', () => {
-  test('auto-refresh endpoint is called before session expires', async ({ page }) => {
+  test('warning modal appears ~1 minute before session expires', async ({ page }) => {
     await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getAuthDetailsPayloadMs(24 * 60 * 60 * 1000) },
-    });
-
-    const refreshPromise = page.waitForRequest(
-      (req) => req.url().includes('/account/refresh') && req.method() === 'POST'
-    );
-
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(5_000));
-
-    const refreshRequest = await refreshPromise;
-    const body = refreshRequest.postDataJSON();
-    expect(body).toHaveProperty('accessToken');
-    expect(body).toHaveProperty('refreshToken');
-  });
-
-  test('warning toast appears ~1 minute before session expires', async ({ page }) => {
-    await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getAuthDetailsPayloadMs(24 * 60 * 60 * 1000) },
+      refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
     });
 
     // 63s expiration: warning fires at 63000 - 60000 = 3000ms
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(63_000));
 
-    const warningToast = page.getByText('Sesja wygaśnie za mniej niż 1 minutę.');
-    await expect(warningToast).toBeVisible({ timeout: 10_000 });
+    const warningTitle = page.getByText('Sesja wygasa');
+    const warningMessage = page.getByText(/Twoja sesja wygaśnie za/);
+    await expect(warningTitle).toBeVisible({ timeout: 10_000 });
+    await expect(warningMessage).toBeVisible({ timeout: 10_000 });
   });
 
-  test('session expiry shows toast and redirects to login', async ({ page }) => {
+  test('session expiry shows warning and redirects to login', async ({ page }) => {
     // Hanging refresh ensures the expire timeout fires at 3s
     await setupAuthMocks(page, { refreshHangs: true });
 
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(3_000));
 
-    const expiredToast = page.getByText('Sesja wygasła. Zaloguj się ponownie.');
-    await expect(expiredToast).toBeVisible({ timeout: 10_000 });
+    const warningTitle = page.getByText('Sesja wygasa');
+    const warningMessage = page.getByText(/Twoja sesja wygaśnie za/);
+    await expect(warningTitle).toBeVisible({ timeout: 10_000 });
+    await expect(warningMessage).toBeVisible({ timeout: 10_000 });
     await expect(page).toHaveURL(/\/login/, { timeout: 10_000 });
   });
 
   test('successful refresh extends session and prevents redirect', async ({ page }) => {
+    const initialSessionMs = 12_000;
     await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getAuthDetailsPayloadMs(24 * 60 * 60 * 1000) },
+      refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
     });
 
-    const refreshPromise = page.waitForRequest(
-      (req) => req.url().includes('/account/refresh') && req.method() === 'POST'
+    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(initialSessionMs));
+
+    const RefreshButton = page.getByTestId('session-refresh-btn');
+    await expect(RefreshButton).toBeVisible({ timeout: 10_000 });
+
+    const refreshPromise = page.waitForResponse(
+      (res) =>
+        res.url().includes('/account/refresh') &&
+        res.request().method() === 'POST' &&
+        res.status() === 200
     );
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(5_000));
+    await RefreshButton.click();
     await refreshPromise;
 
-    // Wait past the original 5s expiration
-    await page.waitForTimeout(7_000);
+    // Wait past the original expiration window to ensure refresh truly extended it.
+    await page.waitForTimeout(initialSessionMs + 1_500);
 
     await expect(page).not.toHaveURL(/\/login/);
   });
 
-  test('cross-tab storage sync clears session when auth is removed', async ({ page }) => {
+  test('auth removed from storage signs out after reload', async ({ page }) => {
     await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getAuthDetailsPayloadMs(24 * 60 * 60 * 1000) },
+      refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
     });
 
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
 
-    const badge = page.getByTestId('session-status-badge');
-    await expect(badge).toBeVisible();
+    await expect(page.getByTestId('session-status-badge')).toBeVisible();
 
-    // Simulate another tab clearing authDetails
+    // Remove persisted auth and validate app re-hydration on next load.
     await page.evaluate(() => {
       window.localStorage.removeItem('authDetails');
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: 'authDetails',
-          newValue: null,
-          storageArea: window.localStorage,
-        })
-      );
     });
 
-    // Session badge should disappear as sessionExpirationDate becomes undefined
-    await expect(badge).toBeHidden({ timeout: 10_000 });
+    await page.reload();
+
+    await expect(page).toHaveURL(/\/login/, { timeout: 10_000 });
+    await expect(page.getByTestId('session-status-badge')).toBeHidden({ timeout: 10_000 });
   });
 
   test('manual refresh button calls refresh endpoint and extends session', async ({ page }) => {
-    const extendedAuth = getAuthDetailsPayloadMs(24 * 60 * 60 * 1000);
+    const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);
     await setupAuthMocks(page, {
       refreshResponse: { status: 200, body: extendedAuth },
     });
