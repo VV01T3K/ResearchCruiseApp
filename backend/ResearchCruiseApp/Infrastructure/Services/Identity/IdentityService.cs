@@ -191,8 +191,7 @@ public class IdentityService(
         {
             return Error.UnknownIdentity();
         }
-        var result = await CreateLoginResponseDto(user);
-        return result;
+        return await CreateLoginResponseDto(user);
     }
 
     public async Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto)

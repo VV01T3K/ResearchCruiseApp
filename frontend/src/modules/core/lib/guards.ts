@@ -1,7 +1,10 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 
+import { client } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
+import { User } from '@/core/models/User';
 import { UserContextType } from '@/user/contexts/UserContext';
+import { getStoredAuthDetails } from '@/user/services/StoredAuthDetails';
 
 type GuardContextType = {
   context: {
@@ -16,10 +19,54 @@ type GlobalGuardType = {
   unauthenticated: () => (context: GuardContextType) => Promise<void>;
 };
 
+async function resolveCurrentUser(userContext?: UserContextType): Promise<User | undefined> {
+  if (userContext?.currentUser) {
+    return userContext.currentUser;
+  }
+
+  const storedAuthDetails = getStoredAuthDetails();
+  if (!storedAuthDetails) {
+    return undefined;
+  }
+
+  if (storedAuthDetails.refreshTokenExpirationDate <= new Date()) {
+    return undefined;
+  }
+
+  let accessToken = storedAuthDetails.accessToken;
+
+  if (storedAuthDetails.accessTokenExpirationDate <= new Date() && userContext) {
+    try {
+      await userContext.refreshUser();
+      accessToken = getStoredAuthDetails()?.accessToken ?? '';
+    } catch {
+      return undefined;
+    }
+  }
+
+  if (!accessToken) {
+    return undefined;
+  }
+
+  try {
+    const response = await client.get('/account', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data as User;
+  } catch {
+    return undefined;
+  }
+}
+
 export const allowOnly: GlobalGuardType = {
   withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      if (!context.userContext?.currentUser) {
+      const currentUser = await resolveCurrentUser(context.userContext);
+
+      if (!currentUser) {
         throw redirect({
           to: '/login',
           search: {
@@ -28,7 +75,7 @@ export const allowOnly: GlobalGuardType = {
         });
       }
 
-      if (!roles.some((r) => context.userContext!.currentUser!.roles.includes(r))) {
+      if (!roles.some((r) => currentUser.roles.includes(r))) {
         throw redirect({
           to: '/',
         });
@@ -37,7 +84,9 @@ export const allowOnly: GlobalGuardType = {
   },
   authenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      if (!context.userContext?.currentUser) {
+      const currentUser = await resolveCurrentUser(context.userContext);
+
+      if (!currentUser) {
         throw redirect({
           to: '/login',
           search: {
@@ -49,7 +98,9 @@ export const allowOnly: GlobalGuardType = {
   },
   unauthenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context }) => {
-      if (context.userContext?.currentUser) {
+      const currentUser = await resolveCurrentUser(context.userContext);
+
+      if (currentUser) {
         throw redirect({
           to: '/',
         });

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { client } from '@/core/lib/api';
 import { User } from '@/core/models/User';
 import { AuthDetails } from '@/user/models/AuthDetails';
+import { getStoredAuthDetails } from '@/user/services/StoredAuthDetails';
 
 type MutationProps = {
   updateAuthDetails: (newAuthDetails: AuthDetails | undefined) => Promise<void>;
@@ -14,12 +15,17 @@ export function useProfileQuery() {
   return useSuspenseQuery({
     queryKey: ['userProfile'],
     queryFn: async () => {
-      if (!client.defaults.headers.Authorization) {
+      const accessToken = getStoredAuthDetails()?.accessToken;
+      if (!accessToken) {
         return null;
       }
 
       try {
-        const response = await client.get('/account');
+        const response = await client.get('/account', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         return response;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
