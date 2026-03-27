@@ -100,10 +100,7 @@ test.describe('session expiration and refresh', () => {
     await expect(RefreshButton).toBeVisible({ timeout: 10_000 });
 
     const refreshPromise = page.waitForResponse(
-      (res) =>
-        res.url().includes('/account/refresh') &&
-        res.request().method() === 'POST' &&
-        res.status() === 200
+      (res) => res.url().includes('/account/refresh') && res.request().method() === 'POST' && res.status() === 200
     );
 
     await RefreshButton.click();
