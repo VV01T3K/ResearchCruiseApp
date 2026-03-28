@@ -79,7 +79,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'bun run dev --open false --port 5174 --strictPort',
+    command: 'vp dev --host --open false --port 5174 --strictPort',
     url: 'http://localhost:5174',
     reuseExistingServer: !process.env.CI,
   },

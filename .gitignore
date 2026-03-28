@@ -281,3 +281,6 @@ gen
 # VS Code settings
 .vscode/launch.json
 .vscode/tasks.json
+
+# Agent skills
+.agents/skills/*
