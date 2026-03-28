@@ -10,14 +10,17 @@ bun = "latest"
 pnpm = "latest"
 dotnet = "10.0"
 
+[shell_alias]
+vpr = "vp run"
+
 [hooks]
 preinstall = '''
     test -f .mise-setup-done && exit 0
-    (cd frontend && vp env install)
+    vp env install
 '''
 postinstall = '''
     test -f .mise-setup-done && exit 0
-    (cd frontend && vp install)
+    vp install
     (cd backend && dotnet restore && dotnet tool restore)
     touch .mise-setup-done
 '''
@@ -73,7 +76,7 @@ run = '''
   }
   trap cleanup EXIT
 
-  bun run start > "$LOG" 2>&1 &
+  vp run start > "$LOG" 2>&1 &
   DOTNET_PID=$!
 
   tail -f "$LOG" &

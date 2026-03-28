@@ -9,8 +9,6 @@
     "build": "tsgo && vp build",
     "type": "tsgo",
     "check": "vp check",
-    "fmt": "vp fmt",
-    "lint": "vp lint",
     "fix": "vp check --fix",
     "preview": "vp preview --host",
     "storybook": "storybook dev -p 6006",
