@@ -23,7 +23,8 @@ services:
   frontend:
     container_name: researchcruiseapp-frontend
     build:
-      context: ../frontend
+      context: ..
+      dockerfile: frontend/Dockerfile
     ports:
       - 8080:8080
     environment:

@@ -24,8 +24,12 @@ jobs:
       matrix:
         include:
           - component: frontend
+            context: .
+            dockerfile: frontend/Dockerfile
             build-args: APP_ENVIRONMENT=production
           - component: backend
+            context: backend
+            dockerfile: backend/Dockerfile
             build-args: ""
 
     steps:
@@ -51,7 +55,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.component }}
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
