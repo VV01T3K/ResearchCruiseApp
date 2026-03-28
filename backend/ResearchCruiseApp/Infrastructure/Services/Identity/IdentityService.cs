@@ -533,9 +533,9 @@ public class IdentityService(
         var loginResponseDto = new LoginResponseDto
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
-            AccessTokenExpiration = accessToken?.ValidTo ?? DateTime.UtcNow,
+            AccessTokenExpirationDate = accessToken?.ValidTo ?? DateTime.UtcNow,
             RefreshToken = refreshToken,
-            RefreshTokenExpiration = refreshTokenExpiry.ToUniversalTime(),
+            RefreshTokenExpirationDate = refreshTokenExpiry.ToUniversalTime(),
         };
         return loginResponseDto;
     }
