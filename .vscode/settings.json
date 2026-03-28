@@ -10,6 +10,9 @@
     "source.fixAll.oxc": "always"
   },
   "oxc.fixKind": "safe_fix_or_suggestion",
+  "files.exclude": {
+    ".mise-setup-done": true
+  },
   "files.watcherExclude": {
     "**/*.gen.ts": true,
     "**/env.d.ts": true
@@ -68,6 +71,9 @@
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "[yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[toml]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "dotnetAcquisitionExtension.allowInvalidPaths": true,

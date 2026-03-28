@@ -24,9 +24,9 @@ export default defineConfig({
     tanstackRouter(),
     viteReact(),
     tailwindcss(),
-    babel({
-      presets: [reactCompilerPreset()],
-    }),
+    // babel({ // Breaks tests and some forms etc FIXME: Re-enable and fix
+    //   presets: [reactCompilerPreset()],
+    // }),
   ],
   define: {
     APP_VERSION: JSON.stringify(process.env.npm_package_version),

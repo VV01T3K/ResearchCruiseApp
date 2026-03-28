@@ -2,6 +2,9 @@
 DOTNET_CLI_TELEMETRY_OPTOUT = "1"
 DO_NOT_TRACK = "1"
 
+[settings]
+experimental = true
+
 [tools]
 bun = "latest"
 pnpm = "latest"
@@ -9,16 +12,89 @@ dotnet = "10.0"
 
 [hooks]
 preinstall = '''
-  if [ -d frontend/node_modules ]; then
+    test -f .mise-setup-done && exit 0
     (cd frontend && vp env install)
-  fi
 '''
 postinstall = '''
-  if [ ! -d frontend/node_modules ]; then
+    test -f .mise-setup-done && exit 0
     (cd frontend && vp install)
     (cd backend && dotnet restore && dotnet tool restore)
-  fi
+    touch .mise-setup-done
 '''
 
-[settings]
-experimental = true
+
+[tasks."db:up"]
+description = "Start the database container"
+run = "docker compose -f docker/docker-compose.infra.yml up -d db"
+
+[tasks."db:down"]
+description = "Stop the database container"
+run = "docker compose -f docker/docker-compose.infra.yml down"
+
+[tasks."db:wait"]
+description = "Wait for the database to be ready"
+hide = true
+depends = ["db:up"]
+run = """
+  echo 'Waiting for database...'
+  until [ "$(docker inspect --format='{% raw %}{{.State.Health.Status}}{% endraw %}' researchcruiseapp-db 2>/dev/null)" = "healthy" ]; do
+    sleep 1
+  done
+  echo 'Database is ready'
+"""
+
+[tasks."db:del"]
+description = "Delete the database volume and seed credentials log"
+depends = ["db:down"]
+run = """
+  docker volume rm researchcruiseapp_researchcruiseapp-db 2>/dev/null || true
+  rm -f credentials.log 2>/dev/null || true
+"""
+
+[tasks."seed:cred"]
+description = "Reset database and capture seed user credentials"
+depends = ["db:del"]
+alias = "creds"
+dir = "backend"
+run = '''
+  mise run db:wait
+
+  echo "Starting backend to capture seed credentials..."
+  LOG=$(mktemp)
+
+  cleanup() {
+    echo "Shutting down backend..."
+    if [ -n "$PORT" ]; then
+      lsof -ti:"$PORT" | xargs kill -9 2>/dev/null || true
+    fi
+    kill -9 "$DOTNET_PID" 2>/dev/null
+    kill "$TAIL_PID" 2>/dev/null
+    rm -f "$LOG"
+  }
+  trap cleanup EXIT
+
+  bun run start > "$LOG" 2>&1 &
+  DOTNET_PID=$!
+
+  tail -f "$LOG" &
+  TAIL_PID=$!
+
+  while kill -0 "$DOTNET_PID" 2>/dev/null; do
+    if grep -q "Application started" "$LOG" 2>/dev/null; then
+      break
+    fi
+    sleep 0.5
+  done
+
+  PORT=$(grep -oP 'Now listening on: http://localhost:\K[0-9]+' "$LOG" 2>/dev/null)
+
+  if grep -q "Seed User Created:" "$LOG" 2>/dev/null; then
+    grep -oP 'Seed User Created: \K.*' "$LOG" | awk -F ' - ' '
+      NR>1 { printf "\n" }
+      { printf "Email:    %s\nPassword: %s\n", $1, $2 }
+    ' > ../credentials.log
+    echo "Users credentials saved to credentials.log"
+  else
+    echo "Warning: users credentials not found in output"
+  fi
+'''
