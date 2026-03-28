@@ -79,7 +79,8 @@
   "dotnetAcquisitionExtension.allowInvalidPaths": true,
   "csharp.suppressDotnetInstallWarning": true,
   "oxc.enable": true,
-  "oxc.typeAware": true
+  "oxc.typeAware": true,
+  "js/ts.experimental.useTsgo": true
   // "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
   // "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution"
 }
