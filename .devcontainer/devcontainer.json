@@ -39,5 +39,6 @@
       ]
     }
   },
-  "onCreateCommand": "rm .mise-setup-done && mise trust && mise install"
+  "onCreateCommand": "rm .mise-setup-done && mise trust && mise install",
+  "forwardPorts": [3000, 5173]
 }

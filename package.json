@@ -5,7 +5,8 @@
     "dev": "vp run -r dev",
     "build": "vp run -r build",
     "check": "vp run -r check",
-    "fix": "vp run -r fix"
+    "fix": "vp run -r fix",
+    "seed": "mise run seed:credentials"
   },
   "packageManager": "pnpm@10.33.0"
 }

@@ -25,7 +25,6 @@ postinstall = '''
     touch .mise-setup-done
 '''
 
-
 [tasks."db:up"]
 description = "Start the database container"
 run = "docker compose -f docker/docker-compose.infra.yml up -d db"
@@ -33,6 +32,14 @@ run = "docker compose -f docker/docker-compose.infra.yml up -d db"
 [tasks."db:down"]
 description = "Stop the database container"
 run = "docker compose -f docker/docker-compose.infra.yml down"
+
+[tasks."db:del"]
+description = "Delete the database volume and seed credentials log"
+depends = ["db:down"]
+run = """
+  docker volume rm researchcruiseapp_researchcruiseapp-db 2>/dev/null || true
+  rm -f credentials.log 2>/dev/null || true
+"""
 
 [tasks."db:wait"]
 description = "Wait for the database to be ready"
@@ -46,18 +53,10 @@ run = """
   echo 'Database is ready'
 """
 
-[tasks."db:del"]
-description = "Delete the database volume and seed credentials log"
-depends = ["db:down"]
-run = """
-  docker volume rm researchcruiseapp_researchcruiseapp-db 2>/dev/null || true
-  rm -f credentials.log 2>/dev/null || true
-"""
-
-[tasks."seed:cred"]
+[tasks."seed:credentials"]
 description = "Reset database and capture seed user credentials"
+alias = "seed"
 depends = ["db:del"]
-alias = "admin"
 dir = "backend"
 run = '''
   mise run db:wait
