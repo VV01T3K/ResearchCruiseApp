@@ -31,12 +31,12 @@ export const getInitValuesBPayload = () => {
 };
 
 export const getAuthDetailsPayload = (timeoutHours: number = 24) => {
-  const deadlineDate = new Date();
-  deadlineDate.setTime(deadlineDate.getTime() + timeoutHours * 60 * 60 * 1000); // add timeout in hours
+  const expirationDate = new Date();
+  expirationDate.setTime(expirationDate.getTime() + timeoutHours * 60 * 60 * 1000); // add timeout in hours
 
   return {
     ...authDetailsPayload,
-    expiresIn: deadlineDate.toISOString(),
-    expirationDate: deadlineDate.toISOString(),
+    accessTokenExpirationDate: expirationDate.toISOString(),
+    refreshTokenExpirationDate: expirationDate.toISOString(),
   };
 };
