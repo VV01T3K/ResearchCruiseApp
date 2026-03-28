@@ -21,6 +21,7 @@ export function MockUserContextProvider({ loggedIn, children }: Props) {
           roles: [Role.Administrator],
         }
       : undefined,
+    isReady: true,
     signIn: fn(),
     signOut: fn(),
     isInRole: (roles: Role | Role[]) =>

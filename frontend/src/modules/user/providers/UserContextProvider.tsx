@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import React from 'react';
 
+import { SessionExpirationWarning } from '@/core/components/SessionExpirationWarning';
 import { client, setAuthToken } from '@/core/lib/api';
 import { Role } from '@/core/models/Role';
 import { UserContext, UserContextType } from '@/user/contexts/UserContext';
@@ -17,7 +17,32 @@ export function UserContextProvider({ children }: Props) {
   const queryClient = useQueryClient();
 
   const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(() => getStoredAuthDetails());
-  setAuthToken(authDetails);
+  const [isReady, setIsReady] = React.useState(false);
+
+  const [initialRefreshPending, setInitialRefreshPending] = React.useState(() => {
+    const stored = getStoredAuthDetails();
+    const needsRefresh =
+      !!stored && stored.accessTokenExpirationDate <= new Date() && stored.refreshTokenExpirationDate > new Date();
+    return needsRefresh;
+  });
+  const setReadyOnceRef = React.useRef<(value: boolean) => void>(() => {});
+
+  React.useLayoutEffect(() => {
+    setReadyOnceRef.current = (ready: boolean) => {
+      setIsReady(ready);
+    };
+  }, []);
+
+  const accessTokenValid = authDetails ? authDetails.accessTokenExpirationDate > new Date() : false;
+
+  React.useLayoutEffect(() => {
+    if (accessTokenValid) {
+      setAuthToken(authDetails);
+    } else {
+      setAuthToken(undefined);
+    }
+  }, [accessTokenValid, authDetails]);
+
   const profileQuery = useProfileQuery();
 
   const updateAuthDetails = React.useCallback(
@@ -68,14 +93,15 @@ export function UserContextProvider({ children }: Props) {
   }, [updateAuthDetails]);
 
   const refreshUser = React.useCallback(async () => {
-    setAuthDetails(getStoredAuthDetails()); // Sync state with storage in case it changed in another tab
-    if (authDetails) {
-      await refreshTokenMutateAsync(authDetails);
+    const currentAuthDetails = getStoredAuthDetails();
+
+    if (currentAuthDetails) {
+      await refreshTokenMutateAsync(currentAuthDetails);
       return;
     }
 
     await signOut();
-  }, [authDetails, signOut, refreshTokenMutateAsync]);
+  }, [refreshTokenMutateAsync, signOut]);
 
   const isInRole = React.useCallback(
     (allowedRoles: Role | Role[]) => {
@@ -95,33 +121,117 @@ export function UserContextProvider({ children }: Props) {
   const context = React.useMemo<UserContextType>(
     () => ({
       currentUser: profileQuery.data,
+      accessTokenExpirationDate: authDetails?.accessTokenExpirationDate,
+      refreshTokenExpirationDate: authDetails?.refreshTokenExpirationDate,
+      isReady,
       signIn,
       signOut,
       refreshUser,
       isInRole,
     }),
-    [isInRole, profileQuery.data, refreshUser, signIn, signOut]
+    [
+      isReady,
+      isInRole,
+      profileQuery.data,
+      authDetails?.accessTokenExpirationDate,
+      authDetails?.refreshTokenExpirationDate,
+      refreshUser,
+      signIn,
+      signOut,
+    ]
   );
 
+  // Refs keep the interceptor stable while accessing latest functions
+  const refreshUserRef = React.useRef(refreshUser);
   React.useEffect(() => {
-    const interceptorId = createAuthRefreshInterceptor(
-      client,
-      async (failedRequest) => {
-        await context.refreshUser();
+    refreshUserRef.current = refreshUser;
+  }, [refreshUser]);
+  const refreshPromiseRef = React.useRef<Promise<void> | null>(null);
 
-        failedRequest.response.config.headers['Authorization'] = `Bearer ${getStoredAuthDetails()?.accessToken}`;
-        return failedRequest;
-      },
-      {
-        statusCodes: [401],
-        pauseInstanceWhileRefreshing: true,
+  React.useEffect(() => {
+    const interceptorId = client.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        // Rule 1: Never intercept refresh requests
+        if (error.config?.url?.includes('/account/refresh')) {
+          return Promise.reject(error);
+        }
+
+        // Rule 2: Only retry once per failed request
+        if (error.response?.status === 401 && !error.config?._retry) {
+          error.config._retry = true;
+
+          try {
+            if (!refreshPromiseRef.current) {
+              refreshPromiseRef.current = refreshUserRef
+                .current()
+                .then(() => {
+                  refreshPromiseRef.current = null;
+                })
+                .catch((err) => {
+                  refreshPromiseRef.current = null;
+                  throw err;
+                });
+            }
+            await refreshPromiseRef.current;
+
+            const updatedToken = getStoredAuthDetails()?.accessToken;
+            if (updatedToken) {
+              error.config.headers['Authorization'] = `Bearer ${updatedToken}`;
+              return client(error.config);
+            }
+          } catch (refreshError) {
+            return Promise.reject(refreshError);
+          }
+        }
+
+        return Promise.reject(error);
       }
     );
 
     return () => {
       client.interceptors.response.eject(interceptorId);
     };
-  }, [context]);
+  }, []);
+
+  const initRefreshRef = React.useRef(false);
+  React.useEffect(() => {
+    if (initRefreshRef.current) return;
+    initRefreshRef.current = true;
+
+    const stored = getStoredAuthDetails();
+    if (stored && stored.accessTokenExpirationDate <= new Date()) {
+      if (!refreshPromiseRef.current) {
+        refreshPromiseRef.current = refreshUserRef
+          .current()
+          .then(() => {
+            refreshPromiseRef.current = null;
+          })
+          .catch((err) => {
+            refreshPromiseRef.current = null;
+            throw err;
+          });
+      }
+      refreshPromiseRef.current
+        .then(
+          () => queryClient.invalidateQueries({ queryKey: ['userProfile'] }),
+          () => {} // refresh failure is handled inside refreshUser (signs out)
+        )
+        .finally(() => {
+          setInitialRefreshPending(false);
+        });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    }
+  }, [queryClient]);
+
+  const readyRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!readyRef.current && !profileQuery.isLoading && !profileQuery.isPending && !initialRefreshPending) {
+      readyRef.current = true;
+      setReadyOnceRef.current(true);
+    }
+  }, [profileQuery.isLoading, profileQuery.isPending, initialRefreshPending]);
 
   React.useEffect(() => {
     const timeoutId = setInterval(
@@ -138,5 +248,35 @@ export function UserContextProvider({ children }: Props) {
     return () => clearInterval(timeoutId);
   }, [context, authDetails]);
 
-  return <UserContext value={context}>{children}</UserContext>;
+  React.useEffect(() => {
+    if (!authDetails?.refreshTokenExpirationDate) {
+      return;
+    }
+
+    const checkExpiration = () => {
+      if (new Date() >= authDetails.refreshTokenExpirationDate) {
+        signOut();
+      }
+    };
+
+    checkExpiration();
+
+    // Check every 5 seconds
+    const interval = setInterval(checkExpiration, 5000);
+
+    return () => clearInterval(interval);
+  }, [authDetails?.refreshTokenExpirationDate, signOut]);
+
+  return (
+    <UserContext value={context}>
+      {children}
+      {authDetails?.refreshTokenExpirationDate && (
+        <SessionExpirationWarning
+          expirationDate={authDetails.refreshTokenExpirationDate}
+          onRefreshSession={refreshUser}
+          onSignOut={signOut}
+        />
+      )}
+    </UserContext>
+  );
 }

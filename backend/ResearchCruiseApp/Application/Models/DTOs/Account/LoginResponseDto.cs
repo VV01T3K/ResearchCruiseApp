@@ -4,7 +4,7 @@ public class LoginResponseDto
 {
     public string AccessToken { get; set; } = null!;
 
-    public DateTime ExpiresIn { get; set; }
+    public DateTime AccessTokenExpirationDate { get; set; }
     public string RefreshToken { get; set; } = null!;
-    public DateTime ExpirationDate { get; set; }
+    public DateTime RefreshTokenExpirationDate { get; set; }
 }
