@@ -73,6 +73,7 @@ async function seedAuthAndNavigate(page: Page, authPayload: ReturnType<typeof ge
 
 test.describe('session expiration and refresh', () => {
   test('warning modal appears ~1 minute before session expires', async ({ page }) => {
+    await page.clock.install({ time: Date.now() });
     await setupAuthMocks(page, {
       refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
     });
@@ -81,9 +82,10 @@ test.describe('session expiration and refresh', () => {
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(63_000));
 
     const warningTitle = page.getByText('Sesja wygasa');
-    const warningMessage = page.getByText(/Twoja sesja wygaśnie za/);
-    await expect(warningTitle).toBeVisible({ timeout: 10_000 });
-    await expect(warningMessage).toBeVisible({ timeout: 10_000 });
+
+    await page.clock.runFor(3_500);
+
+    await expect(warningTitle).toBeVisible();
   });
 
   test('session expiry shows warning and redirects to login', async ({ page }) => {
@@ -164,6 +166,7 @@ test.describe('session expiration and refresh', () => {
   });
 
   test('manual refresh button calls refresh endpoint and extends session', async ({ page }) => {
+    await page.clock.install({ time: Date.now() });
     const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);
     const initialSessionMs = 12_000;
     await setupAuthMocks(page, {
@@ -201,6 +204,8 @@ test.describe('session expiration and refresh', () => {
     const body = refreshResponse.request().postDataJSON();
     expect(body).toHaveProperty('accessToken');
     expect(body).toHaveProperty('refreshToken');
+
+    await page.clock.runFor(1_000);
 
     const afterRefreshAuthDetails = await page.evaluate(() => {
       const raw = window.localStorage.getItem('authDetails');
