@@ -96,6 +96,13 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
                         && dto.PrecisePeriodEnd >= dto.PrecisePeriodStart
                     )
                     .WithMessage("PrecisePeriod must not start after it's end");
+
+                RuleFor(command => command.FormADto)
+                    .Must(HasEnoughPrecisePeriodForCruise)
+                    .When(command => uint.TryParse(command.FormADto.CruiseHours, out _))
+                    .WithMessage(
+                        "Dokładny okres rejsu musi być równy lub dłuższy niż liczba planowanych godzin rejsowych."
+                    );
             }
         );
 
@@ -124,8 +131,80 @@ public class FormACommandValidator : AbstractValidator<FormACommand>
                         && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
                     )
                     .WithMessage("Granice optymalnego okresu są w niepoprawnym formacie");
+
+                RuleFor(command => command.FormADto)
+                    .Must(HasEnoughPeriodsForCruise)
+                    .When(command => uint.TryParse(command.FormADto.CruiseHours, out _))
+                    .WithMessage(
+                        "Okres dopuszczalny i optymalny muszą być równe lub dłuższe niż liczba planowanych godzin rejsowych."
+                    );
             }
         );
+    }
+
+    private static bool HasEnoughPrecisePeriodForCruise(FormADto dto)
+    {
+        if (dto.PrecisePeriodStart is null || dto.PrecisePeriodEnd is null)
+            return false;
+        if (!TryGetCruiseDurationDays(dto.CruiseHours, out var cruiseDurationDays))
+            return false;
+
+        var periodDays = (dto.PrecisePeriodEnd.Value - dto.PrecisePeriodStart.Value).TotalDays;
+        return periodDays >= cruiseDurationDays;
+    }
+
+    private static bool HasEnoughPeriodsForCruise(FormADto dto)
+    {
+        if (!TryGetCruiseDurationDays(dto.CruiseHours, out var cruiseDurationDays))
+            return false;
+        if (!int.TryParse(dto.Year, out var year))
+            return false;
+
+        return HasEnoughDaysInPeriod(dto.AcceptablePeriod, year, cruiseDurationDays)
+            && HasEnoughDaysInPeriod(dto.OptimalPeriod, year, cruiseDurationDays);
+    }
+
+    private static bool HasEnoughDaysInPeriod(
+        List<string>? period,
+        int year,
+        double cruiseDurationDays
+    )
+    {
+        if (
+            period is null
+            || period.Count != 2
+            || !uint.TryParse(period[0], out var startEdge)
+            || !uint.TryParse(period[1], out var endEdge)
+            || startEdge > FormAValuesConstants.MaxPeriodEdgeValue
+            || endEdge > FormAValuesConstants.MaxPeriodEdgeValue
+        )
+            return false;
+
+        var periodStart = GetPeriodEdgeDatePoint(year, startEdge);
+        var periodEnd = GetPeriodEdgeDatePoint(year, endEdge);
+        var periodDays = (periodEnd - periodStart).TotalDays;
+
+        return periodDays >= cruiseDurationDays;
+    }
+
+    private static DateTime GetPeriodEdgeDatePoint(int year, uint edge)
+    {
+        if (edge == FormAValuesConstants.MaxPeriodEdgeValue)
+            return new DateTime(year + 1, 1, 1);
+
+        var month = (int)(edge / 2) + 1;
+        var day = edge % 2 == 0 ? 1 : 15;
+        return new DateTime(year, month, day);
+    }
+
+    private static bool TryGetCruiseDurationDays(string cruiseHours, out double durationDays)
+    {
+        durationDays = 0;
+        if (!uint.TryParse(cruiseHours, out var hours))
+            return false;
+
+        durationDays = hours / 24.0;
+        return true;
     }
 
     private void AddCruiseHoursDraftValidation()

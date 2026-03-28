@@ -4,8 +4,9 @@ import axios from 'axios';
 import { client } from '@/core/lib/api';
 import { User } from '@/core/models/User';
 import { AuthDetails } from '@/user/models/AuthDetails';
+import { getStoredAuthDetails } from '@/user/services/StoredAuthDetails';
 
-type Props = {
+type MutationProps = {
   updateAuthDetails: (newAuthDetails: AuthDetails | undefined) => Promise<void>;
 };
 
@@ -13,25 +14,44 @@ type Props = {
 export function useProfileQuery() {
   return useSuspenseQuery({
     queryKey: ['userProfile'],
-    queryFn: () => {
-      if (!client.defaults.headers.Authorization) {
+    queryFn: async () => {
+      const accessToken = getStoredAuthDetails()?.accessToken;
+      if (!accessToken) {
         return null;
       }
 
-      return client.get('/account').catch(() => null);
+      try {
+        const response = await client.get('/account', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        return response;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          return null;
+        }
+        return null;
+      }
     },
     select: (res) => res?.data as User | undefined,
     refetchOnWindowFocus: false,
   });
 }
 
-export function useLoginMutation({ updateAuthDetails }: Props) {
+export function useLoginMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) => {
       return client.post('/account/login', { email, password });
     },
     onSuccess: async ({ data }) => {
-      updateAuthDetails(data as AuthDetails);
+      const authDetails: AuthDetails = {
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        accessTokenExpirationDate: new Date(data.accessTokenExpirationDate),
+        refreshTokenExpirationDate: new Date(data.refreshTokenExpirationDate),
+      };
+      updateAuthDetails(authDetails);
     },
     onError: () => {
       updateAuthDetails(undefined);
@@ -39,18 +59,27 @@ export function useLoginMutation({ updateAuthDetails }: Props) {
   });
 }
 
-export function useRefreshTokenMutation({ updateAuthDetails }: Props) {
+export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
     mutationFn: ({ accessToken, refreshToken }: AuthDetails) => {
       // We create a new client here since the main one is paused while refreshing
-      const refreshClient = axios.create(client.defaults);
+      // Don't copy client.defaults to avoid sending expired Authorization header
+      const refreshClient = axios.create({
+        baseURL: client.defaults.baseURL,
+      });
       return refreshClient.post('/account/refresh', {
         accessToken,
         refreshToken,
       });
     },
     onSuccess: async ({ data }) => {
-      updateAuthDetails(data as AuthDetails);
+      const authDetails: AuthDetails = {
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        accessTokenExpirationDate: new Date(data.accessTokenExpirationDate),
+        refreshTokenExpirationDate: new Date(data.refreshTokenExpirationDate),
+      };
+      updateAuthDetails(authDetails);
     },
     onError: () => {
       updateAuthDetails(undefined);
