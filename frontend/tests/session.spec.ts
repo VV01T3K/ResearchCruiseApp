@@ -19,8 +19,8 @@ function getRefreshResponsePayloadMs(timeoutMs: number) {
   return {
     accessToken: base.accessToken,
     refreshToken: base.refreshToken,
-    accessTokenExpiration: deadline,
-    refreshTokenExpiration: deadline,
+    accessTokenExpirationDate: deadline,
+    refreshTokenExpirationDate: deadline,
   };
 }
 

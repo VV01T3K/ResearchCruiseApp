@@ -76,8 +76,8 @@ export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
       const authDetails: AuthDetails = {
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
-        accessTokenExpirationDate: new Date(data.accessTokenExpiration),
-        refreshTokenExpirationDate: new Date(data.refreshTokenExpiration),
+        accessTokenExpirationDate: new Date(data.accessTokenExpirationDate),
+        refreshTokenExpirationDate: new Date(data.refreshTokenExpirationDate),
       };
       updateAuthDetails(authDetails);
     },
