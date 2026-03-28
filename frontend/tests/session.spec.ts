@@ -90,11 +90,21 @@ test.describe('session expiration and refresh', () => {
 
   test('successful refresh extends session and prevents redirect', async ({ page }) => {
     const initialSessionMs = 12_000;
+    const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);
+    await page.clock.install();
+
     await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
+      refreshResponse: { status: 200, body: extendedAuth },
     });
 
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(initialSessionMs));
+
+    const beforeRefreshAuthDetails = await page.evaluate(() => {
+      const raw = window.localStorage.getItem('authDetails');
+      return raw ? (JSON.parse(raw) as { refreshTokenExpirationDate: string }) : null;
+    });
+
+    expect(beforeRefreshAuthDetails).not.toBeNull();
 
     const RefreshButton = page.getByTestId('session-refresh-btn');
     await expect(RefreshButton).toBeVisible({ timeout: 10_000 });
@@ -106,8 +116,18 @@ test.describe('session expiration and refresh', () => {
     await RefreshButton.click();
     await refreshPromise;
 
-    // Wait past the original expiration window to ensure refresh truly extended it.
-    await page.waitForTimeout(initialSessionMs + 1_500);
+    const afterRefreshAuthDetails = await page.evaluate(() => {
+      const raw = window.localStorage.getItem('authDetails');
+      return raw ? (JSON.parse(raw) as { refreshTokenExpirationDate: string }) : null;
+    });
+
+    expect(afterRefreshAuthDetails).not.toBeNull();
+    expect(afterRefreshAuthDetails!.refreshTokenExpirationDate).toBe(extendedAuth.refreshTokenExpirationDate);
+    expect(new Date(afterRefreshAuthDetails!.refreshTokenExpirationDate).getTime()).toBeGreaterThan(
+      new Date(beforeRefreshAuthDetails!.refreshTokenExpirationDate).getTime()
+    );
+
+    await page.clock.runFor(initialSessionMs + 3_000);
 
     await expect(page).not.toHaveURL(/\/login/);
   });
