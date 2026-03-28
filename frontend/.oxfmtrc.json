@@ -6,8 +6,8 @@
   "singleQuote": true,
   "printWidth": 120,
   "sortTailwindcss": {
-    "stylesheet": "./frontend/src/index.css"
+    "stylesheet": "./src/index.css"
   },
-  "experimentalSortPackageJson": false,
+  "sortPackageJson": false,
   "ignorePatterns": ["dist", "src/routeTree.gen.ts", "pnpm-lock.yaml"]
 }

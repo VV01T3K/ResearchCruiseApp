@@ -12,15 +12,15 @@
   "oxc.fixKind": "safe_fix_or_suggestion",
   "files.watcherExclude": {
     "**/*.gen.ts": true,
-    "**/env.d.ts": true,
+    "**/env.d.ts": true
   },
   "search.exclude": {
     "**/*.gen.ts": true,
-    "**/env.d.ts": true,
+    "**/env.d.ts": true
   },
   "files.readonlyInclude": {
     "**/*.gen.ts": true,
-    "**/env.d.ts": true,
+    "**/env.d.ts": true
   },
   "[css]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
@@ -70,4 +70,10 @@
   "[yaml]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
+  "dotnetAcquisitionExtension.allowInvalidPaths": true,
+  "csharp.suppressDotnetInstallWarning": true,
+  "oxc.enable": true,
+  "oxc.typeAware": true
+  // "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+  // "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution"
 }

@@ -277,5 +277,7 @@ __pycache__/
 out
 gen
 
-.vscode/
-!.vscode/settings.json
+
+# VS Code settings
+.vscode/launch.json
+.vscode/tasks.json

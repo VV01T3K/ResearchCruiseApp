@@ -1,38 +1,39 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/php
 {
-	"name": "DEV-ResearchCruiseApp",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": ".."
-	},
-	"containerEnv": {
-		"DOTNET_CLI_TELEMETRY_OPTOUT": "1"
-	},
-	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"moby": false
-		}
-	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"hverlin.mise-vscode",
-				"Anthropic.claude-code",
-				"bradlc.vscode-tailwindcss",
-				"tamasfe.even-better-toml",
-				"openai.chatgpt",
-				"sst-dev.opencode",
-				"docker.docker",
-				"ahmadalli.vscode-nginx-conf",
-				"csharpier.csharpier-vscode",
-				"ms-dotnettools.csharp",
-				"cweijan.vscode-mysql-client2",
-				"ms-playwright.playwright",
-				"oxc.oxc-vscode"
-			]
-		}
-	},
-	"onCreateCommand": "mise trust && mise install"
+  "name": "DEV-ResearchCruiseApp",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "containerEnv": {
+    "DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false,
+      "azureDnsAutoDetection": false
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hverlin.mise-vscode",
+        "Anthropic.claude-code",
+        "bradlc.vscode-tailwindcss",
+        "tamasfe.even-better-toml",
+        "openai.chatgpt",
+        "sst-dev.opencode",
+        "docker.docker",
+        "ahmadalli.vscode-nginx-conf",
+        "csharpier.csharpier-vscode",
+        "ms-dotnettools.csharp",
+        "cweijan.vscode-mysql-client2",
+        "ms-playwright.playwright",
+        "oxc.oxc-vscode"
+      ]
+    }
+  },
+  "onCreateCommand": "mise trust && mise install"
 }
