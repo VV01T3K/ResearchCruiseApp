@@ -10,6 +10,9 @@
   "containerEnv": {
     "DOTNET_CLI_TELEMETRY_OPTOUT": "1"
   },
+  "remoteEnv": {
+    "PATH": "/home/vscode/.local/share/mise/shims:/home/vscode/.local/bin:${containerEnv:PATH}"
+  },
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "moby": false,
@@ -31,7 +34,7 @@
         "ms-dotnettools.csharp",
         "cweijan.vscode-mysql-client2",
         "ms-playwright.playwright",
-        "oxc.oxc-vscode"
+        "VoidZero.vite-plus-extension-pack"
       ]
     }
   },

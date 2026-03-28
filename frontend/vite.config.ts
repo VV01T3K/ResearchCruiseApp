@@ -4,8 +4,11 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 import babel from '@rolldown/plugin-babel';
+import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
 export default defineConfig({
+  lint: lintConfig,
+  fmt: fmtConfig,
   server: {
     host: true,
   },
