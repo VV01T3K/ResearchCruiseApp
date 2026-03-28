@@ -13,7 +13,7 @@ import { ResearchEquipmentDto } from '@/cruise-applications/models/ResearchEquip
 
 const researchEquipmentsColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean

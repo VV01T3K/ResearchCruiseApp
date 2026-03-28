@@ -56,7 +56,7 @@ export function useDropdown({
       width -= headerRect.right - width;
     }
 
-    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setDropdownProperties({
       top:
         direction === 'down'
@@ -79,8 +79,7 @@ export function useDropdown({
     return () => {
       window.removeEventListener('resize', updateDropdownPosition);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateDropdownPosition, dropdownRef.current]);
+  }, [updateDropdownPosition]);
 
   return dropdownProperties;
 }
