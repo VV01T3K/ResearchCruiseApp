@@ -276,6 +276,3 @@ __pycache__/
 *.iml
 out
 gen
-
-# Visual Studio Code options directory
-.vscode/

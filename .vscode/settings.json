@@ -1,0 +1,14 @@
+{
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+  "js/ts.preferences.quoteStyle": "single",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.fmt.configPath": "./frontend/.oxfmtrc.json",
+  "oxc.configPath": "./frontend/.oxlintrc.json",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+  "oxc.fixKind": "safe_fix_or_suggestion",
+  "oxc.useExecPath": false,
+}
