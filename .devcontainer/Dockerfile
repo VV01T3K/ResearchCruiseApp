@@ -4,7 +4,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends xdg-utils
 USER vscode
 
 RUN curl -fsSL https://vite.plus | bash
-RUN curl https://mise.run/zsh | sh
+RUN curl -fsSL https://mise.run | sh \
+    && echo 'eval "$(mise activate bash)"' >> ~/.bashrc \
+    && echo 'eval "$(mise activate zsh)"' >> "${ZDOTDIR-$HOME}/.zshrc"
 ENV PATH="/home/vscode/.vite-plus/bin:/home/vscode/.local/bin:${PATH}"
 COPY frontend/.node-version /tmp/.node-version
 RUN cd /tmp && vp env install
