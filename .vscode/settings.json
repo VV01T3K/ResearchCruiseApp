@@ -2,12 +2,13 @@
   "js/ts.preferences.importModuleSpecifier": "non-relative",
   "js/ts.preferences.quoteStyle": "single",
   "editor.defaultFormatter": "oxc.oxc-vscode",
-  "oxc.fmt.configPath": "./frontend/.oxfmtrc.json",
-  "oxc.configPath": "./frontend/.oxlintrc.json",
+  "oxc.fmt.configPath": "frontend/vite.config.ts",
+  "oxc.configPath": "frontend/vite.config.ts",
+  "oxc.tsConfigPath": "frontend/tsconfig.json",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "explicit"
+    "source.fixAll.oxc": "always"
   },
   "oxc.fixKind": "safe_fix_or_suggestion",
   "files.watcherExclude": {
