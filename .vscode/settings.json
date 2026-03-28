@@ -1,7 +1,6 @@
 {
   "js/ts.preferences.importModuleSpecifier": "non-relative",
   "js/ts.preferences.quoteStyle": "single",
-  "editor.defaultFormatter": "oxc.oxc-vscode",
   "oxc.fmt.configPath": "frontend/vite.config.ts",
   "oxc.configPath": "frontend/vite.config.ts",
   "oxc.tsConfigPath": "frontend/tsconfig.json",

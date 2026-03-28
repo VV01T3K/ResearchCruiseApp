@@ -1,4 +1,4 @@
-FROM oven/bun:1-alpine AS build
+FROM node:25-alpine AS build
 
 ARG APP_ENVIRONMENT="development"
 ARG OTEL_SERVICE_NAME="research-cruise-app-frontend"
@@ -9,14 +9,16 @@ ENV API_URL="/api" \
     OTEL_SERVICE_NAME=$OTEL_SERVICE_NAME
 
 WORKDIR /app
-COPY package.json bun.lock ./
-RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
-    bun install --frozen-lockfile
+RUN npm install --global vite-plus@0.1.14
+COPY package.json pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/vp/store \
+    vp install --frozen-lockfile
 
 COPY . .
-RUN bun run build
+RUN vp run build
 
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+FROM nginx:stable-alpine-slim
+
 
 ARG API_URL="http://backend:8080/"
 ARG GRAFANA_FARO_URL="http://0.0.0.0:12347/"
