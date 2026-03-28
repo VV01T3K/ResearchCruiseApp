@@ -4,28 +4,30 @@
 	"name": "DEV-ResearchCruiseApp",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile",
+		"context": ".."
 	},
 	"containerEnv": {
 		"DOTNET_CLI_TELEMETRY_OPTOUT": "1"
 	},
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-	// Configure tool-specific properties.
-	// "customizations": {},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [
-	// 	8080
-	// ],
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": false
+		}
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"hverlin.mise-vscode",
+				"Anthropic.claude-code",
+				"bradlc.vscode-tailwindcss",
+				"tamasfe.even-better-toml",
+				"openai.chatgpt",
+				"sst-dev.opencode",
+				"docker.docker",
+				// ----------
 				"esbenp.prettier-vscode",
 				"ahmadalli.vscode-nginx-conf",
-				"docker.docker",
 				"csharpier.csharpier-vscode",
 				"ms-dotnettools.csharp",
 				"cweijan.vscode-mysql-client2",
@@ -33,9 +35,5 @@
 			]
 		}
 	},
-	"postCreateCommand": "(cd backend && dotnet restore && dotnet tool restore) && (cd frontend && bun install && bun x playwright install --with-deps chromium)"
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"onCreateCommand": "mise trust && mise install"
 }
