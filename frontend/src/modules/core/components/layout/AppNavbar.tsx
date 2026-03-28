@@ -4,7 +4,7 @@ import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
-import packageJson from 'package.json';
+import packageJson from '@/../../package.json';
 
 import { AppButton } from '@/core/components/AppButton';
 import { AppLink } from '@/core/components/AppLink';
