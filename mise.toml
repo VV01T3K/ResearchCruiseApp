@@ -1,24 +1,23 @@
 [env]
-CONVEX_DISABLE_TELEMETRY = "1"
-TURBO_TELEMETRY_DISABLED = "1"
 DOTNET_CLI_TELEMETRY_OPTOUT = "1"
 DO_NOT_TRACK = "1"
 
 [tools]
-node = "latest"
 bun = "latest"
-pnpm = "latest"
 dotnet = "10.0"
 
 [hooks]
+preinstall = '''
+  if [ -d frontend/node_modules ]; then
+    (cd frontend && vp env install)
+  fi
+'''
 postinstall = '''
   if [ ! -d frontend/node_modules ]; then
     (cd frontend && vp install)
     (cd backend && dotnet restore && dotnet tool restore)
   fi
 '''
+
 [settings]
 experimental = true
-
-[settings.npm]
-package_manager = "bun"

@@ -1,8 +1,5 @@
 {
   "name": "research-cruise-app-scripts",
-  "engines": {
-    "node": ">=25"
-  },
   "scripts": {
     "deps": "docker compose -f docker/docker-compose.infra.yml pull && cd frontend && bun install",
     "db:up": "docker compose -f docker/docker-compose.infra.yml up -d db",
