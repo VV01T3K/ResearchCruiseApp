@@ -1,0 +1,86 @@
+{
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+  "js/ts.preferences.quoteStyle": "single",
+  "oxc.fmt.configPath": "frontend/vite.config.ts",
+  "oxc.configPath": "frontend/vite.config.ts",
+  "oxc.tsConfigPath": "frontend/tsconfig.json",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always"
+  },
+  "oxc.fixKind": "safe_fix_or_suggestion",
+  "files.exclude": {
+    ".mise-setup-done": true
+  },
+  "files.watcherExclude": {
+    "**/*.gen.ts": true,
+    "**/env.d.ts": true
+  },
+  "search.exclude": {
+    "**/*.gen.ts": true,
+    "**/env.d.ts": true
+  },
+  "files.readonlyInclude": {
+    "**/*.gen.ts": true,
+    "**/env.d.ts": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[graphql]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[handlebars]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[vue-html]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "dotnetAcquisitionExtension.allowInvalidPaths": true,
+  "csharp.suppressDotnetInstallWarning": true,
+  "oxc.enable": true,
+  "oxc.typeAware": true,
+  "js/ts.experimental.useTsgo": true
+  // "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+  // "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution"
+}

@@ -68,7 +68,7 @@ export function AppNumberInput({
     const roundedValue = roundNumber(value, type === 'float' ? precision : 0);
     const newStringValue = roundedValue.toString();
     if (newStringValue !== stringValue) {
-      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setStringValue(newStringValue);
     }
   }, [precision, stringValue, type, value]);

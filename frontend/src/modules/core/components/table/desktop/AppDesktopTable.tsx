@@ -67,7 +67,7 @@ export function AppDesktopTable<T>({
               <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                 <div
                   className={`rounded-lg border bg-gray-100 p-2.5 ${
-                    errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
+                    errors ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
                   }`}
                 >
                   <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
