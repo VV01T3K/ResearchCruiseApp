@@ -11,10 +11,9 @@ dotnet = "10.0"
 
 [hooks]
 postinstall = '''
-(cd frontend && test -d node_modules || vp install)
-  if [ ! -f .mise-setup-done ]; then
+  if [ ! -d frontend/node_modules ]; then
+    (cd frontend && vp install)
     (cd backend && dotnet restore && dotnet tool restore)
-    echo 'mise setup complete' > .mise-setup-done
   fi
 '''
 [settings]

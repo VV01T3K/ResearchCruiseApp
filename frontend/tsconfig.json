@@ -1,13 +1,9 @@
 {
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2024",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2024",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -19,39 +15,24 @@
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     /* Linting */
+    "allowUnreachableCode": false,
+    // "noUncheckedIndexedAccess": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    // "noImplicitOverride": true,
+    // "erasableSyntaxOnly": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/modules/*"
-      ],
-      "@config": [
-        "src/config.ts"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@public/*": [
-        "public/*"
-      ],
-      "@routeTree": [
-        "src/routeTree.gen.ts"
-      ],
-      "@stories/*": [
-        "src/stories/*"
-      ],
-      "@tests/*": [
-        "tests/*"
-      ]
+      "@/*": ["./src/modules/*"],
+      "@config": ["./src/config.ts"],
+      "@assets/*": ["./src/assets/*"],
+      "@public/*": ["./public/*"],
+      "@routeTree": ["./src/routeTree.gen.ts"],
+      "@stories/*": ["./src/stories/*"],
+      "@tests/*": ["./tests/*"]
     }
-  },
-  "include": [
-    "src",
-    "tests",
-    "playwright.config.ts"
-  ]
+  }
 }

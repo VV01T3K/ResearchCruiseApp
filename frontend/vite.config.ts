@@ -1,36 +1,29 @@
-import { defineConfig } from "vite-plus";
-import viteReact from "@vitejs/plugin-react";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import svgr from "vite-plugin-svgr";
-import tailwindcss from "@tailwindcss/vite";
-import { reactCompilerPreset } from "@vitejs/plugin-react";
-import babel from "@rolldown/plugin-babel";
+import { defineConfig } from 'vite-plus';
+import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import svgr from 'vite-plugin-svgr';
+import tailwindcss from '@tailwindcss/vite';
+import babel from '@rolldown/plugin-babel';
 
 export default defineConfig({
   server: {
-   host: true,
-  },
-  lint: {
-    options: {
-      typeAware: true,
-      typeCheck: true,
-    },
+    host: true,
   },
   resolve: {
-		tsconfigPaths: true,
-	},
+    tsconfigPaths: true,
+  },
   plugins: [
     svgr({
       svgrOptions: {
-        icon: "100%",
+        icon: '100%',
       },
     }),
     tanstackRouter(),
     viteReact(),
     tailwindcss(),
     babel({
-			presets: [reactCompilerPreset()],
-		}),
+      presets: [reactCompilerPreset()],
+    }),
   ],
   define: {
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
