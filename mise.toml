@@ -54,7 +54,7 @@ run = """
 [tasks."seed:cred"]
 description = "Reset database and capture seed user credentials"
 depends = ["db:del"]
-alias = "creds"
+alias = "admin"
 dir = "backend"
 run = '''
   mise run db:wait
