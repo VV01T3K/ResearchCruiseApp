@@ -276,3 +276,6 @@ __pycache__/
 *.iml
 out
 gen
+
+.vscode/
+!.vscode/settings.json
