@@ -63,12 +63,18 @@ export function NewCruisePage() {
 
   // Update form validators when blockades change
   useEffect(() => {
+    const newValidators = {
+      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+    };
     form.update({
-      validators: {
-        onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-      },
+      validators: newValidators,
     });
-  }, [blockadesQuery.data, initialStateQuery.data, form]);
+
+    // Re-validate the fields that depend on blockades if form has been submitted
+    if (hasFormBeenSubmitted) {
+      form.validate('change');
+    }
+  }, [blockadesQuery.data, blockadesQuery.status, initialStateQuery.data, hasFormBeenSubmitted, form]);
 
   const context = {
     form,
@@ -82,6 +88,14 @@ export function NewCruisePage() {
   };
 
   async function handleSubmitting() {
+    // Ensure validators are updated with the latest blockades BEFORE validation
+    const currentValidators = {
+      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+    };
+    form.update({
+      validators: currentValidators,
+    });
+
     setHasFormBeenSubmitted(true);
 
     await form.validate('change');

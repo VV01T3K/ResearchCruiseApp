@@ -50,12 +50,15 @@ public class UpdateFormAHandler(
         if (!verificationResult.IsSuccess)
             return verificationResult;
 
-        var periodValidationResult = await ValidatePrecisePeriodAgainstBlockades(
-            request.FormADto,
-            cancellationToken
-        );
-        if (!periodValidationResult.IsSuccess)
-            return periodValidationResult;
+        if (!request.IsDraft)
+        {
+            var periodValidationResult = await ValidatePrecisePeriodAgainstBlockades(
+                request.FormADto,
+                cancellationToken
+            );
+            if (!periodValidationResult.IsSuccess)
+                return periodValidationResult;
+        }
 
         var result = await unitOfWork.ExecuteIsolated(
             action: () =>
@@ -161,10 +164,20 @@ public class UpdateFormAHandler(
             return Error.InvalidArgument("Rok w zgłoszeniu ma niepoprawny format.");
         }
 
+        double cruiseDurationDays = 0;
+        if (!string.IsNullOrWhiteSpace(formADto.CruiseHours))
+        {
+            if (double.TryParse(formADto.CruiseHours, out var cruiseHours))
+            {
+                cruiseDurationDays = cruiseHours / 24.0;
+            }
+        }
+
         return await cruisesService.CheckForOverlappingCruises(
             formADto.PrecisePeriodStart.Value,
             formADto.PrecisePeriodEnd.Value,
             year,
+            cruiseDurationDays,
             cancellationToken
         )
             ? Error.Conflict("Podany dokładny termin koliduje z innymi rejsami blokującymi statek.")

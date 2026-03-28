@@ -21,6 +21,7 @@ public interface ICruisesService
         DateTime start,
         DateTime end,
         int year,
+        double cruiseDurationDays,
         CancellationToken cancellationToken
     );
 }
