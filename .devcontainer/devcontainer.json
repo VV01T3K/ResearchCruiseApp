@@ -25,13 +25,12 @@
 				"openai.chatgpt",
 				"sst-dev.opencode",
 				"docker.docker",
-				// ----------
-				"esbenp.prettier-vscode",
 				"ahmadalli.vscode-nginx-conf",
 				"csharpier.csharpier-vscode",
 				"ms-dotnettools.csharp",
 				"cweijan.vscode-mysql-client2",
-				"ms-playwright.playwright"
+				"ms-playwright.playwright",
+				"oxc.oxc-vscode"
 			]
 		}
 	},
