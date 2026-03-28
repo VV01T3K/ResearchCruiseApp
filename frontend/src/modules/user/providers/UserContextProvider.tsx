@@ -115,7 +115,7 @@ export function UserContextProvider({ children }: Props) {
       },
       {
         statusCodes: [401],
-        pauseInstanceWhileRefreshing: true,
+        deduplicateRefresh: true,
       }
     );
 
