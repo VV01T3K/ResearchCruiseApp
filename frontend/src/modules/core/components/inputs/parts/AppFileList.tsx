@@ -24,7 +24,7 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
         <AnimatePresence>
           {files.map((file, i) => (
             <motion.li
-              // eslint-disable-next-line @eslint-react/no-array-index-key
+              // oxlint-disable-next-line @eslint-react/no-array-index-key
               key={file.name + i}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}

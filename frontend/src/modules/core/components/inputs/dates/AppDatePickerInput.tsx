@@ -83,7 +83,7 @@ export function AppDatePickerInput({
   const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
 
   React.useEffect(() => {
-    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setSelectedDate(getDateFromValue(value));
   }, [value]);
 
