@@ -28,7 +28,7 @@ export function FormABlockadeWarning({ year, blockades }: Props) {
               >
                 <div className="flex flex-col items-start">
                   <span className="font-bold">Blokady statku w roku {year}</span>
-                  <span className="text-sm font-normal">Rozwin, aby zobaczyc wszystkie blokady</span>
+                  <span className="text-sm font-normal">Rozwiń, aby zobaczyć wszystkie blokady</span>
                 </div>
                 <span className="ml-4 transition-transform duration-300 data-[panel-open]:rotate-180">
                   <ChevronDownIcon className="h-5 w-5" />

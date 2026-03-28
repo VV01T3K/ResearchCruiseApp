@@ -332,7 +332,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
           ctx.addIssue({
             code: 'custom',
             message:
-              'Rejs nie może się odbyć w podanym terminie czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+              'Rejs nie może się odbyć w podanym terminie. Czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
             path: ['precisePeriodEnd'],
           });
         }
