@@ -4,6 +4,7 @@ DO_NOT_TRACK = "1"
 
 [tools]
 bun = "latest"
+pnpm = "latest"
 dotnet = "10.0"
 
 [hooks]

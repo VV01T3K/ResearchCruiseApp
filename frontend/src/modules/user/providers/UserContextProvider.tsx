@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import createAuthRefresh from 'axios-auth-refresh';
 import React from 'react';
 
 import { client, setAuthToken } from '@/core/lib/api';
@@ -104,12 +104,13 @@ export function UserContextProvider({ children }: Props) {
   );
 
   React.useEffect(() => {
-    const interceptorId = createAuthRefreshInterceptor(
+    const interceptorId = createAuthRefresh(
       client,
       async (failedRequest) => {
         await context.refreshUser();
 
-        failedRequest.response.config.headers['Authorization'] = `Bearer ${getStoredAuthDetails()?.accessToken}`;
+        const requestConfig = failedRequest.response?.config ?? failedRequest.config;
+        requestConfig.headers['Authorization'] = `Bearer ${getStoredAuthDetails()?.accessToken}`;
         return failedRequest;
       },
       {
