@@ -87,7 +87,7 @@ test.describe('session expiration and refresh', () => {
   });
 
   test('session expiry shows warning and redirects to login', async ({ page }) => {
-    await page.clock.install();
+    await page.clock.install({ time: Date.now() });
     await setupAuthMocks(page, { refreshHangs: true });
 
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(10_000));
@@ -133,9 +133,25 @@ test.describe('session expiration and refresh', () => {
       });
     });
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadWithExpirations(-5_000, 24 * 60 * 60 * 1000));
+    await seedAuthAndNavigate(page, getAuthDetailsPayloadWithExpirations(60_000, 24 * 60 * 60 * 1000));
     await page.goto('/usermanagement');
     await expect(page).toHaveURL('/usermanagement');
+
+    await page.evaluate(
+      (expiredAccessTokenDateIso) => {
+        const raw = window.localStorage.getItem('authDetails');
+        if (!raw) {
+          return;
+        }
+
+        const details = JSON.parse(raw) as {
+          accessTokenExpirationDate: string;
+        };
+        details.accessTokenExpirationDate = expiredAccessTokenDateIso;
+        window.localStorage.setItem('authDetails', JSON.stringify(details));
+      },
+      new Date(Date.now() - 5_000).toISOString()
+    );
 
     const refreshPromise = page.waitForResponse(
       (res) => res.url().includes('/account/refresh') && res.request().method() === 'POST' && res.status() === 200
