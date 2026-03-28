@@ -6,7 +6,12 @@
     "start": "dotnet run --project ResearchCruiseApp",
     "build": "dotnet build ResearchCruiseApp.sln",
     "fix": "exit 0 && dotnet csharpier format . && dotnet format ResearchCruiseApp.sln --severity info --exclude-diagnostics IDE0130",
-    "check": "exit 0 && dotnet csharpier check . && dotnet format ResearchCruiseApp.sln --verify-no-changes --severity info --exclude-diagnostics IDE0130"
+    "check": "exit 0 && dotnet csharpier check . && dotnet format ResearchCruiseApp.sln --verify-no-changes --severity info --exclude-diagnostics IDE0130",
+    "ef:seed": "mise run seed",
+    "ef:drop": "dotnet ef database drop --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -f",
+    "ef:update": "dotnet ef database update --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
+    "ef:migration:add": "dotnet ef migrations add --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -o Infrastructure/Persistence/Migrations",
+    "ef:migration:remove": "dotnet ef migrations remove --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext"
   },
   "packageManager": "pnpm@10.33.0"
 }
