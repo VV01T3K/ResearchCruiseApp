@@ -104,10 +104,18 @@ export function FormAPage() {
   const blockadesQuery = useBlockadesQuery(+year);
 
   useEffect(() => {
-    form.options.validators = {
+    const newValidators = {
       onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
     };
-  }, [blockadesQuery.data, initialStateQuery.data, form.options]);
+    form.update({
+      validators: newValidators,
+    });
+
+    // Re-validate the fields that depend on blockades if form has been submitted
+    if (hasFormBeenSubmitted) {
+      form.validate('change');
+    }
+  }, [blockadesQuery.data, blockadesQuery.status, initialStateQuery.data, hasFormBeenSubmitted, form]);
 
   const context = {
     form,
@@ -163,6 +171,13 @@ export function FormAPage() {
   }
 
   async function handleSubmit() {
+    const currentValidators = {
+      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+    };
+    form.update({
+      validators: currentValidators,
+    });
+
     setHasFormBeenSubmitted(true);
     await form.validate('change');
 
