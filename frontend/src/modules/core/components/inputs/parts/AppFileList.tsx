@@ -80,7 +80,7 @@ function AppFileListElement({ file, setFileInPreview, onRemove, disabled }: File
         disabled ? 'bg-gray-100' : 'bg-white'
       )}
     >
-      <div className="hover:text-primary truncate duration-300 ease-in-out" onClick={() => setFileInPreview(file)}>
+      <div className="truncate duration-300 ease-in-out hover:text-primary" onClick={() => setFileInPreview(file)}>
         {file.name}
       </div>
 
