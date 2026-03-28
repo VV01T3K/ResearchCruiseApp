@@ -237,6 +237,41 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
   }
 
+  function hasEnoughFreeSlotInPeriod(
+    year: string,
+    period: [string, string],
+    cruiseHours: string
+  ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
+    if (!period || period.length !== 2) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+
+    const parsedYear = parseInt(year, 10);
+    const startEdge = parseInt(period[0], 10);
+    const endEdge = parseInt(period[1], 10);
+    const parsedHours = parseInt(cruiseHours, 10);
+
+    if (
+      Number.isNaN(parsedYear) ||
+      Number.isNaN(startEdge) ||
+      Number.isNaN(endEdge) ||
+      Number.isNaN(parsedHours) ||
+      startEdge < 0 ||
+      endEdge < 0 ||
+      startEdge > MAX_PERIOD_EDGE_VALUE ||
+      endEdge > MAX_PERIOD_EDGE_VALUE ||
+      parsedHours <= 0
+    ) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+
+    const start = getPeriodEdgeDatePoint(parsedYear, startEdge);
+    const end = getPeriodEdgeDatePoint(parsedYear, endEdge);
+    const cruiseDurationDays = parsedHours / 24;
+
+    return analyzeCruiseSlot(start, end, cruiseDurationDays);
+  }
+
   return z
     .object({
       year: z.string(),
@@ -247,25 +282,62 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
       precisePeriodEnd: z.string().or(literal('')),
       cruiseHours: z.string(),
     })
-    .superRefine(({ periodSelectionType, precisePeriodStart, precisePeriodEnd, cruiseHours }, ctx) => {
-      if (periodSelectionType === 'period') {
-        return;
-      }
-      if (!precisePeriodStart || !precisePeriodEnd) {
-        return;
-      }
+    .superRefine(
+      (
+        {
+          periodSelectionType,
+          year,
+          acceptablePeriod,
+          optimalPeriod,
+          precisePeriodStart,
+          precisePeriodEnd,
+          cruiseHours,
+        },
+        ctx
+      ) => {
+        if (periodSelectionType === 'period') {
+          if (acceptablePeriod !== '') {
+            const acceptableAnalysis = hasEnoughFreeSlotInPeriod(year, acceptablePeriod, cruiseHours);
+            if (!acceptableAnalysis.canFitCruise) {
+              ctx.addIssue({
+                code: 'custom',
+                message:
+                  'Rejs nie może się odbyć w podanym okresie. Czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+                path: ['acceptablePeriod'],
+              });
+            }
+          }
 
-      const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, cruiseHours);
+          if (optimalPeriod !== '') {
+            const optimalAnalysis = hasEnoughFreeSlotInPeriod(year, optimalPeriod, cruiseHours);
+            if (!optimalAnalysis.canFitCruise) {
+              ctx.addIssue({
+                code: 'custom',
+                message:
+                  'Rejs nie może się odbyć w podanym okresie. Czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+                path: ['optimalPeriod'],
+              });
+            }
+          }
 
-      if (!slotAnalysis.canFitCruise) {
-        ctx.addIssue({
-          code: 'custom',
-          message:
-            'Rejs nie może się odbyć w podanym terminie czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
-          path: ['precisePeriodEnd'],
-        });
+          return;
+        }
+        if (!precisePeriodStart || !precisePeriodEnd) {
+          return;
+        }
+
+        const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, cruiseHours);
+
+        if (!slotAnalysis.canFitCruise) {
+          ctx.addIssue({
+            code: 'custom',
+            message:
+              'Rejs nie może się odbyć w podanym terminie czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+            path: ['precisePeriodEnd'],
+          });
+        }
       }
-    });
+    );
 };
 
 const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
