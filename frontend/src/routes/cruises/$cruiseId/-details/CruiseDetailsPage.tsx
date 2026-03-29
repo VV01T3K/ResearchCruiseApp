@@ -8,14 +8,14 @@ import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppModal } from '@/components/AppModal';
-import { toast } from '@/components/layout/toast';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { useCruiseApplicationsQuery } from '@/features/cruise-applications/hooks/CruiseApplicationsApiHooks';
-import { CruiseApplicationDto, CruiseApplicationStatus } from '@/features/cruise-applications/models/CruiseApplicationDto';
-import { CruiseFrom } from '@/features/cruise-schedule/components/cruise-from/CruiseForm';
+import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
+import { CruiseFrom } from '@/components/cruises/cruise-form/CruiseForm';
 import {
   useConfirmCruiseMutation,
   useCruiseQuery,
@@ -23,9 +23,9 @@ import {
   useEndCruiseMutation,
   useRevertCruiseStatusMutation,
   useUpdateCruiseMutation,
-} from '@/features/cruise-schedule/hooks/CruisesApiHooks';
-import { CruiseDto } from '@/features/cruise-schedule/models/CruiseDto';
-import { CruiseFormDto } from '@/features/cruise-schedule/models/CruiseFormDto';
+} from '@/api/hooks/cruises/CruisesApiHooks';
+import { ApplicationCruiseDto } from '@/api/dto/cruises/CruiseDto';
+import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-new/cruiseForm.schema';
 
 const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
@@ -200,7 +200,7 @@ export function CruiseDetailsPage() {
     }
   }
 
-  function filterValidCruiseApplications(cruise: CruiseDto, cruiseApplications: CruiseApplicationDto[]) {
+  function filterValidCruiseApplications(cruise: ApplicationCruiseDto, cruiseApplications: CruiseApplicationDto[]) {
     return cruiseApplications.filter(
       (application) =>
         application.status === CruiseApplicationStatus.Accepted ||
@@ -352,7 +352,7 @@ export function CruiseDetailsPage() {
   );
 }
 
-function mapCruiseToForm(cruise: CruiseDto): CruiseFormDto {
+function mapCruiseToForm(cruise: ApplicationCruiseDto): CruiseFormDto {
   return {
     startDate: cruise.startDate,
     endDate: cruise.endDate,

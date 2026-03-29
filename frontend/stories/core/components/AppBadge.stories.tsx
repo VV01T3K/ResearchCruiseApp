@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppBadge } from '@/components/AppBadge';
+import { AppBadge } from '@/components/shared/AppBadge';
 
 const meta = {
   component: AppBadge,

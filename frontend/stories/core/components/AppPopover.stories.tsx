@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppButton } from '@/components/AppButton';
-import { AppPopover } from '@/components/AppPopover';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppPopover } from '@/components/shared/AppPopover';
 
 const meta = {
   component: AppPopover,

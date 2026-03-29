@@ -1,0 +1,292 @@
+/* eslint-disable @eslint-react/no-array-index-key */
+import { Fragment, RefObject } from 'react';
+
+import { cn } from '@/lib/utils';
+import {
+  formatLocalDateStringFromUtcString,
+  getExplanationForPeriod,
+} from '@/components/applications/common/cruisePeriodExplanation';
+import { PrintableResearchTaskDetails } from '@/components/applications/common/printable-research-task-details/PrintableResearchTaskDetails';
+import { PrintingPage } from '@/components/applications/common/printing/PrintingPage';
+import { PrintingPageSection } from '@/components/applications/common/printing/PrintingPageSection';
+import { useFormA } from '@/contexts/applications/FormAContext';
+import { mapPersonToText } from '@/lib/applications/PersonMappers';
+import { getContractCategoryName } from '@/api/dto/applications/ContractDto';
+import { getPublicationCategoryLabel } from '@/api/dto/applications/PublicationDto';
+import { getResearchAreaName } from '@/api/dto/applications/ResearchAreaDto';
+import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
+
+type Props = {
+  ref: RefObject<HTMLDivElement | null>;
+};
+export function FormAPrintTemplate({ ref }: Props) {
+  const { initValues, form } = useFormA();
+  const values = form.state.values;
+
+  return (
+    <PrintingPage ref={ref} title="Formularz A">
+      <PrintingPageSection title="1. Kierownik zgłaszanego rejsu">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Kierownik rejsu: </span>
+          <span>{mapPersonToText(initValues.cruiseManagers.find((x) => x.id === values.cruiseManagerId))}</span>
+          <span>Zastępca kierownika rejsu: </span>
+          <span>{mapPersonToText(initValues.deputyManagers.find((x) => x.id === values.deputyManagerId))}</span>
+          <span>Rok: </span>
+          <span>{values.year}</span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="2. Zgłaszany rejs">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          {values.acceptablePeriod?.length !== 0 && (
+            <>
+              <span>Dopuszczalny okres, w którym miałby się odbywać rejs: </span>
+              <span>
+                {getExplanationForPeriod(parseInt(values.acceptablePeriod[0]), parseInt(values.acceptablePeriod[1]))}
+              </span>
+            </>
+          )}
+          {values.optimalPeriod?.length !== 0 && (
+            <>
+              <span>Optymalny okres, w którym miałby się odbywać rejs: </span>
+              <span>
+                {getExplanationForPeriod(parseInt(values.optimalPeriod[0]), parseInt(values.optimalPeriod[1]))}
+              </span>
+            </>
+          )}
+          {values.precisePeriodStart && (
+            <>
+              <span>Dokładny termin rozpoczęcia rejsu: </span>
+              <span>{formatLocalDateStringFromUtcString(values.precisePeriodStart)}</span>
+            </>
+          )}
+          {values.precisePeriodStart && (
+            <>
+              <span>Dokładny termin zakończenia rejsu: </span>
+              <span>{formatLocalDateStringFromUtcString(values.precisePeriodEnd)}</span>
+            </>
+          )}
+
+          <span>Liczba planowanych dób rejsowych: </span>
+          <span>{parseInt(values.cruiseHours) / 24}</span>
+          <span>Liczba planowanych godzin rejsowych:</span>
+          <span>{values.cruiseHours} h</span>
+          <span>Uwagi dotyczące terminu:</span>
+          <span>{values.periodNotes}</span>
+          <span>Sposób wykorzystania statku:</span>
+          <span>{initValues?.shipUsages.find((_, i) => i === parseInt(values.shipUsage!))}</span>
+          <span>Inny sposób użycia:</span>
+          <span>{values.differentUsage}</span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="3. Zgłaszany rejs">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Treść pozwolenia</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Organ wydający</div>
+          {values.permissions.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.description}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.executive}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="4. Rejony prowadzenia badań">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Rejon prowadzenia badań</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Informacje dodatkowe</div>
+          {values.researchAreaDescriptions.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                <div>{i + 1}.</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>
+                <div>{x.areaId ? getResearchAreaName(initValues.researchAreas, x.areaId) : x.differentName}</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>
+                <div>{x.info}</div>
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="5. Cel rejsu">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Cel rejsu: </span>
+          <span>{initValues.cruiseGoals.find((_, i) => i === parseInt(values.cruiseGoal))}</span>
+          <span>Opis: </span>
+          <span>{values.cruiseGoalDescription}</span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="6. Zgłaszane badania">
+        <div className="grid grid-cols-9 gap-x-8">
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-2 mb-2 text-center font-semibold">Zadanie</span>
+          <span className="col-span-6 mb-2 text-center font-semibold">Szczegóły</span>
+          {values.researchTasks.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                <span>{i + 1}.</span>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                <span>{getTaskName(x.type)}</span>
+              </div>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-6')}>
+                <PrintableResearchTaskDetails data={x} />
+              </span>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="7. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze">
+        <div className="grid grid-cols-9 gap-x-8">
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-2 mb-2 text-center font-semibold">Kategoria</span>
+          <span className="col-span-6 mb-2 text-center font-semibold">Pozostałe szczegóły</span>
+          {values.contracts.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-1 grid place-items-center')}>
+                <span>{i + 1}.</span>
+              </div>
+              <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-2 grid place-items-center')}>
+                <span>{getContractCategoryName(x.category)}</span>
+              </div>
+              <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-6 flex flex-col')}>
+                <div className="font-semibold">Szczegóły</div>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between">
+                    <span>Nazwa instytucji:</span>
+                    <span>{x.institutionName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Jednostka:</span>
+                    <span>{x.institutionUnit}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span>Lokalizacja instytucji:</span>
+                    <span>{x.institutionLocalization}</span>
+                  </div>
+                </div>
+                <div className="font-semibold">Opis</div>
+                <div className="mb-4">{x.description}</div>
+                <div className="font-semibold">Skany</div>
+                <div>
+                  {x.scans.length === 0
+                    ? 'Brak skanów'
+                    : x.scans.map((file, fileIndex) => <div key={fileIndex}>{file.name}</div>)}
+                </div>
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie">
+        <>
+          <div className="mb-16 grid grid-cols-9 gap-x-8">
+            <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+            <div className="col-span-3 mb-4 text-center font-semibold">Jednostka</div>
+            <div className="col-span-3 mb-4 text-center font-semibold">Liczba pracowników</div>
+            <div className="col-span-2 mb-4 text-center font-semibold">Liczba studentów</div>
+            {values.ugTeams.map((x, i) => (
+              <Fragment key={i}>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>
+                  {initValues.ugUnits.find(({ id }) => id === x.ugUnitId)?.name}
+                </div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.noOfEmployees}</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.noOfStudents}</div>
+              </Fragment>
+            ))}
+          </div>
+
+          <div className="mb-16 grid grid-cols-9 gap-x-8">
+            <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+            <div className="col-span-6 mb-4 text-center font-semibold">Instytucja</div>
+            <div className="col-span-2 mb-4 text-center font-semibold">Liczba osób</div>
+            {values.guestTeams.map((x, i) => (
+              <Fragment key={i}>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-6 grid place-items-center')}>{x.name}</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.noOfPersons}</div>
+              </Fragment>
+            ))}
+          </div>
+        </>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="9. Publikacje">
+        <div className="grid grid-cols-9 gap-x-8">
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Kategoria</span>
+          <span className="col-span-5 mb-2 text-center font-semibold">Informacje</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Rok wydania</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Punkty minister.</span>
+          {values.publications.map((x, i) => (
+            <Fragment key={i}>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                {getPublicationCategoryLabel(x.category)}
+              </span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-5 px-4')}>
+                <div className="flex items-center justify-between">
+                  <span>DOI:</span>
+                  <span>{x.doi}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Autorzy:</span>
+                  <span>{x.authors}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Tytuł:</span>
+                  <span>{x.title}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Czasopismo:</span>
+                  <span>{x.magazine}</span>
+                </div>
+              </span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.year}</span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                {x.ministerialPoints}
+              </span>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="10. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rok rozpoczęcia</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rok zakończenia</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Nazwa zadania</div>
+          {values.spubTasks.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.yearFrom}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.yearTo}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="11. Dane kontaktowe kierownika rejsu">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Adres e-mail przełożonego: </span>
+          <span>{values.supervisorEmail}</span>
+        </div>
+      </PrintingPageSection>
+    </PrintingPage>
+  );
+}

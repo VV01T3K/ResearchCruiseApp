@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppDropdownInput } from '@/components/inputs/AppDropdownInput';
+import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 
 const stringOptions = [
   { value: 'first', inlineLabel: 'First string' },

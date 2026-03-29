@@ -3,11 +3,11 @@ import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useEffect, useState } from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppModal } from '@/components/AppModal';
-import { AppInput } from '@/components/inputs/AppInput';
-import { toast } from '@/components/layout/toast';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { toast } from '@/components/shared/layout/toast';
 import {
   getErrors,
   getFormErrorMessage,
@@ -15,14 +15,14 @@ import {
   navigateToFirstError,
   removeEmptyValues,
 } from '@/lib/utils';
-import { FormA } from '@/features/cruise-applications/components/formA/FormA';
+import { FormA } from '@/components/applications/formA/FormA';
 import {
   useFormAInitValuesQuery,
   useFormAQuery,
   useUpdateFormAMutation,
-} from '@/features/cruise-applications/hooks/FormAApiHooks';
-import { FormADto } from '@/features/cruise-applications/models/FormADto';
-import { useBlockadesQuery } from '@/features/cruise-schedule/hooks/CruisesApiHooks';
+} from '@/api/hooks/applications/FormAApiHooks';
+import { FormADto } from '@/api/dto/applications/FormADto';
+import { useBlockadesQuery } from '@/api/hooks/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';
 import { FORM_A_FIELD_TO_SECTION, getFormAValidationSchema } from './formA.schema';
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppInputHelper } from '@/components/inputs/parts/AppInputHelper';
+import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 
 const meta = {
   component: AppInputHelper,

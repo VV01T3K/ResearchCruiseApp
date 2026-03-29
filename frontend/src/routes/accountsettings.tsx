@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { AppAvatar } from '@/components/AppAvatar';
-import { AppLayout } from '@/components/AppLayout';
-import { ChangePasswordForm } from '@/features/user/components/ChangePasswordForm';
-import { EmailConfirmationBadge } from '@/features/user/components/EmailConfirmationBadge';
+import { AppAvatar } from '@/components/shared/AppAvatar';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { ChangePasswordForm } from '@/components/user/ChangePasswordForm';
+import { EmailConfirmationBadge } from '@/components/user/EmailConfirmationBadge';
 import { allowOnly } from '@/lib/guards';
 import { useUserContext } from '@/providers/useUserContext';
 

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { AppAlert } from '@/components/AppAlert';
+import { AppAlert } from '@/components/shared/AppAlert';
 import {
   AccountSettingsCard,
   ApplicationsCard,
@@ -11,10 +11,10 @@ import {
   PrioritizationInfoCard,
   PublicationsCard,
   UserManagementCard,
-} from '@/features/dashboard/components/DashboardCards';
-import { DashboardGrid } from '@/features/dashboard/components/DashboardGrid';
+} from '@/components/dashboard/DashboardCards';
+import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/lib/models/Role';
+import { Role } from '@/models/shared/Role';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/')({

@@ -1,5 +1,5 @@
 import BackgroundImageUrl from '@/assets/background.jpg';
-import { AppLoader } from '@/components/layout/AppLoader';
+import { AppLoader } from '@/components/shared/layout/AppLoader';
 
 export function RouterBootFallback() {
   return (

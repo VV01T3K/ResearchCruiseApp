@@ -2,29 +2,29 @@ import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?re
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import { useState } from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppGuard } from '@/components/AppGuard';
-import { AppLayout } from '@/components/AppLayout';
-import { AppModal } from '@/components/AppModal';
-import { AppTabs } from '@/components/AppTabs';
-import { toast } from '@/components/layout/toast';
-import { Role } from '@/lib/models/Role';
-import { CruiseCalendar } from '@/features/cruise-schedule/components/CruiseCalendar';
-import { CruiseExportForm } from '@/features/cruise-schedule/components/CruiseExportForm';
-import { CruisesTable } from '@/features/cruise-schedule/components/CruisesTable';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppGuard } from '@/components/shared/AppGuard';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { AppTabs } from '@/components/shared/AppTabs';
+import { toast } from '@/components/shared/layout/toast';
+import { Role } from '@/models/shared/Role';
+import { CruiseCalendar } from '@/components/cruises/CruiseCalendar';
+import { CruiseExportForm } from '@/components/cruises/CruiseExportForm';
+import { CruisesTable } from '@/components/cruises/CruisesTable';
 import {
   useAutoAddCruisesMutation,
   useCruisesQuery,
   useDeleteCruiseMutation,
-} from '@/features/cruise-schedule/hooks/CruisesApiHooks';
-import { CruiseDto } from '@/features/cruise-schedule/models/CruiseDto';
+} from '@/api/hooks/cruises/CruisesApiHooks';
+import { ApplicationCruiseDto } from '@/api/dto/cruises/CruiseDto';
 
 export function CruisesPage() {
   const cruisesQuery = useCruisesQuery();
   const deleteCruiseMutation = useDeleteCruiseMutation();
   const autoAddCruisesMutation = useAutoAddCruisesMutation();
 
-  const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseDto | undefined>(undefined);
+  const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<ApplicationCruiseDto | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   async function autoAddCruises() {

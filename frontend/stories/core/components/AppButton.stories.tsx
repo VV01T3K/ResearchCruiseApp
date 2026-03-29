@@ -2,7 +2,7 @@ import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppButton } from '@/components/AppButton';
+import { AppButton } from '@/components/shared/AppButton';
 
 const meta = {
   component: AppButton,

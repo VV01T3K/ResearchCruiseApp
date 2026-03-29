@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppFloatingLabelInput } from '@/components/inputs/AppFloatingLabelInput';
+import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 
 const meta = {
   component: AppFloatingLabelInput,

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppInputErrorTriangle } from '@/components/inputs/parts/AppInputErrorTriangle';
+import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 
 const meta = {
   component: AppInputErrorTriangle,

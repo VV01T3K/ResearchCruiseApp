@@ -3,20 +3,20 @@ import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
 
-import { AppLayout } from '@/components/AppLayout';
-import { toast } from '@/components/layout/toast';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
-import { FormB } from '@/features/cruise-applications/components/formB/FormB';
-import { useCruiseForCruiseApplicationQuery } from '@/features/cruise-applications/hooks/CruiseApplicationsApiHooks';
-import { useFormAInitValuesQuery, useFormAQuery } from '@/features/cruise-applications/hooks/FormAApiHooks';
+import { FormB } from '@/components/applications/formB/FormB';
+import { useCruiseForCruiseApplicationQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { useFormAInitValuesQuery, useFormAQuery } from '@/api/hooks/applications/FormAApiHooks';
 import {
   useFormBInitValuesQuery,
   useFormBQuery,
   useRevertFormBToEditMutation,
   useUpdateFormBMutation,
-} from '@/features/cruise-applications/hooks/FormBApiHooks';
-import { CruiseDayDetailsDtoValidationSchema } from '@/features/cruise-applications/models/CruiseDayDetailsDto';
-import { FormBDto } from '@/features/cruise-applications/models/FormBDto';
+} from '@/api/hooks/applications/FormBApiHooks';
+import { CruiseDayDetailsDtoValidationSchema } from '@/api/dto/applications/CruiseDayDetailsDto';
+import { FormBDto } from '@/api/dto/applications/FormBDto';
 import { FORM_B_FIELD_TO_SECTION, getFormBValidationSchema } from './formB.schema';
 
 export function FormBPage() {

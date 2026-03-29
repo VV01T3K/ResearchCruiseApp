@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppInputLabel } from '@/components/inputs/parts/AppInputLabel';
+import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 
 const meta = {
   component: AppInputLabel,

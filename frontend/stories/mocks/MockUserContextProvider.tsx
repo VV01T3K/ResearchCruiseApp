@@ -1,6 +1,6 @@
 import { fn } from 'storybook/test';
 
-import { Role } from '@/lib/models/Role';
+import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
 
 type Props = {

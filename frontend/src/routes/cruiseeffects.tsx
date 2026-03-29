@@ -2,14 +2,14 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { AppBadge } from '@/components/AppBadge';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import { AppTable } from '@/components/table/AppTable';
-import { ReadOnlyResearchTaskDetails } from '@/features/cruise-applications/components/common/readonly-research-task-details/ReadOnlyResearchTaskDetails';
-import { useEffectsEvaluationsQuery } from '@/features/cruise-applications/hooks/CruiseApplicationsApiHooks';
-import { getTaskName } from '@/features/cruise-applications/models/ResearchTaskDto';
-import { UserEffectDto } from '@/features/cruise-applications/models/UserEffectDto';
+import { AppBadge } from '@/components/shared/AppBadge';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { ReadOnlyResearchTaskDetails } from '@/components/applications/common/readonly-research-task-details/ReadOnlyResearchTaskDetails';
+import { useEffectsEvaluationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
+import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
 import { allowOnly } from '@/lib/guards';
 
 export const Route = createFileRoute('/cruiseeffects')({

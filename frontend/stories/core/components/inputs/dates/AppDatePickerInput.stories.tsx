@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppDatePickerInput } from '@/components/inputs/dates/AppDatePickerInput';
+import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 
 const meta = {
   component: AppDatePickerInput,

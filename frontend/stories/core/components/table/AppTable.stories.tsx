@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppButton } from '@/components/AppButton';
-import { AppTable } from '@/components/table/AppTable';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppTable } from '@/components/shared/table/AppTable';
 
 type ExampleUser = {
   id: number;

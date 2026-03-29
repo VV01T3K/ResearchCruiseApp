@@ -2,16 +2,16 @@ import { ColumnDef } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import dayjs from 'dayjs';
 
-import { AppAvatar } from '@/components/AppAvatar';
-import { AppBadge } from '@/components/AppBadge';
-import { AppButton } from '@/components/AppButton';
-import { AppGuard } from '@/components/AppGuard';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import { AppTable } from '@/components/table/AppTable';
-import { getDisplayPeriod } from '@/features/cruise-applications/helpers/periodUtils';
-import { useCruiseApplicationsQuery } from '@/features/cruise-applications/hooks/CruiseApplicationsApiHooks';
-import { CruiseApplicationDto, CruiseApplicationStatus } from '@/features/cruise-applications/models/CruiseApplicationDto';
+import { AppAvatar } from '@/components/shared/AppAvatar';
+import { AppBadge } from '@/components/shared/AppBadge';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppGuard } from '@/components/shared/AppGuard';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { getDisplayPeriod } from '@/lib/applications/periodUtils';
+import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
 
 const dateFormat = 'DD.MM.YYYY';
 

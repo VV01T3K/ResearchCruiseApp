@@ -5,11 +5,11 @@ import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useRouter } from '@tanstack/react-router';
 import React from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import { AppFloatingLabelInput } from '@/components/inputs/AppFloatingLabelInput';
-import { SignInResult } from '@/features/user/models/Results';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { SignInResult } from '@/models/user/Results';
 import { allowOnly } from '@/lib/guards';
 import { getErrors } from '@/lib/utils';
 import { useUserContext } from '@/providers/useUserContext';

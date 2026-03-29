@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppTabs } from '@/components/AppTabs';
+import { AppTabs } from '@/components/shared/AppTabs';
 
 const meta = {
   component: AppTabs,

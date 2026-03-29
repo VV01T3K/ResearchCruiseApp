@@ -3,10 +3,10 @@ import { Outlet, useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
 
-import AppBackground from '@/components/layout/AppBackground';
-import { AppNavbar } from '@/components/layout/AppNavbar';
-import { AppNetworkDisconnectAlert } from '@/components/layout/AppNetworkDisconnectAlert';
-import { AppToaster } from '@/components/layout/AppToaster';
+import AppBackground from '@/components/shared/layout/AppBackground';
+import { AppNavbar } from '@/components/shared/layout/AppNavbar';
+import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
+import { AppToaster } from '@/components/shared/layout/AppToaster';
 
 const TanStackRouterDevtools = config.dev
   ? lazy(() => import('@tanstack/react-router-devtools').then((m) => ({ default: m.TanStackRouterDevtools })))

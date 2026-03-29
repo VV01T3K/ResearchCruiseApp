@@ -4,13 +4,13 @@ import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react'
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { toast } from '@/components/layout/toast';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { CruiseFrom } from '@/features/cruise-schedule/components/cruise-from/CruiseForm';
-import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/features/cruise-schedule/hooks/CruisesApiHooks';
-import { CruiseFormDto } from '@/features/cruise-schedule/models/CruiseFormDto';
+import { CruiseFrom } from '@/components/cruises/cruise-form/CruiseForm';
+import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/api/hooks/cruises/CruisesApiHooks';
+import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
 import { getCruiseFormValidationSchema } from './cruiseForm.schema';
 
 const CRUISE_FIELD_TO_SECTION: Record<string, number> = {

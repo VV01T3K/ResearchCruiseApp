@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppModal } from '@/components/AppModal';
-import AppBackground from '@/components/layout/AppBackground';
+import { AppModal } from '@/components/shared/AppModal';
+import AppBackground from '@/components/shared/layout/AppBackground';
 
 const meta = {
   component: AppModal,

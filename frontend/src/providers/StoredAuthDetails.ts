@@ -1,4 +1,4 @@
-import { AuthDetails } from '@/features/user/models/AuthDetails';
+import { AuthDetails } from '@/models/user/AuthDetails';
 
 export function getStoredAuthDetails(): AuthDetails | undefined {
   const data = localStorage.getItem('authDetails');

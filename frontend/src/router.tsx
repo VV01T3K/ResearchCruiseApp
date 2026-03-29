@@ -1,7 +1,7 @@
 import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import React from 'react';
 
-import { AppLoader } from '@/components/layout/AppLoader';
+import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { useUserContext } from '@/providers/useUserContext';
 import { routeTree } from './routeTree.gen';
 import { RouterBootFallback } from './routes/-root/RouterBootFallback';

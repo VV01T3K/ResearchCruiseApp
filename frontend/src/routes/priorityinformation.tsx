@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { AppLayout } from '@/components/AppLayout';
-import { PriorityInformationCell } from '@/features/other/components/PriorityInformationCell';
-import { PriorityInformationRow } from '@/features/other/components/PriorityInformationRow';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { PriorityInformationCell } from '@/components/shared/PriorityInformationCell';
+import { PriorityInformationRow } from '@/components/shared/PriorityInformationRow';
 import { allowOnly } from '@/lib/guards';
 
 export const Route = createFileRoute('/priorityinformation')({

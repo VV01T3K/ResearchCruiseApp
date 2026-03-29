@@ -5,12 +5,12 @@ import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
 import { z } from 'zod';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import { AppFloatingLabelInput } from '@/components/inputs/AppFloatingLabelInput';
-import { useRegisterMutation } from '@/features/user/hooks/UserApiHooks';
-import { Result } from '@/features/user/models/Results';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { useRegisterMutation } from '@/api/hooks/user/UserApiHooks';
+import { Result } from '@/models/user/Results';
 import { allowOnly } from '@/lib/guards';
 import { getErrors } from '@/lib/utils';
 

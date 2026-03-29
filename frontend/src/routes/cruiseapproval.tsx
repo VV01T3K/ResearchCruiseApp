@@ -5,14 +5,14 @@ import { useForm } from '@tanstack/react-form';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import axios, { AxiosError } from 'axios';
 
-import { toast } from '@/components/layout/toast';
-import { FormAForSupervisor } from '@/features/cruise-applications/components/formA/FormAForSupervisor';
+import { toast } from '@/components/shared/layout/toast';
+import { FormAForSupervisor } from '@/components/applications/formA/FormAForSupervisor';
 import {
   useFormAForSupervisorInitValuesQuery,
   useFormAForSupervisorQuery,
   useSupervisorAnswerFormAMutation,
-} from '@/features/cruise-applications/hooks/FormAApiHooks';
-import { CruisePeriodType, FormADto } from '@/features/cruise-applications/models/FormADto';
+} from '@/api/hooks/applications/FormAApiHooks';
+import { CruisePeriodType, FormADto } from '@/api/dto/applications/FormADto';
 
 export const Route = createFileRoute('/cruiseapproval')({
   component: FormAForSupervisorPage,

@@ -1,13 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
-import { SessionExpirationWarning } from '@/components/SessionExpirationWarning';
+import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { client, setAuthToken } from '@/lib/api';
-import { Role } from '@/lib/models/Role';
+import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
-import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/features/user/hooks/UserContextApiHooks';
-import { AuthDetails } from '@/features/user/models/AuthDetails';
-import { SignInResult } from '@/features/user/models/Results';
+import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/hooks/user/UserContextApiHooks';
+import { AuthDetails } from '@/models/user/AuthDetails';
+import { SignInResult } from '@/models/user/Results';
 import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
 type Props = {

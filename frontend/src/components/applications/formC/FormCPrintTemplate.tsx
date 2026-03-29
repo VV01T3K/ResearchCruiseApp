@@ -1,0 +1,479 @@
+/* eslint-disable @eslint-react/no-array-index-key */
+import dayjs from 'dayjs';
+import { Fragment, RefObject } from 'react';
+
+import { cn } from '@/lib/utils';
+import { PrintableResearchTaskDetails } from '@/components/applications/common/printable-research-task-details/PrintableResearchTaskDetails';
+import { PrintingPage } from '@/components/applications/common/printing/PrintingPage';
+import { PrintingPageSection } from '@/components/applications/common/printing/PrintingPageSection';
+import { useFormC } from '@/contexts/applications/FormCContext';
+import { mapPersonToText } from '@/lib/applications/PersonMappers';
+import { getContractCategoryName } from '@/api/dto/applications/ContractDto';
+import { getPublicationCategoryLabel } from '@/api/dto/applications/PublicationDto';
+import { getResearchAreaName } from '@/api/dto/applications/ResearchAreaDto';
+import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
+
+function getAction(action: 'Put' | 'Collect'): string {
+  if (action === 'Put') {
+    return 'Pozostawienie';
+  }
+
+  if (action === 'Collect') {
+    return 'Zabranie';
+  }
+
+  throw new Error('Invalid action');
+}
+
+type Props = {
+  ref: RefObject<HTMLDivElement | null>;
+};
+export function FormCPrintTemplate({ ref }: Props) {
+  const { formAInitValues, formBInitValues, form, formA, formB, cruise } = useFormC();
+  const values = form.state.values;
+
+  return (
+    <PrintingPage ref={ref} title="Formularz C">
+      <PrintingPageSection title="1. Informacje o rejsie">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Numer rejsu: </span>
+          <span>{cruise.number}</span>
+          <span>Terminy rozpoczęcia i zakończenia: </span>
+          <span>
+            {dayjs(cruise.startDate).format('DD.MM.YYYY HH:mm')} - {dayjs(cruise.endDate).format('DD.MM.YYYY HH:mm')}
+          </span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="2. Kierownik zgłaszanego rejsu">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Kierownik rejsu: </span>
+          <span>{mapPersonToText(formAInitValues.cruiseManagers.find((x) => x.id === formA.cruiseManagerId))}</span>
+          <span>Zastępca kierownika rejsu: </span>
+          <span>{mapPersonToText(formAInitValues.deputyManagers.find((x) => x.id === formA.deputyManagerId))}</span>
+          <span>Rok: </span>
+          <span>{formA.year}</span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="3. Sposób wykorzystania statku">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Sposób wykorzystania statku:</span>
+          <span>{formAInitValues?.shipUsages.find((_, i) => i === parseInt(values.shipUsage))}</span>
+          <span>Inny sposób użycia:</span>
+          <span>{values.differentUsage}</span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań">
+        <div className="grid grid-cols-10 gap-x-4">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Treść pozwolenia</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Organ wydający</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Skan</div>
+          {values.permissions.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.description}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.executive}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>
+                {x.scan?.name || 'Brak skanu'}
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="5. Rejony prowadzenia badań">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Rejon prowadzenia badań</div>
+          <div className="col-span-4 mb-4 text-center font-semibold">Informacje dodatkowe</div>
+          {values.researchAreaDescriptions.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                <div>{i + 1}.</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 flex items-center')}>
+                <div>{x.areaId ? getResearchAreaName(formAInitValues.researchAreas, x.areaId) : x.differentName}</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 flex items-center')}>
+                <div>{x.info}</div>
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="6. Cel rejsu">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <span>Cel rejsu: </span>
+          <span>{formAInitValues.cruiseGoals.find((_, i) => i === parseInt(formA.cruiseGoal))}</span>
+          <span>Opis: </span>
+          <span>{formA.cruiseGoalDescription}</span>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="7. Zadania przypisane do rejsu - efekty rejsu">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-4 text-center font-semibold">Zadanie</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Szczegóły</div>
+          <div className="col-span-3 mb-4 text-center font-semibold" />
+          {values.researchTasksEffects.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                <div>{i + 1}.</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 flex items-center')}>
+                <div>{getTaskName(x.type)}</div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 flex items-center')}>
+                <div className="w-full">
+                  <PrintableResearchTaskDetails data={x} />
+                </div>
+              </div>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid grid-cols-4')}>
+                <div className="col-span-3">Zrealizowane: </div>
+                <div>{x.done === 'true' ? 'Tak' : 'Nie'}</div>
+                <div className="col-span-3">Punkty naliczone kierownikowi: </div>
+                <div>{x.managerConditionMet === 'true' ? 'Tak' : 'Nie'}</div>
+                <div className="col-span-3">Punkty naliczone zastępcy: </div>
+                <div>{x.deputyConditionMet === 'true' ? 'Tak' : 'Nie'}</div>
+              </span>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="8. Umowy regulujące współpracę, w ramach której zostały zrealizowane zadania badawcze">
+        <div className="grid grid-cols-9 gap-x-8">
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-2 mb-2 text-center font-semibold">Kategoria</span>
+          <span className="col-span-6 mb-2 text-center font-semibold">Pozostałe szczegóły</span>
+          {values.contracts.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-1 grid place-items-center')}>
+                <span>{i + 1}.</span>
+              </div>
+              <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-2 grid place-items-center')}>
+                <span>{getContractCategoryName(x.category)}</span>
+              </div>
+              <div className={cn(i > 0 ? 'mt-8' : '', 'col-span-6 flex flex-col')}>
+                <div className="font-semibold">Szczegóły</div>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between">
+                    <span>Nazwa instytucji:</span>
+                    <span>{x.institutionName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Jednostka:</span>
+                    <span>{x.institutionUnit}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span>Lokalizacja instytucji:</span>
+                    <span>{x.institutionLocalization}</span>
+                  </div>
+                </div>
+                <div className="font-semibold">Opis</div>
+                <div className="mb-4">{x.description}</div>
+                <div className="font-semibold">Skany</div>
+                <div>
+                  {x.scans.length === 0
+                    ? 'Brak skanów'
+                    : x.scans.map((file, fileIndex) => <div key={fileIndex}>{file.name}</div>)}
+                </div>
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="9. Zespoły badawcze, które uczestniczyły w rejsie">
+        <div className="mb-16 grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Jednostka</div>
+          <div className="col-span-3 mb-4 text-center font-semibold">Liczba pracowników</div>
+          <div className="col-span-2 mb-4 text-center font-semibold">Liczba studentów</div>
+          {values.ugTeams.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>
+                {formAInitValues.ugUnits.find(({ id }) => id === x.ugUnitId)?.name}
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.noOfEmployees}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.noOfStudents}</div>
+            </Fragment>
+          ))}
+        </div>
+
+        <div className="mb-16 grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
+          <div className="col-span-6 mb-4 text-center font-semibold">Instytucja</div>
+          <div className="col-span-2 mb-4 text-center font-semibold">Liczba osób</div>
+          {values.guestTeams.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-6 grid place-items-center')}>{x.name}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.noOfPersons}</div>
+            </Fragment>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Dane osobowe</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Dokument tożsamości</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Nazwa jednostki</div>
+          {formB.crewMembers.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                {x.title} {x.firstName} {x.lastName}
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4')}>
+                <div className="flex items-center justify-between">
+                  <span>Miejsce urodzenia:</span>
+                  <span>{x.birthPlace}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Data urodzenia:</span>
+                  <span>{dayjs(x.birthDate).format('DD.MM.YYYY')}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Numer ID dokumentu:</span>
+                  <span>{x.documentNumber}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Data ważności dokumentu:</span>
+                  <span>{dayjs(x.documentExpiryDate).format('DD.MM.YYYY')}</span>
+                </div>
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.institution}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="10. Publikacje">
+        <div className="grid grid-cols-9 gap-x-8">
+          <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Kategoria</span>
+          <span className="col-span-5 mb-2 text-center font-semibold">Informacje</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Rok wydania</span>
+          <span className="col-span-1 mb-2 text-center font-semibold">Punkty minister.</span>
+          {formA.publications.map((x, i) => (
+            <Fragment key={i}>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                {getPublicationCategoryLabel(x.category)}
+              </span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-5 px-4')}>
+                <div className="flex items-center justify-between">
+                  <span>DOI:</span>
+                  <span>{x.doi}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Autorzy:</span>
+                  <span>{x.authors}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Tytuł:</span>
+                  <span>{x.title}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Czasopismo:</span>
+                  <span>{x.magazine}</span>
+                </div>
+              </span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.year}</span>
+              <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>
+                {x.ministerialPoints}
+              </span>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rok rozpoczęcia</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Rok zakończenia</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Nazwa zadania</div>
+          {values.spubTasks.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.yearFrom}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.yearTo}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="12. Szczegóły rejsu">
+        <div>
+          <h3 className="mb-2 text-xl">Wystawienie sprzętu</h3>
+          <div className="grid grid-cols-9 gap-x-8">
+            <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Od</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Do</div>
+            <div className="col-span-4 mb-2 text-center font-semibold">Nazwa sprzętu</div>
+            {values.shortResearchEquipments.map((x, i) => (
+              <Fragment key={i}>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                  {dayjs(x.startDate).format('DD.MM.YYYY')}
+                </div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                  {dayjs(x.endDate).format('DD.MM.YYYY')}
+                </div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-2 text-xl">Pozostawienie lub zabranie sprzętu</h3>
+          <div className="grid grid-cols-9 gap-x-8">
+            <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Czynność</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Czas</div>
+            <div className="col-span-4 mb-2 text-center font-semibold">Nazwa sprzętu</div>
+            {values.longResearchEquipments.map((x, i) => (
+              <Fragment key={i}>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                  {getAction(x.action)}
+                </div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.duration}</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-2 text-xl">Wchodzenie lub wychodzenie z portu</h3>
+          <div className="grid grid-cols-9 gap-x-8">
+            <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Wejście</div>
+            <div className="col-span-2 mb-2 text-center font-semibold">Wyjście</div>
+            <div className="col-span-4 mb-2 text-center font-semibold">Nazwa portu</div>
+            {values.ports.map((x, i) => (
+              <Fragment key={i}>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                  {dayjs(x.startTime).format('DD.MM.YYYY HH:mm')}
+                </div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                  {dayjs(x.endTime).format('DD.MM.YYYY HH:mm')}
+                </div>
+                <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu">
+        <div className="grid grid-cols-6 gap-x-8">
+          <div className="col-span-1 mb-2 text-center font-semibold">Dzień</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Liczba godzin</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Nazwa zadania</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Rejon zadania</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Pozycja</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Uwagi</div>
+          {values.cruiseDaysDetails.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.number}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.hours}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.taskName}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.region}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.position}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.comment}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-3 mb-2 text-center font-semibold">Nazwa sprzętu / aparatury</div>
+          <div className="col-span-3 mb-2 text-center font-semibold">Data zgłoszenia do ubezpieczenia</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">Zgoda opiekuna</div>
+          {values.researchEquipments.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.name}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>
+                {x.insuranceStartDate ? dayjs(x.insuranceStartDate).format('DD.MM.YYYY') : ''}
+                {x.insuranceStartDate || x.insuranceEndDate ? ' - ' : ''}
+                {x.insuranceEndDate ? dayjs(x.insuranceEndDate).format('DD.MM.YYYY') : ''}
+                {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
+              </div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                {x.permission === 'true' ? 'Tak' : 'Nie'}
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="15. Elementy techniczne statku wykorzystywane podczas rejsu">
+        <div className="grid grid-cols-9 gap-x-8">
+          <div className="col-span-7 mb-2 text-center font-semibold">Element</div>
+          <div className="col-span-2 mb-2 text-center font-semibold">W użyciu</div>
+          {formBInitValues.shipEquipments.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-7 grid place-items-center')}>{x.name}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
+                {values.shipEquipmentsIds.filter((id) => id === x.id).length > 0 ? 'Tak' : 'Nie'}
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="16. Lista próbek pobranych i poddanych analizie podczas rejsu">
+        <div className="grid grid-cols-10 gap-x-8">
+          <div className="col-span-2 mb-2 text-center font-semibold">Rodzaj materiału badawczego</div>
+          <div className="col-span-1 mb-2 text-center font-semibold">Ilość</div>
+          <div className="col-span-4 mb-2 text-center font-semibold">Analizy przeprowadzone na zebranym materiale</div>
+          <div className="col-span-3 mb-2 text-center font-semibold">Publiczność danych</div>
+          {values.collectedSamples.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.type}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{x.amount}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.analysis}</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.publishing}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="17. Dodatkowe dane do raportu SPUB">
+        <div className="mx-6 text-justify">{values.spubReportData}</div>
+      </PrintingPageSection>
+
+      <PrintingPageSection title="18. Krótki opis podsumowujący dany rejs">
+        <div className="mx-6 text-justify">{values.additionalDescription}</div>
+        <div className="text-center text-xl">Załączniki</div>
+        <div className="grid grid-cols-9 gap-4">
+          <div className="col-span-1 mb-2 text-center font-semibold">Lp.</div>
+          <div className="col-span-8 mb-2 text-center font-semibold">Nazwa pliku</div>
+          {values.photos.map((x, i) => (
+            <Fragment key={i}>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
+              <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-8 grid place-items-center')}>{x.name}</div>
+            </Fragment>
+          ))}
+        </div>
+      </PrintingPageSection>
+    </PrintingPage>
+  );
+}

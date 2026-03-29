@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppInputErrorsList } from '@/components/inputs/parts/AppInputErrorsList';
+import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 
 const meta = {
   component: AppInputErrorsList,

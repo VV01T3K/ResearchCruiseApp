@@ -5,21 +5,21 @@ import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import React from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppModal } from '@/components/AppModal';
-import { AppCheckbox } from '@/components/inputs/AppCheckbox';
-import { AppTable } from '@/components/table/AppTable';
-import { UploadPublicationsButton } from '@/features/my-publications/components/UploadPublicationsButton';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { UploadPublicationsButton } from '@/components/publications/UploadPublicationsButton';
 import {
   useDeleteAllOwnPublicationsMutation,
   useDeleteOwnPublicationMutation,
   useOwnPublicationQuery,
   useUploadPublicationsMutation,
-} from '@/features/my-publications/hooks/MyPublicationsApiHooks';
-import { Publication } from '@/features/my-publications/models/Publication';
+} from '@/api/hooks/publications/MyPublicationsApiHooks';
+import { Publication } from '@/api/dto/publications/Publication';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/lib/models/Role';
+import { Role } from '@/models/shared/Role';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublicationsPage,

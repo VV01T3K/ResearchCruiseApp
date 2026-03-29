@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppAlert } from '@/components/AppAlert';
+import { AppAlert } from '@/components/shared/AppAlert';
 
 const meta = {
   component: AppAlert,

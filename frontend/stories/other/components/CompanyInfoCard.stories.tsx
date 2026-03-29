@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
 
-import { CompanyInfoCard } from '@/features/other/components/CompanyInfoCard';
+import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 
 const meta = {
   component: CompanyInfoCard,

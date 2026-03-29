@@ -1,7 +1,7 @@
 import config from '@/config';
 import axios from 'axios';
 
-import { AuthDetails } from '@/features/user/models/AuthDetails';
+import { AuthDetails } from '@/models/user/AuthDetails';
 
 export const client = axios.create({
   baseURL: config.apiUrl,

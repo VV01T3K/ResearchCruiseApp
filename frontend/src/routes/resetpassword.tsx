@@ -7,12 +7,12 @@ import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import { AppFloatingLabelInput } from '@/components/inputs/AppFloatingLabelInput';
-import { useResetPasswordMutation } from '@/features/user/hooks/UserApiHooks';
-import { Result } from '@/features/user/models/Results';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { useResetPasswordMutation } from '@/api/hooks/user/UserApiHooks';
+import { Result } from '@/models/user/Results';
 import { allowOnly } from '@/lib/guards';
 import { getErrors } from '@/lib/utils';
 

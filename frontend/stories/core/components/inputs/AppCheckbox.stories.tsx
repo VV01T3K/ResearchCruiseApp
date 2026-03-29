@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppCheckbox } from '@/components/inputs/AppCheckbox';
+import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 
 const meta = {
   component: AppCheckbox,

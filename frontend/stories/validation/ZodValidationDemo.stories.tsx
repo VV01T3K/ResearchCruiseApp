@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 
-import { AppButton } from '@/components/AppButton';
-import { AppInput } from '@/components/inputs/AppInput';
-import { AppNumberInput } from '@/components/inputs/AppNumberInput';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { getErrors } from '@/lib/utils';
 
 // Zod validation schema

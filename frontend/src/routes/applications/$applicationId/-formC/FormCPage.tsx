@@ -3,16 +3,16 @@ import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
 
-import { AppLayout } from '@/components/AppLayout';
-import { toast } from '@/components/layout/toast';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
-import { FormC } from '@/features/cruise-applications/components/formC/FormC';
-import { useCruiseForCruiseApplicationQuery } from '@/features/cruise-applications/hooks/CruiseApplicationsApiHooks';
-import { useFormAInitValuesQuery, useFormAQuery } from '@/features/cruise-applications/hooks/FormAApiHooks';
-import { useFormBInitValuesQuery, useFormBQuery } from '@/features/cruise-applications/hooks/FormBApiHooks';
-import { useFormCQuery, useUpdateFormCMutation } from '@/features/cruise-applications/hooks/FormCApiHooks';
-import { FormCDto } from '@/features/cruise-applications/models/FormCDto';
-import { ResearchTaskEffectDto } from '@/features/cruise-applications/models/ResearchTaskEffectDto';
+import { FormC } from '@/components/applications/formC/FormC';
+import { useCruiseForCruiseApplicationQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { useFormAInitValuesQuery, useFormAQuery } from '@/api/hooks/applications/FormAApiHooks';
+import { useFormBInitValuesQuery, useFormBQuery } from '@/api/hooks/applications/FormBApiHooks';
+import { useFormCQuery, useUpdateFormCMutation } from '@/api/hooks/applications/FormCApiHooks';
+import { FormCDto } from '@/api/dto/applications/FormCDto';
+import { ResearchTaskEffectDto } from '@/api/dto/applications/ResearchTaskEffectDto';
 import { FORM_C_FIELD_TO_SECTION, getFormCValidationSchema } from './formC.schema';
 
 export function FormCPage() {

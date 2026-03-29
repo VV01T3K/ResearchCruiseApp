@@ -1,12 +1,12 @@
 import { ErrorComponentProps } from '@tanstack/react-router';
 import EmojiSmileUpsideDownIcon from 'bootstrap-icons/icons/emoji-smile-upside-down.svg?react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import AppBackground from '@/components/layout/AppBackground';
-import { AppNavbar } from '@/components/layout/AppNavbar';
-import { AppNetworkDisconnectAlert } from '@/components/layout/AppNetworkDisconnectAlert';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import AppBackground from '@/components/shared/layout/AppBackground';
+import { AppNavbar } from '@/components/shared/layout/AppNavbar';
+import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
 
 export function AppErrorHandler({ error }: ErrorComponentProps) {
   return (

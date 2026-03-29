@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppAccordion } from '@/components/AppAccordion';
+import { AppAccordion } from '@/components/shared/AppAccordion';
 
 const meta = {
   component: AppAccordion,

@@ -3,21 +3,21 @@ import { createFileRoute } from '@tanstack/react-router';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import React from 'react';
 
-import { AppAvatar } from '@/components/AppAvatar';
-import { AppBadge } from '@/components/AppBadge';
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppModal } from '@/components/AppModal';
-import { AppCheckbox } from '@/components/inputs/AppCheckbox';
-import { AppTable } from '@/components/table/AppTable';
-import { GroupActionSection } from '@/features/user-management/components/GroupActionSection';
-import { RoleBadge } from '@/features/user-management/components/RoleBadge';
-import { UserEditForm } from '@/features/user-management/components/UserEditForm';
-import { useUsersQuery } from '@/features/user-management/hooks/UserManagementApiHooks';
+import { AppAvatar } from '@/components/shared/AppAvatar';
+import { AppBadge } from '@/components/shared/AppBadge';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { GroupActionSection } from '@/components/user-management/GroupActionSection';
+import { RoleBadge } from '@/components/user-management/RoleBadge';
+import { UserEditForm } from '@/components/user-management/UserEditForm';
+import { useUsersQuery } from '@/api/hooks/user-management/UserManagementApiHooks';
 import { allowOnly } from '@/lib/guards';
 import { cn } from '@/lib/utils';
-import { getRoleLabel, Role } from '@/lib/models/Role';
-import { User } from '@/lib/models/User';
+import { getRoleLabel, Role } from '@/models/shared/Role';
+import { User } from '@/models/shared/User';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/usermanagement')({

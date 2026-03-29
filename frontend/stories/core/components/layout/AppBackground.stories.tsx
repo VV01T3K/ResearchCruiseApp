@@ -1,7 +1,7 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import AppBackground from '@/components/layout/AppBackground';
+import AppBackground from '@/components/shared/layout/AppBackground';
 
 const meta = {
   component: AppBackground,

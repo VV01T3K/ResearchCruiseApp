@@ -1,0 +1,179 @@
+import type { AnyFieldApi } from '@tanstack/react-form';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
+import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { getErrors } from '@/lib/utils';
+import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/common/CruiseApplicationDropdownElementSelectorButton';
+import { useFormC } from '@/contexts/applications/FormCContext';
+import { SpubTaskDto } from '@/api/dto/applications/SpubTaskDto';
+
+export function FormCSPUBTasksSection() {
+  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
+
+  function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskDto>[] {
+    return [
+      {
+        header: 'Lp.',
+        cell: ({ row }) => `${row.index + 1}.`,
+        size: 5,
+      },
+      {
+        header: 'Rok rozpoczęcia',
+        accessorFn: (row) => row.yearFrom,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <form.Field
+            name={`spubTasks[${row.index}].yearFrom`}
+            listeners={{
+              onChange: ({ value }) => {
+                const yearTo = form.getFieldValue(`spubTasks[${row.index}].yearTo`);
+                if (value && yearTo && parseInt(value) > parseInt(yearTo)) {
+                  form.setFieldValue(`spubTasks[${row.index}].yearTo`, value);
+                }
+              },
+            }}
+            children={(field) => (
+              <AppYearPickerInput
+                name={field.name}
+                value={field.state.value ? parseInt(field.state.value) : undefined}
+                onChange={(e) => field.handleChange(e?.toString() ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+              />
+            )}
+          />
+        ),
+        size: 20,
+      },
+      {
+        header: 'Rok zakończenia',
+        accessorFn: (row) => row.yearTo,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <form.Field
+            name={`spubTasks[${row.index}].yearTo`}
+            children={(field) => (
+              <AppYearPickerInput
+                name={field.name}
+                value={field.state.value ? parseInt(field.state.value) : undefined}
+                onChange={(e) => field.handleChange(e?.toString() ?? '')}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                disabled={isReadonly}
+              />
+            )}
+          />
+        ),
+        size: 20,
+      },
+      {
+        header: 'Nazwa zadania',
+        accessorFn: (row) => row.name,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <form.Field
+            name={`spubTasks[${row.index}].name`}
+            children={(field) => (
+              <AppDropdownInput
+                name={field.name}
+                value={field.state.value as string}
+                onChange={(e) => field.handleChange(e as string)}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                allOptions={formAInitValues?.standardSpubTasks.map((taskName) => ({
+                  value: taskName,
+                  inlineLabel: taskName,
+                }))}
+                disabled={isReadonly}
+              />
+            )}
+          />
+        ),
+        size: 50,
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <AppTableDeleteRowButton
+              onClick={() => {
+                field.removeValue(row.index);
+                field.handleChange((prev: SpubTaskDto[]) => prev);
+                field.handleBlur();
+              }}
+              disabled={isReadonly}
+            />
+          </div>
+        ),
+        size: 5,
+      },
+    ];
+  }
+
+  return (
+    <AppAccordion
+      title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie"
+      expandedByDefault
+      data-testid="form-c-spub-tasks-section"
+    >
+      <div>
+        <form.Field
+          name="spubTasks"
+          mode="array"
+          children={(field) => (
+            <>
+              <AppTable
+                columns={getColumns(field)}
+                data={field.state.value}
+                buttons={() => [
+                  <AppButton
+                    key="new"
+                    onClick={() => {
+                      field.pushValue({ name: '', yearFrom: '', yearTo: '' });
+                      field.handleChange((prev) => prev);
+                      field.handleBlur();
+                    }}
+                    disabled={isReadonly}
+                  >
+                    Dodaj
+                  </AppButton>,
+                  <CruiseApplicationDropdownElementSelectorButton
+                    key="historical"
+                    options={formAInitValues.historicalSpubTasks.map((task) => ({
+                      value: JSON.stringify(task),
+                      content: `${task.name} (${task.yearFrom} - ${task.yearTo})`,
+                      onClick: () => {
+                        field.pushValue(task);
+                        field.handleChange((prev) => prev);
+                        field.handleBlur();
+                      },
+                    }))}
+                    variant="primaryOutline"
+                    disabled={isReadonly}
+                  >
+                    Dodaj historyczne zadanie
+                  </CruiseApplicationDropdownElementSelectorButton>,
+                ]}
+                emptyTableMessage="Brak zadań SPUB"
+                variant="form"
+                disabled={isReadonly}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+            </>
+          )}
+        />
+      </div>
+    </AppAccordion>
+  );
+}

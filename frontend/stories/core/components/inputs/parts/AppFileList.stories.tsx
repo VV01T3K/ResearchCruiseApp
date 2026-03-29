@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppFileList } from '@/components/inputs/parts/AppFileList';
+import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
 
 const meta = {
   component: AppFileList,

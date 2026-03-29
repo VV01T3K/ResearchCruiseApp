@@ -1,8 +1,8 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 
 import { client } from '@/lib/api';
-import { Role } from '@/lib/models/Role';
-import { User } from '@/lib/models/User';
+import { Role } from '@/models/shared/Role';
+import { User } from '@/models/shared/User';
 import { UserContextType } from '@/providers/UserContext';
 import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
 

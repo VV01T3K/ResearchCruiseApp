@@ -1,7 +1,7 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppLink } from '@/components/AppLink';
+import { AppLink } from '@/components/shared/AppLink';
 
 const meta = {
   component: AppLink,

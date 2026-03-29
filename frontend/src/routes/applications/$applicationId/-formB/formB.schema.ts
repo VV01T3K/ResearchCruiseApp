@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
-import { CrewMemberDtoValidationSchema } from '@/features/cruise-applications/models/CrewMemberDto';
-import { CruiseDayDetailsDtoValidationSchema } from '@/features/cruise-applications/models/CruiseDayDetailsDto';
-import { GuestTeamDtoValidationSchema } from '@/features/cruise-applications/models/GuestTeamDto';
-import { LongResearchEquipmentDtoValidationSchema } from '@/features/cruise-applications/models/LongResearchEquipmentDto';
-import { PermissionDtoWithFileValidationSchema } from '@/features/cruise-applications/models/PermissionDto';
-import { PortDtoValidationSchema } from '@/features/cruise-applications/models/PortDto';
-import { ResearchEquipmentDtoValidationSchema } from '@/features/cruise-applications/models/ResearchEquipmentDto';
-import { ShortResearchEquipmentDtoValidationSchema } from '@/features/cruise-applications/models/ShortResearchEquipmentDto';
-import { UGTeamDtoValidationSchema } from '@/features/cruise-applications/models/UGTeamDto';
+import { CrewMemberDtoValidationSchema } from '@/api/dto/applications/CrewMemberDto';
+import { CruiseDayDetailsDtoValidationSchema } from '@/api/dto/applications/CruiseDayDetailsDto';
+import { GuestTeamDtoValidationSchema } from '@/api/dto/applications/GuestTeamDto';
+import { LongResearchEquipmentDtoValidationSchema } from '@/api/dto/applications/LongResearchEquipmentDto';
+import { PermissionDtoWithFileValidationSchema } from '@/api/dto/applications/PermissionDto';
+import { PortDtoValidationSchema } from '@/api/dto/applications/PortDto';
+import { ResearchEquipmentDtoValidationSchema } from '@/api/dto/applications/ResearchEquipmentDto';
+import { ShortResearchEquipmentDtoValidationSchema } from '@/api/dto/applications/ShortResearchEquipmentDto';
+import { UGTeamDtoValidationSchema } from '@/api/dto/applications/UGTeamDto';
 
 export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
   isCruiseManagerPresent: 2,

@@ -8,12 +8,12 @@ import TelephoneFillIcon from 'bootstrap-icons/icons/telephone-fill.svg?react';
 import WindowStackIcon from 'bootstrap-icons/icons/window-stack.svg?react';
 import { z } from 'zod';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
-import { AppLink } from '@/components/AppLink';
-import { AppInput } from '@/components/inputs/AppInput';
-import { CompanyInfoCard } from '@/features/other/components/CompanyInfoCard';
-import { useBackendVersionQuery } from '@/features/other/hooks/BackendVersionApiHook';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
+import { useBackendVersionQuery } from '@/api/hooks/other/BackendVersionApiHook';
 import { allowOnly } from '@/lib/guards';
 
 export const Route = createFileRoute('/help')({

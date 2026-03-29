@@ -1,8 +1,8 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppButton } from '@/components/AppButton';
-import { AppCalendar } from '@/components/calendar/AppCalendar';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
 
 const meta = {
   component: AppCalendar,

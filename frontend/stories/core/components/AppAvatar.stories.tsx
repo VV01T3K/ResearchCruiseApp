@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppAvatar } from '@/components/AppAvatar';
+import { AppAvatar } from '@/components/shared/AppAvatar';
 
 const meta = {
   component: AppAvatar,

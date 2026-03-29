@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppActionsSection } from '@/components/AppActionsSection';
-import { AppButton } from '@/components/AppButton';
+import { AppActionsSection } from '@/components/shared/AppActionsSection';
+import { AppButton } from '@/components/shared/AppButton';
 
 const meta = {
   component: AppActionsSection,

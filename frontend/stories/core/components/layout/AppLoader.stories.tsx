@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AppLoader } from '@/components/layout/AppLoader';
+import { AppLoader } from '@/components/shared/layout/AppLoader';
 
 const meta = {
   component: AppLoader,

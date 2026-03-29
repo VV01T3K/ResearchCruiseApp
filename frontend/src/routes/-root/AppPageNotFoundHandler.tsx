@@ -1,8 +1,8 @@
 import { useRouter } from '@tanstack/react-router';
 import EmojiNeutralIcon from 'bootstrap-icons/icons/emoji-neutral.svg?react';
 
-import { AppButton } from '@/components/AppButton';
-import { AppLayout } from '@/components/AppLayout';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
 
 export function AppPageNotFoundHandler() {
   const router = useRouter();

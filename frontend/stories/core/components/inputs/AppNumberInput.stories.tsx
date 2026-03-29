@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppNumberInput } from '@/components/inputs/AppNumberInput';
+import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 
 const meta = {
   component: AppNumberInput,
