@@ -123,7 +123,7 @@ public class AddCruiseApplicationHandler(
         double cruiseDurationDays = 0;
         if (!string.IsNullOrWhiteSpace(formADto.CruiseHours))
         {
-            if (double.TryParse(formADto.CruiseHours, out var cruiseHours))
+            if (uint.TryParse(formADto.CruiseHours, out var cruiseHours))
             {
                 cruiseDurationDays = cruiseHours / 24.0;
             }

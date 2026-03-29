@@ -78,12 +78,9 @@ test.describe('session expiration and refresh', () => {
       refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
     });
 
-    // 63s expiration: warning fires at 63000 - 60000 = 3000ms
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(63_000));
 
     const warningTitle = page.getByText('Sesja wygasa');
-
-    await page.clock.runFor(3_500);
 
     await expect(warningTitle).toBeVisible();
   });

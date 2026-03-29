@@ -9,12 +9,11 @@ export const MAX_PERIOD_EDGE_VALUE = 24;
 
 export function getPeriodEdgeDatePoint(year: number, edge: number): Date {
   if (edge === MAX_PERIOD_EDGE_VALUE) {
-    return new Date(year + 1, 0, 1);
+    return new Date(Date.UTC(year + 1, 0, 1));
   }
-
   const month = Math.floor(edge / 2);
   const day = edge % 2 === 0 ? 1 : 15;
-  return new Date(year, month, day);
+  return new Date(Date.UTC(year, month, day));
 }
 
 export function getPeriodEdgeDateString(year: number, edge: number): string {
