@@ -195,9 +195,6 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
     if (cruiseDurationDays <= 0) {
       return { canFitCruise: true, overlappingBlockades: [] };
     }
-    if ((rangeEnd.getTime() - rangeStart.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
-      return { canFitCruise: false, overlappingBlockades: [] };
-    }
     if (!blockades || blockades.length === 0) {
       return { canFitCruise: true, overlappingBlockades: [] };
     }
@@ -323,6 +320,20 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
           return;
         }
         if (!precisePeriodStart || !precisePeriodEnd) {
+          return;
+        }
+
+        const start = new Date(precisePeriodStart);
+        const end = new Date(precisePeriodEnd);
+        const parsedHours = parseInt(cruiseHours, 10);
+        const cruiseDurationDays = parsedHours / 24;
+
+        if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
+          ctx.addIssue({
+            code: 'custom',
+            message: 'Wybrany czas trwania rejsu jest dłuższy niż okres pomiędzy wybranymi datami.',
+            path: ['precisePeriodEnd'],
+          });
           return;
         }
 
