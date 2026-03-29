@@ -25,6 +25,7 @@ import { Route as AccountsettingsRouteImport } from './routes/accountsettings'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CruisesIndexRouteImport } from './routes/cruises/index'
 import { Route as ApplicationsIndexRouteImport } from './routes/applications/index'
+import { Route as ExperimentsFormRouteImport } from './routes/experiments/form'
 import { Route as CruisesNewRouteImport } from './routes/cruises/new'
 import { Route as CruisesCruiseIdIndexRouteImport } from './routes/cruises/$cruiseId/index'
 import { Route as ApplicationsApplicationIdFormCRouteImport } from './routes/applications/$applicationId/formC'
@@ -112,6 +113,11 @@ const ApplicationsIndexRoute = ApplicationsIndexRouteImport.update({
   path: '/applications/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperimentsFormRoute = ExperimentsFormRouteImport.update({
+  id: '/experiments/form',
+  path: '/experiments/form',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CruisesNewRoute = CruisesNewRouteImport.update({
   id: '/cruises/new',
   path: '/cruises/new',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
+  '/experiments/form': typeof ExperimentsFormRoute
   '/applications/': typeof ApplicationsIndexRoute
   '/cruises/': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
+  '/experiments/form': typeof ExperimentsFormRoute
   '/applications': typeof ApplicationsIndexRoute
   '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/resetpassword': typeof ResetpasswordRoute
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
+  '/experiments/form': typeof ExperimentsFormRoute
   '/applications/': typeof ApplicationsIndexRoute
   '/cruises/': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
     | '/resetpassword'
     | '/usermanagement'
     | '/cruises/new'
+    | '/experiments/form'
     | '/applications/'
     | '/cruises/'
     | '/applications/$applicationId/details'
@@ -262,6 +272,7 @@ export interface FileRouteTypes {
     | '/resetpassword'
     | '/usermanagement'
     | '/cruises/new'
+    | '/experiments/form'
     | '/applications'
     | '/cruises'
     | '/applications/$applicationId/details'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/resetpassword'
     | '/usermanagement'
     | '/cruises/new'
+    | '/experiments/form'
     | '/applications/'
     | '/cruises/'
     | '/applications/$applicationId/details'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   ResetpasswordRoute: typeof ResetpasswordRoute
   UsermanagementRoute: typeof UsermanagementRoute
   CruisesNewRoute: typeof CruisesNewRoute
+  ExperimentsFormRoute: typeof ExperimentsFormRoute
   ApplicationsIndexRoute: typeof ApplicationsIndexRoute
   CruisesIndexRoute: typeof CruisesIndexRoute
   ApplicationsApplicationIdDetailsRoute: typeof ApplicationsApplicationIdDetailsRoute
@@ -434,6 +447,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experiments/form': {
+      id: '/experiments/form'
+      path: '/experiments/form'
+      fullPath: '/experiments/form'
+      preLoaderRoute: typeof ExperimentsFormRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cruises/new': {
       id: '/cruises/new'
       path: '/cruises/new'
@@ -495,6 +515,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetpasswordRoute: ResetpasswordRoute,
   UsermanagementRoute: UsermanagementRoute,
   CruisesNewRoute: CruisesNewRoute,
+  ExperimentsFormRoute: ExperimentsFormRoute,
   ApplicationsIndexRoute: ApplicationsIndexRoute,
   CruisesIndexRoute: CruisesIndexRoute,
   ApplicationsApplicationIdDetailsRoute: ApplicationsApplicationIdDetailsRoute,
