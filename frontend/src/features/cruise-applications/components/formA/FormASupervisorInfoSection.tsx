@@ -1,0 +1,41 @@
+import { AppAccordion } from '@/components/AppAccordion';
+import { AppAlert } from '@/components/AppAlert';
+import { AppInput } from '@/components/inputs/AppInput';
+import { getErrors } from '@/lib/utils';
+import { useFormA } from '@/features/cruise-applications/contexts/FormAContext';
+
+export function FormASupervisorInfoSection() {
+  const { form, isReadonly, hasFormBeenSubmitted } = useFormA();
+
+  return (
+    <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault data-testid="form-a-supervisor-section">
+      <div className="mx-auto max-w-180 space-y-4">
+        <AppAlert variant="warning">
+          <span className="text-center text-sm">
+            Użytkownik odpowiada za podanie prawidłowego adresu e-mail przełożonego, a w przypadku fałszywych danych
+            zgłoszenie może zostać odrzucone.
+          </span>
+        </AppAlert>
+        <form.Field
+          name="supervisorEmail"
+          children={(field) => (
+            <AppInput
+              name={field.name}
+              value={field.state.value}
+              onChange={field.handleChange}
+              onBlur={field.handleBlur}
+              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              label="Adres e-mail przełożonego"
+              showRequiredAsterisk
+              placeholder="Wprowadź adres e-mail przełożonego"
+              type="email"
+              disabled={isReadonly}
+              data-testid="form-a-supervisor-email-input"
+              data-testid-errors="form-a-supervisor-email-errors"
+            />
+          )}
+        />
+      </div>
+    </AppAccordion>
+  );
+}

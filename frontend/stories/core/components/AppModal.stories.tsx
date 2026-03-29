@@ -1,0 +1,32 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
+
+import { AppModal } from '@/components/AppModal';
+import AppBackground from '@/components/layout/AppBackground';
+
+const meta = {
+  component: AppModal,
+  args: {
+    children: <div className="min-h-80 rounded-2xl bg-gray-100" />,
+    onClose: fn(),
+  },
+  decorators: [
+    (Story) => (
+      <div className="h-160">
+        <AppBackground />
+        <Story />
+      </div>
+    ),
+  ],
+} satisfies Meta<typeof AppModal>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    title: 'Modal',
+    isOpen: true,
+  },
+};

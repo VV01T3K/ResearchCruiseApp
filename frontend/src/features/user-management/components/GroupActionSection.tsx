@@ -1,0 +1,144 @@
+import ExclamationTriangleFillIcon from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
+import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
+import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
+import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { motion } from 'motion/react';
+import React from 'react';
+
+import { AppAlert } from '@/components/AppAlert';
+import { AppButton } from '@/components/AppButton';
+import { toast } from '@/components/layout/toast';
+import { Role } from '@/lib/models/Role';
+import { User } from '@/lib/models/User';
+import {
+  useAcceptUserMutation,
+  useDeleteUserMutation,
+  useUnAcceptUserMutation,
+} from '@/features/user-management/hooks/UserManagementApiHooks';
+
+type Props = {
+  selectedUsers: User[];
+  allUsers: User[];
+
+  allowToRemoveUsers: boolean;
+
+  close: () => void;
+};
+export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers, close }: Props) {
+  const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
+
+  const mutationContext = { editMode: true, setSubmitError };
+  const deleteUserMutation = useDeleteUserMutation(mutationContext);
+  const acceptUserMutation = useAcceptUserMutation(mutationContext);
+  const unAcceptUserMutation = useUnAcceptUserMutation(mutationContext);
+
+  async function handleDeleteSelectedUsers() {
+    if (!deletionConfirmed) {
+      setDeletionConfirmed(true);
+      return;
+    }
+
+    const selectedIds = new Set(selectedUsers.map((u) => u.id));
+    const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
+    if (remainingAdmins.length === 0) {
+      toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin');
+      setDeletionConfirmed(false);
+      return;
+    }
+
+    for (const user of selectedUsers) {
+      await deleteUserMutation
+        .mutateAsync(user.id, {
+          onSuccess: async () => {
+            close();
+          },
+        })
+        .catch(() => {});
+    }
+  }
+
+  async function handleAcceptSelectedUsers() {
+    // TODO: probably need refactor - await blocks everything + close() is called x times + add toast
+    for (const user of selectedUsers.filter((user) => !user.accepted)) {
+      await acceptUserMutation
+        .mutateAsync(user.id, {
+          onSuccess: async () => {
+            close();
+          },
+        })
+        .catch(() => {});
+    }
+  }
+
+  async function handleUnAcceptSelectedUsers() {
+    for (const user of selectedUsers.filter((user) => user.accepted)) {
+      await unAcceptUserMutation
+        .mutateAsync(user.id, {
+          onSuccess: async () => {
+            close();
+          },
+        })
+        .catch(() => {});
+    }
+  }
+
+  return (
+    <div>
+      {submitError && (
+        <div>
+          <AppAlert variant="danger" onClose={() => setSubmitError(undefined)}>
+            {submitError}
+          </AppAlert>
+        </div>
+      )}
+
+      {allowToRemoveUsers && (
+        <AppButton
+          type="button"
+          variant={deletionConfirmed ? 'dangerOutline' : 'danger'}
+          className="w-full"
+          disabled={deleteUserMutation.isPending || !!submitError}
+          onClick={() => handleDeleteSelectedUsers()}
+        >
+          {deletionConfirmed ? (
+            <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <ExclamationTriangleFillIcon className="h-4 w-4" />
+              <span>Na pewno?</span>
+            </motion.div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <TrashFillIcon className="h-4 w-4" />
+              <span>Usuń zaznaczonych użytkowników</span>
+            </div>
+          )}
+        </AppButton>
+      )}
+
+      <div className="mt-4">
+        <AppButton
+          variant="success"
+          className="mt-4 w-full"
+          disabled={acceptUserMutation.isPending || !!submitError}
+          onClick={handleAcceptSelectedUsers}
+        >
+          <div className="flex items-center gap-4">
+            <PersonFillCheckIcon className="h-4 w-4" />
+            <span>Akceptuj zaznaczonych użytkowników</span>
+          </div>
+        </AppButton>
+        <AppButton
+          variant="danger"
+          className="mt-4 w-full"
+          disabled={unAcceptUserMutation.isPending || !!submitError}
+          onClick={handleUnAcceptSelectedUsers}
+        >
+          <div className="flex items-center gap-4">
+            <PersonFillSlashIcon className="h-4 w-4" />
+            <span>Usuń akceptację zaznaczonych użytkowników</span>
+          </div>
+        </AppButton>
+      </div>
+    </div>
+  );
+}

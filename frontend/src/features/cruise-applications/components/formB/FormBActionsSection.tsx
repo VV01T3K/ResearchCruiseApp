@@ -1,0 +1,59 @@
+import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import PrinterFillIcon from 'bootstrap-icons/icons/printer-fill.svg?react';
+import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
+
+import { AppActionsSection } from '@/components/AppActionsSection';
+import { AppButton } from '@/components/AppButton';
+import { AppGuard } from '@/components/AppGuard';
+import { Role } from '@/lib/models/Role';
+import { useFormB } from '@/features/cruise-applications/contexts/FormBContext';
+
+type Props = {
+  onSaveDraft: () => void;
+  onRevertToEdit?: () => void;
+  onPrint?: () => void;
+  disabled?: boolean;
+};
+export function FormBActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled }: Props) {
+  const { isReadonly } = useFormB();
+
+  return (
+    <AppActionsSection>
+      <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+        {isReadonly && !!onRevertToEdit && (
+          <AppButton
+            className="w-36 !justify-center gap-4 lg:w-48"
+            variant="primaryOutline"
+            onClick={onRevertToEdit}
+            disabled={disabled}
+          >
+            Cofnij do edycji
+          </AppButton>
+        )}
+      </AppGuard>
+      {!isReadonly && (
+        <AppButton
+          className="w-36 !justify-center gap-4 lg:w-48"
+          variant="primaryOutline"
+          onClick={onSaveDraft}
+          disabled={disabled}
+        >
+          <FloppyFillIcon className="h-4 w-4" />
+          Zapisz wersję roboczą
+        </AppButton>
+      )}
+      {!isReadonly && (
+        <AppButton type="submit" className="w-36 !justify-center gap-4 lg:w-48" disabled={disabled}>
+          <SendFillIcon className="h-4 w-4" />
+          Wyślij
+        </AppButton>
+      )}
+      {isReadonly && (
+        <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={onPrint} disabled={disabled}>
+          <PrinterFillIcon className="h-4 w-4" />
+          Wydrukuj
+        </AppButton>
+      )}
+    </AppActionsSection>
+  );
+}

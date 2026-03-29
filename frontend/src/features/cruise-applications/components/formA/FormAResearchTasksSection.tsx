@@ -1,0 +1,152 @@
+import type { AnyFieldApi } from '@tanstack/react-form';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { AppAccordion } from '@/components/AppAccordion';
+import { AppInputErrorsList } from '@/components/inputs/parts/AppInputErrorsList';
+import { AppTable } from '@/components/table/AppTable';
+import { AppTableDeleteRowButton } from '@/components/table/AppTableDeleteRowButton';
+import { getErrors, groupBy } from '@/lib/utils';
+import { CruiseApplicationDropdownElementSelectorButton } from '@/features/cruise-applications/components/common/CruiseApplicationDropdownElementSelectorButton';
+import { ResearchTaskThumbnail } from '@/features/cruise-applications/components/common/research-task-thumbnails/ResearchTaskThumbnail';
+import { ResearchTaskDetails } from '@/features/cruise-applications/components/formA/research-task-details/ResearchTaskDetails';
+import { useFormA } from '@/features/cruise-applications/contexts/FormAContext';
+import {
+  getEmptyTask,
+  getTaskName,
+  ResearchTaskDto,
+  ResearchTaskType,
+  taskTypes,
+} from '@/features/cruise-applications/models/ResearchTaskDto';
+
+export function FormAResearchTasksSection() {
+  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+
+  function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskDto>[] {
+    return [
+      {
+        header: 'Lp.',
+        cell: ({ row }) => `${row.index + 1}. `,
+        size: 5,
+      },
+      {
+        header: 'Zadanie',
+        accessorFn: (row) => getTaskName(row.type),
+        cell: ({ row }) => (
+          <form.Field
+            key={row.index}
+            name={`researchTasks[${row.index}].type`}
+            children={(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
+          />
+        ),
+        size: 20,
+      },
+      {
+        header: 'Szczegóły',
+        cell: ({ row }) => (
+          <ResearchTaskDetails
+            form={form}
+            row={row}
+            disabled={isReadonly}
+            hasFormBeenSubmitted={hasFormBeenSubmitted}
+          />
+        ),
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <AppTableDeleteRowButton
+              onClick={() => {
+                field.removeValue(row.index);
+                field.handleChange((prev: ResearchTaskDto[]) => prev);
+                field.handleBlur();
+              }}
+              disabled={isReadonly}
+            />
+          </div>
+        ),
+        size: 5,
+      },
+    ];
+  }
+
+  return (
+    <AppAccordion
+      title="6. Zadania do zrealizowania w trakcie rejsu"
+      expandedByDefault
+      data-testid="form-a-research-tasks-section"
+    >
+      <div>
+        <form.Field
+          name="researchTasks"
+          mode="array"
+          children={(field) => (
+            <>
+              <AppTable
+                columns={getColumns(field)}
+                data={field.state.value}
+                showRequiredAsterisk
+                buttons={() => [
+                  <CruiseApplicationDropdownElementSelectorButton
+                    key="new"
+                    options={taskTypes.map((type) => ({
+                      value: getTaskName(type),
+                      onClick: () => {
+                        field.pushValue(getEmptyTask(type));
+                        field.handleChange((prev: ResearchTaskDto[]) => prev);
+                        field.handleBlur();
+                      },
+                    }))}
+                    variant="primary"
+                    disabled={isReadonly}
+                    data-testid="form-a-add-research-task-btn"
+                  >
+                    Dodaj nowe efekty rejsu
+                  </CruiseApplicationDropdownElementSelectorButton>,
+                  <CruiseApplicationDropdownElementSelectorButton
+                    key="historical"
+                    options={groupBy(initValues.historicalResearchTasks, (x) => x.type).flatMap(([type, tasks]) => [
+                      ...[
+                        {
+                          value: type,
+                          content: (
+                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                              {getTaskName(type as ResearchTaskType)}
+                            </div>
+                          ),
+                        },
+                      ],
+                      ...tasks.map((task) => ({
+                        value: JSON.stringify(task),
+                        content: <ResearchTaskThumbnail task={task} />,
+                        onClick: () => {
+                          field.pushValue(task);
+                          field.handleChange((prev: ResearchTaskDto[]) => prev);
+                          field.handleBlur();
+                        },
+                      })),
+                    ])}
+                    variant="primaryOutline"
+                    disabled={isReadonly}
+                    data-testid="form-a-add-historical-research-task-btn"
+                  >
+                    Dodaj historyczne efekty rejsu
+                  </CruiseApplicationDropdownElementSelectorButton>,
+                ]}
+                emptyTableMessage="Nie dodano żadnego zadania."
+                variant="form"
+                disabled={isReadonly}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-research-tasks-table"
+              />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                data-testid="form-a-research-tasks-errors"
+              />
+            </>
+          )}
+        />
+      </div>
+    </AppAccordion>
+  );
+}

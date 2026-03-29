@@ -1,9 +1,9 @@
 import { createRootRouteWithContext } from '@tanstack/react-router';
 
-import { AppErrorHandler } from '@/core/components/layout/AppErrorHandler';
-import { AppPageNotFoundHandler } from '@/core/components/layout/AppPageNotFoundHandler';
-import { RootLayout } from '@/core/pages/RootLayout';
-import { UserContextType } from '@/user/contexts/UserContext';
+import { AppErrorHandler } from '@/routes/-root/AppErrorHandler';
+import { AppPageNotFoundHandler } from '@/routes/-root/AppPageNotFoundHandler';
+import { RootLayout } from '@/routes/-root/RootLayout';
+import { UserContextType } from '@/providers/UserContext';
 
 type RouterContext = {
   userContext?: UserContextType;

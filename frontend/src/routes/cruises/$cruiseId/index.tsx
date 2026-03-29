@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { allowOnly } from '@/core/lib/guards';
-import { CruiseDetailsPage } from '@/cruise-schedule/pages/CruiseDetailsPage';
+import { allowOnly } from '@/lib/guards';
+import { CruiseDetailsPage } from '@/routes/cruises/$cruiseId/-details/CruiseDetailsPage';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,

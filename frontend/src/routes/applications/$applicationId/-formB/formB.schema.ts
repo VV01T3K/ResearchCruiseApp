@@ -1,0 +1,51 @@
+import { z } from 'zod';
+
+import { groupBy } from '@/lib/utils';
+import { CrewMemberDtoValidationSchema } from '@/features/cruise-applications/models/CrewMemberDto';
+import { CruiseDayDetailsDtoValidationSchema } from '@/features/cruise-applications/models/CruiseDayDetailsDto';
+import { GuestTeamDtoValidationSchema } from '@/features/cruise-applications/models/GuestTeamDto';
+import { LongResearchEquipmentDtoValidationSchema } from '@/features/cruise-applications/models/LongResearchEquipmentDto';
+import { PermissionDtoWithFileValidationSchema } from '@/features/cruise-applications/models/PermissionDto';
+import { PortDtoValidationSchema } from '@/features/cruise-applications/models/PortDto';
+import { ResearchEquipmentDtoValidationSchema } from '@/features/cruise-applications/models/ResearchEquipmentDto';
+import { ShortResearchEquipmentDtoValidationSchema } from '@/features/cruise-applications/models/ShortResearchEquipmentDto';
+import { UGTeamDtoValidationSchema } from '@/features/cruise-applications/models/UGTeamDto';
+
+export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
+  isCruiseManagerPresent: 2,
+  permissions: 4,
+  ugTeams: 9,
+  guestTeams: 9,
+  crewMembers: 9,
+  shortResearchEquipments: 12,
+  longResearchEquipments: 12,
+  ports: 12,
+  cruiseDaysDetails: 13,
+  researchEquipments: 14,
+  shipEquipmentsIds: 15,
+};
+
+export function getFormBValidationSchema() {
+  return z.object({
+    isCruiseManagerPresent: z.enum(['true', 'false']),
+    permissions: PermissionDtoWithFileValidationSchema.array(),
+    ugTeams: UGTeamDtoValidationSchema.array()
+      .min(1, 'Co najmniej jeden zespół UG jest wymagany')
+      .refine(
+        (val) => val.every((x) => parseInt(x.noOfEmployees, 10) + parseInt(x.noOfStudents, 10) > 0),
+        'Zespół UG musi składać się z co najmniej jednej osoby'
+      )
+      .refine(
+        (val) => groupBy(val, (x) => x.ugUnitId).filter((x) => x[1].length > 1).length === 0,
+        'Nie można dodać dwóch zespołów UG z tego samego wydziału'
+      ),
+    guestTeams: GuestTeamDtoValidationSchema.array(),
+    crewMembers: CrewMemberDtoValidationSchema.array(),
+    shortResearchEquipments: ShortResearchEquipmentDtoValidationSchema.array(),
+    longResearchEquipments: LongResearchEquipmentDtoValidationSchema.array(),
+    ports: PortDtoValidationSchema.array(),
+    cruiseDaysDetails: CruiseDayDetailsDtoValidationSchema.array(),
+    researchEquipments: ResearchEquipmentDtoValidationSchema.array(),
+    shipEquipmentsIds: z.array(z.string()),
+  });
+}
