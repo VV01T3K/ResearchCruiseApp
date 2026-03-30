@@ -136,21 +136,18 @@ test.describe('session expiration and refresh', () => {
     await page.goto('/usermanagement');
     await expect(page).toHaveURL('/usermanagement');
 
-    await page.evaluate(
-      (expiredAccessTokenDateIso) => {
-        const raw = window.localStorage.getItem('authDetails');
-        if (!raw) {
-          return;
-        }
+    await page.evaluate((expiredAccessTokenDateIso) => {
+      const raw = window.localStorage.getItem('authDetails');
+      if (!raw) {
+        return;
+      }
 
-        const details = JSON.parse(raw) as {
-          accessTokenExpirationDate: string;
-        };
-        details.accessTokenExpirationDate = expiredAccessTokenDateIso;
-        window.localStorage.setItem('authDetails', JSON.stringify(details));
-      },
-      new Date(Date.now() - 5_000).toISOString()
-    );
+      const details = JSON.parse(raw) as {
+        accessTokenExpirationDate: string;
+      };
+      details.accessTokenExpirationDate = expiredAccessTokenDateIso;
+      window.localStorage.setItem('authDetails', JSON.stringify(details));
+    }, new Date(Date.now() - 5_000).toISOString());
 
     const refreshPromise = page.waitForResponse(
       (res) => res.url().includes('/account/refresh') && res.request().method() === 'POST' && res.status() === 200
