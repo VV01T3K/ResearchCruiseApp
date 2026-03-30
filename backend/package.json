@@ -7,6 +7,7 @@
     "build": "dotnet build ResearchCruiseApp.sln",
     "fix": "exit 0 && dotnet csharpier format . && dotnet format ResearchCruiseApp.sln --severity info --exclude-diagnostics IDE0130",
     "check": "exit 0 && dotnet csharpier check . && dotnet format ResearchCruiseApp.sln --verify-no-changes --severity info --exclude-diagnostics IDE0130",
+    "staged": "exit 0 && dotnet csharpier format",
     "ef:seed": "mise run seed",
     "ef:drop": "dotnet ef database drop --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -f",
     "ef:update": "dotnet ef database update --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",

@@ -8,10 +8,14 @@ import tailwindcss from '@tailwindcss/vite';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
 export default defineConfig({
+  staged: {
+    // TODO: put in the tool.config like the rest
+    '*': 'vp fmt --write',
+  },
   lint: lintConfig,
   fmt: fmtConfig,
   server: {
-    host: true,
+    host: true, // TODO: set only for development, not for production build
   },
   resolve: {
     tsconfigPaths: true,

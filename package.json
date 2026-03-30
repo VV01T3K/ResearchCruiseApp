@@ -12,5 +12,13 @@
     "ef:migration:add": "vp run -F backend ef:migration:add",
     "ef:migration:remove": "vp run -F backend ef:migration:remove"
   },
-  "packageManager": "pnpm@10.33.0"
+  "devDependencies": {
+    "lefthook": "^2.1.4"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "lefthook"
+    ]
+  }
 }
