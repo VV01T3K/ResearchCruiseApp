@@ -32,7 +32,7 @@ export function AppMobileTable<T>({
         {allButtons.length > 0 && (
           <div className="m-4 flex flex-col gap-4">
             {allButtons.map((x, id) => (
-              // eslint-disable-next-line @eslint-react/no-array-index-key
+              // oxlint-disable-next-line @eslint-react/no-array-index-key
               <div key={id} className="flex justify-end">
                 {x}
               </div>
@@ -66,7 +66,7 @@ export function AppMobileTable<T>({
                 <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                   <div
                     className={`rounded-lg border bg-gray-100 p-2.5 ${
-                      errors ? 'border-danger ring-danger text-danger bg-gray-50' : 'border-gray-300'
+                      errors ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
                     }`}
                   >
                     <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>

@@ -277,5 +277,11 @@ __pycache__/
 out
 gen
 
-# Visual Studio Code options directory
-.vscode/
+
+# VS Code settings
+.vscode/launch.json
+.vscode/tasks.json
+.mise-setup-done
+
+# Agent skills
+.agents/skills/*
