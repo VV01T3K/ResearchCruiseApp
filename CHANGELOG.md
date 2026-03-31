@@ -1,3 +1,16 @@
+## 2.4.0 - 2026-03-31
+#### Changes since *2.3.1*:
+* style(formA): corrected the messages in the cruise period/precise date
+* fix: corrected misleading test behaviour
+* fix: enchance session automated tests (#320)
+* fix: Ship blockade validation (#317)
+* feat: session logic corrected (#303)
+* fix(tests): select only current month days in datetime-picker (#319)
+* fix: prevent throwing InvalidOperationException when ids list is empty
+* fix(formA,slider): enforce min can't be equal to max (#316)
+* chore: update copyright holders and year in LICENSE file (#310)
+* chore: RPI project organization exercise (#311)
+
 ## 2.3.1 - 2026-02-17
 #### Changes since *2.3.0*:
 * fix: improve comment validation error handling in handleDraftSave function
