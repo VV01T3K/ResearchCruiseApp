@@ -24,7 +24,9 @@ export function SelectField({
       <SelectPrimitive.Root
         name={field.name}
         value={field.state.value}
-        onValueChange={(value) => field.handleChange(value ?? '')}
+        onValueChange={(value) => {
+          field.handleChange(value ?? '');
+        }}
         modal={false}
         onOpenChange={(open) => {
           if (!open) field.handleBlur();

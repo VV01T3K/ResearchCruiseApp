@@ -25,6 +25,7 @@ import { Route as AccountsettingsRouteImport } from './routes/accountsettings'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CruisesIndexRouteImport } from './routes/cruises/index'
 import { Route as ApplicationsIndexRouteImport } from './routes/applications/index'
+import { Route as ExperimentsFormARouteImport } from './routes/experiments/form-a'
 import { Route as ExperimentsFormRouteImport } from './routes/experiments/form'
 import { Route as CruisesNewRouteImport } from './routes/cruises/new'
 import { Route as CruisesCruiseIdIndexRouteImport } from './routes/cruises/$cruiseId/index'
@@ -113,6 +114,11 @@ const ApplicationsIndexRoute = ApplicationsIndexRouteImport.update({
   path: '/applications/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperimentsFormARoute = ExperimentsFormARouteImport.update({
+  id: '/experiments/form-a',
+  path: '/experiments/form-a',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExperimentsFormRoute = ExperimentsFormRouteImport.update({
   id: '/experiments/form',
   path: '/experiments/form',
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
   '/experiments/form': typeof ExperimentsFormRoute
+  '/experiments/form-a': typeof ExperimentsFormARoute
   '/applications/': typeof ApplicationsIndexRoute
   '/cruises/': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
   '/experiments/form': typeof ExperimentsFormRoute
+  '/experiments/form-a': typeof ExperimentsFormARoute
   '/applications': typeof ApplicationsIndexRoute
   '/cruises': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/usermanagement': typeof UsermanagementRoute
   '/cruises/new': typeof CruisesNewRoute
   '/experiments/form': typeof ExperimentsFormRoute
+  '/experiments/form-a': typeof ExperimentsFormARoute
   '/applications/': typeof ApplicationsIndexRoute
   '/cruises/': typeof CruisesIndexRoute
   '/applications/$applicationId/details': typeof ApplicationsApplicationIdDetailsRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/usermanagement'
     | '/cruises/new'
     | '/experiments/form'
+    | '/experiments/form-a'
     | '/applications/'
     | '/cruises/'
     | '/applications/$applicationId/details'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/usermanagement'
     | '/cruises/new'
     | '/experiments/form'
+    | '/experiments/form-a'
     | '/applications'
     | '/cruises'
     | '/applications/$applicationId/details'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/usermanagement'
     | '/cruises/new'
     | '/experiments/form'
+    | '/experiments/form-a'
     | '/applications/'
     | '/cruises/'
     | '/applications/$applicationId/details'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   UsermanagementRoute: typeof UsermanagementRoute
   CruisesNewRoute: typeof CruisesNewRoute
   ExperimentsFormRoute: typeof ExperimentsFormRoute
+  ExperimentsFormARoute: typeof ExperimentsFormARoute
   ApplicationsIndexRoute: typeof ApplicationsIndexRoute
   CruisesIndexRoute: typeof CruisesIndexRoute
   ApplicationsApplicationIdDetailsRoute: typeof ApplicationsApplicationIdDetailsRoute
@@ -447,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experiments/form-a': {
+      id: '/experiments/form-a'
+      path: '/experiments/form-a'
+      fullPath: '/experiments/form-a'
+      preLoaderRoute: typeof ExperimentsFormARouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/experiments/form': {
       id: '/experiments/form'
       path: '/experiments/form'
@@ -516,6 +536,7 @@ const rootRouteChildren: RootRouteChildren = {
   UsermanagementRoute: UsermanagementRoute,
   CruisesNewRoute: CruisesNewRoute,
   ExperimentsFormRoute: ExperimentsFormRoute,
+  ExperimentsFormARoute: ExperimentsFormARoute,
   ApplicationsIndexRoute: ApplicationsIndexRoute,
   CruisesIndexRoute: CruisesIndexRoute,
   ApplicationsApplicationIdDetailsRoute: ApplicationsApplicationIdDetailsRoute,

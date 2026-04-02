@@ -9,6 +9,7 @@ export function TextField({
   placeholder,
   type,
   autoComplete,
+  disabled,
   inline,
   children,
 }: {
@@ -16,6 +17,7 @@ export function TextField({
   placeholder?: string;
   type?: React.HTMLInputTypeAttribute;
   autoComplete?: string;
+  disabled?: boolean;
   inline?: boolean;
   children?: React.ReactNode;
 }) {
@@ -31,6 +33,7 @@ export function TextField({
         autoComplete={autoComplete}
         value={field.state.value}
         placeholder={placeholder}
+        disabled={disabled}
         onBlur={field.handleBlur}
         onChange={(event) => field.handleChange(event.target.value)}
         aria-invalid={hasError || undefined}
@@ -39,6 +42,7 @@ export function TextField({
           'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
           'resize-none transition duration-300 ease-in-out',
           'focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
+          'disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-500',
           hasError ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
         )}
       />
