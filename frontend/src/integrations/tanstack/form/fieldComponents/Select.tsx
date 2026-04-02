@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
 
-export function Select({
+export function SelectField({
   label,
   values,
   placeholder = 'Wybierz',

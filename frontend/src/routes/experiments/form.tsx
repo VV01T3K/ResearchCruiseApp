@@ -59,28 +59,28 @@ function ExperimentForm() {
 
         <div className="grid gap-5 md:grid-cols-2">
           <form.AppField name="title">
-            {(field) => <field.Text label="Experiment title" placeholder="Pricing page test" />}
+            {(field) => <field.TextField label="Experiment title" placeholder="Pricing page test" />}
           </form.AppField>
 
           <form.AppField name="email">
-            {(field) => <field.Email label="Owner email" placeholder="owner@company.com" autoComplete="email" />}
+            {(field) => <field.EmailField label="Owner email" placeholder="owner@company.com" autoComplete="email" />}
           </form.AppField>
         </div>
 
         <div className="grid gap-5 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <form.AppField name="destination">
-            {(field) => <field.Select label="Track" values={destinationOptions} placeholder="Select a track" />}
+            {(field) => <field.SelectField label="Track" values={destinationOptions} placeholder="Select a track" />}
           </form.AppField>
 
           <form.AppField name="participants">
-            {(field) => <field.Integer label="Participants" minimum={1} maximum={20} />}
+            {(field) => <field.IntegerField label="Participants" minimum={1} maximum={20} />}
           </form.AppField>
         </div>
 
-        <form.AppField name="notes">{(field) => <field.TextArea label="Notes" rows={4} />}</form.AppField>
+        <form.AppField name="notes">{(field) => <field.TextAreaField label="Notes" rows={4} />}</form.AppField>
 
         <form.AppField name="wantsFollowUp">
-          {(field) => <field.Checkbox label="I want a follow-up after submission" />}
+          {(field) => <field.CheckboxField label="I want a follow-up after submission" />}
         </form.AppField>
 
         <div className="rounded-xl bg-gray-50 p-4">

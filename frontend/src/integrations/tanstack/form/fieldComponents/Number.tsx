@@ -16,7 +16,7 @@ type NumberFieldProps = {
   precision?: number;
 };
 
-export function Number({
+export function NumberField({
   label,
   minimum,
   maximum,
@@ -126,10 +126,10 @@ export function Number({
   );
 }
 
-export function Integer(props: Omit<NumberFieldProps, 'type' | 'precision'>) {
-  return <Number {...props} type="integer" />;
+export function IntegerField(props: Omit<NumberFieldProps, 'type' | 'precision'>) {
+  return <NumberField {...props} type="integer" />;
 }
 
-export function Float(props: Omit<NumberFieldProps, 'type'> & { precision?: number }) {
-  return <Number {...props} type="float" />;
+export function FloatField(props: Omit<NumberFieldProps, 'type'> & { precision?: number }) {
+  return <NumberField {...props} type="float" />;
 }

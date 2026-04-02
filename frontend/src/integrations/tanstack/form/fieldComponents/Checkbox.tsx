@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 import { FieldErrorsBlock, FieldLabel, useNormalizedFieldErrors } from './shared';
 
-export function Checkbox({
+export function CheckboxField({
   label,
   className,
   labelPosition = 'left',

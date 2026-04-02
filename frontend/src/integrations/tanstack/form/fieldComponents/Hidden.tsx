@@ -1,6 +1,6 @@
 import { useNormalizedFieldErrors } from './shared';
 
-export function Hidden() {
+export function HiddenField() {
   const { field } = useNormalizedFieldErrors<string>();
   const value = field.state.value == null ? '' : String(field.state.value);
 

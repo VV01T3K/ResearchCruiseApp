@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
 
-export function Text({
+export function TextField({
   label,
   placeholder,
   type,
@@ -55,10 +55,10 @@ export function Text({
   );
 }
 
-export function Email(props: Omit<React.ComponentProps<typeof Text>, 'type'>) {
-  return <Text {...props} type="email" />;
+export function EmailField(props: Omit<React.ComponentProps<typeof TextField>, 'type'>) {
+  return <TextField {...props} type="email" />;
 }
 
-export function Password(props: Omit<React.ComponentProps<typeof Text>, 'type'>) {
-  return <Text {...props} type="password" />;
+export function PasswordField(props: Omit<React.ComponentProps<typeof TextField>, 'type'>) {
+  return <TextField {...props} type="password" />;
 }

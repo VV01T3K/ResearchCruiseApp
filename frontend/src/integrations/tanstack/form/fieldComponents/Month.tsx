@@ -20,7 +20,7 @@ import {
   useNormalizedFieldErrors,
 } from './shared';
 
-export function Month({
+export function MonthField({
   label,
   placeholder = 'Wybierz miesiąc',
 }: {

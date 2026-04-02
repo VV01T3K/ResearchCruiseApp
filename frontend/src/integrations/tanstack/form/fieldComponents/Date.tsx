@@ -34,7 +34,7 @@ type DateFieldProps = {
   minuteStep?: number;
 };
 
-export function Date({
+export function DateField({
   label,
   placeholder = 'Wybierz datę',
   minimalDate,
@@ -204,8 +204,8 @@ export function Date({
   );
 }
 
-export function DateTime(props: Omit<DateFieldProps, 'type'>) {
-  return <Date {...props} type="datetime" />;
+export function DateTimeField(props: Omit<DateFieldProps, 'type'>) {
+  return <DateField {...props} type="datetime" />;
 }
 
 function CalendarDateTile({

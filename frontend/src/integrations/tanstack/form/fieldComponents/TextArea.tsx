@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 
 import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
 
-export function TextArea({ label, rows = 3 }: { label: string; rows?: number }) {
+export function TextAreaField({ label, rows = 3 }: { label: string; rows?: number }) {
   const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string>();
 
   return (

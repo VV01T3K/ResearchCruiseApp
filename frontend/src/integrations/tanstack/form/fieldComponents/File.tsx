@@ -26,7 +26,7 @@ type FileFieldProps =
       acceptedMimeTypes?: string[];
     };
 
-export function File({
+export function FileField({
   label,
   allowMultiple,
   uploadMessage = 'Kliknij lub przeciągnij plik',

@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 import { DropdownModal, FieldErrorsBlock, FieldErrorTriangle, FieldLabel, PlainButton, useNormalizedFieldErrors } from './shared';
 
-export function Year({
+export function YearField({
   label,
   placeholder = 'Wybierz rok',
 }: {
