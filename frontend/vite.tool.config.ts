@@ -63,7 +63,7 @@ export const fmtConfig = {
   singleQuote: true,
   printWidth: 120,
   sortTailwindcss: {
-    stylesheet: './src/index.css',
+    stylesheet: './src/styles/index.css',
   },
   sortPackageJson: true,
   ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'pnpm-lock.yaml'],

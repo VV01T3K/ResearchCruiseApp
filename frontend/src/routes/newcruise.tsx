@@ -18,7 +18,10 @@ import { allowOnly } from '@/lib/guards';
 import { Role } from '@/models/shared/Role';
 import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { useUserContext } from '@/providers/useUserContext';
-import { FORM_A_FIELD_TO_SECTION, getFormAValidationSchema } from '@/routes/applications/$applicationId/-formA/formA.schema';
+import {
+  FORM_A_FIELD_TO_SECTION,
+  getFormAValidationSchema,
+} from '@/routes/applications/$applicationId/-formA/formA.schema';
 
 export const Route = createFileRoute('/newcruise')({
   component: NewCruisePage,

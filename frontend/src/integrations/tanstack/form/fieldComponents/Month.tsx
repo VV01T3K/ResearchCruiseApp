@@ -67,7 +67,9 @@ export function MonthField({
               hasError ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
             )}
           >
-            {selectedDate ? selectedDate.toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' }) : placeholder}
+            {selectedDate
+              ? selectedDate.toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })
+              : placeholder}
             <span className="flex items-center gap-2">
               <FieldErrorTriangle hasError={hasError} />
               <div ref={portalContainerRef}></div>

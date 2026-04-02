@@ -49,7 +49,14 @@ export function TextField({
   return (
     <div className="flex flex-col" data-invalid={hasError || undefined}>
       <FieldLabel htmlFor={field.name} label={label} className={inline ? 'sr-only' : undefined} />
-      {inline ? <div className="flex items-center gap-2">{input}{children}</div> : input}
+      {inline ? (
+        <div className="flex items-center gap-2">
+          {input}
+          {children}
+        </div>
+      ) : (
+        input
+      )}
       <FieldErrorsBlock errors={normalizedErrors} />
     </div>
   );

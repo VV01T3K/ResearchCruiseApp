@@ -16,11 +16,7 @@ import {
   removeEmptyValues,
 } from '@/lib/utils';
 import { FormA } from '@/components/applications/formA/FormA';
-import {
-  useFormAInitValuesQuery,
-  useFormAQuery,
-  useUpdateFormAMutation,
-} from '@/api/hooks/applications/FormAApiHooks';
+import { useFormAInitValuesQuery, useFormAQuery, useUpdateFormAMutation } from '@/api/hooks/applications/FormAApiHooks';
 import { FormADto } from '@/api/dto/applications/FormADto';
 import { useBlockadesQuery } from '@/api/hooks/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';

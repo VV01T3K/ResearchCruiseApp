@@ -51,7 +51,11 @@ export function SelectField({
           </span>
         </SelectPrimitive.Trigger>
         <SelectPrimitive.Portal>
-          <SelectPrimitive.Positioner className="z-50 w-[var(--anchor-width)]" sideOffset={4} alignItemWithTrigger={false}>
+          <SelectPrimitive.Positioner
+            className="z-50 w-[var(--anchor-width)]"
+            sideOffset={4}
+            alignItemWithTrigger={false}
+          >
             <SelectPrimitive.Popup
               className={cn(
                 'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/10',

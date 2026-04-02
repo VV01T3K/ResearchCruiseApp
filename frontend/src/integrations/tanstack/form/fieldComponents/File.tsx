@@ -119,7 +119,11 @@ export function FileField({
           )}
         >
           <AnimatePresence>
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
                 <CloudUploadIcon className="mb-4 h-8 w-8" />
                 {uploadMessage}

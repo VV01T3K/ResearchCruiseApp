@@ -24,7 +24,9 @@ export function CruisesPage() {
   const deleteCruiseMutation = useDeleteCruiseMutation();
   const autoAddCruisesMutation = useAutoAddCruisesMutation();
 
-  const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<ApplicationCruiseDto | undefined>(undefined);
+  const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<ApplicationCruiseDto | undefined>(
+    undefined
+  );
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   async function autoAddCruises() {

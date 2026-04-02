@@ -148,13 +148,21 @@ export function DateField({
         {expanded && (
           <DropdownModal dropdownRef={dropdownRef} inputRef={inputRef} top={top} left={left} direction={direction}>
             <div className="grid grid-cols-5 items-center px-2 py-2">
-              <PlainButton type="button" onClick={() => handleMonthChange(-1)} className="grid w-full place-items-center rounded-lg hover:bg-gray-100">
+              <PlainButton
+                type="button"
+                onClick={() => handleMonthChange(-1)}
+                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+              >
                 <ChevronLeftIcon className="h-5 w-5" />
               </PlainButton>
               <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">
                 <AppMonthPickerPopover value={visibleMonth} onChange={setVisibleMonth} />
               </span>
-              <PlainButton type="button" onClick={() => handleMonthChange(1)} className="grid w-full place-items-center rounded-lg hover:bg-gray-100">
+              <PlainButton
+                type="button"
+                onClick={() => handleMonthChange(1)}
+                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+              >
                 <ChevronRightIcon className="h-5 w-5" />
               </PlainButton>
             </div>
@@ -183,7 +191,9 @@ export function DateField({
               <div className="p-2">
                 <AppDatePickerTimeInput
                   name={field.name}
-                  value={selectedDate ? { hours: selectedDate.getHours(), minutes: selectedDate.getMinutes() } : undefined}
+                  value={
+                    selectedDate ? { hours: selectedDate.getHours(), minutes: selectedDate.getMinutes() } : undefined
+                  }
                   placeholder="Wybierz godzinę"
                   onChange={(nextTime) => {
                     const newDate = new globalThis.Date(selectedDate ?? new globalThis.Date());

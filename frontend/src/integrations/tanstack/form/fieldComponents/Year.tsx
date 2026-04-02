@@ -10,18 +10,23 @@ import { useDropdown } from '@/hooks/shared/DropdownHook';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
 
-import { DropdownModal, FieldErrorsBlock, FieldErrorTriangle, FieldLabel, PlainButton, useNormalizedFieldErrors } from './shared';
+import {
+  DropdownModal,
+  FieldErrorsBlock,
+  FieldErrorTriangle,
+  FieldLabel,
+  PlainButton,
+  useNormalizedFieldErrors,
+} from './shared';
 
-export function YearField({
-  label,
-  placeholder = 'Wybierz rok',
-}: {
-  label?: React.ReactNode;
-  placeholder?: string;
-}) {
+export function YearField({ label, placeholder = 'Wybierz rok' }: { label?: React.ReactNode; placeholder?: string }) {
   const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<number | string | undefined>();
   const currentValue =
-    typeof field.state.value === 'number' ? field.state.value : field.state.value ? parseInt(field.state.value) : undefined;
+    typeof field.state.value === 'number'
+      ? field.state.value
+      : field.state.value
+        ? parseInt(field.state.value)
+        : undefined;
   const [selectedYear, setSelectedYear] = React.useState<number | undefined>(currentValue);
   const [visibleDecade, setVisibleDecade] = React.useState(() => {
     const now = new globalThis.Date().getFullYear();
@@ -106,21 +111,35 @@ export function YearField({
         {expanded && (
           <DropdownModal dropdownRef={dropdownRef} inputRef={inputRef} top={top} left={left} direction={direction}>
             <div className="grid grid-cols-5 items-center px-2 py-2">
-              <PlainButton type="button" onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))} className="grid w-full place-items-center rounded-lg hover:bg-gray-100">
+              <PlainButton
+                type="button"
+                onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
+                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+              >
                 <ChevronLeftIcon className="h-5 w-5" />
               </PlainButton>
               <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
-              <PlainButton type="button" onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))} className="grid w-full place-items-center rounded-lg hover:bg-gray-100">
+              <PlainButton
+                type="button"
+                onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
+                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+              >
                 <ChevronRightIcon className="h-5 w-5" />
               </PlainButton>
             </div>
             <div className="grid grid-cols-3 gap-4 px-4 py-2">
-              {Array.from({ length: visibleDecade.to - visibleDecade.from + 1 }, (_, index) => visibleDecade.from + index).map((year) => (
+              {Array.from(
+                { length: visibleDecade.to - visibleDecade.from + 1 },
+                (_, index) => visibleDecade.from + index
+              ).map((year) => (
                 <PlainButton
                   key={year}
                   type="button"
                   onClick={() => handleSelectYear(year)}
-                  className={cn('grid place-items-center rounded-lg hover:bg-gray-100', year === selectedYear ? 'text-primary-500 font-bold' : '')}
+                  className={cn(
+                    'grid place-items-center rounded-lg hover:bg-gray-100',
+                    year === selectedYear ? 'text-primary-500 font-bold' : ''
+                  )}
                 >
                   {year}
                 </PlainButton>

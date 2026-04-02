@@ -69,13 +69,7 @@ export function FieldLabel({
   );
 }
 
-export function FieldErrorTriangle({
-  hasError,
-  mode = 'inline',
-}: {
-  hasError: boolean;
-  mode?: 'absolute' | 'inline';
-}) {
+export function FieldErrorTriangle({ hasError, mode = 'inline' }: { hasError: boolean; mode?: 'absolute' | 'inline' }) {
   if (!hasError) {
     return null;
   }

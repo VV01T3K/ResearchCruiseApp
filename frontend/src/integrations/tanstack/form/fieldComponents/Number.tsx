@@ -16,14 +16,7 @@ type NumberFieldProps = {
   precision?: number;
 };
 
-export function NumberField({
-  label,
-  minimum,
-  maximum,
-  step = 1,
-  type = 'integer',
-  precision = 2,
-}: NumberFieldProps) {
+export function NumberField({ label, minimum, maximum, step = 1, type = 'integer', precision = 2 }: NumberFieldProps) {
   const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<number | string>();
   const numericValue =
     typeof field.state.value === 'number'
