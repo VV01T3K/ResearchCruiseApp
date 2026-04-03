@@ -380,7 +380,8 @@ export const experimentFormASchema = z.object({
         executive: z.string().min(1, 'Organ wydający jest wymagany').max(128, 'Maksymalna długość to 128 znaków'),
         scan: z.undefined().optional(),
       })
-      .array(),
+      .array()
+      .min(1, 'Należy dodać co najmniej jedno pozwolenie'),
   }),
   section4: z.object({
     researchAreaDescriptions: z
@@ -395,7 +396,8 @@ export const experimentFormASchema = z.object({
         differentName: z.string().trim().min(1, 'Nazwa rejonu badań nie może być pusta'),
         info: z.string().max(1024, 'Maksymalna długość to 1024 znaków'),
       })
-      .array(),
+      .array()
+      .min(1, 'Należy dodać co najmniej jeden opis rejonu badań'),
   }),
   section5: z.object({
     cruiseGoal: z.object({
