@@ -1,214 +1,39 @@
-import { useStore } from '@tanstack/react-form';
 import { createFileRoute } from '@tanstack/react-router';
 
 import { FormABlockadeWarning } from '@/components/applications/formA/FormABlockadeWarning';
-import { type CruisePeriodType } from '@/api/dto/applications/FormADto';
-import { CruiseApplicationPeriodInput } from '@/components/applications/common/CruiseApplicationPeriodInput';
+import { AppAlert } from '@/components/shared/AppAlert';
 import { AppLayout } from '@/components/shared/AppLayout';
-import { useFieldContext } from '@/integrations/tanstack/form/context';
-import { normalizeErrors } from '@/integrations/tanstack/form/fieldComponents/shared';
 import { useAppForm } from '@/integrations/tanstack/form';
 
 import {
   cruiseGoalOptions,
+  formatBlockadeDate,
   getCurrentBlockades,
+  getOverlappingBlockades,
+  defaultValues,
+  type ExperimentFormAOutput,
   managerOptions,
-  periodSelectionOptions,
   shipUsageOptions,
+  experimentFormASchema,
   yearOptions,
 } from './-form-a';
-import { SectionCard } from './-componets-a';
-import z from 'zod';
+import { ExperimentCruisePeriodField, PeriodTypeField, SectionCard } from './-componets-a';
 
 export const Route = createFileRoute('/experiments/form-a')({
   component: ExperimentFormA,
 });
 
-const simplifiedExperimentFormASchema = z.object({
-  cruiseManagerId: z.uuid(),
-  deputyManagerId: z.uuid(),
-  year: z.codec(
-    z.string(),
-    z
-      .int()
-      .min(new Date().getFullYear() - 1)
-      .max(new Date().getFullYear() + 1),
-    {
-      decode: (string) => Number(string),
-      encode: (int) => String(int),
-    }
-  ),
-  period: z.discriminatedUnion('exact', [
-    z
-      .object({
-        exact: z.literal(false),
-        acceptable: z
-          .object({
-            start: z.int().min(0).max(24),
-            end: z.int().min(0).max(24),
-          })
-          .refine(({ start, end }) => start < end, {
-            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
-            path: ['end'],
-          }),
-        optimal: z
-          .object({
-            start: z.int().min(0).max(24),
-            end: z.int().min(0).max(24),
-          })
-          .refine(({ start, end }) => start < end, {
-            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
-            path: ['end'],
-          }),
-        precise: z.any(),
-      })
-      .transform(({ precise: _precise, ...period }) => period),
-    z
-      .object({
-        exact: z.literal(true),
-        optimal: z.any(),
-        acceptable: z.any(),
-        precise: z
-          .object({
-            start: z
-              .string()
-              .check(z.iso.date())
-              .transform((value) => new Date(value)),
-            end: z
-              .string()
-              .check(z.iso.date())
-              .transform((value) => new Date(value)),
-          })
-          .refine(({ start, end }) => start < end, {
-            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
-            path: ['end'],
-          }),
-      })
-      .transform(({ optimal: _optimal, acceptable: _acceptable, ...period }) => period),
-  ]),
-  notes: z.string(),
-  cruiseDurationHours: z.codec(z.string(), z.int().min(1).max(1440), {
-    decode: (string) => Number(string),
-    encode: (int) => String(int),
-  }),
-  shipUsage: z.string(),
-  differentUsage: z.string(),
-  cruiseGoal: z.string(),
-  cruiseGoalDescription: z.string(),
-});
-
-type SimplifiedExperimentFormAInput = z.input<typeof simplifiedExperimentFormASchema>;
-type SimplifiedExperimentFormAOutput = z.output<typeof simplifiedExperimentFormASchema>;
-type SimplifiedExperimentPeriodInput = SimplifiedExperimentFormAInput['period'];
-type SimplifiedPeriodModeInput = Extract<SimplifiedExperimentPeriodInput, { exact: false }>;
-type SimplifiedCruisePeriod = SimplifiedPeriodModeInput['acceptable'];
-
-function toCruisePeriod(period?: SimplifiedCruisePeriod): CruisePeriodType | undefined {
-  if (!period) {
-    return undefined;
-  }
-
-  return [String(period.start), String(period.end)] as CruisePeriodType;
-}
-
-function fromCruisePeriod(period: CruisePeriodType): SimplifiedCruisePeriod {
-  return {
-    start: Number(period[0]),
-    end: Number(period[1]),
-  };
-}
-
-function formatSubmittedValue(value: SimplifiedExperimentFormAOutput) {
-  return JSON.stringify(value, null, 2);
-}
-
-function SimplifiedCruisePeriodField({ label, maxValues }: { label: string; maxValues?: SimplifiedCruisePeriod }) {
-  const field = useFieldContext<SimplifiedCruisePeriod>();
-  const errors = useStore(field.store, (state) => state.meta.errors);
-  const normalizedErrors = field.state.meta.isTouched && errors.length > 0 ? normalizeErrors(errors) : undefined;
-
-  return (
-    <CruiseApplicationPeriodInput
-      name={field.name}
-      value={toCruisePeriod(field.state.value)}
-      maxValues={toCruisePeriod(maxValues)}
-      onChange={(value) => field.handleChange(fromCruisePeriod(value))}
-      onBlur={field.handleBlur}
-      errors={normalizedErrors?.map((error) => error.message)}
-      label={label}
-    />
-  );
-}
-
-function PeriodTypeField() {
-  const field = useFieldContext<boolean>();
-
-  return (
-    <div className="flex flex-col">
-      <label htmlFor={field.name} className="mb-2 block text-sm font-medium text-gray-900">
-        Wybierz sposób określenia terminu rejsu
-      </label>
-      <select
-        id={field.name}
-        name={field.name}
-        value={field.state.value ? 'precise' : 'period'}
-        onChange={(event) => {
-          field.handleChange(event.target.value === 'precise');
-        }}
-        onBlur={field.handleBlur}
-        className="rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out outline-none hover:border-gray-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-inset"
-      >
-        <option value="" disabled>
-          Wybierz
-        </option>
-        {periodSelectionOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
 function ExperimentFormA() {
-  const defaultValues: SimplifiedExperimentFormAInput = {
-    cruiseManagerId: '',
-    deputyManagerId: '',
-    year: String(new Date().getFullYear()),
-    period: {
-      exact: false,
-      acceptable: {
-        start: 0,
-        end: 24,
-      },
-      optimal: {
-        start: 4,
-        end: 10,
-      },
-      precise: {
-        start: '',
-        end: '',
-      },
-    },
-    notes: '',
-    cruiseDurationHours: '',
-    shipUsage: '',
-    differentUsage: '',
-    cruiseGoal: '',
-    cruiseGoalDescription: '',
-  };
-
   const form = useAppForm({
     defaultValues,
     validators: {
-      onChange: simplifiedExperimentFormASchema,
-      onSubmit: simplifiedExperimentFormASchema,
+      onChange: experimentFormASchema,
+      onSubmit: experimentFormASchema,
     },
     onSubmit: ({ value }) => {
-      const parsedValue = simplifiedExperimentFormASchema.parse(value);
+      const parsedValue: ExperimentFormAOutput = experimentFormASchema.parse(value);
       console.log(parsedValue);
-      alert(`Form submitted:\n${formatSubmittedValue(parsedValue)}`);
+      alert(`Form submitted:\n${JSON.stringify(parsedValue, null, 2)}`);
     },
   });
 
@@ -233,11 +58,11 @@ function ExperimentFormA() {
               <SectionCard
                 number="1"
                 title="Kierownik zgłaszanego rejsu"
-                description="Sekcja testuje podstawowe selecty, zależności między osobami oraz wybór roku."
+                description="Sekcja testuje podstawowe selecty oraz zależności między osobami."
                 testId="experiment-form-a-section-1"
               >
-                <div className="grid gap-5 md:grid-cols-3">
-                  <form.AppField name="cruiseManagerId">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <form.AppField name="section1.cruiseManagerId">
                     {(field) => (
                       <field.SelectField
                         label="Kierownik rejsu"
@@ -247,22 +72,12 @@ function ExperimentFormA() {
                     )}
                   </form.AppField>
 
-                  <form.AppField name="deputyManagerId">
+                  <form.AppField name="section1.deputyManagerId">
                     {(field) => (
                       <field.SelectField
                         label="Zastępca kierownika rejsu"
                         values={managerOptions}
                         placeholder="Wybierz zastępcę kierownika rejsu"
-                      />
-                    )}
-                  </form.AppField>
-
-                  <form.AppField name="year">
-                    {(field) => (
-                      <field.SelectField
-                        label="Rok"
-                        values={yearOptions.map((value) => ({ value, label: value }))}
-                        placeholder="Wybierz rok"
                       />
                     )}
                   </form.AppField>
@@ -277,23 +92,19 @@ function ExperimentFormA() {
               >
                 <form.Subscribe
                   selector={(state) => ({
-                    period: state.values.period,
-                    shipUsage: state.values.shipUsage,
-                    year: state.values.year,
+                    period: state.values.section2.period,
+                    year: state.values.section2.year,
                   })}
                 >
-                  {({ period, shipUsage, year }) => {
+                  {({ period, year }) => {
                     const currentBlockades = getCurrentBlockades(year);
-                    // const overlappingBlockades = getOverlappingBlockades(
-                    //   {
-                    //     acceptablePeriod: toCruisePeriod(period.acceptable) ?? '',
-                    //     periodSelectionType: period.type,
-                    //     precisePeriodEnd: period.precise.end,
-                    //     precisePeriodStart: period.precise.start,
-                    //     year,
-                    //   },
-                    //   currentBlockades
-                    // );
+                    const overlappingBlockades = getOverlappingBlockades(
+                      {
+                        period,
+                        year,
+                      },
+                      currentBlockades
+                    );
 
                     return (
                       <div className="space-y-5">
@@ -301,12 +112,27 @@ function ExperimentFormA() {
 
                         <div className="grid gap-5 md:grid-cols-2">
                           <div className="md:col-span-2">
-                            <form.AppField name="period.exact">{() => <PeriodTypeField />}</form.AppField>
+                            <form.AppField name="section2.year">
+                              {(field) => (
+                                <field.SelectField
+                                  label="Rok"
+                                  values={yearOptions.map((value) => ({
+                                    value,
+                                    label: value,
+                                  }))}
+                                  placeholder="Wybierz rok"
+                                />
+                              )}
+                            </form.AppField>
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <form.AppField name="section2.period.exact">{() => <PeriodTypeField />}</form.AppField>
                           </div>
 
                           {period.exact ? (
                             <>
-                              <form.AppField name={'period.precise.start' as never}>
+                              <form.AppField name={'section2.period.precise.start' as never}>
                                 {(field) => (
                                   <field.NativeDateField
                                     label="Dokładny termin rozpoczęcia rejsu"
@@ -315,7 +141,7 @@ function ExperimentFormA() {
                                 )}
                               </form.AppField>
 
-                              <form.AppField name={'period.precise.end' as never}>
+                              <form.AppField name={'section2.period.precise.end' as never}>
                                 {(field) => (
                                   <field.NativeDateField
                                     label="Dokładny termin zakończenia rejsu"
@@ -327,15 +153,15 @@ function ExperimentFormA() {
                             </>
                           ) : (
                             <>
-                              <form.AppField name="period.acceptable">
+                              <form.AppField name="section2.period.acceptable">
                                 {() => (
-                                  <SimplifiedCruisePeriodField label="Dopuszczalny okres, w którym miałby się odbywać rejs" />
+                                  <ExperimentCruisePeriodField label="Dopuszczalny okres, w którym miałby się odbywać rejs" />
                                 )}
                               </form.AppField>
 
-                              <form.AppField name="period.optimal">
+                              <form.AppField name="section2.period.optimal">
                                 {() => (
-                                  <SimplifiedCruisePeriodField
+                                  <ExperimentCruisePeriodField
                                     label="Optymalny okres, w którym miałby się odbywać rejs"
                                     maxValues={period.acceptable}
                                   />
@@ -344,7 +170,7 @@ function ExperimentFormA() {
                             </>
                           )}
 
-                          {/* {overlappingBlockades.length > 0 ? (
+                          {overlappingBlockades.length > 0 ? (
                             <div className="md:col-span-2" data-testid="experiment-form-a-blockade-overlap">
                               <AppAlert variant="warning">
                                 <div className="space-y-2 text-sm">
@@ -362,10 +188,10 @@ function ExperimentFormA() {
                                 </div>
                               </AppAlert>
                             </div>
-                          ) : null} */}
+                          ) : null}
 
                           <div className="md:col-span-2">
-                            <form.AppField name="cruiseDurationHours">
+                            <form.AppField name="section2.cruiseDurationHours">
                               {(field) => (
                                 <field.HoursDaysField
                                   label="Planowany czas rejsu"
@@ -378,13 +204,13 @@ function ExperimentFormA() {
                           </div>
 
                           <div className="md:col-span-2">
-                            <form.AppField name="notes">
+                            <form.AppField name="section2.notes">
                               {(field) => <field.TextAreaField label="Uwagi dotyczące terminu" rows={3} />}
                             </form.AppField>
                           </div>
 
                           <div className="md:col-span-2">
-                            <form.AppField name="shipUsage">
+                            <form.AppField name="section2.shipUsage.type">
                               {(field) => (
                                 <field.SelectField
                                   label="Statek na potrzeby badań będzie wykorzystywany"
@@ -398,18 +224,22 @@ function ExperimentFormA() {
                             </form.AppField>
                           </div>
 
-                          {shipUsage === '4' ? (
-                            <div className="md:col-span-2">
-                              <form.AppField name="differentUsage">
-                                {(field) => (
-                                  <field.TextField
-                                    label="Inny sposób użycia"
-                                    placeholder="Opisz niestandardowy sposób wykorzystania statku"
-                                  />
-                                )}
-                              </form.AppField>
-                            </div>
-                          ) : null}
+                          <form.Subscribe selector={(state) => state.values.section2.shipUsage.type === '4'}>
+                            {(showDifferentUsage) =>
+                              showDifferentUsage ? (
+                                <div className="md:col-span-2">
+                                  <form.AppField name="section2.shipUsage.description">
+                                    {(field) => (
+                                      <field.TextField
+                                        label="Inny sposób użycia"
+                                        placeholder="Opisz niestandardowy sposób wykorzystania statku"
+                                      />
+                                    )}
+                                  </form.AppField>
+                                </div>
+                              ) : null
+                            }
+                          </form.Subscribe>
                         </div>
                       </div>
                     );
@@ -424,19 +254,22 @@ function ExperimentFormA() {
                 testId="experiment-form-a-section-5"
               >
                 <div className="grid gap-5 md:grid-cols-2">
-                  <form.AppField name="cruiseGoal">
+                  <form.AppField name="section5.cruiseGoal.type">
                     {(field) => (
                       <field.SelectField
                         label="Cel rejsu"
-                        values={cruiseGoalOptions.map((option) => ({ value: option.value, label: option.label }))}
+                        values={cruiseGoalOptions.map((option) => ({
+                          value: option.value,
+                          label: option.label,
+                        }))}
                         placeholder="Wybierz cel rejsu"
                       />
                     )}
                   </form.AppField>
 
-                  <form.Subscribe selector={(state) => state.values.cruiseGoal === ''}>
+                  <form.Subscribe selector={(state) => state.values.section5.cruiseGoal.type === ''}>
                     {(isGoalDescriptionDisabled) => (
-                      <form.AppField name="cruiseGoalDescription">
+                      <form.AppField name="section5.cruiseGoal.description">
                         {(field) => (
                           <field.TextField
                             label="Opis celu rejsu"

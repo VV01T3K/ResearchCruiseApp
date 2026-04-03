@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { z } from 'zod';
+import { pl } from 'zod/locales';
 
 import { initializeFaro } from '@/lib/grafanaFaro';
 import { UserContextProvider } from '@/providers/UserContextProvider';
@@ -8,6 +10,8 @@ import { AppRouter } from '@/router';
 import './styles/index.css';
 
 const queryClient = new QueryClient();
+
+z.config(pl());
 
 initializeFaro();
 
