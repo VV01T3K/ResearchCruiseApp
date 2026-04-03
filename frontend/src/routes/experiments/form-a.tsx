@@ -328,15 +328,8 @@ function ExperimentFormA() {
                         </div>
 
                         {field.state.value.length === 0 ? (
-                          <AppAlert
-                            variant={
-                              field.state.meta.isTouched && field.state.meta.errors.length > 0 ? 'danger' : 'info'
-                            }
-                            data-testid="experiment-form-a-permissions-empty"
-                          >
-                            <div className="text-sm">
-                              {field.state.meta.errors[0]?.message ?? 'Nie dodano jeszcze żadnego pozwolenia.'}
-                            </div>
+                          <AppAlert variant="info" data-testid="experiment-form-a-permissions-empty">
+                            <div className="text-sm">Nie dodano jeszcze żadnego pozwolenia.</div>
                           </AppAlert>
                         ) : (
                           <div
@@ -433,15 +426,8 @@ function ExperimentFormA() {
                         </div>
 
                         {field.state.value.length === 0 ? (
-                          <AppAlert
-                            variant={
-                              field.state.meta.isTouched && field.state.meta.errors.length > 0 ? 'danger' : 'info'
-                            }
-                            data-testid="experiment-form-a-research-areas-empty"
-                          >
-                            <div className="text-sm">
-                              {field.state.meta.errors[0]?.message ?? 'Nie dodano jeszcze żadnego rejonu.'}
-                            </div>
+                          <AppAlert variant="danger" data-testid="experiment-form-a-research-areas-empty">
+                            <div className="text-sm">Należy dodać co najmniej jeden opis rejonu badań</div>
                           </AppAlert>
                         ) : (
                           <div

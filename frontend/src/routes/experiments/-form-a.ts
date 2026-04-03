@@ -380,8 +380,7 @@ export const experimentFormASchema = z.object({
         executive: z.string().min(1, 'Organ wydający jest wymagany').max(128, 'Maksymalna długość to 128 znaków'),
         scan: z.undefined().optional(),
       })
-      .array()
-      .min(1, 'Należy dodać co najmniej jedno pozwolenie'),
+      .array(),
   }),
   section4: z.object({
     researchAreaDescriptions: z
