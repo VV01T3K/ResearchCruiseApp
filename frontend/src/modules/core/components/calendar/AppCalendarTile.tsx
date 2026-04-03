@@ -22,10 +22,17 @@ type CalendarEventTilesProps = {
   eventsWithRows: CalendarEventWithRow[];
   tileWidth: number;
   enableDragAndDrop: boolean;
+  activeDragEventId?: string;
 };
-function CalendarEventTiles({ date, eventsWithRows, tileWidth, enableDragAndDrop }: CalendarEventTilesProps) {
+function CalendarEventTiles({
+  date,
+  eventsWithRows,
+  tileWidth,
+  enableDragAndDrop,
+  activeDragEventId,
+}: CalendarEventTilesProps) {
   const todaysEvents = getEventsForDate(date, eventsWithRows);
-  const rowCount = Math.max(...todaysEvents.map((event) => event.row + 1));
+  const rowCount = Math.max(0, ...todaysEvents.map((event) => event.row + 1));
 
   const eventTiles = [];
   for (let i = 0; i < rowCount; i++) {
@@ -60,14 +67,18 @@ function CalendarEventTiles({ date, eventsWithRows, tileWidth, enableDragAndDrop
       );
 
       const innerComponent = (
-        <div style={{ '--color': event.color } as React.CSSProperties} className={className}>
+        <div data-calendar-event-block style={{ '--color': event.color } as React.CSSProperties} className={className}>
           {textComponent}
         </div>
       );
 
       const renderedComponent =
         enableDragAndDrop && event.id ? (
-          <DraggableCalendarEvent eventId={event.id} sourceDayUtc={dateToUtcDay(date)}>
+          <DraggableCalendarEvent
+            eventId={event.id}
+            sourceDayUtc={dateToUtcDay(date)}
+            activeDragEventId={activeDragEventId}
+          >
             {innerComponent}
           </DraggableCalendarEvent>
         ) : (
@@ -96,16 +107,18 @@ type DraggableCalendarEventProps = {
   children: React.ReactNode;
   eventId: string;
   sourceDayUtc: number;
+  activeDragEventId?: string;
 };
-function DraggableCalendarEvent({ children, eventId, sourceDayUtc }: DraggableCalendarEventProps) {
+function DraggableCalendarEvent({ children, eventId, sourceDayUtc, activeDragEventId }: DraggableCalendarEventProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `calendar-event-${eventId}-${sourceDayUtc}`,
     data: { eventId, sourceDayUtc },
   });
+  const isActiveDraggedEvent = activeDragEventId === eventId;
 
   const style = {
     transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.6 : 1,
+    opacity: isActiveDraggedEvent ? 0 : 1,
     cursor: isDragging ? 'grabbing' : 'grab',
   };
 
@@ -130,6 +143,7 @@ type Props = {
   enableDragAndDrop: boolean;
   dayDropId: string;
   isDropPreview: boolean;
+  activeDragEventId?: string;
 };
 export function AppCalendarTile({
   date,
@@ -139,6 +153,7 @@ export function AppCalendarTile({
   enableDragAndDrop,
   dayDropId,
   isDropPreview,
+  activeDragEventId,
 }: Props) {
   const isCurrentMonth = date.getMonth() === currentMonth.month;
   const isToday = dateToUtcDay(date) === dateToUtcDay(new Date());
@@ -147,6 +162,7 @@ export function AppCalendarTile({
 
   return (
     <div
+      data-calendar-day-tile
       ref={setNodeRef}
       className={cn(
         !isCurrentMonth ? 'bg-gray-100' : '',
@@ -161,12 +177,13 @@ export function AppCalendarTile({
           {date.getDate()}
         </div>
       </div>
-      <div className="-m-2 mt-2 grid grid-cols-1 gap-1">
+      <div data-calendar-event-rows className="-m-2 mt-2 grid grid-cols-1 gap-1">
         <CalendarEventTiles
           date={date}
           eventsWithRows={eventsWithRows}
           tileWidth={tileWidth}
           enableDragAndDrop={enableDragAndDrop}
+          activeDragEventId={activeDragEventId}
         />
       </div>
     </div>

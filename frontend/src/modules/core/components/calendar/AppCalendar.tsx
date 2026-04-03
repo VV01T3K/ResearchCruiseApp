@@ -2,6 +2,8 @@ import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
 import {
   DndContext,
+  DragOverlay,
+  pointerWithin,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
@@ -43,19 +45,54 @@ type Props = {
 };
 export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const DAY_MS = 24 * 60 * 60 * 1000;
+  const DRAG_CURSOR_Y_NUDGE = 4;
   const [currentMonth, setCurrentMonth] = React.useState({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
+  const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
+  const [activeDragOverlay, setActiveDragOverlay] = React.useState<
+    { title: string; spanDays: number; anchorOffset: number } | undefined
+  >(undefined);
+  const [activeDragPointerOffsetY, setActiveDragPointerOffsetY] = React.useState(0);
   const calendarRef = React.useRef<HTMLDivElement>(null);
   const [tileWidth, setTileWidth] = React.useState(0);
+  const [dragBlockHeight, setDragBlockHeight] = React.useState(32);
+  const [dragBlockRowGap, setDragBlockRowGap] = React.useState(4);
+  const [dragWeekRowStep, setDragWeekRowStep] = React.useState(120);
 
   function updateTileWidth() {
     const calendarWidth = calendarRef.current?.offsetWidth ?? 700;
     // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setTileWidth(calendarWidth / 7);
+
+    const eventBlock = calendarRef.current?.querySelector<HTMLElement>('[data-calendar-event-block]');
+    if (eventBlock) {
+      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+      setDragBlockHeight(eventBlock.getBoundingClientRect().height);
+    }
+
+    const eventRows = calendarRef.current?.querySelector<HTMLElement>('[data-calendar-event-rows]');
+    if (eventRows) {
+      const rowGap = Number.parseFloat(window.getComputedStyle(eventRows).rowGap || '0');
+      if (Number.isFinite(rowGap)) {
+        // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+        setDragBlockRowGap(rowGap);
+      }
+    }
+
+    const dayTiles = calendarRef.current?.querySelectorAll<HTMLElement>('[data-calendar-day-tile]');
+    if (dayTiles && dayTiles.length > 7) {
+      const firstRowTop = dayTiles[0].getBoundingClientRect().top;
+      const secondRowTop = dayTiles[7].getBoundingClientRect().top;
+      const weekStep = secondRowTop - firstRowTop;
+      if (Number.isFinite(weekStep) && weekStep > 0) {
+        // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+        setDragWeekRowStep(weekStep);
+      }
+    }
   }
 
   React.useEffect(() => {
@@ -103,6 +140,52 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     return Array.from({ length: spanDays }, (_, index) => previewStartDayUtc + index * DAY_MS);
   }
 
+  function getWeekdayColumn(dayUtc: number): number {
+    const utcWeekday = new Date(dayUtc).getUTCDay();
+    return utcWeekday === 0 ? 6 : utcWeekday - 1;
+  }
+
+  function buildWeeklyOverlaySegments(
+    previewStartDayUtc: number,
+    spanDays: number
+  ): Array<{ startColumn: number; length: number }> {
+    const segments: Array<{ startColumn: number; length: number }> = [];
+    let remainingDays = spanDays;
+    let currentDayUtc = previewStartDayUtc;
+
+    while (remainingDays > 0) {
+      const startColumn = getWeekdayColumn(currentDayUtc);
+      const daysUntilWeekEnd = 7 - startColumn;
+      const length = Math.min(remainingDays, daysUntilWeekEnd);
+      segments.push({ startColumn, length });
+      remainingDays -= length;
+      currentDayUtc += length * DAY_MS;
+    }
+
+    return segments;
+  }
+
+  function getOverlayAnchorPosition(segments: Array<{ startColumn: number; length: number }>, anchorOffset: number) {
+    let coveredDays = 0;
+    for (let row = 0; row < segments.length; row++) {
+      const segment = segments[row];
+      if (anchorOffset < coveredDays + segment.length) {
+        return {
+          row,
+          column: segment.startColumn + (anchorOffset - coveredDays),
+        };
+      }
+      coveredDays += segment.length;
+    }
+
+    const lastRow = Math.max(0, segments.length - 1);
+    const lastSegment = segments[lastRow];
+    return {
+      row: lastRow,
+      column: Math.max(0, lastSegment.startColumn + lastSegment.length - 1),
+    };
+  }
+
   function handleDragStart(event: DragStartEvent) {
     if (!onEventDrop) {
       return;
@@ -110,10 +193,48 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
 
     const { eventId, sourceDayUtc } = event.active.data.current ?? {};
     if (typeof eventId !== 'string' || typeof sourceDayUtc !== 'number') {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
       setDropPreviewDays([]);
       return;
     }
 
+    const draggedEvent = events.find((calendarEvent) => calendarEvent.id === eventId);
+    if (!draggedEvent) {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
+      setDropPreviewDays([]);
+      return;
+    }
+
+    const startDayUtc = dateToUtcDay(draggedEvent.start);
+    const anchorOffset = Math.floor((sourceDayUtc - startDayUtc) / DAY_MS);
+    const initialTop = event.active.rect.current.initial?.top;
+    const activatorEvent = event.activatorEvent;
+    let pointerY: number | undefined;
+    if ('clientY' in activatorEvent && typeof activatorEvent.clientY === 'number') {
+      pointerY = activatorEvent.clientY;
+    } else if ('touches' in activatorEvent) {
+      const touchEvent = activatorEvent as { touches?: Array<{ clientY: number }> };
+      if (touchEvent.touches && touchEvent.touches.length > 0) {
+        pointerY = touchEvent.touches[0].clientY;
+      }
+    } else if ('changedTouches' in activatorEvent) {
+      const changedTouchEvent = activatorEvent as { changedTouches?: Array<{ clientY: number }> };
+      if (changedTouchEvent.changedTouches && changedTouchEvent.changedTouches.length > 0) {
+        pointerY = changedTouchEvent.changedTouches[0].clientY;
+      }
+    }
+    const nextPointerOffsetY =
+      typeof pointerY === 'number' && typeof initialTop === 'number' ? pointerY - initialTop : dragBlockHeight / 2;
+
+    setActiveDragEventId(eventId);
+    setActiveDragOverlay({
+      title: draggedEvent.title,
+      spanDays: getVisibleSpanDays(draggedEvent),
+      anchorOffset,
+    });
+    setActiveDragPointerOffsetY(nextPointerOffsetY);
     setDropPreviewDays(buildDropPreview(eventId, sourceDayUtc, sourceDayUtc));
   }
 
@@ -139,10 +260,16 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   }
 
   function handleDragCancel() {
+    setActiveDragEventId(undefined);
+    setActiveDragOverlay(undefined);
+    setActiveDragPointerOffsetY(0);
     setDropPreviewDays([]);
   }
 
   function handleDragEnd(event: DragEndEvent) {
+    setActiveDragEventId(undefined);
+    setActiveDragOverlay(undefined);
+    setActiveDragPointerOffsetY(0);
     setDropPreviewDays([]);
     if (!onEventDrop || !event.over?.id) {
       return;
@@ -185,6 +312,14 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   }
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
+  const overlaySegments =
+    activeDragOverlay && dropPreviewDays.length > 0
+      ? buildWeeklyOverlaySegments(dropPreviewDays[0], activeDragOverlay.spanDays)
+      : [];
+  const overlayAnchor =
+    activeDragOverlay && overlaySegments.length > 0
+      ? getOverlayAnchorPosition(overlaySegments, activeDragOverlay.anchorOffset)
+      : { row: 0, column: 0 };
 
   const defaultButtons = [
     <AppButton
@@ -243,6 +378,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
           <DndContext
+            collisionDetection={pointerWithin}
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
@@ -264,10 +400,40 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
                   enableDragAndDrop={Boolean(onEventDrop)}
                   dayDropId={`calendar-day-${dateToUtcDay(date)}`}
                   isDropPreview={dropPreviewDays.includes(dateToUtcDay(date))}
+                  activeDragEventId={activeDragEventId}
                   key={date.toString()}
                 />
               ))}
             </div>
+            <DragOverlay adjustScale={false}>
+              {activeDragOverlay ? (
+                <div
+                  className="pointer-events-none"
+                  style={{
+                    marginLeft: -(overlayAnchor.column * tileWidth),
+                    marginTop: DRAG_CURSOR_Y_NUDGE - activeDragPointerOffsetY - overlayAnchor.row * dragWeekRowStep,
+                  }}
+                >
+                  <div
+                    className="flex flex-col"
+                    style={{ gap: Math.max(dragBlockRowGap, dragWeekRowStep - dragBlockHeight) }}
+                  >
+                    {overlaySegments.map((segment, index) => (
+                      <div
+                        key={`${activeDragOverlay.title}-${index}`}
+                        className="h-8 rounded-lg bg-gray-500/90 p-2 text-sm text-white shadow-lg"
+                        style={{
+                          width: Math.max(40, segment.length * tileWidth - 20),
+                          marginLeft: segment.startColumn * tileWidth,
+                        }}
+                      >
+                        <div className="truncate">{index === 0 ? activeDragOverlay.title : ''}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </DragOverlay>
           </DndContext>
         </motion.div>
       </AnimatePresence>
