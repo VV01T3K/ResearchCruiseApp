@@ -76,7 +76,7 @@ export function FieldErrorTriangle({ hasError, mode = 'inline' }: { hasError: bo
 
   return (
     <ExclamationTriangleIcon
-      className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-2.5 right-5' : '')}
+      className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-1/2 right-3 -translate-y-1/2' : '')}
     />
   );
 }

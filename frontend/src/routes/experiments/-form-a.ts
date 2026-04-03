@@ -6,6 +6,10 @@ import type { BlockadePeriodDto } from '@/api/dto/cruises/CruiseDto';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 
 export type PeriodSelectionType = 'precise' | 'period';
+export type ExperimentResearchAreaOption = {
+  id: string;
+  name: string;
+};
 
 export type ExperimentCruisePeriod = {
   start: number;
@@ -62,6 +66,12 @@ export const cruiseGoalOptions = [
   { value: CruiseGoal.Commercial, label: 'Komercyjny' },
   { value: CruiseGoal.Educational, label: 'Dydaktyczny' },
 ] as const;
+
+export const researchAreaOptions: ExperimentResearchAreaOption[] = [
+  { id: 'gulf-of-gdansk', name: 'Zatoka Gdańska' },
+  { id: 'southern-baltic', name: 'Południowy Bałtyk' },
+  { id: 'puck-bay', name: 'Zatoka Pucka' },
+];
 
 export const blockadesByYear: Record<string, BlockadePeriodDto[]> = {
   '2025': [
@@ -371,6 +381,21 @@ export const experimentFormASchema = z.object({
       })
       .array(),
   }),
+  section4: z.object({
+    researchAreaDescriptions: z
+      .object({
+        areaId: z
+          .string()
+          .nullable()
+          .refine(
+            (value) => !value || researchAreaOptions.some((option) => option.id === value),
+            'Niepoprawne ID rejonu'
+          ),
+        differentName: z.string().trim().min(1, 'Nazwa rejonu badań nie może być pusta'),
+        info: z.string().max(1024, 'Maksymalna długość to 1024 znaków'),
+      })
+      .array(),
+  }),
   section5: z.object({
     cruiseGoal: z.object({
       type: z.string().pipe(z.enum(CruiseGoal, 'Cel rejsu musi zostać wybrany z listy')),
@@ -389,6 +414,7 @@ export type ExperimentPeriodInput = ExperimentFormAInput['section2']['period'];
 export type ExperimentPeriodModeInput = Extract<ExperimentPeriodInput, { exact: false }>;
 export type ExperimentFormASection2Values = ExperimentFormAInput['section2'];
 export type ExperimentPermissionInput = ExperimentFormAInput['section3']['permissions'][number];
+export type ExperimentResearchAreaInput = ExperimentFormAInput['section4']['researchAreaDescriptions'][number];
 
 export function getCurrentBlockades(year: string) {
   return blockadesByYear[year] ?? [];
@@ -455,6 +481,9 @@ export const defaultValues: ExperimentFormAInput = {
   },
   section3: {
     permissions: [],
+  },
+  section4: {
+    researchAreaDescriptions: [],
   },
   section5: {
     cruiseGoal: {

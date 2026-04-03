@@ -11,6 +11,7 @@ export function TextField({
   autoComplete,
   disabled,
   inline,
+  endAdornment,
   children,
 }: {
   label?: string;
@@ -19,6 +20,7 @@ export function TextField({
   autoComplete?: string;
   disabled?: boolean;
   inline?: boolean;
+  endAdornment?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string>();
@@ -40,12 +42,16 @@ export function TextField({
         className={cn(
           inline ? 'flex-1' : '',
           'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
+          hasError || endAdornment ? 'pr-11' : '',
           'resize-none transition duration-300 ease-in-out',
           'focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
           'disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-500',
           hasError ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
         )}
       />
+      {!hasError && endAdornment ? (
+        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">{endAdornment}</div>
+      ) : null}
       <FieldErrorTriangle hasError={hasError} mode="absolute" />
     </div>
   );

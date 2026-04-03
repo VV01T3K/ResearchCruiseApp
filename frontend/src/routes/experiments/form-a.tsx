@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
+import KeyFillIcon from 'bootstrap-icons/icons/key-fill.svg?react';
 
+import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/common/CruiseApplicationDropdownElementSelectorButton';
 import { FormABlockadeWarning } from '@/components/applications/formA/FormABlockadeWarning';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
@@ -14,11 +16,18 @@ import {
   getOverlappingBlockades,
   defaultValues,
   managerOptions,
+  researchAreaOptions,
   shipUsageOptions,
   experimentFormASchema,
   yearOptions,
 } from './-form-a';
 import { ExperimentCruisePeriodField, PeriodTypeField, SectionCard } from './-componets-a';
+
+function getMatchingResearchArea(name: string) {
+  return researchAreaOptions.find(
+    (option) => option.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase()
+  );
+}
 
 export const Route = createFileRoute('/experiments/form-a')({
   component: ExperimentFormA,
@@ -286,7 +295,7 @@ function ExperimentFormA() {
                           <div className="overflow-x-auto">
                             <div className="min-w-190">
                               <div className="grid grid-cols-[72px_minmax(0,1.3fr)_minmax(0,0.9fr)_96px] border-b border-gray-200 bg-gray-50">
-                                <div className="px-4 py-3 text-sm font-semibold text-gray-700">Lp.</div>
+                                <div className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Lp.</div>
                                 <div className="px-4 py-3 text-sm font-semibold text-gray-700">Treść pozwolenia</div>
                                 <div className="px-4 py-3 text-sm font-semibold text-gray-700">Organ wydający</div>
                                 <div className="px-4 py-3" />
@@ -298,8 +307,10 @@ function ExperimentFormA() {
                                   className="grid grid-cols-[72px_minmax(0,1.3fr)_minmax(0,0.9fr)_96px] border-b border-gray-200 align-top last:border-b-0"
                                   data-testid={`experiment-form-a-permission-row-${index}`}
                                 >
-                                  <div className="px-4 py-4 text-center align-middle">
-                                    <span className="font-semibold text-gray-500">{index + 1}.</span>
+                                  <div className="px-4 py-4 text-center">
+                                    <span className="inline-flex h-10 items-center font-semibold text-gray-500">
+                                      {index + 1}.
+                                    </span>
                                   </div>
 
                                   <div className="px-4 py-4">
@@ -316,10 +327,139 @@ function ExperimentFormA() {
                                     </form.AppField>
                                   </div>
 
-                                  <div className="flex items-center justify-end px-4 py-4">
-                                    <AppTableDeleteRowButton
-                                      onClick={() => field.removeValue(index, { dontValidate: true })}
-                                    />
+                                  <div className="flex justify-end px-4 py-4">
+                                    <span className="inline-flex h-10 items-center">
+                                      <AppTableDeleteRowButton
+                                        onClick={() => field.removeValue(index, { dontValidate: true })}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </form.Field>
+              </SectionCard>
+
+              <SectionCard
+                number="4"
+                title="Rejony prowadzenia badań"
+                description="Sekcja odtwarza produkcyjny przepływ dodawania rejonów z listy albo wpisania własnej nazwy."
+                testId="experiment-form-a-section-4"
+              >
+                <form.Field name="section4.researchAreaDescriptions" mode="array">
+                  {(field) => (
+                    <div className="space-y-4" data-testid="experiment-form-a-research-areas">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="text-sm text-gray-600">
+                          Dodaj rejony z listy albo wybierz opcję „Inne...”, żeby wpisać własną nazwę.
+                        </p>
+
+                        <CruiseApplicationDropdownElementSelectorButton
+                          variant="primary"
+                          options={researchAreaOptions.concat([{ id: '', name: 'Inne...' }]).map((area) => ({
+                            value: area.name,
+                            onClick: () => {
+                              field.pushValue({
+                                areaId: area.id || null,
+                                differentName: area.name === 'Inne...' ? '' : area.name,
+                                info: '',
+                              });
+                            },
+                          }))}
+                          data-testid="experiment-form-a-add-research-area"
+                        >
+                          Dodaj rejon
+                        </CruiseApplicationDropdownElementSelectorButton>
+                      </div>
+
+                      {field.state.value.length === 0 ? (
+                        <AppAlert variant="info" data-testid="experiment-form-a-research-areas-empty">
+                          <div className="text-sm">Nie dodano jeszcze żadnego rejonu.</div>
+                        </AppAlert>
+                      ) : (
+                        <div
+                          className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+                          data-testid="experiment-form-a-research-areas-table"
+                        >
+                          <div className="overflow-x-auto">
+                            <div className="min-w-220">
+                              <div className="grid grid-cols-[72px_minmax(0,1fr)_minmax(0,0.9fr)_96px] border-b border-gray-200 bg-gray-50">
+                                <div className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Lp.</div>
+                                <div className="px-4 py-3 text-sm font-semibold text-gray-700">
+                                  Rejon prowadzenia badań
+                                </div>
+                                <div className="px-4 py-3 text-sm font-semibold text-gray-700">
+                                  Informacje dodatkowe
+                                </div>
+                                <div className="px-4 py-3" />
+                              </div>
+
+                              {field.state.value.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className="grid grid-cols-[72px_minmax(0,1fr)_minmax(0,0.9fr)_96px] border-b border-gray-200 align-top last:border-b-0"
+                                  data-testid={`experiment-form-a-research-area-row-${index}`}
+                                >
+                                  <div className="px-4 py-4 text-center">
+                                    <span className="inline-flex h-10 items-center font-semibold text-gray-500">
+                                      {index + 1}.
+                                    </span>
+                                  </div>
+
+                                  <div className="px-4 py-4">
+                                    <form.AppField name={`section4.researchAreaDescriptions[${index}].areaId`}>
+                                      {(areaIdField) => (
+                                        <form.AppField
+                                          listeners={{
+                                            onChange: ({ value }) => {
+                                              form.setFieldValue(
+                                                `section4.researchAreaDescriptions[${index}].areaId`,
+                                                getMatchingResearchArea(value)?.id || null
+                                              );
+                                            },
+                                          }}
+                                          name={`section4.researchAreaDescriptions[${index}].differentName`}
+                                        >
+                                          {(subField) => (
+                                            <subField.TextField
+                                              placeholder="Nazwa rejonu"
+                                              endAdornment={
+                                                areaIdField.state.value ? (
+                                                  <KeyFillIcon
+                                                    className="h-4 w-4 rotate-45 text-success-dark"
+                                                    title="Powiązany z listą rejonów"
+                                                    aria-label="Powiązany z listą rejonów"
+                                                  />
+                                                ) : undefined
+                                              }
+                                            />
+                                          )}
+                                        </form.AppField>
+                                      )}
+                                    </form.AppField>
+                                  </div>
+
+                                  <div className="px-4 py-4">
+                                    <form.AppField name={`section4.researchAreaDescriptions[${index}].info`}>
+                                      {(subField) => (
+                                        <subField.TextField placeholder="np. szczegóły dotyczące celu rejsu" />
+                                      )}
+                                    </form.AppField>
+                                  </div>
+
+                                  <div className="flex justify-end px-4 py-4">
+                                    <span className="inline-flex h-10 items-center">
+                                      <AppTableDeleteRowButton
+                                        onClick={() => {
+                                          field.removeValue(index, { dontValidate: true });
+                                        }}
+                                      />
+                                    </span>
                                   </div>
                                 </div>
                               ))}
