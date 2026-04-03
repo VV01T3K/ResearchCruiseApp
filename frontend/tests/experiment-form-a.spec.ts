@@ -145,9 +145,7 @@ test.describe('experimental form A', () => {
     ).toBeVisible();
   });
 
-  test('precise dates stay preserved when switching modes in live values', async ({
-    page,
-  }) => {
+  test('precise dates stay preserved when switching modes in live values', async ({ page }) => {
     const section = page.getByTestId('experiment-form-a-section-2');
 
     await fillSectionOne(page);

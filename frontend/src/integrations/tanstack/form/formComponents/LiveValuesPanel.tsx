@@ -1,4 +1,14 @@
 import { useFormContext } from '../context';
+import { normalizeErrors } from '../fieldComponents/shared';
+
+function getAllErrors(fieldMeta: Record<string, { errors?: unknown[] }>) {
+  return Object.entries(fieldMeta).flatMap(([fieldName, meta]) =>
+    normalizeErrors(meta.errors ?? []).map((error) => ({
+      field: fieldName,
+      message: error.message,
+    }))
+  );
+}
 
 export function LiveValuesPanel({
   title = 'Live values',
@@ -21,12 +31,27 @@ export function LiveValuesPanel({
         className={panelClassName ?? 'rounded-xl border border-gray-200 bg-white p-4 shadow-sm'}
         data-testid={testId}
       >
-        <p className="mb-2 text-sm font-medium text-gray-700">{title}</p>
-        <form.Subscribe selector={(state) => state.values}>
-          {(values) => (
-            <pre className={preClassName ?? 'overflow-x-auto whitespace-pre-wrap break-words text-xs text-gray-600'}>
-              {JSON.stringify(values, null, 2)}
-            </pre>
+        <form.Subscribe selector={(state) => ({ values: state.values, fieldMeta: state.fieldMeta })}>
+          {({ values, fieldMeta }) => (
+            <div className="space-y-4">
+              <div>
+                <p className="mb-2 text-sm font-medium text-gray-700">{title}</p>
+                <pre
+                  className={preClassName ?? 'overflow-x-auto text-xs break-words whitespace-pre-wrap text-gray-600'}
+                >
+                  {JSON.stringify(values, null, 2)}
+                </pre>
+              </div>
+
+              <div>
+                <p className="mb-2 text-sm font-medium text-gray-700">All errors</p>
+                <pre
+                  className={preClassName ?? 'overflow-x-auto text-xs break-words whitespace-pre-wrap text-gray-600'}
+                >
+                  {JSON.stringify(getAllErrors(fieldMeta as Record<string, { errors?: unknown[] }>), null, 2)}
+                </pre>
+              </div>
+            </div>
           )}
         </form.Subscribe>
       </div>
