@@ -28,7 +28,7 @@ export const { fieldContext, formContext, useFieldContext, useFormContext } = cr
  * );
  * ```
  */
-export const { useAppForm, withForm } = createFormHook({
+export const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: {},

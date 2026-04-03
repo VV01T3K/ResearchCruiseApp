@@ -312,14 +312,14 @@ export const experimentFormASchema = z.object({
           .transform(({ optimal: _optimal, acceptable: _acceptable, ...period }) => period),
       ]),
       notes: z.string(),
-      cruiseDurationHours: z.codec(
-        z.string(),
-        z.int().min(1, 'Rejs musi trwać co najmniej godzinę').max(1440, 'Rejs nie może trwać dłużej niż 1440 minut'),
-        {
-          decode: (string) => Number(string),
-          encode: (int) => String(int),
-        }
-      ),
+      cruiseDurationDays: z
+        .number()
+        .positive('Rejs musi trwać co najmniej godzinę')
+        .max(60, 'Rejs nie może trwać dłużej niż 60 dni'),
+      cruiseDurationHours: z
+        .int()
+        .min(1, 'Rejs musi trwać co najmniej godzinę')
+        .max(1440, 'Rejs nie może trwać dłużej niż 1440 godzin'),
       shipUsage: z
         .discriminatedUnion('type', [
           z.object({
@@ -339,6 +339,7 @@ export const experimentFormASchema = z.object({
           message: 'Wymagane jest wskazanie sposobu korzystania ze statku',
         }),
     })
+    .transform(({ cruiseDurationDays: _cruiseDurationDays, ...section2 }) => section2)
     .superRefine(({ period, year, cruiseDurationHours }, ctx) => {
       if (period.exact) {
         if (!canFitCruiseInPreciseRange(period.precise.start, period.precise.end, year, cruiseDurationHours)) {
@@ -473,7 +474,8 @@ export const defaultValues: ExperimentFormAInput = {
       },
     },
     notes: '',
-    cruiseDurationHours: '',
+    cruiseDurationDays: 0,
+    cruiseDurationHours: 0,
     shipUsage: {
       type: '',
       description: '',

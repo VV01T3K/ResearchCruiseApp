@@ -205,16 +205,59 @@ function ExperimentFormA() {
                           ) : null}
 
                           <div className="md:col-span-2">
-                            <form.AppField name="section2.cruiseDurationHours">
-                              {(field) => (
-                                <field.HoursDaysField
-                                  label="Planowany czas rejsu"
-                                  rootTestId="experiment-form-a-cruise-duration"
-                                  daysTestId="experiment-form-a-days-input"
-                                  hoursTestId="experiment-form-a-hours-input"
-                                />
-                              )}
-                            </form.AppField>
+                            <div className="space-y-4" data-testid="experiment-form-a-cruise-duration">
+                              <p className="text-sm font-medium text-gray-900">Planowany czas rejsu</p>
+
+                              <div className="grid gap-4 md:grid-cols-2">
+                                <form.AppField
+                                  name="section2.cruiseDurationDays"
+                                  listeners={{
+                                    onChange: ({ value, fieldApi }) => {
+                                      const nextHours = Math.max(0, Math.min(1440, Math.round(value * 24)));
+                                      const currentHours = fieldApi.form.getFieldValue('section2.cruiseDurationHours');
+
+                                      if (currentHours !== nextHours) {
+                                        fieldApi.form.setFieldValue('section2.cruiseDurationHours', nextHours);
+                                      }
+                                    },
+                                  }}
+                                >
+                                  {(field) => (
+                                    <field.FloatField
+                                      label="Liczba planowanych dób rejsowych"
+                                      minimum={0}
+                                      maximum={60}
+                                      step={0.25}
+                                      precision={2}
+                                      testId="experiment-form-a-days-input"
+                                    />
+                                  )}
+                                </form.AppField>
+
+                                <form.AppField
+                                  name="section2.cruiseDurationHours"
+                                  listeners={{
+                                    onChange: ({ value, fieldApi }) => {
+                                      const nextDays = Number((value / 24).toFixed(2));
+                                      const currentDays = fieldApi.form.getFieldValue('section2.cruiseDurationDays');
+
+                                      if (currentDays !== nextDays) {
+                                        fieldApi.form.setFieldValue('section2.cruiseDurationDays', nextDays);
+                                      }
+                                    },
+                                  }}
+                                >
+                                  {(field) => (
+                                    <field.IntegerField
+                                      label="Liczba planowanych godzin rejsowych"
+                                      minimum={0}
+                                      maximum={1440}
+                                      testId="experiment-form-a-hours-input"
+                                    />
+                                  )}
+                                </form.AppField>
+                              </div>
+                            </div>
                           </div>
 
                           <div className="md:col-span-2">

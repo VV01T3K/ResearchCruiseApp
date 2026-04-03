@@ -16,7 +16,7 @@ const experimentSchema = z.object({
   title: z.string().trim().min(3, 'Enter at least 3 characters'),
   email: z.email('Enter a valid email address'),
   destination: z.string().min(1, 'Choose a track'),
-  participants: z.number().int().min(1, 'At least 1 participant is required').max(20, 'Maximum is 20 participants'),
+  participants: z.int().min(1, 'At least 1 participant is required').max(20, 'Maximum is 20 participants'),
   notes: z.string().trim().min(10, 'Add at least 10 characters'),
   wantsFollowUp: z.boolean(),
 });

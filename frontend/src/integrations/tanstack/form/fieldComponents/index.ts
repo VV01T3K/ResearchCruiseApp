@@ -1,13 +1,11 @@
 export { CheckboxField } from './Checkbox';
 export { CruisePeriodField } from './CruisePeriod';
 export { DateField, DateTimeField } from './Date';
-export { DualNumberField } from './DualNumber';
 export { FileField } from './File';
 export { HiddenField } from './Hidden';
-export { HoursDaysField } from './HoursDays';
 export { MonthField } from './Month';
 export { NativeDateField } from './NativeDate';
-export { FloatField, IntegerField, NumberField } from './Number';
+export { FloatField, IntegerField, NumberField } from '../newFieldComponets/Number';
 export { SelectField } from './Select';
 export { EmailField, PasswordField, TextField } from '../newFieldComponets/Text';
 export { TextAreaField } from './TextArea';

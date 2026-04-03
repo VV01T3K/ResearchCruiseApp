@@ -4,7 +4,7 @@ import { fieldContext, formContext } from './context';
 import * as fieldComponents from './fieldComponents';
 import * as formComponents from './formComponents';
 
-export const { useAppForm } = createFormHook({
+export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldComponents,
   formComponents,
   fieldContext,
