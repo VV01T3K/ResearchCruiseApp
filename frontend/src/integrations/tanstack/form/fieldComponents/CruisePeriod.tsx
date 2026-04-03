@@ -1,7 +1,8 @@
 import type { CruisePeriodType } from '@/api/dto/applications/FormADto';
 import { CruiseApplicationPeriodInput } from '@/components/applications/common/CruiseApplicationPeriodInput';
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 
-import { useNormalizedFieldErrors } from './shared';
+import { getFieldErrorMessages } from '../newFieldComponets/shared';
 
 export function CruisePeriodField({
   label,
@@ -12,7 +13,7 @@ export function CruisePeriodField({
   maxValues?: CruisePeriodType | '';
   minPeriodValue?: number;
 }) {
-  const { field, normalizedErrors } = useNormalizedFieldErrors<CruisePeriodType | ''>();
+  const field = useFieldContext<CruisePeriodType | ''>();
 
   return (
     <CruiseApplicationPeriodInput
@@ -22,7 +23,7 @@ export function CruisePeriodField({
       minPeriodValue={minPeriodValue}
       onChange={(value) => field.handleChange(value)}
       onBlur={field.handleBlur}
-      errors={normalizedErrors?.map((error) => error.message)}
+      errors={field.state.meta.isTouched ? getFieldErrorMessages(field.state.meta, true) : undefined}
       label={label}
     />
   );

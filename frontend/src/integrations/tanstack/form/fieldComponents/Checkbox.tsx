@@ -1,9 +1,11 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { cn } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldLabel, useNormalizedFieldErrors } from './shared';
+import { FieldLabel } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 export function CheckboxField({
   label,
@@ -14,7 +16,8 @@ export function CheckboxField({
   className?: string;
   labelPosition?: 'top' | 'left';
 }) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<boolean>();
+  const field = useFieldContext<boolean>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const checked = field.state.value === true;
 
   return (
@@ -38,7 +41,7 @@ export function CheckboxField({
           </CheckboxPrimitive.Indicator>
         </CheckboxPrimitive.Root>
       </div>
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

@@ -32,7 +32,7 @@ function ExperimentForm() {
       wantsFollowUp: false,
     },
     validators: {
-      onBlur: experimentSchema,
+      onChange: experimentSchema,
       onSubmit: experimentSchema,
     },
     onSubmit: ({ value }) => {

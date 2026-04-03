@@ -8,6 +8,7 @@ import { createPortal } from 'react-dom';
 
 import { AppMonthPickerPopover } from '@/components/shared/inputs/dates/AppMonthPickerPopover';
 import { AppDatePickerTimeInput } from '@/components/shared/inputs/dates/AppTimePickerInput';
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { useDropdown } from '@/hooks/shared/DropdownHook';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { dateToUtcDay, getDaysInMonth, shortWeekDays } from '@/lib/calendarUtils';
@@ -15,14 +16,13 @@ import { cn } from '@/lib/utils';
 
 import {
   DropdownModal,
-  FieldErrorsBlock,
   FieldErrorTriangle,
   FieldLabel,
   PlainButton,
   getDateFromValue,
   getValueFromDate,
-  useNormalizedFieldErrors,
 } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 type DateFieldProps = {
   label?: React.ReactNode;
@@ -43,7 +43,8 @@ export function DateField({
   type = 'date',
   minuteStep,
 }: DateFieldProps) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string | undefined>();
+  const field = useFieldContext<string | undefined>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const value = field.state.value;
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(() => getDateFromValue(value));
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
@@ -142,7 +143,7 @@ export function DateField({
               )
             : null}
         </div>
-        <FieldErrorsBlock errors={normalizedErrors} />
+        <FieldErrors meta={field.state.meta} />
       </div>
       <AnimatePresence>
         {expanded && (

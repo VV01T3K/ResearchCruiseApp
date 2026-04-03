@@ -6,21 +6,17 @@ import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { useDropdown } from '@/hooks/shared/DropdownHook';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
 
-import {
-  DropdownModal,
-  FieldErrorsBlock,
-  FieldErrorTriangle,
-  FieldLabel,
-  PlainButton,
-  useNormalizedFieldErrors,
-} from './shared';
+import { DropdownModal, FieldErrorTriangle, FieldLabel, PlainButton } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 export function YearField({ label, placeholder = 'Wybierz rok' }: { label?: React.ReactNode; placeholder?: string }) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<number | string | undefined>();
+  const field = useFieldContext<number | string | undefined>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const currentValue =
     typeof field.state.value === 'number'
       ? field.state.value
@@ -105,7 +101,7 @@ export function YearField({ label, placeholder = 'Wybierz rok' }: { label?: Reac
               )
             : null}
         </div>
-        <FieldErrorsBlock errors={normalizedErrors} />
+        <FieldErrors meta={field.state.meta} />
       </div>
       <AnimatePresence>
         {expanded && (

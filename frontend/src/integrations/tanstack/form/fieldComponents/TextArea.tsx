@@ -1,9 +1,12 @@
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { cn } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
+import { FieldErrorTriangle, FieldLabel } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 export function TextAreaField({ label, rows = 3 }: { label: string; rows?: number }) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string>();
+  const field = useFieldContext<string>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
   return (
     <div className="flex flex-col" data-invalid={hasError || undefined}>
@@ -26,7 +29,7 @@ export function TextAreaField({ label, rows = 3 }: { label: string; rows?: numbe
         />
         <FieldErrorTriangle hasError={hasError} mode="absolute" />
       </div>
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

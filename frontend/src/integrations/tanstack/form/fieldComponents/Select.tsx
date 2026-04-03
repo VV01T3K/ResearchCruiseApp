@@ -2,9 +2,11 @@ import { Select as SelectPrimitive } from '@base-ui/react/select';
 import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { cn } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
+import { FieldErrorTriangle, FieldLabel } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 export function SelectField({
   label,
@@ -15,7 +17,8 @@ export function SelectField({
   values: Array<{ label: string; value: string }>;
   placeholder?: string;
 }) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string>();
+  const field = useFieldContext<string>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const selectedOption = values.find((option) => option.value === field.state.value);
 
   return (
@@ -90,7 +93,7 @@ export function SelectField({
           </SelectPrimitive.Positioner>
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

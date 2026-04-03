@@ -1,11 +1,11 @@
 import { useFormContext } from '../context';
-import { normalizeErrors } from '../fieldComponents/shared';
+import { getFieldErrorMessages } from '../newFieldComponets/shared';
 
 function getAllErrors(fieldMeta: Record<string, { errors?: unknown[] }>) {
   return Object.entries(fieldMeta).flatMap(([fieldName, meta]) =>
-    normalizeErrors(meta.errors ?? []).map((error) => ({
+    getFieldErrorMessages({ errors: meta.errors ?? [] }, true).map((message) => ({
       field: fieldName,
-      message: error.message,
+      message,
     }))
   );
 }

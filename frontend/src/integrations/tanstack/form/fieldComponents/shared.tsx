@@ -1,5 +1,4 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { useStore } from '@tanstack/react-form';
 import ExclamationTriangleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -8,46 +7,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { useFieldContext } from '../context';
-
 dayjs.extend(utc);
-
-export type NormalizedError = {
-  message: string;
-};
-
-export function normalizeErrors(errors: unknown[]): NormalizedError[] {
-  return errors
-    .map((error) => {
-      if (typeof error === 'string') {
-        return { message: error };
-      }
-
-      if (
-        typeof error === 'object' &&
-        error !== null &&
-        'message' in error &&
-        typeof (error as { message?: unknown }).message === 'string'
-      ) {
-        return { message: (error as { message: string }).message };
-      }
-
-      return { message: String(error) };
-    })
-    .filter((error) => error.message.length > 0);
-}
-
-export function useNormalizedFieldErrors<TValue>() {
-  const field = useFieldContext<TValue>();
-  const errors = useStore(field.store, (state) => state.meta.errors);
-  const hasError = field.state.meta.isTouched && errors.length > 0;
-
-  return {
-    field,
-    hasError,
-    normalizedErrors: hasError ? normalizeErrors(errors) : undefined,
-  };
-}
 
 export function FieldLabel({
   htmlFor,
@@ -78,38 +38,6 @@ export function FieldErrorTriangle({ hasError, mode = 'inline' }: { hasError: bo
     <ExclamationTriangleIcon
       className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-1/2 right-3 -translate-y-1/2' : '')}
     />
-  );
-}
-
-export function FieldError({ errors }: { errors?: NormalizedError[] }) {
-  if (!errors || errors.length === 0) {
-    return null;
-  }
-
-  if (errors.length === 1) {
-    return (
-      <p className="text-danger" data-error="true">
-        {errors[0]?.message}
-      </p>
-    );
-  }
-
-  return (
-    <ul className="list-disc ps-4 text-danger">
-      {errors.map((error) => (
-        <li key={error.message} data-error="true">
-          {error.message}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export function FieldErrorsBlock({ errors }: { errors?: NormalizedError[] }) {
-  return (
-    <div className={cn('flex flex-col justify-between text-sm', errors ? 'mt-2' : '')}>
-      <FieldError errors={errors} />
-    </div>
   );
 }
 

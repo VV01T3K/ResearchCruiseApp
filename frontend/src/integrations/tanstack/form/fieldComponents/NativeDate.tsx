@@ -1,6 +1,8 @@
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { cn } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
+import { FieldErrorTriangle, FieldLabel } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 type NativeDateFieldProps = {
   label?: React.ReactNode;
@@ -10,7 +12,8 @@ type NativeDateFieldProps = {
 };
 
 export function NativeDateField({ label, min, max, testId }: NativeDateFieldProps) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string>();
+  const field = useFieldContext<string>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
   return (
     <div className="flex flex-col" data-invalid={hasError || undefined}>
@@ -36,7 +39,7 @@ export function NativeDateField({ label, min, max, testId }: NativeDateFieldProp
         />
         <FieldErrorTriangle hasError={hasError} mode="absolute" />
       </div>
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

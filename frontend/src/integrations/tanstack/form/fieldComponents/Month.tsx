@@ -5,20 +5,20 @@ import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { AppMonthPicker } from '@/components/shared/inputs/dates/AppMonthPicker';
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { useDropdown } from '@/hooks/shared/DropdownHook';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
 
 import {
   DropdownModal,
-  FieldErrorsBlock,
   FieldErrorTriangle,
   FieldLabel,
   PlainButton,
   getLooseDateFromValue,
   getLooseValueFromDate,
-  useNormalizedFieldErrors,
 } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 export function MonthField({
   label,
@@ -27,7 +27,8 @@ export function MonthField({
   label?: React.ReactNode;
   placeholder?: string;
 }) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<string | undefined>();
+  const field = useFieldContext<string | undefined>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const value = field.state.value;
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(() => getLooseDateFromValue(value));
   const [expanded, setExpanded] = React.useState(false);
@@ -95,7 +96,7 @@ export function MonthField({
               )
             : null}
         </div>
-        <FieldErrorsBlock errors={normalizedErrors} />
+        <FieldErrors meta={field.state.meta} />
       </div>
       <AnimatePresence>
         {expanded && (

@@ -3,10 +3,12 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import type { FileDto } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldLabel, useNormalizedFieldErrors } from './shared';
+import { FieldLabel } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 type FileFieldProps =
   | {
@@ -34,7 +36,8 @@ export function FileField({
   maxSizeInMb = 2,
   acceptedMimeTypes,
 }: FileFieldProps) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<FileDto[] | FileDto | null | undefined>();
+  const field = useFieldContext<FileDto[] | FileDto | null | undefined>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const initialFiles = React.useMemo(
     () =>
       allowMultiple
@@ -162,7 +165,7 @@ export function FileField({
           event.target.value = '';
         }}
       />
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

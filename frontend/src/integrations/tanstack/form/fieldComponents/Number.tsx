@@ -2,10 +2,12 @@ import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import React from 'react';
 
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { useInputCursorPosition } from '@/hooks/shared/InputCursorPositionHook';
 import { cn, roundNumber } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, PlainButton, useNormalizedFieldErrors } from './shared';
+import { FieldErrorTriangle, FieldLabel, PlainButton } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 type NumberFieldProps = {
   label?: React.ReactNode;
@@ -17,7 +19,8 @@ type NumberFieldProps = {
 };
 
 export function NumberField({ label, minimum, maximum, step = 1, type = 'integer', precision = 2 }: NumberFieldProps) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<number | string>();
+  const field = useFieldContext<number | string>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const numericValue =
     typeof field.state.value === 'number'
       ? field.state.value
@@ -114,7 +117,7 @@ export function NumberField({ label, minimum, maximum, step = 1, type = 'integer
         </div>
         <NumberControlButton side="right" onClick={() => commitValue(safeValue + step)} />
       </div>
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

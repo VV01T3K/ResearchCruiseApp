@@ -9,6 +9,6 @@ export { MonthField } from './Month';
 export { NativeDateField } from './NativeDate';
 export { FloatField, IntegerField, NumberField } from './Number';
 export { SelectField } from './Select';
-export { EmailField, PasswordField, TextField } from './Text';
+export { EmailField, PasswordField, TextField } from '../newFieldComponets/Text';
 export { TextAreaField } from './TextArea';
 export { YearField } from './Year';

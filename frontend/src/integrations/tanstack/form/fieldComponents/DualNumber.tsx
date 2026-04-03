@@ -1,6 +1,8 @@
+import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { cn, roundNumber } from '@/lib/utils';
 
-import { FieldErrorsBlock, FieldErrorTriangle, FieldLabel, useNormalizedFieldErrors } from './shared';
+import { FieldErrorTriangle, FieldLabel } from './shared';
+import { FieldErrors } from '../newFieldComponets/shared';
 
 type DualNumberFieldProps = {
   label?: React.ReactNode;
@@ -55,7 +57,8 @@ export function DualNumberField({
   toSecondaryValue,
   fromSecondaryValue,
 }: DualNumberFieldProps) {
-  const { field, hasError, normalizedErrors } = useNormalizedFieldErrors<number | string>();
+  const field = useFieldContext<number | string>();
+  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const parsedValue = parseFieldValue(field.state.value);
   const safeValue = Number.isNaN(parsedValue) ? 0 : parsedValue;
 
@@ -138,7 +141,7 @@ export function DualNumberField({
         </label>
       </div>
 
-      <FieldErrorsBlock errors={normalizedErrors} />
+      <FieldErrors meta={field.state.meta} />
     </div>
   );
 }

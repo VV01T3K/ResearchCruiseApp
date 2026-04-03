@@ -1,9 +1,8 @@
-import { useStore } from '@tanstack/react-form';
 import type { ReactNode } from 'react';
 
 import { CruiseApplicationPeriodInput } from '@/components/applications/common/CruiseApplicationPeriodInput';
 import { useFieldContext } from '@/integrations/tanstack/form/context';
-import { normalizeErrors } from '@/integrations/tanstack/form/fieldComponents/shared';
+import { getFieldErrorMessages } from '@/integrations/tanstack/form/newFieldComponets/shared';
 
 import { fromCruisePeriod, periodSelectionOptions, toCruisePeriod, type ExperimentCruisePeriod } from './-form-a';
 
@@ -44,8 +43,7 @@ export function ExperimentCruisePeriodField({
   maxValues?: ExperimentCruisePeriod;
 }) {
   const field = useFieldContext<ExperimentCruisePeriod>();
-  const errors = useStore(field.store, (state) => state.meta.errors);
-  const normalizedErrors = field.state.meta.isTouched && errors.length > 0 ? normalizeErrors(errors) : undefined;
+  const errors = field.state.meta.isTouched ? getFieldErrorMessages(field.state.meta, true) : undefined;
 
   return (
     <CruiseApplicationPeriodInput
@@ -54,7 +52,7 @@ export function ExperimentCruisePeriodField({
       maxValues={toCruisePeriod(maxValues)}
       onChange={(value) => field.handleChange(fromCruisePeriod(value))}
       onBlur={field.handleBlur}
-      errors={normalizedErrors?.map((error) => error.message)}
+      errors={errors}
       label={label}
     />
   );
