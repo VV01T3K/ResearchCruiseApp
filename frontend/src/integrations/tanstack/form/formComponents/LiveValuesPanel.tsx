@@ -3,7 +3,7 @@ import { getFieldErrorMessages } from '../newFieldComponets/shared';
 
 function getAllErrors(fieldMeta: Record<string, { errors?: unknown[] }>) {
   return Object.entries(fieldMeta).flatMap(([fieldName, meta]) =>
-    getFieldErrorMessages({ errors: meta.errors ?? [] }, true).map((message) => ({
+    getFieldErrorMessages(meta as any, true).map((message) => ({
       field: fieldName,
       message,
     }))
