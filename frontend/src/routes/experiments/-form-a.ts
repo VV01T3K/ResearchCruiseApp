@@ -362,6 +362,15 @@ export const experimentFormASchema = z.object({
         }
       }
     }),
+  section3: z.object({
+    permissions: z
+      .object({
+        description: z.string().min(1, 'Treść pozwolenia jest wymagana').max(1024, 'Maksymalna długość to 1024 znaków'),
+        executive: z.string().min(1, 'Organ wydający jest wymagany').max(128, 'Maksymalna długość to 128 znaków'),
+        scan: z.undefined().optional(),
+      })
+      .array(),
+  }),
   section5: z.object({
     cruiseGoal: z.object({
       type: z.string().pipe(z.enum(CruiseGoal, 'Cel rejsu musi zostać wybrany z listy')),
@@ -442,6 +451,9 @@ export const defaultValues: ExperimentFormAInput = {
       type: '',
       description: '',
     },
+  },
+  section3: {
+    permissions: [],
   },
   section5: {
     cruiseGoal: {

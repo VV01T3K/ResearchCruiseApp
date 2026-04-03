@@ -2,7 +2,9 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { FormABlockadeWarning } from '@/components/applications/formA/FormABlockadeWarning';
 import { AppAlert } from '@/components/shared/AppAlert';
+import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
+import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { useAppForm } from '@/integrations/tanstack/form';
 
 import {
@@ -11,7 +13,6 @@ import {
   getCurrentBlockades,
   getOverlappingBlockades,
   defaultValues,
-  type ExperimentFormAOutput,
   managerOptions,
   shipUsageOptions,
   experimentFormASchema,
@@ -31,7 +32,7 @@ function ExperimentFormA() {
       onSubmit: experimentFormASchema,
     },
     onSubmit: ({ value }) => {
-      const parsedValue: ExperimentFormAOutput = experimentFormASchema.parse(value);
+      const parsedValue = experimentFormASchema.parse(value);
       console.log(parsedValue);
       alert(`Form submitted:\n${JSON.stringify(parsedValue, null, 2)}`);
     },
@@ -132,7 +133,7 @@ function ExperimentFormA() {
 
                           {period.exact ? (
                             <>
-                              <form.AppField name={'section2.period.precise.start' as never}>
+                              <form.AppField name="section2.period.precise.start">
                                 {(field) => (
                                   <field.NativeDateField
                                     label="Dokładny termin rozpoczęcia rejsu"
@@ -141,7 +142,7 @@ function ExperimentFormA() {
                                 )}
                               </form.AppField>
 
-                              <form.AppField name={'section2.period.precise.end' as never}>
+                              <form.AppField name="section2.period.precise.end">
                                 {(field) => (
                                   <field.NativeDateField
                                     label="Dokładny termin zakończenia rejsu"
@@ -245,6 +246,90 @@ function ExperimentFormA() {
                     );
                   }}
                 </form.Subscribe>
+              </SectionCard>
+
+              <SectionCard
+                number="3"
+                title="Dodatkowe pozwolenia do planowanych podczas rejsu badań"
+                description="Sekcja ćwiczy tablicowe pola TanStack Form: dodawanie, usuwanie i walidację zagnieżdżonych wierszy."
+                testId="experiment-form-a-section-3"
+              >
+                <form.Field name={'section3.permissions'} mode="array">
+                  {(field) => {
+                    return (
+                      <div className="space-y-4" data-testid="experiment-form-a-permissions">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-sm text-gray-600">
+                            Dodaj każde wymagane pozwolenie jako osobny wiersz.
+                          </p>
+
+                          <AppButton
+                            type="button"
+                            variant="primaryOutline"
+                            onClick={() => {
+                              field.pushValue({
+                                description: '',
+                                executive: '',
+                              });
+                            }}
+                            data-testid="experiment-form-a-add-permission"
+                          >
+                            Dodaj pozwolenie
+                          </AppButton>
+                        </div>
+
+                        {field.state.value.length === 0 ? (
+                          <AppAlert variant="info" data-testid="experiment-form-a-permissions-empty">
+                            <div className="text-sm">Nie dodano jeszcze żadnego pozwolenia.</div>
+                          </AppAlert>
+                        ) : (
+                          <div className="space-y-4">
+                            {field.state.value.map((_, idx) => (
+                              <div
+                                key={idx}
+                                className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 shadow-sm"
+                                data-testid={`experiment-form-a-permission-row-${idx}`}
+                              >
+                                <div className="mb-4 flex items-center justify-between gap-4">
+                                  <div>
+                                    <p className="text-sm font-semibold text-gray-900">Pozwolenie {idx + 1}</p>
+                                    <p className="text-xs text-gray-500">Uzupełnij treść pozwolenia i organ wydający.</p>
+                                  </div>
+
+                                  <AppTableDeleteRowButton
+                                    onClick={() => {
+                                      field.removeValue(idx);
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="grid gap-4 md:grid-cols-2">
+                                  <form.AppField name={`section3.permissions[${idx}].description`}>
+                                    {(subField) => (
+                                      <subField.TextField
+                                        label="Treść pozwolenia"
+                                        placeholder="Opisz wymagane pozwolenie"
+                                      />
+                                    )}
+                                  </form.AppField>
+
+                                  <form.AppField name={`section3.permissions[${idx}].executive`}>
+                                    {(subField) => (
+                                      <subField.TextField
+                                        label="Organ wydający"
+                                        placeholder="Podaj organ wydający pozwolenie"
+                                      />
+                                    )}
+                                  </form.AppField>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }}
+                </form.Field>
               </SectionCard>
 
               <SectionCard
