@@ -24,8 +24,8 @@ export const Route = createFileRoute('/experiments/form-a')({
   component: ExperimentFormA,
 });
 
-function ExperimentFormA() {
-  const form = useAppForm({
+function useExperimentFormA() {
+  return useAppForm({
     defaultValues,
     validators: {
       onChange: experimentFormASchema,
@@ -37,6 +37,10 @@ function ExperimentFormA() {
       alert(`Form submitted:\n${JSON.stringify(parsedValue, null, 2)}`);
     },
   });
+}
+
+function ExperimentFormA() {
+  const form = useExperimentFormA();
 
   return (
     <AppLayout
@@ -254,81 +258,77 @@ function ExperimentFormA() {
                 description="Sekcja ćwiczy tablicowe pola TanStack Form: dodawanie, usuwanie i walidację zagnieżdżonych wierszy."
                 testId="experiment-form-a-section-3"
               >
-                <form.Field name={'section3.permissions'} mode="array">
-                  {(field) => {
-                    return (
-                      <div className="space-y-4" data-testid="experiment-form-a-permissions">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-sm text-gray-600">
-                            Dodaj każde wymagane pozwolenie jako osobny wiersz.
-                          </p>
+                <form.Field name="section3.permissions" mode="array">
+                  {(field) => (
+                    <div className="space-y-4" data-testid="experiment-form-a-permissions">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="text-sm text-gray-600">Dodaj każde wymagane pozwolenie jako osobny wiersz.</p>
 
-                          <AppButton
-                            type="button"
-                            variant="primaryOutline"
-                            onClick={() => {
-                              field.pushValue({
-                                description: '',
-                                executive: '',
-                              });
-                            }}
-                            data-testid="experiment-form-a-add-permission"
-                          >
-                            Dodaj pozwolenie
-                          </AppButton>
-                        </div>
+                        <AppButton
+                          onClick={() => {
+                            field.pushValue({ description: '', executive: '' });
+                          }}
+                          data-testid="experiment-form-a-add-permission"
+                        >
+                          Dodaj pozwolenie
+                        </AppButton>
+                      </div>
 
-                        {field.state.value.length === 0 ? (
-                          <AppAlert variant="info" data-testid="experiment-form-a-permissions-empty">
-                            <div className="text-sm">Nie dodano jeszcze żadnego pozwolenia.</div>
-                          </AppAlert>
-                        ) : (
-                          <div className="space-y-4">
-                            {field.state.value.map((_, idx) => (
-                              <div
-                                key={idx}
-                                className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 shadow-sm"
-                                data-testid={`experiment-form-a-permission-row-${idx}`}
-                              >
-                                <div className="mb-4 flex items-center justify-between gap-4">
-                                  <div>
-                                    <p className="text-sm font-semibold text-gray-900">Pozwolenie {idx + 1}</p>
-                                    <p className="text-xs text-gray-500">Uzupełnij treść pozwolenia i organ wydający.</p>
+                      {field.state.value.length === 0 ? (
+                        <AppAlert variant="info" data-testid="experiment-form-a-permissions-empty">
+                          <div className="text-sm">Nie dodano jeszcze żadnego pozwolenia.</div>
+                        </AppAlert>
+                      ) : (
+                        <div
+                          className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+                          data-testid="experiment-form-a-permissions-table"
+                        >
+                          <div className="overflow-x-auto">
+                            <div className="min-w-190">
+                              <div className="grid grid-cols-[72px_minmax(0,1.3fr)_minmax(0,0.9fr)_96px] border-b border-gray-200 bg-gray-50">
+                                <div className="px-4 py-3 text-sm font-semibold text-gray-700">Lp.</div>
+                                <div className="px-4 py-3 text-sm font-semibold text-gray-700">Treść pozwolenia</div>
+                                <div className="px-4 py-3 text-sm font-semibold text-gray-700">Organ wydający</div>
+                                <div className="px-4 py-3" />
+                              </div>
+
+                              {field.state.value.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className="grid grid-cols-[72px_minmax(0,1.3fr)_minmax(0,0.9fr)_96px] border-b border-gray-200 align-top last:border-b-0"
+                                  data-testid={`experiment-form-a-permission-row-${index}`}
+                                >
+                                  <div className="px-4 py-4 text-center align-middle">
+                                    <span className="font-semibold text-gray-500">{index + 1}.</span>
                                   </div>
 
-                                  <AppTableDeleteRowButton
-                                    onClick={() => {
-                                      field.removeValue(idx);
-                                    }}
-                                  />
-                                </div>
+                                  <div className="px-4 py-4">
+                                    <form.AppField name={`section3.permissions[${index}].description`}>
+                                      {(subField) => <subField.TextField placeholder="Opisz wymagane pozwolenie" />}
+                                    </form.AppField>
+                                  </div>
 
-                                <div className="grid gap-4 md:grid-cols-2">
-                                  <form.AppField name={`section3.permissions[${idx}].description`}>
-                                    {(subField) => (
-                                      <subField.TextField
-                                        label="Treść pozwolenia"
-                                        placeholder="Opisz wymagane pozwolenie"
-                                      />
-                                    )}
-                                  </form.AppField>
+                                  <div className="px-4 py-4">
+                                    <form.AppField name={`section3.permissions[${index}].executive`}>
+                                      {(subField) => (
+                                        <subField.TextField placeholder="Podaj organ wydający pozwolenie" />
+                                      )}
+                                    </form.AppField>
+                                  </div>
 
-                                  <form.AppField name={`section3.permissions[${idx}].executive`}>
-                                    {(subField) => (
-                                      <subField.TextField
-                                        label="Organ wydający"
-                                        placeholder="Podaj organ wydający pozwolenie"
-                                      />
-                                    )}
-                                  </form.AppField>
+                                  <div className="flex items-center justify-end px-4 py-4">
+                                    <AppTableDeleteRowButton
+                                      onClick={() => field.removeValue(index, { dontValidate: true })}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    );
-                  }}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </form.Field>
               </SectionCard>
 

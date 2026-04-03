@@ -388,6 +388,7 @@ export type ExperimentFormAOutput = z.output<typeof experimentFormASchema>;
 export type ExperimentPeriodInput = ExperimentFormAInput['section2']['period'];
 export type ExperimentPeriodModeInput = Extract<ExperimentPeriodInput, { exact: false }>;
 export type ExperimentFormASection2Values = ExperimentFormAInput['section2'];
+export type ExperimentPermissionInput = ExperimentFormAInput['section3']['permissions'][number];
 
 export function getCurrentBlockades(year: string) {
   return blockadesByYear[year] ?? [];

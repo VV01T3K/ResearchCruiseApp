@@ -13,7 +13,7 @@ export function TextField({
   inline,
   children,
 }: {
-  label: string;
+  label?: string;
   placeholder?: string;
   type?: React.HTMLInputTypeAttribute;
   autoComplete?: string;
