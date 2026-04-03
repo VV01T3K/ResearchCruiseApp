@@ -1,5 +1,15 @@
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
+import {
+  DndContext,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -29,13 +39,16 @@ function isOverlapping(a: CalendarEvent, b: CalendarEvent): boolean {
 type Props = {
   events: CalendarEvent[];
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
+  onEventDrop?: (payload: CalendarEventDropPayload) => Promise<void> | void;
 };
-export function AppCalendar({ events, buttons }: Props) {
+export function AppCalendar({ events, buttons, onEventDrop }: Props) {
+  const DAY_MS = 24 * 60 * 60 * 1000;
   const [currentMonth, setCurrentMonth] = React.useState({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
+  const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const calendarRef = React.useRef<HTMLDivElement>(null);
   const [tileWidth, setTileWidth] = React.useState(0);
 
@@ -55,6 +68,121 @@ export function AppCalendar({ events, buttons }: Props) {
       window.removeEventListener('resize', updateTileWidth);
     };
   }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } })
+  );
+
+  function getDayNumberFromDropId(dropId: string): number | undefined {
+    if (!dropId.startsWith('calendar-day-')) {
+      return undefined;
+    }
+    const parsedDay = Number(dropId.replace('calendar-day-', ''));
+    return Number.isFinite(parsedDay) ? parsedDay : undefined;
+  }
+
+  function getVisibleSpanDays(calendarEvent: CalendarEvent): number {
+    const startDayUtc = dateToUtcDay(calendarEvent.start);
+    const endAtMidnight = calendarEvent.end.getHours() === 0 && calendarEvent.end.getMinutes() === 0;
+    const endDayUtc = dateToUtcDay(calendarEvent.end) - (endAtMidnight ? DAY_MS : 0);
+    return Math.max(1, Math.floor((endDayUtc - startDayUtc) / DAY_MS) + 1);
+  }
+
+  function buildDropPreview(activeEventId: string, sourceDayUtc: number, targetDayUtc: number): number[] {
+    const draggedEvent = events.find((calendarEvent) => calendarEvent.id === activeEventId);
+    if (!draggedEvent) {
+      return [];
+    }
+
+    const startDayUtc = dateToUtcDay(draggedEvent.start);
+    const anchorOffset = Math.floor((sourceDayUtc - startDayUtc) / DAY_MS);
+    const previewStartDayUtc = targetDayUtc - anchorOffset * DAY_MS;
+    const spanDays = getVisibleSpanDays(draggedEvent);
+
+    return Array.from({ length: spanDays }, (_, index) => previewStartDayUtc + index * DAY_MS);
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    if (!onEventDrop) {
+      return;
+    }
+
+    const { eventId, sourceDayUtc } = event.active.data.current ?? {};
+    if (typeof eventId !== 'string' || typeof sourceDayUtc !== 'number') {
+      setDropPreviewDays([]);
+      return;
+    }
+
+    setDropPreviewDays(buildDropPreview(eventId, sourceDayUtc, sourceDayUtc));
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    if (!onEventDrop || !event.over?.id) {
+      setDropPreviewDays([]);
+      return;
+    }
+
+    const { eventId, sourceDayUtc } = event.active.data.current ?? {};
+    if (typeof eventId !== 'string' || typeof sourceDayUtc !== 'number') {
+      setDropPreviewDays([]);
+      return;
+    }
+
+    const targetDayUtc = getDayNumberFromDropId(String(event.over.id));
+    if (targetDayUtc === undefined) {
+      setDropPreviewDays([]);
+      return;
+    }
+
+    setDropPreviewDays(buildDropPreview(eventId, sourceDayUtc, targetDayUtc));
+  }
+
+  function handleDragCancel() {
+    setDropPreviewDays([]);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    setDropPreviewDays([]);
+    if (!onEventDrop || !event.over?.id) {
+      return;
+    }
+
+    const { eventId, sourceDayUtc } = event.active.data.current ?? {};
+    if (typeof eventId !== 'string' || typeof sourceDayUtc !== 'number') {
+      return;
+    }
+
+    const targetDayId = String(event.over.id);
+    const targetDayUtc = getDayNumberFromDropId(targetDayId);
+    if (targetDayUtc === undefined) {
+      return;
+    }
+
+    if (targetDayUtc === sourceDayUtc) {
+      return;
+    }
+
+    const draggedEvent = events.find((calendarEvent) => calendarEvent.id === eventId);
+    if (!draggedEvent) {
+      return;
+    }
+
+    const dayDelta = Math.round((targetDayUtc - sourceDayUtc) / DAY_MS);
+
+    const nextStart = new Date(draggedEvent.start);
+    const nextEnd = new Date(draggedEvent.end);
+    nextStart.setUTCDate(nextStart.getUTCDate() + dayDelta);
+    nextEnd.setUTCDate(nextEnd.getUTCDate() + dayDelta);
+
+    void onEventDrop({
+      event: draggedEvent,
+      sourceDate: new Date(sourceDayUtc),
+      targetDate: new Date(targetDayUtc),
+      nextStart,
+      nextEnd,
+    });
+  }
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
 
@@ -114,22 +242,33 @@ export function AppCalendar({ events, buttons }: Props) {
           exit={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          <div ref={calendarRef} className="grid grid-cols-7 gap-1">
-            {weekDays.map((day) => (
-              <div key={day} className="truncate text-center">
-                {day}
-              </div>
-            ))}
-            {getDaysInMonth(currentMonth).map((date) => (
-              <AppCalendarTile
-                date={date}
-                eventsWithRows={eventsWithRows}
-                currentMonth={currentMonth}
-                tileWidth={tileWidth}
-                key={date.toString()}
-              />
-            ))}
-          </div>
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragCancel={handleDragCancel}
+            onDragEnd={handleDragEnd}
+          >
+            <div ref={calendarRef} className="grid grid-cols-7 gap-1">
+              {weekDays.map((day) => (
+                <div key={day} className="truncate text-center">
+                  {day}
+                </div>
+              ))}
+              {getDaysInMonth(currentMonth).map((date) => (
+                <AppCalendarTile
+                  date={date}
+                  eventsWithRows={eventsWithRows}
+                  currentMonth={currentMonth}
+                  tileWidth={tileWidth}
+                  enableDragAndDrop={Boolean(onEventDrop)}
+                  dayDropId={`calendar-day-${dateToUtcDay(date)}`}
+                  isDropPreview={dropPreviewDays.includes(dateToUtcDay(date))}
+                  key={date.toString()}
+                />
+              ))}
+            </div>
+          </DndContext>
         </motion.div>
       </AnimatePresence>
     </div>
@@ -137,6 +276,7 @@ export function AppCalendar({ events, buttons }: Props) {
 }
 
 export type CalendarEvent = {
+  id?: string;
   title: string;
   start: Date;
   end: Date;
@@ -146,3 +286,11 @@ export type CalendarEvent = {
 };
 
 export type CalendarEventWithRow = CalendarEvent & { row: number };
+
+export type CalendarEventDropPayload = {
+  event: CalendarEvent;
+  sourceDate: Date;
+  targetDate: Date;
+  nextStart: Date;
+  nextEnd: Date;
+};
