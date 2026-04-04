@@ -70,7 +70,6 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const updateTileWidth = React.useCallback(() => {
     const calendarElement = calendarRef.current;
     if (!calendarElement) {
-      console.log('Calendar element not found');
       return;
     }
 
@@ -333,11 +332,10 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
           nextEnd,
         })
       );
-    } catch (error) {
+    } catch {
       setActiveDragEventId(undefined);
       setDropPreviewDays([]);
       setPendingDrop(undefined);
-      throw error;
     }
   }
 
@@ -418,20 +416,6 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const overlayScrollOffsetY = typeof window === 'undefined' ? 0 : window.scrollY;
   const overlayDrawTop =
     DRAG_CURSOR_Y_NUDGE - activeDragPointerOffsetY - overlayAnchor.row * dragWeekRowStep + overlayScrollOffsetY;
-
-  React.useEffect(() => {
-    if (!activeDragOverlay || overlaySegments.length === 0) {
-      return;
-    }
-  }, [
-    activeDragOverlay,
-    overlaySegments.length,
-    overlayDrawLeft,
-    overlayDrawTop,
-    overlayScrollOffsetY,
-    overlayAnchor.row,
-    overlayAnchor.column,
-  ]);
 
   const defaultButtons = [
     <AppButton
