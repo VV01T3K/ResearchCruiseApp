@@ -1,4 +1,4 @@
-export { CheckboxField } from './Checkbox';
+export { CheckboxField } from '../newFieldComponets/Checkbox';
 export { CruisePeriodField } from './CruisePeriod';
 export { DateField, DateTimeField } from './Date';
 export { FileField } from './File';
