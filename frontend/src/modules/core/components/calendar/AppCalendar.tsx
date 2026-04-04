@@ -54,6 +54,9 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
+  const [pendingDrop, setPendingDrop] = React.useState<
+    { eventId: string; nextStartMs: number; nextEndMs: number } | undefined
+  >(undefined);
   const [activeDragOverlay, setActiveDragOverlay] = React.useState<
     { title: string; spanDays: number; anchorOffset: number } | undefined
   >(undefined);
@@ -113,17 +116,6 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
       viewport.removeEventListener('resize', handleViewportResize);
     };
   }, [updateTileWidth]);
-
-  function getInitialTopFromActivatorEvent(activatorEvent: Event): number | undefined {
-    const target = activatorEvent.target;
-    if (!(target instanceof Element)) {
-      return undefined;
-    }
-
-    const eventBlock = target.closest('[data-calendar-event-block]');
-    const element = eventBlock ?? target;
-    return element.getBoundingClientRect().top;
-  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { delay: 0, tolerance: 0 } }),
@@ -228,26 +220,10 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
 
     const startDayUtc = dateToUtcDay(draggedEvent.start);
     const anchorOffset = Math.floor((sourceDayUtc - startDayUtc) / DAY_MS);
-    const activatorEvent = event.activatorEvent;
-    const initialTop = event.active.rect.current.initial?.top ?? getInitialTopFromActivatorEvent(activatorEvent);
-    let pointerY: number | undefined;
-    if ('clientY' in activatorEvent && typeof activatorEvent.clientY === 'number') {
-      pointerY = activatorEvent.clientY;
-    } else if ('touches' in activatorEvent) {
-      const touchEvent = activatorEvent as { touches?: Array<{ clientY: number }> };
-      if (touchEvent.touches && touchEvent.touches.length > 0) {
-        pointerY = touchEvent.touches[0].clientY;
-      }
-    } else if ('changedTouches' in activatorEvent) {
-      const changedTouchEvent = activatorEvent as { changedTouches?: Array<{ clientY: number }> };
-      if (changedTouchEvent.changedTouches && changedTouchEvent.changedTouches.length > 0) {
-        pointerY = changedTouchEvent.changedTouches[0].clientY;
-      }
-    }
-    const nextPointerOffsetY =
-      typeof pointerY === 'number' && typeof initialTop === 'number' ? pointerY - initialTop : dragBlockHeight / 2;
+    const nextPointerOffsetY = dragBlockHeight * 2.3;
 
     setActiveDragEventId(eventId);
+    setPendingDrop(undefined);
     setActiveDragOverlay({
       title: draggedEvent.title,
       spanDays: getVisibleSpanDays(draggedEvent),
@@ -283,36 +259,61 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     setActiveDragOverlay(undefined);
     setActiveDragPointerOffsetY(0);
     setDropPreviewDays([]);
+    setPendingDrop(undefined);
   }
 
-  function handleDragEnd(event: DragEndEvent) {
-    setActiveDragEventId(undefined);
-    setActiveDragOverlay(undefined);
-    setActiveDragPointerOffsetY(0);
-    setDropPreviewDays([]);
+  async function handleDragEnd(event: DragEndEvent) {
     if (!onEventDrop || !event.over?.id) {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
+      setActiveDragPointerOffsetY(0);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
       return;
     }
 
     const { eventId, sourceDayUtc } = event.active.data.current ?? {};
     if (typeof eventId !== 'string' || typeof sourceDayUtc !== 'number') {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
+      setActiveDragPointerOffsetY(0);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
       return;
     }
 
     const targetDayId = String(event.over.id);
     const targetDayUtc = getDayNumberFromDropId(targetDayId);
     if (targetDayUtc === undefined) {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
+      setActiveDragPointerOffsetY(0);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
       return;
     }
 
     if (targetDayUtc === sourceDayUtc) {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
+      setActiveDragPointerOffsetY(0);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
       return;
     }
 
     const draggedEvent = events.find((calendarEvent) => calendarEvent.id === eventId);
     if (!draggedEvent) {
+      setActiveDragEventId(undefined);
+      setActiveDragOverlay(undefined);
+      setActiveDragPointerOffsetY(0);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
       return;
     }
+
+    setActiveDragOverlay(undefined);
+    setActiveDragPointerOffsetY(0);
 
     const dayDelta = Math.round((targetDayUtc - sourceDayUtc) / DAY_MS);
 
@@ -320,15 +321,45 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     const nextEnd = new Date(draggedEvent.end);
     nextStart.setUTCDate(nextStart.getUTCDate() + dayDelta);
     nextEnd.setUTCDate(nextEnd.getUTCDate() + dayDelta);
+    setPendingDrop({ eventId, nextStartMs: nextStart.getTime(), nextEndMs: nextEnd.getTime() });
 
-    void onEventDrop({
-      event: draggedEvent,
-      sourceDate: new Date(sourceDayUtc),
-      targetDate: new Date(targetDayUtc),
-      nextStart,
-      nextEnd,
-    });
+    try {
+      await Promise.resolve(
+        onEventDrop({
+          event: draggedEvent,
+          sourceDate: new Date(sourceDayUtc),
+          targetDate: new Date(targetDayUtc),
+          nextStart,
+          nextEnd,
+        })
+      );
+    } catch (error) {
+      setActiveDragEventId(undefined);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
+      throw error;
+    }
   }
+
+  React.useEffect(() => {
+    if (!pendingDrop) {
+      return;
+    }
+
+    const updatedEvent = events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
+    if (!updatedEvent) {
+      return;
+    }
+
+    if (
+      updatedEvent.start.getTime() === pendingDrop.nextStartMs &&
+      updatedEvent.end.getTime() === pendingDrop.nextEndMs
+    ) {
+      setActiveDragEventId(undefined);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
+    }
+  }, [events, pendingDrop]);
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
   const displayedMonthDays = React.useMemo(() => getDaysInMonth(currentMonth), [currentMonth]);
@@ -486,7 +517,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
                 />
               ))}
             </div>
-            <DragOverlay adjustScale={false}>
+            <DragOverlay adjustScale={false} dropAnimation={null}>
               {activeDragOverlay && overlaySegments.length > 0 ? (
                 <div
                   className="pointer-events-none"
