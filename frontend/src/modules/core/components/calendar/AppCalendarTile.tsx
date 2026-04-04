@@ -3,9 +3,9 @@ import { CSS } from '@dnd-kit/utilities';
 import React, { Fragment } from 'react';
 
 import { AppLink } from '@/core/components/AppLink';
-import { CalendarEventWithRow } from '@/core/components/calendar/AppCalendar';
 import { dateToUtcDay } from '@/core/lib/calendarUtils';
 import { cn } from '@/core/lib/utils';
+import type { CalendarEventWithRow } from './calendarTypes';
 
 function getEventsForDate(date: Date, eventsWithRows: CalendarEventWithRow[]): CalendarEventWithRow[] {
   const dayUtc = dateToUtcDay(date);
