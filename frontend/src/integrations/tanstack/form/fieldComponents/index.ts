@@ -8,5 +8,5 @@ export { NativeDateField } from './NativeDate';
 export { FloatField, IntegerField, NumberField } from '../newFieldComponets/Number';
 export { SelectField } from './Select';
 export { EmailField, PasswordField, TextField } from '../newFieldComponets/Text';
-export { TextAreaField } from './TextArea';
+export { TextAreaField } from '../newFieldComponets/TextArea';
 export { YearField } from './Year';
