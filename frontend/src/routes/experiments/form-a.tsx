@@ -227,7 +227,7 @@ function ExperimentFormA() {
                                       label="Liczba planowanych dób rejsowych"
                                       minimum={0}
                                       maximum={60}
-                                      step={0.25}
+                                      step={1}
                                       precision={2}
                                       testId="experiment-form-a-days-input"
                                     />
