@@ -19,6 +19,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppCalendarTile } from '@/core/components/calendar/AppCalendarTile';
 import { AppMonthPickerPopover } from '@/core/components/inputs/dates/AppMonthPickerPopover';
 import { dateToUtcDay, getDaysInMonth, months, weekDays } from '@/core/lib/calendarUtils';
+import type { CalendarEvent, CalendarEventWithRow, CalendarEventDropPayload } from './calendarTypes';
 
 function assignEventsToRows(events: CalendarEvent[]): CalendarEventWithRow[] {
   const eventsWithRows = events.map((event) => ({ ...event, row: 0 }));
@@ -63,18 +64,27 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const [dragBlockRowGap, setDragBlockRowGap] = React.useState(4);
   const [dragWeekRowStep, setDragWeekRowStep] = React.useState(120);
 
-  function updateTileWidth() {
-    const calendarWidth = calendarRef.current?.offsetWidth ?? 700;
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setTileWidth(calendarWidth / 7);
+  const updateTileWidth = React.useCallback(() => {
+    const calendarElement = calendarRef.current;
+    if (!calendarElement) {
+      console.log('Calendar element not found');
+      return;
+    }
 
-    const eventBlock = calendarRef.current?.querySelector<HTMLElement>('[data-calendar-event-block]');
+    const dayTiles = calendarElement.querySelectorAll<HTMLElement>('[data-calendar-day-tile]');
+    const calendarWidth = calendarElement.getBoundingClientRect().width;
+    if (Number.isFinite(calendarWidth) && calendarWidth > 0) {
+      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+      setTileWidth(calendarWidth / 7);
+    }
+
+    const eventBlock = calendarElement.querySelector<HTMLElement>('[data-calendar-event-block]');
     if (eventBlock) {
       // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setDragBlockHeight(eventBlock.getBoundingClientRect().height);
     }
 
-    const eventRows = calendarRef.current?.querySelector<HTMLElement>('[data-calendar-event-rows]');
+    const eventRows = calendarElement.querySelector<HTMLElement>('[data-calendar-event-rows]');
     if (eventRows) {
       const rowGap = Number.parseFloat(window.getComputedStyle(eventRows).rowGap || '0');
       if (Number.isFinite(rowGap)) {
@@ -83,8 +93,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
       }
     }
 
-    const dayTiles = calendarRef.current?.querySelectorAll<HTMLElement>('[data-calendar-day-tile]');
-    if (dayTiles && dayTiles.length > 7) {
+    if (dayTiles.length > 7) {
       const firstRowTop = dayTiles[0].getBoundingClientRect().top;
       const secondRowTop = dayTiles[7].getBoundingClientRect().top;
       const weekStep = secondRowTop - firstRowTop;
@@ -93,22 +102,32 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
         setDragWeekRowStep(weekStep);
       }
     }
+  }, []);
+
+  React.useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const handleViewportResize = () => updateTileWidth();
+    viewport.addEventListener('resize', handleViewportResize);
+    return () => {
+      viewport.removeEventListener('resize', handleViewportResize);
+    };
+  }, [updateTileWidth]);
+
+  function getInitialTopFromActivatorEvent(activatorEvent: Event): number | undefined {
+    const target = activatorEvent.target;
+    if (!(target instanceof Element)) {
+      return undefined;
+    }
+
+    const eventBlock = target.closest('[data-calendar-event-block]');
+    const element = eventBlock ?? target;
+    return element.getBoundingClientRect().top;
   }
 
-  React.useEffect(() => {
-    updateTileWidth();
-  }, []);
-
-  React.useEffect(() => {
-    window.addEventListener('resize', updateTileWidth);
-    return () => {
-      window.removeEventListener('resize', updateTileWidth);
-    };
-  }, []);
-
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { delay: 0, tolerance: 0 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 0 } })
   );
 
   function getDayNumberFromDropId(dropId: string): number | undefined {
@@ -209,8 +228,8 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
 
     const startDayUtc = dateToUtcDay(draggedEvent.start);
     const anchorOffset = Math.floor((sourceDayUtc - startDayUtc) / DAY_MS);
-    const initialTop = event.active.rect.current.initial?.top;
     const activatorEvent = event.activatorEvent;
+    const initialTop = event.active.rect.current.initial?.top ?? getInitialTopFromActivatorEvent(activatorEvent);
     let pointerY: number | undefined;
     if ('clientY' in activatorEvent && typeof activatorEvent.clientY === 'number') {
       pointerY = activatorEvent.clientY;
@@ -312,14 +331,76 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   }
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
+  const displayedMonthDays = React.useMemo(() => getDaysInMonth(currentMonth), [currentMonth]);
+  const displayedStartDayUtc = displayedMonthDays.length > 0 ? dateToUtcDay(displayedMonthDays[0]) : undefined;
+  const displayedEndDayUtc =
+    displayedMonthDays.length > 0 ? dateToUtcDay(displayedMonthDays[displayedMonthDays.length - 1]) : undefined;
+
+  const overlayVisibleWindow = React.useMemo(() => {
+    if (
+      !activeDragOverlay ||
+      dropPreviewDays.length === 0 ||
+      displayedStartDayUtc === undefined ||
+      displayedEndDayUtc === undefined
+    ) {
+      return undefined;
+    }
+
+    const previewStartDayUtc = dropPreviewDays[0];
+    const previewEndDayUtc = previewStartDayUtc + (activeDragOverlay.spanDays - 1) * DAY_MS;
+    const visibleStartDayUtc = Math.max(previewStartDayUtc, displayedStartDayUtc);
+    const visibleEndDayUtc = Math.min(previewEndDayUtc, displayedEndDayUtc);
+
+    if (visibleEndDayUtc < visibleStartDayUtc) {
+      return undefined;
+    }
+
+    const hiddenLeadingDays = Math.floor((visibleStartDayUtc - previewStartDayUtc) / DAY_MS);
+    const visibleSpanDays = Math.floor((visibleEndDayUtc - visibleStartDayUtc) / DAY_MS) + 1;
+    return {
+      visibleStartDayUtc,
+      visibleSpanDays,
+      hiddenLeadingDays,
+    };
+  }, [DAY_MS, activeDragOverlay, displayedEndDayUtc, displayedStartDayUtc, dropPreviewDays]);
+
   const overlaySegments =
-    activeDragOverlay && dropPreviewDays.length > 0
-      ? buildWeeklyOverlaySegments(dropPreviewDays[0], activeDragOverlay.spanDays)
+    overlayVisibleWindow && overlayVisibleWindow.visibleSpanDays > 0
+      ? buildWeeklyOverlaySegments(overlayVisibleWindow.visibleStartDayUtc, overlayVisibleWindow.visibleSpanDays)
       : [];
+
+  const visibleAnchorOffset =
+    activeDragOverlay && overlayVisibleWindow
+      ? Math.max(
+          0,
+          Math.min(
+            overlayVisibleWindow.visibleSpanDays - 1,
+            activeDragOverlay.anchorOffset - overlayVisibleWindow.hiddenLeadingDays
+          )
+        )
+      : 0;
+
   const overlayAnchor =
-    activeDragOverlay && overlaySegments.length > 0
-      ? getOverlayAnchorPosition(overlaySegments, activeDragOverlay.anchorOffset)
-      : { row: 0, column: 0 };
+    overlaySegments.length > 0 ? getOverlayAnchorPosition(overlaySegments, visibleAnchorOffset) : { row: 0, column: 0 };
+
+  const overlayDrawLeft = -(overlayAnchor.column * tileWidth);
+  const overlayScrollOffsetY = typeof window === 'undefined' ? 0 : window.scrollY;
+  const overlayDrawTop =
+    DRAG_CURSOR_Y_NUDGE - activeDragPointerOffsetY - overlayAnchor.row * dragWeekRowStep + overlayScrollOffsetY;
+
+  React.useEffect(() => {
+    if (!activeDragOverlay || overlaySegments.length === 0) {
+      return;
+    }
+  }, [
+    activeDragOverlay,
+    overlaySegments.length,
+    overlayDrawLeft,
+    overlayDrawTop,
+    overlayScrollOffsetY,
+    overlayAnchor.row,
+    overlayAnchor.column,
+  ]);
 
   const defaultButtons = [
     <AppButton
@@ -349,7 +430,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     currentMonth.year * 12 + currentMonth.month > previousMonth.year * 12 + previousMonth.month ? 'right' : 'left';
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div ref={calendarRef} className="flex flex-col gap-4 p-4">
       <div className="flex w-full items-center justify-center">
         <AppButton variant="plain" onClick={() => handleMonthChange(-1)}>
           <ChevronLeftIcon className="h-8 w-8" />
@@ -385,13 +466,13 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
             onDragCancel={handleDragCancel}
             onDragEnd={handleDragEnd}
           >
-            <div ref={calendarRef} className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-1">
               {weekDays.map((day) => (
                 <div key={day} className="truncate text-center">
                   {day}
                 </div>
               ))}
-              {getDaysInMonth(currentMonth).map((date) => (
+              {displayedMonthDays.map((date) => (
                 <AppCalendarTile
                   date={date}
                   eventsWithRows={eventsWithRows}
@@ -406,12 +487,12 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
               ))}
             </div>
             <DragOverlay adjustScale={false}>
-              {activeDragOverlay ? (
+              {activeDragOverlay && overlaySegments.length > 0 ? (
                 <div
                   className="pointer-events-none"
                   style={{
-                    marginLeft: -(overlayAnchor.column * tileWidth),
-                    marginTop: DRAG_CURSOR_Y_NUDGE - activeDragPointerOffsetY - overlayAnchor.row * dragWeekRowStep,
+                    marginLeft: overlayDrawLeft,
+                    marginTop: overlayDrawTop,
                   }}
                 >
                   <div
@@ -440,23 +521,3 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     </div>
   );
 }
-
-export type CalendarEvent = {
-  id?: string;
-  title: string;
-  start: Date;
-  end: Date;
-
-  link?: string;
-  color?: string;
-};
-
-export type CalendarEventWithRow = CalendarEvent & { row: number };
-
-export type CalendarEventDropPayload = {
-  event: CalendarEvent;
-  sourceDate: Date;
-  targetDate: Date;
-  nextStart: Date;
-  nextEnd: Date;
-};
