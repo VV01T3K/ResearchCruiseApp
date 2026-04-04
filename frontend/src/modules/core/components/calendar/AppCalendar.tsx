@@ -109,6 +109,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   React.useEffect(() => {
     const viewport = window.visualViewport;
     if (!viewport) return;
+    updateTileWidth();
     const handleViewportResize = () => updateTileWidth();
     viewport.addEventListener('resize', handleViewportResize);
     return () => {
