@@ -1,13 +1,10 @@
-import { Field as BaseField } from '@base-ui/react/field';
-import { Input as BaseInput } from '@base-ui/react/input';
 import { cva } from 'class-variance-authority';
 import { TriangleAlert } from 'lucide-react';
 import React from 'react';
 
+import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from '@/components/shadcn/ui/field';
+import { Input } from '@/components/shadcn/ui/input';
 import { useFieldContext } from '@/integrations/tanstack/form/context';
-import { cn } from '@/lib/utils';
-
-import { FieldErrors } from '@/integrations/tanstack/form/newFieldComponets/shared';
 
 type TextFieldProps = {
   label?: React.ReactNode;
@@ -17,16 +14,15 @@ type TextFieldProps = {
   autoComplete?: string;
   disabled?: boolean;
   endAdornment?: React.ReactNode;
-  children?: React.ReactNode;
   showAllErrors?: boolean;
 };
 
 const textFieldInputVariants = cva(
-  'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-500',
+  'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus-visible:border-blue-500 focus-visible:shadow focus-visible:ring-3 focus-visible:ring-blue-500/30',
   {
     variants: {
       hasError: {
-        true: 'border-danger ring-danger text-danger focus:border-danger focus:ring-danger focus:text-gray-900',
+        true: 'border-danger text-danger focus-visible:border-danger focus-visible:ring-danger/20 focus-visible:text-gray-900',
       },
       hasAdornment: {
         true: 'pr-11',
@@ -46,51 +42,49 @@ export function TextField({
   showAllErrors,
 }: TextFieldProps) {
   const field = useFieldContext<string>();
-  const isInvalid = !field.state.meta.isValid;
-  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
-    <BaseField.Root
-      name={field.name}
-      invalid={isInvalid}
-      dirty={field.state.meta.isDirty}
-      touched={field.state.meta.isTouched}
+    <Field
+      data-invalid={isInvalid || undefined}
+      data-dirty={field.state.meta.isDirty || undefined}
+      data-touched={field.state.meta.isTouched || undefined}
+      data-disabled={disabled || undefined}
       className="flex flex-col"
-      data-invalid={hasError || undefined}
     >
       {label ? (
-        <BaseField.Label className="mb-2 block text-sm font-medium text-gray-900">{label}</BaseField.Label>
+        <FieldLabel htmlFor={field.name} className="mb-2 block text-sm font-medium text-gray-900">
+          {label}
+        </FieldLabel>
       ) : null}
-      {description ? (
-        <BaseField.Description className="mb-2 text-sm text-gray-600">{description}</BaseField.Description>
-      ) : null}
-      <div className="relative flex">
-        <BaseInput
-          id={field.name}
-          type={type}
-          autoComplete={autoComplete}
-          value={field.state.value}
-          placeholder={placeholder}
-          disabled={disabled}
-          onBlur={field.handleBlur}
-          onValueChange={field.handleChange}
-          className={cn(
-            textFieldInputVariants({
-              hasError,
-              hasAdornment: hasError || Boolean(endAdornment),
-            })
-          )}
-        />
-        {hasError || endAdornment ? (
-          <div className="pointer-events-none absolute top-1/2 right-3 flex -translate-y-1/2 items-center">
-            {hasError ? <TriangleAlert className="h-5 w-5 text-danger" /> : endAdornment}
-          </div>
-        ) : null}
-      </div>
-      <BaseField.Error match={hasError}>
-        <FieldErrors meta={field.state.meta} showAllErrors={showAllErrors} />
-      </BaseField.Error>
-    </BaseField.Root>
+      {description ? <FieldDescription className="mb-2 text-sm text-gray-600">{description}</FieldDescription> : null}
+      <FieldContent className="gap-0">
+        <div className="relative flex">
+          <Input
+            id={field.name}
+            name={field.name}
+            type={type}
+            autoComplete={autoComplete}
+            value={field.state.value}
+            placeholder={placeholder}
+            disabled={disabled}
+            aria-invalid={isInvalid || undefined}
+            onBlur={field.handleBlur}
+            onChange={(event) => field.handleChange(event.target.value)}
+            className={textFieldInputVariants({
+              hasError: isInvalid,
+              hasAdornment: isInvalid || Boolean(endAdornment),
+            })}
+          />
+          {isInvalid || endAdornment ? (
+            <div className="pointer-events-none absolute top-1/2 right-3 flex -translate-y-1/2 items-center">
+              {isInvalid ? <TriangleAlert className="h-5 w-5 text-danger" /> : endAdornment}
+            </div>
+          ) : null}
+        </div>
+        {isInvalid ? <FieldError errors={field.state.meta.errors} showAllErrors={showAllErrors} /> : null}
+      </FieldContent>
+    </Field>
   );
 }
 

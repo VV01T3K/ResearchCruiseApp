@@ -1,13 +1,11 @@
-import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
-import { Field as BaseField } from '@base-ui/react/field';
-import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import { cva } from 'class-variance-authority';
 import React from 'react';
 
+import { Checkbox } from '@/components/shadcn/ui/checkbox';
+import { Field, FieldError, FieldLabel } from '@/components/shadcn/ui/field';
 import { cn } from '@/lib/utils';
 
 import { useFieldContext } from '../context';
-import { FieldErrors } from './shared';
 
 type CheckboxFieldProps = {
   label?: React.ReactNode;
@@ -40,15 +38,15 @@ const checkboxFieldLabelVariants = cva('block text-sm font-medium text-gray-900'
 });
 
 const checkboxFieldRootVariants = cva(
-  'flex h-4 w-4 items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
+  'border-gray-300 bg-white text-white transition-all duration-300 hover:border-gray-400',
   {
     variants: {
       checked: {
         true: 'border-primary bg-primary text-white',
-        false: 'bg-white hover:border-gray-400',
+        false: '',
       },
       hasError: {
-        true: 'border-danger focus-visible:border-danger',
+        true: 'border-danger aria-invalid:border-danger',
       },
     },
   }
@@ -56,45 +54,43 @@ const checkboxFieldRootVariants = cva(
 
 export function CheckboxField({ label, className, labelPosition = 'left' }: CheckboxFieldProps) {
   const field = useFieldContext<boolean>();
-  const isInvalid = !field.state.meta.isValid;
-  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   const checked = field.state.value === true;
 
   return (
-    <BaseField.Root
-      name={field.name}
-      invalid={isInvalid}
-      dirty={field.state.meta.isDirty}
-      touched={field.state.meta.isTouched}
-      className={cn('flex flex-col', className)}
-      data-invalid={hasError || undefined}
+    <div
+      className={cn('flex flex-col gap-2', className)}
+      data-invalid={isInvalid || undefined}
+      data-dirty={field.state.meta.isDirty || undefined}
+      data-touched={field.state.meta.isTouched || undefined}
     >
-      <div className={cn(checkboxFieldLayoutVariants({ labelPosition }))}>
+      <Field
+        orientation={labelPosition === 'left' ? 'horizontal' : 'vertical'}
+        data-invalid={isInvalid || undefined}
+        className={cn(checkboxFieldLayoutVariants({ labelPosition }), 'gap-2')}
+      >
         {label ? (
-          <BaseField.Label className={cn(checkboxFieldLabelVariants({ labelPosition }))}>{label}</BaseField.Label>
+          <FieldLabel htmlFor={field.name} className={checkboxFieldLabelVariants({ labelPosition })}>
+            {label}
+          </FieldLabel>
         ) : null}
-        <BaseCheckbox.Root
+        <Checkbox
           id={field.name}
           name={field.name}
           checked={checked}
+          aria-invalid={isInvalid || undefined}
           onCheckedChange={(nextChecked) => field.handleChange(nextChecked === true)}
           onBlur={field.handleBlur}
           className={cn(
             checkboxFieldRootVariants({
               checked,
-              hasError,
+              hasError: isInvalid,
             }),
             'cursor-pointer'
           )}
-        >
-          <BaseCheckbox.Indicator>
-            <CheckLgIcon className="h-4 w-4" />
-          </BaseCheckbox.Indicator>
-        </BaseCheckbox.Root>
-      </div>
-      <BaseField.Error match={hasError}>
-        <FieldErrors meta={field.state.meta} />
-      </BaseField.Error>
-    </BaseField.Root>
+        />
+      </Field>
+      {isInvalid ? <FieldError errors={field.state.meta.errors} /> : null}
+    </div>
   );
 }

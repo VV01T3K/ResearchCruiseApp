@@ -1,5 +1,9 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import './shadcn.css';
 @import './theme.css';
+
+@custom-variant dark (&:is(.dark *));
 
 @layer base {
   html,

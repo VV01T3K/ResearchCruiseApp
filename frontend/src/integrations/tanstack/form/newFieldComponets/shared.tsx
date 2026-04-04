@@ -1,37 +1,45 @@
 import { AnyFieldMeta } from '@tanstack/react-form';
-import { CircleX } from 'lucide-react';
-import { ZodError } from 'zod';
 
 type FieldErrorsProps = {
   meta: AnyFieldMeta;
   showAllErrors?: boolean;
 };
 
+type FieldErrorItem = {
+  message?: string;
+};
+
 export function FieldErrors({ meta, showAllErrors }: FieldErrorsProps) {
-  if (!meta.isTouched || meta.errors.length === 0) return null;
-  const errors = showAllErrors ? meta.errors : meta.errors.slice(0, 1);
-  const uniqueErrors = errors.filter(
-    (error, index, errors) => errors.findIndex(({ message }) => message === error.message) === index
-  );
+  const uniqueMessages = getFieldErrorMessages(meta, showAllErrors);
+
+  if (uniqueMessages.length === 0) return null;
 
   return (
-    <ul className="mt-1 list-disc text-sm text-danger" data-error="true">
-      {uniqueErrors.map(({ message }: ZodError, index) => (
-        <li key={index} className="flex items-start gap-1">
-          <CircleX className="mt-0.5 h-4 w-4 shrink-0" />
-          {message}
-        </li>
+    <ul className="mt-2 flex list-disc flex-col gap-1 pl-4 text-sm text-danger" data-error="true">
+      {uniqueMessages.map((message, index) => (
+        <li key={index}>{message}</li>
       ))}
     </ul>
   );
 }
 
-export function getFieldErrorMessages(meta: AnyFieldMeta, showAllErrors = false) {
+export function getVisibleFieldErrors(meta: AnyFieldMeta, showAllErrors = false): FieldErrorItem[] {
   if (!meta.isTouched || meta.errors.length === 0) return [];
+
   const errors = showAllErrors ? meta.errors : meta.errors.slice(0, 1);
-  const uniqueMessages = errors
+  const uniqueErrors = errors.filter(
+    (error, index, items) => items.findIndex((item) => item.message === error.message) === index
+  );
+
+  return uniqueErrors.map((error) => ({
+    message: error.message,
+  }));
+}
+
+export function getFieldErrorMessages(meta: AnyFieldMeta, showAllErrors = false) {
+  const uniqueMessages = getVisibleFieldErrors(meta, showAllErrors)
     .map((error) => error.message)
-    .filter((message, index, messages) => messages.indexOf(message) === index);
+    .filter((message, index, messages): message is string => Boolean(message) && messages.indexOf(message) === index);
 
   return uniqueMessages;
 }

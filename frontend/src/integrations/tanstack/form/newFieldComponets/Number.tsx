@@ -1,13 +1,11 @@
-import { Field as BaseField } from '@base-ui/react/field';
 import { NumberField as BaseNumberField } from '@base-ui/react/number-field';
 import { cva } from 'class-variance-authority';
 import { Minus, Plus } from 'lucide-react';
 import React from 'react';
 
+import { Field, FieldContent, FieldError, FieldLabel } from '@/components/shadcn/ui/field';
 import { useFieldContext } from '@/integrations/tanstack/form/context';
 import { cn } from '@/lib/utils';
-
-import { FieldErrors } from '@/integrations/tanstack/form/newFieldComponets/shared';
 
 type NumberFieldProps = {
   label?: React.ReactNode;
@@ -59,77 +57,76 @@ export function NumberField({
   testId,
 }: NumberFieldProps) {
   const field = useFieldContext<number>();
-  const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
-    <BaseField.Root
-      name={field.name}
-      invalid={!field.state.meta.isValid}
-      dirty={field.state.meta.isDirty}
-      touched={field.state.meta.isTouched}
+    <Field
+      data-invalid={isInvalid || undefined}
+      data-dirty={field.state.meta.isDirty || undefined}
+      data-touched={field.state.meta.isTouched || undefined}
       className="flex flex-col"
-      data-invalid={hasError || undefined}
     >
       {label ? (
-        <BaseField.Label htmlFor={field.name} className="mb-2 block text-sm font-medium text-gray-900">
+        <FieldLabel htmlFor={field.name} className="mb-2 block text-sm font-medium text-gray-900">
           {label}
-        </BaseField.Label>
+        </FieldLabel>
       ) : null}
-      <BaseNumberField.Root
-        id={field.name}
-        name={field.name}
-        value={field.state.value}
-        min={minimum}
-        max={maximum}
-        step={step}
-        allowOutOfRange={allowOutOfRange}
-        format={{
-          minimumFractionDigits: 0,
-          maximumFractionDigits: type === 'float' ? precision : 0,
-        }}
-        onValueChange={(value) => {
-          field.handleChange(value ?? 0);
-        }}
-        onValueCommitted={field.handleBlur}
-      >
-        <BaseNumberField.Group className="flex items-center">
-          <BaseNumberField.Decrement
-            aria-label="Decrease value"
-            className={cn(
-              numberFieldButtonVariants({ side: 'left', hasError }),
-              'focus:relative focus:z-10 focus:shadow'
-            )}
-          >
-            <Minus className="h-4 w-4" />
-          </BaseNumberField.Decrement>
-          <div className="relative flex-1">
-            <BaseNumberField.Input
-              data-testid={testId}
-              onBlur={field.handleBlur}
-              inputMode={type === 'float' ? 'decimal' : 'numeric'}
+      <FieldContent className="gap-0">
+        <BaseNumberField.Root
+          id={field.name}
+          name={field.name}
+          value={field.state.value}
+          min={minimum}
+          max={maximum}
+          step={step}
+          allowOutOfRange={allowOutOfRange}
+          format={{
+            minimumFractionDigits: 0,
+            maximumFractionDigits: type === 'float' ? precision : 0,
+          }}
+          onValueChange={(value) => {
+            field.handleChange(value ?? 0);
+          }}
+          onValueCommitted={field.handleBlur}
+        >
+          <BaseNumberField.Group className="flex items-center">
+            <BaseNumberField.Decrement
+              aria-label="Decrease value"
               className={cn(
-                numberFieldInputVariants({
-                  hasError,
-                }),
-                '-mx-px w-[calc(100%+2px)] focus:relative focus:z-10 focus:shadow'
+                numberFieldButtonVariants({ side: 'left', hasError: isInvalid }),
+                'focus:relative focus:z-10 focus:shadow'
               )}
-            />
-          </div>
-          <BaseNumberField.Increment
-            aria-label="Increase value"
-            className={cn(
-              numberFieldButtonVariants({ side: 'right', hasError }),
-              'focus:relative focus:z-10 focus:shadow'
-            )}
-          >
-            <Plus className="h-4 w-4" />
-          </BaseNumberField.Increment>
-        </BaseNumberField.Group>
-      </BaseNumberField.Root>
-      <BaseField.Error match={hasError}>
-        <FieldErrors meta={field.state.meta} />
-      </BaseField.Error>
-    </BaseField.Root>
+            >
+              <Minus className="h-4 w-4" />
+            </BaseNumberField.Decrement>
+            <div className="relative flex-1">
+              <BaseNumberField.Input
+                data-testid={testId}
+                aria-invalid={isInvalid || undefined}
+                onBlur={field.handleBlur}
+                inputMode={type === 'float' ? 'decimal' : 'numeric'}
+                className={cn(
+                  numberFieldInputVariants({
+                    hasError: isInvalid,
+                  }),
+                  '-mx-px w-[calc(100%+2px)] focus:relative focus:z-10 focus:shadow'
+                )}
+              />
+            </div>
+            <BaseNumberField.Increment
+              aria-label="Increase value"
+              className={cn(
+                numberFieldButtonVariants({ side: 'right', hasError: isInvalid }),
+                'focus:relative focus:z-10 focus:shadow'
+              )}
+            >
+              <Plus className="h-4 w-4" />
+            </BaseNumberField.Increment>
+          </BaseNumberField.Group>
+        </BaseNumberField.Root>
+        {isInvalid ? <FieldError errors={field.state.meta.errors} /> : null}
+      </FieldContent>
+    </Field>
   );
 }
 
