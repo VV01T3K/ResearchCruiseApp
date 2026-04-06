@@ -3,6 +3,7 @@ pre-commit:
   commands:
     format-frontend:
       root: frontend/
+      glob: '**/*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}'
       run: vp staged
       stage_fixed: true
     format-backend:

@@ -10,7 +10,7 @@ import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 export default defineConfig({
   staged: {
     // TODO: put in the tool.config like the rest
-    '*': 'vp fmt --write',
+    '*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}': 'vp fmt --write',
   },
   lint: lintConfig,
   fmt: fmtConfig,
