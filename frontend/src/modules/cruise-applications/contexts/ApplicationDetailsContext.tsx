@@ -10,7 +10,7 @@ export type ApplicationDetailsContextType = {
 
 const ApplicationDetailsContext = createContext<ApplicationDetailsContextType | undefined>(undefined);
 
-// eslint-disable-next-line react-refresh/only-export-components
+// oxlint-disable-next-line react-refresh/only-export-components
 export function useApplicationDetails() {
   return use(ApplicationDetailsContext)!;
 }

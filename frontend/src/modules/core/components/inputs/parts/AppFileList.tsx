@@ -24,7 +24,7 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
         <AnimatePresence>
           {files.map((file, i) => (
             <motion.li
-              // eslint-disable-next-line @eslint-react/no-array-index-key
+              // oxlint-disable-next-line @eslint-react/no-array-index-key
               key={file.name + i}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -80,7 +80,7 @@ function AppFileListElement({ file, setFileInPreview, onRemove, disabled }: File
         disabled ? 'bg-gray-100' : 'bg-white'
       )}
     >
-      <div className="hover:text-primary truncate duration-300 ease-in-out" onClick={() => setFileInPreview(file)}>
+      <div className="truncate duration-300 ease-in-out hover:text-primary" onClick={() => setFileInPreview(file)}>
         {file.name}
       </div>
 
