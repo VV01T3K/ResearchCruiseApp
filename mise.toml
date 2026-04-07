@@ -8,6 +8,7 @@ npm.package_manager = "bun"
 
 [tools]
 bun = "1.3.11"
+pnpm = "10.33.0"
 dotnet = "10.0"
 
 
@@ -16,27 +17,16 @@ preinstall = '''
     test -f .mise-setup-done && exit 0
     vp env install
 '''
-postinstall = '''
-    mise run sync:package-manager
+postinstall = { task = "postinstall-task" }
+[tasks.postinstall-task]
+dir = "."
+hide = true
+run = '''
     test -f .mise-setup-done && exit 0
     vp install
     (cd frontend && vp exec playwright install --with-deps chromium)
     (cd backend && dotnet restore && dotnet tool restore)
     touch .mise-setup-done
-'''
-
-[tasks."sync:package-manager"]
-description = "Sync the packageManager field in all workspace package.json files to the active Bun version"
-run = '''
-  BUN_PACKAGE_MANAGER="bun@$(bun --version)"
-
-  for package_json in package.json frontend/package.json backend/package.json; do
-    package_dir=$(dirname "$package_json")
-    (
-      cd "$package_dir"
-      bun pm pkg set packageManager="$BUN_PACKAGE_MANAGER"
-    )
-  done
 '''
 
 [tasks."db:up"]
