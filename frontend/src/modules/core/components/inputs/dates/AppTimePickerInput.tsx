@@ -54,7 +54,7 @@ export function AppDatePickerTimeInput({
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setTime(value);
   }, [value]);
 
@@ -117,7 +117,7 @@ export function AppDatePickerTimeInput({
                     }
                     return (
                       <AppButton
-                        // eslint-disable-next-line @eslint-react/no-array-index-key
+                        // oxlint-disable-next-line @eslint-react/no-array-index-key
                         key={i}
                         variant="plain"
                         onClick={() => {
@@ -149,7 +149,7 @@ export function AppDatePickerTimeInput({
 
                     return (
                       <AppButton
-                        // eslint-disable-next-line @eslint-react/no-array-index-key
+                        // oxlint-disable-next-line @eslint-react/no-array-index-key
                         key={i}
                         variant="plain"
                         onClick={() => {

@@ -15,7 +15,7 @@ export type FormAContextType = {
 
 const FormAContext = createContext<FormAContextType | undefined>(undefined);
 
-// eslint-disable-next-line react-refresh/only-export-components
+// oxlint-disable-next-line react-refresh/only-export-components
 export function useFormA() {
   return use(FormAContext)!;
 }

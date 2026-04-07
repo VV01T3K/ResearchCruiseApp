@@ -1,4 +1,4 @@
-import { AnyFieldMeta, AnyFormApi } from '@tanstack/form-core';
+import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
 import clsx, { ClassValue } from 'clsx';
 import { createPortal } from 'react-dom';
 import { twMerge } from 'tailwind-merge';

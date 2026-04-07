@@ -19,7 +19,7 @@ export type FormBContextType = {
 
 const FormBContext = React.createContext<FormBContextType | undefined>(undefined);
 
-// eslint-disable-next-line react-refresh/only-export-components
+// oxlint-disable-next-line react-refresh/only-export-components
 export function useFormB() {
   return React.use(FormBContext)!;
 }

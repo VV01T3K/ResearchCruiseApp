@@ -140,7 +140,7 @@ Utrzymanie porządku w repozytorium jest głównym zadaniem lidera projektu, jak
 - *Visual Studio Code* – środowisko do pracy nad kodem front-endu i back-endu.
 
 == Technologie frontendowe
-- *pnpm*, *bun*, *Node.js* – narzędzia do zarządzania zależnościami, budowania i uruchamiania aplikacji frontendowej.
+- *bun*, *pnpm*, *Vite+*, *Node.js* – narzędzia do zarządzania zależnościami, budowania i uruchamiania aplikacji frontendowej.
 - *React* oraz biblioteki takie jak *TanStack* i *React Motion* – framework i biblioteki wykorzystywane do tworzenia interfejsu użytkownika.
 
 == Technologie backendowe
