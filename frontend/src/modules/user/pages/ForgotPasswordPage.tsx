@@ -49,7 +49,7 @@ export function ForgotPasswordPage() {
     return (
       <AppLayout title="Przywracanie hasła" variant="narrow">
         <p className="text-lg">
-          Link do resetowania hasła został wysłany na adres: <span className="text-primary font-bold">{email}</span>
+          Link do resetowania hasła został wysłany na adres: <span className="font-bold text-primary">{email}</span>
           <AppButton type="link" href="/login" className="mt-8 w-full">
             Wróć do logowania
           </AppButton>

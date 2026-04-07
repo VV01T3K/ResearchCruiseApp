@@ -41,7 +41,7 @@ export function AppCalendar({ events, buttons }: Props) {
 
   function updateTileWidth() {
     const calendarWidth = calendarRef.current?.offsetWidth ?? 700;
-    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setTileWidth(calendarWidth / 7);
   }
 

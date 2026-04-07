@@ -117,7 +117,7 @@ export function LoginPage() {
             />
 
             {signInResult && (
-              <p className="text-danger mt-2 text-center text-sm font-semibold">{errorMessages[signInResult]}</p>
+              <p className="mt-2 text-center text-sm font-semibold text-danger">{errorMessages[signInResult]}</p>
             )}
           </div>
 

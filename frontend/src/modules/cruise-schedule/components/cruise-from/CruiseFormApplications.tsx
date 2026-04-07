@@ -1,4 +1,4 @@
-import { AnyFieldApi } from '@tanstack/form-core';
+import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';

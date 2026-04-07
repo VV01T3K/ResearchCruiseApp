@@ -14,7 +14,7 @@ import { PermissionDto } from '@/cruise-applications/models/PermissionDto';
 export function FormBAdditionalPermissionsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   function getColumns(field: any): ColumnDef<PermissionDto>[] {
     return [
       {

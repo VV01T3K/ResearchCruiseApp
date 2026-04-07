@@ -40,7 +40,7 @@ export function AppButton(props: Props) {
   );
 
   if (props.type === 'link') {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     const { variant: _, ...other } = props;
 
     return (

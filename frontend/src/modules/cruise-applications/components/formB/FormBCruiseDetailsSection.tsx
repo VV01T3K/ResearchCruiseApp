@@ -18,7 +18,7 @@ import { ShortResearchEquipmentDto } from '@/cruise-applications/models/ShortRes
 
 const shortResearchEquipmentColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean,
@@ -137,7 +137,7 @@ const shortResearchEquipmentColumns = (
 
 const longResearchEquipmentColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
@@ -242,7 +242,7 @@ const longResearchEquipmentColumns = (
 
 const portColumns = (
   form: FormBContextType['form'],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean,
