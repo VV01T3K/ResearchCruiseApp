@@ -1,14 +1,16 @@
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+FROM mcr.microsoft.com/devcontainers/base:trixie
 
-# Fix expired Yarn GPG key that breaks docker-in-docker feature
-# See: https://github.com/devcontainers/features/issues/1543
-RUN rm -f /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y --no-install-recommends xdg-utils
+USER vscode
 
-COPY --from=oven/bun /usr/local/bin/bun /usr/local/bin/bun
-RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
-
-RUN wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install -y dotnet-sdk-10.0
+RUN curl -fsSL https://vite.plus | bash
+RUN curl -fsSL https://mise.run | sh \
+    && echo 'eval "$(mise activate bash)"' >> ~/.bashrc \
+    && echo 'eval "$(mise activate zsh)"' >> "${ZDOTDIR-$HOME}/.zshrc"
+ENV PATH="/home/vscode/.vite-plus/bin:/home/vscode/.local/bin:${PATH}"
+COPY frontend/.node-version /tmp/.node-version
+RUN cd /tmp && vp env install
+RUN vp dlx playwright@1.59.1 install --with-deps chromium
+RUN mise use -g claude@latest codex@latest opencode@latest "npm:btca@latest"
+COPY mise.toml /tmp/mise.toml
+RUN cd /tmp && mise trust && mise install -y

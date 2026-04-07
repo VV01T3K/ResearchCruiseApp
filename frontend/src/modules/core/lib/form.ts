@@ -46,7 +46,7 @@ export const { useAppForm, withForm } = createFormHook({
  *
  * @template TFormData - The type of the form's data/values
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 export type AnyReactFormApi<TFormData> = ReactFormExtendedApi<
   TFormData,
   any,
@@ -61,4 +61,4 @@ export type AnyReactFormApi<TFormData> = ReactFormExtendedApi<
   any,
   any
 >;
-/* eslint-enable @typescript-eslint/no-explicit-any */
+/* oxlint-enable @typescript-eslint/no-explicit-any */

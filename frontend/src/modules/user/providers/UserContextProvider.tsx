@@ -33,15 +33,26 @@ export function UserContextProvider({ children }: Props) {
     };
   }, []);
 
-  const accessTokenValid = authDetails ? authDetails.accessTokenExpirationDate > new Date() : false;
-
   React.useLayoutEffect(() => {
-    if (accessTokenValid) {
-      setAuthToken(authDetails);
-    } else {
+    if (!authDetails) {
       setAuthToken(undefined);
+      return;
     }
-  }, [accessTokenValid, authDetails]);
+
+    const remainingMs = authDetails.accessTokenExpirationDate.getTime() - Date.now();
+    if (remainingMs <= 0) {
+      setAuthToken(undefined);
+      return;
+    }
+
+    setAuthToken(authDetails);
+
+    const timeoutId = window.setTimeout(() => {
+      setAuthToken(undefined);
+    }, remainingMs);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [authDetails]);
 
   const profileQuery = useProfileQuery();
 

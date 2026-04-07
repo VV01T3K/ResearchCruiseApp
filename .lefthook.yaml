@@ -1,0 +1,13 @@
+pre-commit:
+  parallel: true
+  commands:
+    format-frontend:
+      root: frontend/
+      glob: '**/*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}'
+      run: vp staged
+      stage_fixed: true
+    format-backend:
+      root: backend/
+      glob: '**/*.cs'
+      run: vp run -F backend staged {staged_files}
+      stage_fixed: true
