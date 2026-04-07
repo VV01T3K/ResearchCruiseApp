@@ -3,17 +3,17 @@
   "private": true,
   "scripts": {
     "dev": "vp run -r dev",
-    "build": "vp run -r build",
-    "check": "vp run -r check",
-    "fix": "vp run -r fix",
-    "ef:seed": "vp run -F backend ef:seed",
+    "build": "vp run --cache -r build",
+    "check": "vp run --cache -r check",
+    "fix": "vp run --cache -r fix",
+    "seed": "vp run -F backend seed",
     "ef:update": "vp run -F backend ef:update",
     "ef:drop": "vp run -F backend ef:drop",
     "ef:migration:add": "vp run -F backend ef:migration:add",
     "ef:migration:remove": "vp run -F backend ef:migration:remove"
   },
   "devDependencies": {
-    "lefthook": "^2.1.4"
+    "lefthook": "^2.1.5"
   },
   "packageManager": "pnpm@10.33.0",
   "pnpm": {
