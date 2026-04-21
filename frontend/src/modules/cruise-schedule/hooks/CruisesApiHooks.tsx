@@ -83,6 +83,19 @@ export function useUpdateCruiseMutation(id: string) {
   });
 }
 
+export function useUpdateCruiseByIdMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, cruise }: { id: string; cruise: CruiseFormDto }) => {
+      await client.patch(`/api/Cruises/${id}`, cruise);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['cruises'] });
+      queryClient.invalidateQueries({ queryKey: ['cruises', variables.id] });
+    },
+  });
+}
+
 export function useConfirmCruiseMutation(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
