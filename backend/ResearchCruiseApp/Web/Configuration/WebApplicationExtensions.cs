@@ -16,6 +16,12 @@ public static class WebApplicationExtensions
                 {
                     options.WithOpenApiRoutePattern("/openapi/{documentName}.json");
                     options.AddDocument("v1", "Research Cruise App API");
+                    options.AddPreferredSecuritySchemes("Bearer");
+                    options.ShowOperationId();
+                    options.SortTagsAlphabetically();
+                    options.SortOperationsByMethod();
+                    options.WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Fetch);
+                    options.DisableAgent();
                 }
             );
         }
