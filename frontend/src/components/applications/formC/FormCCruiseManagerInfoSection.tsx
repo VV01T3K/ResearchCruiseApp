@@ -1,0 +1,45 @@
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { useFormC } from '@/contexts/applications/FormCContext';
+
+export function FormCCruiseManagerInfoSection() {
+  const { formA, formAInitValues } = useFormC();
+
+  return (
+    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-c-cruise-manager-section">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <AppDropdownInput
+          name="cruiseManager"
+          value={formA.cruiseManagerId}
+          allOptions={formAInitValues.cruiseManagers.map((cruiseManager) => ({
+            inlineLabel: `${cruiseManager.firstName} ${cruiseManager.lastName} (${cruiseManager.email})`,
+            value: cruiseManager.id,
+          }))}
+          label="Kierownik rejsu"
+          disabled
+        />
+        <AppDropdownInput
+          name="deputyManager"
+          value={formA.deputyManagerId}
+          allOptions={formAInitValues.deputyManagers.map((deputyManager) => ({
+            inlineLabel: `${deputyManager.firstName} ${deputyManager.lastName} (${deputyManager.email})`,
+            value: deputyManager.id,
+          }))}
+          label="Zastępca kierownika rejsu"
+          disabled
+        />
+        <AppDropdownInput
+          name="Rok"
+          value={formA.year}
+          label="Rok"
+          placeholder="Wybierz rok"
+          allOptions={formAInitValues.years.map((year) => ({
+            value: year,
+            inlineLabel: year,
+          }))}
+          disabled
+        />
+      </div>
+    </AppAccordion>
+  );
+}

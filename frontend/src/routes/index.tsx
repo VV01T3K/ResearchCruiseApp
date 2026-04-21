@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { allowOnly } from '@/core/lib/guards';
-import { DashboardPage } from '@/dashboard/pages/DashboardPage';
+import { allowOnly } from '@/lib/guards';
+import { DashboardPage } from '@/routes/-index/DashboardPage';
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,

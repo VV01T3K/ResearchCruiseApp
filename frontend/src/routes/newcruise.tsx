@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { allowOnly } from '@/core/lib/guards';
-import { Role } from '@/core/models/Role';
-import { NewCruisePage } from '@/cruise-applications/pages/NewCruisePage';
+import { allowOnly } from '@/lib/guards';
+import { Role } from '@/models/shared/Role';
+import { NewCruisePage } from '@/routes/-newcruise/NewCruisePage';
 
 export const Route = createFileRoute('/newcruise')({
   component: NewCruisePage,

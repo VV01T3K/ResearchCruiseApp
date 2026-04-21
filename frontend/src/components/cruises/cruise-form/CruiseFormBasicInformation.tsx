@@ -1,0 +1,52 @@
+import { useStore } from '@tanstack/react-form';
+
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppAlert } from '@/components/shared/AppAlert';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { getErrors } from '@/lib/utils';
+import { CruiseStatusBadge } from '@/components/cruises/CruiseStatusBadge';
+import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
+
+export function CruiseFormBasicInformationSection() {
+  const { cruise, form, hasFormBeenSubmitted, isReadonly } = useCruiseForm();
+  const shipUnavailable = useStore(form.store, (state) => state.values.shipUnavailable);
+
+  return (
+    <AppAccordion title={`1. Podstawowe informacje o ${shipUnavailable ? 'blokadzie' : 'rejsie'}`} expandedByDefault>
+      <>
+        {cruise && (
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="flex gap-4">
+              <div className="font-bold">Numer rejsu:</div>
+              <div>{cruise.number}</div>
+            </div>
+            <div className="flex gap-4">
+              <div className="font-bold">Status:</div>
+              <div>
+                <CruiseStatusBadge status={cruise.status} />
+              </div>
+            </div>
+          </div>
+        )}
+        {!cruise && <AppAlert>Numer i status rejsu będą dostępne po jego utworzeniu</AppAlert>}
+        <div className="mt-2 flex flex-col space-y-2">
+          <form.Field
+            name="title"
+            children={(field) => (
+              <AppInput
+                name={field.name}
+                value={field.state.value || ''}
+                onChange={(value) => field.handleChange(value)}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                label={shipUnavailable ? 'Tytuł blokady' : 'Tytuł rejsu'}
+                placeholder="np. Rejs specjalny, Serwis silnika, Zmiana załogi..."
+                disabled={isReadonly}
+              />
+            )}
+          />
+        </div>
+      </>
+    </AppAccordion>
+  );
+}

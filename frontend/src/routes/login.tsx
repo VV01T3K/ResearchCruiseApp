@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
-import { allowOnly } from '@/core/lib/guards';
-import { LoginPage } from '@/user/pages/LoginPage';
+import { allowOnly } from '@/lib/guards';
+import { LoginPage } from '@/routes/-login/LoginPage';
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
