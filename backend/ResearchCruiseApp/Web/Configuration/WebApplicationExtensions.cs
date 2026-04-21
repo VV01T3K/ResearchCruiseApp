@@ -9,6 +9,8 @@ public static class WebApplicationExtensions
     {
         if (app.Environment.IsDevelopment())
         {
+            var scalarBearerToken = app.Configuration["Scalar:BearerToken"];
+
             app.MapOpenApi();
             app.MapScalarApiReference(
                 "/scalar",
@@ -22,6 +24,14 @@ public static class WebApplicationExtensions
                     options.SortOperationsByMethod();
                     options.WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Fetch);
                     options.DisableAgent();
+
+                    if (!string.IsNullOrWhiteSpace(scalarBearerToken))
+                    {
+                        options.AddHttpAuthentication("Bearer", auth =>
+                        {
+                            auth.Token = scalarBearerToken;
+                        });
+                    }
                 }
             );
         }

@@ -100,6 +100,15 @@ run = '''
       { printf "Email:    %s\nPassword: %s\n", $1, $2 }
     ' > ../credentials.log
     echo "Users credentials saved to credentials.log"
+
+    SEED_USER=$(grep -oP 'Seed User Created: \K.*' "$LOG" | head -n 1)
+    TOKEN=$(curl -fsS \
+      -H "Content-Type: application/json" \
+      --data "$(jq -n --arg email "${SEED_USER%% - *}" --arg password "${SEED_USER#* - }" '{ email: $email, password: $password }')" \
+      "http://localhost:$PORT/Account/login" \
+      | jq -r ".accessToken")
+    dotnet user-secrets set "Scalar:BearerToken" "$TOKEN" --project ResearchCruiseApp/ResearchCruiseApp.csproj >/dev/null
+    echo "Scalar bearer token saved to backend user-secrets"
   else
     echo "Warning: users credentials not found in output"
   fi
