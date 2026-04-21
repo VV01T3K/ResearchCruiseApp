@@ -1,4 +1,5 @@
 ﻿using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
+using Scalar.AspNetCore;
 
 namespace ResearchCruiseApp.Web.Configuration;
 
@@ -9,6 +10,14 @@ public static class WebApplicationExtensions
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.MapScalarApiReference(
+                "/scalar",
+                options =>
+                {
+                    options.WithOpenApiRoutePattern("/openapi/{documentName}.json");
+                    options.AddDocument("v1", "Research Cruise App API");
+                }
+            );
         }
 
         app.UseHttpsRedirection();
