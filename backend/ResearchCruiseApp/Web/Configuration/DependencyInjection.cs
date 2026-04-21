@@ -11,8 +11,11 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.MaxDepth = 64;
             });
 
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddOpenApi("v1", options =>
+        {
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+            options.AddOperationTransformer<AuthorizeOperationTransformer>();
+        });
         services.AddHealthChecks();
 
         services.AddCors(options =>
