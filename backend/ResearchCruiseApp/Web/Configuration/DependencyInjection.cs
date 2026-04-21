@@ -1,4 +1,6 @@
-﻿namespace ResearchCruiseApp.Web.Configuration;
+﻿using MicroElements.AspNetCore.OpenApi.FluentValidation;
+
+namespace ResearchCruiseApp.Web.Configuration;
 
 public static class DependencyInjection
 {
@@ -11,8 +13,14 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.MaxDepth = 64;
             });
 
+        services.AddFluentValidationRulesToOpenApi(options =>
+        {
+            options.SetNotNullableIfMinLengthGreaterThenZero = true;
+        });
+
         services.AddOpenApi("v1", options =>
         {
+            options.AddFluentValidationRules();
             options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
             options.AddOperationTransformer<AuthorizeOperationTransformer>();
         });
