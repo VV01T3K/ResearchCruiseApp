@@ -1,4 +1,5 @@
-﻿using MicroElements.AspNetCore.OpenApi.FluentValidation;
+﻿using System.Text.Json.Serialization;
+using MicroElements.AspNetCore.OpenApi.FluentValidation;
 
 namespace ResearchCruiseApp.Web.Configuration;
 
@@ -11,7 +12,13 @@ public static class DependencyInjection
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.MaxDepth = 64;
+                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
             });
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+        });
 
         services.AddFluentValidationRulesToOpenApi(options =>
         {

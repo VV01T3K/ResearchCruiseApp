@@ -1,0 +1,2975 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "ResearchCruiseApp | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/Account/register": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Account/login": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Account/refresh": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Account/emailConfirmation": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "changedEmail",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Account/emailConfirmationRequest": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Account": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Account/password": {
+      "patch": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Account/forgotPassword": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Account/passwordReset": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CruiseApplications": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "isDraft",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormADto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormADto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormADto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/forCruise": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/FormA": {
+      "put": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "isDraft",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormADto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormADto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormADto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/evaluation": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseApplicationEvaluationsEditsDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseApplicationEvaluationsEditsDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseApplicationEvaluationsEditsDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/FormB": {
+      "put": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "isDraft",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormBDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormBDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormBDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/formA": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/formAForSupervisor": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "supervisorCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/supervisorAnswer": {
+      "patch": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "accept",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "supervisorCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/answer": {
+      "patch": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "accept",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/formB": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/FormC": {
+      "put": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "isDraft",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormCDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormCDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormCDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/FormC/Effects": {
+      "patch": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EffectsUpdatesDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EffectsUpdatesDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EffectsUpdatesDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{id}/FormC/Refill": {
+      "put": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{id}/FormB/Refill": {
+      "put": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{userId}/effectsEvaluations": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/{cruiseApplicationId}/cruise": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/effectsEvaluations": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/ownPublications": {
+      "get": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PublicationDto"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PublicationDto"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PublicationDto"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/CruiseApplications/ownPublications/{publicationId}": {
+      "delete": {
+        "tags": [
+          "CruiseApplications"
+        ],
+        "parameters": [
+          {
+            "name": "publicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises": {
+      "get": {
+        "tags": [
+          "Cruises"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Cruises"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/{id}": {
+      "get": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CruiseFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/{id}/confirm": {
+      "put": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/{id}/revert": {
+      "put": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/{id}/end": {
+      "put": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/autoAdded": {
+      "put": {
+        "tags": [
+          "Cruises"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/csv": {
+      "get": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Cruises/blockades/{year}": {
+      "get": {
+        "tags": [
+          "Cruises"
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Forms/InitValues/A": {
+      "get": {
+        "tags": [
+          "Forms"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Forms/InitValuesForSupervisor/A": {
+      "get": {
+        "tags": [
+          "Forms"
+        ],
+        "parameters": [
+          {
+            "name": "cruiseApplicationId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "supervisorCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Forms/InitValues/B": {
+      "get": {
+        "tags": [
+          "Forms"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserFormDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserFormDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserFormDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Users/unaccepted/{id}": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Users/{id}/deactivate": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Users/{id}/roles": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleToggleDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleToggleDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRoleToggleDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Version": {
+      "get": {
+        "tags": [
+          "Version"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddUserFormDto": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "role": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ChangePasswordFormDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "CollectedSampleDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": "string"
+          },
+          "amount": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": "string"
+          },
+          "analysis": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": "string"
+          },
+          "publishing": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "ContractDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "institutionName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "institutionUnit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "institutionLocalization": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileDto"
+            }
+          }
+        }
+      },
+      "CrewMemberDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "firstName": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "lastName": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "birthPlace": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "birthDate": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "documentNumber": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "documentExpiryDate": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "institution": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "CruiseApplicationEvaluationsEditsDto": {
+        "type": "object",
+        "properties": {
+          "researchTasksEvaluationsEdits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationEditDto"
+            }
+          },
+          "contractsEvaluationsEdits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationEditDto"
+            }
+          },
+          "newUgUnitsPoints": {
+            "type": "string"
+          },
+          "publicationsEvaluationsEdits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationEditDto"
+            }
+          },
+          "spubTaskEvaluationsEdits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationEditDto"
+            }
+          }
+        }
+      },
+      "CruiseDayDetailsDto": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "hours": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "taskName": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "region": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "position": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "comment": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "CruiseFormDto": {
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "endDate": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "managersTeam": {
+            "$ref": "#/components/schemas/CruiseManagersTeamDto"
+          },
+          "cruiseApplicationsIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "title": {
+            "maxLength": 512,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "shipUnavailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CruiseManagersTeamDto": {
+        "type": "object",
+        "properties": {
+          "mainCruiseManagerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mainDeputyManagerId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "EffectsUpdatesDto": {
+        "type": "object",
+        "properties": {
+          "researchTasksEffects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchTaskEffectDto"
+            }
+          }
+        }
+      },
+      "EmailDto": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "EvaluationEditDto": {
+        "type": "object",
+        "properties": {
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "newPoints": {
+            "type": "string"
+          }
+        }
+      },
+      "FileDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "ForgotPasswordFormDto": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "FormADto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "cruiseManagerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deputyManagerId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "maxLength": 4,
+            "minLength": 0,
+            "type": "string"
+          },
+          "acceptablePeriod": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "optimalPeriod": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "periodSelectionType": {
+            "maxLength": 16,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "precisePeriodStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "precisePeriodEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "cruiseHours": {
+            "maxLength": 8,
+            "minLength": 0,
+            "type": "string"
+          },
+          "periodNotes": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "shipUsage": {
+            "maxLength": 1,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "differentUsage": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDto"
+            }
+          },
+          "researchAreaDescriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchAreaDescriptionDto"
+            }
+          },
+          "cruiseGoal": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cruiseGoalDescription": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": "string"
+          },
+          "researchTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchTaskDto"
+            }
+          },
+          "contracts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractDto"
+            }
+          },
+          "ugTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UgTeamDto"
+            }
+          },
+          "guestTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuestTeamDto"
+            }
+          },
+          "publications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicationDto"
+            }
+          },
+          "spubTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpubTaskDto"
+            }
+          },
+          "supervisorEmail": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "FormBDto": {
+        "type": "object",
+        "properties": {
+          "isCruiseManagerPresent": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDto"
+            }
+          },
+          "ugTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UgTeamDto"
+            }
+          },
+          "guestTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuestTeamDto"
+            }
+          },
+          "crewMembers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewMemberDto"
+            }
+          },
+          "shortResearchEquipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShortResearchEquipmentDto"
+            }
+          },
+          "longResearchEquipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LongResearchEquipmentDto"
+            }
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortDto"
+            }
+          },
+          "cruiseDaysDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CruiseDayDetailsDto"
+            }
+          },
+          "researchEquipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchEquipmentDto"
+            }
+          },
+          "shipEquipmentsIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "FormCDto": {
+        "type": "object",
+        "properties": {
+          "shipUsage": {
+            "maxLength": 1,
+            "minLength": 0,
+            "type": "string"
+          },
+          "differentUsage": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDto"
+            }
+          },
+          "researchAreaDescriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchAreaDescriptionDto"
+            }
+          },
+          "ugTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UgTeamDto"
+            }
+          },
+          "guestTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuestTeamDto"
+            }
+          },
+          "researchTasksEffects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchTaskEffectDto"
+            }
+          },
+          "contracts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractDto"
+            }
+          },
+          "spubTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpubTaskDto"
+            }
+          },
+          "shortResearchEquipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShortResearchEquipmentDto"
+            }
+          },
+          "longResearchEquipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LongResearchEquipmentDto"
+            }
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortDto"
+            }
+          },
+          "cruiseDaysDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CruiseDayDetailsDto"
+            }
+          },
+          "researchEquipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchEquipmentDto"
+            }
+          },
+          "shipEquipmentsIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "collectedSamples": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectedSampleDto"
+            }
+          },
+          "spubReportData": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "additionalDescription": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileDto"
+            }
+          }
+        }
+      },
+      "GuestTeamDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "noOfPersons": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginFormDto": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LongResearchEquipmentDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "action": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "duration": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "PermissionDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "executive": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scan": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FileDto"
+              }
+            ]
+          }
+        }
+      },
+      "PortDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "startTime": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "endTime": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "PublicationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "doi": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "authors": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "magazine": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "year": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ministerialPoints": {
+            "type": "string"
+          }
+        }
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "RegisterFormDto": {
+        "required": [
+          "email",
+          "password",
+          "firstName",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "ResearchAreaDescriptionDto": {
+        "type": "object",
+        "properties": {
+          "areaId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "differentName": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "info": {
+            "maxLength": 10240,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "ResearchEquipmentDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "insuranceStartDate": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "insuranceEndDate": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "permission": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "ResearchTaskDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "magazine": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "author": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "institution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "date": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingApproved": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "securedAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ministerialPoints": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ResearchTaskEffectDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "magazine": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "author": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "institution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "date": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingApproved": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "securedAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ministerialPoints": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "done": {
+            "type": "string"
+          },
+          "publicationMinisterialPoints": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "managerConditionMet": {
+            "type": "string"
+          },
+          "deputyConditionMet": {
+            "type": "string"
+          }
+        }
+      },
+      "ResetPasswordFormDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "passwordConfirm": {
+            "type": "string"
+          },
+          "resetCode": {
+            "type": "string"
+          },
+          "emailBase64": {
+            "type": "string"
+          }
+        }
+      },
+      "ShortResearchEquipmentDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "startDate": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "endDate": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "SpubTaskDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "yearFrom": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "yearTo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "UgTeamDto": {
+        "type": "object",
+        "properties": {
+          "ugUnitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "noOfEmployees": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "noOfStudents": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "UpdateUserFormDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "firstName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "role": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "UserRoleToggleDto": {
+        "type": "object",
+        "properties": {
+          "roleName": {
+            "type": "string"
+          },
+          "addRole": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Json Web Token"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Account"
+    },
+    {
+      "name": "CruiseApplications"
+    },
+    {
+      "name": "Cruises"
+    },
+    {
+      "name": "Forms"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Version"
+    }
+  ]
+}
