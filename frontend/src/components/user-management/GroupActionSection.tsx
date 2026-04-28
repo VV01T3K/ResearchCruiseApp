@@ -39,12 +39,14 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
       return;
     }
 
-    const selectedIds = new Set(selectedUsers.map((u) => u.id));
-    const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
-    if (remainingAdmins.length === 0) {
-      toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin');
-      setDeletionConfirmed(false);
-      return;
+    if (selectedUsers.some((user) => user.roles.includes(Role.Administrator))) {
+      const selectedIds = new Set(selectedUsers.map((u) => u.id));
+      const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
+      if (remainingAdmins.length === 0) {
+        toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin');
+        setDeletionConfirmed(false);
+        return;
+      }
     }
 
     if (selectedUsers.length === 0) return;
