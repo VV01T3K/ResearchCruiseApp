@@ -8,7 +8,7 @@
     "dev": "vp dev --host",
     "build": "tsgo && vp build",
     "type": "tsgo",
-    "gen": "orval --config ./orval.config.ts",
+    "gen": "orval --config ./orval.config.ts && node ./scripts/orval-hide-http-exports.mjs",
     "check": "vp check",
     "fix": "vp check --fix",
     "preview": "vp preview --host",
