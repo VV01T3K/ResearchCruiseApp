@@ -1,0 +1,28 @@
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { useFormB } from '@/contexts/applications/FormBContext';
+
+export function FormBShipUsageSection() {
+  const { formA, formAInitValues } = useFormB();
+
+  return (
+    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-b-ship-usage-section">
+      <div className="grid grid-cols-1 gap-4">
+        <AppDropdownInput
+          name="shipUsage"
+          value={formA.shipUsage ?? ''}
+          allOptions={formAInitValues?.shipUsages.map((shipUsage, i) => ({
+            value: i.toString(),
+            inlineLabel: shipUsage,
+          }))}
+          label="Statek na potrzeby badań będzie wykorzystywany"
+          disabled
+        />
+        {formA.shipUsage === '4' && (
+          <AppInput name="differentUsage" value={formA.differentUsage} label="Inny sposób użycia" disabled />
+        )}
+      </div>
+    </AppAccordion>
+  );
+}

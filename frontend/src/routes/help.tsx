@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { allowOnly } from '@/core/lib/guards';
-import { HelpPage } from '@/other/pages/HelpPage';
+import { allowOnly } from '@/lib/guards';
+import { HelpPage } from '@/routes/-help/HelpPage';
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,

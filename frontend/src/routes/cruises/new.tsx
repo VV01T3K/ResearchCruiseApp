@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
-import { allowOnly } from '@/core/lib/guards';
-import { NewCruisePage } from '@/cruise-schedule/pages/NewCruisePage';
+import { allowOnly } from '@/lib/guards';
+import { NewCruisePage } from '@/routes/cruises/-new/NewCruisePage';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
