@@ -26,12 +26,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@/*": ["./src/modules/*"],
-      "@config": ["./src/config.ts"],
-      "@assets/*": ["./src/assets/*"],
+      "@/*": ["./src/*"],
       "@public/*": ["./public/*"],
-      "@routeTree": ["./src/routeTree.gen.ts"],
-      "@stories/*": ["./src/stories/*"],
+      "@stories/*": ["./stories/*"],
       "@tests/*": ["./tests/*"]
     }
   }

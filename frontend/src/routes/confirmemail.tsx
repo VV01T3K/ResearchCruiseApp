@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
-import { allowOnly } from '@/core/lib/guards';
-import { ConfirmEmailPage } from '@/user/pages/ConfirmEmailPage';
+import { allowOnly } from '@/lib/guards';
+import { ConfirmEmailPage } from '@/routes/-confirmemail/ConfirmEmailPage';
 
 export const Route = createFileRoute('/confirmemail')({
   component: ConfirmEmailPage,

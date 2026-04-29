@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
-import { FormAForSupervisorPage } from '@/cruise-applications/pages/FormAForSupervisorPage';
+import { FormAForSupervisorPage } from '@/routes/-cruiseapproval/FormAForSupervisorPage';
 
 export const Route = createFileRoute('/cruiseapproval')({
   component: FormAForSupervisorPage,

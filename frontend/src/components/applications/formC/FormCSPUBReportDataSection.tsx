@@ -1,0 +1,40 @@
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { getErrors } from '@/lib/utils';
+import { useFormC } from '@/contexts/applications/FormCContext';
+
+export function FormCSPUBReportDataSection() {
+  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+
+  return (
+    <AppAccordion
+      title="17. Dodatkowe dane do raportu SPUB"
+      expandedByDefault
+      data-testid="form-c-spub-report-data-section"
+    >
+      <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center text-sm">
+        Wpisać czy podczas rejsu były pozyskane dane do ekspertyzy lub do oceny oddziaływań na środowisko przy
+        współpracy z otoczeniem gospodarczym i biznesowym lub w celach popularnonaukowych, edukacyjnych,
+        reprezentacyjnych, lub odbywając szkolenie doskonalące z wykonywania prac z wykorzystaniem aparatury
+        naukowo-badawczej, itp.
+      </header>
+      <form.Field
+        name="spubReportData"
+        children={(field) => (
+          <AppInput
+            name={field.name}
+            value={field.state.value ?? ''}
+            onChange={field.handleChange}
+            onBlur={field.handleBlur}
+            label="Dodatkowe dane do raportu SPUB"
+            type="textarea"
+            className="h-48"
+            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            placeholder="Wpisz dodatkowe dane do raportu SPUB"
+            disabled={isReadonly}
+          />
+        )}
+      />
+    </AppAccordion>
+  );
+}
