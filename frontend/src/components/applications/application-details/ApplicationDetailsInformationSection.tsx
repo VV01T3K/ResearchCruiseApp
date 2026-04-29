@@ -17,21 +17,19 @@ export function ApplicationDetailsInformationSection() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <AppInput name="number" value={application.number} label="Numer zgłoszenia:" disabled />
         <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
-        <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" disabled />
         <AppInput
           name="cruiseLeader"
           value={`${application.cruiseManagerFirstName} ${application.cruiseManagerLastName} (${application.cruiseManagerEmail})`}
           label="Kierownik:"
-          showRequiredAsterisk
           disabled
         />
         <AppInput
           name="deputyManager"
           value={`${application.deputyManagerFirstName} ${application.deputyManagerLastName} (${application.deputyManagerEmail})`}
           label="Zastępca kierownika:"
-          showRequiredAsterisk
           disabled
         />
+        <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" disabled />
         <div className="grid grid-cols-1 gap-1">
           <strong>Formularze:</strong>
           <AppLink href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>
