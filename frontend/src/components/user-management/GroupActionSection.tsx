@@ -39,6 +39,8 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
       return;
     }
 
+    if (selectedUsers.length === 0) return;
+
     if (selectedUsers.some((user) => user.roles.includes(Role.Administrator))) {
       const selectedIds = new Set(selectedUsers.map((u) => u.id));
       const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
@@ -49,25 +51,18 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
       }
     }
 
-    if (selectedUsers.length === 0) return;
+    const promises = selectedUsers.map((user) => deleteUserMutation.mutateAsync(user.id));
+    const results = await Promise.allSettled(promises);
+    const failedCount = results.filter((result) => result.status === 'rejected').length;
 
-    try {
-      const promises = selectedUsers.map((user) => deleteUserMutation.mutateAsync(user.id));
-      const results = await Promise.allSettled(promises);
-      const failedCount = results.filter((result) => result.status === 'rejected').length;
-
-      if (failedCount === 0) {
-        toast.success('Pomyślnie usunięto wszystkich wybranych użytkowników');
-      } else if (failedCount === selectedUsers.length) {
-        toast.error('Nie udało się usunąć żadnego z użytkowników');
-      } else {
-        toast.error(`Usunięto część osób. Błąd przy ${failedCount} użytkownikach`);
-      }
-    } catch {
-      toast.error('Wystąpił błąd podczas usuwania użytkowników');
-    } finally {
-      close();
+    if (failedCount === 0) {
+      toast.success('Pomyślnie usunięto wszystkich wybranych użytkowników');
+    } else if (failedCount === selectedUsers.length) {
+      toast.error('Nie udało się usunąć żadnego z użytkowników');
+    } else {
+      toast.error(`Usunięto część osób. Błąd przy ${failedCount} użytkownikach`);
     }
+    close();
   }
 
   async function handleAcceptSelectedUsers() {
@@ -77,21 +72,16 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
       return;
     }
 
-    try {
-      const promises = usersToAccept.map((user) => acceptUserMutation.mutateAsync(user.id));
-      const results = await Promise.allSettled(promises);
-      const failedCount = results.filter((result) => result.status === 'rejected').length;
+    const promises = usersToAccept.map((user) => acceptUserMutation.mutateAsync(user.id));
+    const results = await Promise.allSettled(promises);
+    const failedCount = results.filter((result) => result.status === 'rejected').length;
 
-      if (failedCount === 0) {
-        toast.success('Pomyślnie zaakceptowano wszystkich wybranych użytkowników');
-      } else {
-        toast.error(`Nie udało się zaakceptować ${failedCount} użytkowników`);
-      }
-    } catch {
-      toast.error('Wystąpił błąd podczas akceptowania użytkowników');
-    } finally {
-      close();
+    if (failedCount === 0) {
+      toast.success('Pomyślnie zaakceptowano wszystkich wybranych użytkowników');
+    } else {
+      toast.error(`Nie udało się zaakceptować ${failedCount} użytkowników`);
     }
+    close();
   }
 
   async function handleUnAcceptSelectedUsers() {
@@ -101,21 +91,16 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
       return;
     }
 
-    try {
-      const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync(user.id));
-      const results = await Promise.allSettled(promises);
-      const failedCount = results.filter((result) => result.status === 'rejected').length;
+    const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync(user.id));
+    const results = await Promise.allSettled(promises);
+    const failedCount = results.filter((result) => result.status === 'rejected').length;
 
-      if (failedCount === 0) {
-        toast.success('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników');
-      } else {
-        toast.error(`Nie udało się usunąć akceptacji ${failedCount} użytkowników`);
-      }
-    } catch {
-      toast.error('Wystąpił błąd podczas usuwania akceptacji użytkowników');
-    } finally {
-      close();
+    if (failedCount === 0) {
+      toast.success('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników');
+    } else {
+      toast.error(`Nie udało się usunąć akceptacji ${failedCount} użytkowników`);
     }
+    close();
   }
 
   return (
