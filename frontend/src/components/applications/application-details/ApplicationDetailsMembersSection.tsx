@@ -1,0 +1,123 @@
+import { ColumnDef } from '@tanstack/react-table';
+
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { EvaluationUGTeamDto } from '@/api/dto/applications/EvaluationDto';
+import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
+
+export function ApplicationDetailsMembersSection() {
+  const { evaluation } = useApplicationDetails();
+
+  const ugTeamsColumns: ColumnDef<EvaluationUGTeamDto>[] = [
+    {
+      header: 'Lp.',
+      cell: ({ row }) => `${row.index + 1}. `,
+      size: 10,
+    },
+    {
+      header: 'Jednostka',
+      accessorFn: (row) => row.ugUnitName,
+      cell: ({ row }) => row.original.ugUnitName,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      header: 'Liczba pracowników',
+      accessorFn: (row) => row.noOfEmployees,
+      cell: ({ row }) => (
+        <AppNumberInput
+          name={`ugTeams[${row.index}].noOfEmployees`}
+          value={parseInt(row.original.noOfEmployees)}
+          minimum={0}
+          className="mx-4"
+          showRequiredAsterisk
+          disabled
+        />
+      ),
+      size: 10,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      id: 'padding',
+      cell: () => null,
+      size: 10,
+    },
+    {
+      header: 'Liczba studentów',
+      accessorFn: (row) => row.noOfStudents,
+      cell: ({ row }) => (
+        <AppNumberInput
+          name={`ugTeams[${row.index}].noOfStudents`}
+          value={parseInt(row.original.noOfStudents)}
+          minimum={0}
+          className="mx-4"
+          showRequiredAsterisk
+          disabled
+        />
+      ),
+      size: 10,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+  ];
+
+  const guestTeamsColumns: ColumnDef<GuestTeamDto>[] = [
+    {
+      header: 'Lp.',
+      cell: ({ row }) => `${row.index + 1}. `,
+      size: 10,
+    },
+    {
+      header: 'Instytucja',
+      accessorFn: (row) => row.name,
+      cell: ({ row }) => row.original.name,
+      size: 70,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      header: 'Liczba osób',
+      accessorFn: (row) => row.noOfPersons,
+      cell: ({ row }) => (
+        <AppNumberInput
+          name={`guestTeams[${row.index}].noOfPersons`}
+          value={parseInt(row.original.noOfPersons)}
+          minimum={0}
+          className="mx-4"
+          showRequiredAsterisk
+          disabled
+        />
+      ),
+      size: 10,
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+  ];
+
+  return (
+    <AppAccordion title="5. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+      <div className="grid grid-cols-1 gap-x-16 lg:grid-cols-2">
+        <AppTable
+          columns={ugTeamsColumns}
+          data={evaluation.ugTeams}
+          emptyTableMessage="Nie dodano żadnego zespołu."
+          disabled
+        />
+
+        <AppTable
+          columns={guestTeamsColumns}
+          data={evaluation.guestTeams}
+          emptyTableMessage="Nie dodano żadnego zespołu."
+          disabled
+        />
+
+        <div className="col-span-2">
+          <AppNumberInput name="Punkty" value={parseInt(evaluation.ugUnitsPoints)} label="Punkty" disabled />
+        </div>
+      </div>
+    </AppAccordion>
+  );
+}

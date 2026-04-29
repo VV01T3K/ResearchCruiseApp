@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { allowOnly } from '@/core/lib/guards';
-import { PriorityInformationPage } from '@/other/pages/PriorityInformationPage';
+import { allowOnly } from '@/lib/guards';
+import { PriorityInformationPage } from '@/routes/-priorityinformation/PriorityInformationPage';
 
 export const Route = createFileRoute('/priorityinformation')({
   component: PriorityInformationPage,

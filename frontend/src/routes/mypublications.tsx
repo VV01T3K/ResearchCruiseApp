@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { allowOnly } from '@/core/lib/guards';
-import { Role } from '@/core/models/Role';
-import { MyPublicationsPage } from '@/mypublications/pages/MyPublicationsPage';
+import { allowOnly } from '@/lib/guards';
+import { Role } from '@/models/shared/Role';
+import { MyPublicationsPage } from '@/routes/-mypublications/MyPublicationsPage';
 
 export const Route = createFileRoute('/mypublications')({
   component: MyPublicationsPage,
