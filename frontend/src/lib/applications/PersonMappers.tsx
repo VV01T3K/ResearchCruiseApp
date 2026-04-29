@@ -3,9 +3,17 @@ import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownIn
 import { FormUserDto } from '@/api/dto/applications/FormUserDto';
 
 export function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption {
+  const isDeletedOrUnknown = !person.firstName && !person.lastName;
+
+  const displayName = isDeletedOrUnknown
+    ? `Użytkownik usunięty lub nieznany`
+    : `${person.firstName} ${person.lastName}`;
+
+  const emailSuffix = !isDeletedOrUnknown && person.email ? ` (${person.email})` : '';
+
   return {
     value: person.id,
-    inlineLabel: `${person.firstName} ${person.lastName} (${person.email})`,
+    inlineLabel: displayName + emailSuffix,
     richLabel: (
       <div className="flex w-full gap-4">
         <AppAvatar fullName={`${person.firstName} ${person.lastName}`} variant="small" />

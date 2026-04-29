@@ -25,6 +25,7 @@ export function CruiseFormManagerSelectionSection() {
 
 function CruiseFormManagerSelectionReadonly() {
   const { form, cruise } = useCruiseForm();
+  const usersQuery = useUsersQuery();
 
   const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
   const selectedDeputyManagerId = useStore(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
@@ -37,7 +38,7 @@ function CruiseFormManagerSelectionReadonly() {
           id: selectedCruiseManagerId,
           firstName: cruise.mainCruiseManagerFirstName,
           lastName: cruise.mainCruiseManagerLastName,
-          email: '',
+          email: findEmailForUserId(selectedCruiseManagerId, usersQuery.data ?? []),
         })
       );
     }
@@ -47,12 +48,12 @@ function CruiseFormManagerSelectionReadonly() {
           id: selectedDeputyManagerId,
           firstName: cruise.mainDeputyManagerFirstName,
           lastName: cruise.mainDeputyManagerLastName,
-          email: '',
+          email: findEmailForUserId(selectedDeputyManagerId, usersQuery.data ?? []),
         })
       );
     }
     return options;
-  }, [cruise, selectedCruiseManagerId, selectedDeputyManagerId]);
+  }, [cruise, selectedCruiseManagerId, selectedDeputyManagerId, usersQuery.data]);
 
   return (
     <CruiseFormManagerSelectionLayout
@@ -229,4 +230,9 @@ function getAllUsersForDropdown(
   const sortedUsers = [...assignedUsers, ...unassignedUsers];
 
   return sortedUsers.map(mapPersonToLabel);
+}
+
+function findEmailForUserId(userId: string, users: User[]): string {
+  const user = users.find((u) => u.id === userId);
+  return user ? user.email : '';
 }
