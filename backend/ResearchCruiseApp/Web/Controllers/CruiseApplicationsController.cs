@@ -10,7 +10,6 @@ using ResearchCruiseApp.Application.UseCases.CruiseApplications.AddFormC;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.AnswerAsSupervisor;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.DeleteAllOwnPublications;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.DeleteOwnPublication;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.EditCruiseApplicationEvaluation;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
@@ -100,22 +99,6 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             new GetCruiseApplicationEvaluationQuery(cruiseApplicationId)
         );
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
-    }
-
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}")]
-    [HttpPatch("{cruiseApplicationId:guid}/evaluation")]
-    public async Task<IActionResult> EditCruiseApplicationEvaluation(
-        Guid cruiseApplicationId,
-        [FromBody] CruiseApplicationEvaluationsEditsDto cruiseApplicationEvaluationsEditsDto
-    )
-    {
-        var result = await mediator.Send(
-            new EditCruiseApplicationEvaluationCommand(
-                cruiseApplicationId,
-                cruiseApplicationEvaluationsEditsDto
-            )
-        );
-        return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
     [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
