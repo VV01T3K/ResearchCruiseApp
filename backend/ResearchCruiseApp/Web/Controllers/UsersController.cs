@@ -8,7 +8,6 @@ using ResearchCruiseApp.Application.UseCases.Users.AddUser;
 using ResearchCruiseApp.Application.UseCases.Users.DeactivateUser;
 using ResearchCruiseApp.Application.UseCases.Users.DeleteUser;
 using ResearchCruiseApp.Application.UseCases.Users.GetAllUsers;
-using ResearchCruiseApp.Application.UseCases.Users.ToggleUserRole;
 using ResearchCruiseApp.Application.UseCases.Users.UpdateUser;
 using ResearchCruiseApp.Web.Common.Extensions;
 
@@ -47,17 +46,6 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Deactivate([FromRoute] Guid id)
     {
         var result = await mediator.Send(new DeactivateUserCommand(id));
-        return result.IsSuccess ? NoContent() : this.CreateError(result);
-    }
-
-    [Authorize(Roles = RoleName.Administrator)]
-    [HttpPatch("{id}/roles")]
-    public async Task<IActionResult> ToggleUserRole(
-        [FromRoute] Guid id,
-        [FromBody] UserRoleToggleDto userRoleToggle
-    )
-    {
-        var result = await mediator.Send(new ToggleUserRoleCommand(id, userRoleToggle));
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
