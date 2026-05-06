@@ -39,48 +39,68 @@ export function GroupActionSection({ selectedUsers, allUsers, allowToRemoveUsers
       return;
     }
 
-    const selectedIds = new Set(selectedUsers.map((u) => u.id));
-    const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
-    if (remainingAdmins.length === 0) {
-      toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin');
-      setDeletionConfirmed(false);
-      return;
+    if (selectedUsers.length === 0) return;
+
+    if (selectedUsers.some((user) => user.roles.includes(Role.Administrator))) {
+      const selectedIds = new Set(selectedUsers.map((u) => u.id));
+      const remainingAdmins = allUsers.filter((u) => !selectedIds.has(u.id) && u.roles.includes(Role.Administrator));
+      if (remainingAdmins.length === 0) {
+        toast.error('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin');
+        setDeletionConfirmed(false);
+        return;
+      }
     }
 
-    for (const user of selectedUsers) {
-      await deleteUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: async () => {
-            close();
-          },
-        })
-        .catch(() => {});
+    const promises = selectedUsers.map((user) => deleteUserMutation.mutateAsync(user.id));
+    const results = await Promise.allSettled(promises);
+    const failedCount = results.filter((result) => result.status === 'rejected').length;
+
+    if (failedCount === 0) {
+      toast.success('Pomyślnie usunięto wszystkich wybranych użytkowników');
+    } else if (failedCount === selectedUsers.length) {
+      toast.error('Nie udało się usunąć żadnego z użytkowników');
+    } else {
+      toast.error(`Usunięto część osób. Błąd przy ${failedCount} użytkownikach`);
     }
+    close();
   }
 
   async function handleAcceptSelectedUsers() {
-    // TODO: probably need refactor - await blocks everything + close() is called x times + add toast
-    for (const user of selectedUsers.filter((user) => !user.accepted)) {
-      await acceptUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: async () => {
-            close();
-          },
-        })
-        .catch(() => {});
+    const usersToAccept = selectedUsers.filter((user) => !user.accepted);
+    if (usersToAccept.length === 0) {
+      toast.success('Wszyscy zaznaczeni użytkownicy są już zaakceptowani');
+      return;
     }
+
+    const promises = usersToAccept.map((user) => acceptUserMutation.mutateAsync(user.id));
+    const results = await Promise.allSettled(promises);
+    const failedCount = results.filter((result) => result.status === 'rejected').length;
+
+    if (failedCount === 0) {
+      toast.success('Pomyślnie zaakceptowano wszystkich wybranych użytkowników');
+    } else {
+      toast.error(`Nie udało się zaakceptować ${failedCount} użytkowników`);
+    }
+    close();
   }
 
   async function handleUnAcceptSelectedUsers() {
-    for (const user of selectedUsers.filter((user) => user.accepted)) {
-      await unAcceptUserMutation
-        .mutateAsync(user.id, {
-          onSuccess: async () => {
-            close();
-          },
-        })
-        .catch(() => {});
+    const usersToUnAccept = selectedUsers.filter((user) => user.accepted);
+    if (usersToUnAccept.length === 0) {
+      toast.success('Wszyscy zaznaczeni użytkownicy są już niezaakceptowani');
+      return;
     }
+
+    const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync(user.id));
+    const results = await Promise.allSettled(promises);
+    const failedCount = results.filter((result) => result.status === 'rejected').length;
+
+    if (failedCount === 0) {
+      toast.success('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników');
+    } else {
+      toast.error(`Nie udało się usunąć akceptacji ${failedCount} użytkowników`);
+    }
+    close();
   }
 
   return (
