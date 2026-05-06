@@ -15,7 +15,6 @@ using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplica
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationsForCruise;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseForCruiseApplication;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetEffectsEvaluations;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetFormA;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetFormAForSupervisor;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetFormB;
@@ -213,16 +212,6 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new RefillFormBCommand(id));
         return result.IsSuccess ? NoContent() : this.CreateError(result);
-    }
-
-    [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.Guest}, {RoleName.ShipCrew}"
-    )]
-    [HttpGet("{userId:guid}/effectsEvaluations")]
-    public async Task<IActionResult> GetEffectsEvaluations(Guid userId)
-    {
-        var result = await mediator.Send(new GetEffectsEvaluationsQuery(userId));
-        return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 
     [Authorize(
