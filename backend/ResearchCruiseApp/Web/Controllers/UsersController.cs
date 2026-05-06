@@ -8,7 +8,6 @@ using ResearchCruiseApp.Application.UseCases.Users.AddUser;
 using ResearchCruiseApp.Application.UseCases.Users.DeactivateUser;
 using ResearchCruiseApp.Application.UseCases.Users.DeleteUser;
 using ResearchCruiseApp.Application.UseCases.Users.GetAllUsers;
-using ResearchCruiseApp.Application.UseCases.Users.GetUserById;
 using ResearchCruiseApp.Application.UseCases.Users.ToggleUserRole;
 using ResearchCruiseApp.Application.UseCases.Users.UpdateUser;
 using ResearchCruiseApp.Web.Common.Extensions;
@@ -24,14 +23,6 @@ public class UsersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await mediator.Send(new GetAllUsersQuery());
-        return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
-    }
-
-    [Authorize(Roles = RoleName.Administrator)]
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserById([FromRoute] Guid id)
-    {
-        var result = await mediator.Send(new GetUserByIdQuery(id));
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 
