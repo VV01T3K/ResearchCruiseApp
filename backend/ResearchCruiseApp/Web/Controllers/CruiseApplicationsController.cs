@@ -189,7 +189,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     }
 
     [Authorize(
-        Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> GetFormC(Guid cruiseApplicationId)
