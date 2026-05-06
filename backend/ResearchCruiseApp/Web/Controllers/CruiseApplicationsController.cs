@@ -26,7 +26,6 @@ using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetOwnPublicatio
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.PostOwnPublications;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.RefillFormB;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.RefillFormC;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.UpdateEffects;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.UpdateFormA;
 using ResearchCruiseApp.Web.Common.Extensions;
 
@@ -205,19 +204,6 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             new AddFormCCommand(cruiseApplicationId, formCDto, isDraft)
         );
         return result.IsSuccess ? Created() : this.CreateError(result);
-    }
-
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
-    [HttpPatch("{cruiseApplicationId:guid}/FormC/Effects")]
-    public async Task<IActionResult> UpdateEffects(
-        Guid cruiseApplicationId,
-        EffectsUpdatesDto effectsUpdatesDto
-    )
-    {
-        var result = await mediator.Send(
-            new UpdateEffectsCommand(cruiseApplicationId, effectsUpdatesDto)
-        );
-        return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 
     [Authorize(
