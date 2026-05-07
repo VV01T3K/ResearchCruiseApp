@@ -27,5 +27,5 @@ public interface ICruisesRepository : IRepository<Cruise>
         CancellationToken cancellationToken
     );
 
-    Task<List<Cruise>> GetAllByYear(string year, CancellationToken cancellationToken);
+    Task<List<Cruise>> GetAllByYearWithCruiseApplicationsWithForm(string year, CancellationToken cancellationToken);
 }

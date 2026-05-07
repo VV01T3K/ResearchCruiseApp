@@ -101,10 +101,13 @@ internal class CruisesRepository : Repository<Cruise>, ICruisesRepository
             .ToListAsync(cancellationToken);
     }
 
-    public Task<List<Cruise>> GetAllByYear(string year, CancellationToken cancellationToken)
+    public Task<List<Cruise>> GetAllByYearWithCruiseApplicationsWithForm(string year, CancellationToken cancellationToken)
     {
         return DbContext
-            .Cruises.Where(cruise => cruise.StartDate.StartsWith(year))
+            .Cruises
+            .Where(cruise => cruise.StartDate.StartsWith(year))
+            .Include(cruise => cruise.CruiseApplications)
+                .ThenInclude(cruiseApplication => cruiseApplication.FormA)
             .ToListAsync(cancellationToken);
     }
 }
