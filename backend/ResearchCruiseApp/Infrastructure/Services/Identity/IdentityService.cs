@@ -118,16 +118,8 @@ public class IdentityService(
 
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
     {
-        var emailAddressAttribute = new EmailAddressAttribute();
-
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
-
-        if (
-            string.IsNullOrEmpty(registerForm.Email)
-            || !emailAddressAttribute.IsValid(registerForm.Email)
-        )
-            return Error.InvalidArgument("E-mail jest niepoprawny");
 
         var user = CreateUser(registerForm);
         var identityResult = await userManager.CreateAsync(user, registerForm.Password);
