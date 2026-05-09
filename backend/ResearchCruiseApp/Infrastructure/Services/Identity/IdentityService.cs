@@ -47,6 +47,30 @@ public class IdentityService(
         return usersDtos;
     }
 
+    public async Task<List<CruiseManagerOptionDto>> GetAllCruiseManagersDtos(
+        CancellationToken cancellationToken
+    )
+    {
+        var roleNames = new[]
+        {
+            RoleName.Administrator,
+            RoleName.Shipowner,
+            RoleName.CruiseManager,
+        };
+
+        var users = new List<User>();
+
+        foreach (var roleName in roleNames)
+        {
+            var roleUsers = await userManager.GetUsersInRoleAsync(roleName);
+            users.AddRange(roleUsers);
+        }
+
+        var distinctUsers = users.DistinctBy(u => u.Id).ToList();
+
+        return mapper.Map<List<CruiseManagerOptionDto>>(distinctUsers);
+    }
+
     public async Task<bool> UserWithIdExists(Guid id)
     {
         return await userManager.FindByIdAsync(id.ToString()) is not null;

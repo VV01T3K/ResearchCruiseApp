@@ -9,6 +9,9 @@ public interface IIdentityService
     Task<UserDto?> GetUserDtoById(Guid id);
 
     Task<List<UserDto>> GetAllUsersDtos(CancellationToken cancellationToken);
+    Task<List<CruiseManagerOptionDto>> GetAllCruiseManagersDtos(
+        CancellationToken cancellationToken
+    );
 
     Task<bool> UserWithIdExists(Guid id);
 

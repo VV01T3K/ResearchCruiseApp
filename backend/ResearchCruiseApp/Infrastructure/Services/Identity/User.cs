@@ -27,6 +27,7 @@ public class User : IdentityUser
         public MapProfile()
         {
             CreateMap<User, UserDto>();
+            CreateMap<User, CruiseManagerOptionDto>();
         }
     }
 }
