@@ -100,7 +100,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpPut("{cruiseApplicationId:guid}/FormB")]
     public async Task<IActionResult> AddFormB(
         Guid cruiseApplicationId,
@@ -174,7 +174,7 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 
-    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.CruiseManager}")]
+    [Authorize(Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}")]
     [HttpPut("{cruiseApplicationId:guid}/FormC")]
     public async Task<IActionResult> AddFormC(
         Guid cruiseApplicationId,
