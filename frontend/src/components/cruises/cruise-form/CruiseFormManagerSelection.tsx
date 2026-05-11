@@ -66,7 +66,7 @@ function CruiseFormManagerSelectionReadonly() {
 
 function CruiseFormManagerSelectionEditable() {
   const { form, cruiseApplications } = useCruiseForm();
-  const usersQuery = useAvailableCruiseManagersQuery(); // change to useAvailableCruiseManagersQuery when it will be implemented
+  const usersQuery = useAvailableCruiseManagersQuery();
 
   const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
   const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
