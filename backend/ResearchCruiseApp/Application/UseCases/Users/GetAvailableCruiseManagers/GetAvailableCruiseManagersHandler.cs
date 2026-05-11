@@ -2,7 +2,6 @@ using MediatR;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.Users;
-using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Application.UseCases.Users.GetAvailableCruiseManagers;
 

@@ -66,7 +66,7 @@ public class IdentityService(
             users.AddRange(roleUsers);
         }
 
-        var distinctUsers = users.DistinctBy(u => u.Id).ToList();
+        var distinctUsers = users.DistinctBy(u => u.Id).Where(u => u.Accepted).ToList();
 
         return mapper.Map<List<CruiseManagerOptionDto>>(distinctUsers);
     }
