@@ -8,8 +8,11 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.Cruises.ExportToCsv;
 
-public class ExportToCsvHandler(ICruisesRepository cruisesRepository, IUserPermissionVerifier userPermissionVerifier, ICsvExporter csvExporter)
-    : IRequestHandler<ExportToCsvCommand, Result<FileDto>>
+public class ExportToCsvHandler(
+    ICruisesRepository cruisesRepository,
+    IUserPermissionVerifier userPermissionVerifier,
+    ICsvExporter csvExporter
+) : IRequestHandler<ExportToCsvCommand, Result<FileDto>>
 {
     public async Task<Result<FileDto>> Handle(
         ExportToCsvCommand request,
@@ -19,12 +22,15 @@ public class ExportToCsvHandler(ICruisesRepository cruisesRepository, IUserPermi
         if (!int.TryParse(request.Year, out _))
             return Error.InvalidArgument("Rok jest niepoprawny.");
 
-        var cruises = await cruisesRepository.GetAllByYearWithCruiseApplicationsWithForm(request.Year, cancellationToken);
-        
+        var cruises = await cruisesRepository.GetAllByYearWithCruiseApplicationsWithForm(
+            request.Year,
+            cancellationToken
+        );
+
         var cruisesFiltered = new List<Cruise>();
         foreach (var cruise in cruises)
         {
-            if(await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
+            if (await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
                 cruisesFiltered.Add(cruise);
         }
 
