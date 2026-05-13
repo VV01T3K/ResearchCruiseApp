@@ -9,7 +9,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { CruiseFrom } from '@/components/cruises/cruise-form/CruiseForm';
+import { CruiseFrom } from './-components/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/cruiseForm.schema';
 import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/api/hooks/cruises/CruisesApiHooks';
 import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';

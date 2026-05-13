@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { CruiseApplicationPeriodInput } from '@/components/applications/common/CruiseApplicationPeriodInput';
+import { CruiseApplicationPeriodInput } from '@/components/applications/formA/CruiseApplicationPeriodInput';
 
 const meta = {
   component: CruiseApplicationPeriodInput,

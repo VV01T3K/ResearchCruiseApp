@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { CruiseStatusBadge } from '@/components/cruises/CruiseStatusBadge';
+import { CruiseStatusBadge } from '@/routes/cruises/-components/CruiseStatusBadge';
 
 const meta = {
   component: CruiseStatusBadge,

@@ -5,36 +5,41 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
+import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useFormC } from '@/contexts/applications/FormCContext';
+import { CrewMemberDto } from '@/api/dto/applications/CrewMemberDto';
 import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
 import { UGTeamDto } from '@/api/dto/applications/UGTeamDto';
 
-export function FormAMembersSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function FormCMembersSection() {
+  const { form, formB, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UGTeamDto>[] {
     const tableField = field;
     return [
       {
         header: 'Lp.',
+        enableColumnFilter: false,
+        enableSorting: false,
         cell: ({ row }) => `${row.index + 1}. `,
-        size: 5,
+        size: 10,
       },
       {
         header: 'Jednostka',
-        accessorFn: (row) => row.ugUnitId,
-        cell: ({ row }) => initValues.ugUnits.find((unit) => unit.id === row.original.ugUnitId)?.name,
-        size: 50,
         enableColumnFilter: false,
         enableSorting: false,
+        accessorFn: (row) => formAInitValues.ugUnits.find((unit) => unit.id === row.ugUnitId)?.name,
+        size: 45,
       },
       {
         header: 'Liczba pracowników',
+        enableColumnFilter: false,
+        enableSorting: false,
         accessorFn: (row) => row.noOfEmployees,
         cell: ({ row }) => (
           <form.Field
@@ -51,18 +56,17 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
           />
         ),
         size: 20,
-        enableColumnFilter: false,
-        enableSorting: false,
       },
       {
         header: 'Liczba studentów',
+        enableColumnFilter: false,
+        enableSorting: false,
         accessorFn: (row) => row.noOfStudents,
         cell: ({ row }) => (
           <form.Field
@@ -79,15 +83,12 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
           />
         ),
         size: 20,
-        enableColumnFilter: false,
-        enableSorting: false,
       },
       {
         id: 'actions',
@@ -114,11 +115,15 @@ export function FormAMembersSection() {
     return [
       {
         header: 'Lp.',
+        enableColumnFilter: false,
+        enableSorting: false,
         cell: ({ row }) => `${row.index + 1}. `,
-        size: 5,
+        size: 10,
       },
       {
         header: 'Instytucja',
+        enableColumnFilter: false,
+        enableSorting: false,
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
           <form.Field
@@ -131,18 +136,17 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 containerClassName="mx-4"
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
           />
         ),
-        size: 70,
-        enableColumnFilter: false,
-        enableSorting: false,
+        size: 60,
       },
       {
         header: 'Liczba osób',
+        enableColumnFilter: false,
+        enableSorting: false,
         accessorFn: (row) => row.noOfPersons,
         cell: ({ row }) => (
           <form.Field
@@ -159,15 +163,12 @@ export function FormAMembersSection() {
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
-                showRequiredAsterisk
                 disabled={isReadonly}
               />
             )}
           />
         ),
-        size: 20,
-        enableColumnFilter: false,
-        enableSorting: false,
+        size: 25,
       },
       {
         id: 'actions',
@@ -189,37 +190,104 @@ export function FormAMembersSection() {
     ];
   }
 
+  const crewMembersColumns: ColumnDef<CrewMemberDto>[] = [
+    {
+      header: 'Lp.',
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => `${row.index + 1}. `,
+      size: 5,
+    },
+    {
+      header: 'Dane osobowe',
+      enableColumnFilter: false,
+      enableSorting: false,
+      accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
+      cell: ({ row }) => (
+        <div className="grid grid-cols-5 gap-2">
+          <AppInput value={formB.crewMembers[row.index].title} label="Tytuł" disabled />
+          <AppInput
+            value={formB.crewMembers[row.index].firstName}
+            label="Imiona"
+            containerClassName="col-span-2"
+            disabled
+          />
+          <AppInput
+            value={formB.crewMembers[row.index].lastName}
+            label="Nazwisko"
+            containerClassName="col-span-2"
+            disabled
+          />
+        </div>
+      ),
+      size: 35,
+    },
+    {
+      header: 'Dokument tożsamości',
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="grid grid-cols-2 gap-2">
+          <AppInput value={formB.crewMembers[row.index].birthPlace} label="Miejsce urodzenia" disabled />
+          <AppDatePickerInput
+            name="birthPlace"
+            value={formB.crewMembers[row.index].birthDate}
+            label="Data urodzenia"
+            disabled
+          />
+          <AppInput value={formB.crewMembers[row.index].documentNumber} label="Numer ID dokumentu" disabled />
+
+          <AppDatePickerInput
+            name="documentExpiryDate"
+            value={formB.crewMembers[row.index].documentExpiryDate}
+            label="Data ważności dokumentu"
+            disabled
+          />
+        </div>
+      ),
+      size: 35,
+    },
+    {
+      header: 'Nazwa jednostki organizacyjnej UG lub instytucji zewnętrznej',
+      enableColumnFilter: false,
+      enableSorting: false,
+      accessorFn: (row) => row.institution,
+      cell: ({ row }) => (
+        <AppInput value={formB.crewMembers[row.index].institution} placeholder="Wprowadź nazwę jednostki" disabled />
+      ),
+      size: 20,
+    },
+  ];
+
   return (
     <AppAccordion
-      title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie"
+      title="9. Zespoły badawcze, które uczestniczyły w rejsie"
       expandedByDefault
-      data-testid="form-a-members-section"
+      data-testid="form-c-members-section"
     >
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.Field
           name="ugTeams"
           mode="array"
           children={(field) => (
-            <div className="mt-auto">
+            <div>
               <AppTable
                 columns={getUgTeamsColumns(field)}
                 data={field.state.value}
-                showRequiredAsterisk
                 buttons={() => [
                   <CruiseApplicationDropdownElementSelectorButton
                     key="new"
-                    options={initValues.ugUnits.map((unit) => ({
+                    options={formAInitValues.ugUnits.map((unit) => ({
                       value: unit.name,
                       content: unit.name,
                       onClick: () => {
                         field.pushValue({ ugUnitId: unit.id, noOfEmployees: '0', noOfStudents: '0' });
-                        field.handleChange((prev: UGTeamDto[]) => prev);
+                        field.handleChange((prev) => prev);
                         field.handleBlur();
                       },
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-ug-unit-btn"
                   >
                     Dodaj jednostkę UG
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -228,12 +296,8 @@ export function FormAMembersSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-ug-teams-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-ug-teams-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </div>
           )}
         />
@@ -251,28 +315,26 @@ export function FormAMembersSection() {
                     variant="primary"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: '0' });
-                      field.handleChange((prev: GuestTeamDto[]) => prev);
+                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
                     disabled={isReadonly}
-                    data-testid="form-a-add-guest-team-btn"
                   >
                     Dodaj nowy zespół
                   </AppButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
-                    options={initValues.historicalGuestInstitutions.map((institution) => ({
+                    options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
                       onClick: () => {
                         field.pushValue({ name: institution, noOfPersons: '0' });
-                        field.handleChange((prev: GuestTeamDto[]) => prev);
+                        field.handleChange((prev) => prev);
                         field.handleBlur();
                       },
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-team-btn"
                   >
                     Dodaj historyczny zespół
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -281,16 +343,20 @@ export function FormAMembersSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-guest-teams-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-guest-teams-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </div>
           )}
         />
       </div>
+      <AppTable
+        columns={crewMembersColumns}
+        data={formB.crewMembers}
+        buttons={() => []}
+        emptyTableMessage="Nie dodano żadnego członka załogi."
+        variant="form"
+        disabled
+      />
     </AppAccordion>
   );
 }

@@ -10,9 +10,9 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppTabs } from '@/components/shared/AppTabs';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/models/shared/Role';
-import { CruiseCalendar } from '@/components/cruises/CruiseCalendar';
-import { CruiseExportForm } from '@/components/cruises/CruiseExportForm';
-import { CruisesTable } from '@/components/cruises/CruisesTable';
+import { CruiseCalendar } from './-components/CruiseCalendar';
+import { CruiseExportForm } from './-components/CruiseExportForm';
+import { CruisesTable } from './-components/CruisesTable';
 import {
   useAutoAddCruisesMutation,
   useCruisesQuery,

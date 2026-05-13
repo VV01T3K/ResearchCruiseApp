@@ -15,7 +15,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
-import { CruiseFrom } from '@/components/cruises/cruise-form/CruiseForm';
+import { CruiseFrom } from '../-components/CruiseForm';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/cruiseForm.schema';
 import {
   useConfirmCruiseMutation,

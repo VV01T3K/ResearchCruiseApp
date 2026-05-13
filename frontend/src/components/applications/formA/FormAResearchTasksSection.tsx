@@ -6,8 +6,8 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors, groupBy } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/common/CruiseApplicationDropdownElementSelectorButton';
-import { ResearchTaskThumbnail } from '@/components/applications/common/research-task-thumbnails/ResearchTaskThumbnail';
+import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { ResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/components/applications/formA/research-task-details/ResearchTaskDetails';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import {

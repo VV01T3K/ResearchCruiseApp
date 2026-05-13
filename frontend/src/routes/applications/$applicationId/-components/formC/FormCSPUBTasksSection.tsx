@@ -10,11 +10,11 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useFormC } from '@/contexts/applications/FormCContext';
 import { SpubTaskDto } from '@/api/dto/applications/SpubTaskDto';
 
-export function FormASPUBTasksSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function FormCSPUBTasksSection() {
+  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskDto>[] {
     return [
@@ -90,12 +90,11 @@ export function FormASPUBTasksSection() {
                 onChange={(e) => field.handleChange(e as string)}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                allOptions={initValues?.standardSpubTasks.map((taskName) => ({
+                allOptions={formAInitValues?.standardSpubTasks.map((taskName) => ({
                   value: taskName,
                   inlineLabel: taskName,
                 }))}
                 disabled={isReadonly}
-                data-testid-button="form-a-spub-task-name-button"
               />
             )}
           />
@@ -123,9 +122,9 @@ export function FormASPUBTasksSection() {
 
   return (
     <AppAccordion
-      title="10. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
+      title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie"
       expandedByDefault
-      data-testid="form-a-spub-tasks-section"
+      data-testid="form-c-spub-tasks-section"
     >
       <div>
         <form.Field
@@ -141,30 +140,26 @@ export function FormASPUBTasksSection() {
                     key="new"
                     onClick={() => {
                       field.pushValue({ name: '', yearFrom: '', yearTo: '' });
-                      field.handleChange((prev: SpubTaskDto[]) => prev);
+                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
-                    data-testid="form-a-add-spub-task-btn"
                   >
                     Dodaj
                   </AppButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
-                    options={initValues.historicalSpubTasks
-                      .filter((task) => task.name && task.yearFrom && task.yearTo) // dont show options with empty fields
-                      .map((task) => ({
-                        value: JSON.stringify(task),
-                        content: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,
-                        onClick: () => {
-                          field.pushValue(task);
-                          field.handleChange((prev: SpubTaskDto[]) => prev);
-                          field.handleBlur();
-                        },
-                      }))}
+                    options={formAInitValues.historicalSpubTasks.map((task) => ({
+                      value: JSON.stringify(task),
+                      content: `${task.name} (${task.yearFrom} - ${task.yearTo})`,
+                      onClick: () => {
+                        field.pushValue(task);
+                        field.handleChange((prev) => prev);
+                        field.handleBlur();
+                      },
+                    }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-spub-task-btn"
                   >
                     Dodaj historyczne zadanie
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -173,12 +168,8 @@ export function FormASPUBTasksSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-spub-tasks-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-spub-tasks-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </>
           )}
         />

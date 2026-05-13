@@ -10,7 +10,7 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors, groupBy } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/common/CruiseApplicationDropdownElementSelectorButton';
+import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import {
   getPublicationCategoryLabel,

@@ -7,14 +7,14 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useFormC } from '@/contexts/applications/FormCContext';
 import { ResearchAreaDescriptionDto } from '@/api/dto/applications/ResearchAreaDescriptionDto';
 import { getResearchAreaName } from '@/api/dto/applications/ResearchAreaDto';
 
 import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
 
-export function FormAResearchAreaSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function FormCResearchAreaSection() {
+  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaDescriptionDto>[] {
     return [
@@ -42,14 +42,15 @@ export function FormAResearchAreaSection() {
                 <AppInput
                   name={field.name}
                   value={
-                    field.state.value ?? getResearchAreaName(initValues.researchAreas, row.original.areaId ?? '') ?? ''
+                    field.state.value ??
+                    getResearchAreaName(formAInitValues.researchAreas, row.original.areaId ?? '') ??
+                    ''
                   }
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
                   errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   placeholder="Nazwa rejonu"
                   disabled={isReadonly}
-                  showRequiredAsterisk
                 />
               )}
             />
@@ -96,7 +97,7 @@ export function FormAResearchAreaSection() {
   }
 
   return (
-    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault data-testid="form-a-research-area-section">
+    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault data-testid="form-c-research-area-section">
       <form.Field
         name="researchAreaDescriptions"
         mode="array"
@@ -105,11 +106,10 @@ export function FormAResearchAreaSection() {
             <AppTable
               columns={getColumns(field)}
               data={field.state.value}
-              showRequiredAsterisk
               buttons={() => [
                 <CruiseApplicationDropdownElementSelectorButton
                   key="new"
-                  options={initValues.researchAreas.concat([{ id: '', name: 'Inne...' }]).map((area) => ({
+                  options={formAInitValues.researchAreas.concat([{ id: '', name: 'Inne...' }]).map((area) => ({
                     value: area.name,
                     onClick: () => {
                       field.pushValue({
@@ -117,13 +117,12 @@ export function FormAResearchAreaSection() {
                         differentName: area.id != '' ? null : '',
                         info: '',
                       });
-                      field.handleChange((prev: ResearchAreaDescriptionDto[]) => prev);
+                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     },
                   }))}
                   variant="primary"
                   disabled={isReadonly}
-                  data-testid="form-a-add-research-area-btn"
                 >
                   Dodaj rejon
                 </CruiseApplicationDropdownElementSelectorButton>,
@@ -132,12 +131,8 @@ export function FormAResearchAreaSection() {
               variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              data-testid="form-a-research-areas-table"
             />
-            <AppInputErrorsList
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              data-testid="form-a-research-areas-errors"
-            />
+            <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
           </>
         )}
       />

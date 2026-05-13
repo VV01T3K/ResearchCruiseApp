@@ -15,7 +15,7 @@ import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applicatio
 import { CruisePeriodType } from '@/api/dto/applications/FormADto';
 import { BlockadePeriodDto } from '@/api/dto/cruises/CruiseDto';
 
-import { CruiseApplicationPeriodInput } from '../common/CruiseApplicationPeriodInput';
+import { CruiseApplicationPeriodInput } from './CruiseApplicationPeriodInput';
 import { FormABlockadeWarning } from './FormABlockadeWarning';
 
 function isValidPeriod(period: unknown): period is CruisePeriodType {

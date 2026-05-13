@@ -2,8 +2,8 @@ import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
 
-import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
-import { DashboardGridCard } from '@/components/dashboard/DashboardGridCard';
+import { DashboardGrid } from '@/routes/-root-components/dashboard/DashboardGrid';
+import { DashboardGridCard } from '@/routes/-root-components/dashboard/DashboardGridCard';
 
 const meta = {
   component: DashboardGridCard,

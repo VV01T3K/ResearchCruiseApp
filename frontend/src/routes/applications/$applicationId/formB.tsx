@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
-import { FormB } from '@/components/applications/formB/FormB';
+import { FormB } from './-components/formB/FormB';
 import {
   FORM_B_FIELD_TO_SECTION,
   getFormBValidationSchema,

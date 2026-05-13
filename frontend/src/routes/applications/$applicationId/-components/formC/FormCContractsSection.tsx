@@ -9,11 +9,11 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useFormC } from '@/contexts/applications/FormCContext';
 import { ContractDto, getContractCategoryName } from '@/api/dto/applications/ContractDto';
 
-export function FormAContractsSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function FormCContractsSection() {
+  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
   function getColumns(field: AnyFieldApi): ColumnDef<ContractDto>[] {
     return [
@@ -156,9 +156,9 @@ export function FormAContractsSection() {
 
   return (
     <AppAccordion
-      title="7. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
+      title="8. Umowy regulujące współpracę, w ramach której zostały zrealizowane zadania badawcze"
       expandedByDefault
-      data-testid="form-a-contracts-section"
+      data-testid="form-c-contracts-section"
     >
       <div>
         <form.Field
@@ -192,13 +192,12 @@ export function FormAContractsSection() {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
-                    data-testid="form-a-add-contract-btn"
                   >
                     Dodaj nowy kontrakt
                   </CruiseApplicationDropdownElementSelectorButton>,
                   <CruiseApplicationDropdownElementSelectorButton
                     key="historical"
-                    options={initValues.historicalContracts.map((contract) => ({
+                    options={formAInitValues.historicalContracts.map((contract) => ({
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
@@ -208,7 +207,6 @@ export function FormAContractsSection() {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-contract-btn"
                   >
                     Dodaj historyczną umowę
                   </CruiseApplicationDropdownElementSelectorButton>,
@@ -217,12 +215,8 @@ export function FormAContractsSection() {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-contracts-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-contracts-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
             </>
           )}
         />

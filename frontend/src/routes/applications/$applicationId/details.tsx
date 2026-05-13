@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { useCruiseApplicationQuery, useEvaluationQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
-import { ApplicationDetails } from '@/components/applications/application-details/ApplicationDetails';
+import { ApplicationDetails } from './-components/details/ApplicationDetails';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({
   component: ApplicationDetailsPage,

@@ -1,0 +1,41 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { allowOnly } from '@/lib/guards';
+import { AppAvatar } from '@/components/shared/AppAvatar';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { ChangePasswordForm } from './-components/ChangePasswordForm';
+import { EmailConfirmationBadge } from './-components/EmailConfirmationBadge';
+import { useUserContext } from '@/providers/useUserContext';
+
+export const Route = createFileRoute('/accountsettings/')({
+  component: AccountSettingsPage,
+  beforeLoad: allowOnly.authenticated(),
+});
+
+function AccountSettingsPage() {
+  const userContext = useUserContext();
+
+  if (!userContext.currentUser) {
+    return null;
+  }
+
+  return (
+    <AppLayout title="Ustawienia konta">
+      <div className="space-y-8">
+        <header className="flex items-center gap-4">
+          <AppAvatar fullName={`${userContext.currentUser.firstName} ${userContext.currentUser.lastName}`} />
+          <div>
+            <p className="title text-xl font-semibold">
+              {userContext.currentUser.firstName} {userContext.currentUser.lastName}
+            </p>
+            <p>
+              {userContext.currentUser?.email}{' '}
+              <EmailConfirmationBadge emailConfirmed={userContext.currentUser.emailConfirmed} />
+            </p>
+          </div>
+        </header>
+        <hr />
+        <ChangePasswordForm />
+      </div>
+    </AppLayout>
+  );
+}
