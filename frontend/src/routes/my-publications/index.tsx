@@ -19,7 +19,7 @@ import {
 } from '@/api/hooks/publications/MyPublicationsApiHooks';
 import { Publication } from '@/api/dto/publications/Publication';
 
-export const Route = createFileRoute('/mypublications/')({
+export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.CruiseManager, Role.ShipOwner),
 });

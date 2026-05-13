@@ -63,7 +63,7 @@ export class FormAPage {
   }
 
   public async goto() {
-    await this.page.goto('/newcruise');
+    await this.page.goto('/applications/new');
   }
 
   private constructor(page: Page) {

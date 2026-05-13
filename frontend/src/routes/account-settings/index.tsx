@@ -6,7 +6,7 @@ import { ChangePasswordForm } from './-components/ChangePasswordForm';
 import { EmailConfirmationBadge } from './-components/EmailConfirmationBadge';
 import { useUserContext } from '@/providers/useUserContext';
 
-export const Route = createFileRoute('/accountsettings/')({
+export const Route = createFileRoute('/account-settings/')({
   component: AccountSettingsPage,
   beforeLoad: allowOnly.authenticated(),
 });

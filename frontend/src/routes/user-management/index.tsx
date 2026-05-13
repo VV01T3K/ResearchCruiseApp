@@ -18,7 +18,7 @@ import { RoleBadge } from './-components/RoleBadge';
 import { UserEditForm } from './-components/UserEditForm';
 import { useUsersQuery } from '@/api/hooks/user-management/UserManagementApiHooks';
 
-export const Route = createFileRoute('/usermanagement/')({
+export const Route = createFileRoute('/user-management/')({
   component: UserManagementPage,
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner),
 });

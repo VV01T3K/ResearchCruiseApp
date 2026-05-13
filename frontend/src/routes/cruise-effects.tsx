@@ -10,7 +10,7 @@ import { useEffectsEvaluationsQuery } from '@/api/hooks/applications/CruiseAppli
 import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
 import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
 
-export const Route = createFileRoute('/cruiseeffects')({
+export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,
   beforeLoad: allowOnly.authenticated(),
 });

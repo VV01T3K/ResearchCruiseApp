@@ -16,7 +16,7 @@ export function NewFormCard({ className }: { className?: string }) {
       key="new_form"
       name="Nowe zgłoszenie"
       description="Zgłoś nowy rejs"
-      href="/newcruise"
+      href="/applications/new"
       Icon={PlusCircleFillIcon}
       className={className}
     />
@@ -29,7 +29,7 @@ export function PrioritizationInfoCard({ className }: { className?: string }) {
       key="prioritization_info"
       name="Informacje o priorytetyzacji"
       description="Dowiedz się więcej o zasadach priorytetyzacji"
-      href="/priorityinformation"
+      href="/priority-information"
       Icon={InfoIcon}
       className={className}
     />
@@ -42,7 +42,7 @@ export function UserManagementCard({ className }: { className?: string }) {
       key="user_management"
       name="Zarządzanie użytkownikami"
       description="Dodaj, edytuj lub usuń użytkowników"
-      href="/usermanagement"
+      href="/user-management"
       Icon={PeopleFillIcon}
       className={className}
     />
@@ -55,7 +55,7 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       key="settings"
       name="Ustawienia konta"
       description="Zmień ustawienia swojego konta"
-      href="/accountsettings"
+      href="/account-settings"
       Icon={GearFillIcon}
       className={className}
     />
@@ -107,7 +107,7 @@ export function PublicationsCard({ className }: { className?: string }) {
       key="publications"
       name="Moje publikacje"
       description="Zarządzaj moimi publikacjami"
-      href="/mypublications"
+      href="/my-publications"
       Icon={BookIcon}
       className={className}
     />
@@ -120,7 +120,7 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       key="cruise_effects"
       name="Efekty rejsów"
       description="Przeglądaj efekty rejsów"
-      href="/cruiseeffects"
+      href="/cruise-effects"
       Icon={AwardFillIcon}
       className={className}
     />

@@ -4,7 +4,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { PriorityInformationCell } from '@/components/shared/PriorityInformationCell';
 import { PriorityInformationRow } from '@/components/shared/PriorityInformationRow';
 
-export const Route = createFileRoute('/priorityinformation')({
+export const Route = createFileRoute('/priority-information')({
   component: PriorityInformationPage,
   beforeLoad: allowOnly.authenticated(),
 });

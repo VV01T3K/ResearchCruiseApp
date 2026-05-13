@@ -25,7 +25,7 @@ internal class EmailSender(
     )
     {
         var link =
-            GetFrontEndUrl() + $"/confirmEmail?userId={userDto.Id}&code={emailConfirmationCode}";
+            GetFrontEndUrl() + $"/confirm-email?userId={userDto.Id}&code={emailConfirmationCode}";
 
         var messageTemplate = await templateFileReader.ReadEmailConfirmationMessageTemplate();
         var emailSubject = await templateFileReader.ReadEmailConfirmationEmailSubject();
@@ -84,7 +84,7 @@ internal class EmailSender(
         var emailBase64 = UrlBase64.Encode(Encoding.UTF8.GetBytes(userDto.Email));
 
         var link =
-            GetFrontEndUrl() + $"/resetPassword?emailBase64={emailBase64}&resetCode={resetCode}";
+            GetFrontEndUrl() + $"/reset-password?emailBase64={emailBase64}&resetCode={resetCode}";
 
         var emailMessage = messageTemplate.Replace("{{link}}", link);
 
@@ -102,7 +102,7 @@ internal class EmailSender(
 
         var link =
             GetFrontEndUrl()
-            + $"/cruiseapproval?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCodeEncoded}";
+            + $"/cruise-approval?cruiseApplicationId={cruiseApplicationId}&supervisorCode={supervisorCodeEncoded}";
 
         var messageTemplate = await templateFileReader.ReadRequestToSupervisorMessageTemplate();
         var emailSubject = await templateFileReader.ReadRequestToSupervisorEmailSubject();

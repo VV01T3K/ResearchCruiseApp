@@ -20,12 +20,12 @@ import { FormADto } from '@/api/dto/applications/FormADto';
 import { useBlockadesQuery } from '@/api/hooks/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';
 
-export const Route = createFileRoute('/newcruise')({
-  component: NewCruisePage,
+export const Route = createFileRoute('/applications/new')({
+  component: NewCruiseApplicationPage,
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager),
 });
 
-function NewCruisePage() {
+function NewCruiseApplicationPage() {
   const navigate = useNavigate();
   const userContext = useUserContext();
   const initialStateQuery = useFormAInitValuesQuery();

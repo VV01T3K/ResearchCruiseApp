@@ -11,7 +11,7 @@ import {
 } from '@/api/hooks/applications/FormAApiHooks';
 import { CruisePeriodType, FormADto } from '@/api/dto/applications/FormADto';
 
-export const Route = createFileRoute('/cruiseapproval')({
+export const Route = createFileRoute('/cruise-approval')({
   component: FormAForSupervisorPage,
   validateSearch: z
     .object({

@@ -104,7 +104,7 @@ function LoginPage() {
           />
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
-            <AppLink href="/forgotpassword">Zapomniałeś hasła?</AppLink>
+            <AppLink href="/forgot-password">Zapomniałeś hasła?</AppLink>
           </div>
 
           <div className="mt-8">
