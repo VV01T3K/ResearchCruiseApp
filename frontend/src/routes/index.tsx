@@ -12,8 +12,8 @@ import {
   PrioritizationInfoCard,
   PublicationsCard,
   UserManagementCard,
-} from './-root-components/dashboard/DashboardCards';
-import { DashboardGrid } from './-root-components/dashboard/DashboardGrid';
+} from '@/components/dashboard/DashboardCards';
+import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/')({
