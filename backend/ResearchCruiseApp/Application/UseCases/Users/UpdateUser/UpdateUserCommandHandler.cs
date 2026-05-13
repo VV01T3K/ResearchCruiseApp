@@ -6,8 +6,10 @@ using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Application.UseCases.Users.UpdateUser;
 
-public class UpdateUserCommandHandler(IUserPermissionVerifier userPermissionVerifier, IIdentityService identityService)
-    : IRequestHandler<UpdateUserCommand, Result>
+public class UpdateUserCommandHandler(
+    IUserPermissionVerifier userPermissionVerifier,
+    IIdentityService identityService
+) : IRequestHandler<UpdateUserCommand, Result>
 {
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -18,12 +20,19 @@ public class UpdateUserCommandHandler(IUserPermissionVerifier userPermissionVeri
         )
             return Error.InvalidArgument("Adres e-mail jest niepoprawny");
 
+        if (!await userPermissionVerifier.CanCurrentUserAccess(request.UserId))
+            return Error.ForbiddenOperation("Nie można edytować tego użytkownika");
+
         if (request.UpdateUserFormDto.Role is not null)
         {
-            if (!await userPermissionVerifier.CanCurrentUserAssignRole(request.UpdateUserFormDto.Role))
+            if (
+                !await userPermissionVerifier.CanCurrentUserAssignRole(
+                    request.UpdateUserFormDto.Role
+                )
+            )
                 return Error.ForbiddenOperation("Nie można nadać tej roli");
         }
-        
+
         var rolesNames = await identityService.GetAllRoleNames(cancellationToken);
         if (
             request.UpdateUserFormDto.Role is not null
