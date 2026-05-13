@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import axios, { AxiosError } from 'axios';
 import { toast } from '@/components/shared/layout/toast';
-import { FormAForSupervisor } from '@/components/applications/formA/FormAForSupervisor';
+import { SupervisorView } from '@/components/applications/formA/SupervisorView';
 import {
   useFormAForSupervisorInitValuesQuery,
   useFormAForSupervisorQuery,
@@ -12,7 +12,7 @@ import {
 import { CruisePeriodType, FormADto } from '@/api/dto/applications/FormADto';
 
 export const Route = createFileRoute('/cruise-approval')({
-  component: FormAForSupervisorPage,
+  component: SupervisorViewPage,
   validateSearch: z
     .object({
       cruiseApplicationId: z.guid(),
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/cruise-approval')({
     }),
 });
 
-function FormAForSupervisorPage() {
+function SupervisorViewPage() {
   const { cruiseApplicationId, supervisorCode } = Route.useSearch();
   const navigate = useNavigate();
   const initialStateQuery = useFormAForSupervisorInitValuesQuery({ cruiseId: cruiseApplicationId, supervisorCode });
@@ -124,7 +124,7 @@ function FormAForSupervisorPage() {
   }
 
   return (
-    <FormAForSupervisor
+    <SupervisorView
       form={form}
       formInitValues={initialStateQuery.data}
       handleAcceptForm={handleAcceptForm}

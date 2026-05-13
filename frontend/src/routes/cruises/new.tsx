@@ -9,8 +9,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { CruiseFrom } from './-components/CruiseForm';
-import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/cruiseForm.schema';
+import { FormView } from './-components/FormView';
+import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/api/hooks/cruises/CruisesApiHooks';
 import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
 
@@ -101,7 +101,7 @@ function NewCruisePage() {
   return (
     <>
       <AppLayout title={search.blockade ? 'Nowa blokada' : 'Nowy rejs'}>
-        <CruiseFrom
+        <FormView
           context={{
             form,
             cruiseApplications: cruiseApplicationsQuery.data,

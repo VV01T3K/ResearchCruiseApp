@@ -1,0 +1,75 @@
+import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+
+import { ActionsSection } from './ActionsSection';
+import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
+import { ContractsSection } from './ContractsSection';
+import { CruiseDayDetailsSection } from './CruiseDayDetailsSection';
+import { CruiseDetailsSection } from './CruiseDetailsSection';
+import { CruiseGoalSection } from './CruiseGoalSection';
+import { CruiseInfoSection } from './CruiseInfoSection';
+import { CruiseManagerInfoSection } from './CruiseManagerInfoSection';
+import { MembersSection } from './MembersSection';
+import { PrintTemplate } from './PrintTemplate';
+import { PublicationsSection } from './PublicationsSection';
+import { ResearchAreaSection } from './ResearchAreaSection';
+import { ResearchEquipmentsSection } from './ResearchEquipmentsSection';
+import { ResearchTasksSection } from './ResearchTasksSection';
+import { ShipEquipmentsSection } from './ShipEquipmentsSection';
+import { ShipUsageSection } from './ShipUsageSection';
+import { SPUBTasksSection } from './SPUBTasksSection';
+import { FormBContextType, FormBProvider } from '@/contexts/applications/FormBContext';
+
+type Props = {
+  context: FormBContextType & {
+    onSubmit: () => void;
+    onSaveDraft: () => void;
+    onRevertToEdit?: () => void;
+    actionsDisabled?: boolean;
+  };
+};
+export function FormView({ context }: Props) {
+  const componentRef = useRef(null);
+
+  const reactToPrintContent = () => {
+    return componentRef.current;
+  };
+
+  const handlePrint = useReactToPrint({});
+
+  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
+    evt.preventDefault();
+    context.onSubmit();
+  }
+
+  return (
+    <>
+      <FormBProvider value={context}>
+        <form className="space-y-8" onSubmit={onSubmit}>
+          <CruiseInfoSection />
+          <CruiseManagerInfoSection />
+          <ShipUsageSection />
+          <AdditionalPermissionsSection />
+          <ResearchAreaSection />
+          <CruiseGoalSection />
+          <ResearchTasksSection />
+          <ContractsSection />
+          <MembersSection />
+          <PublicationsSection />
+          <SPUBTasksSection />
+          <CruiseDetailsSection />
+          <CruiseDayDetailsSection />
+          <ResearchEquipmentsSection />
+          <ShipEquipmentsSection />
+          <ActionsSection
+            onSaveDraft={context.onSaveDraft}
+            onRevertToEdit={context.onRevertToEdit}
+            onPrint={() => handlePrint(reactToPrintContent)}
+            disabled={context.actionsDisabled}
+          />
+        </form>
+        <PrintTemplate ref={componentRef} />
+      </FormBProvider>
+    </>
+  );
+}

@@ -13,9 +13,9 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
 import { User } from '@/models/shared/User';
 import { useUserContext } from '@/providers/useUserContext';
-import { GroupActionSection } from './-components/GroupActionSection';
+import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';
-import { UserEditForm } from './-components/UserEditForm';
+import { EditForm } from './-components/EditForm';
 import { useUsersQuery } from '@/api/hooks/user-management/UserManagementApiHooks';
 
 export const Route = createFileRoute('/user-management/')({
@@ -168,7 +168,7 @@ function UserManagementPage() {
         onClose={() => handleModalClose()}
         title="Dodaj użytkownika"
       >
-        <UserEditForm
+        <EditForm
           allUsers={usersQuery.data}
           allowedRoles={allowedRoles[currentUserRole]}
           close={() => handleModalClose()}
@@ -180,7 +180,7 @@ function UserManagementPage() {
         onClose={() => handleModalClose()}
         title="Akcje grupowe"
       >
-        <GroupActionSection
+        <GroupActionsSection
           selectedUsers={usersQuery.data.filter((user) => selectedUsers[user.id])}
           allUsers={usersQuery.data}
           allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
@@ -192,7 +192,7 @@ function UserManagementPage() {
         onClose={() => handleModalClose()}
         title="Edytuj użytkownika"
       >
-        <UserEditForm
+        <EditForm
           user={(modalState as { state: 'editUserModal'; user: User }).user}
           allUsers={usersQuery.data}
           allowedRoles={allowedRoles[currentUserRole]}

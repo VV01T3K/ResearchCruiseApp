@@ -10,9 +10,9 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppTabs } from '@/components/shared/AppTabs';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/models/shared/Role';
-import { CruiseCalendar } from './-components/CruiseCalendar';
-import { CruiseExportForm } from './-components/CruiseExportForm';
-import { CruisesTable } from './-components/CruisesTable';
+import { Calendar } from './-components/Calendar';
+import { ExportForm } from './-components/ExportForm';
+import { TableView } from './-components/TableView';
 import {
   useAutoAddCruisesMutation,
   useCruisesQuery,
@@ -74,8 +74,8 @@ function CruisesPage() {
     <>
       <AppLayout title="Rejsy">
         <AppTabs tabNames={['Lista rejsów', 'Kalendarz']}>
-          <CruisesTable cruises={cruisesQuery.data} buttons={buttons} deleteCruise={setCruiseSelectedForDeletion} />
-          <CruiseCalendar cruises={cruisesQuery.data} buttons={buttons} />
+          <TableView cruises={cruisesQuery.data} buttons={buttons} deleteCruise={setCruiseSelectedForDeletion} />
+          <Calendar cruises={cruisesQuery.data} buttons={buttons} />
         </AppTabs>
       </AppLayout>
 
@@ -111,7 +111,7 @@ function CruisesPage() {
       </AppModal>
 
       <AppModal title={`Eksportuj rejsy`} isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)}>
-        <CruiseExportForm cruises={cruisesQuery.data} onDone={() => setIsExportModalOpen(false)} />
+        <ExportForm cruises={cruisesQuery.data} onDone={() => setIsExportModalOpen(false)} />
       </AppModal>
     </>
   );

@@ -2,17 +2,17 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { API_URL } from '@tests/fixtures/consts';
 import { getAdminAccountPayload, getAuthDetailsPayload, getInitValuesAPayload } from '@tests/fixtures/mockPayloads';
 
-import { FormAContractsSection } from './FormAContractsSection';
-import { FormACruiseGoalSection } from './FormACruiseGoalSection';
-import { FormACruiseLengthSection } from './FormACruiseLengthSection';
-import { FormACruiseManagerInfoSection } from './FormACruiseManagerInfoSection';
-import { FormAMembersSection } from './FormAMembersSection';
-import { FormAPermissionsSection } from './FormAPermissionsSection';
-import { FormAPublicationsSection } from './FormAPublicationsSection';
-import { FormAResearchAreaSection } from './FormAResearchAreaSection';
-import { FormAResearchTasksSection } from './FormAResearchTasksSection';
-import { FormASPUBTasksSection } from './FormASPUBTasksSection';
-import { FormASupervisorInfoSection } from './FormASupervisorInfoSection';
+import { ContractsSection } from './ContractsSection';
+import { CruiseGoalSection } from './CruiseGoalSection';
+import { CruiseLengthSection } from './CruiseLengthSection';
+import { CruiseManagerInfoSection } from './CruiseManagerInfoSection';
+import { MembersSection } from './MembersSection';
+import { PermissionsSection } from './PermissionsSection';
+import { PublicationsSection } from './PublicationsSection';
+import { ResearchAreaSection } from './ResearchAreaSection';
+import { ResearchTasksSection } from './ResearchTasksSection';
+import { SPUBTasksSection } from './SPUBTasksSection';
+import { SupervisorInfoSection } from './SupervisorInfoSection';
 
 export class FormAPage {
   public readonly page: Page;
@@ -69,17 +69,17 @@ export class FormAPage {
   private constructor(page: Page) {
     this.page = page;
     this.sections = {
-      cruiseManagerInfoSection: new FormACruiseManagerInfoSection(this),
-      cruiseLengthSection: new FormACruiseLengthSection(this),
-      permissionsSection: new FormAPermissionsSection(this),
-      researchAreaSection: new FormAResearchAreaSection(this),
-      cruiseGoalSection: new FormACruiseGoalSection(this),
-      researchTasksSection: new FormAResearchTasksSection(this),
-      contractsSection: new FormAContractsSection(this),
-      membersSection: new FormAMembersSection(this),
-      publicationsSection: new FormAPublicationsSection(this),
-      spubTasksSection: new FormASPUBTasksSection(this),
-      supervisorInfoSection: new FormASupervisorInfoSection(this),
+      cruiseManagerInfoSection: new CruiseManagerInfoSection(this),
+      cruiseLengthSection: new CruiseLengthSection(this),
+      permissionsSection: new PermissionsSection(this),
+      researchAreaSection: new ResearchAreaSection(this),
+      cruiseGoalSection: new CruiseGoalSection(this),
+      researchTasksSection: new ResearchTasksSection(this),
+      contractsSection: new ContractsSection(this),
+      membersSection: new MembersSection(this),
+      publicationsSection: new PublicationsSection(this),
+      spubTasksSection: new SPUBTasksSection(this),
+      supervisorInfoSection: new SupervisorInfoSection(this),
     } as const;
 
     this.submitButton = this.page.getByTestId('form-submit-btn');

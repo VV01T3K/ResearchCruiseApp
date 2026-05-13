@@ -10,7 +10,7 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { FormA } from '@/components/applications/formA/FormA';
+import { FormView } from '@/components/applications/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
@@ -194,7 +194,7 @@ function NewCruiseApplicationPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <FormA context={context} />
+        <FormView context={context} />
       </AppLayout>
 
       <AppModal

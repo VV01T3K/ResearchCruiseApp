@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
-import { FormC } from './-components/formC/FormC';
+import { FormView } from './-components/formC/FormView';
 import {
   FORM_C_FIELD_TO_SECTION,
   getFormCValidationSchema,
@@ -169,7 +169,7 @@ function FormCPage() {
   return (
     <>
       <AppLayout title="Formularz C">
-        <FormC context={context} />
+        <FormView context={context} />
       </AppLayout>
     </>
   );

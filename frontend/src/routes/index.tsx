@@ -8,12 +8,12 @@ import {
   CruiseEffectsCard,
   CruisesCard,
   HelpCard,
-  NewFormCard,
-  PrioritizationInfoCard,
+  NewCruiseApplicationCard,
+  PriorityInformationCard,
   PublicationsCard,
   UserManagementCard,
-} from '@/components/dashboard/DashboardCards';
-import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
+} from '@/components/dashboard/Cards';
+import { Grid } from '@/components/dashboard/Grid';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/')({
@@ -26,9 +26,9 @@ function DashboardPage() {
 
   if (userContext.isInRole(Role.Administrator)) {
     return (
-      <DashboardGrid>
-        <NewFormCard className="col-span-2 row-span-2" />
-        <PrioritizationInfoCard className="col-span-2" />
+      <Grid>
+        <NewCruiseApplicationCard className="col-span-2 row-span-2" />
+        <PriorityInformationCard className="col-span-2" />
         <UserManagementCard />
         <AccountSettingsCard />
         <ApplicationsCard />
@@ -36,62 +36,62 @@ function DashboardPage() {
         <CruisesCard className="col-span-2" />
         <PublicationsCard />
         <CruiseEffectsCard />
-      </DashboardGrid>
+      </Grid>
     );
   }
 
   if (userContext.isInRole(Role.ShipOwner)) {
     return (
-      <DashboardGrid>
+      <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
         <ApplicationsCard className="row-span-2" />
         <UserManagementCard className="col-span-2" />
         <AccountSettingsCard className="row-span-2" />
-        <NewFormCard />
+        <NewCruiseApplicationCard />
         <HelpCard />
-        <PrioritizationInfoCard className="col-span-2" />
+        <PriorityInformationCard className="col-span-2" />
         <PublicationsCard />
         <CruiseEffectsCard />
-      </DashboardGrid>
+      </Grid>
     );
   }
 
   if (userContext.isInRole(Role.CruiseManager)) {
     return (
-      <DashboardGrid>
-        <NewFormCard className="col-span-2 row-span-2" />
+      <Grid>
+        <NewCruiseApplicationCard className="col-span-2 row-span-2" />
         <ApplicationsCard className="col-span-2" />
-        <PrioritizationInfoCard />
+        <PriorityInformationCard />
         <AccountSettingsCard className="row-span-2" />
         <CruisesCard className="col-span-2" />
         <HelpCard />
         <PublicationsCard />
         <CruiseEffectsCard />
-      </DashboardGrid>
+      </Grid>
     );
   }
 
   if (userContext.isInRole(Role.Guest)) {
     return (
-      <DashboardGrid>
+      <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
         <ApplicationsCard className="row-span-2" />
-        <PrioritizationInfoCard className="col-span-2" />
+        <PriorityInformationCard className="col-span-2" />
         <AccountSettingsCard className="row-span-2" />
         <HelpCard className="col-span-2" />
-      </DashboardGrid>
+      </Grid>
     );
   }
 
   if (userContext.isInRole(Role.ShipCrew)) {
     return (
-      <DashboardGrid>
+      <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
         <ApplicationsCard className="col-span-2 row-span-2" />
-        <PrioritizationInfoCard />
+        <PriorityInformationCard />
         <AccountSettingsCard />
         <HelpCard className="col-span-2" />
-      </DashboardGrid>
+      </Grid>
     );
   }
 

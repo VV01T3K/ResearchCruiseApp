@@ -15,8 +15,8 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
-import { CruiseFrom } from '../-components/CruiseForm';
-import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/cruiseForm.schema';
+import { FormView } from '../-components/FormView';
+import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
 import {
   useConfirmCruiseMutation,
   useCruiseQuery,
@@ -216,7 +216,7 @@ function CruiseDetailsPage() {
   return (
     <>
       <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
-        <CruiseFrom
+        <FormView
           context={{
             form,
             cruise: cruiseQuery.data,

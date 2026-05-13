@@ -10,7 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { UploadPublicationsButton } from './-components/UploadPublicationsButton';
+import { UploadButton } from './-components/UploadButton';
 import {
   useDeleteAllOwnPublicationsMutation,
   useDeleteOwnPublicationMutation,
@@ -122,7 +122,7 @@ function MyPublicationsPage() {
           getRowId={(row) => row.id}
           emptyTableMessage="Nie dodano żadnej publikacji"
           buttons={(defaultButtons) => [
-            <UploadPublicationsButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
+            <UploadButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
             <AppButton
               key="goToRepository"
               type="link"
