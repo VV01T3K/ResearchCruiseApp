@@ -1,12 +1,12 @@
 import { Row } from '@tanstack/react-table';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { DidacticsResearchTaskDetails } from '@/components/applications/formA/research-task-details/DidacticsResearchTaskDetails';
-import { OtherResearchTaskDetails } from '@/components/applications/formA/research-task-details/OtherResearchTaskDetails';
-import { OwnResearchTaskDetails } from '@/components/applications/formA/research-task-details/OwnResearchTaskDetails';
-import { ProjectPreparationResearchTaskDetails } from '@/components/applications/formA/research-task-details/ProjectPreparationResearchTaskDetails';
-import { ProjectResearchTaskDetails } from '@/components/applications/formA/research-task-details/ProjectResearchTaskDetails';
-import { ThesisResearchTaskDetails } from '@/components/applications/formA/research-task-details/ThesisResearchTaskDetails';
+import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/DidacticsResearchTaskDetails';
+import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OtherResearchTaskDetails';
+import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OwnResearchTaskDetails';
+import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
+import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectResearchTaskDetails';
+import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ThesisResearchTaskDetails';
 import { FormADto } from '@/api/dto/applications/FormADto';
 import {
   DidacticsResearchTaskDto,

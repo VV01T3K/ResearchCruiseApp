@@ -8,7 +8,7 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
 import { ContractDto, getContractCategoryName } from '@/api/dto/applications/ContractDto';
 
@@ -170,7 +170,7 @@ export function ContractsSection() {
                 columns={getColumns(field)}
                 data={field.state.value}
                 buttons={() => [
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="new"
                     options={[
                       { name: 'Krajowa', category: 'domestic' },
@@ -194,8 +194,8 @@ export function ContractsSection() {
                     disabled={isReadonly}
                   >
                     Dodaj nowy kontrakt
-                  </CruiseApplicationDropdownElementSelectorButton>,
-                  <CruiseApplicationDropdownElementSelectorButton
+                  </DropdownElementSelectorButton>,
+                  <DropdownElementSelectorButton
                     key="historical"
                     options={formAInitValues.historicalContracts.map((contract) => ({
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
@@ -209,7 +209,7 @@ export function ContractsSection() {
                     disabled={isReadonly}
                   >
                     Dodaj historyczną umowę
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnej umowy."
                 variant="form"

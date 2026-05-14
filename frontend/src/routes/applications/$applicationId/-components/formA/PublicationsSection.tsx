@@ -10,7 +10,7 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors, groupBy } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import {
   getPublicationCategoryLabel,
@@ -242,7 +242,7 @@ export function PublicationsSection() {
                 columns={getColumns(field)}
                 data={field.state.value}
                 buttons={() => [
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="new"
                     options={Object.values(PublicationCategory).map((role) => ({
                       value: getPublicationCategoryLabel(role),
@@ -266,8 +266,8 @@ export function PublicationsSection() {
                     data-testid="form-a-add-publication-btn"
                   >
                     Dodaj nową publikację
-                  </CruiseApplicationDropdownElementSelectorButton>,
-                  <CruiseApplicationDropdownElementSelectorButton
+                  </DropdownElementSelectorButton>,
+                  <DropdownElementSelectorButton
                     key="historical"
                     // dont show options with empty fields
                     options={groupBy(
@@ -324,7 +324,7 @@ export function PublicationsSection() {
                     data-testid="form-a-add-historical-publication-btn"
                   >
                     Dodaj historyczną publikację
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 variant="form"
                 disabled={isReadonly}

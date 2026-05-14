@@ -11,7 +11,7 @@ import { useFormC } from '@/contexts/applications/FormCContext';
 import { ResearchAreaDescriptionDto } from '@/api/dto/applications/ResearchAreaDescriptionDto';
 import { getResearchAreaName } from '@/api/dto/applications/ResearchAreaDto';
 
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 
 export function ResearchAreaSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
@@ -107,7 +107,7 @@ export function ResearchAreaSection() {
               columns={getColumns(field)}
               data={field.state.value}
               buttons={() => [
-                <CruiseApplicationDropdownElementSelectorButton
+                <DropdownElementSelectorButton
                   key="new"
                   options={formAInitValues.researchAreas.concat([{ id: '', name: 'Inne...' }]).map((area) => ({
                     value: area.name,
@@ -125,7 +125,7 @@ export function ResearchAreaSection() {
                   disabled={isReadonly}
                 >
                   Dodaj rejon
-                </CruiseApplicationDropdownElementSelectorButton>,
+                </DropdownElementSelectorButton>,
               ]}
               emptyTableMessage="Nie dodano żadnego rejonu."
               variant="form"

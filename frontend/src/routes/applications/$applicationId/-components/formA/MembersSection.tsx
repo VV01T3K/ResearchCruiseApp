@@ -9,7 +9,7 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
 import { UGTeamDto } from '@/api/dto/applications/UGTeamDto';
@@ -206,7 +206,7 @@ export function MembersSection() {
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="new"
                     options={initValues.ugUnits.map((unit) => ({
                       value: unit.name,
@@ -222,7 +222,7 @@ export function MembersSection() {
                     data-testid="form-a-add-ug-unit-btn"
                   >
                     Dodaj jednostkę UG
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
@@ -260,7 +260,7 @@ export function MembersSection() {
                   >
                     Dodaj nowy zespół
                   </AppButton>,
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="historical"
                     options={initValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
@@ -275,7 +275,7 @@ export function MembersSection() {
                     data-testid="form-a-add-historical-team-btn"
                   >
                     Dodaj historyczny zespół
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"

@@ -1,9 +1,9 @@
-import { PrintableDidacticsResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableDidacticsResearchTaskDetails';
-import { PrintableOtherResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableOtherResearchTaskDetails';
-import { PrintableOwnResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableOwnResearchTaskDetails';
-import { PrintableProjectPreparationResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableProjectPreparationResearchTaskDetails';
-import { PrintableProjectResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableProjectResearchTaskDetails';
-import { PrintableThesisResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableThesisResearchTaskDetails';
+import { PrintableDidacticsResearchTaskDetails } from '@/components/print/research-task-details/PrintableDidacticsResearchTaskDetails';
+import { PrintableOtherResearchTaskDetails } from '@/components/print/research-task-details/PrintableOtherResearchTaskDetails';
+import { PrintableOwnResearchTaskDetails } from '@/components/print/research-task-details/PrintableOwnResearchTaskDetails';
+import { PrintableProjectPreparationResearchTaskDetails } from '@/components/print/research-task-details/PrintableProjectPreparationResearchTaskDetails';
+import { PrintableProjectResearchTaskDetails } from '@/components/print/research-task-details/PrintableProjectResearchTaskDetails';
+import { PrintableThesisResearchTaskDetails } from '@/components/print/research-task-details/PrintableThesisResearchTaskDetails';
 import {
   DidacticsResearchTaskDto,
   OtherResearchTaskDto,

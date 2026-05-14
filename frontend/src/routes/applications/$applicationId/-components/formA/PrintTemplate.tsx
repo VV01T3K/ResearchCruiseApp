@@ -5,10 +5,10 @@ import { cn } from '@/lib/utils';
 import {
   formatLocalDateStringFromUtcString,
   getExplanationForPeriod,
-} from '@/components/applications/formA/cruisePeriodExplanation';
-import { PrintableResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableResearchTaskDetails';
-import { PrintingPage } from '@/components/applications/print/layout/PrintingPage';
-import { PrintingPageSection } from '@/components/applications/print/layout/PrintingPageSection';
+} from '@/routes/applications/$applicationId/-components/formA/cruisePeriodExplanation';
+import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
+import { PrintingPage } from '@/components/print/layout/PrintingPage';
+import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/api/dto/applications/ContractDto';

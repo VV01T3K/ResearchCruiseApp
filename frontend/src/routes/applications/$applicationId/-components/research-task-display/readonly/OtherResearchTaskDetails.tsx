@@ -4,7 +4,7 @@ import { OtherResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
 type Props = {
   data: OtherResearchTaskDto;
 };
-export function ReadOnlyOtherResearchTaskDetails({ data }: Props) {
+export function OtherResearchTaskDetails({ data }: Props) {
   return (
     <div>
       <AppInput

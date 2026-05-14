@@ -10,7 +10,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
 import { FormCDto } from '@/api/dto/applications/FormCDto';
 import { LongResearchEquipmentDto } from '@/api/dto/applications/LongResearchEquipmentDto';
@@ -382,7 +382,7 @@ export function CruiseDetailsSection() {
               columns={longResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
               data={field.state.value}
               buttons={() => [
-                <CruiseApplicationDropdownElementSelectorButton
+                <DropdownElementSelectorButton
                   key="new"
                   options={[
                     { value: 'Put', label: 'Pozostawienie' },
@@ -403,7 +403,7 @@ export function CruiseDetailsSection() {
                   disabled={isReadonly}
                 >
                   Dodaj nowe
-                </CruiseApplicationDropdownElementSelectorButton>,
+                </DropdownElementSelectorButton>,
               ]}
               variant="form"
               disabled={isReadonly}

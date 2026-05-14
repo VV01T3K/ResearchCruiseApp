@@ -9,7 +9,7 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
 import { SpubTaskDto } from '@/api/dto/applications/SpubTaskDto';
 
@@ -147,7 +147,7 @@ export function SPUBTasksSection() {
                   >
                     Dodaj
                   </AppButton>,
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="historical"
                     options={formAInitValues.historicalSpubTasks.map((task) => ({
                       value: JSON.stringify(task),
@@ -162,7 +162,7 @@ export function SPUBTasksSection() {
                     disabled={isReadonly}
                   >
                     Dodaj historyczne zadanie
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Brak zadań SPUB"
                 variant="form"

@@ -1,9 +1,9 @@
-import { DidacticsResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/DidacticsResearchTaskThumbnail';
-import { OtherResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/OtherResearchTaskThumbnail';
-import { OwnResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/OwnResearchTaskThumbnail';
-import { ProjectPreparationResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
-import { ProjectResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
-import { ThesisResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
+import { DidacticsResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/DidacticsResearchTaskThumbnail';
+import { OtherResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/OtherResearchTaskThumbnail';
+import { OwnResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/OwnResearchTaskThumbnail';
+import { ProjectPreparationResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
+import { ProjectResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
+import { ThesisResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
 import { ResearchTaskDto, ResearchTaskType } from '@/api/dto/applications/ResearchTaskDto';
 
 type Props = {

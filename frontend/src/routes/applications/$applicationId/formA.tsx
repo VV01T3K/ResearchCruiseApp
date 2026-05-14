@@ -16,7 +16,7 @@ import {
   navigateToFirstError,
   removeEmptyValues,
 } from '@/lib/utils';
-import { FormView } from '@/components/applications/formA/FormView';
+import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,

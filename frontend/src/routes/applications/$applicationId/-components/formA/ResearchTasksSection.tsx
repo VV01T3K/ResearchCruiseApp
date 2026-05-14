@@ -6,9 +6,9 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors, groupBy } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
-import { ResearchTaskThumbnail } from '@/components/applications/formA/research-task-thumbnails/ResearchTaskThumbnail';
-import { ResearchTaskDetails } from '@/components/applications/formA/research-task-details/ResearchTaskDetails';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
+import { ResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ResearchTaskThumbnail';
+import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ResearchTaskDetails';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import {
   getEmptyTask,
@@ -87,7 +87,7 @@ export function ResearchTasksSection() {
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="new"
                     options={taskTypes.map((type) => ({
                       value: getTaskName(type),
@@ -102,8 +102,8 @@ export function ResearchTasksSection() {
                     data-testid="form-a-add-research-task-btn"
                   >
                     Dodaj nowe efekty rejsu
-                  </CruiseApplicationDropdownElementSelectorButton>,
-                  <CruiseApplicationDropdownElementSelectorButton
+                  </DropdownElementSelectorButton>,
+                  <DropdownElementSelectorButton
                     key="historical"
                     options={groupBy(initValues.historicalResearchTasks, (x) => x.type).flatMap(([type, tasks]) => [
                       ...[
@@ -131,7 +131,7 @@ export function ResearchTasksSection() {
                     data-testid="form-a-add-historical-research-task-btn"
                   >
                     Dodaj historyczne efekty rejsu
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zadania."
                 variant="form"

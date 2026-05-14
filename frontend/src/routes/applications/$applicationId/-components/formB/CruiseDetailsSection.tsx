@@ -10,7 +10,7 @@ import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePick
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
 import { LongResearchEquipmentDto } from '@/api/dto/applications/LongResearchEquipmentDto';
 import { PortDto } from '@/api/dto/applications/PortDto';
@@ -436,7 +436,7 @@ export function CruiseDetailsSection() {
               columns={longResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
               data={field.state.value}
               buttons={() => [
-                <CruiseApplicationDropdownElementSelectorButton
+                <DropdownElementSelectorButton
                   key="new"
                   data-testid="form-b-add-long-equipment-btn"
                   options={[
@@ -458,7 +458,7 @@ export function CruiseDetailsSection() {
                   disabled={isReadonly}
                 >
                   Dodaj nowe
-                </CruiseApplicationDropdownElementSelectorButton>,
+                </DropdownElementSelectorButton>,
               ]}
               variant="form"
               disabled={isReadonly}

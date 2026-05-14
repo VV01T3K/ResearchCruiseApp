@@ -6,7 +6,7 @@ import { ProjectResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
 type Props = {
   data: ProjectResearchTaskDto;
 };
-export function ReadOnlyProjectResearchTaskDetails({ data }: Props) {
+export function ProjectResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <AppInput

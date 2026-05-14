@@ -22,13 +22,7 @@ type Props = {
   'data-testid'?: string;
 };
 
-export function CruiseApplicationDropdownElementSelectorButton({
-  variant,
-  options,
-  children,
-  disabled,
-  'data-testid': testId,
-}: Props) {
+export function DropdownElementSelectorButton({ variant, options, children, disabled, 'data-testid': testId }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 

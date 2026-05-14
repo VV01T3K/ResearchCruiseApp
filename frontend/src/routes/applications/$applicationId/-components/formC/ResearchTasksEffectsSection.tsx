@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
-import { ReadOnlyResearchTaskDetails } from '@/components/applications/research-task-display/readonly/ReadOnlyResearchTaskDetails';
+import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useFormC } from '@/contexts/applications/FormCContext';
 import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
 import { ResearchTaskEffectDto } from '@/api/dto/applications/ResearchTaskEffectDto';
@@ -25,7 +25,7 @@ export function ResearchTasksEffectsSection() {
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ReadOnlyResearchTaskDetails data={row.original} />,
+      cell: ({ row }) => <ResearchTaskDetails data={row.original} />,
       size: 45,
     },
     {

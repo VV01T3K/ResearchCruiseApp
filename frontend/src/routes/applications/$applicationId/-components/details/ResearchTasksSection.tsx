@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { ReadOnlyResearchTaskDetails } from '@/components/applications/research-task-display/readonly/ReadOnlyResearchTaskDetails';
+import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
 import { EvaluationFormAResearchTask } from '@/api/dto/applications/EvaluationDto';
 import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
@@ -24,7 +24,7 @@ export function ResearchTasksSection() {
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ReadOnlyResearchTaskDetails data={row.original.researchTask} />,
+      cell: ({ row }) => <ResearchTaskDetails data={row.original.researchTask} />,
     },
     {
       header: 'Punkty',

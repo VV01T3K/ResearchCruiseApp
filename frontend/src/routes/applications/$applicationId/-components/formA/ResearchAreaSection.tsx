@@ -11,7 +11,7 @@ import { useFormA } from '@/contexts/applications/FormAContext';
 import { ResearchAreaDescriptionDto } from '@/api/dto/applications/ResearchAreaDescriptionDto';
 import { getResearchAreaName } from '@/api/dto/applications/ResearchAreaDto';
 
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 
 export function ResearchAreaSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
@@ -107,7 +107,7 @@ export function ResearchAreaSection() {
               data={field.state.value}
               showRequiredAsterisk
               buttons={() => [
-                <CruiseApplicationDropdownElementSelectorButton
+                <DropdownElementSelectorButton
                   key="new"
                   options={initValues.researchAreas.concat([{ id: '', name: 'Inne...' }]).map((area) => ({
                     value: area.name,
@@ -126,7 +126,7 @@ export function ResearchAreaSection() {
                   data-testid="form-a-add-research-area-btn"
                 >
                   Dodaj rejon
-                </CruiseApplicationDropdownElementSelectorButton>,
+                </DropdownElementSelectorButton>,
               ]}
               emptyTableMessage="Nie dodano żadnego rejonu."
               variant="form"

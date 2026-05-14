@@ -3,9 +3,9 @@ import dayjs from 'dayjs';
 import { Fragment, RefObject } from 'react';
 
 import { cn } from '@/lib/utils';
-import { PrintableResearchTaskDetails } from '@/components/applications/print/research-task-details/PrintableResearchTaskDetails';
-import { PrintingPage } from '@/components/applications/print/layout/PrintingPage';
-import { PrintingPageSection } from '@/components/applications/print/layout/PrintingPageSection';
+import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
+import { PrintingPage } from '@/components/print/layout/PrintingPage';
+import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
 import { useFormB } from '@/contexts/applications/FormBContext';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/api/dto/applications/ContractDto';

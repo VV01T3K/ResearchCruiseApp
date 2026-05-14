@@ -5,7 +5,7 @@ import { AppBadge } from '@/components/shared/AppBadge';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { ReadOnlyResearchTaskDetails } from '@/components/applications/research-task-display/readonly/ReadOnlyResearchTaskDetails';
+import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useEffectsEvaluationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
 import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
@@ -31,7 +31,7 @@ function CruiseEffectsPage() {
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ReadOnlyResearchTaskDetails data={row.original.effect} />,
+      cell: ({ row }) => <ResearchTaskDetails data={row.original.effect} />,
     },
     {
       header: 'Punkty',

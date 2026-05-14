@@ -10,7 +10,7 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDropdownElementSelectorButton } from '@/components/applications/form-controls/CruiseApplicationDropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormB } from '@/contexts/applications/FormBContext';
 import { CrewMemberDto } from '@/api/dto/applications/CrewMemberDto';
 import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
@@ -410,7 +410,7 @@ export function MembersSection() {
                 columns={getUgTeamsColumns(field)}
                 data={field.state.value}
                 buttons={() => [
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="new"
                     data-testid="form-b-add-ug-unit-btn"
                     options={formAInitValues.ugUnits.map((unit) => ({
@@ -426,7 +426,7 @@ export function MembersSection() {
                     disabled={isReadonly}
                   >
                     Dodaj jednostkę UG
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
@@ -463,7 +463,7 @@ export function MembersSection() {
                   >
                     Dodaj nowy zespół
                   </AppButton>,
-                  <CruiseApplicationDropdownElementSelectorButton
+                  <DropdownElementSelectorButton
                     key="historical"
                     data-testid="form-b-add-historical-guest-team-btn"
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
@@ -478,7 +478,7 @@ export function MembersSection() {
                     disabled={isReadonly}
                   >
                     Dodaj historyczny zespół
-                  </CruiseApplicationDropdownElementSelectorButton>,
+                  </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
