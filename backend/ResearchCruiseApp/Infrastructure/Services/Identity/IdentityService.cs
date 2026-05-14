@@ -47,6 +47,30 @@ public class IdentityService(
         return usersDtos;
     }
 
+    public async Task<List<CruiseManagerOptionDto>> GetAllCruiseManagersDtos(
+        CancellationToken cancellationToken
+    )
+    {
+        var roleNames = new[]
+        {
+            RoleName.Administrator,
+            RoleName.Shipowner,
+            RoleName.CruiseManager,
+        };
+
+        var users = new List<User>();
+
+        foreach (var roleName in roleNames)
+        {
+            var roleUsers = await userManager.GetUsersInRoleAsync(roleName);
+            users.AddRange(roleUsers);
+        }
+
+        var distinctUsers = users.DistinctBy(u => u.Id).Where(u => u.Accepted).ToList();
+
+        return mapper.Map<List<CruiseManagerOptionDto>>(distinctUsers);
+    }
+
     public async Task<bool> UserWithIdExists(Guid id)
     {
         return await userManager.FindByIdAsync(id.ToString()) is not null;
@@ -118,16 +142,8 @@ public class IdentityService(
 
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
     {
-        var emailAddressAttribute = new EmailAddressAttribute();
-
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
-
-        if (
-            string.IsNullOrEmpty(registerForm.Email)
-            || !emailAddressAttribute.IsValid(registerForm.Email)
-        )
-            return Error.InvalidArgument("E-mail jest niepoprawny");
 
         var user = CreateUser(registerForm);
         var identityResult = await userManager.CreateAsync(user, registerForm.Password);

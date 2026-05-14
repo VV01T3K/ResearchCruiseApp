@@ -1,0 +1,66 @@
+# Matryca Uprawnień API
+
+**Legenda ról:**
+
+- 🔴 **Admin** - Administrator, Administrator systemu
+- 🟡 **Armator** - Shipowner, Właściciel/Zarządca statku
+- 🔵 **Kierownik** - CruiseManager, Kierownik rejsu
+- 🟢 **Załoga** - ShipCrew, Członek załogi statku
+- ⚪ **Gość** - Guest, Gość
+
+---
+
+## Moduł: Użytkownicy (Users)
+
+| Akcja Biznesowa                           | 🔴 Admin | 🟡 Armator | 🔵 Kierownik | 🟢 Załoga | ⚪ Gość | Endpoint                             | Uwagi                                                                                                           |
+| :---------------------------------------- | :------: | :--------: | :----------: | :-------: | :-----: | :----------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| Przeglądanie listy użytkowników           |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `GET /Users`                         | Armator ma filtrowanie i dostaje tylko użytkowników z niższymi rolami(nie widzi innych Armatorów i Adminów)     |
+| Pobierz listę możliwych kierowników rejsu |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `GET /Users/availableCruiseManagers` | Zwraca listę wszystkich którzy mogą być kierownikiem **rejsu** - Admin, Armator, Kierownik                      |
+| Tworzenie użytkownika                     |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `POST /Users`                        | Armator może utworzyć tylko konta z niższymi rolami                                                             |
+| Akceptacja konta                          |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PATCH /Users/unaccepted/{id}`       | Armator może akceptować wszystkich                                                                              |
+| Cofnięcie akceptacji konta                |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PATCH /Users/{id:guid}/deactivate`  | Admin może dezaktywować wszystkich poza sobą. Armator może dezaktywować wszystkich z niższymi rolami            |
+| Usuwanie konta                            |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `DELETE /Users/{id:guid}`            | Admin może usunąć wszystkich. Armator może usunąć wszystkich z niższymi rolami(innego Armatora nie może usunąć) |
+| Edytowanie użytkownika                    |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PUT /Users/{id:guid}`               | Armator może zmienić role tylko na niższe od siebie                                                             |
+
+---
+
+## Moduł: Rejsy (Cruises)
+
+| Akcja Biznesowa           | 🔴 Admin | 🟡 Armator | 🔵 Kierownik | 🟢 Załoga | ⚪ Gość | Endpoint                             | Uwagi                                                                                                                               |
+| :------------------------ | :------: | :--------: | :----------: | :-------: | :-----: | :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| Przeglądanie listy rejsów |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/Cruises`                   | Kierownik widzi tylko swoje rejsy(te w których w **FormA** jest jako kierownik/zastępca). Wszystkie inne role widzą wszystkie rejsy |
+| Szczegóły rejsu           |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/Cruises/{id:guid}`         | Kierownik dostanie NotFound jeśli nie jest kierownikiem/zastępcą rejsu(**w FormA**)                                                 |
+| Tworzenie rejsu           |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `POST /api/Cruises`                  | -                                                                                                                                   |
+| Edycja rejsu              |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PATCH /api/Cruises/{id:guid}`       | -                                                                                                                                   |
+| Usuwanie rejsu            |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `DELETE /api/Cruises/{id:guid}`      | -                                                                                                                                   |
+| Zatwierdzenie rejsu       |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PUT /api/Cruises/{id:guid}/confirm` | -                                                                                                                                   |
+| Cofnięcie statusu rejsu   |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PUT /api/Cruises/{id:guid}/revert`  | -                                                                                                                                   |
+| Zakończenie rejsu         |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PUT /api/Cruises/{id:guid}/end`     | -                                                                                                                                   |
+| Auto-dodawanie rejsów     |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PUT /api/Cruises/autoAdded`         | -                                                                                                                                   |
+| Eksport do CSV / Blokady  |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/Cruises/csv`, `/blockades` | -                                                                                                                                   |
+
+---
+
+## Moduł: Zgłoszenia i Formularze (Cruise Applications)
+
+| Akcja Biznesowa                | 🔴 Admin | 🟡 Armator | 🔵 Kierownik | 🟢 Załoga | ⚪ Gość | Endpoint                                                                                  | Uwagi                                                                                                                                                                   |
+| :----------------------------- | :------: | :--------: | :----------: | :-------: | :-----: | :---------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Przeglądanie zgłoszeń          |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications`                                                             | Drafty - widoczne tylko jeśli jestem kierownikiem/zastępcą zgłoszenia. Non-draft - kierownik widzi tylko swoje(jest jako kierownik/zastępca), inne role widzą wszystkie |
+| Tworzenie Form. A              |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `POST /api/CruiseApplications?isDraft={bool}`                                             | -                                                                                                                                                                       |
+| Edycja Form. A                 |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `PUT /api/CruiseApplications/{id}/FormA?isDraft={bool}`                                   | Tylko edycja draftów. Tylko kierownik/zastępca zgłoszenia lub Admin mogą edytować                                                                                       |
+| Podgląd Form. A                |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/{id}/formA`                                                  | Drafty - tylko jeśli jestem kierownikiem/zastępcą; non-draft - kierownik widzi tylko swoje, inne role widzą wszystkie                                                   |
+| Dodawanie Formularza B         |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `PUT /api/CruiseApplications/{id}/FormB?isDraft={bool}`                                   | Może dodać tylko kierownik/zastępca + Admin                                                                                                                             |
+| Podgląd Formularza B           |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/{id}/formB`                                                  | Drafty - tylko kierownik/zastępca; non-draft - jak wyżej                                                                                                                |
+| Dodawanie Formularza C         |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `PUT /api/CruiseApplications/{id}/FormC?isDraft={bool}`                                   | Może dodać tylko kierownik/zastępca + Admin                                                                                                                             |
+| Podgląd Formularza C           |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/{id}/FormC`                                                  | Drafty - tylko kierownik/zastępca. Non-draft - jak wyżej                                                                                                                |
+| Otwarcie do poprawy (Refill)   |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PUT /api/CruiseApplications/{id}/FormB/Refill`, `PUT .../FormC/Refill`                   | -                                                                                                                                                                       |
+| Akceptacja zgłoszenia          |    ✅    |     ✅     |      ❌      |    ❌     |   ❌    | `PATCH /api/CruiseApplications/{id}/answer?accept={bool}`                                 | -                                                                                                                                                                       |
+| GetCruiseApplicationEvaluation |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/{id}/evaluation`                                             | Drafty - tylko kierownik/zastępca; non-draft - jak wyżej                                                                                                                |
+| GetFormAForSupervisor          |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/{id}/formAForSupervisor?supervisorCode={code}`               | AllowAnonymous - dostęp po supervisorCode                                                                                                                               |
+| AnswerAsSupervisor             |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `PATCH /api/CruiseApplications/{id}/supervisorAnswer?accept={bool}&supervisorCode={code}` | AllowAnonymous - akcja po supervisorCode                                                                                                                                |
+| GetCruiseForCruiseApplication  |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/{id}/cruise`                                                 | Drafty - tylko kierownik/zastępca; non-draft - jak wyżej                                                                                                                |
+| GetOwnEffectsEvaluations       |    ✅    |     ✅     |      ✅      |    ✅     |   ✅    | `GET /api/CruiseApplications/effectsEvaluations`                                          | Kafelek efekty rejsów. Zwraca oceny bieżącego użytkownika                                                                                                               |
+| GetOwnPublications             |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `GET /api/CruiseApplications/ownPublications`                                             | Kafelek moje publikacje                                                                                                                                                 |
+| PostOwnPublications            |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `POST /api/CruiseApplications/ownPublications`                                            | Używane tylko przy imporcie publikacji z csv                                                                                                                            |
+| DeleteOwnPublicationCommand    |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `DELETE /api/CruiseApplications/ownPublications/{id}`                                     | Kafelek moje publikacje                                                                                                                                                 |
+| DeleteAllOwnPublication        |    ✅    |     ✅     |      ✅      |    ❌     |   ❌    | `DELETE /api/CruiseApplications/ownPublications`                                          | Kafelek moje publikacje                                                                                                                                                 |
