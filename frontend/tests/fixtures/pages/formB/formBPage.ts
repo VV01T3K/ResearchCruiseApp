@@ -9,21 +9,21 @@ import {
   getInitValuesBPayload,
 } from '@tests/fixtures/mockPayloads';
 
-import { FormBAdditionalPermissionsSection } from './FormBAdditionalPermissionsSection';
-import { FormBContractsSection } from './FormBContractsSection';
-import { FormBCruiseDayDetailsSection } from './FormBCruiseDayDetailsSection';
-import { FormBCruiseDetailsSection } from './FormBCruiseDetailsSection';
-import { FormBCruiseGoalSection } from './FormBCruiseGoalSection';
-import { FormBCruiseInfoSection } from './FormBCruiseInfoSection';
-import { FormBCruiseManagerInfoSection } from './FormBCruiseManagerInfoSection';
-import { FormBMembersSection } from './FormBMembersSection';
-import { FormBPublicationsSection } from './FormBPublicationsSection';
-import { FormBResearchAreaSection } from './FormBResearchAreaSection';
-import { FormBResearchEquipmentsSection } from './FormBResearchEquipmentsSection';
-import { FormBResearchTasksSection } from './FormBResearchTasksSection';
-import { FormBShipEquipmentsSection } from './FormBShipEquipmentsSection';
-import { FormBShipUsageSection } from './FormBShipUsageSection';
-import { FormBSPUBTasksSection } from './FormBSPUBTasksSection';
+import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
+import { ContractsSection } from './ContractsSection';
+import { CruiseDayDetailsSection } from './CruiseDayDetailsSection';
+import { CruiseDetailsSection } from './CruiseDetailsSection';
+import { CruiseGoalSection } from './CruiseGoalSection';
+import { CruiseInfoSection } from './CruiseInfoSection';
+import { CruiseManagerInfoSection } from './CruiseManagerInfoSection';
+import { MembersSection } from './MembersSection';
+import { PublicationsSection } from './PublicationsSection';
+import { ResearchAreaSection } from './ResearchAreaSection';
+import { ResearchEquipmentsSection } from './ResearchEquipmentsSection';
+import { ResearchTasksSection } from './ResearchTasksSection';
+import { ShipEquipmentsSection } from './ShipEquipmentsSection';
+import { ShipUsageSection } from './ShipUsageSection';
+import { SPUBTasksSection } from './SPUBTasksSection';
 
 export class FormBPage {
   public readonly page: Page;
@@ -112,21 +112,21 @@ export class FormBPage {
     this.page = page;
     this.formId = formId;
     this.sections = {
-      cruiseInfoSection: new FormBCruiseInfoSection(this),
-      cruiseManagerInfoSection: new FormBCruiseManagerInfoSection(this),
-      shipUsageSection: new FormBShipUsageSection(this),
-      additionalPermissionsSection: new FormBAdditionalPermissionsSection(this),
-      researchAreaSection: new FormBResearchAreaSection(this),
-      cruiseGoalSection: new FormBCruiseGoalSection(this),
-      researchTasksSection: new FormBResearchTasksSection(this),
-      contractsSection: new FormBContractsSection(this),
-      membersSection: new FormBMembersSection(this),
-      publicationsSection: new FormBPublicationsSection(this),
-      SPUBTasksSection: new FormBSPUBTasksSection(this),
-      cruiseDetailsSection: new FormBCruiseDetailsSection(this),
-      cruiseDayDetailsSection: new FormBCruiseDayDetailsSection(this),
-      researchEquipmentsSection: new FormBResearchEquipmentsSection(this),
-      shipEquipmentSection: new FormBShipEquipmentsSection(this),
+      cruiseInfoSection: new CruiseInfoSection(this),
+      cruiseManagerInfoSection: new CruiseManagerInfoSection(this),
+      shipUsageSection: new ShipUsageSection(this),
+      additionalPermissionsSection: new AdditionalPermissionsSection(this),
+      researchAreaSection: new ResearchAreaSection(this),
+      cruiseGoalSection: new CruiseGoalSection(this),
+      researchTasksSection: new ResearchTasksSection(this),
+      contractsSection: new ContractsSection(this),
+      membersSection: new MembersSection(this),
+      publicationsSection: new PublicationsSection(this),
+      SPUBTasksSection: new SPUBTasksSection(this),
+      cruiseDetailsSection: new CruiseDetailsSection(this),
+      cruiseDayDetailsSection: new CruiseDayDetailsSection(this),
+      researchEquipmentsSection: new ResearchEquipmentsSection(this),
+      shipEquipmentSection: new ShipEquipmentsSection(this),
     } as const;
 
     this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });
