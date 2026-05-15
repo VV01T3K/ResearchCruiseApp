@@ -7,15 +7,14 @@ next recommended work stay easy to recover.
 ## Current Status
 
 Account recovery and security slice implemented. Most account flows now exist under
-`/v2`; email confirmation remains on v1 pending resolution of its legacy
-`changedEmail` branch, and larger resource areas still use v1 routes.
+`/v2`; email confirmation remains on v1 while the legacy `changedEmail` decision is
+deferred to a later follow-up PR outside the main port.
 
 ## Active Slice
 
-Backend v2 account recovery and security slice: move resend-confirmation email,
-password-reset request, password reset, and current-user password change onto the new
-minimal API request path, migrate the matching frontend callers, and add the first
-shared auth rate limit.
+Backend v2 email confirmation audit slice: document whether the legacy
+`changedEmail` confirmation branch still represents a supported workflow and defer the
+actual product decision until after the main port is complete.
 
 ## Decisions Made
 
@@ -42,6 +41,13 @@ shared auth rate limit.
   returning `204` even when the email is unknown.
 - Use one shared built-in fixed-window rate limit for sensitive public account routes:
   10 requests per minute per remote IP.
+- Treat `changedEmail` as likely legacy residue based on current repo evidence, but do
+  not resolve it inside the main port.
+- Keep risky behavior changes that are discovered during the port in
+  `docs/backend-rewrite-v2-deferred-decisions.md` so they can be handled in focused
+  follow-up PRs after migration work is complete.
+- Keep `GET /v2/account/confirm-email` out of v2 until the deferred decision is
+  handled so the new contract does not preserve or delete behavior accidentally.
 
 ## Files Changed By Slice
 
@@ -95,6 +101,11 @@ shared auth rate limit.
 - `frontend/src/routes/forgot-password.tsx`
 - `frontend/src/routes/reset-password.tsx`
 - `frontend/tests/account-recovery.spec.ts`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Email Confirmation Audit Slice
+
+- `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
 ## Verification Run
@@ -163,17 +174,33 @@ shared auth rate limit.
   - The v2 OpenAPI document does not expose `confirm-email`; that endpoint remains on
     v1 in this slice.
 
+### Email Confirmation Audit Slice
+
+- Source inspection confirmed the current repo-visible shape:
+  - v1 still accepts `changedEmail` in `AccountController` and
+    `IdentityService.ConfirmEmail`.
+  - The current frontend confirm-email caller sends only `userId` and `code`.
+  - Confirmation links emitted by the backend include only `userId` and `code`.
+  - The admin user-edit flow can change email, but it updates the stored email
+    directly and does not mint or send a change-email confirmation token.
+  - No live source path currently calls the change-email token generation branch.
+  - `fix/roles-access-control` changes user-update validation and removes unrelated
+    role helpers, but does not resolve or rely on `changedEmail`.
+- No build, formatter, or runtime verification was run because this slice changed
+  documentation only.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
   runs during application startup.
 - Registration still depends on the legacy identity service error text to detect the
   existing "username taken" case on the frontend.
-- Email confirmation still has an unresolved legacy `changedEmail` branch, so only the
-  resend flow was ported in this slice.
+- Email confirmation still has an unresolved legacy `changedEmail` branch. Current
+  repo evidence suggests it is dormant, but the decision is intentionally deferred to
+  a separate post-port PR.
 
 ## Next Recommended Slice
 
-Resolve the legacy `changedEmail` confirmation branch and then either port or remove
-it intentionally before moving on to the next account-adjacent v2 area, likely
-current-user publications and cruise effects.
+Continue the main v2 port with the next account-adjacent area, likely current-user
+publications and cruise effects. Resolve `changedEmail` later through the deferred
+decisions list in a separate follow-up PR rather than inside the migration stream.

@@ -1,0 +1,49 @@
+# Backend v2 Deferred Decisions
+
+This file records behavior changes that were noticed during the backend v2 port but
+are intentionally deferred because deciding them inside the port would mix migration
+work with riskier product or cleanup changes.
+
+Use this file for cases where:
+
+- the current behavior is suspicious, awkward, or probably obsolete
+- changing it during the port could silently alter product behavior
+- the safer path is to preserve behavior for now and handle the decision in a
+  separate follow-up PR
+
+Each deferred item should state the current behavior, why the decision is deferred,
+the evidence gathered so far, and the later decision that still needs to be made.
+
+## Open Decisions
+
+### Email confirmation `changedEmail` branch
+
+**Current behavior**
+
+- v1 email confirmation accepts optional `changedEmail`.
+- When present, `IdentityService.ConfirmEmail` uses `ChangeEmailAsync` and then
+  updates the username to match the new email.
+
+**Why deferred**
+
+- The repo strongly suggests this branch is dormant, but removing it would still be a
+  behavior change.
+- The backend v2 port should stay focused on migration, while uncertain account-policy
+  cleanup should happen in a separate PR after the port is complete.
+
+**Evidence gathered**
+
+- The current frontend confirm-email caller sends only `userId` and `code`.
+- Confirmation links emitted by the backend include only `userId` and `code`.
+- The admin user-edit flow can change email, but it updates the stored email directly
+  and does not mint or send a change-email confirmation token.
+- No live source path currently calls the change-email token generation branch.
+- `fix/roles-access-control` changes user-update validation and removes unrelated role
+  helpers, but does not resolve or rely on `changedEmail`.
+
+**Later decision**
+
+- After the v2 port is complete, decide in a separate PR whether to:
+  - remove the branch as dead behavior, or
+  - preserve it deliberately as a supported email-change workflow and complete the
+    missing surrounding flow.
