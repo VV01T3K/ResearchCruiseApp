@@ -41,14 +41,6 @@ public interface IIdentityService
 
     Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName);
 
-    Task<Result> AddRoleToUser(Guid userId, string roleName);
-
-    Task<Result> RemoveRoleFromUser(
-        Guid userId,
-        string roleName,
-        CancellationToken cancellationToken = default
-    );
-
     Task<IList<string>> GetUserRolesNames(Guid userId);
 
     Task<IList<string>> GetCurrentUserRoleNames();

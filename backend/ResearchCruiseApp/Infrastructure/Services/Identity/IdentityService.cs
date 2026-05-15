@@ -297,33 +297,6 @@ public class IdentityService(
         return Result.Empty;
     }
 
-    public async Task<Result> AddRoleToUser(Guid userId, string roleName)
-    {
-        var user = await userManager.FindByEmailAsync(userId.ToString());
-        if (user is null)
-            return Error.ResourceNotFound();
-
-        var result = await userManager.AddToRoleAsync(user, roleName);
-        return result.ToApplicationResult();
-    }
-
-    public async Task<Result> RemoveRoleFromUser(
-        Guid userId,
-        string roleName,
-        CancellationToken cancellationToken = default
-    )
-    {
-        if (roleName != RoleName.Administrator)
-            return await RemoveRoleFromUserCore(userId, roleName);
-
-        return await ExecuteAdminInvariantGuarded(
-            userId,
-            "Nie można usunąć roli ostatniego administratora",
-            () => RemoveRoleFromUserCore(userId, roleName),
-            cancellationToken
-        );
-    }
-
     public async Task<IList<string>> GetUserRolesNames(Guid userId)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
@@ -380,16 +353,6 @@ public class IdentityService(
             () => UpdateUserCore(userId, updateUserFormDto),
             cancellationToken
         );
-    }
-
-    private async Task<Result> RemoveRoleFromUserCore(Guid userId, string roleName)
-    {
-        var user = await userManager.FindByIdAsync(userId.ToString());
-        if (user is null)
-            return Error.ResourceNotFound();
-
-        var result = await userManager.RemoveFromRoleAsync(user, roleName);
-        return result.ToApplicationResult();
     }
 
     private async Task<Result> DeleteUserCore(Guid userId)
