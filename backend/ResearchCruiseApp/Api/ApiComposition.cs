@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ResearchCruiseApp.Api.Account;
+using ResearchCruiseApp.Api.Users;
 
 namespace ResearchCruiseApp.Api;
 
@@ -22,7 +23,10 @@ public static class ApiComposition
         CurrentPublications.Map(account);
         CurrentCruiseEffects.Map(account);
 
-        v2.MapGroup("/users").WithTags("Users");
+        var users = v2.MapGroup("/users").WithTags("Users");
+        UserDirectory.Map(users);
+        UserProfile.Map(users);
+        UserAcceptance.Map(users);
         v2.MapGroup("/cruises").WithTags("Cruises");
         v2.MapGroup("/applications").WithTags("Applications");
 

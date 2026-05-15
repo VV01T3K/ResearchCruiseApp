@@ -14,7 +14,7 @@ import {
   useAcceptUserMutation,
   useDeleteUserMutation,
   useUnAcceptUserMutation,
-} from '@/api/hooks/user-management/UserManagementApiHooks';
+} from '@/api-v2/users/UserManagementApiHooks';
 
 type Props = {
   selectedUsers: User[];

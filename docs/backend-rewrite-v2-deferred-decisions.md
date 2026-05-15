@@ -70,3 +70,26 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 - After the v2 port is complete, review whether publication import/delete behavior and
   the cruise-effects response should stay as-is or be redesigned deliberately.
+
+### User-management surface cleanup
+
+**Current behavior**
+
+- The live admin/shipowner workflow uses list/create/update/delete, acceptance
+  toggling, and the available-cruise-managers query.
+- Existing permission rules filter which users shipowners can see or mutate and
+  preserve the last-administrator invariant through the identity service.
+
+**Why deferred**
+
+- The long-term rewrite plan sketches additional user resources, but the current app
+  does not consume them yet.
+- Adding or redesigning user-management behavior during this port would mix migration
+  work with product-surface decisions that deserve their own review.
+
+**Later decision**
+
+- After the v2 port is complete, decide whether the broader planned users surface
+  should be added, whether the current privileged-management contract should be
+  reshaped further, and whether the existing permission model needs any deliberate
+  cleanup.

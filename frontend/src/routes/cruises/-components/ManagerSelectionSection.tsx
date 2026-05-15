@@ -10,7 +10,7 @@ import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMapp
 import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
 import { FormUserDto } from '@/api/dto/applications/FormUserDto';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
-import { useAvailableCruiseManagersQuery } from '@/api/hooks/user-management/UserManagementApiHooks';
+import { useAvailableCruiseManagersQuery } from '@/api-v2/users/UserManagementApiHooks';
 import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
 
 export function ManagerSelectionSection() {

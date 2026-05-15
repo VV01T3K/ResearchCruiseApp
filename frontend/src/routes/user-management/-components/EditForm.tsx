@@ -27,7 +27,7 @@ import {
   useNewUserMutation,
   useUnAcceptUserMutation,
   useUpdateUserMutation,
-} from '@/api/hooks/user-management/UserManagementApiHooks';
+} from '@/api-v2/users/UserManagementApiHooks';
 
 type Props = {
   user?: User;

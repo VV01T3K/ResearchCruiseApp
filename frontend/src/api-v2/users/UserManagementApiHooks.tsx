@@ -1,55 +1,49 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
-import { client } from '@/lib/api';
-import { User } from '@/models/shared/User';
-import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
 import { ProblemDetails } from '@/api-v2/account/contracts';
+import { CruiseManagerOptionResponse, UserResponse, UserWriteRequest } from '@/api-v2/users/contracts';
+import { client } from '@/lib/api';
 
 type Props = {
   editMode: boolean;
   setSubmitError: (error: string) => void;
 };
 
-type UserDto = {
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-};
+function getProblemDetail(error: unknown, fallback: string) {
+  if (isAxiosError<ProblemDetails>(error)) {
+    return error.response?.data.detail ?? fallback;
+  }
+
+  return fallback;
+}
 
 export function useNewUserMutation({ editMode, setSubmitError }: Props) {
   return useMutation({
-    mutationFn: async (data: UserDto) => {
+    mutationFn: async (data: UserWriteRequest) => {
       if (editMode) {
         throw new Error('This method should be called only for new users');
       }
-      return await client.post('/users', data);
+
+      return await client.post('/v2/users', data);
     },
-    onError: async (error) => {
-      if (isAxiosError(error)) {
-        setSubmitError(error.response?.data);
-      } else {
-        setSubmitError('Wystąpił błąd podczas dodawania użytkownika');
-      }
+    onError: (error) => {
+      setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas dodawania użytkownika'));
     },
   });
 }
 
 export function useUpdateUserMutation({ editMode, setSubmitError }: Props) {
   return useMutation({
-    mutationFn: async ({ userId, data }: { userId: string; data: UserDto }) => {
+    mutationFn: async ({ userId, data }: { userId: string; data: UserWriteRequest }) => {
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
-      return await client.put(`/users/${userId}`, data);
+
+      return await client.put(`/v2/users/${userId}`, data);
     },
-    onError: async (error) => {
-      if (isAxiosError(error)) {
-        setSubmitError(error.response?.data);
-      } else {
-        setSubmitError('Wystąpił błąd podczas aktualizacji użytkownika');
-      }
+    onError: (error) => {
+      setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas aktualizacji użytkownika'));
     },
   });
 }
@@ -60,58 +54,51 @@ export function useDeleteUserMutation({ editMode, setSubmitError }: Props) {
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
-      return await client.delete(`/users/${userId}`);
+
+      return await client.delete(`/v2/users/${userId}`);
     },
-    onError: async (error) => {
-      if (isAxiosError(error)) {
-        setSubmitError(error.response?.data);
-      } else {
-        setSubmitError('Wystąpił błąd podczas usuwania użytkownika');
-      }
+    onError: (error) => {
+      setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas usuwania użytkownika'));
     },
   });
 }
 
 export function useAcceptUserMutation({ editMode, setSubmitError }: Props) {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (userId: string) => {
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
-      return await client.patch(`/users/unaccepted/${userId}`);
+
+      return await client.put(`/v2/users/${userId}/acceptance`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
-    onError: async (error) => {
-      if (isAxiosError(error)) {
-        setSubmitError(error.response?.data);
-      } else {
-        setSubmitError('Wystąpił błąd podczas akceptacji użytkownika');
-      }
+    onError: (error) => {
+      setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas akceptacji użytkownika'));
     },
   });
 }
 
 export function useUnAcceptUserMutation({ editMode, setSubmitError }: Props) {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (userId: string) => {
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
-      return await client.patch(`/users/${userId}/deactivate`);
+
+      return await client.delete(`/v2/users/${userId}/acceptance`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
-    onError: async (error) => {
-      if (isAxiosError(error)) {
-        setSubmitError(error.response?.data);
-      } else {
-        setSubmitError('Wystąpił błąd podczas cofania akceptacji użytkownika');
-      }
+    onError: (error) => {
+      setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas cofania akceptacji użytkownika'));
     },
   });
 }
@@ -122,14 +109,11 @@ export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: P
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
+
       return await client.post('/v2/account/password-reset-request', { email });
     },
-    onError: async (error) => {
-      if (isAxiosError<ProblemDetails>(error)) {
-        setSubmitError(error.response?.data.detail ?? 'Wystąpił błąd podczas inicjowania zmiany hasła');
-      } else {
-        setSubmitError('Wystąpił błąd podczas inicjowania zmiany hasła');
-      }
+    onError: (error) => {
+      setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas inicjowania zmiany hasła'));
     },
   });
 }
@@ -137,19 +121,15 @@ export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: P
 export function useUsersQuery() {
   return useSuspenseQuery({
     queryKey: ['users'],
-    queryFn: () => {
-      return client.get('/users');
-    },
-    select: (data) => data.data as User[],
+    queryFn: async () => client.get<UserResponse[]>('/v2/users'),
+    select: (response) => response.data,
   });
 }
 
 export function useAvailableCruiseManagersQuery() {
   return useSuspenseQuery({
     queryKey: ['availableCruiseManagers'],
-    queryFn: () => {
-      return client.get('/users/availableCruiseManagers');
-    },
-    select: (data) => data.data as CruiseManagerOption[],
+    queryFn: async () => client.get<CruiseManagerOptionResponse[]>('/v2/users/available-cruise-managers'),
+    select: (response) => response.data,
   });
 }

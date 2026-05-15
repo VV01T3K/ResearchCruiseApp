@@ -6,16 +6,16 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Current-user data slice implemented. Core account, recovery, current-user
-publications, and current-user cruise-effects routes now exist under `/v2`; email
-confirmation remains on v1 while the legacy `changedEmail` decision is deferred to a
-later follow-up PR outside the main port.
+User-management slice implemented. Core account, recovery, current-user data, and the
+live privileged user-management surface now exist under `/v2`; email confirmation
+remains on v1 while the legacy `changedEmail` decision is deferred to a later
+follow-up PR outside the main port.
 
 ## Active Slice
 
-Backend v2 current-user data slice: move current-user publications and cruise effects
-under `/v2/account/me`, migrate the matching frontend callers, and preserve the
-existing publication workflow rules while the port is underway.
+Backend v2 user-management slice: move the live privileged `/users` surface under
+`/v2/users`, migrate the matching frontend callers, and keep unused planned user
+resources out of this migration pass.
 
 ## Decisions Made
 
@@ -55,6 +55,12 @@ existing publication workflow rules while the port is underway.
   frontend never uses the legacy `UserPublication` wrapper.
 - Preserve current publication import/delete rules and current cruise-effects shape
   during migration; defer broader cleanup decisions to the follow-up ledger.
+- Port only live privileged user-management behavior in this slice rather than adding
+  currently unused planned `/v2/users` resources ahead of demand.
+- Use `/v2/users/available-cruise-managers` for the live cruise-manager option query
+  while preserving the current accepted-user selection behavior.
+- Preserve the existing user-management permission and last-administrator rules during
+  migration; defer broader cleanup decisions to the follow-up ledger.
 
 ## Files Changed By Slice
 
@@ -129,6 +135,24 @@ existing publication workflow rules while the port is underway.
 - `frontend/src/routes/my-publications/-components/UploadButton.tsx`
 - `frontend/src/routes/my-publications/index.tsx`
 - `frontend/tests/current-user-data.spec.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### User Management Slice
+
+- `backend/ResearchCruiseApp/Api/ApiComposition.cs`
+- `backend/ResearchCruiseApp/Api/Users/UserAcceptance.cs`
+- `backend/ResearchCruiseApp/Api/Users/UserDirectory.cs`
+- `backend/ResearchCruiseApp/Api/Users/UserProfile.cs`
+- `frontend/src/api-v2/users/UserManagementApiHooks.tsx`
+- `frontend/src/api-v2/users/contracts.ts`
+- `frontend/src/api/hooks/user-management/UserManagementApiHooks.tsx`
+- `frontend/src/routes/cruises/-components/ManagerSelectionSection.tsx`
+- `frontend/src/routes/user-management/-components/EditForm.tsx`
+- `frontend/src/routes/user-management/-components/GroupActionsSection.tsx`
+- `frontend/src/routes/user-management/index.tsx`
+- `frontend/tests/session.spec.ts`
+- `frontend/tests/user-management.spec.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -235,6 +259,28 @@ existing publication workflow rules while the port is underway.
   - `GET /openapi/v2.json` returned `200` and exposes the four current-publication
     routes plus current-user cruise effects.
 
+### User Management Slice
+
+- `vpr -F backend check` passed, matching the backend formatting step used by CI.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/user-management.spec.ts tests/current-user-data.spec.ts tests/account-recovery.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 22 focused Playwright tests for migrated users plus existing
+  auth/account flows.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies: AutoMapper, MailKit, MimeKit, NuGet.Packaging, NuGet.Protocol, and
+  OpenTelemetry packages.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://127.0.0.1:51365`:
+  - `GET /health` returned `200`.
+  - `GET /version` returned `200`.
+  - Existing v1 `GET /Users` returned `401` without credentials, confirming controller
+    routing still works.
+  - `GET /v2/users` returned `401` without credentials.
+  - A guest JWT on `GET /v2/users` returned `403`.
+  - `GET /openapi/v2.json` returned `200` and exposes the seven live v2 user routes.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -244,9 +290,11 @@ existing publication workflow rules while the port is underway.
 - Email confirmation still has an unresolved legacy `changedEmail` branch. Current
   repo evidence suggests it is dormant, but the decision is intentionally deferred to
   a separate post-port PR.
+- The long-term rewrite plan names additional `/v2/users` resources that the current
+  app does not use yet; they remain intentionally unported until a later slice needs
+  them.
 
 ## Next Recommended Slice
 
-Continue with the next v2 resource area, likely privileged user management under
-`/v2/users`, while keeping deferred behavior changes outside the main migration
-stream.
+Continue with the next v2 resource area, likely cruises under `/v2/cruises`, while
+keeping deferred behavior changes outside the main migration stream.

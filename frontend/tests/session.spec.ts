@@ -124,7 +124,7 @@ test.describe('session expiration and refresh', () => {
     await setupAuthMocks(page, {
       refreshResponse: { status: 200, body: extendedAuth },
     });
-    await page.route(`${API_URL}/users`, (route) => {
+    await page.route(`${API_URL}/v2/users`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),
@@ -166,7 +166,7 @@ test.describe('session expiration and refresh', () => {
     await setupAuthMocks(page, {
       refreshResponse: { status: 200, body: extendedAuth },
     });
-    await page.route(`${API_URL}/users`, (route) => {
+    await page.route(`${API_URL}/v2/users`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),
