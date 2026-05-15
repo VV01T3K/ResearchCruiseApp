@@ -13,7 +13,7 @@ import { getErrors } from '@/lib/utils';
 import { useResetPasswordMutation } from '@/api/hooks/user/UserApiHooks';
 import { Result } from '@/models/user/Results';
 
-export const Route = createFileRoute('/reset-password')({
+export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({

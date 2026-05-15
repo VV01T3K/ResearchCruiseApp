@@ -11,7 +11,7 @@ import { getErrors } from '@/lib/utils';
 import { useForgotPasswordMutation } from '@/api/hooks/user/UserApiHooks';
 import { Result } from '@/models/user/Results';
 
-export const Route = createFileRoute('/forgot-password')({
+export const Route = createFileRoute('/(auth)/forgot-password')({
   component: ForgotPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
 });
