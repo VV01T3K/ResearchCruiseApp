@@ -31,6 +31,19 @@ export type ChangePasswordRequest = {
   newPassword: string;
 };
 
+export type CurrentPublicationResponse = {
+  id: string;
+  category: string;
+  doi: string | null;
+  authors: string | null;
+  title: string | null;
+  magazine: string | null;
+  year: string | null;
+  ministerialPoints: string;
+};
+
+export type CurrentPublicationImportRequest = Omit<CurrentPublicationResponse, 'id'>;
+
 export type AuthResponse = {
   accessToken: string;
   accessTokenExpirationDate: string;

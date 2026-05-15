@@ -47,3 +47,26 @@ the evidence gathered so far, and the later decision that still needs to be made
   - remove the branch as dead behavior, or
   - preserve it deliberately as a supported email-change workflow and complete the
     missing surrounding flow.
+
+### Current-user publications and cruise effects cleanup
+
+**Current behavior**
+
+- Publication import deduplicates against existing publication rows, skips imports with
+  zero ministerial points, and only deletes shared publication rows when no Form A or
+  other user-publication references remain.
+- Current-user cruise effects keep the existing response shape while the route moves
+  under `/v2/account/me`.
+
+**Why deferred**
+
+- Those rules are intertwined with existing form workflows and are safer to preserve
+  during route migration.
+- More opinionated lifecycle or contract cleanup should happen after the port in a
+  focused PR with a product decision attached, not as an incidental side effect of the
+  v2 move.
+
+**Later decision**
+
+- After the v2 port is complete, review whether publication import/delete behavior and
+  the cruise-effects response should stay as-is or be redesigned deliberately.

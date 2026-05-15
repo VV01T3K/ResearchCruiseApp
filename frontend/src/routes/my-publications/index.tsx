@@ -12,11 +12,11 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { UploadButton } from './-components/UploadButton';
 import {
-  useDeleteAllOwnPublicationsMutation,
-  useDeleteOwnPublicationMutation,
-  useOwnPublicationQuery,
-  useUploadPublicationsMutation,
-} from '@/api/hooks/publications/MyPublicationsApiHooks';
+  useCurrentPublicationsQuery,
+  useDeleteAllCurrentPublicationsMutation,
+  useDeleteCurrentPublicationMutation,
+  useImportCurrentPublicationsMutation,
+} from '@/api-v2/account/AccountCurrentDataApiHooks';
 import { Publication } from '@/api/dto/publications/Publication';
 
 export const Route = createFileRoute('/my-publications/')({
@@ -28,10 +28,10 @@ function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
 
-  const ownPublicationsQuery = useOwnPublicationQuery();
-  const deleteOwnPublicationMutation = useDeleteOwnPublicationMutation();
-  const deleteAllOwnPublicationsMutation = useDeleteAllOwnPublicationsMutation();
-  const uploadPublicationsMutation = useUploadPublicationsMutation();
+  const ownPublicationsQuery = useCurrentPublicationsQuery();
+  const deleteOwnPublicationMutation = useDeleteCurrentPublicationMutation();
+  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentPublicationsMutation();
+  const uploadPublicationsMutation = useImportCurrentPublicationsMutation();
 
   function deleteSelectedPublications() {
     Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync(id));

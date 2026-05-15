@@ -6,15 +6,16 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Account recovery and security slice implemented. Most account flows now exist under
-`/v2`; email confirmation remains on v1 while the legacy `changedEmail` decision is
-deferred to a later follow-up PR outside the main port.
+Current-user data slice implemented. Core account, recovery, current-user
+publications, and current-user cruise-effects routes now exist under `/v2`; email
+confirmation remains on v1 while the legacy `changedEmail` decision is deferred to a
+later follow-up PR outside the main port.
 
 ## Active Slice
 
-Backend v2 email confirmation audit slice: document whether the legacy
-`changedEmail` confirmation branch still represents a supported workflow and defer the
-actual product decision until after the main port is complete.
+Backend v2 current-user data slice: move current-user publications and cruise effects
+under `/v2/account/me`, migrate the matching frontend callers, and preserve the
+existing publication workflow rules while the port is underway.
 
 ## Decisions Made
 
@@ -48,6 +49,12 @@ actual product decision until after the main port is complete.
   follow-up PRs after migration work is complete.
 - Keep `GET /v2/account/confirm-email` out of v2 until the deferred decision is
   handled so the new contract does not preserve or delete behavior accidentally.
+- Put current-user publications and cruise effects under `/v2/account/me` instead of
+  preserving their legacy placement under `CruiseApplications`.
+- Flatten the v2 current-publications read response to publications only because the
+  frontend never uses the legacy `UserPublication` wrapper.
+- Preserve current publication import/delete rules and current cruise-effects shape
+  during migration; defer broader cleanup decisions to the follow-up ledger.
 
 ## Files Changed By Slice
 
@@ -105,6 +112,23 @@ actual product decision until after the main port is complete.
 
 ### Email Confirmation Audit Slice
 
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Current User Data Slice
+
+- `backend/ResearchCruiseApp/Api/ApiComposition.cs`
+- `backend/ResearchCruiseApp/Api/AuthorizationPolicies.cs`
+- `backend/ResearchCruiseApp/Api/Account/CurrentCruiseEffects.cs`
+- `backend/ResearchCruiseApp/Api/Account/CurrentPublications.cs`
+- `frontend/src/api-v2/account/AccountCurrentDataApiHooks.tsx`
+- `frontend/src/api-v2/account/contracts.ts`
+- `frontend/src/api/hooks/applications/CruiseApplicationsApiHooks.tsx`
+- `frontend/src/api/hooks/publications/MyPublicationsApiHooks.tsx`
+- `frontend/src/routes/cruise-effects.tsx`
+- `frontend/src/routes/my-publications/-components/UploadButton.tsx`
+- `frontend/src/routes/my-publications/index.tsx`
+- `frontend/tests/current-user-data.spec.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -189,6 +213,28 @@ actual product decision until after the main port is complete.
 - No build, formatter, or runtime verification was run because this slice changed
   documentation only.
 
+### Current User Data Slice
+
+- `vpr -F backend check` passed, matching the backend formatting step used by CI.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/current-user-data.spec.ts tests/account-recovery.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 19 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies: AutoMapper, MailKit, MimeKit, NuGet.Packaging, NuGet.Protocol, and
+  OpenTelemetry packages.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - `GET /health` returned `200`.
+  - `GET /version` returned `200`.
+  - Existing v1 current-publication and cruise-effect controller routes returned
+    `401` without credentials, confirming they still map.
+  - `GET /v2/account/me/publications` returned `401` without credentials.
+  - `GET /v2/account/me/cruise-effects` returned `401` without credentials.
+  - `GET /openapi/v2.json` returned `200` and exposes the four current-publication
+    routes plus current-user cruise effects.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -201,6 +247,6 @@ actual product decision until after the main port is complete.
 
 ## Next Recommended Slice
 
-Continue the main v2 port with the next account-adjacent area, likely current-user
-publications and cruise effects. Resolve `changedEmail` later through the deferred
-decisions list in a separate follow-up PR rather than inside the migration stream.
+Continue with the next v2 resource area, likely privileged user management under
+`/v2/users`, while keeping deferred behavior changes outside the main migration
+stream.

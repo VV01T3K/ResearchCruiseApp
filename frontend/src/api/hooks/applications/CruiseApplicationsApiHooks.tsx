@@ -4,7 +4,6 @@ import { client } from '@/lib/api';
 import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
 import { CruiseDto } from '@/api/dto/applications/ApplicationCruiseDto';
 import { EvaluationDto } from '@/api/dto/applications/EvaluationDto';
-import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
 
 export function useCruiseApplicationsQuery() {
   return useSuspenseQuery({
@@ -43,16 +42,6 @@ export function useEvaluationQuery(applicationId: string) {
       return client.get(`/api/CruiseApplications/${applicationId}/evaluation`);
     },
     select: (res) => res.data as EvaluationDto,
-  });
-}
-
-export function useEffectsEvaluationsQuery() {
-  return useSuspenseQuery({
-    queryKey: ['effectsEvaluations'],
-    queryFn: async () => {
-      return client.get('/api/CruiseApplications/effectsEvaluations');
-    },
-    select: (res) => res.data as UserEffectDto[],
   });
 }
 

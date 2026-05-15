@@ -19,6 +19,8 @@ public static class ApiComposition
         PasswordRecovery.Map(account);
         Registration.Map(account);
         CurrentUser.Map(account);
+        CurrentPublications.Map(account);
+        CurrentCruiseEffects.Map(account);
 
         v2.MapGroup("/users").WithTags("Users");
         v2.MapGroup("/cruises").WithTags("Cruises");

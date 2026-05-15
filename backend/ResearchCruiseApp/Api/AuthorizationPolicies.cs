@@ -8,6 +8,7 @@ public static class AuthorizationPolicies
     public const string AnyKnownUser = nameof(AnyKnownUser);
     public const string AdministratorsOnly = nameof(AdministratorsOnly);
     public const string AdministratorsOrShipowners = nameof(AdministratorsOrShipowners);
+    public const string CurrentUserPublications = nameof(CurrentUserPublications);
 
     public static void AddApiAuthorizationPolicies(AuthorizationOptions options)
     {
@@ -36,6 +37,14 @@ public static class AuthorizationPolicies
                 policy
                     .RequireAuthenticatedUser()
                     .RequireRole(RoleName.Administrator, RoleName.Shipowner)
+        );
+
+        options.AddPolicy(
+            CurrentUserPublications,
+            policy =>
+                policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole(RoleName.Administrator, RoleName.Shipowner, RoleName.CruiseManager)
         );
     }
 }
