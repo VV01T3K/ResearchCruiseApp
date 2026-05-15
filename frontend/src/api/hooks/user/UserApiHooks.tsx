@@ -1,6 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
-
 import { client } from '@/lib/api';
 import { Result } from '@/models/user/Results';
 
@@ -36,37 +34,6 @@ export function useForgotPasswordMutation({ setResult }: Props) {
       setResult('success');
     },
     onError: () => {
-      setResult('error');
-    },
-  });
-}
-
-export type RegisterDto = {
-  email: string;
-  firstname: string;
-  lastname: string;
-  password: string;
-};
-
-type RegisterProps = {
-  setResult: (result: Result | 'username-taken') => void;
-};
-
-export function useRegisterMutation({ setResult }: RegisterProps) {
-  return useMutation({
-    mutationFn: async (data: RegisterDto) => {
-      return await client.post('/account/register', data);
-    },
-    onSuccess: async () => {
-      setResult('success');
-    },
-    onError: async (error) => {
-      if (isAxiosError(error)) {
-        if (error.response?.data.includes('taken')) {
-          setResult('username-taken');
-          return;
-        }
-      }
       setResult('error');
     },
   });

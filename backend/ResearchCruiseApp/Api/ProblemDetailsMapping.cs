@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ResearchCruiseApp.Application.Common.Enums;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
@@ -31,7 +32,7 @@ public static class ProblemDetailsMapping
         };
     }
 
-    public static IResult ToProblemHttpResult(this Error error)
+    public static ProblemHttpResult ToProblemHttpResult(this Error error)
     {
         var problemDetails = error.ToProblemDetails();
 

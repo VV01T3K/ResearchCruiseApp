@@ -8,7 +8,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { getErrors } from '@/lib/utils';
-import { useRegisterMutation } from '@/api/hooks/user/UserApiHooks';
+import { useRegisterMutation } from '@/api-v2/account/AccountAuthApiHooks';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/register')({
@@ -19,8 +19,8 @@ export const Route = createFileRoute('/register')({
 const validationSchema = z
   .object({
     email: z.email('Niepoprawny adres e-mail'),
-    firstname: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
-    lastname: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
+    firstName: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
+    lastName: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
     password: z
       .string()
       .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
@@ -54,8 +54,8 @@ function RegisterPage() {
   const form = useForm({
     defaultValues: {
       email: '',
-      firstname: '',
-      lastname: '',
+      firstName: '',
+      lastName: '',
       password: '',
       confirmPassword: '',
     },
@@ -69,7 +69,7 @@ function RegisterPage() {
         return;
       }
 
-      if (!value.email || !value.firstname || !value.lastname || !value.password) {
+      if (!value.email || !value.firstName || !value.lastName || !value.password) {
         throw new Error('Not all fields are filled despite validation');
       }
 
@@ -107,7 +107,7 @@ function RegisterPage() {
           />
 
           <form.Field
-            name="firstname"
+            name="firstName"
             children={(field) => (
               <AppFloatingLabelInput
                 name={field.name}
@@ -122,7 +122,7 @@ function RegisterPage() {
           />
 
           <form.Field
-            name="lastname"
+            name="lastName"
             children={(field) => (
               <AppFloatingLabelInput
                 name={field.name}

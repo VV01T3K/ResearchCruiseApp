@@ -1,16 +1,29 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 
 import { client } from '@/lib/api';
-import { User } from '@/models/shared/User';
 import { AuthDetails } from '@/models/user/AuthDetails';
+import { Result } from '@/models/user/Results';
 import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
+
+import {
+  AuthResponse,
+  CurrentUserResponse,
+  LoginRequest,
+  ProblemDetails,
+  RegisterRequest,
+  RefreshRequest,
+} from './contracts';
 
 type MutationProps = {
   updateAuthDetails: (newAuthDetails: AuthDetails | undefined) => Promise<void>;
 };
 
-/* Returns NULL when no access token has been set or profile couldn't be fetched  */
+type RegisterProps = {
+  setResult: (result: Result | 'username-taken') => void;
+};
+
+/* Returns NULL when no access token has been set or profile couldn't be fetched. */
 export function useProfileQuery() {
   return useSuspenseQuery({
     queryKey: ['userProfile'],
@@ -21,7 +34,7 @@ export function useProfileQuery() {
       }
 
       try {
-        const response = await client.get('/account', {
+        const response = await client.get<CurrentUserResponse>('/v2/account/me', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -34,15 +47,15 @@ export function useProfileQuery() {
         return null;
       }
     },
-    select: (res) => res?.data as User | undefined,
+    select: (res) => res?.data,
     refetchOnWindowFocus: false,
   });
 }
 
 export function useLoginMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) => {
-      return client.post('/account/login', { email, password });
+    mutationFn: (request: LoginRequest) => {
+      return client.post<AuthResponse>('/v2/account/login', request);
     },
     onSuccess: async ({ data }) => {
       const authDetails: AuthDetails = {
@@ -61,13 +74,13 @@ export function useLoginMutation({ updateAuthDetails }: MutationProps) {
 
 export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
-    mutationFn: ({ accessToken, refreshToken }: AuthDetails) => {
-      // We create a new client here since the main one is paused while refreshing
-      // Don't copy client.defaults to avoid sending expired Authorization header
+    mutationFn: ({ accessToken, refreshToken }: RefreshRequest) => {
+      // We create a new client here since the main one is paused while refreshing.
+      // Don't copy client.defaults to avoid sending an expired Authorization header.
       const refreshClient = axios.create({
         baseURL: client.defaults.baseURL,
       });
-      return refreshClient.post('/account/refresh', {
+      return refreshClient.post<AuthResponse>('/v2/account/refresh', {
         accessToken,
         refreshToken,
       });
@@ -83,6 +96,25 @@ export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
     },
     onError: () => {
       updateAuthDetails(undefined);
+    },
+  });
+}
+
+export function useRegisterMutation({ setResult }: RegisterProps) {
+  return useMutation({
+    mutationFn: async (request: RegisterRequest) => {
+      return await client.post('/v2/account/register', request);
+    },
+    onSuccess: async () => {
+      setResult('success');
+    },
+    onError: async (error) => {
+      if (isAxiosError<ProblemDetails>(error) && error.response?.data.detail?.includes('taken')) {
+        setResult('username-taken');
+        return;
+      }
+
+      setResult('error');
     },
   });
 }
