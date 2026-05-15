@@ -26,6 +26,8 @@ public static class WebApplicationExtensions
 
         app.UseCors("CustomPolicy");
 
+        app.UseRateLimiter();
+
         app.UseAuthentication().UseAuthorization();
 
         app.MapApi();

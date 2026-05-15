@@ -15,6 +15,8 @@ public static class ApiComposition
 
         var account = v2.MapGroup("/account").WithTags("Account");
         Authentication.Map(account);
+        EmailConfirmation.Map(account);
+        PasswordRecovery.Map(account);
         Registration.Map(account);
         CurrentUser.Map(account);
 

@@ -1,4 +1,7 @@
-﻿using Asp.Versioning;
+﻿using System.Threading.RateLimiting;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ResearchCruiseApp.Api;
 
 namespace ResearchCruiseApp.Web.Configuration;
@@ -43,6 +46,36 @@ public static class DependencyInjection
             options.ApiVersionReader = new UrlSegmentApiVersionReader();
         });
         services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.AddPolicy(
+                RateLimitingPolicies.AuthSensitive,
+                httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        static _ => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 10,
+                            QueueLimit = 0,
+                            Window = TimeSpan.FromMinutes(1),
+                        }
+                    )
+            );
+            options.OnRejected = async (context, cancellationToken) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.HttpContext.Response.WriteAsJsonAsync(
+                    new ProblemDetails
+                    {
+                        Status = StatusCodes.Status429TooManyRequests,
+                        Title = "Too many requests.",
+                    },
+                    cancellationToken
+                );
+            };
+        });
         services.AddHealthChecks();
 
         services.AddCors(options =>

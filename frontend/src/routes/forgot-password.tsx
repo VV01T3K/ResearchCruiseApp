@@ -8,7 +8,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { getErrors } from '@/lib/utils';
-import { useForgotPasswordMutation } from '@/api/hooks/user/UserApiHooks';
+import { useForgotPasswordMutation } from '@/api-v2/account/AccountRecoveryApiHooks';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/forgot-password')({
@@ -37,11 +37,14 @@ function ForgotPasswordPage() {
       }
 
       setResult(undefined);
-      await mutateAsync(value.email, {
-        onSuccess: async () => {
-          setEmail(value.email);
-        },
-      }).catch(() => {});
+      await mutateAsync(
+        { email: value.email },
+        {
+          onSuccess: async () => {
+            setEmail(value.email);
+          },
+        }
+      ).catch(() => {});
     },
   });
 

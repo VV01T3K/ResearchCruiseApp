@@ -15,6 +15,22 @@ export type RefreshRequest = {
   refreshToken: string;
 };
 
+export type PasswordResetRequest = {
+  email: string;
+};
+
+export type ResetPasswordRequest = {
+  emailBase64: string;
+  resetCode: string;
+  password: string;
+  passwordConfirm: string;
+};
+
+export type ChangePasswordRequest = {
+  password: string;
+  newPassword: string;
+};
+
 export type AuthResponse = {
   accessToken: string;
   accessTokenExpirationDate: string;

@@ -16,7 +16,9 @@ public static class Authentication
             .WithSummary("Sign in with an account.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .WithRequestValidation<LoginRequest>();
+            .ProducesProblem(StatusCodes.Status429TooManyRequests)
+            .WithRequestValidation<LoginRequest>()
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
 
         group
             .MapPost("/refresh", Refresh)
@@ -24,7 +26,9 @@ public static class Authentication
             .WithSummary("Refresh account tokens.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .WithRequestValidation<RefreshRequest>();
+            .ProducesProblem(StatusCodes.Status429TooManyRequests)
+            .WithRequestValidation<RefreshRequest>()
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
     }
 
     private static async Task<Results<Ok<AuthResponse>, ProblemHttpResult>> Login(

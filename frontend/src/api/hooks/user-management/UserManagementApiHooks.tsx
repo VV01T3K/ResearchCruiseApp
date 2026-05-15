@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios';
 import { client } from '@/lib/api';
 import { User } from '@/models/shared/User';
 import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
+import { ProblemDetails } from '@/api-v2/account/contracts';
 
 type Props = {
   editMode: boolean;
@@ -121,11 +122,11 @@ export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: P
       if (!editMode) {
         throw new Error('This method should be called only for existing users');
       }
-      return await client.post('/account/forgotPassword', { email });
+      return await client.post('/v2/account/password-reset-request', { email });
     },
     onError: async (error) => {
-      if (isAxiosError(error)) {
-        setSubmitError(error.response?.data);
+      if (isAxiosError<ProblemDetails>(error)) {
+        setSubmitError(error.response?.data.detail ?? 'Wystąpił błąd podczas inicjowania zmiany hasła');
       } else {
         setSubmitError('Wystąpił błąd podczas inicjowania zmiany hasła');
       }

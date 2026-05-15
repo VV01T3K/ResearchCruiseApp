@@ -1,5 +1,7 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Application.ExternalServices;
+using ResearchCruiseApp.Application.Models.DTOs.Account;
 using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Api.Account;
@@ -13,6 +15,17 @@ public static class CurrentUser
             .WithName("GetCurrentUserV2")
             .WithSummary("Get the current account.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
+
+        group
+            .MapPatch("/me/password", ChangePassword)
+            .WithName("ChangeCurrentUserPasswordV2")
+            .WithSummary("Change the current account password.")
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithRequestValidation<ChangePasswordRequest>()
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
@@ -31,6 +44,22 @@ public static class CurrentUser
         return currentUser is null
             ? TypedResults.NotFound()
             : TypedResults.Ok(CurrentUserResponse.From(currentUser));
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> ChangePassword(
+        ChangePasswordRequest request,
+        IIdentityService identityService
+    )
+    {
+        var result = await identityService.ChangePassword(
+            new ChangePasswordFormDto
+            {
+                Password = request.Password,
+                NewPassword = request.NewPassword,
+            }
+        );
+
+        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 }
 
@@ -55,5 +84,16 @@ public sealed record CurrentUserResponse(
             user.EmailConfirmed,
             user.Accepted
         );
+    }
+}
+
+public sealed record ChangePasswordRequest(string Password, string NewPassword);
+
+public sealed class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
+{
+    public ChangePasswordRequestValidator()
+    {
+        RuleFor(request => request.Password).NotEmpty();
+        RuleFor(request => request.NewPassword).NotEmpty();
     }
 }

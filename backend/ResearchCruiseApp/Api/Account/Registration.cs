@@ -15,7 +15,9 @@ public static class Registration
             .WithName("RegisterAccountV2")
             .WithSummary("Register a new account.")
             .ProducesValidationProblem()
-            .WithRequestValidation<RegisterRequest>();
+            .ProducesProblem(StatusCodes.Status429TooManyRequests)
+            .WithRequestValidation<RegisterRequest>()
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Register(
