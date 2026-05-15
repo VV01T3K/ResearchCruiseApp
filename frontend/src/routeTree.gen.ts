@@ -26,6 +26,9 @@ import { Route as ApplicationsIndexRouteImport } from './routes/applications/ind
 import { Route as AccountSettingsIndexRouteImport } from './routes/account-settings/index'
 import { Route as CruisesNewRouteImport } from './routes/cruises/new'
 import { Route as ApplicationsNewRouteImport } from './routes/applications/new'
+import { Route as legacyResetPasswordRouteImport } from './routes/(legacy)/resetPassword'
+import { Route as legacyCruiseapprovalRouteImport } from './routes/(legacy)/cruiseapproval'
+import { Route as legacyConfirmEmailRouteImport } from './routes/(legacy)/confirmEmail'
 import { Route as CruisesCruiseIdIndexRouteImport } from './routes/cruises/$cruiseId/index'
 import { Route as ApplicationsApplicationIdFormCRouteImport } from './routes/applications/$applicationId/formC'
 import { Route as ApplicationsApplicationIdFormBRouteImport } from './routes/applications/$applicationId/formB'
@@ -117,6 +120,21 @@ const ApplicationsNewRoute = ApplicationsNewRouteImport.update({
   path: '/applications/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const legacyResetPasswordRoute = legacyResetPasswordRouteImport.update({
+  id: '/(legacy)/resetPassword',
+  path: '/resetPassword',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyCruiseapprovalRoute = legacyCruiseapprovalRouteImport.update({
+  id: '/(legacy)/cruiseapproval',
+  path: '/cruiseapproval',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyConfirmEmailRoute = legacyConfirmEmailRouteImport.update({
+  id: '/(legacy)/confirmEmail',
+  path: '/confirmEmail',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CruisesCruiseIdIndexRoute = CruisesCruiseIdIndexRouteImport.update({
   id: '/cruises/$cruiseId/',
   path: '/cruises/$cruiseId/',
@@ -158,6 +176,9 @@ export interface FileRoutesByFullPath {
   '/priority-information': typeof PriorityInformationRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/confirmEmail': typeof legacyConfirmEmailRoute
+  '/cruiseapproval': typeof legacyCruiseapprovalRoute
+  '/resetPassword': typeof legacyResetPasswordRoute
   '/applications/new': typeof ApplicationsNewRoute
   '/cruises/new': typeof CruisesNewRoute
   '/account-settings/': typeof AccountSettingsIndexRoute
@@ -182,6 +203,9 @@ export interface FileRoutesByTo {
   '/priority-information': typeof PriorityInformationRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/confirmEmail': typeof legacyConfirmEmailRoute
+  '/cruiseapproval': typeof legacyCruiseapprovalRoute
+  '/resetPassword': typeof legacyResetPasswordRoute
   '/applications/new': typeof ApplicationsNewRoute
   '/cruises/new': typeof CruisesNewRoute
   '/account-settings': typeof AccountSettingsIndexRoute
@@ -207,6 +231,9 @@ export interface FileRoutesById {
   '/priority-information': typeof PriorityInformationRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/(legacy)/confirmEmail': typeof legacyConfirmEmailRoute
+  '/(legacy)/cruiseapproval': typeof legacyCruiseapprovalRoute
+  '/(legacy)/resetPassword': typeof legacyResetPasswordRoute
   '/applications/new': typeof ApplicationsNewRoute
   '/cruises/new': typeof CruisesNewRoute
   '/account-settings/': typeof AccountSettingsIndexRoute
@@ -233,6 +260,9 @@ export interface FileRouteTypes {
     | '/priority-information'
     | '/register'
     | '/reset-password'
+    | '/confirmEmail'
+    | '/cruiseapproval'
+    | '/resetPassword'
     | '/applications/new'
     | '/cruises/new'
     | '/account-settings/'
@@ -257,6 +287,9 @@ export interface FileRouteTypes {
     | '/priority-information'
     | '/register'
     | '/reset-password'
+    | '/confirmEmail'
+    | '/cruiseapproval'
+    | '/resetPassword'
     | '/applications/new'
     | '/cruises/new'
     | '/account-settings'
@@ -281,6 +314,9 @@ export interface FileRouteTypes {
     | '/priority-information'
     | '/register'
     | '/reset-password'
+    | '/(legacy)/confirmEmail'
+    | '/(legacy)/cruiseapproval'
+    | '/(legacy)/resetPassword'
     | '/applications/new'
     | '/cruises/new'
     | '/account-settings/'
@@ -306,6 +342,9 @@ export interface RootRouteChildren {
   PriorityInformationRoute: typeof PriorityInformationRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  legacyConfirmEmailRoute: typeof legacyConfirmEmailRoute
+  legacyCruiseapprovalRoute: typeof legacyCruiseapprovalRoute
+  legacyResetPasswordRoute: typeof legacyResetPasswordRoute
   ApplicationsNewRoute: typeof ApplicationsNewRoute
   CruisesNewRoute: typeof CruisesNewRoute
   AccountSettingsIndexRoute: typeof AccountSettingsIndexRoute
@@ -441,6 +480,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(legacy)/resetPassword': {
+      id: '/(legacy)/resetPassword'
+      path: '/resetPassword'
+      fullPath: '/resetPassword'
+      preLoaderRoute: typeof legacyResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/cruiseapproval': {
+      id: '/(legacy)/cruiseapproval'
+      path: '/cruiseapproval'
+      fullPath: '/cruiseapproval'
+      preLoaderRoute: typeof legacyCruiseapprovalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/confirmEmail': {
+      id: '/(legacy)/confirmEmail'
+      path: '/confirmEmail'
+      fullPath: '/confirmEmail'
+      preLoaderRoute: typeof legacyConfirmEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cruises/$cruiseId/': {
       id: '/cruises/$cruiseId/'
       path: '/cruises/$cruiseId'
@@ -490,6 +550,9 @@ const rootRouteChildren: RootRouteChildren = {
   PriorityInformationRoute: PriorityInformationRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  legacyConfirmEmailRoute: legacyConfirmEmailRoute,
+  legacyCruiseapprovalRoute: legacyCruiseapprovalRoute,
+  legacyResetPasswordRoute: legacyResetPasswordRoute,
   ApplicationsNewRoute: ApplicationsNewRoute,
   CruisesNewRoute: CruisesNewRoute,
   AccountSettingsIndexRoute: AccountSettingsIndexRoute,
