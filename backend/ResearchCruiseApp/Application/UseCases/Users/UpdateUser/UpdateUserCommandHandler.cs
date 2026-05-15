@@ -15,8 +15,8 @@ public class UpdateUserCommandHandler(
     {
         var emailAddressAttribute = new EmailAddressAttribute();
         if (
-            string.IsNullOrEmpty(request.UpdateUserFormDto.Email)
-            || !emailAddressAttribute.IsValid(request.UpdateUserFormDto.Email)
+            !string.IsNullOrEmpty(request.UpdateUserFormDto.Email)
+            && !emailAddressAttribute.IsValid(request.UpdateUserFormDto.Email)
         )
             return Error.InvalidArgument("Adres e-mail jest niepoprawny");
 
