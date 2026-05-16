@@ -4,13 +4,13 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationUGTeamDto } from '@/api/dto/applications/EvaluationDto';
+import { EvaluationUgTeamResponse } from '@/api-v2/applications/contracts';
 import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
 
 export function MembersSection() {
   const { evaluation } = useApplicationDetails();
 
-  const ugTeamsColumns: ColumnDef<EvaluationUGTeamDto>[] = [
+  const ugTeamsColumns: ColumnDef<EvaluationUgTeamResponse>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

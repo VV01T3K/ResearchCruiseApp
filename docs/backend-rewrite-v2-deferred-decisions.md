@@ -115,3 +115,25 @@ the evidence gathered so far, and the later decision that still needs to be made
 - After the v2 port is complete, decide whether cruise statuses should move to stable
   machine values, whether lifecycle actions should be reshaped further, and whether
   the current auto-planning and reassignment semantics should be revised.
+
+### Application contract and workflow cleanup
+
+**Current behavior**
+
+- The first v2 application slice groups manager data in reads, but preserves current
+  localized status values, evaluation output, and decision semantics.
+- Form workflows and supervisor review stay on their existing behavior until their
+  own migration slices.
+
+**Why deferred**
+
+- Status normalization, form-workflow redesign, and broader application-model cleanup
+  would change product behavior beyond the route migration itself.
+- The application area is large enough that those choices should be reviewed after the
+  whole surface is visible under v2, not mixed into the first catalog/decision move.
+
+**Later decision**
+
+- After the v2 port is complete, decide whether application statuses should become
+  stable machine values, whether the form workflow should be reshaped, and whether
+  evaluation or decision contracts need deliberate redesign.

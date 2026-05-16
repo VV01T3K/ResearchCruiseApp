@@ -53,7 +53,7 @@ export class FormCPage {
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/cruise`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/cruise`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getCruisePayload()),
@@ -81,7 +81,7 @@ export class FormCPage {
       });
     });
 
-    page.route(`${API_URL}/account`, (route) => {
+    page.route(`${API_URL}/v2/account/me`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),
@@ -95,7 +95,7 @@ export class FormCPage {
     });
 
     // return empty list of applications
-    page.route(`${API_URL}/api/CruiseApplications`, (route) => {
+    page.route(`${API_URL}/v2/applications`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),

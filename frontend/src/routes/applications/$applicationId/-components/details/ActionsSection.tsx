@@ -7,7 +7,7 @@ import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
+import { ApplicationStatus } from '@/api-v2/applications/contracts';
 
 type Props = {
   onAccept: () => void;
@@ -26,13 +26,13 @@ export function ActionsSection({ onAccept, onReject }: Props) {
   }
 
   switch (application.status) {
-    case CruiseApplicationStatus.WaitingForSupervisor:
+    case ApplicationStatus.WaitingForSupervisor:
       return (
         <AppActionsSection>
           <RejectButton setConfirmationMode={setConfirmationMode} />
         </AppActionsSection>
       );
-    case CruiseApplicationStatus.AcceptedBySupervisor:
+    case ApplicationStatus.AcceptedBySupervisor:
       return (
         <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
           <AppActionsSection>

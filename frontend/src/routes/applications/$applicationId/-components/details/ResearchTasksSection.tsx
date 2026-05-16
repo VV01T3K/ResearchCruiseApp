@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationFormAResearchTask } from '@/api/dto/applications/EvaluationDto';
+import { EvaluationFormAResearchTask } from '@/api-v2/applications/contracts';
 import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
 
 export function ResearchTasksSection() {

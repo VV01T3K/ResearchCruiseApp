@@ -13,8 +13,8 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
-import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
+import { useApplicationsQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, ApplicationStatus } from '@/api-v2/applications/contracts';
 import { FormView } from '../-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
 import {
@@ -26,6 +26,7 @@ import {
   useUpdateCruiseMutation,
 } from '@/api-v2/cruises/CruisesApiHooks';
 import { CruiseFormValues, CruiseResponse } from '@/api-v2/cruises/contracts';
+import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -45,7 +46,7 @@ function CruiseDetailsPage() {
   const { cruiseId } = Route.useParams();
 
   const cruiseQuery = useCruiseQuery(cruiseId);
-  const applicationQuery = useCruiseApplicationsQuery();
+  const applicationQuery = useApplicationsQuery();
   const updateCruiseMutation = useUpdateCruiseMutation(cruiseId);
   const confirmCruiseMutation = useConfirmCruiseMutation(cruiseId);
   const deleteCruiseMutation = useDeleteCruiseMutation();
@@ -204,12 +205,13 @@ function CruiseDetailsPage() {
     }
   }
 
-  function filterValidCruiseApplications(cruise: CruiseResponse, cruiseApplications: CruiseApplicationDto[]) {
-    return cruiseApplications.filter(
-      (application) =>
-        application.status === CruiseApplicationStatus.Accepted ||
-        cruise.applications.some((x) => x.id === application.id)
-    );
+  function filterValidCruiseApplications(cruise: CruiseResponse, cruiseApplications: ApplicationResponse[]) {
+    return cruiseApplications
+      .filter(
+        (application) =>
+          application.status === ApplicationStatus.Accepted || cruise.applications.some((x) => x.id === application.id)
+      )
+      .map(mapApplicationToLegacyCruiseApplication);
   }
 
   return (
@@ -354,6 +356,22 @@ function CruiseDetailsPage() {
       </AppModal>
     </>
   );
+}
+
+function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationDto {
+  return {
+    ...application,
+    status: application.status as unknown as CruiseApplicationStatus,
+    cruiseManagerId: application.mainManager.id,
+    cruiseManagerEmail: application.mainManager.email,
+    cruiseManagerFirstName: application.mainManager.firstName,
+    cruiseManagerLastName: application.mainManager.lastName,
+    deputyManagerId: application.deputyManager.id,
+    deputyManagerEmail: application.deputyManager.email,
+    deputyManagerFirstName: application.deputyManager.firstName,
+    deputyManagerLastName: application.deputyManager.lastName,
+    cruiseHours: application.cruiseHours ?? '',
+  };
 }
 
 function mapCruiseToForm(cruise: CruiseResponse): CruiseFormValues {

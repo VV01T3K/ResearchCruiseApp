@@ -37,6 +37,11 @@ public static class ApiComposition
         CruiseExport.Map(cruises);
 
         var applications = v2.MapGroup("/applications").WithTags("Applications");
+        ApplicationCatalog.Map(applications);
+        ApplicationDetails.Map(applications);
+        ApplicationCruise.Map(applications);
+        ApplicationEvaluation.Map(applications);
+        ApplicationDecision.Map(applications);
         CruisePlanningCandidates.Map(applications);
 
         return app;

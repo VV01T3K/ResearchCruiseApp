@@ -12,7 +12,7 @@ import {
   FORM_C_FIELD_TO_SECTION,
   getFormCValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { useCruiseForCruiseApplicationQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { useApplicationCruiseQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
 import { useFormAInitValuesQuery, useFormAQuery } from '@/api/hooks/applications/FormAApiHooks';
 import { useFormBInitValuesQuery, useFormBQuery } from '@/api/hooks/applications/FormBApiHooks';
 import { useFormCQuery, useUpdateFormCMutation } from '@/api/hooks/applications/FormCApiHooks';
@@ -38,7 +38,7 @@ function FormCPage() {
   const formC = useFormCQuery(applicationId);
   const formAInitValues = useFormAInitValuesQuery();
   const formBInitValues = useFormBInitValuesQuery();
-  const cruise = useCruiseForCruiseApplicationQuery(applicationId);
+  const cruise = useApplicationCruiseQuery(applicationId);
   const updateMutation = useUpdateFormCMutation();
 
   const form = useForm({

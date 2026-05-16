@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { AppLayout } from '@/components/shared/AppLayout';
-import { useCruiseApplicationQuery, useEvaluationQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { useApplicationEvaluationQuery, useApplicationQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
 import { DetailsView } from './-components/details/DetailsView';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({
@@ -12,8 +12,8 @@ export const Route = createFileRoute('/applications/$applicationId/details')({
 function DetailsPage() {
   const { applicationId } = Route.useParams();
 
-  const applicationQuery = useCruiseApplicationQuery(applicationId);
-  const evaluationQuery = useEvaluationQuery(applicationId);
+  const applicationQuery = useApplicationQuery(applicationId);
+  const evaluationQuery = useApplicationEvaluationQuery(applicationId);
 
   return (
     <AppLayout title="Szczegóły Zgłoszenia">

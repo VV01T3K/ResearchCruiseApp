@@ -5,7 +5,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { CruiseDto } from '@/api/dto/applications/ApplicationCruiseDto';
+import { CruiseResponse } from '@/api-v2/cruises/contracts';
 
 export function CruiseInfoSection() {
   const { cruise } = useFormB();
@@ -39,7 +39,7 @@ export function CruiseInfoSection() {
   );
 }
 
-function StatusBadge({ status }: { status: CruiseDto['status'] }) {
+function StatusBadge({ status }: { status: CruiseResponse['status'] }) {
   if (status === 'Nowy') {
     return <AppBadge variant="info">Nowy</AppBadge>;
   }

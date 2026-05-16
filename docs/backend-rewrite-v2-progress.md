@@ -6,16 +6,17 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Cruise-management slice implemented. Core account, recovery, current-user data, live
-privileged user management, and the live cruise workflow now exist under `/v2`;
-email confirmation remains on v1 while the legacy `changedEmail` decision is deferred
-to a later follow-up PR outside the main port.
+Application catalog and decisions slice implemented. Core account, recovery,
+current-user data, live privileged user management, the live cruise workflow, and the
+first split application surface now exist under `/v2`; email confirmation remains on
+v1 while the legacy `changedEmail` decision is deferred to a later follow-up PR
+outside the main port.
 
 ## Active Slice
 
-Backend v2 cruise-management slice: move the live `/api/Cruises` workflow under
-`/v2/cruises`, move the cruise-planning candidate read to `/v2/applications`, and
-clean up the cruise wire shape without changing lifecycle behavior.
+Backend v2 application catalog and decisions slice: move list/detail, linked-cruise,
+evaluation-read, and accept/reject decision flows under `/v2/applications` while
+leaving forms and supervisor review for later application slices.
 
 ## Decisions Made
 
@@ -68,6 +69,12 @@ clean up the cruise wire shape without changing lifecycle behavior.
   create-cruise workflow depends on it.
 - Clean up the v2 cruise wire shape by grouping manager data and attached applications
   while keeping current status values and lifecycle semantics unchanged.
+- Split the remaining application migration into catalog/decision, authenticated form,
+  and supervisor-review slices so the broader area stays reviewable.
+- Group v2 application read managers as `mainManager` and `deputyManager`, while
+  keeping current status values and evaluation behavior unchanged for this slice.
+- Keep application form endpoints on v1 for now, but move the linked-cruise read used
+  by Form B and Form C to `/v2/applications/{applicationId}/cruise`.
 
 ## Files Changed By Slice
 
@@ -177,6 +184,23 @@ clean up the cruise wire shape without changing lifecycle behavior.
 - `frontend/src/routes/cruises`
 - `frontend/tests/cruises.spec.ts`
 - `frontend/tests/user-management.spec.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Application Catalog And Decisions Slice
+
+- `backend/ResearchCruiseApp/Api/ApiComposition.cs`
+- `backend/ResearchCruiseApp/Api/Applications`
+- `frontend/src/api-v2/applications/ApplicationCatalogApiHooks.tsx`
+- `frontend/src/api-v2/applications/contracts.ts`
+- `frontend/src/contexts/applications`
+- `frontend/src/lib/applications/periodUtils.ts`
+- `frontend/src/routes/applications`
+- `frontend/src/routes/cruises/$cruiseId/index.tsx`
+- `frontend/tests/applications.spec.ts`
+- `frontend/tests/assets/api-mocks/api_CruiseApplications_id_cruise.json`
+- `frontend/tests/fixtures/pages/formB/formBPage.ts`
+- `frontend/tests/fixtures/pages/formC/formCPage.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -322,6 +346,25 @@ clean up the cruise wire shape without changing lifecycle behavior.
   - `GET /openapi/v2.json` exposed the live cruise surface and
     `/v{version}/applications/for-cruise-planning`.
 
+### Application Catalog And Decisions Slice
+
+- `vpr -F backend check` passed, matching the backend formatting step used by CI.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/applications.spec.ts tests/formB.spec.ts:7 tests/formC.spec.ts:7 tests/session.spec.ts tests/login.spec.ts`
+  passed with 17 focused Playwright tests for migrated application reads/decisions,
+  linked-cruise form dependencies, and existing auth/session coverage.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - `GET /v2/applications` returned `401` without credentials.
+  - A guest-token request to
+    `PUT /v2/applications/{applicationId}/decision?accept=true` returned `403`.
+  - Existing v1 `GET /api/CruiseApplications` still mapped through controllers and
+    returned `401` without credentials.
+  - `GET /openapi/v2.json` exposed list, detail, linked-cruise, evaluation, and
+    decision application routes plus the earlier `for-cruise-planning` route.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -336,8 +379,10 @@ clean up the cruise wire shape without changing lifecycle behavior.
   them.
 - Cruise status normalization and broader lifecycle redesign remain intentionally
   deferred after the targeted v2 contract cleanup.
+- Application status normalization and broader form-workflow redesign remain
+  intentionally deferred after the targeted v2 catalog contract cleanup.
 
 ## Next Recommended Slice
 
-Continue with the broader applications surface under `/v2/applications`, while
-keeping deferred behavior changes outside the main migration stream.
+Continue with authenticated application form workflows under `/v2/applications`,
+while keeping deferred behavior changes outside the main migration stream.

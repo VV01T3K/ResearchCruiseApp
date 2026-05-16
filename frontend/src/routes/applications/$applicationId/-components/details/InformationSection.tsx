@@ -4,13 +4,12 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
+import { ApplicationStatus } from '@/api-v2/applications/contracts';
 
 export function InformationSection() {
   const { application } = useApplicationDetails();
   const isFormBReadOnly =
-    application.status !== CruiseApplicationStatus.FormBFilled &&
-    application.status !== CruiseApplicationStatus.Undertaken;
+    application.status !== ApplicationStatus.FormBFilled && application.status !== ApplicationStatus.Undertaken;
 
   return (
     <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>
@@ -19,13 +18,13 @@ export function InformationSection() {
         <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
         <AppInput
           name="cruiseLeader"
-          value={`${application.cruiseManagerFirstName} ${application.cruiseManagerLastName} (${application.cruiseManagerEmail})`}
+          value={`${application.mainManager.firstName} ${application.mainManager.lastName} (${application.mainManager.email})`}
           label="Kierownik:"
           disabled
         />
         <AppInput
           name="deputyManager"
-          value={`${application.deputyManagerFirstName} ${application.deputyManagerLastName} (${application.deputyManagerEmail})`}
+          value={`${application.deputyManager.firstName} ${application.deputyManager.lastName} (${application.deputyManager.email})`}
           label="Zastępca kierownika:"
           disabled
         />

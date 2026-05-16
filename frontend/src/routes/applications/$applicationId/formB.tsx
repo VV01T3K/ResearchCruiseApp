@@ -12,7 +12,7 @@ import {
   FORM_B_FIELD_TO_SECTION,
   getFormBValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { useCruiseForCruiseApplicationQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { useApplicationCruiseQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
 import { useFormAInitValuesQuery, useFormAQuery } from '@/api/hooks/applications/FormAApiHooks';
 import {
   useFormBInitValuesQuery,
@@ -41,7 +41,7 @@ function FormBPage() {
   const formB = useFormBQuery(applicationId);
   const formAInitValues = useFormAInitValuesQuery();
   const formBInitValues = useFormBInitValuesQuery();
-  const cruise = useCruiseForCruiseApplicationQuery(applicationId);
+  const cruise = useApplicationCruiseQuery(applicationId);
   const updateMutation = useUpdateFormBMutation();
   const revertToEditMutation = useRevertFormBToEditMutation();
 

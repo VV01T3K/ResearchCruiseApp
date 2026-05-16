@@ -5,9 +5,8 @@ import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationD
 import {
   useAcceptApplicationMutation,
   useRejectApplicationMutation,
-} from '@/api/hooks/applications/CruiseApplicationsApiHooks';
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
-import { EvaluationDto } from '@/api/dto/applications/EvaluationDto';
+} from '@/api-v2/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, EvaluationResponse } from '@/api-v2/applications/contracts';
 
 import { ActionsSection } from './ActionsSection';
 import { ContractsSection } from './ContractsSection';
@@ -19,8 +18,8 @@ import { ResearchTasksSection } from './ResearchTasksSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
 
 type Props = {
-  application: CruiseApplicationDto;
-  evaluation: EvaluationDto;
+  application: ApplicationResponse;
+  evaluation: EvaluationResponse;
 };
 export function DetailsView({ application, evaluation }: Props) {
   const queryClient = useQueryClient();
@@ -31,7 +30,7 @@ export function DetailsView({ application, evaluation }: Props) {
   function acceptApplication() {
     acceptMutation.mutate(application.id, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['cruiseApplications', application.id] });
+        queryClient.invalidateQueries({ queryKey: ['applications', application.id] });
         toast.success('Formularz został zaakceptowany');
       },
       onError: (err) => {
@@ -44,7 +43,7 @@ export function DetailsView({ application, evaluation }: Props) {
   function rejectApplication() {
     rejectMutation.mutate(application.id, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['cruiseApplications', application.id] });
+        queryClient.invalidateQueries({ queryKey: ['applications', application.id] });
         toast.success('Formularz został odrzucony');
       },
       onError: (err) => {

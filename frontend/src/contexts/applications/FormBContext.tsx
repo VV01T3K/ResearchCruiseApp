@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { CruiseDto } from '@/api/dto/applications/ApplicationCruiseDto';
+import { CruiseResponse } from '@/api-v2/cruises/contracts';
 import { FormADto } from '@/api/dto/applications/FormADto';
 import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
 import { FormBDto } from '@/api/dto/applications/FormBDto';
@@ -12,7 +12,7 @@ export type FormBContextType = {
   formBInitValues: FormBInitValuesDto;
   form: AnyReactFormApi<FormBDto>;
   formA: FormADto;
-  cruise: CruiseDto;
+  cruise: CruiseResponse;
   hasFormBeenSubmitted: boolean;
   isReadonly: boolean;
 };

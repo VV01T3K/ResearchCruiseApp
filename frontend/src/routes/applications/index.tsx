@@ -11,8 +11,8 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
-import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
-import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
+import { useApplicationsQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, ApplicationStatus } from '@/api-v2/applications/contracts';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
@@ -22,9 +22,9 @@ export const Route = createFileRoute('/applications/')({
 const dateFormat = 'DD.MM.YYYY';
 
 function ApplicationsPage() {
-  const applicationsQuery = useCruiseApplicationsQuery();
+  const applicationsQuery = useApplicationsQuery();
 
-  const columns: ColumnDef<CruiseApplicationDto>[] = [
+  const columns: ColumnDef<ApplicationResponse>[] = [
     {
       id: 'number',
       header: 'Nr',
@@ -84,14 +84,14 @@ function ApplicationsPage() {
     },
     {
       header: 'Kierownik',
-      accessorFn: (row) => `${row.cruiseManagerFirstName} ${row.cruiseManagerLastName}`,
+      accessorFn: (row) => `${row.mainManager.firstName} ${row.mainManager.lastName}`,
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <AppAvatar
-            fullName={`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}
+            fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
           />
-          <span>{`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}</span>
+          <span>{`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}</span>
         </div>
       ),
       size: 20,
@@ -100,8 +100,7 @@ function ApplicationsPage() {
       header: 'Formularze',
       cell: ({ row }) => {
         const isFormBReadOnly =
-          row.original.status !== CruiseApplicationStatus.FormBFilled &&
-          row.original.status !== CruiseApplicationStatus.Undertaken;
+          row.original.status !== ApplicationStatus.FormBFilled && row.original.status !== ApplicationStatus.Undertaken;
         return (
           <div className="flex flex-col gap-1">
             <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
@@ -134,9 +133,9 @@ function ApplicationsPage() {
         <>
           <p className="mb-2 text-right italic sm:text-center">
             {row.original.status}
-            {row.original.status === CruiseApplicationStatus.Draft ? ` (${row.original.note})` : null}
+            {row.original.status === ApplicationStatus.Draft ? ` (${row.original.note})` : null}
           </p>
-          {row.original.status === CruiseApplicationStatus.Draft && (
+          {row.original.status === ApplicationStatus.Draft && (
             <AppButton
               className="ml-auto sm:mx-auto"
               size="sm"
@@ -146,8 +145,8 @@ function ApplicationsPage() {
               Kontynuuj wypełnianie
             </AppButton>
           )}
-          {row.original.status === CruiseApplicationStatus.FormBRequired && (
-            <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
+          {row.original.status === ApplicationStatus.FormBRequired && (
+            <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
               <AppButton
                 className="ml-auto sm:mx-auto"
                 size="sm"
@@ -158,9 +157,9 @@ function ApplicationsPage() {
               </AppButton>
             </AppGuard>
           )}
-          {row.original.status === CruiseApplicationStatus.Undertaken && (
+          {row.original.status === ApplicationStatus.Undertaken && (
             <div className="flex flex-col items-center gap-2">
-              <AppGuard allowedUserIds={[row.original.cruiseManagerId, row.original.deputyManagerId]}>
+              <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
                 <AppButton
                   className="ml-auto sm:mx-auto"
                   size="sm"
