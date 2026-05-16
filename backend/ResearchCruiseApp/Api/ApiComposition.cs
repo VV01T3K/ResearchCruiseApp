@@ -43,6 +43,10 @@ public static class ApiComposition
         ApplicationEvaluation.Map(applications);
         ApplicationDecision.Map(applications);
         CruisePlanningCandidates.Map(applications);
+        ApplicationFormContext.Map(applications);
+        ApplicationFormA.Map(applications);
+        ApplicationFormB.Map(applications);
+        ApplicationFormC.Map(applications);
 
         return app;
     }

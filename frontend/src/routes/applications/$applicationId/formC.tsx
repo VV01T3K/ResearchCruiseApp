@@ -13,9 +13,14 @@ import {
   getFormCValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { useApplicationCruiseQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
-import { useFormAInitValuesQuery, useFormAQuery } from '@/api/hooks/applications/FormAApiHooks';
-import { useFormBInitValuesQuery, useFormBQuery } from '@/api/hooks/applications/FormBApiHooks';
-import { useFormCQuery, useUpdateFormCMutation } from '@/api/hooks/applications/FormCApiHooks';
+import {
+  useFormAInitValuesQuery,
+  useFormAQuery,
+  useFormBInitValuesQuery,
+  useFormBQuery,
+  useFormCQuery,
+  useUpdateFormCMutation,
+} from '@/api-v2/applications/ApplicationFormsApiHooks';
 import { FormCDto } from '@/api/dto/applications/FormCDto';
 import { ResearchTaskEffectDto } from '@/api/dto/applications/ResearchTaskEffectDto';
 

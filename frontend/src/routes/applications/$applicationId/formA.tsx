@@ -21,7 +21,11 @@ import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { useFormAInitValuesQuery, useFormAQuery, useUpdateFormAMutation } from '@/api/hooks/applications/FormAApiHooks';
+import {
+  useFormAInitValuesQuery,
+  useFormAQuery,
+  useUpdateFormAMutation,
+} from '@/api-v2/applications/ApplicationFormsApiHooks';
 import { FormADto } from '@/api/dto/applications/FormADto';
 import { useBlockadesQuery } from '@/api-v2/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';

@@ -13,13 +13,14 @@ import {
   getFormBValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { useApplicationCruiseQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
-import { useFormAInitValuesQuery, useFormAQuery } from '@/api/hooks/applications/FormAApiHooks';
 import {
+  useFormAInitValuesQuery,
+  useFormAQuery,
   useFormBInitValuesQuery,
   useFormBQuery,
   useRevertFormBToEditMutation,
   useUpdateFormBMutation,
-} from '@/api/hooks/applications/FormBApiHooks';
+} from '@/api-v2/applications/ApplicationFormsApiHooks';
 import { CruiseDayDetailsDtoValidationSchema } from '@/api/dto/applications/CruiseDayDetailsDto';
 import { FormBDto } from '@/api/dto/applications/FormBDto';
 

@@ -35,14 +35,14 @@ export class FormBPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page, formId: string = TESTED_FORM_ID): Promise<FormBPage> {
-    page.route(`${API_URL}/forms/InitValues/A`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-a/init-values`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesAPayload()),
       });
     });
 
-    page.route(`${API_URL}/forms/InitValues/B`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-b/init-values`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesBPayload()),
@@ -56,7 +56,7 @@ export class FormBPage {
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/formA`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/form-a`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getFormAPayload()),
@@ -64,7 +64,7 @@ export class FormBPage {
     });
 
     // Form B is not yet created, so we mock a 404 response
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/formB`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/form-b`, (route) => {
       route.fulfill({
         status: 404,
       });
@@ -77,7 +77,7 @@ export class FormBPage {
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/FormB?isDraft=false`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/form-b?isDraft=false`, (route) => {
       route.fulfill({
         status: 200,
       });

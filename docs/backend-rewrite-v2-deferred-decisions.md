@@ -137,3 +137,22 @@ the evidence gathered so far, and the later decision that still needs to be made
 - After the v2 port is complete, decide whether application statuses should become
   stable machine values, whether the form workflow should be reshaped, and whether
   evaluation or decision contracts need deliberate redesign.
+
+### Authenticated application-form cleanup
+
+**Current behavior**
+
+- The authenticated Form A/B/C workflow keeps the existing DTO shapes, draft
+  semantics, status transitions, and refill behavior while moving under `/v2`.
+- Anonymous supervisor review remains separate from the authenticated form flow.
+
+**Why deferred**
+
+- The current form payloads are large and tightly coupled to existing UI workflows.
+- Reshaping those contracts during route migration would mix a broad product redesign
+  into a behavior-preserving port.
+
+**Later decision**
+
+- After the v2 port is complete, decide whether the form contracts, naming, and
+  workflow boundaries should be redesigned deliberately.

@@ -184,6 +184,13 @@ test('cruise detail update and lifecycle actions use v2 routes', async ({ page }
       contentType: 'application/json',
     });
   });
+  await page.route(`${API_URL}/v2/applications`, (route) => {
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify([]),
+      contentType: 'application/json',
+    });
+  });
 
   await page.goto(`/cruises/${cruise.id}`);
   await page.getByRole('button', { name: 'Edytuj' }).click();
@@ -238,7 +245,7 @@ test('cruise list actions use v2 auto-plan, export, and blockade routes', async 
       contentType: 'application/json',
     });
   });
-  await page.route(`${API_URL}/forms/InitValues/A`, (route) => {
+  await page.route(`${API_URL}/v2/applications/form-a/init-values`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify(getInitValuesAPayload()),

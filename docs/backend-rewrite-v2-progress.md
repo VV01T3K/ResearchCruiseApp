@@ -6,17 +6,17 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Application catalog and decisions slice implemented. Core account, recovery,
-current-user data, live privileged user management, the live cruise workflow, and the
-first split application surface now exist under `/v2`; email confirmation remains on
-v1 while the legacy `changedEmail` decision is deferred to a later follow-up PR
-outside the main port.
+Authenticated application forms slice implemented. Core account, recovery,
+current-user data, live privileged user management, the live cruise workflow, the
+application catalog/decision surface, and authenticated Form A/B/C workflows now
+exist under `/v2`; email confirmation remains on v1 while the legacy `changedEmail`
+decision is deferred to a later follow-up PR outside the main port.
 
 ## Active Slice
 
-Backend v2 application catalog and decisions slice: move list/detail, linked-cruise,
-evaluation-read, and accept/reject decision flows under `/v2/applications` while
-leaving forms and supervisor review for later application slices.
+Backend v2 authenticated application forms slice: move authenticated Form A/B/C
+reads and writes plus authenticated form init-values under `/v2/applications` while
+leaving the anonymous supervisor review flow for the final applications slice.
 
 ## Decisions Made
 
@@ -75,6 +75,12 @@ leaving forms and supervisor review for later application slices.
   keeping current status values and evaluation behavior unchanged for this slice.
 - Keep application form endpoints on v1 for now, but move the linked-cruise read used
   by Form B and Form C to `/v2/applications/{applicationId}/cruise`.
+- Port the authenticated Form A/B/C workflow together so the signed-in application
+  pages no longer straddle v1 and v2.
+- Keep anonymous supervisor review on v1 for one final application slice because it
+  has distinct anonymous authorization and token/code semantics.
+- Preserve existing authenticated form DTOs and workflow semantics during the port;
+  record broader form cleanup in the deferred-decisions ledger.
 
 ## Files Changed By Slice
 
@@ -199,6 +205,26 @@ leaving forms and supervisor review for later application slices.
 - `frontend/src/routes/cruises/$cruiseId/index.tsx`
 - `frontend/tests/applications.spec.ts`
 - `frontend/tests/assets/api-mocks/api_CruiseApplications_id_cruise.json`
+- `frontend/tests/fixtures/pages/formB/formBPage.ts`
+- `frontend/tests/fixtures/pages/formC/formCPage.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Authenticated Application Forms Slice
+
+- `backend/ResearchCruiseApp/Api/ApiComposition.cs`
+- `backend/ResearchCruiseApp/Api/AuthorizationPolicies.cs`
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormA.cs`
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormB.cs`
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormC.cs`
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormContext.cs`
+- `frontend/src/api-v2/applications/ApplicationFormsApiHooks.tsx`
+- `frontend/src/routes/applications/new.tsx`
+- `frontend/src/routes/applications/$applicationId/formA.tsx`
+- `frontend/src/routes/applications/$applicationId/formB.tsx`
+- `frontend/src/routes/applications/$applicationId/formC.tsx`
+- `frontend/tests/cruises.spec.ts`
+- `frontend/tests/fixtures/pages/formA/formAPage.ts`
 - `frontend/tests/fixtures/pages/formB/formBPage.ts`
 - `frontend/tests/fixtures/pages/formC/formCPage.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
@@ -365,6 +391,25 @@ leaving forms and supervisor review for later application slices.
   - `GET /openapi/v2.json` exposed list, detail, linked-cruise, evaluation, and
     decision application routes plus the earlier `for-cruise-planning` route.
 
+### Authenticated Application Forms Slice
+
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/cruises.spec.ts:150 tests/formA.spec.ts:7 tests/formB.spec.ts:7 tests/formC.spec.ts:7 tests/session.spec.ts tests/login.spec.ts`
+  passed with 16 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - unauthenticated `GET` requests to Form A, Form B, and Form C v2 routes returned
+    `401`.
+  - existing v1 `GET /forms/InitValues/A` still returned `401` without credentials,
+    confirming the legacy controller route remains mapped.
+  - `GET /openapi/v2.json` exposed authenticated Form A/B/C routes plus the two
+    authenticated form init-values routes.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -380,9 +425,9 @@ leaving forms and supervisor review for later application slices.
 - Cruise status normalization and broader lifecycle redesign remain intentionally
   deferred after the targeted v2 contract cleanup.
 - Application status normalization and broader form-workflow redesign remain
-  intentionally deferred after the targeted v2 catalog contract cleanup.
+  intentionally deferred after the targeted v2 contract cleanup.
 
 ## Next Recommended Slice
 
-Continue with authenticated application form workflows under `/v2/applications`,
-while keeping deferred behavior changes outside the main migration stream.
+Continue with the anonymous supervisor-review flow under `/v2/applications`, while
+keeping deferred behavior changes outside the main migration stream.
