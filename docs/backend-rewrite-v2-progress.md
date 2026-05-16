@@ -6,17 +6,18 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Authenticated application forms slice implemented. Core account, recovery,
+Supervisor review slice implemented. Core account, recovery,
 current-user data, live privileged user management, the live cruise workflow, the
-application catalog/decision surface, and authenticated Form A/B/C workflows now
-exist under `/v2`; email confirmation remains on v1 while the legacy `changedEmail`
-decision is deferred to a later follow-up PR outside the main port.
+application catalog/decision surface, authenticated Form A/B/C workflows, and the
+anonymous supervisor-review flow now exist under `/v2`; email confirmation remains
+on v1 while the legacy `changedEmail` decision is deferred to a later follow-up PR
+outside the main port.
 
 ## Active Slice
 
-Backend v2 authenticated application forms slice: move authenticated Form A/B/C
-reads and writes plus authenticated form init-values under `/v2/applications` while
-leaving the anonymous supervisor review flow for the final applications slice.
+Backend v2 supervisor review slice: move the anonymous public review read and
+decision flow under `/v2/applications` while bundling the two legacy read calls into
+one response.
 
 ## Decisions Made
 
@@ -81,6 +82,10 @@ leaving the anonymous supervisor review flow for the final applications slice.
   has distinct anonymous authorization and token/code semantics.
 - Preserve existing authenticated form DTOs and workflow semantics during the port;
   record broader form cleanup in the deferred-decisions ledger.
+- Bundle the anonymous supervisor-review read into one v2 response containing Form A
+  plus reduced init values, instead of preserving the old two-request frontend shape.
+- Keep the existing supervisor-code and lifecycle semantics intact during migration;
+  defer any broader public-review redesign to the follow-up ledger.
 
 ## Files Changed By Slice
 
@@ -227,6 +232,17 @@ leaving the anonymous supervisor review flow for the final applications slice.
 - `frontend/tests/fixtures/pages/formA/formAPage.ts`
 - `frontend/tests/fixtures/pages/formB/formBPage.ts`
 - `frontend/tests/fixtures/pages/formC/formCPage.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Supervisor Review Slice
+
+- `backend/ResearchCruiseApp/Api/ApiComposition.cs`
+- `backend/ResearchCruiseApp/Api/Applications/SupervisorReview.cs`
+- `frontend/src/api-v2/applications/SupervisorReviewApiHooks.tsx`
+- `frontend/src/api-v2/applications/contracts.ts`
+- `frontend/src/routes/cruise-approval.tsx`
+- `frontend/tests/supervisor-review.spec.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -410,6 +426,25 @@ leaving the anonymous supervisor review flow for the final applications slice.
   - `GET /openapi/v2.json` exposed authenticated Form A/B/C routes plus the two
     authenticated form init-values routes.
 
+### Supervisor Review Slice
+
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/supervisor-review.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 14 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - anonymous requests to the new supervisor-review read and decision routes with an
+    invalid code returned `404`, confirming the public routes do not challenge for
+    authentication and still mask invalid links.
+  - existing v1 supervisor-review read still mapped through controllers and returned
+    `404` for an invalid link.
+  - `GET /openapi/v2.json` exposed both new supervisor-review routes.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -426,8 +461,11 @@ leaving the anonymous supervisor review flow for the final applications slice.
   deferred after the targeted v2 contract cleanup.
 - Application status normalization and broader form-workflow redesign remain
   intentionally deferred after the targeted v2 contract cleanup.
+- Supervisor-review token, payload, and lifecycle cleanup remain intentionally
+  deferred after the behavior-preserving v2 move.
 
 ## Next Recommended Slice
 
-Continue with the anonymous supervisor-review flow under `/v2/applications`, while
-keeping deferred behavior changes outside the main migration stream.
+The main live v2 port is now complete. Continue with deferred follow-up PRs, starting
+with whichever risky decision is ready for product review rather than folding cleanup
+back into the migration stream.

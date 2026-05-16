@@ -156,3 +156,25 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 - After the v2 port is complete, decide whether the form contracts, naming, and
   workflow boundaries should be redesigned deliberately.
+
+### Supervisor-review cleanup
+
+**Current behavior**
+
+- Anonymous supervisor review uses the existing supervisor code as the public-link
+  credential.
+- The v2 read endpoint bundles Form A plus reduced Form A init values, while the
+  decision endpoint preserves the existing accept/deny state rules.
+
+**Why deferred**
+
+- Token semantics, response shape, and lifecycle messaging are public-link behavior
+  with product and security implications.
+- The main port should preserve the current review workflow first, then revisit it in
+  a focused follow-up PR if a cleaner design is wanted.
+
+**Later decision**
+
+- After the v2 port is complete, decide whether supervisor review should keep its
+  current code model and payload shape or move to a deliberately redesigned public
+  review contract.

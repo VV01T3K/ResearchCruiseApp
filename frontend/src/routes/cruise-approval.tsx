@@ -2,13 +2,13 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import axios, { AxiosError } from 'axios';
+import { ProblemDetails } from '@/api-v2/account/contracts';
+import {
+  useSupervisorReviewDecisionMutation,
+  useSupervisorReviewQuery,
+} from '@/api-v2/applications/SupervisorReviewApiHooks';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
-import {
-  useFormAForSupervisorInitValuesQuery,
-  useFormAForSupervisorQuery,
-  useSupervisorAnswerFormAMutation,
-} from '@/api/hooks/applications/FormAApiHooks';
 import { CruisePeriodType, FormADto } from '@/api/dto/applications/FormADto';
 
 export const Route = createFileRoute('/cruise-approval')({
@@ -27,22 +27,22 @@ export const Route = createFileRoute('/cruise-approval')({
 function SupervisorViewPage() {
   const { cruiseApplicationId, supervisorCode } = Route.useSearch();
   const navigate = useNavigate();
-  const initialStateQuery = useFormAForSupervisorInitValuesQuery({ cruiseId: cruiseApplicationId, supervisorCode });
-  const answerMutation = useSupervisorAnswerFormAMutation();
-  const formA = useFormAForSupervisorQuery({ cruiseId: cruiseApplicationId, supervisorCode });
+  const supervisorReview = useSupervisorReviewQuery({ applicationId: cruiseApplicationId, code: supervisorCode });
+  const answerMutation = useSupervisorReviewDecisionMutation();
+  const formA = supervisorReview.data.form;
 
   const form = useForm({
-    defaultValues: (formA.data
+    defaultValues: (formA
       ? {
-          ...formA.data,
-          acceptablePeriod: formA.data.acceptablePeriod ?? '',
-          optimalPeriod: formA.data.optimalPeriod ?? '',
-          precisePeriodStart: formA.data.precisePeriodStart ?? '',
-          precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
+          ...formA,
+          acceptablePeriod: formA.acceptablePeriod ?? '',
+          optimalPeriod: formA.optimalPeriod ?? '',
+          precisePeriodStart: formA.precisePeriodStart ?? '',
+          precisePeriodEnd: formA.precisePeriodEnd ?? '',
           periodSelectionType:
-            formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period'
-              ? formA.data.periodSelectionType
-              : formA.data.precisePeriodStart || formA.data.precisePeriodEnd
+            formA.periodSelectionType === 'precise' || formA.periodSelectionType === 'period'
+              ? formA.periodSelectionType
+              : formA.precisePeriodStart || formA.precisePeriodEnd
                 ? 'precise'
                 : 'period',
         }
@@ -50,7 +50,7 @@ function SupervisorViewPage() {
           id: undefined,
           cruiseManagerId: '',
           deputyManagerId: '',
-          year: initialStateQuery.data.years[0],
+          year: supervisorReview.data.initValues.years[0],
           acceptablePeriod: ['0', '24'] as CruisePeriodType,
           optimalPeriod: ['0', '24'] as CruisePeriodType,
           precisePeriodStart: '',
@@ -78,7 +78,7 @@ function SupervisorViewPage() {
   function handleAcceptForm() {
     const loading = toast.loading('Przetwarzanie zgłoszenia...');
     answerMutation.mutate(
-      { id: cruiseApplicationId!, accept: true, supervisorCode: supervisorCode! },
+      { applicationId: cruiseApplicationId!, accept: true, code: supervisorCode! },
       {
         onSuccess: () => {
           navigate({ to: '/' });
@@ -86,8 +86,8 @@ function SupervisorViewPage() {
         },
         onError: (err: Error | AxiosError) => {
           console.error(err);
-          if (axios.isAxiosError(err) && err.response?.status === 403) {
-            toast.error('Niedozwolona operacja: ' + err.response?.data);
+          if (axios.isAxiosError<ProblemDetails>(err) && err.response?.status === 403) {
+            toast.error('Niedozwolona operacja: ' + (err.response.data.detail ?? ''));
           } else {
             toast.error('Wystąpił błąd: Nie udało się zaakceptować zgłoszenia');
           }
@@ -102,7 +102,7 @@ function SupervisorViewPage() {
   function handleDenyForm() {
     const loading = toast.loading('Przetwarzanie zgłoszenia...');
     answerMutation.mutate(
-      { id: cruiseApplicationId!, accept: false, supervisorCode: supervisorCode! },
+      { applicationId: cruiseApplicationId!, accept: false, code: supervisorCode! },
       {
         onSuccess: () => {
           navigate({ to: '/' });
@@ -110,8 +110,8 @@ function SupervisorViewPage() {
         },
         onError: (err: Error | AxiosError) => {
           console.error(err);
-          if (axios.isAxiosError(err) && err.response?.status === 403) {
-            toast.error('Niedozwolona operacja: ' + err.response?.data);
+          if (axios.isAxiosError<ProblemDetails>(err) && err.response?.status === 403) {
+            toast.error('Niedozwolona operacja: ' + (err.response.data.detail ?? ''));
           } else {
             toast.error('Wystąpił błąd: Nie udało się odrzucić zgłoszenia');
           }
@@ -126,7 +126,7 @@ function SupervisorViewPage() {
   return (
     <SupervisorView
       form={form}
-      formInitValues={initialStateQuery.data}
+      formInitValues={supervisorReview.data.initValues}
       handleAcceptForm={handleAcceptForm}
       handleDenyForm={handleDenyForm}
     />

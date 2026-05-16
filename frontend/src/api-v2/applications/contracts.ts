@@ -1,4 +1,6 @@
 import { ContractDto } from '@/api/dto/applications/ContractDto';
+import { FormADto } from '@/api/dto/applications/FormADto';
+import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
 import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
 import { PublicationDto } from '@/api/dto/applications/PublicationDto';
 import { ResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
@@ -90,4 +92,9 @@ export type EvaluationFormASpubTask = {
   id: string;
   spubTask: SpubTaskDto;
   points: string;
+};
+
+export type SupervisorReviewResponse = {
+  form: FormADto;
+  initValues: FormAInitValuesDto;
 };

@@ -47,6 +47,7 @@ public static class ApiComposition
         ApplicationFormA.Map(applications);
         ApplicationFormB.Map(applications);
         ApplicationFormC.Map(applications);
+        SupervisorReview.Map(applications);
 
         return app;
     }
