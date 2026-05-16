@@ -111,7 +111,7 @@ test('user management create, update, delete, accept, and deactivate use v2 rout
 test('cruise manager options load from the v2 users route', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
   let requested = false;
-  await page.route(`${API_URL}/api/CruiseApplications/forCruise`, (route) => {
+  await page.route(`${API_URL}/v2/applications/for-cruise-planning`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify([]),

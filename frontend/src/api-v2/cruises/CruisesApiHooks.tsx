@@ -2,35 +2,37 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tansta
 
 import { client } from '@/lib/api';
 import { FileDto } from '@/api/dto/applications/FileDto';
-import { BlockadePeriodDto, CruiseDto } from '@/api/dto/cruises/CruiseDto';
-import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
+import {
+  BlockadePeriodResponse,
+  CruiseFormValues,
+  CruiseResponse,
+  CruiseWriteRequest,
+} from '@/api-v2/cruises/contracts';
+
+function toWriteRequest(cruise: CruiseFormValues): CruiseWriteRequest {
+  return {
+    startDate: cruise.startDate,
+    endDate: cruise.endDate,
+    mainManagerId: cruise.managersTeam.mainCruiseManagerId,
+    deputyManagerId: cruise.managersTeam.mainDeputyManagerId,
+    cruiseApplicationIds: cruise.cruiseApplicationsIds ?? [],
+    title: cruise.title,
+    shipUnavailable: cruise.shipUnavailable,
+  };
+}
 
 export function useCruisesQuery() {
   return useSuspenseQuery({
     queryKey: ['cruises'],
-    queryFn: async () => {
-      return client.get('/api/Cruises');
-    },
-    select: (res) => res.data as CruiseDto[],
+    queryFn: async () => client.get<CruiseResponse[]>('/v2/cruises'),
+    select: (res) => res.data,
   });
 }
 
 export function useCruiseQuery(id: string) {
   return useSuspenseQuery({
     queryKey: ['cruises', id],
-    queryFn: async () => {
-      return client.get(`/api/Cruises/${id}`);
-    },
-    select: (res) => res.data as CruiseDto,
-  });
-}
-
-export function useCruiseApplicationsForCruiseQuery() {
-  return useSuspenseQuery({
-    queryKey: ['cruiseApplications', 'forCruise'],
-    queryFn: async () => {
-      return client.get('/api/CruiseApplications/forCruise');
-    },
+    queryFn: async () => client.get<CruiseResponse>(`/v2/cruises/${id}`),
     select: (res) => res.data,
   });
 }
@@ -39,7 +41,7 @@ export function useDeleteCruiseMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      await client.delete(`/api/Cruises/${id}`);
+      await client.delete(`/v2/cruises/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises'] });
@@ -47,11 +49,11 @@ export function useDeleteCruiseMutation() {
   });
 }
 
-export function useAutoAddCruisesMutation() {
+export function useAutoPlanCruisesMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await client.put('/api/Cruises/autoAdded');
+      await client.post('/v2/cruises/auto-plan');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises'] });
@@ -62,8 +64,8 @@ export function useAutoAddCruisesMutation() {
 export function useCreateCruiseMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (cruise: CruiseFormDto) => {
-      await client.post('/api/Cruises', cruise);
+    mutationFn: async (cruise: CruiseFormValues) => {
+      await client.post('/v2/cruises', toWriteRequest(cruise));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises'] });
@@ -74,8 +76,8 @@ export function useCreateCruiseMutation() {
 export function useUpdateCruiseMutation(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (cruise: CruiseFormDto) => {
-      await client.patch(`/api/Cruises/${id}`, cruise);
+    mutationFn: async (cruise: CruiseFormValues) => {
+      await client.patch(`/v2/cruises/${id}`, toWriteRequest(cruise));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises', id] });
@@ -86,8 +88,8 @@ export function useUpdateCruiseMutation(id: string) {
 export function useUpdateCruiseByIdMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, cruise }: { id: string; cruise: CruiseFormDto }) => {
-      await client.patch(`/api/Cruises/${id}`, cruise);
+    mutationFn: async ({ id, cruise }: { id: string; cruise: CruiseFormValues }) => {
+      await client.patch(`/v2/cruises/${id}`, toWriteRequest(cruise));
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['cruises'] });
@@ -100,7 +102,7 @@ export function useConfirmCruiseMutation(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await client.put(`/api/Cruises/${id}/confirm`);
+      await client.put(`/v2/cruises/${id}/confirmation`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises', id] });
@@ -108,11 +110,11 @@ export function useConfirmCruiseMutation(id: string) {
   });
 }
 
-export function useEndCruiseMutation(id: string) {
+export function useCompleteCruiseMutation(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await client.put(`/api/Cruises/${id}/end`);
+      await client.put(`/v2/cruises/${id}/completion`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises', id] });
@@ -120,13 +122,10 @@ export function useEndCruiseMutation(id: string) {
   });
 }
 
-export function useRevertCruiseStatusMutation(id: string) {
+export function useRemoveCruiseConfirmationMutation(id: string) {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async () => {
-      return client.put(`/api/Cruises/${id}/revert`);
-    },
+    mutationFn: async () => client.delete(`/v2/cruises/${id}/confirmation`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cruises'] });
       queryClient.invalidateQueries({ queryKey: ['cruises', id] });
@@ -137,24 +136,16 @@ export function useRevertCruiseStatusMutation(id: string) {
 export function useCruiseCsvExportMutation(onSuccess: (file: FileDto) => void) {
   return useMutation({
     mutationFn: async (year: string) => {
-      return (await client.get(`/api/Cruises/csv`, { params: { year } })).data;
+      return (await client.get<FileDto>('/v2/cruises/export', { params: { year } })).data;
     },
-    onSuccess: (data) => {
-      const file = {
-        name: data.name,
-        content: data.content,
-      };
-      onSuccess(file);
-    },
+    onSuccess,
   });
 }
 
 export function useBlockadesQuery(year: number) {
   return useQuery({
     queryKey: ['cruises', 'blockades', year],
-    queryFn: async () => {
-      return client.get(`/api/Cruises/blockades/${year}`);
-    },
-    select: (res) => res.data as BlockadePeriodDto[],
+    queryFn: async () => client.get<BlockadePeriodResponse[]>('/v2/cruises/blockades', { params: { year } }),
+    select: (res) => res.data,
   });
 }

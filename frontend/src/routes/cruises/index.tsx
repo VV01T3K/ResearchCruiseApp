@@ -13,12 +13,8 @@ import { Role } from '@/models/shared/Role';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
-import {
-  useAutoAddCruisesMutation,
-  useCruisesQuery,
-  useDeleteCruiseMutation,
-} from '@/api/hooks/cruises/CruisesApiHooks';
-import { CruiseDto } from '@/api/dto/cruises/CruiseDto';
+import { useAutoPlanCruisesMutation, useCruisesQuery, useDeleteCruiseMutation } from '@/api-v2/cruises/CruisesApiHooks';
+import { CruiseResponse } from '@/api-v2/cruises/contracts';
 
 export const Route = createFileRoute('/cruises/')({
   component: CruisesPage,
@@ -28,9 +24,9 @@ export const Route = createFileRoute('/cruises/')({
 function CruisesPage() {
   const cruisesQuery = useCruisesQuery();
   const deleteCruiseMutation = useDeleteCruiseMutation();
-  const autoAddCruisesMutation = useAutoAddCruisesMutation();
+  const autoAddCruisesMutation = useAutoPlanCruisesMutation();
 
-  const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseDto | undefined>(undefined);
+  const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseResponse | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   async function autoAddCruises() {

@@ -11,8 +11,9 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { FormView } from './-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
-import { useCreateCruiseMutation, useCruiseApplicationsForCruiseQuery } from '@/api/hooks/cruises/CruisesApiHooks';
-import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
+import { useCreateCruiseMutation } from '@/api-v2/cruises/CruisesApiHooks';
+import { useCruisePlanningCandidatesQuery } from '@/api-v2/applications/CruisePlanningApiHooks';
+import { CruiseFormValues } from '@/api-v2/cruises/contracts';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -34,7 +35,7 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 function NewCruisePage() {
-  const cruiseApplicationsQuery = useCruiseApplicationsForCruiseQuery();
+  const cruiseApplicationsQuery = useCruisePlanningCandidatesQuery();
   const createCruiseMutation = useCreateCruiseMutation();
   const search = Route.useSearch();
 
@@ -53,7 +54,7 @@ function NewCruisePage() {
       cruiseApplicationsIds: [],
       title: '',
       shipUnavailable: search.blockade ?? false,
-    } as CruiseFormDto,
+    } as CruiseFormValues,
     validators: {
       onChange: getCruiseFormValidationSchema(),
     },

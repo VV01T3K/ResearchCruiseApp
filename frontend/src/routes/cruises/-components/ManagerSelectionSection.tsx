@@ -35,8 +35,8 @@ function ManagerSelectionReadonly() {
       options.push(
         mapPersonToLabel({
           id: selectedCruiseManagerId,
-          firstName: cruise.mainCruiseManagerFirstName,
-          lastName: cruise.mainCruiseManagerLastName,
+          firstName: cruise.mainManager.firstName,
+          lastName: cruise.mainManager.lastName,
           email: '',
         })
       );
@@ -45,8 +45,8 @@ function ManagerSelectionReadonly() {
       options.push(
         mapPersonToLabel({
           id: selectedDeputyManagerId,
-          firstName: cruise.mainDeputyManagerFirstName,
-          lastName: cruise.mainDeputyManagerLastName,
+          firstName: cruise.deputyManager.firstName,
+          lastName: cruise.deputyManager.lastName,
           email: '',
         })
       );

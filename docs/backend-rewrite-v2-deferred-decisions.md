@@ -93,3 +93,25 @@ the evidence gathered so far, and the later decision that still needs to be made
   should be added, whether the current privileged-management contract should be
   reshaped further, and whether the existing permission model needs any deliberate
   cleanup.
+
+### Cruise contract and lifecycle cleanup
+
+**Current behavior**
+
+- The v2 cruise read contract groups managers and attached applications more clearly,
+  but keeps the existing localized status values and current lifecycle behavior.
+- Cruise creation, reassignment, automatic planning, confirmation, completion, and
+  deletion preserve the existing rules while moving under `/v2`.
+
+**Why deferred**
+
+- Status normalization and broader lifecycle redesign would change more than routing
+  and wire shape.
+- Those choices deserve a focused product review after the port rather than being
+  folded into the migration PR.
+
+**Later decision**
+
+- After the v2 port is complete, decide whether cruise statuses should move to stable
+  machine values, whether lifecycle actions should be reshaped further, and whether
+  the current auto-planning and reassignment semantics should be revised.

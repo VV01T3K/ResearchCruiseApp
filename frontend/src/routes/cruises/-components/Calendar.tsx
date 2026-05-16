@@ -3,24 +3,23 @@ import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { useUpdateCruiseByIdMutation } from '@/api/hooks/cruises/CruisesApiHooks';
-import { CruiseDto } from '@/api/dto/cruises/CruiseDto';
-import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
+import { useUpdateCruiseByIdMutation } from '@/api-v2/cruises/CruisesApiHooks';
+import { CruiseFormValues, CruiseResponse } from '@/api-v2/cruises/contracts';
 
 type Props = {
-  cruises: CruiseDto[];
+  cruises: CruiseResponse[];
   buttons: React.ReactNode[];
 };
 export function Calendar({ cruises, buttons }: Props) {
   const updateCruiseByIdMutation = useUpdateCruiseByIdMutation();
   const [isCalendarEditMode, setIsCalendarEditMode] = React.useState(false);
 
-  function getTitle(cruise: CruiseDto) {
+  function getTitle(cruise: CruiseResponse) {
     if (cruise.title || cruise.shipUnavailable) {
       return cruise.shipUnavailable ? `Blokada ${cruise.title}` : `Rejs ${cruise.title}`;
     }
-    return cruise.mainCruiseManagerFirstName.length > 0
-      ? `Kierownik: ${cruise.mainCruiseManagerFirstName} ${cruise.mainCruiseManagerLastName}`
+    return cruise.mainManager.firstName.length > 0
+      ? `Kierownik: ${cruise.mainManager.firstName} ${cruise.mainManager.lastName}`
       : 'Rejs bez kierownika';
   }
 
@@ -33,15 +32,15 @@ export function Calendar({ cruises, buttons }: Props) {
     return `hsl(${angle}deg 70% 50%)`;
   }
 
-  function mapCruiseToForm(cruise: CruiseDto, nextStart: Date, nextEnd: Date): CruiseFormDto {
+  function mapCruiseToForm(cruise: CruiseResponse, nextStart: Date, nextEnd: Date): CruiseFormValues {
     return {
       startDate: nextStart.toISOString(),
       endDate: nextEnd.toISOString(),
       managersTeam: {
-        mainCruiseManagerId: cruise.mainCruiseManagerId,
-        mainDeputyManagerId: cruise.mainDeputyManagerId,
+        mainCruiseManagerId: cruise.mainManager.id,
+        mainDeputyManagerId: cruise.deputyManager.id,
       },
-      cruiseApplicationsIds: cruise.cruiseApplicationsShortInfo.map((x) => x.id),
+      cruiseApplicationsIds: cruise.applications.map((x) => x.id),
       status: cruise.status,
       title: cruise.title || '',
       shipUnavailable: cruise.shipUnavailable,

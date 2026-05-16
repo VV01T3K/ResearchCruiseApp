@@ -23,7 +23,7 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAInitValuesQuery, useFormAQuery, useUpdateFormAMutation } from '@/api/hooks/applications/FormAApiHooks';
 import { FormADto } from '@/api/dto/applications/FormADto';
-import { useBlockadesQuery } from '@/api/hooks/cruises/CruisesApiHooks';
+import { useBlockadesQuery } from '@/api-v2/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({

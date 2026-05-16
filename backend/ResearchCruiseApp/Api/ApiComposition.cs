@@ -1,5 +1,7 @@
 using Asp.Versioning;
 using ResearchCruiseApp.Api.Account;
+using ResearchCruiseApp.Api.Applications;
+using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Api.Users;
 
 namespace ResearchCruiseApp.Api;
@@ -27,8 +29,15 @@ public static class ApiComposition
         UserDirectory.Map(users);
         UserProfile.Map(users);
         UserAcceptance.Map(users);
-        v2.MapGroup("/cruises").WithTags("Cruises");
-        v2.MapGroup("/applications").WithTags("Applications");
+        var cruises = v2.MapGroup("/cruises").WithTags("Cruises");
+        CruiseCatalog.Map(cruises);
+        CruiseDetails.Map(cruises);
+        CruiseLifecycle.Map(cruises);
+        CruisePlanning.Map(cruises);
+        CruiseExport.Map(cruises);
+
+        var applications = v2.MapGroup("/applications").WithTags("Applications");
+        CruisePlanningCandidates.Map(applications);
 
         return app;
     }

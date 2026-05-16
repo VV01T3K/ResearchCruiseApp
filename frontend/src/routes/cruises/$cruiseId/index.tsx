@@ -19,14 +19,13 @@ import { FormView } from '../-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
 import {
   useConfirmCruiseMutation,
+  useCompleteCruiseMutation,
   useCruiseQuery,
   useDeleteCruiseMutation,
-  useEndCruiseMutation,
-  useRevertCruiseStatusMutation,
+  useRemoveCruiseConfirmationMutation,
   useUpdateCruiseMutation,
-} from '@/api/hooks/cruises/CruisesApiHooks';
-import { CruiseDto } from '@/api/dto/cruises/CruiseDto';
-import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
+} from '@/api-v2/cruises/CruisesApiHooks';
+import { CruiseFormValues, CruiseResponse } from '@/api-v2/cruises/contracts';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -50,8 +49,8 @@ function CruiseDetailsPage() {
   const updateCruiseMutation = useUpdateCruiseMutation(cruiseId);
   const confirmCruiseMutation = useConfirmCruiseMutation(cruiseId);
   const deleteCruiseMutation = useDeleteCruiseMutation();
-  const endCruiseMutation = useEndCruiseMutation(cruiseId);
-  const revertCruiseStatusMutation = useRevertCruiseStatusMutation(cruiseId);
+  const endCruiseMutation = useCompleteCruiseMutation(cruiseId);
+  const revertCruiseStatusMutation = useRemoveCruiseConfirmationMutation(cruiseId);
 
   const navigate = useNavigate();
 
@@ -62,7 +61,7 @@ function CruiseDetailsPage() {
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
 
   const form = useForm({
-    defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormDto,
+    defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormValues,
     validators: {
       onChange: getCruiseFormValidationSchema(),
     },
@@ -205,11 +204,11 @@ function CruiseDetailsPage() {
     }
   }
 
-  function filterValidCruiseApplications(cruise: CruiseDto, cruiseApplications: CruiseApplicationDto[]) {
+  function filterValidCruiseApplications(cruise: CruiseResponse, cruiseApplications: CruiseApplicationDto[]) {
     return cruiseApplications.filter(
       (application) =>
         application.status === CruiseApplicationStatus.Accepted ||
-        cruise.cruiseApplicationsShortInfo.some((x) => x.id === application.id)
+        cruise.applications.some((x) => x.id === application.id)
     );
   }
 
@@ -357,15 +356,15 @@ function CruiseDetailsPage() {
   );
 }
 
-function mapCruiseToForm(cruise: CruiseDto): CruiseFormDto {
+function mapCruiseToForm(cruise: CruiseResponse): CruiseFormValues {
   return {
     startDate: cruise.startDate,
     endDate: cruise.endDate,
     managersTeam: {
-      mainCruiseManagerId: cruise.mainCruiseManagerId,
-      mainDeputyManagerId: cruise.mainDeputyManagerId,
+      mainCruiseManagerId: cruise.mainManager.id,
+      mainDeputyManagerId: cruise.deputyManager.id,
     },
-    cruiseApplicationsIds: cruise.cruiseApplicationsShortInfo.map((x) => x.id),
+    cruiseApplicationsIds: cruise.applications.map((x) => x.id),
     status: cruise.status,
     title: cruise.title || '',
     shipUnavailable: cruise.shipUnavailable,

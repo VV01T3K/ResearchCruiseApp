@@ -6,16 +6,16 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-User-management slice implemented. Core account, recovery, current-user data, and the
-live privileged user-management surface now exist under `/v2`; email confirmation
-remains on v1 while the legacy `changedEmail` decision is deferred to a later
-follow-up PR outside the main port.
+Cruise-management slice implemented. Core account, recovery, current-user data, live
+privileged user management, and the live cruise workflow now exist under `/v2`;
+email confirmation remains on v1 while the legacy `changedEmail` decision is deferred
+to a later follow-up PR outside the main port.
 
 ## Active Slice
 
-Backend v2 user-management slice: move the live privileged `/users` surface under
-`/v2/users`, migrate the matching frontend callers, and keep unused planned user
-resources out of this migration pass.
+Backend v2 cruise-management slice: move the live `/api/Cruises` workflow under
+`/v2/cruises`, move the cruise-planning candidate read to `/v2/applications`, and
+clean up the cruise wire shape without changing lifecycle behavior.
 
 ## Decisions Made
 
@@ -61,6 +61,13 @@ resources out of this migration pass.
   while preserving the current accepted-user selection behavior.
 - Preserve the existing user-management permission and last-administrator rules during
   migration; defer broader cleanup decisions to the follow-up ledger.
+- Port the full live cruise-management workflow together so the cruise screens do not
+  remain split between v1 and v2.
+- Move the eligible cruise-planning application read to
+  `/v2/applications/for-cruise-planning` during the cruise slice because the
+  create-cruise workflow depends on it.
+- Clean up the v2 cruise wire shape by grouping manager data and attached applications
+  while keeping current status values and lifecycle semantics unchanged.
 
 ## Files Changed By Slice
 
@@ -152,6 +159,23 @@ resources out of this migration pass.
 - `frontend/src/routes/user-management/-components/GroupActionsSection.tsx`
 - `frontend/src/routes/user-management/index.tsx`
 - `frontend/tests/session.spec.ts`
+- `frontend/tests/user-management.spec.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Cruise Management Slice
+
+- `backend/ResearchCruiseApp/Api/ApiComposition.cs`
+- `backend/ResearchCruiseApp/Api/Applications/CruisePlanningCandidates.cs`
+- `backend/ResearchCruiseApp/Api/Cruises`
+- `frontend/src/api-v2/applications/CruisePlanningApiHooks.tsx`
+- `frontend/src/api-v2/cruises`
+- `frontend/src/api/hooks/cruises/CruisesApiHooks.tsx`
+- `frontend/src/contexts/cruises/CruiseFormContext.tsx`
+- `frontend/src/routes/applications/new.tsx`
+- `frontend/src/routes/applications/$applicationId/formA.tsx`
+- `frontend/src/routes/cruises`
+- `frontend/tests/cruises.spec.ts`
 - `frontend/tests/user-management.spec.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
@@ -281,6 +305,23 @@ resources out of this migration pass.
   - A guest JWT on `GET /v2/users` returned `403`.
   - `GET /openapi/v2.json` returned `200` and exposes the seven live v2 user routes.
 
+### Cruise Management Slice
+
+- `vpr -F backend check` passed, matching the backend formatting step used by CI.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/cruises.spec.ts tests/user-management.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 19 focused Playwright tests for the migrated cruise workflow plus
+  existing user-management and auth/session coverage.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://127.0.0.1:51366`:
+  - `GET /v2/cruises` returned `401` without credentials.
+  - A guest-token request to `POST /v2/cruises/auto-plan` returned `403`.
+  - Existing v1 cruise and cruise-planning routes still mapped through controllers.
+  - `GET /openapi/v2.json` exposed the live cruise surface and
+    `/v{version}/applications/for-cruise-planning`.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -293,8 +334,10 @@ resources out of this migration pass.
 - The long-term rewrite plan names additional `/v2/users` resources that the current
   app does not use yet; they remain intentionally unported until a later slice needs
   them.
+- Cruise status normalization and broader lifecycle redesign remain intentionally
+  deferred after the targeted v2 contract cleanup.
 
 ## Next Recommended Slice
 
-Continue with the next v2 resource area, likely cruises under `/v2/cruises`, while
+Continue with the broader applications surface under `/v2/applications`, while
 keeping deferred behavior changes outside the main migration stream.

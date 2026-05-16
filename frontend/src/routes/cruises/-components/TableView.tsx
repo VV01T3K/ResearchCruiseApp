@@ -11,18 +11,18 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { Role } from '@/models/shared/Role';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
-import { CruiseApplicationShortInfoDto, CruiseDto } from '@/api/dto/cruises/CruiseDto';
+import { CruiseApplicationSummaryResponse, CruiseResponse } from '@/api-v2/cruises/contracts';
 
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 const dateFormat = 'DD.MM.YYYY, HH:mm';
 
 type Props = {
-  cruises: CruiseDto[];
-  deleteCruise: (cruise: CruiseDto) => void;
+  cruises: CruiseResponse[];
+  deleteCruise: (cruise: CruiseResponse) => void;
   buttons: React.ReactNode[];
 };
 export function TableView({ cruises, deleteCruise, buttons }: Props) {
-  const columns: ColumnDef<CruiseDto>[] = [
+  const columns: ColumnDef<CruiseResponse>[] = [
     {
       header: 'Numer',
       id: 'number',
@@ -61,9 +61,9 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       id: 'mainCruiseManagerAvatar',
       cell: ({ row }) =>
-        row.original.mainCruiseManagerId !== emptyGuid ? (
+        row.original.mainManager.id !== emptyGuid ? (
           <AppAvatar
-            fullName={`${row.original.mainCruiseManagerFirstName} ${row.original.mainCruiseManagerLastName}`}
+            fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
           />
         ) : null,
@@ -72,14 +72,14 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Kierownik główny',
       accessorFn: (row) =>
-        row.mainCruiseManagerId !== emptyGuid
-          ? `${row.mainCruiseManagerFirstName} ${row.mainCruiseManagerLastName}`
+        row.mainManager.id !== emptyGuid
+          ? `${row.mainManager.firstName} ${row.mainManager.lastName}`
           : 'Nie przypisano',
       size: 10,
     },
     {
       header: 'Zgłoszenia',
-      cell: ({ row }) => <ApplicationsCell applications={row.original.cruiseApplicationsShortInfo} />,
+      cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
       size: 30,
     },
     {
@@ -104,7 +104,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
 }
 
 type ApplicationsCellProps = {
-  applications: CruiseApplicationShortInfoDto[];
+  applications: CruiseApplicationSummaryResponse[];
 };
 function ApplicationsCell({ applications }: ApplicationsCellProps) {
   if (!applications || applications.length === 0) {
@@ -126,8 +126,8 @@ function ApplicationsCell({ applications }: ApplicationsCellProps) {
 }
 
 type ActionsCellProps = {
-  cruise: CruiseDto;
-  deleteCruise: (CruiseDto: CruiseDto) => void;
+  cruise: CruiseResponse;
+  deleteCruise: (cruise: CruiseResponse) => void;
 };
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
