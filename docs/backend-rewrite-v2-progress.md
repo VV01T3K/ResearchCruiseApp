@@ -6,18 +6,17 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Live v2 migration complete. The full live account surface, recovery, current-user
+Cutover readiness in progress. The full live account surface, recovery, current-user
 data, live privileged user management, the live cruise workflow, the application
 catalog/decision surface, authenticated Form A/B/C workflows, and the anonymous
-supervisor-review flow now exist under `/v2`; post-port compatibility work is
-aligned, and the remaining original-plan-only endpoints have been intentionally
-dropped from scope.
+supervisor-review flow now exist under `/v2`; no further parity endpoints remain to
+port, and the remaining work is retiring the old v1 request path in a controlled
+order.
 
 ## Active Slice
 
-Backend v2 endpoint-scope follow-up: record that the remaining aspirational routes
-from the original rewrite plan were already dead in v1 and are not missing migration
-work.
+Backend v2 cutover-readiness slice: inventory the remaining legacy runtime/frontend
+artifacts and define the ordered retirement path before deleting v1 behavior.
 
 ## Decisions Made
 
@@ -91,6 +90,10 @@ work.
   actually supplied.
 - Drop the six remaining original-plan-only endpoints from v2 scope because their
   matching v1 behaviors had already been removed as dead code before the migration.
+- Use `docs/backend-rewrite-v2-cutover.md` as the cutover checklist before deleting
+  v1 runtime surfaces.
+- Preserve `/version` as an unversioned live endpoint during cutover, but move it off
+  MVC before removing controller mapping globally.
 
 ## Files Changed By Slice
 
@@ -282,6 +285,11 @@ work.
 ### Dropped Plan-Only Endpoint Scope Follow-up
 
 - `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Cutover Readiness Slice
+
+- `docs/backend-rewrite-v2-cutover.md`
 - `docs/backend-rewrite-v2-progress.md`
 
 ## Verification Run
@@ -545,6 +553,18 @@ work.
 - No build, formatter, or runtime verification was run because this slice changed
   documentation only.
 
+### Cutover Readiness Slice
+
+- Source inspection confirmed:
+  - no live imports remain from `frontend/src/api/hooks/applications`
+  - current live frontend business flows import migrated hooks from
+    `frontend/src/api-v2`
+  - `/version` is still served by `VersionController` and remains used by the frontend
+  - `/health` already remains outside MVC through direct health-check mapping
+- `git diff --check` passed.
+- No build, formatter, or runtime verification was run because this slice changed
+  documentation only.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -560,7 +580,5 @@ work.
 
 ## Next Recommended Slice
 
-The live v2 port is complete, no further parity endpoints remain to port, and the
-remaining work is no longer migration work. Continue with cutover/cleanup planning
-and whichever separately chosen product redesign follow-up is ready for focused
-review.
+Start cutover cleanup by removing the dead legacy frontend application-hook modules
+and any legacy-only test helpers that become unused with them.
