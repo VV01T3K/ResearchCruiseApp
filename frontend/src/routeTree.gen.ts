@@ -9,15 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PriorityInformationRouteImport } from './routes/priority-information'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as HelpRouteImport } from './routes/help'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as CruiseEffectsRouteImport } from './routes/cruise-effects'
 import { Route as CruiseApprovalRouteImport } from './routes/cruise-approval'
-import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserManagementIndexRouteImport } from './routes/user-management/index'
 import { Route as MyPublicationsIndexRouteImport } from './routes/my-publications/index'
@@ -26,40 +21,28 @@ import { Route as ApplicationsIndexRouteImport } from './routes/applications/ind
 import { Route as AccountSettingsIndexRouteImport } from './routes/account-settings/index'
 import { Route as CruisesNewRouteImport } from './routes/cruises/new'
 import { Route as ApplicationsNewRouteImport } from './routes/applications/new'
+import { Route as legacyResetPasswordRouteImport } from './routes/(legacy)/resetPassword'
+import { Route as legacyCruiseapprovalRouteImport } from './routes/(legacy)/cruiseapproval'
+import { Route as legacyConfirmEmailRouteImport } from './routes/(legacy)/confirmEmail'
+import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
+import { Route as authConfirmEmailRouteImport } from './routes/(auth)/confirm-email'
 import { Route as CruisesCruiseIdIndexRouteImport } from './routes/cruises/$cruiseId/index'
 import { Route as ApplicationsApplicationIdFormCRouteImport } from './routes/applications/$applicationId/formC'
 import { Route as ApplicationsApplicationIdFormBRouteImport } from './routes/applications/$applicationId/formB'
 import { Route as ApplicationsApplicationIdFormARouteImport } from './routes/applications/$applicationId/formA'
 import { Route as ApplicationsApplicationIdDetailsRouteImport } from './routes/applications/$applicationId/details'
 
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PriorityInformationRoute = PriorityInformationRouteImport.update({
   id: '/priority-information',
   path: '/priority-information',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HelpRoute = HelpRouteImport.update({
   id: '/help',
   path: '/help',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CruiseEffectsRoute = CruiseEffectsRouteImport.update({
@@ -70,11 +53,6 @@ const CruiseEffectsRoute = CruiseEffectsRouteImport.update({
 const CruiseApprovalRoute = CruiseApprovalRouteImport.update({
   id: '/cruise-approval',
   path: '/cruise-approval',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConfirmEmailRoute = ConfirmEmailRouteImport.update({
-  id: '/confirm-email',
-  path: '/confirm-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -117,6 +95,46 @@ const ApplicationsNewRoute = ApplicationsNewRouteImport.update({
   path: '/applications/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const legacyResetPasswordRoute = legacyResetPasswordRouteImport.update({
+  id: '/(legacy)/resetPassword',
+  path: '/resetPassword',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyCruiseapprovalRoute = legacyCruiseapprovalRouteImport.update({
+  id: '/(legacy)/cruiseapproval',
+  path: '/cruiseapproval',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyConfirmEmailRoute = legacyConfirmEmailRouteImport.update({
+  id: '/(legacy)/confirmEmail',
+  path: '/confirmEmail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: '/(auth)/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRegisterRoute = authRegisterRouteImport.update({
+  id: '/(auth)/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
+  id: '/(auth)/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authConfirmEmailRoute = authConfirmEmailRouteImport.update({
+  id: '/(auth)/confirm-email',
+  path: '/confirm-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CruisesCruiseIdIndexRoute = CruisesCruiseIdIndexRouteImport.update({
   id: '/cruises/$cruiseId/',
   path: '/cruises/$cruiseId/',
@@ -149,15 +167,18 @@ const ApplicationsApplicationIdDetailsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/confirm-email': typeof ConfirmEmailRoute
   '/cruise-approval': typeof CruiseApprovalRoute
   '/cruise-effects': typeof CruiseEffectsRoute
-  '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
-  '/login': typeof LoginRoute
   '/priority-information': typeof PriorityInformationRoute
-  '/register': typeof RegisterRoute
-  '/reset-password': typeof ResetPasswordRoute
+  '/confirm-email': typeof authConfirmEmailRoute
+  '/forgot-password': typeof authForgotPasswordRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
+  '/reset-password': typeof authResetPasswordRoute
+  '/confirmEmail': typeof legacyConfirmEmailRoute
+  '/cruiseapproval': typeof legacyCruiseapprovalRoute
+  '/resetPassword': typeof legacyResetPasswordRoute
   '/applications/new': typeof ApplicationsNewRoute
   '/cruises/new': typeof CruisesNewRoute
   '/account-settings/': typeof AccountSettingsIndexRoute
@@ -173,15 +194,18 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/confirm-email': typeof ConfirmEmailRoute
   '/cruise-approval': typeof CruiseApprovalRoute
   '/cruise-effects': typeof CruiseEffectsRoute
-  '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
-  '/login': typeof LoginRoute
   '/priority-information': typeof PriorityInformationRoute
-  '/register': typeof RegisterRoute
-  '/reset-password': typeof ResetPasswordRoute
+  '/confirm-email': typeof authConfirmEmailRoute
+  '/forgot-password': typeof authForgotPasswordRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
+  '/reset-password': typeof authResetPasswordRoute
+  '/confirmEmail': typeof legacyConfirmEmailRoute
+  '/cruiseapproval': typeof legacyCruiseapprovalRoute
+  '/resetPassword': typeof legacyResetPasswordRoute
   '/applications/new': typeof ApplicationsNewRoute
   '/cruises/new': typeof CruisesNewRoute
   '/account-settings': typeof AccountSettingsIndexRoute
@@ -198,15 +222,18 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/confirm-email': typeof ConfirmEmailRoute
   '/cruise-approval': typeof CruiseApprovalRoute
   '/cruise-effects': typeof CruiseEffectsRoute
-  '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
-  '/login': typeof LoginRoute
   '/priority-information': typeof PriorityInformationRoute
-  '/register': typeof RegisterRoute
-  '/reset-password': typeof ResetPasswordRoute
+  '/(auth)/confirm-email': typeof authConfirmEmailRoute
+  '/(auth)/forgot-password': typeof authForgotPasswordRoute
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/register': typeof authRegisterRoute
+  '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/(legacy)/confirmEmail': typeof legacyConfirmEmailRoute
+  '/(legacy)/cruiseapproval': typeof legacyCruiseapprovalRoute
+  '/(legacy)/resetPassword': typeof legacyResetPasswordRoute
   '/applications/new': typeof ApplicationsNewRoute
   '/cruises/new': typeof CruisesNewRoute
   '/account-settings/': typeof AccountSettingsIndexRoute
@@ -224,15 +251,18 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/confirm-email'
     | '/cruise-approval'
     | '/cruise-effects'
-    | '/forgot-password'
     | '/help'
-    | '/login'
     | '/priority-information'
+    | '/confirm-email'
+    | '/forgot-password'
+    | '/login'
     | '/register'
     | '/reset-password'
+    | '/confirmEmail'
+    | '/cruiseapproval'
+    | '/resetPassword'
     | '/applications/new'
     | '/cruises/new'
     | '/account-settings/'
@@ -248,15 +278,18 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/confirm-email'
     | '/cruise-approval'
     | '/cruise-effects'
-    | '/forgot-password'
     | '/help'
-    | '/login'
     | '/priority-information'
+    | '/confirm-email'
+    | '/forgot-password'
+    | '/login'
     | '/register'
     | '/reset-password'
+    | '/confirmEmail'
+    | '/cruiseapproval'
+    | '/resetPassword'
     | '/applications/new'
     | '/cruises/new'
     | '/account-settings'
@@ -272,15 +305,18 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/confirm-email'
     | '/cruise-approval'
     | '/cruise-effects'
-    | '/forgot-password'
     | '/help'
-    | '/login'
     | '/priority-information'
-    | '/register'
-    | '/reset-password'
+    | '/(auth)/confirm-email'
+    | '/(auth)/forgot-password'
+    | '/(auth)/login'
+    | '/(auth)/register'
+    | '/(auth)/reset-password'
+    | '/(legacy)/confirmEmail'
+    | '/(legacy)/cruiseapproval'
+    | '/(legacy)/resetPassword'
     | '/applications/new'
     | '/cruises/new'
     | '/account-settings/'
@@ -297,15 +333,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ConfirmEmailRoute: typeof ConfirmEmailRoute
   CruiseApprovalRoute: typeof CruiseApprovalRoute
   CruiseEffectsRoute: typeof CruiseEffectsRoute
-  ForgotPasswordRoute: typeof ForgotPasswordRoute
   HelpRoute: typeof HelpRoute
-  LoginRoute: typeof LoginRoute
   PriorityInformationRoute: typeof PriorityInformationRoute
-  RegisterRoute: typeof RegisterRoute
-  ResetPasswordRoute: typeof ResetPasswordRoute
+  authConfirmEmailRoute: typeof authConfirmEmailRoute
+  authForgotPasswordRoute: typeof authForgotPasswordRoute
+  authLoginRoute: typeof authLoginRoute
+  authRegisterRoute: typeof authRegisterRoute
+  authResetPasswordRoute: typeof authResetPasswordRoute
+  legacyConfirmEmailRoute: typeof legacyConfirmEmailRoute
+  legacyCruiseapprovalRoute: typeof legacyCruiseapprovalRoute
+  legacyResetPasswordRoute: typeof legacyResetPasswordRoute
   ApplicationsNewRoute: typeof ApplicationsNewRoute
   CruisesNewRoute: typeof CruisesNewRoute
   AccountSettingsIndexRoute: typeof AccountSettingsIndexRoute
@@ -322,20 +361,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/priority-information': {
       id: '/priority-information'
       path: '/priority-information'
@@ -343,25 +368,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PriorityInformationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/help': {
       id: '/help'
       path: '/help'
       fullPath: '/help'
       preLoaderRoute: typeof HelpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cruise-effects': {
@@ -376,13 +387,6 @@ declare module '@tanstack/react-router' {
       path: '/cruise-approval'
       fullPath: '/cruise-approval'
       preLoaderRoute: typeof CruiseApprovalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/confirm-email': {
-      id: '/confirm-email'
-      path: '/confirm-email'
-      fullPath: '/confirm-email'
-      preLoaderRoute: typeof ConfirmEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -441,6 +445,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(legacy)/resetPassword': {
+      id: '/(legacy)/resetPassword'
+      path: '/resetPassword'
+      fullPath: '/resetPassword'
+      preLoaderRoute: typeof legacyResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/cruiseapproval': {
+      id: '/(legacy)/cruiseapproval'
+      path: '/cruiseapproval'
+      fullPath: '/cruiseapproval'
+      preLoaderRoute: typeof legacyCruiseapprovalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/confirmEmail': {
+      id: '/(legacy)/confirmEmail'
+      path: '/confirmEmail'
+      fullPath: '/confirmEmail'
+      preLoaderRoute: typeof legacyConfirmEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/reset-password': {
+      id: '/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof authResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/forgot-password': {
+      id: '/(auth)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof authForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/confirm-email': {
+      id: '/(auth)/confirm-email'
+      path: '/confirm-email'
+      fullPath: '/confirm-email'
+      preLoaderRoute: typeof authConfirmEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cruises/$cruiseId/': {
       id: '/cruises/$cruiseId/'
       path: '/cruises/$cruiseId'
@@ -481,15 +541,18 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ConfirmEmailRoute: ConfirmEmailRoute,
   CruiseApprovalRoute: CruiseApprovalRoute,
   CruiseEffectsRoute: CruiseEffectsRoute,
-  ForgotPasswordRoute: ForgotPasswordRoute,
   HelpRoute: HelpRoute,
-  LoginRoute: LoginRoute,
   PriorityInformationRoute: PriorityInformationRoute,
-  RegisterRoute: RegisterRoute,
-  ResetPasswordRoute: ResetPasswordRoute,
+  authConfirmEmailRoute: authConfirmEmailRoute,
+  authForgotPasswordRoute: authForgotPasswordRoute,
+  authLoginRoute: authLoginRoute,
+  authRegisterRoute: authRegisterRoute,
+  authResetPasswordRoute: authResetPasswordRoute,
+  legacyConfirmEmailRoute: legacyConfirmEmailRoute,
+  legacyCruiseapprovalRoute: legacyCruiseapprovalRoute,
+  legacyResetPasswordRoute: legacyResetPasswordRoute,
   ApplicationsNewRoute: ApplicationsNewRoute,
   CruisesNewRoute: CruisesNewRoute,
   AccountSettingsIndexRoute: AccountSettingsIndexRoute,

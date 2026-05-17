@@ -11,7 +11,7 @@ import { getErrors } from '@/lib/utils';
 import { useUserContext } from '@/providers/useUserContext';
 import { SignInResult } from '@/models/user/Results';
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({ redirect: z.string().optional() }),

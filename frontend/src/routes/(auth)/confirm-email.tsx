@@ -11,7 +11,7 @@ import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { useConfirmEmailMutation } from '@/api-v2/account/AccountRecoveryApiHooks';
 import { Result } from '@/models/user/Results';
 
-export const Route = createFileRoute('/confirm-email')({
+export const Route = createFileRoute('/(auth)/confirm-email')({
   component: ConfirmEmailPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({

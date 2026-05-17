@@ -11,7 +11,7 @@ import { getErrors } from '@/lib/utils';
 import { useRegisterMutation } from '@/api-v2/account/AccountAuthApiHooks';
 import { Result } from '@/models/user/Results';
 
-export const Route = createFileRoute('/register')({
+export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
   beforeLoad: allowOnly.unauthenticated(),
 });
