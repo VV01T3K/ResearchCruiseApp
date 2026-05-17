@@ -1,4 +1,5 @@
 ﻿using ResearchCruiseApp.Api;
+using ResearchCruiseApp.Api.Operations;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using Scalar.AspNetCore;
 
@@ -31,6 +32,7 @@ public static class WebApplicationExtensions
         app.UseAuthentication().UseAuthorization();
 
         app.MapApi();
+        app.MapVersion();
         app.MapControllers();
         app.MapHealthChecks("/health");
 

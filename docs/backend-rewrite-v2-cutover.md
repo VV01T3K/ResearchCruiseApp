@@ -15,8 +15,8 @@ endpoint parity.
   - `CruisesController`
   - `CruiseApplicationsController`
   - `FormsController`
-- `VersionController` is still MVC-backed, but `/version` remains a live unversioned
-  operations endpoint used by the frontend help page.
+- `/version` remains a live unversioned operations endpoint used by the frontend help
+  page, but it has moved off MVC.
 - `AddControllers()` and `MapControllers()` stay in startup only because those MVC
   routes are still present.
 - MediatR registration, package references, and command/query handlers under the
@@ -24,9 +24,10 @@ endpoint parity.
   Shared repositories, factories, and domain/application services are not blanket
   deletion targets.
 
-### Legacy frontend code still present
+### Legacy frontend cleanup completed
 
-- The old application-hook modules remain on disk but have no live imports:
+- The old application-hook modules had no live imports and were removed in cutover
+  slice 1:
   - `frontend/src/api/hooks/applications/CruiseApplicationsApiHooks.tsx`
   - `frontend/src/api/hooks/applications/FormAApiHooks.tsx`
   - `frontend/src/api/hooks/applications/FormBApiHooks.tsx`
@@ -37,15 +38,14 @@ endpoint parity.
 ### Intentionally unversioned endpoints
 
 - `/health` remains live outside MVC through `MapHealthChecks("/health")`.
-- `/version` remains live and unversioned, but it must move off MVC before controller
-  mapping can be removed.
+- `/version` remains live and unversioned outside MVC.
 
 ## Ordered Cleanup
 
 1. Remove the dead legacy frontend application-hook modules and any legacy-only test
-   helpers that become unused with them.
+   helpers that become unused with them. Completed in cutover slice 1.
 2. Move `/version` off MVC while preserving its current unversioned route and response
-   behavior.
+   behavior. Completed in the combined cutover cleanup commit.
 3. Remove the v1 business controllers and `MapControllers()` once the frontend-only
    compatibility assumption is still valid at cleanup time.
 4. Remove controller-only MediatR commands, queries, handlers, registration, and
@@ -55,10 +55,11 @@ endpoint parity.
 
 ## Verification Basis
 
-- Source inspection found no live imports from `frontend/src/api/hooks/applications`.
+- Source inspection found no live imports from `frontend/src/api/hooks/applications`
+  before cutover slice 1, and those dead modules have now been removed.
 - Current frontend business screens import migrated hooks from `frontend/src/api-v2`.
-- `VersionController` still serves `/version`, and the frontend still calls that
-  endpoint from the help page.
+- `/version` still serves the frontend help page, now through an unversioned minimal
+  endpoint instead of MVC.
 - `/health` already bypasses MVC and is mapped directly as a health check endpoint.
 
 ## Assumptions

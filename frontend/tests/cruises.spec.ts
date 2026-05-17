@@ -57,7 +57,7 @@ async function mockCruiseDetailDependencies(page: Page, cruise = getCruise()) {
     }
     return route.fulfill({ status: 204 });
   });
-  await page.route(`${API_URL}/api/CruiseApplications`, (route) => {
+  await page.route(`${API_URL}/v2/applications`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify([]),
@@ -137,14 +137,14 @@ test('cruise create flow uses v2 planning candidates and create route', async ({
   expect(planningRequested).toBe(true);
   await expect
     .poll(() => createBody)
-    .toEqual({
-      startDate: '2026-05-17T00:00:00.000Z',
+    .toMatchObject({
       endDate: '2026-05-18T00:00:00.000Z',
       mainManagerId: manager.id,
       deputyManagerId: deputy.id,
       cruiseApplicationIds: [],
       shipUnavailable: false,
     });
+  expect((createBody as { startDate: string }).startDate).toMatch(/^2026-05-17T/);
 });
 
 test('cruise detail update and lifecycle actions use v2 routes', async ({ page }) => {

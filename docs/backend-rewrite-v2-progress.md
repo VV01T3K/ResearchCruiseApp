@@ -6,17 +6,18 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Cutover readiness in progress. The full live account surface, recovery, current-user
+Cutover cleanup in progress. The full live account surface, recovery, current-user
 data, live privileged user management, the live cruise workflow, the application
 catalog/decision surface, authenticated Form A/B/C workflows, and the anonymous
-supervisor-review flow now exist under `/v2`; no further parity endpoints remain to
-port, and the remaining work is retiring the old v1 request path in a controlled
-order.
+supervisor-review flow now exist under `/v2`; the dead legacy frontend application
+hooks have been removed, `/version` now lives outside MVC, and the remaining work is
+retiring the old v1 request path in a controlled order.
 
 ## Active Slice
 
-Backend v2 cutover-readiness slice: inventory the remaining legacy runtime/frontend
-artifacts and define the ordered retirement path before deleting v1 behavior.
+Backend v2 combined cutover cleanup: remove the dead legacy frontend
+application-hook modules and move `/version` off MVC before deleting v1 business
+controllers.
 
 ## Decisions Made
 
@@ -94,6 +95,10 @@ artifacts and define the ordered retirement path before deleting v1 behavior.
   v1 runtime surfaces.
 - Preserve `/version` as an unversioned live endpoint during cutover, but move it off
   MVC before removing controller mapping globally.
+- Remove the unused legacy frontend application-hook modules once source inspection
+  confirms all live consumers have moved to `frontend/src/api-v2`.
+- Keep `/version` unversioned while moving it to a minimal endpoint so controller
+  mapping is no longer required for operations routes.
 
 ## Files Changed By Slice
 
@@ -289,6 +294,24 @@ artifacts and define the ordered retirement path before deleting v1 behavior.
 
 ### Cutover Readiness Slice
 
+- `docs/backend-rewrite-v2-cutover.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Cutover Slice 1: Remove Dead Legacy Frontend Hooks
+
+- `frontend/src/api/hooks/applications/CruiseApplicationsApiHooks.tsx`
+- `frontend/src/api/hooks/applications/FormAApiHooks.tsx`
+- `frontend/src/api/hooks/applications/FormBApiHooks.tsx`
+- `frontend/src/api/hooks/applications/FormCApiHooks.tsx`
+- `frontend/tests/cruises.spec.ts`
+- `docs/backend-rewrite-v2-cutover.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Cutover Slice 2: Move Version Off MVC
+
+- `backend/ResearchCruiseApp/Api/Operations/VersionEndpoint.cs`
+- `backend/ResearchCruiseApp/Web/Controllers/VersionController.cs`
+- `backend/ResearchCruiseApp/Web/Configuration/WebApplicationExtensions.cs`
 - `docs/backend-rewrite-v2-cutover.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -565,6 +588,39 @@ artifacts and define the ordered retirement path before deleting v1 behavior.
 - No build, formatter, or runtime verification was run because this slice changed
   documentation only.
 
+### Cutover Slice 1: Remove Dead Legacy Frontend Hooks
+
+- Removed the four legacy frontend application-hook modules after confirming no live
+  imports remained.
+- Updated the remaining cruise test mock from `/api/CruiseApplications` to
+  `/v2/applications`.
+- Relaxed the cruise-create Playwright assertion to validate the selected start day
+  instead of assuming a midnight timestamp from the datetime picker.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/cruises.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 16 focused Playwright tests.
+- Search verification confirmed:
+  - no files remain under `frontend/src/api/hooks/applications`
+  - no frontend source or tests still reference `/api/CruiseApplications`
+  - live application/form screens still import from `frontend/src/api-v2`
+
+### Cutover Slice 2: Move Version Off MVC
+
+- Replaced `VersionController` with an unversioned minimal `/version` endpoint.
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development`:
+  - `GET /version` returned `200` with the existing version payload.
+  - `GET /health` returned `200`.
+  - `GET /openapi/v2.json` returned `200`, confirming the v2 document remains
+    available after moving `/version` off MVC.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -580,5 +636,6 @@ artifacts and define the ordered retirement path before deleting v1 behavior.
 
 ## Next Recommended Slice
 
-Start cutover cleanup by removing the dead legacy frontend application-hook modules
-and any legacy-only test helpers that become unused with them.
+Remove the v1 business controllers and `MapControllers()` now that frontend-only
+compatibility remains the only expected usage and `/version` no longer depends on
+MVC.
