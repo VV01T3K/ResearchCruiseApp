@@ -20,7 +20,7 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 **Current behavior**
 
-- v1 email confirmation accepts optional `changedEmail`.
+- v1 and v2 email confirmation accept optional `changedEmail`.
 - When present, `IdentityService.ConfirmEmail` uses `ChangeEmailAsync` and then
   updates the username to match the new email.
 
@@ -28,8 +28,8 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 - The repo strongly suggests this branch is dormant, but removing it would still be a
   behavior change.
-- The backend v2 port should stay focused on migration, while uncertain account-policy
-  cleanup should happen in a separate PR after the port is complete.
+- The v2 port preserved the behavior to finish the migration, while uncertain
+  account-policy cleanup should happen in a separate PR after the port is complete.
 
 **Evidence gathered**
 

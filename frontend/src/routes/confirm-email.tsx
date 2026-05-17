@@ -8,7 +8,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppLoader } from '@/components/shared/layout/AppLoader';
-import { useConfirmEmailMutation } from '@/api/hooks/user/UserApiHooks';
+import { useConfirmEmailMutation } from '@/api-v2/account/AccountRecoveryApiHooks';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/confirm-email')({

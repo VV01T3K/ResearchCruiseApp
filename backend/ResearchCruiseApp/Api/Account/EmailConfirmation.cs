@@ -10,6 +10,14 @@ public static class EmailConfirmation
     public static void Map(RouteGroupBuilder group)
     {
         group
+            .MapGet("/confirm-email", Confirm)
+            .WithName("ConfirmEmailV2")
+            .WithSummary("Confirm an account email.")
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status429TooManyRequests)
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+
+        group
             .MapPost("/resend-confirmation-email", Resend)
             .WithName("ResendConfirmationEmailV2")
             .WithSummary("Resend an account confirmation email.")
@@ -17,6 +25,17 @@ public static class EmailConfirmation
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResendConfirmationEmailRequest>()
             .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
+        Guid userId,
+        string code,
+        string? changedEmail,
+        IIdentityService identityService
+    )
+    {
+        var result = await identityService.ConfirmEmail(userId, code, changedEmail);
+        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 
     private static async Task<NoContent> Resend(

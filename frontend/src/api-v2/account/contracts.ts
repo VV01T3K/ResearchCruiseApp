@@ -19,6 +19,12 @@ export type PasswordResetRequest = {
   email: string;
 };
 
+export type ConfirmEmailRequest = {
+  userId: string;
+  code: string;
+  changedEmail?: string;
+};
+
 export type ResetPasswordRequest = {
   emailBase64: string;
   resetCode: string;

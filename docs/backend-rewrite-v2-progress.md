@@ -6,18 +6,16 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Supervisor review slice implemented. Core account, recovery,
+Confirm-email completion slice implemented. The full live account surface, recovery,
 current-user data, live privileged user management, the live cruise workflow, the
 application catalog/decision surface, authenticated Form A/B/C workflows, and the
-anonymous supervisor-review flow now exist under `/v2`; email confirmation remains
-on v1 while the legacy `changedEmail` decision is deferred to a later follow-up PR
-outside the main port.
+anonymous supervisor-review flow now exist under `/v2`; the legacy `changedEmail`
+decision remains deferred to a later follow-up PR outside the main port.
 
 ## Active Slice
 
-Backend v2 supervisor review slice: move the anonymous public review read and
-decision flow under `/v2/applications` while bundling the two legacy read calls into
-one response.
+Backend v2 confirm-email completion slice: close the last live v1-only account gap
+under `/v2/account` while preserving the deferred `changedEmail` behavior unchanged.
 
 ## Decisions Made
 
@@ -38,8 +36,8 @@ one response.
   coexist.
 - Keep this slice to account auth core only; password and email-confirmation flows
   stay on v1 until the next account slice.
-- Keep email confirmation itself on v1 for now because the legacy `changedEmail`
-  branch has no current caller but has not yet been deliberately removed or justified.
+- Keep the legacy `changedEmail` branch behavior-preserving while porting confirmation
+  itself to v2; decide whether it should survive in a separate follow-up PR.
 - Keep password-reset request and resend-confirmation email non-enumerating on v2 by
   returning `204` even when the email is unknown.
 - Use one shared built-in fixed-window rate limit for sensitive public account routes:
@@ -49,8 +47,6 @@ one response.
 - Keep risky behavior changes that are discovered during the port in
   `docs/backend-rewrite-v2-deferred-decisions.md` so they can be handled in focused
   follow-up PRs after migration work is complete.
-- Keep `GET /v2/account/confirm-email` out of v2 until the deferred decision is
-  handled so the new contract does not preserve or delete behavior accidentally.
 - Put current-user publications and cruise effects under `/v2/account/me` instead of
   preserving their legacy placement under `CruiseApplications`.
 - Flatten the v2 current-publications read response to publications only because the
@@ -86,6 +82,9 @@ one response.
   plus reduced init values, instead of preserving the old two-request frontend shape.
 - Keep the existing supervisor-code and lifecycle semantics intact during migration;
   defer any broader public-review redesign to the follow-up ledger.
+- Port `GET /v2/account/confirm-email` after the main migration stream while
+  intentionally preserving optional `changedEmail` and applying the shared
+  auth-sensitive limiter.
 
 ## Files Changed By Slice
 
@@ -243,6 +242,17 @@ one response.
 - `frontend/src/api-v2/applications/contracts.ts`
 - `frontend/src/routes/cruise-approval.tsx`
 - `frontend/tests/supervisor-review.spec.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Confirm Email Completion Slice
+
+- `backend/ResearchCruiseApp/Api/Account/EmailConfirmation.cs`
+- `frontend/src/api-v2/account/AccountRecoveryApiHooks.tsx`
+- `frontend/src/api-v2/account/contracts.ts`
+- `frontend/src/routes/confirm-email.tsx`
+- `frontend/src/api/hooks/user/UserApiHooks.tsx`
+- `frontend/tests/confirm-email.spec.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -445,6 +455,25 @@ one response.
     `404` for an invalid link.
   - `GET /openapi/v2.json` exposed both new supervisor-review routes.
 
+### Confirm Email Completion Slice
+
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/confirm-email.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 14 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - invalid `GET /v2/account/confirm-email` input returned `401`.
+  - repeated invalid confirmation requests eventually returned `429` under the shared
+    auth-sensitive limiter.
+  - existing v1 `GET /account/emailConfirmation` still mapped through controllers and
+    returned `401` for invalid input.
+  - `GET /openapi/v2.json` exposed `GET /v2/account/confirm-email`.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -452,8 +481,8 @@ one response.
 - Registration still depends on the legacy identity service error text to detect the
   existing "username taken" case on the frontend.
 - Email confirmation still has an unresolved legacy `changedEmail` branch. Current
-  repo evidence suggests it is dormant, but the decision is intentionally deferred to
-  a separate post-port PR.
+  repo evidence suggests it is dormant, but v2 intentionally preserves it until a
+  separate post-port PR resolves the decision.
 - The long-term rewrite plan names additional `/v2/users` resources that the current
   app does not use yet; they remain intentionally unported until a later slice needs
   them.
@@ -466,6 +495,6 @@ one response.
 
 ## Next Recommended Slice
 
-The main live v2 port is now complete. Continue with deferred follow-up PRs, starting
-with whichever risky decision is ready for product review rather than folding cleanup
-back into the migration stream.
+The live v2 port is complete. Continue with deferred follow-up PRs, starting with
+whichever risky decision is ready for product review rather than folding cleanup back
+into the migration stream.
