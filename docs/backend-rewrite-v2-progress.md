@@ -6,18 +6,16 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Cutover cleanup in progress. The full live account surface, recovery, current-user
-data, live privileged user management, the live cruise workflow, the application
+Cutover complete. The full live account surface, recovery, current-user data, live
+privileged user management, the live cruise workflow, the application
 catalog/decision surface, authenticated Form A/B/C workflows, and the anonymous
-supervisor-review flow now exist under `/v2`; the dead legacy frontend application
-hooks have been removed, `/version` now lives outside MVC, and the remaining work is
-retiring the old v1 request path in a controlled order.
+supervisor-review flow now exist under `/v2`; the dead legacy frontend hooks, old v1
+MVC runtime surface, and legacy MediatR request path have all been retired.
 
 ## Active Slice
 
-Backend v2 combined cutover cleanup: remove the dead legacy frontend
-application-hook modules and move `/version` off MVC before deleting v1 business
-controllers.
+Backend v2 accelerated cutover cleanup completed: the v1 runtime surface and dead
+MediatR/use-case path have been removed.
 
 ## Decisions Made
 
@@ -99,6 +97,14 @@ controllers.
   confirms all live consumers have moved to `frontend/src/api-v2`.
 - Keep `/version` unversioned while moving it to a minimal endpoint so controller
   mapping is no longer required for operations routes.
+- Retire the legacy v1 MVC runtime after the live frontend has moved to `/v2`,
+  including the controller-only error helper and old Swagger v1 surface.
+- Preserve the previous JSON max-depth behavior for minimal APIs after removing MVC
+  controller registration.
+- Keep shared form validation behavior during cutover, but move the remaining v2 form
+  validators onto neutral validation models before deleting the legacy use-case tree.
+- Remove the dead MediatR registration, package, and `Application/UseCases` request
+  path after no live endpoint depends on them.
 
 ## Files Changed By Slice
 
@@ -312,6 +318,28 @@ controllers.
 - `backend/ResearchCruiseApp/Api/Operations/VersionEndpoint.cs`
 - `backend/ResearchCruiseApp/Web/Controllers/VersionController.cs`
 - `backend/ResearchCruiseApp/Web/Configuration/WebApplicationExtensions.cs`
+- `docs/backend-rewrite-v2-cutover.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Accelerated Cutover Commit 1: Retire Legacy V1 Runtime Surface
+
+- `backend/ResearchCruiseApp/ResearchCruiseApp.csproj`
+- `backend/ResearchCruiseApp/Web/Configuration/DependencyInjection.cs`
+- `backend/ResearchCruiseApp/Web/Configuration/WebApplicationExtensions.cs`
+- `backend/ResearchCruiseApp/Web/Common/Extensions/ControllerBaseExtensions.cs`
+- `backend/ResearchCruiseApp/Web/Controllers`
+- `docs/backend-rewrite-v2-cutover.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Accelerated Cutover Commit 2: Remove Legacy MediatR Use Cases
+
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormA.cs`
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormB.cs`
+- `backend/ResearchCruiseApp/Api/Applications/ApplicationFormC.cs`
+- `backend/ResearchCruiseApp/Application/DependencyInjection.cs`
+- `backend/ResearchCruiseApp/Application/Models/Common/Validation/CruiseApplications`
+- `backend/ResearchCruiseApp/Application/UseCases`
+- `backend/ResearchCruiseApp/ResearchCruiseApp.csproj`
 - `docs/backend-rewrite-v2-cutover.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -621,6 +649,62 @@ controllers.
   - `GET /openapi/v2.json` returned `200`, confirming the v2 document remains
     available after moving `/version` off MVC.
 
+### Accelerated Cutover Commit 1: Retire Legacy V1 Runtime Surface
+
+- Removed the five remaining v1 MVC business controllers and the controller-only
+  error helper.
+- Removed MVC controller registration/mapping and the legacy Swagger v1 surface while
+  preserving JSON max-depth configuration for minimal APIs.
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/cruises.spec.ts tests/applications.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 19 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - `GET /health` returned `200`.
+  - `GET /version` returned `200` with the existing version payload.
+  - `GET /openapi/v2.json` returned `200`.
+  - retired `GET /api/Cruises` returned `404`.
+  - unauthenticated `GET /v2/cruises` still returned `401`.
+  - `GET /scalar` still redirected to the development Scalar UI.
+
+### Accelerated Cutover Commit 2: Remove Legacy MediatR Use Cases
+
+- Detached the surviving v2 Form A/B/C validation path from retired use-case command
+  types by moving it onto neutral shared validation models.
+- Removed the dead MediatR registration/package and the legacy
+  `Application/UseCases` request path.
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- Search verification found no remaining live `MediatR`, `IMediator`, or
+  `Application.UseCases` references.
+- `git diff --check` passed.
+- Broad form coverage attempt with
+  `vpr -F frontend test -- tests/formA.spec.ts tests/formB.spec.ts tests/formC.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  finished with 90 passing, 3 skipped, and one existing UI timing timeout in
+  `tests/formA.spec.ts:402`; the failing path is an untouched frontend menu-click
+  helper, not the backend validation code moved in this commit.
+- Focused verification with
+  `vpr -F frontend test -- tests/formA.spec.ts:7 tests/formB.spec.ts:7 tests/formC.spec.ts:7 tests/session.spec.ts tests/login.spec.ts`
+  passed with 15 Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://localhost:3000`:
+  - `GET /health` returned `200`.
+  - `GET /version` returned `200` with the existing version payload.
+  - `GET /openapi/v2.json` returned `200`.
+  - retired `GET /api/Cruises` returned `404`.
+  - unauthenticated `GET /v2/applications/{applicationId}/form-a` still returned
+    `401`.
+  - `GET /scalar` still redirected to the development Scalar UI.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
@@ -636,6 +720,5 @@ controllers.
 
 ## Next Recommended Slice
 
-Remove the v1 business controllers and `MapControllers()` now that frontend-only
-compatibility remains the only expected usage and `/version` no longer depends on
-MVC.
+Use `docs/backend-rewrite-v2-deferred-decisions.md` to choose any later product
+redesign follow-ups; the live migration and planned v1 cutover cleanup are complete.

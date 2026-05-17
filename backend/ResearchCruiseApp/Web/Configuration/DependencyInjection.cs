@@ -10,15 +10,12 @@ public static class DependencyInjection
 {
     public static void AddWeb(this IServiceCollection services, IConfiguration configuration)
     {
-        services
-            .AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.MaxDepth = 64;
-            });
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.MaxDepth = 64;
+        });
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
         services.AddProblemDetails();
         services.AddOpenApi(
             "v2",

@@ -1,28 +1,23 @@
 # Backend v2 Cutover Plan
 
 This document records the retirement path after the live backend v2 migration. The
-frontend is the only expected API consumer, and the live frontend business flows have
-already moved to `/v2`. The remaining work is cleanup and cutover, not additional
-endpoint parity.
+frontend is the only expected API consumer, the live frontend business flows have
+moved to `/v2`, and the planned v1 cutover cleanup is now complete.
 
 ## Current State
 
-### Legacy backend runtime still present
+### Legacy backend runtime retired
 
-- Business MVC controllers still map the old v1 surface:
-  - `AccountController`
-  - `UsersController`
-  - `CruisesController`
-  - `CruiseApplicationsController`
-  - `FormsController`
+- The old v1 MVC business controllers have been removed.
 - `/version` remains a live unversioned operations endpoint used by the frontend help
-  page, but it has moved off MVC.
-- `AddControllers()` and `MapControllers()` stay in startup only because those MVC
-  routes are still present.
-- MediatR registration, package references, and command/query handlers under the
-  legacy `Application/UseCases` request path remain for the old controller surface.
-  Shared repositories, factories, and domain/application services are not blanket
-  deletion targets.
+  page, but it now lives outside MVC.
+- MVC controller registration and mapping have been removed from startup.
+- The legacy Swagger v1 surface has been removed with the controller runtime; native
+  v2 OpenAPI remains the documentation source.
+- The legacy MediatR registration, package reference, and `Application/UseCases`
+  request path have been removed.
+- Shared repositories, factories, and domain/application services remain because the
+  live v2 implementation still uses them.
 
 ### Legacy frontend cleanup completed
 
@@ -47,20 +42,24 @@ endpoint parity.
 2. Move `/version` off MVC while preserving its current unversioned route and response
    behavior. Completed in the combined cutover cleanup commit.
 3. Remove the v1 business controllers and `MapControllers()` once the frontend-only
-   compatibility assumption is still valid at cleanup time.
+   compatibility assumption is still valid at cleanup time. Completed in the
+   accelerated cutover runtime cleanup.
 4. Remove controller-only MediatR commands, queries, handlers, registration, and
-   package references after no runtime path uses them.
+   package references after no runtime path uses them. Completed in the accelerated
+   MediatR cleanup.
 5. Run the final cutover verification pass and update the rewrite docs to mark v1
-   retirement complete.
+   retirement complete. Completed in the accelerated cutover cleanup.
 
 ## Verification Basis
 
 - Source inspection found no live imports from `frontend/src/api/hooks/applications`
   before cutover slice 1, and those dead modules have now been removed.
 - Current frontend business screens import migrated hooks from `frontend/src/api-v2`.
-- `/version` still serves the frontend help page, now through an unversioned minimal
+- `/version` still serves the frontend help page through an unversioned minimal
   endpoint instead of MVC.
 - `/health` already bypasses MVC and is mapped directly as a health check endpoint.
+- The live codebase no longer references `MediatR`, `IMediator`, or
+  `Application.UseCases`.
 
 ## Assumptions
 

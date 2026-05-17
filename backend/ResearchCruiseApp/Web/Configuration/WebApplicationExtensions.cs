@@ -11,8 +11,6 @@ public static class WebApplicationExtensions
     {
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
             app.MapOpenApi("/openapi/{documentName}.json");
             app.MapScalarApiReference(options =>
             {
@@ -33,7 +31,6 @@ public static class WebApplicationExtensions
 
         app.MapApi();
         app.MapVersion();
-        app.MapControllers();
         app.MapHealthChecks("/health");
 
         await app.InitializeDatabase();

@@ -4,13 +4,13 @@ using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
+using ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.EffectsService;
 using ResearchCruiseApp.Application.Services.Factories.FormCDtos;
 using ResearchCruiseApp.Application.Services.Factories.FormsC;
 using ResearchCruiseApp.Application.Services.FormsService;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.AddFormC;
 using ResearchCruiseApp.Domain.Common.Enums;
 
 namespace ResearchCruiseApp.Api.Applications;
@@ -72,7 +72,7 @@ public static class ApplicationFormC
         Guid applicationId,
         FormCDto request,
         bool isDraft,
-        IValidator<AddFormCCommand> validator,
+        IValidator<FormCValidationModel> validator,
         ICruiseApplicationsRepository cruiseApplicationsRepository,
         IFormsCFactory formsCFactory,
         IUnitOfWork unitOfWork,
@@ -83,7 +83,7 @@ public static class ApplicationFormC
     )
     {
         var validation = await validator.ValidateAsync(
-            new AddFormCCommand(applicationId, request, isDraft),
+            new FormCValidationModel(request, isDraft),
             cancellationToken
         );
         if (!validation.IsValid)

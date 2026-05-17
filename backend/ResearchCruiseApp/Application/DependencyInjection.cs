@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using ResearchCruiseApp.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp.Application.Services.CruiseApplications;
 using ResearchCruiseApp.Application.Services.CruisesService;
@@ -37,11 +36,7 @@ public static class DependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
-        );
-
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         services.AddFactories();
         services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());

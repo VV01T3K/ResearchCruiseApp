@@ -4,12 +4,12 @@ using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
+using ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.FormBDtos;
 using ResearchCruiseApp.Application.Services.Factories.FormsB;
 using ResearchCruiseApp.Application.Services.FormsService;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.AddFormB;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 
@@ -72,7 +72,7 @@ public static class ApplicationFormB
         Guid applicationId,
         FormBDto request,
         bool isDraft,
-        IValidator<AddFormBCommand> validator,
+        IValidator<FormBValidationModel> validator,
         ICruiseApplicationsRepository cruiseApplicationsRepository,
         IUserPermissionVerifier userPermissionVerifier,
         IFormsBFactory formsBFactory,
@@ -81,8 +81,10 @@ public static class ApplicationFormB
         CancellationToken cancellationToken
     )
     {
-        var command = new AddFormBCommand(applicationId, request, isDraft);
-        var validation = await validator.ValidateAsync(command, cancellationToken);
+        var validation = await validator.ValidateAsync(
+            new FormBValidationModel(request, isDraft),
+            cancellationToken
+        );
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 

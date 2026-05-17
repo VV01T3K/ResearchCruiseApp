@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp.Application.Models.Common.Commands.CruiseApplications;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
+using ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.CruiseApplicationEvaluator;
 using ResearchCruiseApp.Application.Services.CruiseApplications;
@@ -14,8 +14,6 @@ using ResearchCruiseApp.Application.Services.Factories.FormADtos;
 using ResearchCruiseApp.Application.Services.Factories.FormsA;
 using ResearchCruiseApp.Application.Services.FormsService;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.AddCruiseApplication;
-using ResearchCruiseApp.Application.UseCases.CruiseApplications.UpdateFormA;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 
@@ -56,7 +54,7 @@ public static class ApplicationFormA
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         FormADto request,
         bool isDraft,
-        IValidator<FormACommand> validator,
+        IValidator<FormAValidationModel> validator,
         IFormsAFactory formsAFactory,
         ICruisesService cruisesService,
         ICruiseApplicationsFactory cruiseApplicationsFactory,
@@ -68,7 +66,7 @@ public static class ApplicationFormA
     )
     {
         var validation = await validator.ValidateAsync(
-            new AddCruiseApplicationCommand(request, isDraft),
+            new FormAValidationModel(request, isDraft),
             cancellationToken
         );
         if (!validation.IsValid)
@@ -141,7 +139,7 @@ public static class ApplicationFormA
         Guid applicationId,
         FormADto request,
         bool isDraft,
-        IValidator<FormACommand> validator,
+        IValidator<FormAValidationModel> validator,
         ICruiseApplicationsRepository cruiseApplicationsRepository,
         IUserPermissionVerifier userPermissionVerifier,
         IUnitOfWork unitOfWork,
@@ -154,7 +152,7 @@ public static class ApplicationFormA
     )
     {
         var validation = await validator.ValidateAsync(
-            new UpdateFormACommand(applicationId, request, isDraft),
+            new FormAValidationModel(request, isDraft),
             cancellationToken
         );
         if (!validation.IsValid)
