@@ -21,7 +21,7 @@ public interface IIdentityService
 
     Task<Result> DeactivateUser(Guid id);
 
-    Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail);
+    Task<Result> ConfirmEmail(Guid userId, string code);
 
     Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName);
 

@@ -9,6 +9,6 @@ public class ConfirmEmailHandler(IIdentityService identityService)
 {
     public Task<Result> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
     {
-        return identityService.ConfirmEmail(request.UserId, request.Code, request.ChangedEmail);
+        return identityService.ConfirmEmail(request.UserId, request.Code);
     }
 }

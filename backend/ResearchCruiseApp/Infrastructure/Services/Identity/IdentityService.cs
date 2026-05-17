@@ -111,7 +111,7 @@ public class IdentityService(
         return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
     }
 
-    public async Task<Result> ConfirmEmail(Guid userId, string code, string? changedEmail)
+    public async Task<Result> ConfirmEmail(Guid userId, string code)
     {
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
             return Error.UnknownIdentity();
@@ -125,17 +125,7 @@ public class IdentityService(
             return Error.UnknownIdentity();
         }
 
-        IdentityResult result;
-
-        if (string.IsNullOrEmpty(changedEmail))
-            result = await userManager.ConfirmEmailAsync(user, code);
-        else
-        {
-            result = await userManager.ChangeEmailAsync(user, changedEmail, code);
-
-            if (result.Succeeded)
-                result = await userManager.SetUserNameAsync(user, changedEmail); // Email is also the username
-        }
+        var result = await userManager.ConfirmEmailAsync(user, code);
 
         return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
     }
@@ -154,7 +144,7 @@ public class IdentityService(
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
-        var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
+        var emailConfirmationCode = await CreateEmailConfirmationCode(user);
         await emailSender.SendEmailConfirmationEmail(
             await CreateUserDto(user),
             roleName,
@@ -177,7 +167,7 @@ public class IdentityService(
         if (user is null)
             return; // According to Microsoft, responding with an error would give to much information
 
-        var emailConfirmationCode = await CreateEmailConfirmationCode(user, false);
+        var emailConfirmationCode = await CreateEmailConfirmationCode(user);
         var userDto = await CreateUserDto(user);
 
         await emailSender.SendEmailConfirmationEmail(userDto, roleName, emailConfirmationCode);
@@ -556,11 +546,9 @@ public class IdentityService(
         return loginResponseDto;
     }
 
-    private async Task<string> CreateEmailConfirmationCode(User user, bool changeEmail)
+    private async Task<string> CreateEmailConfirmationCode(User user)
     {
-        var code = changeEmail
-            ? await userManager.GenerateChangeEmailTokenAsync(user, user.Email!)
-            : await userManager.GenerateEmailConfirmationTokenAsync(user);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
         return code;

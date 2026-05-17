@@ -16,38 +16,6 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 ## Open Decisions
 
-### Email confirmation `changedEmail` branch
-
-**Current behavior**
-
-- v1 and v2 email confirmation accept optional `changedEmail`.
-- When present, `IdentityService.ConfirmEmail` uses `ChangeEmailAsync` and then
-  updates the username to match the new email.
-
-**Why deferred**
-
-- The repo strongly suggests this branch is dormant, but removing it would still be a
-  behavior change.
-- The v2 port preserved the behavior to finish the migration, while uncertain
-  account-policy cleanup should happen in a separate PR after the port is complete.
-
-**Evidence gathered**
-
-- The current frontend confirm-email caller sends only `userId` and `code`.
-- Confirmation links emitted by the backend include only `userId` and `code`.
-- The admin user-edit flow can change email, but it updates the stored email directly
-  and does not mint or send a change-email confirmation token.
-- No live source path currently calls the change-email token generation branch.
-- `fix/roles-access-control` changes user-update validation and removes unrelated role
-  helpers, but does not resolve or rely on `changedEmail`.
-
-**Later decision**
-
-- After the v2 port is complete, decide in a separate PR whether to:
-  - remove the branch as dead behavior, or
-  - preserve it deliberately as a supported email-change workflow and complete the
-    missing surrounding flow.
-
 ### Current-user publications and cruise effects cleanup
 
 **Current behavior**
@@ -178,3 +146,26 @@ the evidence gathered so far, and the later decision that still needs to be made
 - After the v2 port is complete, decide whether supervisor review should keep its
   current code model and payload shape or move to a deliberately redesigned public
   review contract.
+
+## Resolved Decisions
+
+### Email confirmation `changedEmail` branch
+
+**Resolution**
+
+- Removed the dormant `changedEmail` branch after the live v2 port was complete.
+- Email confirmation now accepts only `userId` and `code` in both v1 and v2 during
+  route coexistence.
+
+**Why**
+
+- The frontend confirmation caller only used `userId` and `code`.
+- Confirmation links emitted by the backend only contained `userId` and `code`.
+- The admin user-edit flow changes stored email directly and never minted or sent a
+  change-email confirmation token.
+- No live source path called the change-email token generation branch.
+
+**Follow-up boundary**
+
+- If product work later needs confirmed email changes, add a deliberate workflow for
+  it instead of reviving the removed hidden branch.

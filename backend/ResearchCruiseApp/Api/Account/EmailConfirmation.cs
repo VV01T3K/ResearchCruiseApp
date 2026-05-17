@@ -13,6 +13,7 @@ public static class EmailConfirmation
             .MapGet("/confirm-email", Confirm)
             .WithName("ConfirmEmailV2")
             .WithSummary("Confirm an account email.")
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
@@ -30,11 +31,17 @@ public static class EmailConfirmation
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
         Guid userId,
         string code,
-        string? changedEmail,
+        HttpContext httpContext,
         IIdentityService identityService
     )
     {
-        var result = await identityService.ConfirmEmail(userId, code, changedEmail);
+        if (httpContext.Request.Query.ContainsKey("changedEmail"))
+            return TypedResults.Problem(
+                detail: "Query parameter 'changedEmail' is no longer supported.",
+                statusCode: StatusCodes.Status400BadRequest
+            );
+
+        var result = await identityService.ConfirmEmail(userId, code);
         return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 

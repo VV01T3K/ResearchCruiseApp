@@ -41,13 +41,12 @@ public class AccountController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("emailConfirmation")]
-    public async Task<IActionResult> ConfirmEmail(
-        [FromQuery] Guid userId,
-        [FromQuery] string code,
-        [FromQuery] string? changedEmail
-    )
+    public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string code)
     {
-        var result = await mediator.Send(new ConfirmEmailCommand(userId, code, changedEmail));
+        if (Request.Query.ContainsKey("changedEmail"))
+            return BadRequest("Query parameter 'changedEmail' is no longer supported.");
+
+        var result = await mediator.Send(new ConfirmEmailCommand(userId, code));
         return result.IsSuccess ? NoContent() : this.CreateError(result);
     }
 

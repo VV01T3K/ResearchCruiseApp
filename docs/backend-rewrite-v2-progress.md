@@ -6,16 +6,16 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Confirm-email completion slice implemented. The full live account surface, recovery,
-current-user data, live privileged user management, the live cruise workflow, the
-application catalog/decision surface, authenticated Form A/B/C workflows, and the
-anonymous supervisor-review flow now exist under `/v2`; the legacy `changedEmail`
-decision remains deferred to a later follow-up PR outside the main port.
+Dormant `changedEmail` cleanup slice implemented. The full live account surface,
+recovery, current-user data, live privileged user management, the live cruise
+workflow, the application catalog/decision surface, authenticated Form A/B/C
+workflows, and the anonymous supervisor-review flow now exist under `/v2`; the first
+post-port deferred decision has now been resolved.
 
 ## Active Slice
 
-Backend v2 confirm-email completion slice: close the last live v1-only account gap
-under `/v2/account` while preserving the deferred `changedEmail` behavior unchanged.
+Backend v2 post-port cleanup slice: remove the dormant `changedEmail` email
+confirmation branch everywhere now that the migration stream is complete.
 
 ## Decisions Made
 
@@ -36,14 +36,10 @@ under `/v2/account` while preserving the deferred `changedEmail` behavior unchan
   coexist.
 - Keep this slice to account auth core only; password and email-confirmation flows
   stay on v1 until the next account slice.
-- Keep the legacy `changedEmail` branch behavior-preserving while porting confirmation
-  itself to v2; decide whether it should survive in a separate follow-up PR.
 - Keep password-reset request and resend-confirmation email non-enumerating on v2 by
   returning `204` even when the email is unknown.
 - Use one shared built-in fixed-window rate limit for sensitive public account routes:
   10 requests per minute per remote IP.
-- Treat `changedEmail` as likely legacy residue based on current repo evidence, but do
-  not resolve it inside the main port.
 - Keep risky behavior changes that are discovered during the port in
   `docs/backend-rewrite-v2-deferred-decisions.md` so they can be handled in focused
   follow-up PRs after migration work is complete.
@@ -85,6 +81,9 @@ under `/v2/account` while preserving the deferred `changedEmail` behavior unchan
 - Port `GET /v2/account/confirm-email` after the main migration stream while
   intentionally preserving optional `changedEmail` and applying the shared
   auth-sensitive limiter.
+- Remove the dormant `changedEmail` confirmation branch in the first post-port
+  follow-up after repo evidence showed no live caller or generated link depended on
+  it.
 
 ## Files Changed By Slice
 
@@ -253,6 +252,18 @@ under `/v2/account` while preserving the deferred `changedEmail` behavior unchan
 - `frontend/src/routes/confirm-email.tsx`
 - `frontend/src/api/hooks/user/UserApiHooks.tsx`
 - `frontend/tests/confirm-email.spec.ts`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Remove Dormant Changed Email Slice
+
+- `backend/ResearchCruiseApp/Application/ExternalServices/IIdentityService.cs`
+- `backend/ResearchCruiseApp/Application/UseCases/Account/ConfirmEmail/ConfirmEmailCommand.cs`
+- `backend/ResearchCruiseApp/Application/UseCases/Account/ConfirmEmail/ConfirmEmailHandler.cs`
+- `backend/ResearchCruiseApp/Infrastructure/Services/Identity/IdentityService.cs`
+- `backend/ResearchCruiseApp/Api/Account/EmailConfirmation.cs`
+- `backend/ResearchCruiseApp/Web/Controllers/AccountController.cs`
+- `frontend/src/api-v2/account/contracts.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -474,15 +485,31 @@ under `/v2/account` while preserving the deferred `changedEmail` behavior unchan
     returned `401` for invalid input.
   - `GET /openapi/v2.json` exposed `GET /v2/account/confirm-email`.
 
+### Remove Dormant Changed Email Slice
+
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/confirm-email.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 14 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime smoke verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://127.0.0.1:51367`:
+  - `GET /openapi/v2.json` documents only `userId` and `code` for
+    `GET /v2/account/confirm-email`.
+  - invalid normal confirmation input still returned `401` on both v2 and existing
+    v1 routes.
+  - requests carrying removed `changedEmail` returned `400` on both v2 and v1 routes
+    instead of silently using the dead branch.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
   runs during application startup.
 - Registration still depends on the legacy identity service error text to detect the
   existing "username taken" case on the frontend.
-- Email confirmation still has an unresolved legacy `changedEmail` branch. Current
-  repo evidence suggests it is dormant, but v2 intentionally preserves it until a
-  separate post-port PR resolves the decision.
 - The long-term rewrite plan names additional `/v2/users` resources that the current
   app does not use yet; they remain intentionally unported until a later slice needs
   them.
@@ -495,6 +522,6 @@ under `/v2/account` while preserving the deferred `changedEmail` behavior unchan
 
 ## Next Recommended Slice
 
-The live v2 port is complete. Continue with deferred follow-up PRs, starting with
-whichever risky decision is ready for product review rather than folding cleanup back
-into the migration stream.
+The live v2 port is complete and the dormant `changedEmail` branch has been resolved.
+Continue with the remaining deferred follow-up PRs, starting with whichever product
+decision is ready for focused review.
