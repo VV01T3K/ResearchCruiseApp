@@ -48,13 +48,16 @@ public static class UserProfile
                 .ToProblemHttpResult();
         }
 
-        if (!await userPermissionVerifier.CanCurrentUserAssignRole(request.Role))
+        if (
+            request.Role is not null
+            && !await userPermissionVerifier.CanCurrentUserAssignRole(request.Role)
+        )
         {
             return Error.ForbiddenOperation("Nie można nadać tej roli").ToProblemHttpResult();
         }
 
         var roles = await identityService.GetAllRoleNames(cancellationToken);
-        if (!roles.Contains(request.Role))
+        if (request.Role is not null && !roles.Contains(request.Role))
         {
             return Error.InvalidArgument("Rola nie istnieje").ToProblemHttpResult();
         }
@@ -85,7 +88,12 @@ public static class UserProfile
     }
 }
 
-public sealed record UpdateUserRequest(string Email, string FirstName, string LastName, string Role)
+public sealed record UpdateUserRequest(
+    string? Email = null,
+    string? FirstName = null,
+    string? LastName = null,
+    string? Role = null
+)
 {
     public UpdateUserFormDto ToLegacyDto()
     {
@@ -103,9 +111,8 @@ public sealed class UpdateUserRequestValidator : AbstractValidator<UpdateUserReq
 {
     public UpdateUserRequestValidator()
     {
-        RuleFor(request => request.Email).NotEmpty().EmailAddress();
-        RuleFor(request => request.FirstName).NotEmpty();
-        RuleFor(request => request.LastName).NotEmpty();
-        RuleFor(request => request.Role).NotEmpty();
+        RuleFor(request => request.Email)
+            .EmailAddress()
+            .When(request => !string.IsNullOrEmpty(request.Email));
     }
 }

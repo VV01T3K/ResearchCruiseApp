@@ -6,16 +6,18 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Dormant `changedEmail` cleanup slice implemented. The full live account surface,
+Post-merge compatibility follow-up in progress. The full live account surface,
 recovery, current-user data, live privileged user management, the live cruise
 workflow, the application catalog/decision surface, authenticated Form A/B/C
 workflows, and the anonymous supervisor-review flow now exist under `/v2`; the first
-post-port deferred decision has now been resolved.
+post-port deferred decision has been resolved, and v2 is being aligned with newly
+merged legacy user-update behavior.
 
 ## Active Slice
 
-Backend v2 post-port cleanup slice: remove the dormant `changedEmail` email
-confirmation branch everywhere now that the migration stream is complete.
+Backend v2 post-merge compatibility follow-up: align v2 managed-user updates with
+the partial-update behavior clarified by the merged `fix/roles-access-control`
+branch.
 
 ## Decisions Made
 
@@ -84,6 +86,9 @@ confirmation branch everywhere now that the migration stream is complete.
 - Remove the dormant `changedEmail` confirmation branch in the first post-port
   follow-up after repo evidence showed no live caller or generated link depended on
   it.
+- Preserve the newly merged legacy partial-update semantics for managed users in v2:
+  update fields may be omitted, and role permission checks only run when a role is
+  actually supplied.
 
 ## Files Changed By Slice
 
@@ -113,7 +118,7 @@ confirmation branch everywhere now that the migration stream is complete.
 - `frontend/src/api/hooks/user/UserContextApiHooks.tsx`
 - `frontend/src/lib/guards.ts`
 - `frontend/src/providers/UserContextProvider.tsx`
-- `frontend/src/routes/register.tsx`
+- `frontend/src/routes/(auth)/register.tsx`
 - `frontend/tests/fixtures/pages/loginPage.ts`
 - `frontend/tests/session.spec.ts`
 - `docs/backend-rewrite-v2-progress.md`
@@ -134,8 +139,8 @@ confirmation branch everywhere now that the migration stream is complete.
 - `frontend/src/api/hooks/user/UserApiHooks.tsx`
 - `frontend/src/api/hooks/user-management/UserManagementApiHooks.tsx`
 - `frontend/src/routes/account-settings/-components/ChangePasswordForm.tsx`
-- `frontend/src/routes/forgot-password.tsx`
-- `frontend/src/routes/reset-password.tsx`
+- `frontend/src/routes/(auth)/forgot-password.tsx`
+- `frontend/src/routes/(auth)/reset-password.tsx`
 - `frontend/tests/account-recovery.spec.ts`
 - `docs/backend-rewrite-v2-progress.md`
 
@@ -249,7 +254,7 @@ confirmation branch everywhere now that the migration stream is complete.
 - `backend/ResearchCruiseApp/Api/Account/EmailConfirmation.cs`
 - `frontend/src/api-v2/account/AccountRecoveryApiHooks.tsx`
 - `frontend/src/api-v2/account/contracts.ts`
-- `frontend/src/routes/confirm-email.tsx`
+- `frontend/src/routes/(auth)/confirm-email.tsx`
 - `frontend/src/api/hooks/user/UserApiHooks.tsx`
 - `frontend/tests/confirm-email.spec.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
@@ -265,6 +270,11 @@ confirmation branch everywhere now that the migration stream is complete.
 - `backend/ResearchCruiseApp/Web/Controllers/AccountController.cs`
 - `frontend/src/api-v2/account/contracts.ts`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Post-Merge User Update Compatibility Follow-up
+
+- `backend/ResearchCruiseApp/Api/Users/UserProfile.cs`
 - `docs/backend-rewrite-v2-progress.md`
 
 ## Verification Run
@@ -503,6 +513,21 @@ confirmation branch everywhere now that the migration stream is complete.
     v1 routes.
   - requests carrying removed `changedEmail` returned `400` on both v2 and v1 routes
     instead of silently using the dead branch.
+
+### Post-Merge User Update Compatibility Follow-up
+
+- `vpr -F backend check` passed.
+- `dotnet build backend/ResearchCruiseApp.sln` passed.
+- `vpr -F frontend check` passed.
+- `vpr -F frontend type` passed.
+- `vpr -F frontend test -- tests/user-management.spec.ts tests/session.spec.ts tests/login.spec.ts`
+  passed with 15 focused Playwright tests.
+- Build reported the same existing NuGet vulnerability warnings for current
+  dependencies as prior slices.
+- Runtime OpenAPI verification passed locally with
+  `ASPNETCORE_ENVIRONMENT=Development` on `http://127.0.0.1:51368`:
+  - `UpdateUserRequest` no longer marks `email`, `firstName`, `lastName`, or `role`
+    as required, matching the merged partial-update behavior.
 
 ## Known Blockers And Risks
 
