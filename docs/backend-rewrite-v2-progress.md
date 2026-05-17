@@ -6,18 +6,18 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Post-merge compatibility follow-up in progress. The full live account surface,
-recovery, current-user data, live privileged user management, the live cruise
-workflow, the application catalog/decision surface, authenticated Form A/B/C
-workflows, and the anonymous supervisor-review flow now exist under `/v2`; the first
-post-port deferred decision has been resolved, and v2 is being aligned with newly
-merged legacy user-update behavior.
+Live v2 migration complete. The full live account surface, recovery, current-user
+data, live privileged user management, the live cruise workflow, the application
+catalog/decision surface, authenticated Form A/B/C workflows, and the anonymous
+supervisor-review flow now exist under `/v2`; post-port compatibility work is
+aligned, and the remaining original-plan-only endpoints have been intentionally
+dropped from scope.
 
 ## Active Slice
 
-Backend v2 post-merge compatibility follow-up: align v2 managed-user updates with
-the partial-update behavior clarified by the merged `fix/roles-access-control`
-branch.
+Backend v2 endpoint-scope follow-up: record that the remaining aspirational routes
+from the original rewrite plan were already dead in v1 and are not missing migration
+work.
 
 ## Decisions Made
 
@@ -89,6 +89,8 @@ branch.
 - Preserve the newly merged legacy partial-update semantics for managed users in v2:
   update fields may be omitted, and role permission checks only run when a role is
   actually supplied.
+- Drop the six remaining original-plan-only endpoints from v2 scope because their
+  matching v1 behaviors had already been removed as dead code before the migration.
 
 ## Files Changed By Slice
 
@@ -275,6 +277,11 @@ branch.
 ### Post-Merge User Update Compatibility Follow-up
 
 - `backend/ResearchCruiseApp/Api/Users/UserProfile.cs`
+- `docs/backend-rewrite-v2-progress.md`
+
+### Dropped Plan-Only Endpoint Scope Follow-up
+
+- `docs/backend-rewrite-v2-deferred-decisions.md`
 - `docs/backend-rewrite-v2-progress.md`
 
 ## Verification Run
@@ -529,15 +536,21 @@ branch.
   - `UpdateUserRequest` no longer marks `email`, `firstName`, `lastName`, or `role`
     as required, matching the merged partial-update behavior.
 
+### Dropped Plan-Only Endpoint Scope Follow-up
+
+- Documentation review confirmed both rewrite docs now treat the six remaining
+  aspirational routes as intentionally out of scope rather than unfinished migration
+  work.
+- `git diff --check` passed.
+- No build, formatter, or runtime verification was run because this slice changed
+  documentation only.
+
 ## Known Blockers And Risks
 
 - Local backend startup requires reachable SQL Server because database initialization
   runs during application startup.
 - Registration still depends on the legacy identity service error text to detect the
   existing "username taken" case on the frontend.
-- The long-term rewrite plan names additional `/v2/users` resources that the current
-  app does not use yet; they remain intentionally unported until a later slice needs
-  them.
 - Cruise status normalization and broader lifecycle redesign remain intentionally
   deferred after the targeted v2 contract cleanup.
 - Application status normalization and broader form-workflow redesign remain
@@ -547,6 +560,7 @@ branch.
 
 ## Next Recommended Slice
 
-The live v2 port is complete and the dormant `changedEmail` branch has been resolved.
-Continue with the remaining deferred follow-up PRs, starting with whichever product
-decision is ready for focused review.
+The live v2 port is complete, no further parity endpoints remain to port, and the
+remaining work is no longer migration work. Continue with cutover/cleanup planning
+and whichever separately chosen product redesign follow-up is ready for focused
+review.

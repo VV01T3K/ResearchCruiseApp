@@ -50,17 +50,14 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 **Why deferred**
 
-- The long-term rewrite plan sketches additional user resources, but the current app
-  does not consume them yet.
-- Adding or redesigning user-management behavior during this port would mix migration
-  work with product-surface decisions that deserve their own review.
+- Redesigning user-management behavior during this port would mix migration work with
+  product-surface decisions that deserve their own review.
 
 **Later decision**
 
-- After the v2 port is complete, decide whether the broader planned users surface
-  should be added, whether the current privileged-management contract should be
-  reshaped further, and whether the existing permission model needs any deliberate
-  cleanup.
+- After the v2 port is complete, decide whether the current privileged-management
+  contract should be reshaped further and whether the existing permission model needs
+  any deliberate cleanup.
 
 ### Cruise contract and lifecycle cleanup
 
@@ -169,3 +166,33 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 - If product work later needs confirmed email changes, add a deliberate workflow for
   it instead of reviving the removed hidden branch.
+
+### Dropped plan-only v2 endpoints
+
+**Resolution**
+
+- Do not add the remaining aspirational routes that were present in the original v2
+  design but no longer correspond to live product behavior:
+  - `GET /v2/users/{userId}`
+  - `PUT /v2/users/{userId}/roles/{roleName}`
+  - `DELETE /v2/users/{userId}/roles/{roleName}`
+  - `GET /v2/users/{userId}/cruise-effects`
+  - `PATCH /v2/applications/{applicationId}/evaluation`
+  - `PATCH /v2/applications/{applicationId}/form-c/effects`
+
+**Why**
+
+- Each matching v1 behavior had already been removed as dead functionality before the
+  v2 port:
+  - `08b6182b` removed dead `GetUserById`.
+  - `41438dc5` removed dead role-toggle behavior.
+  - `39913771` removed dead per-user effects evaluations.
+  - `264dc102` removed dead application-evaluation editing.
+  - `4b702205` removed dead Form C effects updates.
+- Reintroducing those routes only to satisfy an older aspirational endpoint list would
+  expand the API beyond the current product instead of completing migration parity.
+
+**Follow-up boundary**
+
+- If product work later needs any of these capabilities again, design them explicitly
+  as new features instead of reviving dead routes for plan completeness.
