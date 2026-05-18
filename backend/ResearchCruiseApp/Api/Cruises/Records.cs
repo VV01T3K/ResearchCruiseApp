@@ -1,7 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
+using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;

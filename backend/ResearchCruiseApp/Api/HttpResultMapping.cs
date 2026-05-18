@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api;
 

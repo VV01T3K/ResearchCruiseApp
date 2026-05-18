@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Infrastructure.Identity;
 

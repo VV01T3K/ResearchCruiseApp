@@ -1,4 +1,4 @@
-namespace ResearchCruiseApp.Api.Common.ServiceResult;
+namespace ResearchCruiseApp.Results;
 
 public class Result
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
 using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Workflows;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;

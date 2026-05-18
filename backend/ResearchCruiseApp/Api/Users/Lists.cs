@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Api.Common;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Api.Users;

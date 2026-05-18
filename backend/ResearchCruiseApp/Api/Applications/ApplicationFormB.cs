@@ -5,13 +5,14 @@ using ResearchCruiseApp.Api.Applications.Contracts;
 using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Validation;
 using ResearchCruiseApp.Api.Applications.Workflows;
-using ResearchCruiseApp.Api.Common;
-using ResearchCruiseApp.Api.Common.Extensions;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Api.Validation;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Applications;
 

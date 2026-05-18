@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Api.Common.Constants;
+using ResearchCruiseApp.Domain.Common.Constants;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Domain.Logic;

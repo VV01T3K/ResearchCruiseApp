@@ -1,6 +1,6 @@
-﻿namespace ResearchCruiseApp.Api.Common.Constants;
+﻿namespace ResearchCruiseApp.Infrastructure.Localization;
 
-public static class DateConstants
+public static class DateFormats
 {
     public const string IsoStringDateFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
     public const string LocalStringDateFormat = "dd.MM.yyyy (HH:mm)";

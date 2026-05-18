@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Api.Common.Enums;
+﻿namespace ResearchCruiseApp.Results;
 
 public enum ErrorType
 {

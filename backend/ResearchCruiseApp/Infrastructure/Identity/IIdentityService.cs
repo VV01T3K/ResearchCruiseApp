@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Infrastructure.Identity;

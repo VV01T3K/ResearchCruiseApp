@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 

@@ -1,7 +1,7 @@
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Workflows;
-using ResearchCruiseApp.Api.Common;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api;
 

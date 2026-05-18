@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Cruises;
 

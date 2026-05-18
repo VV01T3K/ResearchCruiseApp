@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Api.Applications.Contracts;
 using ResearchCruiseApp.Api.Applications.Projections;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api.Applications;
 

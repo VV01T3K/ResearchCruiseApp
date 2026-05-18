@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Common.Constants;
-using ResearchCruiseApp.Api.Common.Extensions;
 using ResearchCruiseApp.Domain.Common.Constants;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;

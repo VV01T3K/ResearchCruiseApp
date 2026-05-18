@@ -1,6 +1,4 @@
-using ResearchCruiseApp.Api.Common.Enums;
-
-namespace ResearchCruiseApp.Api.Common.ServiceResult;
+namespace ResearchCruiseApp.Results;
 
 public sealed record Error(ErrorType Type, string? Message = null)
 {

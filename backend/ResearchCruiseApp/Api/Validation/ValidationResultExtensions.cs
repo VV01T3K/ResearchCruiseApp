@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
-using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Results;
 
-namespace ResearchCruiseApp.Api.Common.Extensions;
+namespace ResearchCruiseApp.Api.Validation;
 
 public static class ValidationResultExtensions
 {

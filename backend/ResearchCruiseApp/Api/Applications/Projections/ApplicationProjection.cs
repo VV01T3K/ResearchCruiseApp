@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Api.Applications.Contracts;
 using ResearchCruiseApp.Api.Applications.Workflows;
-using ResearchCruiseApp.Api.Common.Extensions;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Domain.Logic;
 

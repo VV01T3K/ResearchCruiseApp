@@ -1,5 +1,5 @@
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Common.Extensions;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 

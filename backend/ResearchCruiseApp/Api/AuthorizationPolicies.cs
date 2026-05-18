@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using ResearchCruiseApp.Api.Common.Constants;
+using ResearchCruiseApp.Domain.Common.Constants;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api;
 

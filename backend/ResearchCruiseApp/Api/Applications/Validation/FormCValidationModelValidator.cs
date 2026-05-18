@@ -1,5 +1,4 @@
 using FluentValidation;
-using ResearchCruiseApp.Api.Common.Constants;
 
 namespace ResearchCruiseApp.Api.Applications.Validation;
 
@@ -29,7 +28,7 @@ public sealed class FormCValidationModelValidator : AbstractValidator<FormCValid
                         contractDto.Scan is not null
                         && fileInspector.IsFileSizeValid(
                             contractDto.Scan.Content,
-                            FileConstants.MaxFileSize
+                            PermissionScanLimits.MaxFileSize
                         )
                     )
                     .WithMessage("Rozmiar skanu pozwolenia nie może przekraczać 2 MiB.");

@@ -1,8 +1,7 @@
 ﻿using System.Globalization;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Common.Constants;
-using ResearchCruiseApp.Api.Common.Extensions;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Common.Constants;
 using ResearchCruiseApp.Domain.Common.Enums;
 
@@ -452,7 +451,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
             .Must(contractDto =>
                 contractDto.Scans.All(scan =>
                     scan is { Name: "", Content: "" }
-                    || _fileInspector.IsFileSizeValid(scan.Content, FileConstants.MaxFileSize)
+                    || _fileInspector.IsFileSizeValid(scan.Content, PermissionScanLimits.MaxFileSize)
                 )
             )
             .WithMessage("Rozmiar skanu nie może przekraczać 2 MiB.");

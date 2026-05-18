@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Domain.Entities;
 
-namespace ResearchCruiseApp.Api.Common;
+namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 public interface IUserPermissionVerifier
 {

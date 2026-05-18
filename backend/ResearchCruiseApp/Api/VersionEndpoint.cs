@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace ResearchCruiseApp.Api.Operations;
+namespace ResearchCruiseApp.Api;
 
 public static class VersionEndpoint
 {
@@ -12,7 +12,13 @@ public static class VersionEndpoint
 
     public static IEndpointRouteBuilder MapVersion(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/version", () => Version is not null ? Results.Ok(Version) : Results.NotFound())
+        app.MapGet(
+                "/version",
+                () =>
+                    Version is not null
+                        ? global::Microsoft.AspNetCore.Http.Results.Ok(Version)
+                        : global::Microsoft.AspNetCore.Http.Results.NotFound()
+            )
             .ExcludeFromDescription();
 
         return app;

@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using ResearchCruiseApp.Api.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Localization;
 
@@ -19,7 +18,7 @@ public class GlobalizationService : IGlobalizationService
 
         var timeZoneInfo = GetTimeZoneInfo();
         var dateUtc = TimeZoneInfo.ConvertTimeToUtc(date, timeZoneInfo);
-        var dateString = dateUtc.ToString(DateConstants.IsoStringDateFormat);
+        var dateString = dateUtc.ToString(DateFormats.IsoStringDateFormat);
 
         return dateString;
     }
@@ -29,7 +28,7 @@ public class GlobalizationService : IGlobalizationService
         var utcDate = DateTime.Parse(isoUtcString, null, DateTimeStyles.RoundtripKind);
         var timeZoneInfo = GetTimeZoneInfo();
         var localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, timeZoneInfo);
-        var localDateString = localDate.ToString(DateConstants.LocalStringDateFormat);
+        var localDateString = localDate.ToString(DateFormats.LocalStringDateFormat);
 
         return localDateString;
     }

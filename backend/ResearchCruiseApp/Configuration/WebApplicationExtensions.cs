@@ -1,5 +1,4 @@
 ﻿using ResearchCruiseApp.Api;
-using ResearchCruiseApp.Api.Operations;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using Scalar.AspNetCore;
 
