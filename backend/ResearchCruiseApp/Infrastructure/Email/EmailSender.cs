@@ -135,13 +135,13 @@ internal class EmailSender(
 
         using var client = new SmtpClient();
         await client.ConnectAsync(
-            smtpSettings.GetSection("SmtpServer").Value,
+            smtpSettings.GetSection("SmtpServer").Value!,
             int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""),
             true
         );
         await client.AuthenticateAsync(
-            smtpSettings.GetSection("SmtpUsername").Value,
-            smtpSettings.GetSection("SmtpPassword").Value
+            smtpSettings.GetSection("SmtpUsername").Value!,
+            smtpSettings.GetSection("SmtpPassword").Value!
         );
 
         var bodyBuilder = new BodyBuilder { HtmlBody = body };
@@ -150,7 +150,7 @@ internal class EmailSender(
         message.From.Add(
             new MailboxAddress(
                 smtpSettings.GetSection("SenderName").Value,
-                smtpSettings.GetSection("SmtpUsername").Value
+                smtpSettings.GetSection("SmtpUsername").Value!
             )
         );
         message.To.Add(new MailboxAddress(email, email));
