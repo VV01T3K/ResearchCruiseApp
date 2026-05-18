@@ -47,7 +47,8 @@ public static class Publications
                 .ToListAsync(cancellationToken);
 
             return TypedResults.Ok(
-                publications.Select(userPublication => Response.From(userPublication.Publication))
+                publications
+                    .Select(userPublication => Response.From(userPublication.Publication))
                     .ToList()
             );
         }

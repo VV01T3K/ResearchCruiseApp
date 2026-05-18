@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using ResearchCruiseApp.Api.Account;
-using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Api.Applications;
+using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Api.Users;
 
@@ -24,10 +24,7 @@ public static class ApiComposition
         AccountEndpoints.Map(account);
 
         var users = v2.MapGroup("/users").WithTags("Users");
-        UserDirectory.Map(users);
-        UserProfile.Map(users);
-        UserAcceptance.Map(users);
-        UserRoles.Map(users);
+        UsersEndpoints.Map(users);
         var cruises = v2.MapGroup("/cruises").WithTags("Cruises");
         CruiseCatalog.Map(cruises);
         CruiseDetails.Map(cruises);

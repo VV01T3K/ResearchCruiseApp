@@ -66,7 +66,10 @@ public static class EmailConfirmation
             IIdentityService identityService
         )
         {
-            await identityService.ResendEmailConfirmationEmail(request.Email, RoleName.CruiseManager);
+            await identityService.ResendEmailConfirmationEmail(
+                request.Email,
+                RoleName.CruiseManager
+            );
             return TypedResults.NoContent();
         }
 

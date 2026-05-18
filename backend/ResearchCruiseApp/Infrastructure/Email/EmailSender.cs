@@ -4,9 +4,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using NeoSmart.Utils;
-using ResearchCruiseApp.Api.Users.Contracts;
 using ResearchCruiseApp.App_GlobalResources;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ResearchCruiseApp.Infrastructure.Email;

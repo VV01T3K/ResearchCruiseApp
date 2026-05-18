@@ -1,7 +1,6 @@
-using ResearchCruiseApp.Api.Users.Contracts;
-using ResearchCruiseApp.Infrastructure.Identity;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
-namespace ResearchCruiseApp.Api.Users;
+namespace ResearchCruiseApp.Infrastructure.Identity;
 
 internal static class UserMappings
 {

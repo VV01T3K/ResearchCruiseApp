@@ -1,5 +1,5 @@
 using Newtonsoft.Json;
-using ResearchCruiseApp.Api.Users.Contracts;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 

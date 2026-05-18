@@ -1,5 +1,5 @@
-﻿using ResearchCruiseApp.Api.Users.Contracts;
-using ResearchCruiseApp.Domain.Entities;
+﻿using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Infrastructure.Email;
 
