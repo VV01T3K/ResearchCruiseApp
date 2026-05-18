@@ -163,9 +163,6 @@ public class UserPermissionVerifier(
             || cruiseApplication.FormA?.DeputyManagerId == currentUserId;
     }
 
-    public Task<bool> CanCurrentUserUpdateEffects(CruiseApplication cruiseApplication) =>
-        CanCurrentUserAddForm(cruiseApplication);
-
     public async Task<bool> CanUserDeactivate(Guid otherUserId)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();

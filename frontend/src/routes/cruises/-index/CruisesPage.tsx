@@ -56,7 +56,7 @@ export function CruisesPage() {
         <PlusLgIcon className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
-    <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+    <AppGuard key="exportCruises">
       <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport
         <BoxArrowUpRightIcon className="ml-2 h-4 w-4" />

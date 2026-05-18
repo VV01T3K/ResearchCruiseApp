@@ -24,7 +24,6 @@ internal class CruiseDtosFactory(
 
         cruiseDto.MainDeputyManagerFirstName = mainDeputyManager?.FirstName ?? string.Empty;
         cruiseDto.MainDeputyManagerLastName = mainDeputyManager?.LastName ?? string.Empty;
-
         cruiseDto.CruiseApplicationsShortInfo = cruise
             .CruiseApplications.Select(cruiseApplicationShortInfoDtosFactory.Create)
             .ToList();
