@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Workflows;
+using ResearchCruiseApp.ApplicationForms.Writing;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Files;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using Xunit;
 
@@ -70,7 +70,10 @@ public sealed class PersistenceWorkflowTests
             .FormsB.Include(candidate => candidate.FormBGuestUnits)
                 .ThenInclude(join => join.GuestUnit)
             .SingleAsync();
-        var service = new FormsService(new NoOpEffectsService(), dbContext);
+        var compressor = new Compressor();
+        var fieldResolver = new UniqueFormFieldResolver(dbContext, compressor);
+        var effects = new CruiseEffectService(dbContext, fieldResolver);
+        var service = new FormDeletionService(effects, dbContext);
 
         await service.DeleteFormB(storedFormB, CancellationToken.None);
         await dbContext.SaveChangesAsync();
@@ -112,22 +115,5 @@ public sealed class PersistenceWorkflowTests
             CruiseGoalDescription = "",
             SupervisorEmail = "supervisor@example.com",
         };
-    }
-
-    private sealed class NoOpEffectsService : IEffectsService
-    {
-        public Task EvaluateEffects(
-            CruiseApplication cruiseApplication,
-            CancellationToken cancellationToken
-        ) => Task.CompletedTask;
-
-        public Task DeleteResearchTasksEffects(FormC formC, CancellationToken cancellationToken) =>
-            Task.CompletedTask;
-
-        public Task AddResearchTasksEffects(
-            FormC formC,
-            List<ResearchTaskEffectDto> researchTaskEffectDtos,
-            CancellationToken cancellationToken
-        ) => Task.CompletedTask;
     }
 }

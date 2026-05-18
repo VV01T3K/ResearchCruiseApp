@@ -1,6 +1,6 @@
 using FluentValidation;
-using ResearchCruiseApp.Api.Applications.Projections;
-using ResearchCruiseApp.Api.Applications.Workflows;
+using ResearchCruiseApp.ApplicationForms.Reading;
+using ResearchCruiseApp.ApplicationForms.Writing;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api;
@@ -12,21 +12,21 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         services
-            .AddScoped<FormAAssembler>()
-            .AddScoped<FormBAssembler>()
-            .AddScoped<FormCAssembler>()
-            .AddScoped<CruiseApplicationAssembler>()
-            .AddScoped<FileProjection>()
-            .AddScoped<ContractProjection>()
-            .AddScoped<PermissionProjection>()
-            .AddScoped<FormProjection>()
-            .AddScoped<ApplicationProjection>()
-            .AddScoped<FormContextProjection>()
-            .AddScoped<ICruiseApplicationsService, CruiseApplicationsService>()
-            .AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>()
-            .AddScoped<IEffectsService, EffectsService>()
-            .AddScoped<IFormsFieldsService, FormsFieldsService>()
+            .AddScoped<FormAFactory>()
+            .AddScoped<FormBFactory>()
+            .AddScoped<FormCFactory>()
+            .AddScoped<ApplicationFactory>()
+            .AddScoped<FileReader>()
+            .AddScoped<ContractReader>()
+            .AddScoped<PermissionReader>()
+            .AddScoped<FormReader>()
+            .AddScoped<ApplicationReader>()
+            .AddScoped<FormInitValuesReader>()
+            .AddScoped<SupervisorInvitationService>()
+            .AddScoped<ApplicationScoringService>()
+            .AddScoped<CruiseEffectService>()
+            .AddScoped<UniqueFormFieldResolver>()
             .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>()
-            .AddScoped<IFormsService, FormsService>();
+            .AddScoped<FormDeletionService>();
     }
 }

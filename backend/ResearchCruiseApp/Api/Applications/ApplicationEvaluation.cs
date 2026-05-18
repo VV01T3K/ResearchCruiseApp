@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Projections;
+using ResearchCruiseApp.ApplicationForms.Payloads;
+using ResearchCruiseApp.ApplicationForms.Reading;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
@@ -24,7 +24,7 @@ public static class ApplicationEvaluation
     private static async Task<Results<Ok<CruiseApplicationEvaluationDetailsDto>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
-        ApplicationProjection applications,
+        ApplicationReader applications,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )

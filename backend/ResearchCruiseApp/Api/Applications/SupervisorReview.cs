@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Projections;
-using ResearchCruiseApp.Api.Applications.Workflows;
+using ResearchCruiseApp.ApplicationForms.Payloads;
+using ResearchCruiseApp.ApplicationForms.Reading;
+using ResearchCruiseApp.ApplicationForms.Writing;
 using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
@@ -35,9 +35,9 @@ public static class SupervisorReview
         Guid applicationId,
         string code,
         ApplicationDbContext dbContext,
-        ICruiseApplicationsService cruiseApplicationsService,
-        FormProjection forms,
-        FormContextProjection formContext,
+        SupervisorInvitationService cruiseApplicationsService,
+        FormReader forms,
+        FormInitValuesReader formContext,
         CancellationToken cancellationToken
     )
     {
@@ -64,7 +64,7 @@ public static class SupervisorReview
         Guid applicationId,
         SupervisorDecisionRequest request,
         ApplicationDbContext dbContext,
-        ICruiseApplicationsService cruiseApplicationsService,
+        SupervisorInvitationService cruiseApplicationsService,
         CancellationToken cancellationToken
     )
     {

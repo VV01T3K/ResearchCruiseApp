@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Workflows;
+using ResearchCruiseApp.ApplicationForms.Writing;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
@@ -27,7 +27,7 @@ public static class ApplicationCruise
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         IIdentityService identityService,
-        ICruiseApplicationEvaluator evaluator,
+        ApplicationScoringService evaluator,
         CancellationToken cancellationToken
     )
     {
@@ -65,7 +65,7 @@ public static class ApplicationCruise
         internal static async Task<Response> From(
             Cruise cruise,
             IIdentityService identityService,
-            ICruiseApplicationEvaluator evaluator
+            ApplicationScoringService evaluator
         )
         {
             var manager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);

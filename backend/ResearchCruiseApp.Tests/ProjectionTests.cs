@@ -1,6 +1,6 @@
-using ResearchCruiseApp.Api.Applications;
-using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Projections;
+using ResearchCruiseApp.ApplicationForms.Mapping;
+using ResearchCruiseApp.ApplicationForms.Payloads;
+using ResearchCruiseApp.ApplicationForms.Reading;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Files;
 using Xunit;
@@ -40,7 +40,7 @@ public sealed class ProjectionTests
     public async Task ContractProjectionRestoresCompressedFiles()
     {
         var compressor = new Compressor();
-        var projection = new ContractProjection(new FileProjection(compressor));
+        var projection = new ContractReader(new FileReader(compressor));
         var contract = new Contract
         {
             Category = "science",
@@ -65,7 +65,7 @@ public sealed class ProjectionTests
     public async Task PermissionProjectionRestoresCompressedScan()
     {
         var compressor = new Compressor();
-        var projection = new PermissionProjection(new FileProjection(compressor));
+        var projection = new PermissionReader(new FileReader(compressor));
         var permission = new Permission
         {
             Description = "description",
