@@ -16,7 +16,7 @@ import {
   ResearchTaskDto,
   ResearchTaskType,
   taskTypes,
-} from '@/api/dto/applications/ResearchTaskDto';
+} from '@/api/applications/dto/ResearchTaskDto';
 
 export function ResearchTasksSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

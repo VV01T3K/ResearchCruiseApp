@@ -6,8 +6,8 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationFormAPublication } from '@/api-v2/applications/contracts';
-import { getPublicationCategoryLabel } from '@/api/dto/applications/PublicationDto';
+import { EvaluationFormAPublication } from '@/api/applications/contracts';
+import { getPublicationCategoryLabel } from '@/api/applications/dto/PublicationDto';
 
 export function PublicationsSection() {
   const { evaluation } = useApplicationDetails();

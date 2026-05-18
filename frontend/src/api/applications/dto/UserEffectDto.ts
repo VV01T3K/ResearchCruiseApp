@@ -1,4 +1,4 @@
-import { ResearchTaskEffectDto } from '@/api/dto/applications/ResearchTaskEffectDto';
+import { ResearchTaskEffectDto } from '@/api/applications/dto/ResearchTaskEffectDto';
 
 export type UserEffectDto = {
   id: string;

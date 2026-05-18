@@ -12,7 +12,7 @@ import {
   FORM_C_FIELD_TO_SECTION,
   getFormCValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { useApplicationCruiseQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
+import { useApplicationCruiseQuery } from '@/api/applications/ApplicationCatalogApiHooks';
 import {
   useFormAInitValuesQuery,
   useFormAQuery,
@@ -20,9 +20,9 @@ import {
   useFormBQuery,
   useFormCQuery,
   useUpdateFormCMutation,
-} from '@/api-v2/applications/ApplicationFormsApiHooks';
-import { FormCDto } from '@/api/dto/applications/FormCDto';
-import { ResearchTaskEffectDto } from '@/api/dto/applications/ResearchTaskEffectDto';
+} from '@/api/applications/ApplicationFormsApiHooks';
+import { FormCDto } from '@/api/applications/dto/FormCDto';
+import { ResearchTaskEffectDto } from '@/api/applications/dto/ResearchTaskEffectDto';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,

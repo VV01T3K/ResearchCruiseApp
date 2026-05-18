@@ -3,8 +3,8 @@ import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { useUpdateCruiseByIdMutation } from '@/api-v2/cruises/CruisesApiHooks';
-import { CruiseFormValues, CruiseResponse } from '@/api-v2/cruises/contracts';
+import { useUpdateCruiseByIdMutation } from '@/api/cruises/CruisesApiHooks';
+import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
 
 type Props = {
   cruises: CruiseResponse[];

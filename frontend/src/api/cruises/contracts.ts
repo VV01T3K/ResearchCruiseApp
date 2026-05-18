@@ -8,7 +8,7 @@ export type CruiseApplicationSummaryResponse = {
 
 export type CruiseStatus = 'new' | 'confirmed' | 'ended';
 
-export type CruisePersonResponse = {
+type CruisePersonResponse = {
   id: string;
   firstName: string;
   lastName: string;

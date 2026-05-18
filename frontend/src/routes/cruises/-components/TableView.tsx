@@ -11,7 +11,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { Role } from '@/models/shared/Role';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
-import { CruiseApplicationSummaryResponse, CruiseResponse } from '@/api-v2/cruises/contracts';
+import { CruiseApplicationSummaryResponse, CruiseResponse } from '@/api/cruises/contracts';
 
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 const dateFormat = 'DD.MM.YYYY, HH:mm';

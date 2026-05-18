@@ -7,7 +7,7 @@ import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-co
 import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
 import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectResearchTaskDetails';
 import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ThesisResearchTaskDetails';
-import { FormADto } from '@/api/dto/applications/FormADto';
+import { FormADto } from '@/api/applications/dto/FormADto';
 import {
   DidacticsResearchTaskDto,
   OtherResearchTaskDto,
@@ -17,7 +17,7 @@ import {
   ResearchTaskDto,
   ResearchTaskType,
   ThesisResearchTaskDto,
-} from '@/api/dto/applications/ResearchTaskDto';
+} from '@/api/applications/dto/ResearchTaskDto';
 
 type Props = {
   form: AnyReactFormApi<FormADto>;

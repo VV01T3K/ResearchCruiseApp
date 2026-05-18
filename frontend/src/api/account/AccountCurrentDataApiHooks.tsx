@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
-import { CurrentPublicationImportRequest, CurrentPublicationResponse } from '@/api-v2/account/contracts';
-import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
-import { Publication } from '@/api/dto/publications/Publication';
+import { CurrentPublicationImportRequest, CurrentPublicationResponse } from '@/api/account/contracts';
+import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
+import { Publication } from '@/api/publications/dto/Publication';
 import { client } from '@/lib/api';
 
 export function useCurrentPublicationsQuery() {

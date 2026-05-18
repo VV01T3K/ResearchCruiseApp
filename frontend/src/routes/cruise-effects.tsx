@@ -6,9 +6,9 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useCurrentCruiseEffectsQuery } from '@/api-v2/account/AccountCurrentDataApiHooks';
-import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
-import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
+import { useCurrentCruiseEffectsQuery } from '@/api/account/AccountCurrentDataApiHooks';
+import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
+import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,

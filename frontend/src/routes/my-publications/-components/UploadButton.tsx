@@ -2,7 +2,7 @@ import Papa from 'papaparse';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
-import { CurrentPublicationImportRequest } from '@/api-v2/account/contracts';
+import { CurrentPublicationImportRequest } from '@/api/account/contracts';
 
 function parseRow(row: Record<string, string>) {
   return {

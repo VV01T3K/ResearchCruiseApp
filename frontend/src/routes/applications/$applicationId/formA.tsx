@@ -25,9 +25,9 @@ import {
   useFormAInitValuesQuery,
   useFormAQuery,
   useUpdateFormAMutation,
-} from '@/api-v2/applications/ApplicationFormsApiHooks';
-import { FormADto } from '@/api/dto/applications/FormADto';
-import { useBlockadesQuery } from '@/api-v2/cruises/CruisesApiHooks';
+} from '@/api/applications/ApplicationFormsApiHooks';
+import { FormADto } from '@/api/applications/dto/FormADto';
+import { useBlockadesQuery } from '@/api/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({

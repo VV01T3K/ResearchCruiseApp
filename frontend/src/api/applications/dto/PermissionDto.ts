@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FileDto, FileDtoValidationSchema } from '@/api/dto/applications/FileDto';
+import { FileDto, FileDtoValidationSchema } from '@/api/applications/dto/FileDto';
 
 export type PermissionDto = {
   description: string;

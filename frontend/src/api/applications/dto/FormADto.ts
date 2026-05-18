@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { ContractDto } from '@/api/dto/applications/ContractDto';
-import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
-import { PermissionDto } from '@/api/dto/applications/PermissionDto';
-import { PublicationDto } from '@/api/dto/applications/PublicationDto';
-import { ResearchAreaDescriptionDto } from '@/api/dto/applications/ResearchAreaDescriptionDto';
-import { ResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
-import { SpubTaskDto } from '@/api/dto/applications/SpubTaskDto';
-import { UGTeamDto } from '@/api/dto/applications/UGTeamDto';
+import { ContractDto } from '@/api/applications/dto/ContractDto';
+import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
+import { PermissionDto } from '@/api/applications/dto/PermissionDto';
+import { PublicationDto } from '@/api/applications/dto/PublicationDto';
+import { ResearchAreaDescriptionDto } from '@/api/applications/dto/ResearchAreaDescriptionDto';
+import { ResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { SpubTaskDto } from '@/api/applications/dto/SpubTaskDto';
+import { UGTeamDto } from '@/api/applications/dto/UGTeamDto';
 
 export type FormADto = {
   id?: string | undefined;

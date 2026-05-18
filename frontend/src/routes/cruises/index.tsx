@@ -13,8 +13,8 @@ import { Role } from '@/models/shared/Role';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
-import { useAutoPlanCruisesMutation, useCruisesQuery, useDeleteCruiseMutation } from '@/api-v2/cruises/CruisesApiHooks';
-import { CruiseResponse } from '@/api-v2/cruises/contracts';
+import { useAutoPlanCruisesMutation, useCruisesQuery, useDeleteCruiseMutation } from '@/api/cruises/CruisesApiHooks';
+import { CruiseResponse } from '@/api/cruises/contracts';
 
 export const Route = createFileRoute('/cruises/')({
   component: CruisesPage,

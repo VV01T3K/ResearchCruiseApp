@@ -3,7 +3,7 @@ import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppAlert } from '@/components/shared/AppAlert';
-import { BlockadePeriodDto } from '@/api/dto/cruises/CruiseDto';
+import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
 
 interface Props {
   blockades?: BlockadePeriodDto[];

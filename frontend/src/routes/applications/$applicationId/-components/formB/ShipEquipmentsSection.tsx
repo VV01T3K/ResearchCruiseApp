@@ -5,7 +5,7 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { ShipEquipmentDto } from '@/api/dto/applications/ShipEquipmentDto';
+import { ShipEquipmentDto } from '@/api/applications/dto/ShipEquipmentDto';
 
 const shipEquipmentColumns = (
   form: FormBContextType['form'],

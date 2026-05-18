@@ -7,8 +7,8 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCDto } from '@/api/dto/applications/FormCDto';
-import { ShipEquipmentDto } from '@/api/dto/applications/ShipEquipmentDto';
+import { FormCDto } from '@/api/applications/dto/FormCDto';
+import { ShipEquipmentDto } from '@/api/applications/dto/ShipEquipmentDto';
 
 const shipEquipmentColumns = (
   form: AnyReactFormApi<FormCDto>,

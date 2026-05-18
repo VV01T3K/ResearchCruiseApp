@@ -10,8 +10,8 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { CruiseDayDetailsDto } from '@/api/dto/applications/CruiseDayDetailsDto';
-import { FormCDto } from '@/api/dto/applications/FormCDto';
+import { CruiseDayDetailsDto } from '@/api/applications/dto/CruiseDayDetailsDto';
+import { FormCDto } from '@/api/applications/dto/FormCDto';
 
 const cruiseDayDetailsColumns = (
   form: AnyReactFormApi<FormCDto>,

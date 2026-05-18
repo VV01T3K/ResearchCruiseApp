@@ -13,8 +13,8 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { useApplicationsQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
-import { ApplicationResponse, ApplicationStatus } from '@/api-v2/applications/contracts';
+import { useApplicationsQuery } from '@/api/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, ApplicationStatus } from '@/api/applications/contracts';
 import { FormView } from '../-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
 import {
@@ -24,9 +24,9 @@ import {
   useDeleteCruiseMutation,
   useRemoveCruiseConfirmationMutation,
   useUpdateCruiseMutation,
-} from '@/api-v2/cruises/CruisesApiHooks';
-import { CruiseFormValues, CruiseResponse } from '@/api-v2/cruises/contracts';
-import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
+} from '@/api/cruises/CruisesApiHooks';
+import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
+import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/applications/dto/CruiseApplicationDto';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,

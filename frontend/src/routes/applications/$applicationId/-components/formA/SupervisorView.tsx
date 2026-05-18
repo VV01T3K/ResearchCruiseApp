@@ -13,8 +13,8 @@ import { ResearchTasksSection } from '@/routes/applications/$applicationId/-comp
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
 import { FormAProvider } from '@/contexts/applications/FormAContext';
-import { FormADto } from '@/api/dto/applications/FormADto';
-import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
+import { FormADto } from '@/api/applications/dto/FormADto';
+import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
 
 export function SupervisorView({
   form,

@@ -1,13 +1,8 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/api';
-import { FileDto } from '@/api/dto/applications/FileDto';
-import {
-  BlockadePeriodResponse,
-  CruiseFormValues,
-  CruiseResponse,
-  CruiseWriteRequest,
-} from '@/api-v2/cruises/contracts';
+import { FileDto } from '@/api/applications/dto/FileDto';
+import { BlockadePeriodResponse, CruiseFormValues, CruiseResponse, CruiseWriteRequest } from '@/api/cruises/contracts';
 
 function toWriteRequest(cruise: CruiseFormValues): CruiseWriteRequest {
   return {

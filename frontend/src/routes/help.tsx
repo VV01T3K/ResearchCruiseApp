@@ -12,7 +12,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
-import { useBackendVersionQuery } from '@/api/hooks/other/BackendVersionApiHook';
+import { useBackendVersionQuery } from '@/api/other/BackendVersionApiHook';
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,

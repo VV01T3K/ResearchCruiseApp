@@ -8,7 +8,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { getErrors } from '@/lib/utils';
-import { useRegisterMutation } from '@/api-v2/account/AccountAuthApiHooks';
+import { useRegisterMutation } from '@/api/account/AccountAuthApiHooks';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/(auth)/register')({

@@ -5,7 +5,7 @@ import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { ContractDto, getContractCategoryName } from '@/api/dto/applications/ContractDto';
+import { ContractDto, getContractCategoryName } from '@/api/applications/dto/ContractDto';
 
 export function ContractsSection() {
   const { formA, isReadonly } = useFormB();

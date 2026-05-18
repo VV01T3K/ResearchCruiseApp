@@ -4,8 +4,8 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationFormAResearchTask } from '@/api-v2/applications/contracts';
-import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
+import { EvaluationFormAResearchTask } from '@/api/applications/contracts';
+import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
 
 export function ResearchTasksSection() {
   const { evaluation } = useApplicationDetails();

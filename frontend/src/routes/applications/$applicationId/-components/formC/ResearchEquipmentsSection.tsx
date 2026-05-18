@@ -11,8 +11,8 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCDto } from '@/api/dto/applications/FormCDto';
-import { ResearchEquipmentDto } from '@/api/dto/applications/ResearchEquipmentDto';
+import { FormCDto } from '@/api/applications/dto/FormCDto';
+import { ResearchEquipmentDto } from '@/api/applications/dto/ResearchEquipmentDto';
 
 const researchEquipmentsColumns = (
   form: AnyReactFormApi<FormCDto>,

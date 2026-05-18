@@ -15,9 +15,9 @@ import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { useFormAInitValuesQuery, useSaveFormAMutation } from '@/api-v2/applications/ApplicationFormsApiHooks';
-import { FormADto } from '@/api/dto/applications/FormADto';
-import { useBlockadesQuery } from '@/api-v2/cruises/CruisesApiHooks';
+import { useFormAInitValuesQuery, useSaveFormAMutation } from '@/api/applications/ApplicationFormsApiHooks';
+import { FormADto } from '@/api/applications/dto/FormADto';
+import { useBlockadesQuery } from '@/api/cruises/CruisesApiHooks';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/new')({

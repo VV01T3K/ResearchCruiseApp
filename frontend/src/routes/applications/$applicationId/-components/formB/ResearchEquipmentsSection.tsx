@@ -9,7 +9,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { ResearchEquipmentDto } from '@/api/dto/applications/ResearchEquipmentDto';
+import { ResearchEquipmentDto } from '@/api/applications/dto/ResearchEquipmentDto';
 
 const researchEquipmentsColumns = (
   form: FormBContextType['form'],

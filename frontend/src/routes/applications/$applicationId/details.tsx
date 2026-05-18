@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { AppLayout } from '@/components/shared/AppLayout';
-import { useApplicationEvaluationQuery, useApplicationQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
+import { useApplicationEvaluationQuery, useApplicationQuery } from '@/api/applications/ApplicationCatalogApiHooks';
 import { DetailsView } from './-components/details/DetailsView';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({

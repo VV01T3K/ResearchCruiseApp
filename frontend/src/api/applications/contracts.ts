@@ -1,10 +1,10 @@
-import { ContractDto } from '@/api/dto/applications/ContractDto';
-import { FormADto } from '@/api/dto/applications/FormADto';
-import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
-import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
-import { PublicationDto } from '@/api/dto/applications/PublicationDto';
-import { ResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
-import { SpubTaskDto } from '@/api/dto/applications/SpubTaskDto';
+import { ContractDto } from '@/api/applications/dto/ContractDto';
+import { FormADto } from '@/api/applications/dto/FormADto';
+import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
+import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
+import { PublicationDto } from '@/api/applications/dto/PublicationDto';
+import { ResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { SpubTaskDto } from '@/api/applications/dto/SpubTaskDto';
 
 export enum ApplicationStatus {
   Draft = 'draft',
@@ -44,7 +44,7 @@ export function getApplicationStatusLabel(status: ApplicationStatus): string {
   }
 }
 
-export type ApplicationPersonResponse = {
+type ApplicationPersonResponse = {
   id: string;
   email: string;
   firstName: string;

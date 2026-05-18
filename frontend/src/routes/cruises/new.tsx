@@ -11,9 +11,9 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { FormView } from './-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
-import { useCreateCruiseMutation } from '@/api-v2/cruises/CruisesApiHooks';
-import { useCruisePlanningCandidatesQuery } from '@/api-v2/applications/CruisePlanningApiHooks';
-import { CruiseFormValues } from '@/api-v2/cruises/contracts';
+import { useCreateCruiseMutation } from '@/api/cruises/CruisesApiHooks';
+import { useCruisePlanningCandidatesQuery } from '@/api/applications/CruisePlanningApiHooks';
+import { CruiseFormValues } from '@/api/cruises/contracts';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),

@@ -6,7 +6,7 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { getErrors } from '@/lib/utils';
-import { useChangePasswordMutation } from '@/api-v2/account/AccountRecoveryApiHooks';
+import { useChangePasswordMutation } from '@/api/account/AccountRecoveryApiHooks';
 
 const validationSchema = z
   .object({

@@ -11,8 +11,8 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
-import { UGTeamDto } from '@/api/dto/applications/UGTeamDto';
+import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
+import { UGTeamDto } from '@/api/applications/dto/UGTeamDto';
 
 export function MembersSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

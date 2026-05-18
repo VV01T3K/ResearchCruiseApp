@@ -1,5 +1,5 @@
 import { AppBadge } from '@/components/shared/AppBadge';
-import { CruiseStatus } from '@/api-v2/cruises/contracts';
+import { CruiseStatus } from '@/api/cruises/contracts';
 
 type Props = {
   status: CruiseStatus;

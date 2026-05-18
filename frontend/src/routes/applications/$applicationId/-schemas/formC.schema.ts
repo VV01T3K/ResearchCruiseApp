@@ -1,21 +1,21 @@
 import { z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
-import { CollectedSampleDtoValidationSchema } from '@/api/dto/applications/CollectedSampleDto';
-import { ContractDtoValidationSchema } from '@/api/dto/applications/ContractDto';
-import { CruiseDayDetailsDtoValidationSchema } from '@/api/dto/applications/CruiseDayDetailsDto';
-import { FileDtoValidationSchema } from '@/api/dto/applications/FileDto';
-import { GuestTeamDtoValidationSchema } from '@/api/dto/applications/GuestTeamDto';
-import { LongResearchEquipmentDtoValidationSchema } from '@/api/dto/applications/LongResearchEquipmentDto';
-import { PermissionDtoWithFileValidationSchema } from '@/api/dto/applications/PermissionDto';
-import { PortDtoValidationSchema } from '@/api/dto/applications/PortDto';
-import { ResearchEquipmentDtoValidationSchema } from '@/api/dto/applications/ResearchEquipmentDto';
-import { ResearchTaskEffectDtoValidationSchema } from '@/api/dto/applications/ResearchTaskEffectDto';
-import { ShortResearchEquipmentDtoValidationSchema } from '@/api/dto/applications/ShortResearchEquipmentDto';
-import { SpubTaskDtoValidationSchema } from '@/api/dto/applications/SpubTaskDto';
-import { UGTeamDtoValidationSchema } from '@/api/dto/applications/UGTeamDto';
-import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
-import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/dto/applications/ResearchAreaDescriptionDto';
+import { CollectedSampleDtoValidationSchema } from '@/api/applications/dto/CollectedSampleDto';
+import { ContractDtoValidationSchema } from '@/api/applications/dto/ContractDto';
+import { CruiseDayDetailsDtoValidationSchema } from '@/api/applications/dto/CruiseDayDetailsDto';
+import { FileDtoValidationSchema } from '@/api/applications/dto/FileDto';
+import { GuestTeamDtoValidationSchema } from '@/api/applications/dto/GuestTeamDto';
+import { LongResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/LongResearchEquipmentDto';
+import { PermissionDtoWithFileValidationSchema } from '@/api/applications/dto/PermissionDto';
+import { PortDtoValidationSchema } from '@/api/applications/dto/PortDto';
+import { ResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/ResearchEquipmentDto';
+import { ResearchTaskEffectDtoValidationSchema } from '@/api/applications/dto/ResearchTaskEffectDto';
+import { ShortResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/ShortResearchEquipmentDto';
+import { SpubTaskDtoValidationSchema } from '@/api/applications/dto/SpubTaskDto';
+import { UGTeamDtoValidationSchema } from '@/api/applications/dto/UGTeamDto';
+import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
+import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/applications/dto/ResearchAreaDescriptionDto';
 
 export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
   shipUsage: 3,

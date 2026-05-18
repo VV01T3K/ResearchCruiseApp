@@ -12,7 +12,7 @@ import {
   FORM_B_FIELD_TO_SECTION,
   getFormBValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { useApplicationCruiseQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
+import { useApplicationCruiseQuery } from '@/api/applications/ApplicationCatalogApiHooks';
 import {
   useFormAInitValuesQuery,
   useFormAQuery,
@@ -20,9 +20,9 @@ import {
   useFormBQuery,
   useRevertFormBToEditMutation,
   useUpdateFormBMutation,
-} from '@/api-v2/applications/ApplicationFormsApiHooks';
-import { CruiseDayDetailsDtoValidationSchema } from '@/api/dto/applications/CruiseDayDetailsDto';
-import { FormBDto } from '@/api/dto/applications/FormBDto';
+} from '@/api/applications/ApplicationFormsApiHooks';
+import { CruiseDayDetailsDtoValidationSchema } from '@/api/applications/dto/CruiseDayDetailsDto';
+import { FormBDto } from '@/api/applications/dto/FormBDto';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,

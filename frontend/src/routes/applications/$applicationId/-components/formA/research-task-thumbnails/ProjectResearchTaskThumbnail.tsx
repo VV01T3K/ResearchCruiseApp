@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { ProjectResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { ProjectResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
 
 type Props = {
   task: ProjectResearchTaskDto;

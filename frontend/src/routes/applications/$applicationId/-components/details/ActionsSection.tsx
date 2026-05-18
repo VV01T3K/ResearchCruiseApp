@@ -7,7 +7,7 @@ import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { ApplicationStatus } from '@/api-v2/applications/contracts';
+import { ApplicationStatus } from '@/api/applications/contracts';
 
 type Props = {
   onAccept: () => void;

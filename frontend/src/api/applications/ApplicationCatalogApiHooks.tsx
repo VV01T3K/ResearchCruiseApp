@@ -1,7 +1,7 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/api';
-import { CruiseResponse } from '@/api-v2/cruises/contracts';
+import { CruiseResponse } from '@/api/cruises/contracts';
 
 import { ApplicationResponse, EvaluationResponse } from './contracts';
 

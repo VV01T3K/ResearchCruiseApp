@@ -1,5 +1,5 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { OtherResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { OtherResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
 
 type Props = {
   data: OtherResearchTaskDto;

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { AppAlert } from '@/components/shared/AppAlert';
-import { useNetworkStatusMutation } from '@/api/hooks/other/NetworkStatusApiHook';
+import { useNetworkStatusMutation } from '@/api/other/NetworkStatusApiHook';
 
 export function AppNetworkDisconnectAlert() {
   const [networkConnectionStatus, setNetworkConnectionStatus] = React.useState<boolean | undefined>(undefined);

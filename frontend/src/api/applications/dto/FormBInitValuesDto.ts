@@ -1,4 +1,4 @@
-import { ShipEquipmentDto } from '@/api/dto/applications/ShipEquipmentDto';
+import { ShipEquipmentDto } from '@/api/applications/dto/ShipEquipmentDto';
 
 export type FormBInitValuesDto = {
   shipEquipments: ShipEquipmentDto[];

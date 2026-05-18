@@ -12,8 +12,8 @@ import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePick
 import { getErrors } from '@/lib/utils';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
-import { CruisePeriodType } from '@/api/dto/applications/FormADto';
-import { BlockadePeriodDto } from '@/api/dto/cruises/CruiseDto';
+import { CruisePeriodType } from '@/api/applications/dto/FormADto';
+import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
 
 import { CruiseApplicationPeriodInput } from './CruiseApplicationPeriodInput';
 import { BlockadeWarning } from './BlockadeWarning';

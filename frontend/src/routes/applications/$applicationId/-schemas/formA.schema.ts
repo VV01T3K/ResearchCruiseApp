@@ -2,17 +2,17 @@ import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
-import { ContractDtoValidationSchema } from '@/api/dto/applications/ContractDto';
-import { CruiseGoal, CruisePeriodValidationSchema } from '@/api/dto/applications/FormADto';
-import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
-import { GuestTeamDtoValidationSchema } from '@/api/dto/applications/GuestTeamDto';
-import { PermissionDtoValidationSchema } from '@/api/dto/applications/PermissionDto';
-import { PublicationDtoValidationSchema } from '@/api/dto/applications/PublicationDto';
-import { ResearchTaskDtoValidationSchema } from '@/api/dto/applications/ResearchTaskDto';
-import { SpubTaskDtoValidationSchema } from '@/api/dto/applications/SpubTaskDto';
-import { UGTeamDtoValidationSchema } from '@/api/dto/applications/UGTeamDto';
-import { BlockadePeriodDto } from '@/api/dto/cruises/CruiseDto';
-import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/dto/applications/ResearchAreaDescriptionDto';
+import { ContractDtoValidationSchema } from '@/api/applications/dto/ContractDto';
+import { CruiseGoal, CruisePeriodValidationSchema } from '@/api/applications/dto/FormADto';
+import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
+import { GuestTeamDtoValidationSchema } from '@/api/applications/dto/GuestTeamDto';
+import { PermissionDtoValidationSchema } from '@/api/applications/dto/PermissionDto';
+import { PublicationDtoValidationSchema } from '@/api/applications/dto/PublicationDto';
+import { ResearchTaskDtoValidationSchema } from '@/api/applications/dto/ResearchTaskDto';
+import { SpubTaskDtoValidationSchema } from '@/api/applications/dto/SpubTaskDto';
+import { UGTeamDtoValidationSchema } from '@/api/applications/dto/UGTeamDto';
+import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
+import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/applications/dto/ResearchAreaDescriptionDto';
 
 export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   cruiseManagerId: 1,

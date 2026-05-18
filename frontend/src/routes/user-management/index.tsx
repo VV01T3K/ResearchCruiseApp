@@ -16,7 +16,7 @@ import { useUserContext } from '@/providers/useUserContext';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';
 import { EditForm } from './-components/EditForm';
-import { useUsersQuery } from '@/api-v2/users/UserManagementApiHooks';
+import { useUsersQuery } from '@/api/users/UserManagementApiHooks';
 
 export const Route = createFileRoute('/user-management/')({
   component: UserManagementPage,

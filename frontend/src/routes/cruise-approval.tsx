@@ -2,14 +2,14 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import axios, { AxiosError } from 'axios';
-import { ProblemDetails } from '@/api-v2/account/contracts';
+import { ProblemDetails } from '@/api/account/contracts';
 import {
   useSupervisorReviewDecisionMutation,
   useSupervisorReviewQuery,
-} from '@/api-v2/applications/SupervisorReviewApiHooks';
+} from '@/api/applications/SupervisorReviewApiHooks';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
-import { CruisePeriodType, FormADto } from '@/api/dto/applications/FormADto';
+import { CruisePeriodType, FormADto } from '@/api/applications/dto/FormADto';
 
 export const Route = createFileRoute('/cruise-approval')({
   component: SupervisorViewPage,

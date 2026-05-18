@@ -6,8 +6,8 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
-import { ResearchTaskEffectDto } from '@/api/dto/applications/ResearchTaskEffectDto';
+import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
+import { ResearchTaskEffectDto } from '@/api/applications/dto/ResearchTaskEffectDto';
 
 export function ResearchTasksEffectsSection() {
   const { form, isReadonly, hasFormBeenSubmitted } = useFormC();

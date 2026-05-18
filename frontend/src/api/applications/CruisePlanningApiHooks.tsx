@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/api';
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
+import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
 
 export function useCruisePlanningCandidatesQuery() {
   return useSuspenseQuery({

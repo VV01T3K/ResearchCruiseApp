@@ -29,7 +29,7 @@ import {
   useRemoveUserRoleMutation,
   useUnAcceptUserMutation,
   useUpdateUserMutation,
-} from '@/api-v2/users/UserManagementApiHooks';
+} from '@/api/users/UserManagementApiHooks';
 
 type Props = {
   user?: User;

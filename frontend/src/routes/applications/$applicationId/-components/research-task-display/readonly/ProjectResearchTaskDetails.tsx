@@ -1,7 +1,7 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
-import { ProjectResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { ProjectResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
 
 type Props = {
   data: ProjectResearchTaskDto;

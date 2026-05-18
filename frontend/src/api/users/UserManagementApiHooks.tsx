@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
-import { ProblemDetails } from '@/api-v2/account/contracts';
+import { ProblemDetails } from '@/api/account/contracts';
 import {
   CruiseManagerOptionResponse,
   UserCreateRequest,
   UserProfilePatchRequest,
   UserResponse,
   UserWriteRequest,
-} from '@/api-v2/users/contracts';
+} from '@/api/users/contracts';
 import { client } from '@/lib/api';
 
 type Props = {

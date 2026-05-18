@@ -12,10 +12,10 @@ import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCDto } from '@/api/dto/applications/FormCDto';
-import { LongResearchEquipmentDto } from '@/api/dto/applications/LongResearchEquipmentDto';
-import { PortDto } from '@/api/dto/applications/PortDto';
-import { ShortResearchEquipmentDto } from '@/api/dto/applications/ShortResearchEquipmentDto';
+import { FormCDto } from '@/api/applications/dto/FormCDto';
+import { LongResearchEquipmentDto } from '@/api/applications/dto/LongResearchEquipmentDto';
+import { PortDto } from '@/api/applications/dto/PortDto';
+import { ShortResearchEquipmentDto } from '@/api/applications/dto/ShortResearchEquipmentDto';
 
 const shortResearchEquipmentColumns = (
   form: AnyReactFormApi<FormCDto>,

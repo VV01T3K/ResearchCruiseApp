@@ -8,10 +8,10 @@ import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
 import { useFormC } from '@/contexts/applications/FormCContext';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
-import { getContractCategoryName } from '@/api/dto/applications/ContractDto';
-import { getPublicationCategoryLabel } from '@/api/dto/applications/PublicationDto';
-import { getResearchAreaName } from '@/api/dto/applications/ResearchAreaDto';
-import { getTaskName } from '@/api/dto/applications/ResearchTaskDto';
+import { getContractCategoryName } from '@/api/applications/dto/ContractDto';
+import { getPublicationCategoryLabel } from '@/api/applications/dto/PublicationDto';
+import { getResearchAreaName } from '@/api/applications/dto/ResearchAreaDto';
+import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
 
 function getAction(action: 'Put' | 'Collect'): string {
   if (action === 'Put') {

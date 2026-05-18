@@ -1,7 +1,7 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { OwnResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { OwnResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
 
 type Props = {
   data: OwnResearchTaskDto;

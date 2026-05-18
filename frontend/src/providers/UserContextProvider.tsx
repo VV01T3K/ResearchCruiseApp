@@ -5,7 +5,7 @@ import { SessionExpirationWarning } from '@/components/shared/SessionExpirationW
 import { client, setAuthToken } from '@/lib/api';
 import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
-import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api-v2/account/AccountAuthApiHooks';
+import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/account/AccountAuthApiHooks';
 import { AuthDetails } from '@/models/user/AuthDetails';
 import { SignInResult } from '@/models/user/Results';
 import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';

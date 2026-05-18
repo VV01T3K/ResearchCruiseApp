@@ -12,9 +12,9 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { CrewMemberDto } from '@/api/dto/applications/CrewMemberDto';
-import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
-import { UGTeamDto } from '@/api/dto/applications/UGTeamDto';
+import { CrewMemberDto } from '@/api/applications/dto/CrewMemberDto';
+import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
+import { UGTeamDto } from '@/api/applications/dto/UGTeamDto';
 
 export function MembersSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormB();

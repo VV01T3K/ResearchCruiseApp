@@ -2,9 +2,9 @@ import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { FileDto } from '@/api/dto/applications/FileDto';
-import { useCruiseCsvExportMutation } from '@/api-v2/cruises/CruisesApiHooks';
-import { CruiseResponse } from '@/api-v2/cruises/contracts';
+import { FileDto } from '@/api/applications/dto/FileDto';
+import { useCruiseCsvExportMutation } from '@/api/cruises/CruisesApiHooks';
+import { CruiseResponse } from '@/api/cruises/contracts';
 
 type Props = {
   cruises: CruiseResponse[];

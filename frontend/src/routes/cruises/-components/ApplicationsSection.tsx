@@ -10,7 +10,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
+import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
 
 export function ApplicationsSection() {

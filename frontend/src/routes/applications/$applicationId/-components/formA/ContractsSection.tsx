@@ -10,7 +10,7 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { ContractDto, getContractCategoryName } from '@/api/dto/applications/ContractDto';
+import { ContractDto, getContractCategoryName } from '@/api/applications/dto/ContractDto';
 
 export function ContractsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

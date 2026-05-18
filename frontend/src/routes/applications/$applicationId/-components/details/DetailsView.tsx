@@ -5,8 +5,8 @@ import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationD
 import {
   useAcceptApplicationMutation,
   useRejectApplicationMutation,
-} from '@/api-v2/applications/ApplicationCatalogApiHooks';
-import { ApplicationResponse, EvaluationResponse } from '@/api-v2/applications/contracts';
+} from '@/api/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, EvaluationResponse } from '@/api/applications/contracts';
 
 import { ActionsSection } from './ActionsSection';
 import { ContractsSection } from './ContractsSection';

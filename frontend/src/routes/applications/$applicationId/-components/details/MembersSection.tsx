@@ -4,8 +4,8 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationUgTeamResponse } from '@/api-v2/applications/contracts';
-import { GuestTeamDto } from '@/api/dto/applications/GuestTeamDto';
+import { EvaluationUgTeamResponse } from '@/api/applications/contracts';
+import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
 
 export function MembersSection() {
   const { evaluation } = useApplicationDetails();

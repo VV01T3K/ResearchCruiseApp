@@ -7,10 +7,10 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInput, AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { getErrors } from '@/lib/utils';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
-import { FormUserDto } from '@/api/dto/applications/FormUserDto';
+import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
+import { FormUserDto } from '@/api/applications/dto/FormUserDto';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
-import { useAvailableCruiseManagersQuery } from '@/api-v2/users/UserManagementApiHooks';
+import { useAvailableCruiseManagersQuery } from '@/api/users/UserManagementApiHooks';
 import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
 
 export function ManagerSelectionSection() {

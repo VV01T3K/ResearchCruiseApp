@@ -1,11 +1,11 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { FormADto } from '@/api/dto/applications/FormADto';
-import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
-import { FormBDto } from '@/api/dto/applications/FormBDto';
-import { FormBInitValuesDto } from '@/api/dto/applications/FormBInitValuesDto';
-import { FormCDto } from '@/api/dto/applications/FormCDto';
+import { FormADto } from '@/api/applications/dto/FormADto';
+import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
+import { FormBDto } from '@/api/applications/dto/FormBDto';
+import { FormBInitValuesDto } from '@/api/applications/dto/FormBInitValuesDto';
+import { FormCDto } from '@/api/applications/dto/FormCDto';
 import { client } from '@/lib/api';
 
 export function useFormAInitValuesQuery() {
@@ -101,11 +101,5 @@ export function useUpdateFormCMutation() {
 export function useRevertFormBToEditMutation() {
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => client.put(`/v2/applications/${id}/form-b/refill`),
-  });
-}
-
-export function useRevertFormCToEditMutation() {
-  return useMutation({
-    mutationFn: async ({ id }: { id: string }) => client.put(`/v2/applications/${id}/form-c/refill`),
   });
 }
