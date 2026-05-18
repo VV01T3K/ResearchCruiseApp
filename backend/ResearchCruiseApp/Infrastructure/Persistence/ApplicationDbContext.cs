@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence.Configurations;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 

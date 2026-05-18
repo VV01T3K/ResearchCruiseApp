@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.Models.Common.ServiceResult;
-using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp.Application.Models.DTOs.Forms;
-using ResearchCruiseApp.Application.Services.CruiseApplications;
-using ResearchCruiseApp.Application.Services.Factories.FormADtos;
-using ResearchCruiseApp.Application.Services.Factories.FormAInitValuesDtos;
+using ResearchCruiseApp.Api.Applications.Contracts;
+using ResearchCruiseApp.Api.Applications.Factories.FormADtos;
+using ResearchCruiseApp.Api.Applications.Factories.FormAInitValuesDtos;
+using ResearchCruiseApp.Api.Applications.Workflows;
+using ResearchCruiseApp.Api.Common.ServiceResult;
 using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;

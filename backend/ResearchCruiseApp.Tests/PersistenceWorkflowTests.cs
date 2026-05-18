@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp.Application.Services.EffectsService;
-using ResearchCruiseApp.Application.Services.FormsFieldsService;
-using ResearchCruiseApp.Application.Services.FormsService;
+using ResearchCruiseApp.Api.Applications.Contracts;
+using ResearchCruiseApp.Api.Applications.Workflows;
+using ResearchCruiseApp.Api.Cruises.Workflows;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
-using ResearchCruiseApp.Infrastructure.Services;
 using Xunit;
 
 namespace ResearchCruiseApp.Tests;

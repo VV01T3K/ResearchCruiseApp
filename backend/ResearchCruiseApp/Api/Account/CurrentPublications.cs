@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;

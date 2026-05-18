@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.Models.DTOs.Forms;
-using ResearchCruiseApp.Application.Services.Factories.FormAInitValuesDtos;
-using ResearchCruiseApp.Application.Services.Factories.FormBInitValuesDtos;
+using ResearchCruiseApp.Api.Applications.Contracts;
+using ResearchCruiseApp.Api.Applications.Factories.FormAInitValuesDtos;
+using ResearchCruiseApp.Api.Applications.Factories.FormBInitValuesDtos;
 
 namespace ResearchCruiseApp.Api.Applications;
 

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
-using ResearchCruiseApp.Application.Common.Constants;
+using ResearchCruiseApp.Api.Common.Constants;
 
 namespace ResearchCruiseApp.Api;
 

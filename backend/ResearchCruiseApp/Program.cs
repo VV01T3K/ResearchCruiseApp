@@ -1,6 +1,6 @@
-using ResearchCruiseApp.Application;
+using ResearchCruiseApp.Api;
+using ResearchCruiseApp.Configuration;
 using ResearchCruiseApp.Infrastructure;
-using ResearchCruiseApp.Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

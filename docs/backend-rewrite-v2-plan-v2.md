@@ -149,19 +149,24 @@ backend/ResearchCruiseApp
 │   │   ├── PasswordRecovery.cs
 │   │   ├── CurrentUser.cs
 │   │   ├── CurrentPublications.cs
-│   │   └── CurrentCruiseEffects.cs
+│   │   ├── CurrentCruiseEffects.cs
+│   │   └── Contracts
 │   ├── Users
 │   │   ├── UserDirectory.cs
 │   │   ├── UserProfile.cs
 │   │   ├── UserAcceptance.cs
 │   │   ├── UserRoles.cs
-│   │   └── UserCruiseEffects.cs
+│   │   ├── UserCruiseEffects.cs
+│   │   └── Contracts
 │   ├── Cruises
 │   │   ├── CruiseCatalog.cs
 │   │   ├── CruiseDetails.cs
 │   │   ├── CruiseLifecycle.cs
 │   │   ├── CruisePlanning.cs
-│   │   └── CruiseExport.cs
+│   │   ├── CruiseExport.cs
+│   │   ├── Contracts
+│   │   ├── Mapping
+│   │   └── Workflows
 │   ├── Applications
 │   │   ├── ApplicationCatalog.cs
 │   │   ├── ApplicationCruise.cs
@@ -171,7 +176,12 @@ backend/ResearchCruiseApp
 │   │   ├── ApplicationFormA.cs
 │   │   ├── ApplicationFormB.cs
 │   │   ├── ApplicationFormC.cs
-│   │   └── SupervisorReview.cs
+│   │   ├── SupervisorReview.cs
+│   │   ├── Contracts
+│   │   ├── Validation
+│   │   ├── Mapping
+│   │   ├── Factories
+│   │   └── Workflows
 │   ├── HttpResultMapping.cs
 │   ├── ProblemDetailsMapping.cs
 │   ├── AuthorizationPolicies.cs
@@ -191,6 +201,9 @@ backend/ResearchCruiseApp
 │   ├── Identity
 │   ├── Email
 │   ├── Files
+│   ├── Exports
+│   ├── Localization
+│   ├── Security
 │   └── Observability
 └── Configuration
     ├── JwtOptions.cs

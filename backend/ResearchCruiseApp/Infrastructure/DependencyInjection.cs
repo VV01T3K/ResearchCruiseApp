@@ -3,11 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ResearchCruiseApp.Application.ExternalServices;
+using ResearchCruiseApp.Api.Cruises.Workflows;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
-using ResearchCruiseApp.Infrastructure.Services;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure;
 

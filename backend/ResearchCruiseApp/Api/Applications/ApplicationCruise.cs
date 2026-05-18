@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp.Api.Applications.Factories.CruiseDtos;
+using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Api.Cruises;
-using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
-using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 

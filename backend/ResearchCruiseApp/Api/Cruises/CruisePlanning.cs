@@ -1,9 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.Models.DTOs.Cruises;
-using ResearchCruiseApp.Application.Services.CruisesService;
+using ResearchCruiseApp.Api.Cruises.Contracts;
+using ResearchCruiseApp.Api.Cruises.Workflows;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;

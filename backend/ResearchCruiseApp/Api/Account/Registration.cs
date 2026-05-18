@@ -1,8 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.Common.Constants;
-using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.Models.DTOs.Account;
+using ResearchCruiseApp.Api.Account.Contracts;
+using ResearchCruiseApp.Api.Common.Constants;
 
 namespace ResearchCruiseApp.Api.Account;
 

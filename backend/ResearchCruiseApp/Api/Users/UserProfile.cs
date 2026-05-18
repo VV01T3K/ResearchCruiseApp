@@ -1,8 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.Models.Common.ServiceResult;
-using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp.Api.Common;
+using ResearchCruiseApp.Api.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Api.Users;
 

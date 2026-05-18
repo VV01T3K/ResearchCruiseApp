@@ -6,10 +6,11 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Cutover complete, with the follow-up internal cleanup now completed on the live `/v2`
-surface. The API now uses stable workflow status codes, body-based workflow commands,
-dedicated role operations, pure workflow rules under `Domain/Logic`, and direct EF
-usage across the full request path, including the shared Form A/B/C workflows.
+Cutover complete, with the follow-up internal cleanup and physical convergence now
+completed on the live `/v2` surface. The API now uses stable workflow status codes,
+body-based workflow commands, dedicated role operations, pure workflow rules under
+`Domain/Logic`, direct EF usage across the full request path, and a feature-oriented
+tree with no live top-level `Application` or `Web` area remaining.
 
 ## Active Slice
 
@@ -146,6 +147,10 @@ decision ledger rather than from unfinished internal migration tasks.
   form and response builders intact.
 - Added focused backend tests for year-based cruise numbering and shared-entity
   retention during form replacement cleanup.
+- Rehomed the surviving contracts, validation, mapping, factories, and workflows
+  beside their owning `Api` features; split infrastructure helpers into concern-based
+  folders; moved web configuration to root `Configuration`; and removed the old
+  top-level `Application` and `Web` folders entirely.
 
 ### Foundation Starting Slice
 
@@ -743,6 +748,18 @@ decision ledger rather than from unfinished internal migration tasks.
   - unauthenticated `GET /v2/applications/{applicationId}/form-a` still returned
     `401`.
   - `GET /scalar` still redirected to the development Scalar UI.
+
+### Physical Shape Convergence Follow-up
+
+- Moved API-facing contracts, validators, mapping profiles, factories, and workflow
+  helpers under their owning `Api/Account`, `Api/Users`, `Api/Cruises`, or
+  `Api/Applications` feature areas.
+- Rehomed cross-cutting abstractions and implementations into concern folders under
+  `Infrastructure`, moved the old web configuration files to root `Configuration`,
+  and removed the obsolete top-level `Application` and `Web` directories.
+- Search verification found no remaining live `ResearchCruiseApp.Application`
+  namespaces.
+- Static verification confirmed no backend `Application/` or `Web/` folder remains.
 
 ## Known Blockers And Risks
 

@@ -1,0 +1,111 @@
+﻿using AutoMapper;
+using ResearchCruiseApp.Api.Applications.Contracts;
+using ResearchCruiseApp.Domain.Entities;
+
+namespace ResearchCruiseApp.Api.Applications.Mapping;
+
+internal class FormADtoProfile : Profile
+{
+    public FormADtoProfile()
+    {
+        CreateMap<FormA, FormADto>()
+            .ForMember(
+                dest => dest.DeputyManagerId,
+                options =>
+                    options.MapFrom(src =>
+                        src.DeputyManagerId == Guid.Empty ? (Guid?)null : src.DeputyManagerId
+                    )
+            )
+            .ForMember(
+                dest => dest.AcceptablePeriod,
+                options =>
+                    options.MapFrom(src =>
+                        src.AcceptablePeriodBeg != null && src.AcceptablePeriodEnd != null
+                            ? new List<string> { src.AcceptablePeriodBeg, src.AcceptablePeriodEnd }
+                            : null
+                    )
+            )
+            .ForMember(
+                dest => dest.OptimalPeriod,
+                options =>
+                    options.MapFrom(src =>
+                        src.OptimalPeriodBeg != null && src.OptimalPeriodEnd != null
+                            ? new List<string> { src.OptimalPeriodBeg, src.OptimalPeriodEnd }
+                            : null
+                    )
+            )
+            .ForMember(dest => dest.Permissions, options => options.Ignore()) // Member requires complex logic
+            .ForMember(
+                dest => dest.ResearchAreaDescriptions,
+                options => options.MapFrom(src => src.ResearchAreaDescriptions)
+            )
+            .ForMember(
+                dest => dest.ResearchTasks,
+                options => options.MapFrom(src => src.FormAResearchTasks)
+            )
+            .ForMember(dest => dest.Contracts, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.UgTeams, options => options.MapFrom(src => src.FormAUgUnits))
+            .ForMember(
+                dest => dest.GuestTeams,
+                options => options.MapFrom(src => src.FormAGuestUnits)
+            )
+            .ForMember(
+                dest => dest.Publications,
+                options => options.MapFrom(src => src.FormAPublications)
+            )
+            .ForMember(
+                dest => dest.SpubTasks,
+                options => options.MapFrom(src => src.FormASpubTasks)
+            );
+
+        CreateMap<FormADto, FormA>()
+            .ForMember(dest => dest.Id, options => options.Ignore()) // Member auto-generated
+            .ForMember(dest => dest.CruiseManagerId, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.DeputyManagerId, options => options.Ignore()) // Member requires complex logic
+            .ForMember(
+                dest => dest.AcceptablePeriodBeg,
+                options =>
+                    options.MapFrom(src =>
+                        src.AcceptablePeriod != null && src.AcceptablePeriod.Count == 2
+                            ? src.AcceptablePeriod[0]
+                            : null
+                    )
+            )
+            .ForMember(
+                dest => dest.AcceptablePeriodEnd,
+                options =>
+                    options.MapFrom(src =>
+                        src.AcceptablePeriod != null && src.AcceptablePeriod.Count == 2
+                            ? src.AcceptablePeriod[1]
+                            : null
+                    )
+            )
+            .ForMember(
+                dest => dest.OptimalPeriodBeg,
+                options =>
+                    options.MapFrom(src =>
+                        src.OptimalPeriod != null && src.OptimalPeriod.Count == 2
+                            ? src.OptimalPeriod[0]
+                            : null
+                    )
+            )
+            .ForMember(
+                dest => dest.OptimalPeriodEnd,
+                options =>
+                    options.MapFrom(src =>
+                        src.OptimalPeriod != null && src.OptimalPeriod.Count == 2
+                            ? src.OptimalPeriod[1]
+                            : null
+                    )
+            )
+            .ForMember(dest => dest.ResearchAreaDescriptions, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.Permissions, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.FormAResearchTasks, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.FormAContracts, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.FormAUgUnits, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.UgUnitsPoints, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.FormAGuestUnits, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.FormAPublications, options => options.Ignore()) // Member requires complex logic
+            .ForMember(dest => dest.FormASpubTasks, options => options.Ignore()); // Member requires complex logic
+    }
+}

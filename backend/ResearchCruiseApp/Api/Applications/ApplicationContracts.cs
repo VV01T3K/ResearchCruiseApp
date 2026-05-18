@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp.Api.Applications.Contracts;
 
 namespace ResearchCruiseApp.Api.Applications;
 

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.Models.Common.ServiceResult;
-using ResearchCruiseApp.Application.Services.CruisesService;
-using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
-using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp.Api.Applications.Factories.CruiseDtos;
+using ResearchCruiseApp.Api.Common;
+using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Api.Cruises.Workflows;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;

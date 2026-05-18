@@ -1,5 +1,5 @@
 using FluentValidation;
-using ResearchCruiseApp.Application.Models.DTOs.Cruises;
+using ResearchCruiseApp.Api.Cruises.Contracts;
 
 namespace ResearchCruiseApp.Api.Cruises;
 

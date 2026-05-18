@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp.Application.Common.Enums;
-using ResearchCruiseApp.Application.Models.Common.ServiceResult;
+using ResearchCruiseApp.Api.Common.Enums;
+using ResearchCruiseApp.Api.Common.ServiceResult;
 
 namespace ResearchCruiseApp.Api;
 
