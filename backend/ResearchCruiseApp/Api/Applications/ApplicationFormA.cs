@@ -8,9 +8,9 @@ using ResearchCruiseApp.Api.Applications.Workflows;
 using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Api.Common.Extensions;
 using ResearchCruiseApp.Api.Common.ServiceResult;
-using ResearchCruiseApp.Api.Cruises.Workflows;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
@@ -52,7 +52,6 @@ public static class ApplicationFormA
         FormAWriteRequest request,
         IValidator<FormAValidationModel> validator,
         FormAAssembler forms,
-        ICruisesService cruisesService,
         CruiseApplicationAssembler applications,
         ApplicationDbContext dbContext,
         ICruiseApplicationEvaluator cruiseApplicationEvaluator,
@@ -71,7 +70,7 @@ public static class ApplicationFormA
         {
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
                 request.Form,
-                cruisesService,
+                dbContext,
                 cancellationToken
             );
             if (!periodValidation.IsSuccess)
@@ -137,7 +136,6 @@ public static class ApplicationFormA
         ApplicationDbContext dbContext,
         FormAAssembler forms,
         IFormsService formsService,
-        ICruisesService cruisesService,
         ICruiseApplicationsService cruiseApplicationsService,
         ICruiseApplicationEvaluator cruiseApplicationEvaluator,
         CancellationToken cancellationToken
@@ -165,7 +163,7 @@ public static class ApplicationFormA
         {
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
                 request.Form,
-                cruisesService,
+                dbContext,
                 cancellationToken
             );
             if (!periodValidation.IsSuccess)
@@ -213,7 +211,7 @@ public static class ApplicationFormA
 
     private static async Task<Result> ValidatePrecisePeriodAgainstBlockades(
         FormADto request,
-        ICruisesService cruisesService,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
@@ -229,12 +227,23 @@ public static class ApplicationFormA
         )
             cruiseDurationDays = cruiseHours / 24.0;
 
-        return await cruisesService.CheckForOverlappingCruises(
+        var cruises = await dbContext.Cruises.ToListAsync(cancellationToken);
+        var blockades = cruises
+            .Where(cruise =>
+                cruise.ShipUnavailable
+                && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
+            )
+            .Where(cruise =>
+                cruise.StartDate.StartsWith(year.ToString())
+                || cruise.EndDate.StartsWith(year.ToString())
+            )
+            .Select(cruise => (DateTime.Parse(cruise.StartDate), DateTime.Parse(cruise.EndDate)));
+
+        return CruiseBlockadeRules.HasNoFreeWindow(
             request.PrecisePeriodStart.Value,
             request.PrecisePeriodEnd.Value,
-            year,
             cruiseDurationDays,
-            cancellationToken
+            blockades
         )
             ? Error.Conflict("Podany dokładny termin koliduje z innymi rejsami blokującymi statek.")
             : Result.Empty;

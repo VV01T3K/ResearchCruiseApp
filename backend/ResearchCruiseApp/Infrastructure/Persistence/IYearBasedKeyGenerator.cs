@@ -1,7 +1,7 @@
 using ResearchCruiseApp.Domain.Common.Interfaces;
 using ResearchCruiseApp.Domain.Entities;
 
-namespace ResearchCruiseApp.Api.Cruises.Workflows;
+namespace ResearchCruiseApp.Infrastructure.Persistence;
 
 public interface IYearBasedKeyGenerator
 {

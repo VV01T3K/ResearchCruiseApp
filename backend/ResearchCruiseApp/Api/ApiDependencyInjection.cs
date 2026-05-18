@@ -2,8 +2,6 @@ using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Workflows;
 using ResearchCruiseApp.Api.Common;
-using ResearchCruiseApp.Api.Cruises.Projections;
-using ResearchCruiseApp.Api.Cruises.Workflows;
 
 namespace ResearchCruiseApp.Api;
 
@@ -24,11 +22,9 @@ public static class DependencyInjection
             .AddScoped<FormProjection>()
             .AddScoped<ApplicationProjection>()
             .AddScoped<FormContextProjection>()
-            .AddScoped<CruiseProjection>()
             .AddScoped<ICruiseApplicationsService, CruiseApplicationsService>()
             .AddScoped<ICruiseApplicationEvaluator, CruiseApplicationEvaluator>()
             .AddScoped<IEffectsService, EffectsService>()
-            .AddScoped<ICruisesService, CruisesService>()
             .AddScoped<IFormsFieldsService, FormsFieldsService>()
             .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>()
             .AddScoped<IFormsService, FormsService>();

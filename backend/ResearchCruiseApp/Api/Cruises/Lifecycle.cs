@@ -8,7 +8,7 @@ using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
-public static class CruiseLifecycle
+public static class Lifecycle
 {
     public static void Map(RouteGroupBuilder group)
     {

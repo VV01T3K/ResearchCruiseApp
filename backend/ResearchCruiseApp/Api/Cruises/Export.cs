@@ -9,12 +9,12 @@ using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
-public static class CruiseExport
+public static class Export
 {
     public static void Map(RouteGroupBuilder group)
     {
         group
-            .MapGet("/export", Export)
+            .MapGet("/export", Handle)
             .WithName("ExportCruisesV2")
             .WithSummary("Export visible cruises for a year.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
@@ -22,7 +22,7 @@ public static class CruiseExport
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Results<Ok<FileDto>, ProblemHttpResult>> Export(
+    private static async Task<Results<Ok<FileDto>, ProblemHttpResult>> Handle(
         string year,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
