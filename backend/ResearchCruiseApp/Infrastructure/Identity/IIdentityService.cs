@@ -1,5 +1,5 @@
-using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Infrastructure.Identity;
 

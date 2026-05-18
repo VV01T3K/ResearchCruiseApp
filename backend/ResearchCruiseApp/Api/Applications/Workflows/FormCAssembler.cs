@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Domain.Common.Extensions;
-using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Applications.Workflows;
 

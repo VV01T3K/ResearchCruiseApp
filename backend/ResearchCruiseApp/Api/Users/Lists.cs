@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api.Users;
 

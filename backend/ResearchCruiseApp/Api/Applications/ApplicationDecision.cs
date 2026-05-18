@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 using ResearchCruiseApp.Results;

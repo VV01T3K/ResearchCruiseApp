@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications;

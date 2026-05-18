@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Results;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
+using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Auth;
 
