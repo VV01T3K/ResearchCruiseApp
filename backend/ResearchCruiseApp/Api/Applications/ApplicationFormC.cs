@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
@@ -12,6 +13,8 @@ using ResearchCruiseApp.Application.Services.Factories.FormsC;
 using ResearchCruiseApp.Application.Services.FormsService;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -49,16 +52,21 @@ public static class ApplicationFormC
 
     private static async Task<Results<Ok<FormCDto>, NotFound>> Get(
         Guid applicationId,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         IFormCDtosFactory formCDtosFactory,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithFormAAndFormCContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormC()
+            .IncludeFormCContent()
+            .AsSplitQuery()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (
             application?.FormC is null
             || !await userPermissionVerifier.CanCurrentUserViewForm(application)
@@ -70,8 +78,7 @@ public static class ApplicationFormC
 
     private static async Task<Results<Created, ProblemHttpResult>> Update(
         Guid applicationId,
-        FormCDto request,
-        bool isDraft,
+        FormCWriteRequest request,
         IValidator<FormCValidationModel> validator,
         ICruiseApplicationsRepository cruiseApplicationsRepository,
         IFormsCFactory formsCFactory,
@@ -83,7 +90,7 @@ public static class ApplicationFormC
     )
     {
         var validation = await validator.ValidateAsync(
-            new FormCValidationModel(request, isDraft),
+            new FormCValidationModel(request.Form, request.Draft),
             cancellationToken
         );
         if (!validation.IsValid)
@@ -104,18 +111,18 @@ public static class ApplicationFormC
             async () =>
             {
                 var oldFormC = application.FormC;
-                var formCResult = await formsCFactory.Create(request, cancellationToken);
+                var formCResult = await formsCFactory.Create(request.Form, cancellationToken);
                 if (!formCResult.IsSuccess)
                     return formCResult.Error!;
 
                 application.FormC = formCResult.Data!;
-                if (!isDraft)
+                if (!request.Draft)
                     application.Status = CruiseApplicationStatus.Reported;
 
                 await unitOfWork.Complete(cancellationToken);
                 if (oldFormC is not null)
                     await formsService.DeleteFormC(oldFormC, cancellationToken);
-                if (!isDraft)
+                if (!request.Draft)
                     await effectsService.EvaluateEffects(application, cancellationToken);
                 await unitOfWork.Complete(cancellationToken);
                 return Result.Empty;
@@ -130,15 +137,17 @@ public static class ApplicationFormC
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Refill(
         Guid applicationId,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithForms(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeCruise()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (application is null)
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Reported)
@@ -147,7 +156,9 @@ public static class ApplicationFormC
                 .ToProblemHttpResult();
 
         application.Status = CruiseApplicationStatus.Undertaken;
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 }
+
+public sealed record FormCWriteRequest(FormCDto Form, bool Draft);

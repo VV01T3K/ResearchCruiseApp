@@ -4,7 +4,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { ApplicationStatus } from '@/api-v2/applications/contracts';
+import { ApplicationStatus, getApplicationStatusLabel } from '@/api-v2/applications/contracts';
 
 export function InformationSection() {
   const { application } = useApplicationDetails();
@@ -44,7 +44,12 @@ export function InformationSection() {
             Formularz C
           </AppLink>
         </div>
-        <AppInput name="status" value={application.status} label="Status zgłoszenia:" disabled />
+        <AppInput
+          name="status"
+          value={getApplicationStatusLabel(application.status)}
+          label="Status zgłoszenia:"
+          disabled
+        />
         <AppNumberInput name="points" value={application.points} label="Punkty:" disabled />
       </div>
     </AppAccordion>

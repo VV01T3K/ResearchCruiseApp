@@ -63,8 +63,14 @@ export class FormBPage {
       });
     });
 
-    // Form B is not yet created, so we mock a 404 response
     page.route(`${API_URL}/v2/applications/${formId}/form-b`, (route) => {
+      if (route.request().method() === 'PUT') {
+        return route.fulfill({
+          status: 200,
+        });
+      }
+
+      // Form B is not yet created, so we mock a 404 response
       route.fulfill({
         status: 404,
       });
@@ -74,12 +80,6 @@ export class FormBPage {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),
-      });
-    });
-
-    page.route(`${API_URL}/v2/applications/${formId}/form-b?isDraft=false`, (route) => {
-      route.fulfill({
-        status: 200,
       });
     });
 

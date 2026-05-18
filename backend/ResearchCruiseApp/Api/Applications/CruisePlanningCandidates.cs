@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -21,14 +23,15 @@ public static class CruisePlanningCandidates
 
     private static async Task<Ok<List<CruiseApplicationDto>>> Get(
         ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var applications = await cruiseApplicationsRepository.GetAllWithFormsAndFormAContent(
-            cancellationToken
-        );
+        var applications = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeFormAContent()
+            .ToListAsync(cancellationToken);
         var visibleApplications = new List<CruiseApplicationDto>();
 
         foreach (var application in applications)

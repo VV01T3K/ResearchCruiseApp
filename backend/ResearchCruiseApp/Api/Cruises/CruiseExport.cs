@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -23,7 +25,7 @@ public static class CruiseExport
 
     private static async Task<Results<Ok<FileDto>, ProblemHttpResult>> Export(
         string year,
-        ICruisesRepository cruisesRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         ICsvExporter csvExporter,
         CancellationToken cancellationToken
@@ -34,10 +36,11 @@ public static class CruiseExport
             return Error.InvalidArgument("Rok jest niepoprawny.").ToProblemHttpResult();
         }
 
-        var cruises = await cruisesRepository.GetAllByYearWithCruiseApplicationsWithForm(
-            year,
-            cancellationToken
-        );
+        var cruises = await dbContext
+            .Cruises.Where(cruise => cruise.StartDate.StartsWith(year))
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA)
+            .ToListAsync(cancellationToken);
         var visibleCruises = new List<Cruise>();
 
         foreach (var cruise in cruises)

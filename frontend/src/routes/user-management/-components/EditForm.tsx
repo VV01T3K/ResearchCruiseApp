@@ -25,6 +25,8 @@ import {
   useDeleteUserMutation,
   useInitiatePasswordResetMutation,
   useNewUserMutation,
+  useAddUserRoleMutation,
+  useRemoveUserRoleMutation,
   useUnAcceptUserMutation,
   useUpdateUserMutation,
 } from '@/api-v2/users/UserManagementApiHooks';
@@ -74,6 +76,8 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   const mutationContext = { editMode, setSubmitError };
   const addNewUserMutation = useNewUserMutation(mutationContext);
   const updateUserMutation = useUpdateUserMutation(mutationContext);
+  const addUserRoleMutation = useAddUserRoleMutation();
+  const removeUserRoleMutation = useRemoveUserRoleMutation();
   const deleteUserMutation = useDeleteUserMutation(mutationContext);
   const acceptUserMutation = useAcceptUserMutation(mutationContext);
   const unAcceptUserMutation = useUnAcceptUserMutation(mutationContext);
@@ -98,6 +102,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         const loading = toast.loading('Zapisywanie zmian...');
         try {
           await updateUserMutation.mutateAsync({ userId: user.id, data: value });
+          const currentRole = user.roles[0];
+          if (currentRole && currentRole !== value.role) {
+            await removeUserRoleMutation.mutateAsync({ userId: user.id, role: currentRole });
+            await addUserRoleMutation.mutateAsync({ userId: user.id, role: value.role });
+          }
           toast.dismiss(loading);
           close();
           toast.success('Zaktualizowano użytkownika');

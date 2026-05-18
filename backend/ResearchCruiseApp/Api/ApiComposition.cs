@@ -29,6 +29,7 @@ public static class ApiComposition
         UserDirectory.Map(users);
         UserProfile.Map(users);
         UserAcceptance.Map(users);
+        UserRoles.Map(users);
         var cruises = v2.MapGroup("/cruises").WithTags("Cruises");
         CruiseCatalog.Map(cruises);
         CruiseDetails.Map(cruises);

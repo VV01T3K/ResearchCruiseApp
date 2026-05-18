@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -21,16 +23,19 @@ public static class ApplicationCruise
 
     private static async Task<Results<Ok<CruiseResponse>, NotFound>> Get(
         Guid applicationId,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         ICruiseDtosFactory cruiseDtosFactory,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithForms(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeCruise()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (
             application?.Cruise is null
             || !await userPermissionVerifier.CanCurrentUserViewForm(application)

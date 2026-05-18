@@ -19,6 +19,22 @@ The v2 rewrite should move to:
 Minimal API endpoint -> use-case slice -> EF Core/Identity/infrastructure
 ```
 
+## Finalized Post-Cutover Direction
+
+The post-cutover cleanup keeps `/v2` as the live contract while finishing the
+remaining internal rewrite:
+
+- stable machine status codes replace localized workflow strings on the wire
+- draft/decision flags live in request bodies instead of query strings
+- role changes use dedicated role endpoints while the current frontend keeps its
+  single-role editor behavior
+- simple use cases read and write through `ApplicationDbContext` directly
+- pure workflow rules live under `Domain/Logic`
+- the broad legacy request path has been narrowed to the shared form
+  creation/replacement workflows rather than serving as the default for `/v2`
+- the anonymous supervisor-review code model remains in place for now; alternative
+  token models stay a documented later decision
+
 That means:
 
 - build a new `/v2` API contract instead of preserving the current mixed route surface
@@ -236,6 +252,12 @@ Keep or rewrite as focused services:
 - database seeding
 - OpenTelemetry and infrastructure configuration
 
+After the post-cutover cleanup pass, the remaining intentional legacy-shaped request
+path is limited to the shared Form A/B/C creation and replacement workflows. Simple
+catalog, detail, export, lifecycle, supervisor-review, current-publication, and
+role-management flows now use direct EF Core access from their use-case slices, with
+query extensions kept only for reusable include graphs.
+
 ## Use-Case File Shape
 
 Each use-case file should contain the pieces that change together:
@@ -451,6 +473,8 @@ public static IEndpointRouteBuilder MapApi(this IEndpointRouteBuilder app)
 - Keep `form-a-context` and `form-b-context` bundled to avoid oversplitting.
 - Move mutating flags such as `isDraft` and `accept` from query strings into request
   bodies.
+- Use stable machine values for workflow statuses and map localized display labels in
+  the frontend.
 - Keep email confirmation as `GET /v2/account/confirm-email` even though it changes
   state, because confirmation links are clicked directly from email clients. Treat this
   as a deliberate exception for link-driven account confirmation.

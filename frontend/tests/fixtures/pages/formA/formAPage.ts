@@ -43,7 +43,7 @@ export class FormAPage {
       });
     });
 
-    page.route(`${API_URL}/v2/applications?isDraft=false`, (route) => {
+    page.route(`${API_URL}/v2/applications`, (route) => {
       // add payload verification if needed
       route.fulfill({
         status: 200,

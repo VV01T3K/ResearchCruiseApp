@@ -73,28 +73,28 @@ export function useFormCQuery(applicationId: string) {
 export function useSaveFormAMutation() {
   return useMutation({
     mutationFn: async ({ form, draft }: { form: FormADto; draft: boolean }) =>
-      client.post(`/v2/applications?isDraft=${draft}`, form),
+      client.post('/v2/applications', { form, draft }),
   });
 }
 
 export function useUpdateFormAMutation() {
   return useMutation({
     mutationFn: async ({ id, form, draft }: { id: string; form: FormADto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-a?isDraft=${draft}`, { ...form, id }),
+      client.put(`/v2/applications/${id}/form-a`, { form: { ...form, id }, draft }),
   });
 }
 
 export function useUpdateFormBMutation() {
   return useMutation({
     mutationFn: async ({ id, form, draft }: { id: string; form: FormBDto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-b?isDraft=${draft}`, form),
+      client.put(`/v2/applications/${id}/form-b`, { form, draft }),
   });
 }
 
 export function useUpdateFormCMutation() {
   return useMutation({
     mutationFn: async ({ id, form, draft }: { id: string; form: FormCDto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-c?isDraft=${draft}`, form),
+      client.put(`/v2/applications/${id}/form-c`, { form, draft }),
   });
 }
 

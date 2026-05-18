@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.Forms;
 using ResearchCruiseApp.Application.Services.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.FormADtos;
 using ResearchCruiseApp.Application.Services.Factories.FormAInitValuesDtos;
-using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -36,17 +36,20 @@ public static class SupervisorReview
     private static async Task<Results<Ok<SupervisorReviewResponse>, NotFound>> Get(
         Guid applicationId,
         string code,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         ICruiseApplicationsService cruiseApplicationsService,
         IFormADtosFactory formADtosFactory,
         IFormAInitValuesDtosFactory formAInitValuesDtosFactory,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithFormAContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormAContent()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (
             application?.FormA is null
             || !cruiseApplicationsService.CheckSupervisorCode(application.SupervisorCode, code)
@@ -65,16 +68,18 @@ public static class SupervisorReview
     private static async Task<Results<NoContent, ProblemHttpResult>> UpdateDecision(
         Guid applicationId,
         SupervisorDecisionRequest request,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         ICruiseApplicationsService cruiseApplicationsService,
-        IUnitOfWork unitOfWork,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithFormsAndFormAContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeFormAContent()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (
             application is null
             || !cruiseApplicationsService.CheckSupervisorCode(
@@ -84,27 +89,23 @@ public static class SupervisorReview
         )
             return Error.ResourceNotFound().ToProblemHttpResult();
 
-        var result = UpdateStatus(application, request.Accept);
-        if (!result.IsSuccess)
-            return result.Error!.ToProblemHttpResult();
+        var decisionResult = SupervisorDecisionRules.Decide(application, request.Accept);
+        if (decisionResult != SupervisorDecisionResult.Applied)
+        {
+            return decisionResult switch
+            {
+                SupervisorDecisionResult.RejectedByOffice => Error
+                    .ForbiddenOperation("Biuro Armatora już wcześniej odrzuciło zgłoszenie.")
+                    .ToProblemHttpResult(),
+                SupervisorDecisionResult.AlreadyAnswered => Error
+                    .ForbiddenOperation("Odpowiedź od przełożonego została już udzielona.")
+                    .ToProblemHttpResult(),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+        }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
-    }
-
-    private static Result UpdateStatus(CruiseApplication application, bool accept)
-    {
-        if (application.Status == CruiseApplicationStatus.Denied)
-            return Error.ForbiddenOperation("Biuro Armatora już wcześniej odrzuciło zgłoszenie.");
-
-        if (application.Status != CruiseApplicationStatus.WaitingForSupervisor)
-            return Error.ForbiddenOperation("Odpowiedź od przełożonego została już udzielona.");
-
-        application.Status = accept
-            ? CruiseApplicationStatus.AcceptedBySupervisor
-            : CruiseApplicationStatus.DeniedBySupervisor;
-
-        return Result.Empty;
     }
 }
 

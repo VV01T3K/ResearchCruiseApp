@@ -59,50 +59,6 @@ the evidence gathered so far, and the later decision that still needs to be made
   contract should be reshaped further and whether the existing permission model needs
   any deliberate cleanup.
 
-### Cruise contract and lifecycle cleanup
-
-**Current behavior**
-
-- The v2 cruise read contract groups managers and attached applications more clearly,
-  but keeps the existing localized status values and current lifecycle behavior.
-- Cruise creation, reassignment, automatic planning, confirmation, completion, and
-  deletion preserve the existing rules while moving under `/v2`.
-
-**Why deferred**
-
-- Status normalization and broader lifecycle redesign would change more than routing
-  and wire shape.
-- Those choices deserve a focused product review after the port rather than being
-  folded into the migration PR.
-
-**Later decision**
-
-- After the v2 port is complete, decide whether cruise statuses should move to stable
-  machine values, whether lifecycle actions should be reshaped further, and whether
-  the current auto-planning and reassignment semantics should be revised.
-
-### Application contract and workflow cleanup
-
-**Current behavior**
-
-- The first v2 application slice groups manager data in reads, but preserves current
-  localized status values, evaluation output, and decision semantics.
-- Form workflows and supervisor review stay on their existing behavior until their
-  own migration slices.
-
-**Why deferred**
-
-- Status normalization, form-workflow redesign, and broader application-model cleanup
-  would change product behavior beyond the route migration itself.
-- The application area is large enough that those choices should be reviewed after the
-  whole surface is visible under v2, not mixed into the first catalog/decision move.
-
-**Later decision**
-
-- After the v2 port is complete, decide whether application statuses should become
-  stable machine values, whether the form workflow should be reshaped, and whether
-  evaluation or decision contracts need deliberate redesign.
-
 ### Authenticated application-form cleanup
 
 **Current behavior**
@@ -140,11 +96,55 @@ the evidence gathered so far, and the later decision that still needs to be made
 
 **Later decision**
 
-- After the v2 port is complete, decide whether supervisor review should keep its
-  current code model and payload shape or move to a deliberately redesigned public
-  review contract.
+- Keep the current stored-code model in the post-cutover internal cleanup pass.
+- Later, choose deliberately between:
+  - the current stored reusable code model
+  - an opaque signed expiring token in the public link
+  - an authenticated supervisor workflow
+  without mixing that public-link redesign into unrelated internal cleanup.
 
 ## Resolved Decisions
+
+### Cruise and application wire-status normalization
+
+**Resolution**
+
+- Cruise statuses now use stable public codes: `new`, `confirmed`, and `ended`.
+- Application statuses now use stable public codes from `draft` through `reported`.
+- The frontend owns Polish display labels locally.
+
+**Why**
+
+- Localized workflow strings made the public contract depend on presentation text.
+- Stable codes keep the wire contract predictable while preserving the existing UX.
+
+### Workflow command payloads
+
+**Resolution**
+
+- Application decisions now use JSON request bodies.
+- Form A/B/C writes now use explicit `{ form, draft }` bodies.
+
+**Why**
+
+- Workflow state-changing flags belong in command payloads, not query strings.
+- The frontend was the only supported consumer, so the contract could be cleaned up
+  in place on `/v2`.
+
+### Dedicated role operations
+
+**Resolution**
+
+- `POST /v2/users` now accepts `roles`.
+- `PATCH /v2/users/{userId}` updates profile fields only.
+- `PUT` and `DELETE /v2/users/{userId}/roles/{roleName}` now manage role assignment.
+
+**Why**
+
+- The backend needed a real multi-role model even though the current frontend still
+  presents a single-role editor.
+- Separating profile mutation from role mutation makes permissions and the
+  last-administrator invariant easier to reason about.
 
 ### Email confirmation `changedEmail` branch
 
@@ -174,8 +174,6 @@ the evidence gathered so far, and the later decision that still needs to be made
 - Do not add the remaining aspirational routes that were present in the original v2
   design but no longer correspond to live product behavior:
   - `GET /v2/users/{userId}`
-  - `PUT /v2/users/{userId}/roles/{roleName}`
-  - `DELETE /v2/users/{userId}/roles/{roleName}`
   - `GET /v2/users/{userId}/cruise-effects`
   - `PATCH /v2/applications/{applicationId}/evaluation`
   - `PATCH /v2/applications/{applicationId}/form-c/effects`

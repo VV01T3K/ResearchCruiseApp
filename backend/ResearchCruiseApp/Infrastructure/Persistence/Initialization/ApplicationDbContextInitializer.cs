@@ -45,7 +45,13 @@ internal class ApplicationDbContextInitializer(
         foreach (var user in users)
         {
             var password = randomGenerator.CreateSecurePassword();
-            await identityService.AddUserWithRole(user, password, user.Role!);
+            await identityService.AddUserWithRoles(
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                password,
+                [user.Role!]
+            );
             if (
                 configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
                 ?? false

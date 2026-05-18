@@ -77,9 +77,10 @@ public static class UserDirectory
         CancellationToken cancellationToken
     )
     {
-        if (!await userPermissionVerifier.CanCurrentUserAssignRole(request.Role))
+        foreach (var role in request.Roles)
         {
-            return Error.ForbiddenOperation("Nie można nadać tej roli").ToProblemHttpResult();
+            if (!await userPermissionVerifier.CanCurrentUserAssignRole(role))
+                return Error.ForbiddenOperation("Nie można nadać tej roli").ToProblemHttpResult();
         }
 
         if (await identityService.UserWithEmailExists(request.Email))
@@ -90,34 +91,29 @@ public static class UserDirectory
         }
 
         var roles = await identityService.GetAllRoleNames(cancellationToken);
-        if (!roles.Contains(request.Role))
+        if (request.Roles.Any(role => !roles.Contains(role)))
         {
             return Error.InvalidArgument("Rola nie istnieje").ToProblemHttpResult();
         }
 
-        var result = await identityService.AddUserWithRole(
-            request.ToLegacyDto(),
+        var result = await identityService.AddUserWithRoles(
+            request.Email,
+            request.FirstName,
+            request.LastName,
             randomGenerator.CreateSecurePassword(),
-            request.Role
+            request.Roles
         );
 
         return result.IsSuccess ? TypedResults.Created() : result.Error!.ToProblemHttpResult();
     }
 }
 
-public sealed record CreateUserRequest(string Email, string FirstName, string LastName, string Role)
-{
-    public AddUserFormDto ToLegacyDto()
-    {
-        return new AddUserFormDto
-        {
-            Email = Email,
-            FirstName = FirstName,
-            LastName = LastName,
-            Role = Role,
-        };
-    }
-}
+public sealed record CreateUserRequest(
+    string Email,
+    string FirstName,
+    string LastName,
+    IReadOnlyList<string> Roles
+);
 
 public sealed class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
@@ -126,7 +122,7 @@ public sealed class CreateUserRequestValidator : AbstractValidator<CreateUserReq
         RuleFor(request => request.Email).NotEmpty().EmailAddress();
         RuleFor(request => request.FirstName).NotEmpty();
         RuleFor(request => request.LastName).NotEmpty();
-        RuleFor(request => request.Role).NotEmpty();
+        RuleFor(request => request.Roles).NotEmpty();
     }
 }
 

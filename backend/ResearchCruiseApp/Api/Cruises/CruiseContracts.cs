@@ -11,25 +11,7 @@ public sealed record CruiseWriteRequest(
     List<Guid> CruiseApplicationIds,
     string? Title,
     bool ShipUnavailable
-)
-{
-    public CruiseFormDto ToLegacyDto()
-    {
-        return new CruiseFormDto
-        {
-            StartDate = StartDate,
-            EndDate = EndDate,
-            ManagersTeam = new CruiseManagersTeamDto
-            {
-                MainCruiseManagerId = MainManagerId,
-                MainDeputyManagerId = DeputyManagerId,
-            },
-            CruiseApplicationsIds = CruiseApplicationIds,
-            Title = Title,
-            ShipUnavailable = ShipUnavailable,
-        };
-    }
-}
+);
 
 public sealed class CruiseWriteRequestValidator : AbstractValidator<CruiseWriteRequest>
 {

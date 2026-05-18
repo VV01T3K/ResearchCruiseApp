@@ -17,6 +17,12 @@ export type UserWriteRequest = {
   role: string;
 };
 
+export type UserCreateRequest = Omit<UserWriteRequest, 'role'> & {
+  roles: string[];
+};
+
+export type UserProfilePatchRequest = Omit<UserWriteRequest, 'role'>;
+
 export type CruiseManagerOptionResponse = {
   id: string;
   email: string;

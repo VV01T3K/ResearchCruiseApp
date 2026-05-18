@@ -12,7 +12,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { useApplicationsQuery } from '@/api-v2/applications/ApplicationCatalogApiHooks';
-import { ApplicationResponse, ApplicationStatus } from '@/api-v2/applications/contracts';
+import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api-v2/applications/contracts';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
@@ -132,7 +132,7 @@ function ApplicationsPage() {
       cell: ({ row }) => (
         <>
           <p className="mb-2 text-right italic sm:text-center">
-            {row.original.status}
+            {getApplicationStatusLabel(row.original.status)}
             {row.original.status === ApplicationStatus.Draft ? ` (${row.original.note})` : null}
           </p>
           {row.original.status === ApplicationStatus.Draft && (

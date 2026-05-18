@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -19,15 +21,17 @@ public static class ApplicationCatalog
 
     private static async Task<Ok<List<ApplicationResponse>>> GetAll(
         ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var applications =
-            await cruiseApplicationsRepository.GetAllWithFormsAndFormAContentAndEffects(
-                cancellationToken
-            );
+        var applications = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeFormAContent()
+            .IncludeEffects()
+            .IncludeCruise()
+            .ToListAsync(cancellationToken);
         var visibleApplications = new List<ApplicationResponse>();
 
         foreach (var application in applications)

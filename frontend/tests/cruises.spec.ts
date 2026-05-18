@@ -16,7 +16,7 @@ const deputy = {
   lastName: 'Hopper',
 };
 
-function getCruise(status: 'Nowy' | 'Potwierdzony' | 'Zakończony' = 'Nowy') {
+function getCruise(status: 'new' | 'confirmed' | 'ended' = 'new') {
   return {
     id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
     number: '2026/1',
@@ -149,7 +149,7 @@ test('cruise create flow uses v2 planning candidates and create route', async ({
 
 test('cruise detail update and lifecycle actions use v2 routes', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
-  const cruise = getCruise('Potwierdzony');
+  const cruise = getCruise('confirmed');
   const requests: string[] = [];
   let updateBody: unknown;
   await mockCruiseDetailDependencies(page, cruise);

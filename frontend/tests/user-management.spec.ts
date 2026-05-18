@@ -63,13 +63,16 @@ test('user management create, update, delete, accept, and deactivate use v2 rout
     });
   });
   await page.route(`${API_URL}/v2/users/${user.id}`, async (route) => {
-    requests.push(route.request().method() === 'PUT' ? 'update' : 'delete');
-    if (route.request().method() === 'PUT') {
+    requests.push(route.request().method() === 'PATCH' ? 'update' : 'delete');
+    if (route.request().method() === 'PATCH') {
       const request = route.request().postDataJSON() as {
         firstName: string;
       };
       currentUser = { ...currentUser, firstName: request.firstName };
     }
+    await route.fulfill({ status: 204 });
+  });
+  await page.route(`${API_URL}/v2/users/${user.id}/roles/*`, async (route) => {
     await route.fulfill({ status: 204 });
   });
   await page.route(`${API_URL}/v2/users/${user.id}/acceptance`, async (route) => {

@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Services.CruisesService;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
-using ResearchCruiseApp.Application.Services.Factories.Cruises;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -35,14 +37,27 @@ public static class CruiseCatalog
 
     private static async Task<Ok<List<CruiseResponse>>> GetAll(
         ICruiseDtosFactory cruiseDtosFactory,
-        ICruisesRepository cruisesRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var cruises = await cruisesRepository.GetAllWithCruiseApplicationsWithFormAContent(
-            cancellationToken
-        );
+        var cruises = await dbContext
+            .Cruises.IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.Permissions)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAResearchTasks)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAContracts)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAUgUnits)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAGuestUnits)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAPublications)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormASpubTasks)
+            .ToListAsync(cancellationToken);
 
         var visibleCruises = new List<CruiseResponse>();
         foreach (var cruise in cruises)
@@ -58,15 +73,26 @@ public static class CruiseCatalog
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         CruiseWriteRequest request,
-        ICruisesFactory cruisesFactory,
         ICruisesService cruisesService,
-        ICruisesRepository cruisesRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var legacyRequest = request.ToLegacyDto();
-        var newCruise = await cruisesFactory.Create(legacyRequest, cancellationToken);
+        var cruiseApplications = await dbContext
+            .CruiseApplications.Where(application =>
+                request.CruiseApplicationIds.Contains(application.Id)
+            )
+            .ToListAsync(cancellationToken);
+        var newCruise = new Cruise
+        {
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
+            MainCruiseManagerId = request.MainManagerId,
+            MainDeputyManagerId = request.DeputyManagerId,
+            CruiseApplications = cruiseApplications,
+            Title = request.Title,
+            ShipUnavailable = request.ShipUnavailable,
+        };
 
         if (
             newCruise.CruiseApplications.Any(application =>
@@ -81,14 +107,18 @@ public static class CruiseCatalog
                 .ToProblemHttpResult();
         }
 
-        var affectedCruises = await cruisesRepository.GetByCruiseApplicationsIds(
-            legacyRequest.CruiseApplicationsIds,
-            cancellationToken
-        );
+        var affectedCruises = await dbContext
+            .Cruises.IncludeCruiseApplications()
+            .Where(cruise =>
+                request.CruiseApplicationIds.Any(id =>
+                    cruise.CruiseApplications.Select(application => application.Id).Contains(id)
+                )
+            )
+            .ToListAsync(cancellationToken);
 
         await cruisesService.PersistCruiseWithNewNumber(newCruise, cancellationToken);
         await cruisesService.CheckEditedCruisesManagersTeams(affectedCruises, cancellationToken);
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return TypedResults.Created();
     }

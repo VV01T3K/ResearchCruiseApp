@@ -24,7 +24,7 @@ const application = {
   hasFormB: false,
   hasFormC: false,
   points: 7,
-  status: 'Zaakceptowane przez przełożonego',
+  status: 'acceptedBySupervisor',
   effectsDoneRate: '0',
   note: null,
   cruiseHours: '24',
@@ -126,8 +126,8 @@ test('application decisions use the v2 decision route', async ({ page }) => {
       contentType: 'application/json',
     });
   });
-  await page.route(`${API_URL}/v2/applications/${application.id}/decision?*`, async (route) => {
-    requests.push(new URL(route.request().url()).searchParams.get('accept') ?? '');
+  await page.route(`${API_URL}/v2/applications/${application.id}/decision`, async (route) => {
+    requests.push(String((route.request().postDataJSON() as { accept: boolean }).accept));
     await route.fulfill({ status: 204 });
   });
 

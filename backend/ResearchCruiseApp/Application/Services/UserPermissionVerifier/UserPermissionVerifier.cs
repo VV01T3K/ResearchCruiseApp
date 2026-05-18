@@ -2,6 +2,7 @@ using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
 
 namespace ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
@@ -13,38 +14,15 @@ public class UserPermissionVerifier(
     public async Task<bool> CanCurrentUserAssignRole(string roleName)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
-
-        if (currentUserRoles.Contains(RoleName.Administrator))
-            return true;
-        if (currentUserRoles.Contains(RoleName.Shipowner))
-        {
-            if (roleName is RoleName.Administrator or RoleName.Shipowner)
-                return false;
-            return true;
-        }
-        return false;
+        return RolePermissionRules.CanAssignRole(currentUserRoles, roleName);
     }
 
     public async Task<bool> CanCurrentUserAccess(Guid otherUserId)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
-        if (currentUserRoles.Contains(RoleName.Administrator))
-            return true;
-
-        if (currentUserRoles.Contains(RoleName.Shipowner))
-        {
-            var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
-            if (
-                otherUserRoles.Contains(RoleName.CruiseManager)
-                || otherUserRoles.Contains(RoleName.Guest)
-                || otherUserRoles.Contains(RoleName.ShipCrew)
-            )
-            {
-                return true;
-            }
-        }
-        return false;
+        var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+        return RolePermissionRules.CanAccessUser(currentUserRoles, otherUserRoles);
     }
 
     public async Task<bool> CanCurrentUserViewCruiseApplication(CruiseApplication cruiseApplication)
@@ -186,24 +164,7 @@ public class UserPermissionVerifier(
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
-        if (currentUserRoles.Contains(RoleName.Administrator))
-        {
-            return true;
-        }
-
-        if (currentUserRoles.Contains(RoleName.Shipowner))
-        {
-            var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
-            if (
-                otherUserRoles.Contains(RoleName.Administrator)
-                || otherUserRoles.Contains(RoleName.Shipowner)
-            )
-            {
-                return false;
-            }
-            return true;
-        }
-
-        return false;
+        var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+        return RolePermissionRules.CanDeleteUser(currentUserRoles, otherUserRoles);
     }
 }

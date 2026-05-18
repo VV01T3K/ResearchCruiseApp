@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationEvaluationDetailsDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -21,16 +23,19 @@ public static class ApplicationEvaluation
 
     private static async Task<Results<Ok<CruiseApplicationEvaluationDetailsDto>, NotFound>> Get(
         Guid applicationId,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         ICruiseApplicationEvaluationDetailsDtosFactory evaluationDetailsDtosFactory,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithFormsAndFormAContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeFormAContent()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (
             application is null
             || !await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application)

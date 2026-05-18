@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp.Application.Services.CruisesService;
 using ResearchCruiseApp.Application.Services.Factories.CruiseBlockadePeriodDtos;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -31,16 +33,18 @@ public static class CruisePlanning
 
     private static async Task<NoContent> AutoPlan(
         ICruisesService cruisesService,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
-        ICruisesRepository cruisesRepository,
+        ApplicationDbContext dbContext,
         IGlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
-        var applications = await cruiseApplicationsRepository.GetAllWithFormsAndFormAContent(
-            cancellationToken
-        );
-        var cruises = await cruisesRepository.GetAllWithCruiseApplications(cancellationToken);
+        var applications = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeFormAContent()
+            .ToListAsync(cancellationToken);
+        var cruises = await dbContext
+            .Cruises.IncludeCruiseApplications()
+            .ToListAsync(cancellationToken);
 
         foreach (var application in applications)
         {

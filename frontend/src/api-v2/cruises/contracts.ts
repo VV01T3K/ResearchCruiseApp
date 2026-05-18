@@ -6,7 +6,7 @@ export type CruiseApplicationSummaryResponse = {
   points: string;
 };
 
-export type CruiseStatus = 'Nowy' | 'Potwierdzony' | 'Zakończony';
+export type CruiseStatus = 'new' | 'confirmed' | 'ended';
 
 export type CruisePersonResponse = {
   id: string;

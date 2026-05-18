@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
-using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -24,51 +24,42 @@ public static class ApplicationDecision
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid applicationId,
-        bool accept,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDecisionRequest request,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithFormsAndFormAContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeForms()
+            .IncludeFormAContent()
+            .IncludeCruise()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (application is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
         }
 
-        var result = UpdateStatus(application, accept);
-        if (!result.IsSuccess)
+        var decisionResult = ApplicationDecisionRules.Decide(application, request.Accept);
+        if (decisionResult != ApplicationDecisionResult.Applied)
         {
-            return result.Error!.ToProblemHttpResult();
+            return decisionResult switch
+            {
+                ApplicationDecisionResult.DecisionWindowClosed => Error
+                    .ForbiddenOperation("Czas na zmianę decyzji minął")
+                    .ToProblemHttpResult(),
+                ApplicationDecisionResult.RemoveFromCruiseFirst => Error
+                    .ForbiddenOperation("Najpierw usuń zgłoszenie z rejsu")
+                    .ToProblemHttpResult(),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
-
-    private static Result UpdateStatus(CruiseApplication application, bool accept)
-    {
-        if (
-            application.Status != CruiseApplicationStatus.WaitingForSupervisor
-            && application.Status != CruiseApplicationStatus.AcceptedBySupervisor
-            && application.Status != CruiseApplicationStatus.Accepted
-        )
-        {
-            return Error.ForbiddenOperation("Czas na zmianę decyzji minął");
-        }
-
-        if (application is { Status: CruiseApplicationStatus.Accepted, Cruise: not null })
-        {
-            return Error.ForbiddenOperation("Najpierw usuń zgłoszenie z rejsu");
-        }
-
-        application.Status = accept
-            ? CruiseApplicationStatus.Accepted
-            : CruiseApplicationStatus.Denied;
-
-        return Result.Empty;
-    }
 }
+
+public sealed record ApplicationDecisionRequest(bool Accept);

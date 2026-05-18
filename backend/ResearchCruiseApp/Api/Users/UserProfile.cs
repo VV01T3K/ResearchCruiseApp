@@ -2,7 +2,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
-using ResearchCruiseApp.Application.Models.DTOs.Users;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 
 namespace ResearchCruiseApp.Api.Users;
@@ -12,7 +11,7 @@ public static class UserProfile
     public static void Map(RouteGroupBuilder group)
     {
         group
-            .MapPut("/{userId:guid}", Update)
+            .MapPatch("/{userId:guid}", Update)
             .WithName("UpdateUserV2")
             .WithSummary("Update a managed user.")
             .ProducesValidationProblem()
@@ -48,23 +47,11 @@ public static class UserProfile
                 .ToProblemHttpResult();
         }
 
-        if (
-            request.Role is not null
-            && !await userPermissionVerifier.CanCurrentUserAssignRole(request.Role)
-        )
-        {
-            return Error.ForbiddenOperation("Nie można nadać tej roli").ToProblemHttpResult();
-        }
-
-        var roles = await identityService.GetAllRoleNames(cancellationToken);
-        if (request.Role is not null && !roles.Contains(request.Role))
-        {
-            return Error.InvalidArgument("Rola nie istnieje").ToProblemHttpResult();
-        }
-
         var result = await identityService.UpdateUser(
             userId,
-            request.ToLegacyDto(),
+            request.Email,
+            request.FirstName,
+            request.LastName,
             cancellationToken
         );
 
@@ -91,21 +78,8 @@ public static class UserProfile
 public sealed record UpdateUserRequest(
     string? Email = null,
     string? FirstName = null,
-    string? LastName = null,
-    string? Role = null
-)
-{
-    public UpdateUserFormDto ToLegacyDto()
-    {
-        return new UpdateUserFormDto
-        {
-            Email = Email,
-            FirstName = FirstName,
-            LastName = LastName,
-            Role = Role,
-        };
-    }
-}
+    string? LastName = null
+);
 
 public sealed class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
 {

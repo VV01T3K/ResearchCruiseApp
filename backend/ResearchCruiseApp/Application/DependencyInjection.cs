@@ -11,7 +11,6 @@ using ResearchCruiseApp.Application.Services.Factories.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationShortInfoDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseBlockadePeriodDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
-using ResearchCruiseApp.Application.Services.Factories.Cruises;
 using ResearchCruiseApp.Application.Services.Factories.FileDtos;
 using ResearchCruiseApp.Application.Services.Factories.FormAContractDtos;
 using ResearchCruiseApp.Application.Services.Factories.FormADtos;
@@ -67,7 +66,6 @@ public static class DependencyInjection
                 ICruiseApplicationEvaluationDetailsDtosFactory,
                 CruiseApplicationEvaluationDetailsDtosFactory
             >()
-            .AddScoped<ICruisesFactory, CruisesFactory>()
             .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>()
             .AddScoped<ICruiseBlockadePeriodDtosFactory, CruiseBlockadePeriodDtosFactory>()
             .AddScoped<

@@ -2,7 +2,13 @@ import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-q
 import { isAxiosError } from 'axios';
 
 import { ProblemDetails } from '@/api-v2/account/contracts';
-import { CruiseManagerOptionResponse, UserResponse, UserWriteRequest } from '@/api-v2/users/contracts';
+import {
+  CruiseManagerOptionResponse,
+  UserCreateRequest,
+  UserProfilePatchRequest,
+  UserResponse,
+  UserWriteRequest,
+} from '@/api-v2/users/contracts';
 import { client } from '@/lib/api';
 
 type Props = {
@@ -25,7 +31,13 @@ export function useNewUserMutation({ editMode, setSubmitError }: Props) {
         throw new Error('This method should be called only for new users');
       }
 
-      return await client.post('/v2/users', data);
+      const request: UserCreateRequest = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        roles: [data.role],
+      };
+      return await client.post('/v2/users', request);
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas dodawania użytkownika'));
@@ -40,11 +52,30 @@ export function useUpdateUserMutation({ editMode, setSubmitError }: Props) {
         throw new Error('This method should be called only for existing users');
       }
 
-      return await client.put(`/v2/users/${userId}`, data);
+      const request: UserProfilePatchRequest = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      };
+      return await client.patch(`/v2/users/${userId}`, request);
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas aktualizacji użytkownika'));
     },
+  });
+}
+
+export function useAddUserRoleMutation() {
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) =>
+      client.put(`/v2/users/${userId}/roles/${role}`),
+  });
+}
+
+export function useRemoveUserRoleMutation() {
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) =>
+      client.delete(`/v2/users/${userId}/roles/${role}`),
   });
 }
 

@@ -5,11 +5,11 @@ type Props = {
   status: CruiseStatus;
 };
 export function StatusBadge({ status }: Props) {
-  if (status === 'Nowy') {
+  if (status === 'new') {
     return <AppBadge variant="primary">Nowy</AppBadge>;
-  } else if (status === 'Potwierdzony') {
+  } else if (status === 'confirmed') {
     return <AppBadge variant="success">Potwierdzony</AppBadge>;
-  } else if (status === 'Zakończony') {
+  } else if (status === 'ended') {
     return <AppBadge variant="info">Zakończony</AppBadge>;
   } else {
     throw new Error(`Unknown cruise status: ${status}`);

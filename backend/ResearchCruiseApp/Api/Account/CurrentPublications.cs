@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
-using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
-using ResearchCruiseApp.Application.Services.FormsFieldsService;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Account;
 
@@ -47,7 +46,7 @@ public static class CurrentPublications
 
     private static async Task<Results<Ok<List<CurrentPublicationResponse>>, NotFound>> Get(
         ICurrentUserService currentUserService,
-        IUserPublicationsRepository userPublicationsRepository,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
@@ -57,10 +56,11 @@ public static class CurrentPublications
             return TypedResults.NotFound();
         }
 
-        var publications = await userPublicationsRepository.GetAllByUserId(
-            currentUserId.Value,
-            cancellationToken
-        );
+        var publications = await dbContext
+            .UserPublications.AsNoTracking()
+            .Include(userPublication => userPublication.Publication)
+            .Where(publication => publication.UserId == currentUserId.Value)
+            .ToListAsync(cancellationToken);
 
         return TypedResults.Ok(
             publications
@@ -73,11 +73,8 @@ public static class CurrentPublications
 
     private static async Task<Results<NoContent, NotFound>> Import(
         CurrentPublicationImportRequest[] publications,
-        IFormsFieldsService formsFieldsService,
         ICurrentUserService currentUserService,
-        IUserPublicationsRepository userPublicationsRepository,
-        IPublicationsRepository publicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
@@ -96,36 +93,47 @@ public static class CurrentPublications
                 continue;
             }
 
-            var publication = await formsFieldsService.GetUniquePublication(
-                request.ToLegacyDto(),
-                alreadyAddedPublications,
-                cancellationToken
-            );
+            var candidate = request.ToEntity();
+            var publication =
+                alreadyAddedPublications.FirstOrDefault(existing => existing.Equals(candidate))
+                ?? await dbContext.Publications.FirstOrDefaultAsync(
+                    Publication.EqualsByExpression(candidate),
+                    cancellationToken
+                )
+                ?? candidate;
 
             if (!alreadyAddedPublications.Contains(publication))
             {
                 var userPublication = new UserPublication { UserId = currentUserId.Value };
 
-                if (!await userPublicationsRepository.CheckIfExists(publication))
+                var alreadyLinked = await dbContext
+                    .UserPublications.Include(userPublication => userPublication.Publication)
+                    .AnyAsync(
+                        userPublication =>
+                            userPublication.UserId == currentUserId.Value
+                            && userPublication.Publication.Id == publication.Id,
+                        cancellationToken
+                    );
+
+                if (!alreadyLinked)
                 {
                     publication.UserPublications.Add(userPublication);
-                    await publicationsRepository.UpdateOrAdd(publication, cancellationToken);
+                    if (publication.Id == Guid.Empty)
+                        await dbContext.Publications.AddAsync(publication, cancellationToken);
                 }
             }
 
             alreadyAddedPublications.Add(publication);
         }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, NotFound>> Delete(
         Guid publicationId,
         ICurrentUserService currentUserService,
-        IUserPublicationsRepository userPublicationsRepository,
-        IPublicationsRepository publicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
@@ -135,10 +143,12 @@ public static class CurrentPublications
             return TypedResults.NotFound();
         }
 
-        var userPublication =
-            await userPublicationsRepository.GetPublicationByUserIdAndPublicationId(
-                currentUserId.Value,
-                publicationId,
+        var userPublication = await dbContext
+            .UserPublications.Include(publication => publication.Publication)
+            .FirstOrDefaultAsync(
+                publication =>
+                    publication.UserId == currentUserId.Value
+                    && publication.Publication.Id == publicationId,
                 cancellationToken
             );
 
@@ -148,26 +158,29 @@ public static class CurrentPublications
         }
 
         var publication = userPublication.Publication;
-        userPublicationsRepository.Delete(userPublication);
+        dbContext.UserPublications.Remove(userPublication);
 
-        if (
-            await publicationsRepository.CountFormAPublications(publication, cancellationToken) == 0
-            && await publicationsRepository.CountUserPublications(publication, cancellationToken)
-                == 1
-        )
+        var formAReferences = await dbContext
+            .Publications.Where(candidate => candidate.Id == publication.Id)
+            .SelectMany(candidate => candidate.FormAPublications)
+            .CountAsync(cancellationToken);
+        var userReferences = await dbContext
+            .Publications.Where(candidate => candidate.Id == publication.Id)
+            .SelectMany(candidate => candidate.UserPublications)
+            .CountAsync(cancellationToken);
+
+        if (CurrentPublicationRules.ShouldDeletePublication(formAReferences, userReferences))
         {
-            publicationsRepository.Delete(publication);
+            dbContext.Publications.Remove(publication);
         }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, NotFound>> DeleteAll(
         ICurrentUserService currentUserService,
-        IUserPublicationsRepository userPublicationsRepository,
-        IPublicationsRepository publicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
@@ -177,30 +190,32 @@ public static class CurrentPublications
             return TypedResults.NotFound();
         }
 
-        var userPublications = await userPublicationsRepository.GetAllByUserId(
-            currentUserId.Value,
-            cancellationToken
-        );
+        var userPublications = await dbContext
+            .UserPublications.Include(userPublication => userPublication.Publication)
+            .Where(publication => publication.UserId == currentUserId.Value)
+            .ToListAsync(cancellationToken);
 
         foreach (var userPublication in userPublications)
         {
             var publication = userPublication.Publication;
-            userPublicationsRepository.Delete(userPublication);
+            dbContext.UserPublications.Remove(userPublication);
 
-            if (
-                await publicationsRepository.CountFormAPublications(publication, cancellationToken)
-                    == 0
-                && await publicationsRepository.CountUserPublications(
-                    publication,
-                    cancellationToken
-                ) == 1
-            )
+            var formAReferences = await dbContext
+                .Publications.Where(candidate => candidate.Id == publication.Id)
+                .SelectMany(candidate => candidate.FormAPublications)
+                .CountAsync(cancellationToken);
+            var userReferences = await dbContext
+                .Publications.Where(candidate => candidate.Id == publication.Id)
+                .SelectMany(candidate => candidate.UserPublications)
+                .CountAsync(cancellationToken);
+
+            if (CurrentPublicationRules.ShouldDeletePublication(formAReferences, userReferences))
             {
-                publicationsRepository.Delete(publication);
+                dbContext.Publications.Remove(publication);
             }
         }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 }
@@ -241,9 +256,9 @@ public sealed record CurrentPublicationImportRequest(
     string MinisterialPoints
 )
 {
-    public PublicationDto ToLegacyDto()
+    public Publication ToEntity()
     {
-        return new PublicationDto
+        return new Publication
         {
             Category = Category,
             Doi = Doi,

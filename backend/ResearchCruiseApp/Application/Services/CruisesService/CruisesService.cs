@@ -3,6 +3,7 @@ using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
 
 namespace ResearchCruiseApp.Application.Services.CruisesService;
 
@@ -91,64 +92,10 @@ internal class CruisesService(
         CancellationToken cancellationToken
     )
     {
-        if ((end - start).TotalDays < cruiseDurationDays)
-            return true;
+        var blockades = (await GetBlockingCruisesForYear(year, cancellationToken)).Select(
+            blockade => (DateTime.Parse(blockade.StartDate), DateTime.Parse(blockade.EndDate))
+        );
 
-        var overlappingBlockades = (await GetBlockingCruisesForYear(year, cancellationToken))
-            .Select(b => new
-            {
-                Start = DateTime.Parse(b.StartDate),
-                End = DateTime.Parse(b.EndDate),
-            })
-            .Where(b => b.End > start && b.Start < end)
-            .Select(b => new
-            {
-                Start = b.Start < start ? start : b.Start,
-                End = b.End > end ? end : b.End,
-            })
-            .OrderBy(b => b.Start)
-            .ToList();
-
-        if (overlappingBlockades.Count == 0)
-            return false;
-
-        var mergedBlockades = new List<(DateTime Start, DateTime End)>();
-        foreach (var blockade in overlappingBlockades)
-        {
-            if (mergedBlockades.Count == 0)
-            {
-                mergedBlockades.Add((blockade.Start, blockade.End));
-                continue;
-            }
-
-            var last = mergedBlockades[^1];
-            if (blockade.Start <= last.End)
-            {
-                mergedBlockades[^1] = (
-                    last.Start,
-                    blockade.End > last.End ? blockade.End : last.End
-                );
-            }
-            else
-            {
-                mergedBlockades.Add((blockade.Start, blockade.End));
-            }
-        }
-
-        var freeSlotStart = start;
-
-        foreach (var blockade in mergedBlockades)
-        {
-            if ((blockade.Start - freeSlotStart).TotalDays >= cruiseDurationDays)
-                return false;
-
-            if (blockade.End > freeSlotStart)
-                freeSlotStart = blockade.End;
-        }
-
-        if ((end - freeSlotStart).TotalDays >= cruiseDurationDays)
-            return false;
-
-        return true;
+        return CruiseBlockadeRules.HasNoFreeWindow(start, end, cruiseDurationDays, blockades);
     }
 }

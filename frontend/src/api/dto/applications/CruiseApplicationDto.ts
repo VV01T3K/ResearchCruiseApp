@@ -1,15 +1,14 @@
 export enum CruiseApplicationStatus {
-  Draft = 'Wersja robocza',
-  New = 'Nowe',
-  Accepted = 'Zaakceptowane',
-  WaitingForSupervisor = 'Oczekujące na przełożonego',
-  AcceptedBySupervisor = 'Zaakceptowane przez przełożonego',
-  Denied = 'Odrzucone',
-  DeniedBySupervisor = 'Odrzucone przez przełożonego',
-  FormBRequired = 'Wymagane uzupełnienie formularza B przez kierownika',
-  FormBFilled = 'Formularz B wypełniony. Oczekiwanie na rejs',
-  Undertaken = 'Zrealizowane',
-  Reported = 'Rozliczone',
+  Draft = 'draft',
+  Accepted = 'accepted',
+  WaitingForSupervisor = 'waitingForSupervisor',
+  AcceptedBySupervisor = 'acceptedBySupervisor',
+  Denied = 'denied',
+  DeniedBySupervisor = 'deniedBySupervisor',
+  FormBRequired = 'formBRequired',
+  FormBFilled = 'formBFilled',
+  Undertaken = 'undertaken',
+  Reported = 'reported',
 }
 
 export type CruiseApplicationDto = {

@@ -266,23 +266,25 @@ public class IdentityService(
         return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
     }
 
-    public async Task<Result> AddUserWithRole(
-        AddUserFormDto addUserFormDto,
+    public async Task<Result> AddUserWithRoles(
+        string email,
+        string firstName,
+        string lastName,
         string password,
-        string roleName
+        IReadOnlyCollection<string> roleNames
     )
     {
-        var user = CreateUser(addUserFormDto);
+        var user = CreateUser(email, firstName, lastName, true, true);
         var identityResult = await userManager.CreateAsync(user, password);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
-        identityResult = await userManager.AddToRoleAsync(user, roleName);
+        identityResult = await userManager.AddToRolesAsync(user, roleNames);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
         var userDto = await CreateUserDto(user);
-        await emailSender.SendAccountCreatedMessage(userDto, roleName, password);
+        await emailSender.SendAccountCreatedMessage(userDto, roleNames.First(), password);
 
         return Result.Empty;
     }
@@ -330,17 +332,42 @@ public class IdentityService(
 
     public async Task<Result> UpdateUser(
         Guid userId,
-        UpdateUserFormDto updateUserFormDto,
+        string? email,
+        string? firstName,
+        string? lastName,
         CancellationToken cancellationToken = default
     )
     {
-        if (updateUserFormDto.Role is null || updateUserFormDto.Role == RoleName.Administrator)
-            return await UpdateUserCore(userId, updateUserFormDto);
+        return await UpdateUserCore(userId, email, firstName, lastName);
+    }
+
+    public async Task<Result> AddUserRole(
+        Guid userId,
+        string roleName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var identityResult = await userManager.AddToRoleAsync(user, roleName);
+        return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
+    }
+
+    public async Task<Result> RemoveUserRole(
+        Guid userId,
+        string roleName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (roleName != RoleName.Administrator)
+            return await RemoveUserRoleCore(userId, roleName);
 
         return await ExecuteAdminInvariantGuarded(
             userId,
-            "Nie można zmienić roli ostatniego administratora",
-            () => UpdateUserCore(userId, updateUserFormDto),
+            "Nie można odebrać roli ostatniemu administratorowi",
+            () => RemoveUserRoleCore(userId, roleName),
             cancellationToken
         );
     }
@@ -386,25 +413,24 @@ public class IdentityService(
         );
     }
 
-    private async Task<Result> UpdateUserCore(Guid userId, UpdateUserFormDto updateUserFormDto)
+    private async Task<Result> UpdateUserCore(
+        Guid userId,
+        string? email,
+        string? firstName,
+        string? lastName
+    )
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
             return Error.ForbiddenOperation();
 
-        if (
-            updateUserFormDto.Email is not null
-            && updateUserFormDto.Email != user.Email
-            && await UserWithEmailExists(updateUserFormDto.Email)
-        )
+        if (email is not null && email != user.Email && await UserWithEmailExists(email))
             return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
 
-        user.EmailConfirmed =
-            (updateUserFormDto.Email == user.Email || updateUserFormDto.Email is null)
-            && user.EmailConfirmed;
-        user.Email = updateUserFormDto.Email ?? user.Email;
-        user.FirstName = updateUserFormDto.FirstName ?? user.FirstName;
-        user.LastName = updateUserFormDto.LastName ?? user.LastName;
+        user.EmailConfirmed = (email == user.Email || email is null) && user.EmailConfirmed;
+        user.Email = email ?? user.Email;
+        user.FirstName = firstName ?? user.FirstName;
+        user.LastName = lastName ?? user.LastName;
 
         var identityResult = await userManager.UpdateAsync(user);
         if (!identityResult.Succeeded)
@@ -412,25 +438,22 @@ public class IdentityService(
 
         var userRoles = await userManager.GetRolesAsync(user);
 
-        if (updateUserFormDto.Role is not null)
-        {
-            identityResult = await userManager.RemoveFromRolesAsync(user, userRoles);
-            if (!identityResult.Succeeded)
-                return identityResult.ToApplicationResult();
-            identityResult = await userManager.AddToRoleAsync(user, updateUserFormDto.Role);
-            if (!identityResult.Succeeded)
-                return identityResult.ToApplicationResult();
-        }
-
         if (user is { EmailConfirmed: false, Email: not null })
         {
-            await ResendEmailConfirmationEmail(
-                user.Email,
-                updateUserFormDto.Role ?? userRoles.First()
-            );
+            await ResendEmailConfirmationEmail(user.Email, userRoles.First());
         }
 
         return Result.Empty;
+    }
+
+    private async Task<Result> RemoveUserRoleCore(Guid userId, string roleName)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var identityResult = await userManager.RemoveFromRoleAsync(user, roleName);
+        return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
     }
 
     private static User CreateUser(RegisterFormDto registerFormDto) =>
@@ -439,15 +462,6 @@ public class IdentityService(
             registerFormDto.FirstName,
             registerFormDto.LastName,
             false
-        );
-
-    private static User CreateUser(AddUserFormDto addUserFormDto) =>
-        CreateUser(
-            addUserFormDto.Email,
-            addUserFormDto.FirstName,
-            addUserFormDto.LastName,
-            true,
-            true
         );
 
     private static User CreateUser(

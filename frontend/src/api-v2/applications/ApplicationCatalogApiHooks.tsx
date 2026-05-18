@@ -48,7 +48,7 @@ export function useApplicationEvaluationQuery(applicationId: string) {
 export function useAcceptApplicationMutation() {
   return useMutation({
     mutationFn: async (applicationId: string) => {
-      return client.put(`/v2/applications/${applicationId}/decision?accept=true`);
+      return client.put(`/v2/applications/${applicationId}/decision`, { accept: true });
     },
   });
 }
@@ -56,7 +56,7 @@ export function useAcceptApplicationMutation() {
 export function useRejectApplicationMutation() {
   return useMutation({
     mutationFn: async (applicationId: string) => {
-      return client.put(`/v2/applications/${applicationId}/decision?accept=false`);
+      return client.put(`/v2/applications/${applicationId}/decision`, { accept: false });
     },
   });
 }

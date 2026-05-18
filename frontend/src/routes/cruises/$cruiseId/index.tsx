@@ -126,7 +126,7 @@ function CruiseDetailsPage() {
     }
 
     switch (cruiseQuery.data?.status) {
-      case 'Nowy':
+      case 'new':
         return (
           <>
             <AppButton
@@ -146,7 +146,7 @@ function CruiseDetailsPage() {
             </AppButton>
           </>
         );
-      case 'Potwierdzony':
+      case 'confirmed':
         return (
           <>
             <AppButton
@@ -179,7 +179,7 @@ function CruiseDetailsPage() {
             </AppButton>
           </>
         );
-      case 'Zakończony':
+      case 'ended':
         return (
           <>
             <AppButton
@@ -324,12 +324,8 @@ function CruiseDetailsPage() {
         isOpen={isConfirmRevertModalOpen}
         onClose={() => setIsConfirmRevertModalOpen(false)}
       >
-        {cruiseQuery.data?.status === 'Potwierdzony' && (
-          <>Status rejsu zostanie zmieniony z "Potwierdzony" na "Nowy".</>
-        )}
-        {cruiseQuery.data?.status === 'Zakończony' && (
-          <>Status rejsu zostanie zmieniony z "Zakończony" na "Potwierdzony".</>
-        )}
+        {cruiseQuery.data?.status === 'confirmed' && <>Status rejsu zostanie zmieniony z "Potwierdzony" na "Nowy".</>}
+        {cruiseQuery.data?.status === 'ended' && <>Status rejsu zostanie zmieniony z "Zakończony" na "Potwierdzony".</>}
         <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="dangerOutline"

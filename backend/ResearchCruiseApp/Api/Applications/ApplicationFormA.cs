@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
@@ -16,6 +17,8 @@ using ResearchCruiseApp.Application.Services.FormsService;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -52,8 +55,7 @@ public static class ApplicationFormA
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
-        FormADto request,
-        bool isDraft,
+        FormAWriteRequest request,
         IValidator<FormAValidationModel> validator,
         IFormsAFactory formsAFactory,
         ICruisesService cruisesService,
@@ -66,16 +68,16 @@ public static class ApplicationFormA
     )
     {
         var validation = await validator.ValidateAsync(
-            new FormAValidationModel(request, isDraft),
+            new FormAValidationModel(request.Form, request.Draft),
             cancellationToken
         );
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
-        if (!isDraft)
+        if (!request.Draft)
         {
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
-                request,
+                request.Form,
                 cruisesService,
                 cancellationToken
             );
@@ -86,17 +88,21 @@ public static class ApplicationFormA
         var createResult = await unitOfWork.ExecuteIsolated<Result<CruiseApplication>>(
             async () =>
             {
-                var formAResult = await formsAFactory.Create(request, cancellationToken);
+                var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
                 if (!formAResult.IsSuccess)
                     return formAResult.Error!;
 
                 var application = cruiseApplicationsFactory.Create(
                     formAResult.Data!,
-                    request.Note,
-                    isDraft
+                    request.Form.Note,
+                    request.Draft
                 );
                 await cruiseApplicationsRepository.Add(application, cancellationToken);
-                await cruiseApplicationEvaluator.Evaluate(application, isDraft, cancellationToken);
+                await cruiseApplicationEvaluator.Evaluate(
+                    application,
+                    request.Draft,
+                    cancellationToken
+                );
                 await unitOfWork.Complete(cancellationToken);
                 return application;
             },
@@ -105,10 +111,10 @@ public static class ApplicationFormA
         if (!createResult.IsSuccess)
             return createResult.Error!.ToProblemHttpResult();
 
-        if (!isDraft)
+        if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
                 createResult.Data!,
-                request.SupervisorEmail
+                request.Form.SupervisorEmail
             );
 
         return TypedResults.Created();
@@ -116,16 +122,19 @@ public static class ApplicationFormA
 
     private static async Task<Results<Ok<FormADto>, NotFound>> Get(
         Guid applicationId,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
+        ApplicationDbContext dbContext,
         IFormADtosFactory formADtosFactory,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var application = await cruiseApplicationsRepository.GetByIdWithFormAContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormAContent()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
         if (
             application?.FormA is null
             || !await userPermissionVerifier.CanCurrentUserViewForm(application)
@@ -137,8 +146,7 @@ public static class ApplicationFormA
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid applicationId,
-        FormADto request,
-        bool isDraft,
+        FormAWriteRequest request,
         IValidator<FormAValidationModel> validator,
         ICruiseApplicationsRepository cruiseApplicationsRepository,
         IUserPermissionVerifier userPermissionVerifier,
@@ -152,7 +160,7 @@ public static class ApplicationFormA
     )
     {
         var validation = await validator.ValidateAsync(
-            new FormAValidationModel(request, isDraft),
+            new FormAValidationModel(request.Form, request.Draft),
             cancellationToken
         );
         if (!validation.IsValid)
@@ -169,10 +177,10 @@ public static class ApplicationFormA
                 .ForbiddenOperation("Zgłoszenie nie jest już w stanie wersji roboczej.")
                 .ToProblemHttpResult();
 
-        if (!isDraft)
+        if (!request.Draft)
         {
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
-                request,
+                request.Form,
                 cruisesService,
                 cancellationToken
             );
@@ -184,12 +192,12 @@ public static class ApplicationFormA
             async () =>
             {
                 var oldFormA = application.FormA;
-                var formAResult = await formsAFactory.Create(request, cancellationToken);
+                var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
                 if (!formAResult.IsSuccess)
                     return formAResult.Error!;
 
-                if (isDraft)
-                    application.Note = request.Note;
+                if (request.Draft)
+                    application.Note = request.Form.Note;
                 else
                 {
                     application.Date = DateOnly.FromDateTime(DateTime.Now);
@@ -197,7 +205,11 @@ public static class ApplicationFormA
                 }
                 application.FormA = formAResult.Data!;
 
-                await cruiseApplicationEvaluator.Evaluate(application, isDraft, cancellationToken);
+                await cruiseApplicationEvaluator.Evaluate(
+                    application,
+                    request.Draft,
+                    cancellationToken
+                );
                 await unitOfWork.Complete(cancellationToken);
 
                 if (oldFormA is not null)
@@ -213,10 +225,10 @@ public static class ApplicationFormA
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 
-        if (!isDraft)
+        if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
                 application,
-                request.SupervisorEmail
+                request.Form.SupervisorEmail
             );
 
         return TypedResults.NoContent();
@@ -251,3 +263,5 @@ public static class ApplicationFormA
             : Result.Empty;
     }
 }
+
+public sealed record FormAWriteRequest(FormADto Form, bool Draft);

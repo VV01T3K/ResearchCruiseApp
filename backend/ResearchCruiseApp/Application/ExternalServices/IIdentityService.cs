@@ -39,7 +39,13 @@ public interface IIdentityService
 
     Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto);
 
-    Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName);
+    Task<Result> AddUserWithRoles(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        IReadOnlyCollection<string> roleNames
+    );
 
     Task<IList<string>> GetUserRolesNames(Guid userId);
 
@@ -50,7 +56,19 @@ public interface IIdentityService
     Task<Result> DeleteUser(Guid userId, CancellationToken cancellationToken = default);
     Task<Result> UpdateUser(
         Guid userId,
-        UpdateUserFormDto updateUserFormDto,
+        string? email,
+        string? firstName,
+        string? lastName,
+        CancellationToken cancellationToken = default
+    );
+    Task<Result> AddUserRole(
+        Guid userId,
+        string roleName,
+        CancellationToken cancellationToken = default
+    );
+    Task<Result> RemoveUserRole(
+        Guid userId,
+        string roleName,
         CancellationToken cancellationToken = default
     );
 }

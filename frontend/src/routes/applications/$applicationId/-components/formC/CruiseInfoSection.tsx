@@ -40,15 +40,15 @@ export function CruiseInfoSection() {
 }
 
 function StatusBadge({ status }: { status: CruiseResponse['status'] }) {
-  if (status === 'Nowy') {
+  if (status === 'new') {
     return <AppBadge variant="info">Nowy</AppBadge>;
   }
 
-  if (status === 'Potwierdzony') {
+  if (status === 'confirmed') {
     return <AppBadge variant="success">Potwierdzony</AppBadge>;
   }
 
-  if (status === 'Zakończony') {
+  if (status === 'ended') {
     return <AppBadge variant="primary">Zakończony</AppBadge>;
   }
 

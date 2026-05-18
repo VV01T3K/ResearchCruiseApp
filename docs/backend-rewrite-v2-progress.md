@@ -6,16 +6,17 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Cutover complete. The full live account surface, recovery, current-user data, live
-privileged user management, the live cruise workflow, the application
-catalog/decision surface, authenticated Form A/B/C workflows, and the anonymous
-supervisor-review flow now exist under `/v2`; the dead legacy frontend hooks, old v1
-MVC runtime surface, and legacy MediatR request path have all been retired.
+Cutover complete, with the follow-up internal cleanup now substantially completed on
+the live `/v2` surface. The API now uses stable workflow status codes, body-based
+workflow commands, dedicated role operations, pure workflow rules under
+`Domain/Logic`, and direct EF usage across the ordinary `/v2` slices. The remaining
+legacy-shaped request-path work is concentrated in the shared Form A/B/C
+creation/replacement workflows instead of being the default architecture.
 
 ## Active Slice
 
-Backend v2 accelerated cutover cleanup completed: the v1 runtime surface and dead
-MediatR/use-case path have been removed.
+Backend v2 internal cleanup pass: finish the remaining request-path simplification
+after the v1 runtime and MediatR path retirement.
 
 ## Decisions Made
 
@@ -105,8 +106,36 @@ MediatR/use-case path have been removed.
   validators onto neutral validation models before deleting the legacy use-case tree.
 - Remove the dead MediatR registration, package, and `Application/UseCases` request
   path after no live endpoint depends on them.
+- Normalize cruise and application statuses to stable machine codes while keeping
+  Polish display labels in the frontend.
+- Move application draft and decision flags into JSON request bodies.
+- Expose dedicated add/remove role operations so the backend can support multi-role
+  users without changing the current single-role frontend workflow yet.
+- Keep anonymous supervisor review on the current stored-code model during this pass
+  and document later alternatives instead of changing public-link semantics now.
+- Prefer direct `ApplicationDbContext` access in simple slices; keep reusable include
+  graphs as query extensions rather than repository ceremony.
+- Move publication retention and role-assignment permission decisions into
+  `Domain/Logic` so those preserved rules are explicit and testable.
+- Remove the user-management request adapters from `/v2`; create/update profile calls
+  now pass their native contract data directly into identity orchestration.
+- Reduce repository and unit-of-work usage in `/v2` to the shared form
+  create/replace workflows that still need broader orchestration.
 
 ## Files Changed By Slice
+
+### Post-Cutover Internal Cleanup Slice
+
+- `backend/ResearchCruiseApp/Api`
+- `backend/ResearchCruiseApp/Domain/Logic`
+- `backend/ResearchCruiseApp/Infrastructure/Services/Identity/IdentityService.cs`
+- `backend/ResearchCruiseApp.Tests`
+- `frontend/src/api-v2`
+- `frontend/src/routes`
+- `frontend/tests`
+- `docs/backend-rewrite-v2-plan-v2.md`
+- `docs/backend-rewrite-v2-progress.md`
+- `docs/backend-rewrite-v2-deferred-decisions.md`
 
 ### Foundation Starting Slice
 

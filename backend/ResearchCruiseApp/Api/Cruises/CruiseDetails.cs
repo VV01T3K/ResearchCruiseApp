@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -48,15 +49,27 @@ public static class CruiseDetails
     private static async Task<Results<Ok<CruiseResponse>, NotFound>> Get(
         Guid cruiseId,
         ICruiseDtosFactory cruiseDtosFactory,
-        ICruisesRepository cruisesRepository,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplicationsWithFormAContent(
-            cruiseId,
-            cancellationToken
-        );
+        var cruise = await dbContext
+            .Cruises.IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.Permissions)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAResearchTasks)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAContracts)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAUgUnits)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAGuestUnits)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormAPublications)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA!.FormASpubTasks)
+            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null || !await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
         {
             return TypedResults.NotFound();
@@ -69,16 +82,13 @@ public static class CruiseDetails
         Guid cruiseId,
         CruiseWriteRequest request,
         IIdentityService identityService,
-        ICruisesRepository cruisesRepository,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
-            cruiseId,
-            cancellationToken
-        );
+        var cruise = await dbContext
+            .Cruises.IncludeCruiseApplications()
+            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
@@ -91,10 +101,9 @@ public static class CruiseDetails
             .ToList();
         if (newApplicationIds.Count != 0)
         {
-            var newApplications = await cruiseApplicationsRepository.GetAllByIds(
-                newApplicationIds,
-                cancellationToken
-            );
+            var newApplications = await dbContext
+                .CruiseApplications.Where(application => newApplicationIds.Contains(application.Id))
+                .ToListAsync(cancellationToken);
             if (
                 newApplications.Any(application =>
                     application.Status != CruiseApplicationStatus.Accepted
@@ -120,10 +129,11 @@ public static class CruiseDetails
             return managerResult.Error!.ToProblemHttpResult();
         }
 
-        var newCruiseApplications = await cruiseApplicationsRepository.GetAllByIds(
-            request.CruiseApplicationIds,
-            cancellationToken
-        );
+        var newCruiseApplications = await dbContext
+            .CruiseApplications.Where(application =>
+                request.CruiseApplicationIds.Contains(application.Id)
+            )
+            .ToListAsync(cancellationToken);
         foreach (var application in newCruiseApplications)
         {
             if (
@@ -144,7 +154,7 @@ public static class CruiseDetails
         }
 
         cruise.CruiseApplications = newCruiseApplications;
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
@@ -177,15 +187,13 @@ public static class CruiseDetails
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(
         Guid cruiseId,
-        ICruisesRepository cruisesRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
-            cruiseId,
-            cancellationToken
-        );
+        var cruise = await dbContext
+            .Cruises.IncludeCruiseApplications()
+            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
@@ -204,8 +212,8 @@ public static class CruiseDetails
             }
         }
 
-        cruisesRepository.Delete(cruise);
-        await unitOfWork.Complete(cancellationToken);
+        dbContext.Cruises.Remove(cruise);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 }

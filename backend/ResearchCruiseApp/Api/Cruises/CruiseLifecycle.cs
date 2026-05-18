@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -44,17 +45,20 @@ public static class CruiseLifecycle
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
         Guid cruiseId,
-        ICruisesRepository cruisesRepository,
+        ApplicationDbContext dbContext,
         IEmailSender emailSender,
         IIdentityService identityService,
-        IUnitOfWork unitOfWork,
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplicationsWithForm(
-            cruiseId,
-            cancellationToken
-        );
+        var cruise = await dbContext
+            .Cruises.IncludeCruiseApplications()
+                .ThenInclude(application => application.FormA)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormB)
+            .IncludeCruiseApplications()
+                .ThenInclude(application => application.FormC)
+            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
@@ -103,108 +107,55 @@ public static class CruiseLifecycle
             }
         }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> RemoveConfirmation(
         Guid cruiseId,
-        ICruisesRepository cruisesRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
-            cruiseId,
-            cancellationToken
-        );
+        var cruise = await dbContext
+            .Cruises.IncludeCruiseApplications()
+            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
         }
 
-        var result = RevertStatus(cruise);
-        if (!result.IsSuccess)
+        var result = CruiseLifecycleRules.Revert(cruise);
+        if (result != CruiseLifecycleResult.Applied)
         {
-            return result.Error!.ToProblemHttpResult();
+            return Error.InvalidArgument("Rejs jest już w stanie 'Nowy'").ToProblemHttpResult();
         }
 
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Complete(
         Guid cruiseId,
-        ICruisesRepository cruisesRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var cruise = await cruisesRepository.GetByIdWithCruiseApplications(
-            cruiseId,
-            cancellationToken
-        );
+        var cruise = await dbContext
+            .Cruises.IncludeCruiseApplications()
+            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
         }
 
-        if (cruise.Status == CruiseStatus.New)
-        {
+        var result = CruiseLifecycleRules.Complete(cruise);
+        if (result == CruiseLifecycleResult.NotConfirmed)
             return Error.InvalidArgument("Rejs nie został potwierdzony").ToProblemHttpResult();
-        }
-
-        if (cruise.Status != CruiseStatus.Confirmed)
-        {
+        if (result == CruiseLifecycleResult.NotCompletable)
             return Error.InvalidArgument("Rejs nie został potwierdzoy").ToProblemHttpResult();
-        }
 
-        cruise.Status = CruiseStatus.Ended;
-        foreach (var application in cruise.CruiseApplications)
-        {
-            if (application.Status == CruiseApplicationStatus.FormBFilled)
-            {
-                application.Status = CruiseApplicationStatus.Undertaken;
-            }
-        }
-
-        await unitOfWork.Complete(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
-    }
-
-    private static Result RevertStatus(Cruise cruise)
-    {
-        if (cruise.Status == CruiseStatus.New)
-        {
-            return Error.InvalidArgument("Rejs jest już w stanie 'Nowy'");
-        }
-
-        foreach (var application in cruise.CruiseApplications)
-        {
-            if (
-                cruise.Status == CruiseStatus.Confirmed
-                && application.Status == CruiseApplicationStatus.FormBRequired
-            )
-            {
-                application.Status = CruiseApplicationStatus.Accepted;
-            }
-
-            if (
-                cruise.Status == CruiseStatus.Ended
-                && application.Status == CruiseApplicationStatus.Undertaken
-            )
-            {
-                application.Status = CruiseApplicationStatus.FormBFilled;
-            }
-        }
-
-        cruise.Status = cruise.Status switch
-        {
-            CruiseStatus.Confirmed => CruiseStatus.New,
-            CruiseStatus.Ended => CruiseStatus.Confirmed,
-            _ => cruise.Status,
-        };
-
-        return Result.Empty;
     }
 }

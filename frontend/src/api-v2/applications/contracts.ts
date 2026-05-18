@@ -7,17 +7,41 @@ import { ResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
 import { SpubTaskDto } from '@/api/dto/applications/SpubTaskDto';
 
 export enum ApplicationStatus {
-  Draft = 'Wersja robocza',
-  New = 'Nowe',
-  Accepted = 'Zaakceptowane',
-  WaitingForSupervisor = 'Oczekujące na przełożonego',
-  AcceptedBySupervisor = 'Zaakceptowane przez przełożonego',
-  Denied = 'Odrzucone',
-  DeniedBySupervisor = 'Odrzucone przez przełożonego',
-  FormBRequired = 'Wymagane uzupełnienie formularza B przez kierownika',
-  FormBFilled = 'Formularz B wypełniony. Oczekiwanie na rejs',
-  Undertaken = 'Zrealizowane',
-  Reported = 'Rozliczone',
+  Draft = 'draft',
+  Accepted = 'accepted',
+  WaitingForSupervisor = 'waitingForSupervisor',
+  AcceptedBySupervisor = 'acceptedBySupervisor',
+  Denied = 'denied',
+  DeniedBySupervisor = 'deniedBySupervisor',
+  FormBRequired = 'formBRequired',
+  FormBFilled = 'formBFilled',
+  Undertaken = 'undertaken',
+  Reported = 'reported',
+}
+
+export function getApplicationStatusLabel(status: ApplicationStatus): string {
+  switch (status) {
+    case ApplicationStatus.Draft:
+      return 'Wersja robocza';
+    case ApplicationStatus.WaitingForSupervisor:
+      return 'Oczekujące na przełożonego';
+    case ApplicationStatus.AcceptedBySupervisor:
+      return 'Zaakceptowane przez przełożonego';
+    case ApplicationStatus.DeniedBySupervisor:
+      return 'Odrzucone przez przełożonego';
+    case ApplicationStatus.Accepted:
+      return 'Zaakceptowane';
+    case ApplicationStatus.Denied:
+      return 'Odrzucone';
+    case ApplicationStatus.FormBRequired:
+      return 'Wymagane uzupełnienie formularza B przez kierownika';
+    case ApplicationStatus.FormBFilled:
+      return 'Formularz B wypełniony. Oczekiwanie na rejs';
+    case ApplicationStatus.Undertaken:
+      return 'Zrealizowane';
+    case ApplicationStatus.Reported:
+      return 'Rozliczone';
+  }
 }
 
 export type ApplicationPersonResponse = {

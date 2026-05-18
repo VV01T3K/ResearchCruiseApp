@@ -137,7 +137,7 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
         <ZoomInIcon className="ml-2 h-4 w-4" />
       </AppButton>
       <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
-        {cruise.status === 'Nowy' && (
+        {cruise.status === 'new' && (
           <AppButton variant="dangerOutline" onClick={() => deleteCruise(cruise)}>
             Usuń
             <TrashIcon className="h-4 w-4" />

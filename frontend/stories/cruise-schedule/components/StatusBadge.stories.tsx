@@ -12,18 +12,18 @@ type Story = StoryObj<typeof meta>;
 
 export const Nowy: Story = {
   args: {
-    status: 'Nowy',
+    status: 'new',
   },
 };
 
 export const Potwierdzony: Story = {
   args: {
-    status: 'Potwierdzony',
+    status: 'confirmed',
   },
 };
 
 export const Zakonczony: Story = {
   args: {
-    status: 'Zakończony',
+    status: 'ended',
   },
 };
