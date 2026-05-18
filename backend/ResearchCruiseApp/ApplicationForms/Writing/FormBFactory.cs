@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.ApplicationForms.Payloads;
 using ResearchCruiseApp.ApplicationForms.Mapping;
+using ResearchCruiseApp.ApplicationForms.Payloads;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;

@@ -4,7 +4,10 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.ApplicationForms.Writing;
 
-internal class FormDeletionService(CruiseEffectService effectsService, ApplicationDbContext dbContext)
+internal class FormDeletionService(
+    CruiseEffectService effectsService,
+    ApplicationDbContext dbContext
+)
 {
     public async Task DeleteFormA(FormA formA, CancellationToken cancellationToken)
     {

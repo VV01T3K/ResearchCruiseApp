@@ -3,7 +3,10 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.ApplicationForms.Writing;
 
-internal class SupervisorInvitationService(IIdentityService identityService, IEmailSender emailSender)
+internal class SupervisorInvitationService(
+    IIdentityService identityService,
+    IEmailSender emailSender
+)
 {
     public async Task SendRequestToSupervisor(
         CruiseApplication cruiseApplication,

@@ -1,14 +1,10 @@
-using ResearchCruiseApp.ApplicationForms.Payloads;
 using ResearchCruiseApp.ApplicationForms.Mapping;
+using ResearchCruiseApp.ApplicationForms.Payloads;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.ApplicationForms.Reading;
 
-internal class FormReader(
-    PermissionReader permissions,
-    ContractReader contracts,
-    FileReader files
-)
+internal class FormReader(PermissionReader permissions, ContractReader contracts, FileReader files)
 {
     public async Task<FormADto> Create(FormA form)
     {
