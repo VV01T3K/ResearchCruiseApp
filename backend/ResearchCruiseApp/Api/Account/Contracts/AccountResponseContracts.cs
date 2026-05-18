@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Api.Account.Contracts;
+namespace ResearchCruiseApp.Api.Account.Contracts;
 
 public class LoginResponseDto
 {
@@ -7,4 +7,9 @@ public class LoginResponseDto
     public DateTime AccessTokenExpirationDate { get; set; }
     public string RefreshToken { get; set; } = null!;
     public DateTime RefreshTokenExpirationDate { get; set; }
+}
+
+public class EmailDto
+{
+    public required string Email { get; init; }
 }

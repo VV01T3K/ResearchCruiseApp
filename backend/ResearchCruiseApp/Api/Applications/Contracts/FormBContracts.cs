@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ResearchCruiseApp.Api.Applications.Contracts;
 
@@ -26,4 +26,9 @@ public class FormBDto
     public List<ResearchEquipmentDto> ResearchEquipments { get; init; } = [];
 
     public List<Guid> ShipEquipmentsIds { get; init; } = [];
+}
+
+public class FormBInitValuesDto
+{
+    public List<ShipEquipmentDto> ShipEquipments { get; init; } = [];
 }

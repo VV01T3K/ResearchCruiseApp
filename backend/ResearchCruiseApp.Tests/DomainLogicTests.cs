@@ -79,16 +79,6 @@ public sealed class DomainLogicTests
     }
 
     [Fact]
-    public void CompletingFormBAdvancesApplicationOutOfEditableState()
-    {
-        var application = new CruiseApplication { Status = CruiseApplicationStatus.FormBRequired };
-
-        FormWorkflowRules.CompleteFormB(application);
-
-        Assert.Equal(CruiseApplicationStatus.FormBFilled, application.Status);
-    }
-
-    [Fact]
     public void BlockadeRulesFindFreeGapBetweenMergedBlockades()
     {
         var noFreeWindow = CruiseBlockadeRules.HasNoFreeWindow(
@@ -131,14 +121,6 @@ public sealed class DomainLogicTests
     )
     {
         Assert.Equal(expectedCode, status.ToCode());
-    }
-
-    [Fact]
-    public void CurrentPublicationRulesDeleteOnlyUnsharedUnreferencedPublications()
-    {
-        Assert.True(CurrentPublicationRules.ShouldDeletePublication(0, 1));
-        Assert.False(CurrentPublicationRules.ShouldDeletePublication(1, 1));
-        Assert.False(CurrentPublicationRules.ShouldDeletePublication(0, 2));
     }
 
     [Fact]

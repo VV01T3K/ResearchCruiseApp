@@ -10,7 +10,6 @@ using ResearchCruiseApp.Api.Common.Extensions;
 using ResearchCruiseApp.Api.Common.ServiceResult;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
@@ -112,7 +111,7 @@ public static class ApplicationFormB
             await formsService.DeleteFormB(oldFormB, cancellationToken);
 
         if (!request.Draft)
-            FormWorkflowRules.CompleteFormB(application);
+            CompleteFormB(application);
 
         return TypedResults.Created();
     }
@@ -132,7 +131,7 @@ public static class ApplicationFormB
             );
         if (application is null)
             return Error.ResourceNotFound().ToProblemHttpResult();
-        if (!FormWorkflowRules.CanRefillFormB(application.Status))
+        if (!CanRefillFormB(application.Status))
             return Error
                 .ForbiddenOperation("Obecnie nie można umożliwić edycji formularza B")
                 .ToProblemHttpResult();
@@ -141,6 +140,17 @@ public static class ApplicationFormB
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
+
+    private static void CompleteFormB(CruiseApplication application)
+    {
+        application.Status =
+            application.Cruise is not null && application.Cruise.Status == CruiseStatus.Ended
+                ? CruiseApplicationStatus.Undertaken
+                : CruiseApplicationStatus.FormBFilled;
+    }
+
+    private static bool CanRefillFormB(CruiseApplicationStatus status) =>
+        status is CruiseApplicationStatus.Undertaken or CruiseApplicationStatus.FormBFilled;
 }
 
 public sealed record FormBWriteRequest(FormBDto Form, bool Draft);

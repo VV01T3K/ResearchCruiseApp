@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Account;
@@ -168,7 +167,7 @@ public static class CurrentPublications
             .SelectMany(candidate => candidate.UserPublications)
             .CountAsync(cancellationToken);
 
-        if (CurrentPublicationRules.ShouldDeletePublication(formAReferences, userReferences))
+        if (formAReferences == 0 && userReferences == 1)
         {
             dbContext.Publications.Remove(publication);
         }
@@ -208,7 +207,7 @@ public static class CurrentPublications
                 .SelectMany(candidate => candidate.UserPublications)
                 .CountAsync(cancellationToken);
 
-            if (CurrentPublicationRules.ShouldDeletePublication(formAReferences, userReferences))
+            if (formAReferences == 0 && userReferences == 1)
             {
                 dbContext.Publications.Remove(publication);
             }

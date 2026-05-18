@@ -30,3 +30,23 @@ public class CruiseDto
 
     public bool ShipUnavailable { get; set; } = false;
 }
+
+public class CruiseApplicationShortInfoDto
+{
+    public Guid Id { get; set; }
+
+    public Guid CruiseManagerId { get; set; }
+
+    public Guid DeputyManagerId { get; set; }
+
+    public string Number { get; set; } = null!;
+
+    public string Points { get; set; } = null!;
+}
+
+public class CruiseBlockadePeriodDto
+{
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public string Title { get; set; } = null!;
+}
