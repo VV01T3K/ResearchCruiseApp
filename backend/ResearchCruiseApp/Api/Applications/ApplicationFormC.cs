@@ -2,8 +2,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
@@ -38,6 +36,7 @@ public static class ApplicationFormC
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithDbTransaction()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
         group
@@ -80,9 +79,8 @@ public static class ApplicationFormC
         Guid applicationId,
         FormCWriteRequest request,
         IValidator<FormCValidationModel> validator,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
         IFormsCFactory formsCFactory,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         IFormsService formsService,
         IEffectsService effectsService,
@@ -96,10 +94,12 @@ public static class ApplicationFormC
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
-        var application = await cruiseApplicationsRepository.GetByIdWithFormAAndFormCContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormC()
+            .IncludeFormCContent()
+            .AsSplitQuery()
+            .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Undertaken)
@@ -107,28 +107,21 @@ public static class ApplicationFormC
                 .ForbiddenOperation("Obecnie nie można wysłać Formularza C.")
                 .ToProblemHttpResult();
 
-        var result = await unitOfWork.ExecuteIsolated(
-            async () =>
-            {
-                var oldFormC = application.FormC;
-                var formCResult = await formsCFactory.Create(request.Form, cancellationToken);
-                if (!formCResult.IsSuccess)
-                    return formCResult.Error!;
+        var oldFormC = application.FormC;
+        var formCResult = await formsCFactory.Create(request.Form, cancellationToken);
+        if (!formCResult.IsSuccess)
+            return formCResult.Error!.ToProblemHttpResult();
 
-                application.FormC = formCResult.Data!;
-                if (!request.Draft)
-                    application.Status = CruiseApplicationStatus.Reported;
+        application.FormC = formCResult.Data!;
+        if (!request.Draft)
+            application.Status = CruiseApplicationStatus.Reported;
 
-                await unitOfWork.Complete(cancellationToken);
-                if (oldFormC is not null)
-                    await formsService.DeleteFormC(oldFormC, cancellationToken);
-                if (!request.Draft)
-                    await effectsService.EvaluateEffects(application, cancellationToken);
-                await unitOfWork.Complete(cancellationToken);
-                return Result.Empty;
-            },
-            cancellationToken
-        );
+        if (oldFormC is not null)
+            await formsService.DeleteFormC(oldFormC, cancellationToken);
+        if (!request.Draft)
+            await effectsService.EvaluateEffects(application, cancellationToken);
+
+        var result = Result.Empty;
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 

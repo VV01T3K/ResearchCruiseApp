@@ -2,8 +2,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
@@ -39,6 +37,7 @@ public static class ApplicationFormB
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithDbTransaction()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
         group
@@ -81,10 +80,9 @@ public static class ApplicationFormB
         Guid applicationId,
         FormBWriteRequest request,
         IValidator<FormBValidationModel> validator,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
         IUserPermissionVerifier userPermissionVerifier,
         IFormsBFactory formsBFactory,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         IFormsService formsService,
         CancellationToken cancellationToken
     )
@@ -96,10 +94,12 @@ public static class ApplicationFormB
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
-        var application = await cruiseApplicationsRepository.GetByIdWithFormAAndFormBContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormB()
+            .IncludeFormBContent()
+            .IncludeCruise()
+            .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.FormBRequired)
@@ -107,22 +107,14 @@ public static class ApplicationFormB
                 .ForbiddenOperation("Obecnie nie można przesłać formularza B.")
                 .ToProblemHttpResult();
 
-        await unitOfWork.ExecuteIsolated(
-            async () =>
-            {
-                var oldFormB = application.FormB;
-                application.FormB = await formsBFactory.Create(request.Form, cancellationToken);
-                await unitOfWork.Complete(cancellationToken);
-                if (oldFormB is not null)
-                    await formsService.DeleteFormB(oldFormB, cancellationToken);
-            },
-            cancellationToken
-        );
+        var oldFormB = application.FormB;
+        application.FormB = await formsBFactory.Create(request.Form, cancellationToken);
+        if (oldFormB is not null)
+            await formsService.DeleteFormB(oldFormB, cancellationToken);
 
         if (!request.Draft)
             FormWorkflowRules.CompleteFormB(application);
 
-        await unitOfWork.Complete(cancellationToken);
         return TypedResults.Created();
     }
 

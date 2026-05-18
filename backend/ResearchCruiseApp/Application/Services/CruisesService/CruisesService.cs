@@ -1,35 +1,26 @@
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.CruisesService;
 
 internal class CruisesService(
     IYearBasedKeyGenerator yearBasedKeyGenerator,
-    ICruisesRepository cruisesRepository,
-    ICruiseApplicationsRepository cruiseApplicationsRepository,
-    IUnitOfWork unitOfWork
+    ApplicationDbContext dbContext
 ) : ICruisesService
 {
-    public Task PersistCruiseWithNewNumber(Cruise cruise, CancellationToken cancellationToken)
+    public async Task PersistCruiseWithNewNumber(Cruise cruise, CancellationToken cancellationToken)
     {
-        return unitOfWork.ExecuteIsolated(
-            async () =>
-            {
-                cruise.Number = await yearBasedKeyGenerator.GenerateKey(
-                    cruisesRepository,
-                    cancellationToken
-                );
-                cruise.Status = CruiseStatus.New;
-
-                await cruisesRepository.Add(cruise, cancellationToken);
-                await unitOfWork.Complete(cancellationToken);
-            },
+        cruise.Number = await yearBasedKeyGenerator.GenerateKey(
+            dbContext.Cruises,
             cancellationToken
         );
+        cruise.Status = CruiseStatus.New;
+
+        await dbContext.Cruises.AddAsync(cruise, cancellationToken);
     }
 
     public async Task CheckEditedCruisesManagersTeams(
@@ -41,7 +32,10 @@ internal class CruisesService(
         {
             foreach (var cruiseApplication in cruise.CruiseApplications)
             {
-                await cruiseApplicationsRepository.LoadFormA(cruiseApplication, cancellationToken);
+                await dbContext
+                    .Entry(cruiseApplication)
+                    .Reference(applicationEntry => applicationEntry.FormA)
+                    .LoadAsync(cancellationToken);
             }
 
             if (cruise.CruiseApplications.Any(app => app.FormA == null))
@@ -70,7 +64,7 @@ internal class CruisesService(
         CancellationToken cancellationToken
     )
     {
-        var cruises = await cruisesRepository.GetAll(cancellationToken);
+        var cruises = await dbContext.Cruises.ToListAsync(cancellationToken);
 
         return cruises
             .Where(cruise =>

@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.FormsFieldsService;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormsB;
 
-public class FormsBFactory(
+internal class FormsBFactory(
     IMapper mapper,
-    IUgUnitsRepository ugUnitsRepository,
-    IShipEquipmentsRepository shipEquipmentsRepository,
+    ApplicationDbContext dbContext,
     IFormsFieldsService formsFieldsService
 ) : IFormsBFactory
 {
@@ -80,7 +80,7 @@ public class FormsBFactory(
     {
         foreach (var ugTeamDto in formBDto.UgTeams)
         {
-            var ugUnit = await ugUnitsRepository.GetById(ugTeamDto.UgUnitId, cancellationToken);
+            var ugUnit = await dbContext.UgUnits.FindAsync([ugTeamDto.UgUnitId], cancellationToken);
             if (ugUnit is null)
                 continue;
 
@@ -276,8 +276,8 @@ public class FormsBFactory(
     {
         foreach (var shipEquipmentId in formBDto.ShipEquipmentsIds)
         {
-            var shipEquipment = await shipEquipmentsRepository.GetById(
-                shipEquipmentId,
+            var shipEquipment = await dbContext.ShipEquipments.FindAsync(
+                [shipEquipmentId],
                 cancellationToken
             );
             if (shipEquipment is null)

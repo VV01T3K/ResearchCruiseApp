@@ -1,15 +1,16 @@
 using System.Diagnostics;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Common.Constants;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.CruiseApplicationEvaluator;
 
-public class CruiseApplicationEvaluator(IUserEffectsRepository userEffectsRepository)
+internal class CruiseApplicationEvaluator(ApplicationDbContext dbContext)
     : ICruiseApplicationEvaluator
 {
     public async Task Evaluate(
@@ -170,9 +171,11 @@ public class CruiseApplicationEvaluator(IUserEffectsRepository userEffectsReposi
         CancellationToken cancellationToken
     )
     {
-        cruiseApplication.EffectsPoints = await userEffectsRepository.GetPointsSumByUserId(
-            cruiseApplication.FormA!.CruiseManagerId,
-            cancellationToken
-        );
+        cruiseApplication.EffectsPoints = await dbContext
+            .UserEffects.Where(userEffect =>
+                userEffect.UserId == cruiseApplication.FormA!.CruiseManagerId
+            )
+            .Select(userEffect => userEffect.Points)
+            .SumAsync(cancellationToken);
     }
 }

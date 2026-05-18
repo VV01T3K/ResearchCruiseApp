@@ -1,8 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Account;
 
@@ -21,7 +22,7 @@ public static class CurrentCruiseEffects
 
     private static async Task<Results<Ok<List<UserEffectDto>>, NotFound>> Get(
         ICurrentUserService currentUserService,
-        IUserEffectsRepository userEffectsRepository,
+        ApplicationDbContext dbContext,
         IMapper mapper,
         CancellationToken cancellationToken
     )
@@ -32,10 +33,11 @@ public static class CurrentCruiseEffects
             return TypedResults.NotFound();
         }
 
-        var userEffects = await userEffectsRepository.GetAllByUserIdWithCruiseApplication(
-            currentUserId.Value,
-            cancellationToken
-        );
+        var userEffects = await dbContext
+            .UserEffects.Include(userEffect => userEffect.Effect.FormC.CruiseApplication)
+            .Include(userEffect => userEffect.Effect.ResearchTask)
+            .Where(userEffect => userEffect.UserId == currentUserId.Value)
+            .ToListAsync(cancellationToken);
 
         return TypedResults.Ok(userEffects.Select(mapper.Map<UserEffectDto>).ToList());
     }

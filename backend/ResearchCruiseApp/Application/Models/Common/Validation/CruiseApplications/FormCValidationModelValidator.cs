@@ -1,7 +1,6 @@
 using FluentValidation;
 using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
 
 namespace ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 

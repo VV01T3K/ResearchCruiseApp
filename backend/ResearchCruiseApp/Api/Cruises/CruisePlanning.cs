@@ -1,9 +1,9 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Application.Models.DTOs.Cruises;
 using ResearchCruiseApp.Application.Services.CruisesService;
-using ResearchCruiseApp.Application.Services.Factories.CruiseBlockadePeriodDtos;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
@@ -69,7 +69,7 @@ public static class CruisePlanning
     private static async Task<Ok<List<CruiseBlockadePeriodDto>>> GetBlockades(
         int year,
         ICruisesService cruisesService,
-        ICruiseBlockadePeriodDtosFactory dtoFactory,
+        IMapper mapper,
         CancellationToken cancellationToken
     )
     {
@@ -77,14 +77,9 @@ public static class CruisePlanning
             year,
             cancellationToken
         );
-        var periods = new List<CruiseBlockadePeriodDto>();
-
-        foreach (var cruise in blockingCruises)
-        {
-            periods.Add(await dtoFactory.Create(cruise));
-        }
-
-        return TypedResults.Ok(periods);
+        return TypedResults.Ok(
+            blockingCruises.Select(mapper.Map<CruiseBlockadePeriodDto>).ToList()
+        );
     }
 
     private static Cruise? CreateCruise(

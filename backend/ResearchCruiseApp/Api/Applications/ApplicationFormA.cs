@@ -2,8 +2,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.Common.Validation.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
@@ -60,8 +58,7 @@ public static class ApplicationFormA
         IFormsAFactory formsAFactory,
         ICruisesService cruisesService,
         ICruiseApplicationsFactory cruiseApplicationsFactory,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         ICruiseApplicationEvaluator cruiseApplicationEvaluator,
         ICruiseApplicationsService cruiseApplicationsService,
         CancellationToken cancellationToken
@@ -85,29 +82,25 @@ public static class ApplicationFormA
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
-        var createResult = await unitOfWork.ExecuteIsolated<Result<CruiseApplication>>(
-            async () =>
-            {
-                var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
-                if (!formAResult.IsSuccess)
-                    return formAResult.Error!;
-
-                var application = cruiseApplicationsFactory.Create(
-                    formAResult.Data!,
-                    request.Form.Note,
-                    request.Draft
-                );
-                await cruiseApplicationsRepository.Add(application, cancellationToken);
-                await cruiseApplicationEvaluator.Evaluate(
-                    application,
-                    request.Draft,
-                    cancellationToken
-                );
-                await unitOfWork.Complete(cancellationToken);
-                return application;
-            },
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
             cancellationToken
         );
+
+        var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
+        if (!formAResult.IsSuccess)
+            return formAResult.Error!.ToProblemHttpResult();
+
+        var application = cruiseApplicationsFactory.Create(
+            formAResult.Data!,
+            request.Form.Note,
+            request.Draft
+        );
+        await dbContext.CruiseApplications.AddAsync(application, cancellationToken);
+        await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        Result<CruiseApplication> createResult = application;
         if (!createResult.IsSuccess)
             return createResult.Error!.ToProblemHttpResult();
 
@@ -148,9 +141,8 @@ public static class ApplicationFormA
         Guid applicationId,
         FormAWriteRequest request,
         IValidator<FormAValidationModel> validator,
-        ICruiseApplicationsRepository cruiseApplicationsRepository,
         IUserPermissionVerifier userPermissionVerifier,
-        IUnitOfWork unitOfWork,
+        ApplicationDbContext dbContext,
         IFormsAFactory formsAFactory,
         IFormsService formsService,
         ICruisesService cruisesService,
@@ -166,10 +158,10 @@ public static class ApplicationFormA
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
-        var application = await cruiseApplicationsRepository.GetByIdWithFormAContent(
-            applicationId,
-            cancellationToken
-        );
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormAContent()
+            .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Draft)
@@ -188,40 +180,33 @@ public static class ApplicationFormA
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
-        var result = await unitOfWork.ExecuteIsolated<Result>(
-            async () =>
-            {
-                var oldFormA = application.FormA;
-                var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
-                if (!formAResult.IsSuccess)
-                    return formAResult.Error!;
-
-                if (request.Draft)
-                    application.Note = request.Form.Note;
-                else
-                {
-                    application.Date = DateOnly.FromDateTime(DateTime.Now);
-                    application.Status = CruiseApplicationStatus.WaitingForSupervisor;
-                }
-                application.FormA = formAResult.Data!;
-
-                await cruiseApplicationEvaluator.Evaluate(
-                    application,
-                    request.Draft,
-                    cancellationToken
-                );
-                await unitOfWork.Complete(cancellationToken);
-
-                if (oldFormA is not null)
-                {
-                    await formsService.DeleteFormA(oldFormA, cancellationToken);
-                    await unitOfWork.Complete(cancellationToken);
-                }
-
-                return Result.Empty;
-            },
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
             cancellationToken
         );
+
+        var oldFormA = application.FormA;
+        var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
+        if (!formAResult.IsSuccess)
+            return formAResult.Error!.ToProblemHttpResult();
+
+        if (request.Draft)
+            application.Note = request.Form.Note;
+        else
+        {
+            application.Date = DateOnly.FromDateTime(DateTime.Now);
+            application.Status = CruiseApplicationStatus.WaitingForSupervisor;
+        }
+        application.FormA = formAResult.Data!;
+
+        await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
+
+        if (oldFormA is not null)
+            await formsService.DeleteFormA(oldFormA, cancellationToken);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        var result = Result.Empty;
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 

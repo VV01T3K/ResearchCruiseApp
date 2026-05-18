@@ -92,6 +92,7 @@ test('cruise list loads from the v2 route', async ({ page }) => {
 });
 
 test('cruise create flow uses v2 planning candidates and create route', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-05-16T12:00:00.000Z') });
   await seedAuthenticatedAdmin(page);
   let planningRequested = false;
   let createBody: unknown;

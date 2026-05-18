@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Services.CruisesService;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;

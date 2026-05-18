@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.Forms;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormBInitValuesDtos;
 
-public class FormBInitValuesDtosFactory(
-    IShipEquipmentsRepository shipEquipmentsRepository,
-    IMapper mapper
-) : IFormBInitValuesDtosFactory
+internal class FormBInitValuesDtosFactory(ApplicationDbContext dbContext, IMapper mapper)
+    : IFormBInitValuesDtosFactory
 {
     public async Task<FormBInitValuesDto> Create(CancellationToken cancellationToken)
     {
@@ -24,7 +23,11 @@ public class FormBInitValuesDtosFactory(
         CancellationToken cancellationToken
     )
     {
-        return (await shipEquipmentsRepository.GetAllActive(cancellationToken))
+        return (
+            await dbContext
+                .ShipEquipments.Where(equipment => equipment.IsActive)
+                .ToListAsync(cancellationToken)
+        )
             .Select(mapper.Map<ShipEquipmentDto>)
             .ToList();
     }

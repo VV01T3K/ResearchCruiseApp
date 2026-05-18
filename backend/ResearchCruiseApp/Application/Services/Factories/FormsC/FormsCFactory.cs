@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.EffectsService;
@@ -8,13 +8,13 @@ using ResearchCruiseApp.Application.Services.Factories.Photos;
 using ResearchCruiseApp.Application.Services.FormsFieldsService;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormsC;
 
-public class FormsCFactory(
+internal class FormsCFactory(
     IMapper mapper,
-    IUgUnitsRepository ugUnitsRepository,
-    IShipEquipmentsRepository shipEquipmentsRepository,
+    ApplicationDbContext dbContext,
     IFormsFieldsService formsFieldsService,
     IEffectsService effectsService,
     IPhotosFactory photosFactory
@@ -113,7 +113,7 @@ public class FormsCFactory(
     {
         foreach (var ugTeamDto in formCDto.UgTeams)
         {
-            var ugUnit = await ugUnitsRepository.GetById(ugTeamDto.UgUnitId, cancellationToken);
+            var ugUnit = await dbContext.UgUnits.FindAsync([ugTeamDto.UgUnitId], cancellationToken);
             if (ugUnit is null)
                 continue;
 
@@ -330,8 +330,8 @@ public class FormsCFactory(
     {
         foreach (var shipEquipmentId in formCDto.ShipEquipmentsIds)
         {
-            var shipEquipment = await shipEquipmentsRepository.GetById(
-                shipEquipmentId,
+            var shipEquipment = await dbContext.ShipEquipments.FindAsync(
+                [shipEquipmentId],
                 cancellationToken
             );
             if (shipEquipment is null)

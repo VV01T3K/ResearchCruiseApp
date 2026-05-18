@@ -10,14 +10,14 @@ using Microsoft.IdentityModel.Tokens;
 using NeoSmart.Utils;
 using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.Account;
 using ResearchCruiseApp.Application.Models.DTOs.Users;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Infrastructure.Services.Identity;
 
-public class IdentityService(
+internal class IdentityService(
     UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager,
     IEmailSender emailSender,
@@ -25,7 +25,7 @@ public class IdentityService(
     ICurrentUserService currentUserService,
     IMapper mapper,
     IConfiguration configuration,
-    IUnitOfWork unitOfWork
+    ApplicationDbContext dbContext
 ) : IIdentityService
 {
     public async Task<UserDto?> GetUserDtoById(Guid id)
@@ -396,21 +396,22 @@ public class IdentityService(
         CancellationToken cancellationToken
     )
     {
-        return await unitOfWork.ExecuteIsolated(
-            async () =>
-            {
-                var userRoles = await GetUserRolesNames(userId);
-                if (userRoles.Contains(RoleName.Administrator))
-                {
-                    var adminCount = await GetUsersCountInRole(RoleName.Administrator);
-                    if (adminCount <= 1)
-                        return Error.Conflict(conflictMessage);
-                }
-
-                return await mutation();
-            },
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable,
             cancellationToken
         );
+
+        var userRoles = await GetUserRolesNames(userId);
+        if (userRoles.Contains(RoleName.Administrator))
+        {
+            var adminCount = await GetUsersCountInRole(RoleName.Administrator);
+            if (adminCount <= 1)
+                return Error.Conflict(conflictMessage);
+        }
+
+        var result = await mutation();
+        await transaction.CommitAsync(cancellationToken);
+        return result;
     }
 
     private async Task<Result> UpdateUserCore(

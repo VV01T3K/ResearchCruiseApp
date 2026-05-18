@@ -21,8 +21,8 @@ Minimal API endpoint -> use-case slice -> EF Core/Identity/infrastructure
 
 ## Finalized Post-Cutover Direction
 
-The post-cutover cleanup keeps `/v2` as the live contract while finishing the
-remaining internal rewrite:
+The post-cutover cleanup keeps `/v2` as the live contract while completing the
+internal rewrite:
 
 - stable machine status codes replace localized workflow strings on the wire
 - draft/decision flags live in request bodies instead of query strings
@@ -30,8 +30,8 @@ remaining internal rewrite:
   single-role editor behavior
 - simple use cases read and write through `ApplicationDbContext` directly
 - pure workflow rules live under `Domain/Logic`
-- the broad legacy request path has been narrowed to the shared form
-  creation/replacement workflows rather than serving as the default for `/v2`
+- direct EF Core now owns the full live request path, including shared form
+  creation/replacement workflows
 - the anonymous supervisor-review code model remains in place for now; alternative
   token models stay a documented later decision
 
@@ -252,10 +252,9 @@ Keep or rewrite as focused services:
 - database seeding
 - OpenTelemetry and infrastructure configuration
 
-After the post-cutover cleanup pass, the remaining intentional legacy-shaped request
-path is limited to the shared Form A/B/C creation and replacement workflows. Simple
-catalog, detail, export, lifecycle, supervisor-review, current-publication, and
-role-management flows now use direct EF Core access from their use-case slices, with
+After the final convergence cleanup pass, the live request path uses direct EF Core
+throughout. Catalog, detail, export, lifecycle, supervisor-review, current-publication,
+role-management, and shared Form A/B/C workflows all use focused slices/services with
 query extensions kept only for reusable include graphs.
 
 ## Use-Case File Shape

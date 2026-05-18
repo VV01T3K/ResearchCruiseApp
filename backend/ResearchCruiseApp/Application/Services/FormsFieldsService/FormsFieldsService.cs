@@ -1,29 +1,19 @@
 ﻿using AutoMapper;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Models.Interfaces;
 using ResearchCruiseApp.Application.Services.Factories.Contracts;
 using ResearchCruiseApp.Application.Services.Factories.Permissions;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.FormsFieldsService;
 
-public class FormsFieldsService(
+internal class FormsFieldsService(
     IMapper mapper,
-    IPermissionsRepository permissionsRepository,
-    IResearchTasksRepository researchTasksRepository,
-    IContractsRepository contractsRepository,
-    IGuestUnitsRepository guestUnitsRepository,
-    IPublicationsRepository publicationsRepository,
-    ISpubTasksRepository spubTasksRepository,
-    ICrewMembersRepository crewMembersRepository,
-    IResearchEquipmentsRepository researchEquipmentsRepository,
-    IPortsRepository portsRepository,
-    ICruiseDaysDetailsRepository cruiseDaysDetailsRepository,
+    ApplicationDbContext dbContext,
     IPermissionsFactory permissionsFactory,
-    IContractsFactory contractsFactory,
-    IResearchAreaDescriptionsRepository researchAreaDescriptionsRepository,
-    IResearchAreasRepository researchAreasRepository
+    IContractsFactory contractsFactory
 ) : IFormsFieldsService
 {
     public async Task<Permission> GetUniquePermission(
@@ -35,7 +25,10 @@ public class FormsFieldsService(
         var newPermission = await permissionsFactory.Create(permissionDto);
         var oldPermission =
             Find(newPermission, permissionsInMemory)
-            ?? await permissionsRepository.Get(newPermission, cancellationToken);
+            ?? await dbContext.Permissions.FirstOrDefaultAsync(
+                Permission.EqualsByExpression(newPermission),
+                cancellationToken
+            );
 
         return oldPermission ?? newPermission;
     }
@@ -52,8 +45,8 @@ public class FormsFieldsService(
             && !string.IsNullOrEmpty(researchAreaDescriptionDto.DifferentName)
         )
         {
-            var researchArea = await researchAreasRepository.GetByName(
-                researchAreaDescriptionDto.DifferentName,
+            var researchArea = await dbContext.ResearchAreas.FirstOrDefaultAsync(
+                researchArea => researchArea.Name == researchAreaDescriptionDto.DifferentName,
                 cancellationToken
             );
 
@@ -72,8 +65,8 @@ public class FormsFieldsService(
         );
         var oldResearchAreaDescription =
             Find(newResearchAreaDescription, researchAreaDescriptionsInMemory)
-            ?? await researchAreaDescriptionsRepository.Get(
-                newResearchAreaDescription,
+            ?? await dbContext.ResearchAreaDescriptions.FirstOrDefaultAsync(
+                ResearchAreaDescription.EqualsByExpression(newResearchAreaDescription),
                 cancellationToken
             );
 
@@ -89,7 +82,10 @@ public class FormsFieldsService(
         var newResearchTask = mapper.Map<ResearchTask>(researchTaskDto);
         var oldResearchTask =
             Find(newResearchTask, researchTasksInMemory)
-            ?? await researchTasksRepository.Get(newResearchTask, cancellationToken);
+            ?? await dbContext.ResearchTasks.FirstOrDefaultAsync(
+                ResearchTask.EqualsByExpression(newResearchTask),
+                cancellationToken
+            );
 
         return oldResearchTask ?? newResearchTask;
     }
@@ -103,7 +99,9 @@ public class FormsFieldsService(
         var newContract = await contractsFactory.Create(contractDto);
         var oldContract =
             Find(newContract, contractsInMemory)
-            ?? await contractsRepository.Get(newContract, cancellationToken);
+            ?? await dbContext
+                .Contracts.Include(contract => contract.Files)
+                .FirstOrDefaultAsync(Contract.EqualsByExpression(newContract), cancellationToken);
 
         if (oldContract != null)
         {
@@ -148,7 +146,10 @@ public class FormsFieldsService(
         var newPublication = mapper.Map<Publication>(publicationDto);
         var oldPublication =
             Find(newPublication, publicationInMemory)
-            ?? await publicationsRepository.Get(newPublication, cancellationToken);
+            ?? await dbContext.Publications.FirstOrDefaultAsync(
+                Publication.EqualsByExpression(newPublication),
+                cancellationToken
+            );
 
         return oldPublication ?? newPublication;
     }
@@ -162,7 +163,10 @@ public class FormsFieldsService(
         var newSpubTask = mapper.Map<SpubTask>(spubTaskDto);
         var oldSpubTask =
             Find(newSpubTask, spubTasksInMemory)
-            ?? await spubTasksRepository.Get(newSpubTask, cancellationToken);
+            ?? await dbContext.SpubTasks.FirstOrDefaultAsync(
+                SpubTask.EqualsByExpression(newSpubTask),
+                cancellationToken
+            );
 
         return oldSpubTask ?? newSpubTask;
     }
@@ -176,7 +180,10 @@ public class FormsFieldsService(
         var newGuestUnit = mapper.Map<GuestUnit>(guestTeamDto);
         var oldGuestUnit =
             Find(newGuestUnit, guestUnitsInMemory)
-            ?? await guestUnitsRepository.Get(newGuestUnit, cancellationToken);
+            ?? await dbContext.GuestUnits.FirstOrDefaultAsync(
+                GuestUnit.EqualsByExpression(newGuestUnit),
+                cancellationToken
+            );
 
         return oldGuestUnit ?? newGuestUnit;
     }
@@ -190,7 +197,10 @@ public class FormsFieldsService(
         var newCrewMember = mapper.Map<CrewMember>(crewMemberDto);
         var oldCrewMember =
             Find(newCrewMember, crewMembersInMemory)
-            ?? await crewMembersRepository.Get(newCrewMember, cancellationToken);
+            ?? await dbContext.CrewMembers.FirstOrDefaultAsync(
+                CrewMember.EqualsByExpression(newCrewMember),
+                cancellationToken
+            );
 
         return oldCrewMember ?? newCrewMember;
     }
@@ -204,7 +214,10 @@ public class FormsFieldsService(
         var newResearchEquipment = mapper.Map<ResearchEquipment>(researchEquipmentDto);
         var oldResearchEquipment =
             Find(newResearchEquipment, researchEquipmentsInMemory)
-            ?? await researchEquipmentsRepository.Get(newResearchEquipment, cancellationToken);
+            ?? await dbContext.ResearchEquipments.FirstOrDefaultAsync(
+                ResearchEquipment.EqualsByExpression(newResearchEquipment),
+                cancellationToken
+            );
 
         return oldResearchEquipment ?? newResearchEquipment;
     }
@@ -217,7 +230,11 @@ public class FormsFieldsService(
     {
         var newPort = mapper.Map<Port>(portDto);
         var oldPort =
-            Find(newPort, portsInMemory) ?? await portsRepository.Get(newPort, cancellationToken);
+            Find(newPort, portsInMemory)
+            ?? await dbContext.Ports.FirstOrDefaultAsync(
+                Port.EqualsByExpression(newPort),
+                cancellationToken
+            );
 
         return oldPort ?? newPort;
     }
@@ -231,7 +248,10 @@ public class FormsFieldsService(
         var newCruiseDayDetails = mapper.Map<CruiseDayDetails>(cruiseDayDetailsDto);
         var oldCruiseDayDetails =
             Find(newCruiseDayDetails, cruiseDaysDetailsInMemory)
-            ?? await cruiseDaysDetailsRepository.Get(newCruiseDayDetails, cancellationToken);
+            ?? await dbContext.CruiseDaysDetails.FirstOrDefaultAsync(
+                CruiseDayDetails.EqualsByExpression(newCruiseDayDetails),
+                cancellationToken
+            );
 
         return oldCruiseDayDetails ?? newCruiseDayDetails;
     }

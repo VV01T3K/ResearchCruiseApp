@@ -6,17 +6,15 @@ next recommended work stay easy to recover.
 
 ## Current Status
 
-Cutover complete, with the follow-up internal cleanup now substantially completed on
-the live `/v2` surface. The API now uses stable workflow status codes, body-based
-workflow commands, dedicated role operations, pure workflow rules under
-`Domain/Logic`, and direct EF usage across the ordinary `/v2` slices. The remaining
-legacy-shaped request-path work is concentrated in the shared Form A/B/C
-creation/replacement workflows instead of being the default architecture.
+Cutover complete, with the follow-up internal cleanup now completed on the live `/v2`
+surface. The API now uses stable workflow status codes, body-based workflow commands,
+dedicated role operations, pure workflow rules under `Domain/Logic`, and direct EF
+usage across the full request path, including the shared Form A/B/C workflows.
 
 ## Active Slice
 
-Backend v2 internal cleanup pass: finish the remaining request-path simplification
-after the v1 runtime and MediatR path retirement.
+No active rewrite slice remains. Later work should come from the deferred product
+decision ledger rather than from unfinished internal migration tasks.
 
 ## Decisions Made
 
@@ -113,14 +111,15 @@ after the v1 runtime and MediatR path retirement.
   users without changing the current single-role frontend workflow yet.
 - Keep anonymous supervisor review on the current stored-code model during this pass
   and document later alternatives instead of changing public-link semantics now.
-- Prefer direct `ApplicationDbContext` access in simple slices; keep reusable include
-  graphs as query extensions rather than repository ceremony.
+- Prefer direct `ApplicationDbContext` access in request-path slices; keep reusable
+  include graphs as query extensions rather than repository ceremony.
 - Move publication retention and role-assignment permission decisions into
   `Domain/Logic` so those preserved rules are explicit and testable.
 - Remove the user-management request adapters from `/v2`; create/update profile calls
   now pass their native contract data directly into identity orchestration.
-- Reduce repository and unit-of-work usage in `/v2` to the shared form
-  create/replace workflows that still need broader orchestration.
+- Remove the repository-per-entity and unit-of-work layers once the shared form
+  workflows move onto direct EF orchestration. Completed in the final convergence
+  cleanup.
 
 ## Files Changed By Slice
 
@@ -136,6 +135,17 @@ after the v1 runtime and MediatR path retirement.
 - `docs/backend-rewrite-v2-plan-v2.md`
 - `docs/backend-rewrite-v2-progress.md`
 - `docs/backend-rewrite-v2-deferred-decisions.md`
+
+### Final Convergence Cleanup Slice
+
+- Replaced the remaining repository/unit-of-work request paths with direct EF usage,
+  including shared Form A/B/C creation, replacement, cleanup, and effects workflows.
+- Removed the generic repository abstractions, per-entity repositories, and
+  unit-of-work implementation from the live backend.
+- Flattened the last purely mechanical DTO helpers while keeping behavior-bearing
+  form and response builders intact.
+- Added focused backend tests for year-based cruise numbering and shared-entity
+  retention during form replacement cleanup.
 
 ### Foundation Starting Slice
 

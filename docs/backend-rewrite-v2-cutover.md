@@ -16,8 +16,9 @@ moved to `/v2`, and the planned v1 cutover cleanup is now complete.
   v2 OpenAPI remains the documentation source.
 - The legacy MediatR registration, package reference, and `Application/UseCases`
   request path have been removed.
-- Shared repositories, factories, and domain/application services remain because the
-  live v2 implementation still uses them.
+- The old repository-per-entity and unit-of-work layers have been removed from the
+  live backend; focused services and mapping helpers remain only where they still
+  encode real behavior.
 
 ### Legacy frontend cleanup completed
 
@@ -64,6 +65,6 @@ moved to `/v2`, and the planned v1 cutover cleanup is now complete.
 ## Assumptions
 
 - There are no non-frontend consumers that require continued v1 compatibility.
-- Repositories, factories, and shared services stay until later review proves they are
-  unused; cutover deletes the legacy request path first.
+- Focused factories and shared services remain only where they encode real behavior;
+  the generic repository and unit-of-work layers are no longer part of the live tree.
 - Deferred product redesigns remain separate from the cutover cleanup sequence.

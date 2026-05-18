@@ -4,11 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
-using ResearchCruiseApp.Infrastructure.Persistence.Repositories;
 using ResearchCruiseApp.Infrastructure.Services;
 using ResearchCruiseApp.Infrastructure.Services.Identity;
 
@@ -97,62 +94,5 @@ public static class DependencyInjection
         );
 
         services.AddScoped<ApplicationDbContextInitializer>();
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services
-            .AddScoped<IFormsARepository, FormsARepository>()
-            .AddScoped<IPermissionsRepository, PermissionsRepository>()
-            .AddScoped<IResearchAreasRepository, ResearchAreasRepository>()
-            .AddScoped<IResearchAreaDescriptionsRepository, ResearchAreaDescriptionsRepository>()
-            .AddScoped<IContractsRepository, ContractsRepository>()
-            .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()
-            .AddScoped<IPublicationsRepository, PublicationsRepository>()
-            .AddScoped<IUgUnitsRepository, UgUnitsRepository>()
-            .AddScoped<IGuestUnitsRepository, GuestUnitsRepository>()
-            .AddScoped<ISpubTasksRepository, SpubTasksRepository>()
-            .AddScoped<IFormAResearchTasksRepository, FormAResearchTasksRepository>()
-            .AddScoped<IFormAContractsRepository, FormAContractsRepository>()
-            .AddScoped<IFormAUgUnitsRepository, FormAUgUnitsRepository>()
-            .AddScoped<IFormAGuestUnitsRepository, FormAGuestUnitsRepository>()
-            .AddScoped<IFormAPublicationsRepository, FormAPublicationsRepository>()
-            .AddScoped<IFormASpubTasksRepository, FormASpubTasksRepository>()
-            .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()
-            .AddScoped<ICruisesRepository, CruisesRepository>()
-            .AddScoped<IFormsBRepository, FormsBRepository>()
-            .AddScoped<IFormBUgUnitsRepository, FormBUgUnitsRepository>()
-            .AddScoped<IFormBGuestUnitsRepository, FormBGuestUnitsRepository>()
-            .AddScoped<
-                IFormBShortResearchEquipmentsRepository,
-                FormBShortResearchEquipmentsRepository
-            >()
-            .AddScoped<
-                IFormBLongResearchEquipmentsRepository,
-                FormBLongResearchEquipmentsRepository
-            >()
-            .AddScoped<IFormBPortsRepository, FormBPortsRepository>()
-            .AddScoped<IFormBResearchEquipmentsRepository, FormBResearchEquipmentsRepository>()
-            .AddScoped<ICrewMembersRepository, CrewMembersRepository>()
-            .AddScoped<IResearchEquipmentsRepository, ResearchEquipmentsRepository>()
-            .AddScoped<IPortsRepository, PortsRepository>()
-            .AddScoped<ICruiseDaysDetailsRepository, CruiseDaysDetailsRepository>()
-            .AddScoped<IShipEquipmentsRepository, ShipEquipmentsRepository>()
-            .AddScoped<IFormsCRepository, FormsCRepository>()
-            .AddScoped<IFormCUgUnitsRepository, FormCUgUnitsRepository>()
-            .AddScoped<IFormCGuestUnitsRepository, FormCGuestUnitsRepository>()
-            .AddScoped<
-                IFormCShortResearchEquipmentsRepository,
-                FormCShortResearchEquipmentsRepository
-            >()
-            .AddScoped<
-                IFormCLongResearchEquipmentsRepository,
-                FormCLongResearchEquipmentsRepository
-            >()
-            .AddScoped<IFormCPortsRepository, FormCPortsRepository>()
-            .AddScoped<IFormCResearchEquipmentsRepository, FormCResearchEquipmentsRepository>()
-            .AddScoped<ICollectedSamplesRepository, CollectedSamplesRepository>()
-            .AddScoped<IPhotosRepository, PhotosRepository>()
-            .AddScoped<IResearchTaskEffectsRepository, ResearchTaskEffectsRepository>()
-            .AddScoped<IUserEffectsRepository, UserEffectsRepository>()
-            .AddScoped<IUserPublicationsRepository, UserPublicationsRepository>();
     }
 }

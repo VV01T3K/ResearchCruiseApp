@@ -1,48 +1,12 @@
-﻿using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Services.EffectsService;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.FormsService;
 
-public class FormsService(
-    IEffectsService effectsService,
-    IPermissionsRepository permissionsRepository,
-    IFormAResearchTasksRepository formAResearchTasksRepository,
-    IResearchTasksRepository researchTasksRepository,
-    IFormAContractsRepository formAContractsRepository,
-    IResearchAreaDescriptionsRepository researchAreaDescriptionsRepository,
-    IFormAUgUnitsRepository formAUgUnitsRepository,
-    IFormAGuestUnitsRepository formAGuestUnitsRepository,
-    IFormAPublicationsRepository formAPublicationsRepository,
-    IPublicationsRepository publicationsRepository,
-    IFormASpubTasksRepository formASpubTasksRepository,
-    IFormBUgUnitsRepository formBUgUnitsRepository,
-    IFormCUgUnitsRepository formCUgUnitsRepository,
-    IFormBGuestUnitsRepository formBGuestUnitsRepository,
-    IFormCGuestUnitsRepository formCGuestUnitsRepository,
-    IGuestUnitsRepository guestUnitsRepository,
-    ICrewMembersRepository crewMembersRepository,
-    IFormBShortResearchEquipmentsRepository formBShortResearchEquipmentsRepository,
-    IFormCShortResearchEquipmentsRepository formCShortResearchEquipmentsRepository,
-    IResearchEquipmentsRepository researchEquipmentsRepository,
-    IFormBLongResearchEquipmentsRepository formBLongResearchEquipmentsRepository,
-    IFormCLongResearchEquipmentsRepository formCLongResearchEquipmentsRepository,
-    IFormBPortsRepository formBPortsRepository,
-    IFormCPortsRepository formCPortsRepository,
-    IPortsRepository portsRepository,
-    ICruiseDaysDetailsRepository cruiseDaysDetailsRepository,
-    IFormBResearchEquipmentsRepository formBResearchEquipmentsRepository,
-    IFormCResearchEquipmentsRepository formCResearchEquipmentsRepository,
-    IContractsRepository contractsRepository,
-    ISpubTasksRepository spubTasksRepository,
-    ICollectedSamplesRepository collectedSamplesRepository,
-    IPhotosRepository photosRepository,
-    IFormsARepository formsARepository,
-    IFormsBRepository formsBRepository,
-    IFormsCRepository formsCRepository,
-    IUnitOfWork unitOfWork
-) : IFormsService
+internal class FormsService(IEffectsService effectsService, ApplicationDbContext dbContext)
+    : IFormsService
 {
     public async Task DeleteFormA(FormA formA, CancellationToken cancellationToken)
     {
@@ -55,8 +19,7 @@ public class FormsService(
         await DeleteFormAPublications(formA, cancellationToken);
         await DeleteFormASpubTasks(formA, cancellationToken);
 
-        formsARepository.Delete(formA);
-        await unitOfWork.Complete(cancellationToken);
+        dbContext.FormsA.Remove(formA);
     }
 
     public async Task DeleteFormB(FormB formB, CancellationToken cancellationToken)
@@ -72,8 +35,7 @@ public class FormsService(
         await DeleteFormBResearchEquipments(formB, cancellationToken);
         RemoveShipEquipments(formB);
 
-        formsBRepository.Delete(formB);
-        await unitOfWork.Complete(cancellationToken);
+        dbContext.FormsB.Remove(formB);
     }
 
     public async Task DeleteFormC(FormC formC, CancellationToken cancellationToken)
@@ -94,8 +56,7 @@ public class FormsService(
         DeleteCollectedSamples(formC);
         DeletePhotos(formC);
 
-        formsCRepository.Delete(formC);
-        await unitOfWork.Complete(cancellationToken);
+        dbContext.FormsC.Remove(formC);
     }
 
     private async Task DeletePermissions(FormA formA, CancellationToken cancellationToken)
@@ -103,13 +64,13 @@ public class FormsService(
         foreach (var permission in formA.Permissions)
         {
             if (
-                await permissionsRepository.CountFormsA(permission, cancellationToken) == 1
+                await CountFormsA(permission, cancellationToken) == 1
                 && // The one to be deleted
-                await permissionsRepository.CountFormsB(permission, cancellationToken) == 0
-                && await permissionsRepository.CountFormsC(permission, cancellationToken) == 0
+                await CountFormsB(permission, cancellationToken) == 0
+                && await CountFormsC(permission, cancellationToken) == 0
             )
             {
-                permissionsRepository.Delete(permission);
+                dbContext.Permissions.Remove(permission);
             }
         }
 
@@ -121,19 +82,15 @@ public class FormsService(
         foreach (var formAResearchTask in formA.FormAResearchTasks)
         {
             var researchTask = formAResearchTask.ResearchTask;
-            formAResearchTasksRepository.Delete(formAResearchTask);
+            dbContext.FormAResearchTasks.Remove(formAResearchTask);
 
             if (
-                await researchTasksRepository.CountUniqueFormsA(researchTask, cancellationToken)
-                    == 1
+                await CountUniqueFormsA(researchTask, cancellationToken) == 1
                 && // The one to ne deleted
-                await researchTasksRepository.CountResearchTaskEffects(
-                    researchTask,
-                    cancellationToken
-                ) == 0
+                await CountResearchTaskEffects(researchTask, cancellationToken) == 0
             )
             {
-                researchTasksRepository.Delete(researchTask);
+                dbContext.ResearchTasks.Remove(researchTask);
             }
         }
     }
@@ -143,15 +100,15 @@ public class FormsService(
         foreach (var formAContract in formA.FormAContracts)
         {
             var contract = formAContract.Contract;
-            formAContractsRepository.Delete(formAContract);
+            dbContext.Set<FormAContract>().Remove(formAContract);
 
             if (
-                await contractsRepository.CountDistinctFormsA(contract, cancellationToken) == 1
+                await CountDistinctFormsA(contract, cancellationToken) == 1
                 && // The one to be deleted
-                await contractsRepository.CountDistinctFormsC(contract, cancellationToken) == 0
+                await CountDistinctFormsC(contract, cancellationToken) == 0
             )
             {
-                contractsRepository.Delete(contract);
+                dbContext.Contracts.Remove(contract);
             }
         }
     }
@@ -164,17 +121,11 @@ public class FormsService(
         foreach (var researchAreaDescription in formA.ResearchAreaDescriptions)
         {
             if (
-                await researchAreaDescriptionsRepository.CountFormsA(
-                    researchAreaDescription,
-                    cancellationToken
-                ) == 1 // The one to be deleted
-                && await researchAreaDescriptionsRepository.CountFormsC(
-                    researchAreaDescription,
-                    cancellationToken
-                ) == 0
+                await CountFormsA(researchAreaDescription, cancellationToken) == 1
+                && await CountFormsC(researchAreaDescription, cancellationToken) == 0
             )
             {
-                researchAreaDescriptionsRepository.Delete(researchAreaDescription);
+                dbContext.ResearchAreaDescriptions.Remove(researchAreaDescription);
             }
         }
 
@@ -185,7 +136,7 @@ public class FormsService(
     {
         foreach (var formAUgUnit in formA.FormAUgUnits)
         {
-            formAUgUnitsRepository.Delete(formAUgUnit);
+            dbContext.FormAUgUnits.Remove(formAUgUnit);
         }
     }
 
@@ -194,17 +145,16 @@ public class FormsService(
         foreach (var formAGuestUnit in formA.FormAGuestUnits)
         {
             var guestUnit = formAGuestUnit.GuestUnit;
-            formAGuestUnitsRepository.Delete(formAGuestUnit);
+            dbContext.FormAGuestUnits.Remove(formAGuestUnit);
 
             if (
-                await guestUnitsRepository.CountUniqueFormsA(guestUnit, cancellationToken) == 1
+                await CountUniqueFormsA(guestUnit, cancellationToken) == 1
                 && // The one to be deleted
-                await guestUnitsRepository.CountFormBGuestUnits(guestUnit, cancellationToken) == 0
-                && await guestUnitsRepository.CountFormCGuestUnits(guestUnit, cancellationToken)
-                    == 0
+                await CountFormBGuestUnits(guestUnit, cancellationToken) == 0
+                && await CountFormCGuestUnits(guestUnit, cancellationToken) == 0
             )
             {
-                guestUnitsRepository.Delete(guestUnit);
+                dbContext.GuestUnits.Remove(guestUnit);
             }
         }
     }
@@ -214,16 +164,15 @@ public class FormsService(
         foreach (var formAPublication in formA.FormAPublications)
         {
             var publication = formAPublication.Publication;
-            formAPublicationsRepository.Delete(formAPublication);
+            dbContext.FormAPublications.Remove(formAPublication);
 
             if (
-                await publicationsRepository.CountUniqueFormsA(publication, cancellationToken) == 1
+                await CountUniqueFormsA(publication, cancellationToken) == 1
                 && // The one to be deleted
-                await publicationsRepository.CountUserPublications(publication, cancellationToken)
-                    == 0
+                await CountUserPublications(publication, cancellationToken) == 0
             )
             {
-                publicationsRepository.Delete(publication);
+                dbContext.Publications.Remove(publication);
             }
         }
     }
@@ -233,15 +182,15 @@ public class FormsService(
         foreach (var formASpubTask in formA.FormASpubTasks)
         {
             var spubTask = formASpubTask.SpubTask;
-            formASpubTasksRepository.Delete(formASpubTask);
+            dbContext.FormASpubTasks.Remove(formASpubTask);
 
             if (
-                await spubTasksRepository.CountUniqueFormsA(spubTask, cancellationToken) == 1
+                await CountUniqueFormsA(spubTask, cancellationToken) == 1
                 && // The one to be deleted
-                await spubTasksRepository.CountUniqueFormsC(spubTask, cancellationToken) == 0
+                await CountUniqueFormsC(spubTask, cancellationToken) == 0
             )
             {
-                spubTasksRepository.Delete(spubTask);
+                dbContext.SpubTasks.Remove(spubTask);
             }
         }
     }
@@ -251,13 +200,13 @@ public class FormsService(
         foreach (var permission in formB.Permissions)
         {
             if (
-                await permissionsRepository.CountFormsA(permission, cancellationToken) == 0
-                && await permissionsRepository.CountFormsB(permission, cancellationToken) == 1
+                await CountFormsA(permission, cancellationToken) == 0
+                && await CountFormsB(permission, cancellationToken) == 1
                 && // The one to be deleted
-                await permissionsRepository.CountFormsC(permission, cancellationToken) == 0
+                await CountFormsC(permission, cancellationToken) == 0
             )
             {
-                permissionsRepository.Delete(permission);
+                dbContext.Permissions.Remove(permission);
             }
         }
 
@@ -268,7 +217,7 @@ public class FormsService(
     {
         foreach (var formBUgUnit in formB.FormBUgUnits)
         {
-            formBUgUnitsRepository.Delete(formBUgUnit);
+            dbContext.FormBUgUnits.Remove(formBUgUnit);
         }
     }
 
@@ -277,16 +226,16 @@ public class FormsService(
         foreach (var formBGuestUnit in formB.FormBGuestUnits)
         {
             var guestUnit = formBGuestUnit.GuestUnit;
-            formBGuestUnitsRepository.Delete(formBGuestUnit);
+            dbContext.FormBGuestUnits.Remove(formBGuestUnit);
 
             if (
-                await guestUnitsRepository.CountFormAGuestUnits(guestUnit, cancellationToken) == 0
-                && await guestUnitsRepository.CountUniqueFormsB(guestUnit, cancellationToken) == 1
+                await CountFormAGuestUnits(guestUnit, cancellationToken) == 0
+                && await CountUniqueFormsB(guestUnit, cancellationToken) == 1
                 && // The one to be deleted
-                await guestUnitsRepository.CountFormCGuestUnits(guestUnit, cancellationToken) == 0
+                await CountFormCGuestUnits(guestUnit, cancellationToken) == 0
             )
             {
-                guestUnitsRepository.Delete(guestUnit);
+                dbContext.GuestUnits.Remove(guestUnit);
             }
         }
     }
@@ -295,8 +244,8 @@ public class FormsService(
     {
         foreach (var crewMember in formB.CrewMembers)
         {
-            if (await crewMembersRepository.CountUniqueFormsB(crewMember, cancellationToken) == 1) // The one to be deleted
-                crewMembersRepository.Delete(crewMember);
+            if (await CountUniqueFormsB(crewMember, cancellationToken) == 1) // The one to be deleted
+                dbContext.CrewMembers.Remove(crewMember);
         }
 
         formB.CrewMembers.Clear();
@@ -310,20 +259,14 @@ public class FormsService(
         foreach (var formBShortResearchEquipment in formB.FormBShortResearchEquipments)
         {
             var researchEquipment = formBShortResearchEquipment.ResearchEquipment;
-            formBShortResearchEquipmentsRepository.Delete(formBShortResearchEquipment);
+            dbContext.FormBShortResearchEquipments.Remove(formBShortResearchEquipment);
 
             if (
-                await researchEquipmentsRepository.CountFormCAssociations(
-                    researchEquipment,
-                    cancellationToken
-                ) == 0
-                && await researchEquipmentsRepository.CountUniqueFormsB(
-                    researchEquipment,
-                    cancellationToken
-                ) == 1
+                await CountFormCAssociations(researchEquipment, cancellationToken) == 0
+                && await CountUniqueFormsB(researchEquipment, cancellationToken) == 1
             ) // The one to be deleted
             {
-                researchEquipmentsRepository.Delete(researchEquipment);
+                dbContext.ResearchEquipments.Remove(researchEquipment);
             }
         }
     }
@@ -336,20 +279,14 @@ public class FormsService(
         foreach (var formBLongResearchEquipment in formB.FormBLongResearchEquipments)
         {
             var researchEquipment = formBLongResearchEquipment.ResearchEquipment;
-            formBLongResearchEquipmentsRepository.Delete(formBLongResearchEquipment);
+            dbContext.FormBLongResearchEquipments.Remove(formBLongResearchEquipment);
 
             if (
-                await researchEquipmentsRepository.CountFormCAssociations(
-                    researchEquipment,
-                    cancellationToken
-                ) == 0
-                && await researchEquipmentsRepository.CountUniqueFormsB(
-                    researchEquipment,
-                    cancellationToken
-                ) == 1
+                await CountFormCAssociations(researchEquipment, cancellationToken) == 0
+                && await CountUniqueFormsB(researchEquipment, cancellationToken) == 1
             ) // The one to be deleted
             {
-                researchEquipmentsRepository.Delete(researchEquipment);
+                dbContext.ResearchEquipments.Remove(researchEquipment);
             }
         }
     }
@@ -359,14 +296,14 @@ public class FormsService(
         foreach (var formBPort in formB.FormBPorts)
         {
             var port = formBPort.Port;
-            formBPortsRepository.Delete(formBPort);
+            dbContext.FormBPorts.Remove(formBPort);
 
             if (
-                await portsRepository.CountFormCPorts(port, cancellationToken) == 0
-                && await portsRepository.CountUniqueFormsB(port, cancellationToken) == 1
+                await CountFormCPorts(port, cancellationToken) == 0
+                && await CountUniqueFormsB(port, cancellationToken) == 1
             ) // The one to be deleted
             {
-                portsRepository.Delete(port);
+                dbContext.Ports.Remove(port);
             }
         }
     }
@@ -376,17 +313,11 @@ public class FormsService(
         foreach (var cruiseDayDetails in formB.CruiseDaysDetails)
         {
             if (
-                await cruiseDaysDetailsRepository.CountUniqueFormsC(
-                    cruiseDayDetails,
-                    cancellationToken
-                ) == 0
-                && await cruiseDaysDetailsRepository.CountUniqueFormsB(
-                    cruiseDayDetails,
-                    cancellationToken
-                ) == 1
+                await CountUniqueFormsC(cruiseDayDetails, cancellationToken) == 0
+                && await CountUniqueFormsB(cruiseDayDetails, cancellationToken) == 1
             ) // The one to be deleted
             {
-                cruiseDaysDetailsRepository.Delete(cruiseDayDetails);
+                dbContext.CruiseDaysDetails.Remove(cruiseDayDetails);
             }
         }
 
@@ -401,20 +332,14 @@ public class FormsService(
         foreach (var formBResearchEquipment in formB.FormBResearchEquipments)
         {
             var researchEquipment = formBResearchEquipment.ResearchEquipment;
-            formBResearchEquipmentsRepository.Delete(formBResearchEquipment);
+            dbContext.FormBResearchEquipments.Remove(formBResearchEquipment);
 
             if (
-                await researchEquipmentsRepository.CountFormCAssociations(
-                    researchEquipment,
-                    cancellationToken
-                ) == 0
-                && await researchEquipmentsRepository.CountUniqueFormsB(
-                    researchEquipment,
-                    cancellationToken
-                ) == 1
+                await CountFormCAssociations(researchEquipment, cancellationToken) == 0
+                && await CountUniqueFormsB(researchEquipment, cancellationToken) == 1
             ) // The one to be deleted
             {
-                researchEquipmentsRepository.Delete(researchEquipment);
+                dbContext.ResearchEquipments.Remove(researchEquipment);
             }
         }
     }
@@ -429,12 +354,12 @@ public class FormsService(
         foreach (var permission in formC.Permissions)
         {
             if (
-                await permissionsRepository.CountFormsA(permission, cancellationToken) == 0
-                && await permissionsRepository.CountFormsB(permission, cancellationToken) == 0
-                && await permissionsRepository.CountFormsC(permission, cancellationToken) == 1
+                await CountFormsA(permission, cancellationToken) == 0
+                && await CountFormsB(permission, cancellationToken) == 0
+                && await CountFormsC(permission, cancellationToken) == 1
             ) // The one to be deleted
             {
-                permissionsRepository.Delete(permission);
+                dbContext.Permissions.Remove(permission);
             }
         }
 
@@ -445,7 +370,7 @@ public class FormsService(
     {
         foreach (var formCUgUnit in formC.FormCUgUnits)
         {
-            formCUgUnitsRepository.Delete(formCUgUnit);
+            dbContext.FormCUgUnits.Remove(formCUgUnit);
         }
     }
 
@@ -454,16 +379,15 @@ public class FormsService(
         foreach (var formCGuestUnit in formC.FormCGuestUnits)
         {
             var guestUnit = formCGuestUnit.GuestUnit;
-            formCGuestUnitsRepository.Delete(formCGuestUnit);
+            dbContext.FormGuestUnits.Remove(formCGuestUnit);
 
             if (
-                await guestUnitsRepository.CountFormAGuestUnits(guestUnit, cancellationToken) == 0
-                && await guestUnitsRepository.CountFormBGuestUnits(guestUnit, cancellationToken)
-                    == 0
-                && await guestUnitsRepository.CountUniqueFormsC(guestUnit, cancellationToken) == 1
+                await CountFormAGuestUnits(guestUnit, cancellationToken) == 0
+                && await CountFormBGuestUnits(guestUnit, cancellationToken) == 0
+                && await CountUniqueFormsC(guestUnit, cancellationToken) == 1
             ) // The one to be deleted
             {
-                guestUnitsRepository.Delete(guestUnit);
+                dbContext.GuestUnits.Remove(guestUnit);
             }
         }
     }
@@ -473,11 +397,11 @@ public class FormsService(
         foreach (var contract in formC.Contracts)
         {
             if (
-                await contractsRepository.CountFormAContracts(contract, cancellationToken) == 0
-                && await contractsRepository.CountDistinctFormsC(contract, cancellationToken) == 1
+                await CountFormAContracts(contract, cancellationToken) == 0
+                && await CountDistinctFormsC(contract, cancellationToken) == 1
             ) // The one to be deleted
             {
-                contractsRepository.Delete(contract);
+                dbContext.Contracts.Remove(contract);
             }
         }
 
@@ -492,17 +416,11 @@ public class FormsService(
         foreach (var researchAreaDescription in formC.ResearchAreaDescriptions)
         {
             if (
-                await researchAreaDescriptionsRepository.CountFormsC(
-                    researchAreaDescription,
-                    cancellationToken
-                ) == 1 // The one to be deleted
-                && await researchAreaDescriptionsRepository.CountFormsA(
-                    researchAreaDescription,
-                    cancellationToken
-                ) == 0
+                await CountFormsC(researchAreaDescription, cancellationToken) == 1
+                && await CountFormsA(researchAreaDescription, cancellationToken) == 0
             )
             {
-                researchAreaDescriptionsRepository.Delete(researchAreaDescription);
+                dbContext.ResearchAreaDescriptions.Remove(researchAreaDescription);
             }
         }
 
@@ -514,11 +432,11 @@ public class FormsService(
         foreach (var spubTask in formC.SpubTasks)
         {
             if (
-                await spubTasksRepository.CountFormASpubTasks(spubTask, cancellationToken) == 0
-                && await spubTasksRepository.CountUniqueFormsC(spubTask, cancellationToken) == 1
+                await CountFormASpubTasks(spubTask, cancellationToken) == 0
+                && await CountUniqueFormsC(spubTask, cancellationToken) == 1
             ) // The one to be deleted
             {
-                spubTasksRepository.Delete(spubTask);
+                dbContext.SpubTasks.Remove(spubTask);
             }
         }
 
@@ -533,20 +451,14 @@ public class FormsService(
         foreach (var formCShortResearchEquipment in formC.FormCShortResearchEquipments)
         {
             var researchEquipment = formCShortResearchEquipment.ResearchEquipment;
-            formCShortResearchEquipmentsRepository.Delete(formCShortResearchEquipment);
+            dbContext.FormCShortResearchEquipments.Remove(formCShortResearchEquipment);
 
             if (
-                await researchEquipmentsRepository.CountFormBAssociations(
-                    researchEquipment,
-                    cancellationToken
-                ) == 0
-                && await researchEquipmentsRepository.CountUniqueFormsC(
-                    researchEquipment,
-                    cancellationToken
-                ) == 1
+                await CountFormBAssociations(researchEquipment, cancellationToken) == 0
+                && await CountUniqueFormsC(researchEquipment, cancellationToken) == 1
             ) // The one to be deleted
             {
-                researchEquipmentsRepository.Delete(researchEquipment);
+                dbContext.ResearchEquipments.Remove(researchEquipment);
             }
         }
     }
@@ -559,20 +471,14 @@ public class FormsService(
         foreach (var formCLongResearchEquipment in formC.FormCLongResearchEquipments)
         {
             var researchEquipment = formCLongResearchEquipment.ResearchEquipment;
-            formCLongResearchEquipmentsRepository.Delete(formCLongResearchEquipment);
+            dbContext.FormCLongResearchEquipments.Remove(formCLongResearchEquipment);
 
             if (
-                await researchEquipmentsRepository.CountFormBAssociations(
-                    researchEquipment,
-                    cancellationToken
-                ) == 0
-                && await researchEquipmentsRepository.CountUniqueFormsC(
-                    researchEquipment,
-                    cancellationToken
-                ) == 1
+                await CountFormBAssociations(researchEquipment, cancellationToken) == 0
+                && await CountUniqueFormsC(researchEquipment, cancellationToken) == 1
             ) // The one to be deleted
             {
-                researchEquipmentsRepository.Delete(researchEquipment);
+                dbContext.ResearchEquipments.Remove(researchEquipment);
             }
         }
     }
@@ -582,14 +488,14 @@ public class FormsService(
         foreach (var formCPort in formC.FormCPorts)
         {
             var port = formCPort.Port;
-            formCPortsRepository.Delete(formCPort);
+            dbContext.FormCPorts.Remove(formCPort);
 
             if (
-                await portsRepository.CountFormBPorts(port, cancellationToken) == 0
-                && await portsRepository.CountUniqueFormsC(port, cancellationToken) == 1
+                await CountFormBPorts(port, cancellationToken) == 0
+                && await CountUniqueFormsC(port, cancellationToken) == 1
             ) // The one to be deleted
             {
-                portsRepository.Delete(port);
+                dbContext.Ports.Remove(port);
             }
         }
     }
@@ -599,17 +505,11 @@ public class FormsService(
         foreach (var cruiseDayDetails in formC.CruiseDaysDetails)
         {
             if (
-                await cruiseDaysDetailsRepository.CountUniqueFormsB(
-                    cruiseDayDetails,
-                    cancellationToken
-                ) == 0
-                && await cruiseDaysDetailsRepository.CountUniqueFormsC(
-                    cruiseDayDetails,
-                    cancellationToken
-                ) == 1
+                await CountUniqueFormsB(cruiseDayDetails, cancellationToken) == 0
+                && await CountUniqueFormsC(cruiseDayDetails, cancellationToken) == 1
             ) // The one to be deleted
             {
-                cruiseDaysDetailsRepository.Delete(cruiseDayDetails);
+                dbContext.CruiseDaysDetails.Remove(cruiseDayDetails);
             }
         }
 
@@ -624,20 +524,14 @@ public class FormsService(
         foreach (var formCResearchEquipment in formC.FormCResearchEquipments)
         {
             var researchEquipment = formCResearchEquipment.ResearchEquipment;
-            formCResearchEquipmentsRepository.Delete(formCResearchEquipment);
+            dbContext.FormCResearchEquipments.Remove(formCResearchEquipment);
 
             if (
-                await researchEquipmentsRepository.CountFormBAssociations(
-                    researchEquipment,
-                    cancellationToken
-                ) == 0
-                && await researchEquipmentsRepository.CountUniqueFormsC(
-                    researchEquipment,
-                    cancellationToken
-                ) == 1
+                await CountFormBAssociations(researchEquipment, cancellationToken) == 0
+                && await CountUniqueFormsC(researchEquipment, cancellationToken) == 1
             ) // The one to be deleted
             {
-                researchEquipmentsRepository.Delete(researchEquipment);
+                dbContext.ResearchEquipments.Remove(researchEquipment);
             }
         }
     }
@@ -651,7 +545,7 @@ public class FormsService(
     {
         foreach (var collectedSample in formC.CollectedSamples)
         {
-            collectedSamplesRepository.Delete(collectedSample);
+            dbContext.CollectedSamples.Remove(collectedSample);
         }
 
         formC.CollectedSamples.Clear();
@@ -661,9 +555,319 @@ public class FormsService(
     {
         foreach (var photo in formC.Photos)
         {
-            photosRepository.Delete(photo);
+            dbContext.Photos.Remove(photo);
         }
 
         formC.Photos.Clear();
     }
+
+    private Task<int> CountFormsA(Permission permission, CancellationToken cancellationToken) =>
+        dbContext
+            .Permissions.Where(candidate => candidate.Id == permission.Id)
+            .SelectMany(candidate => candidate.FormsA)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormsB(Permission permission, CancellationToken cancellationToken) =>
+        dbContext
+            .Permissions.Where(candidate => candidate.Id == permission.Id)
+            .SelectMany(candidate => candidate.FormsB)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormsC(Permission permission, CancellationToken cancellationToken) =>
+        dbContext
+            .Permissions.Where(candidate => candidate.Id == permission.Id)
+            .SelectMany(candidate => candidate.FormsC)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsA(
+        ResearchTask researchTask,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .ResearchTasks.Where(candidate => candidate.Id == researchTask.Id)
+            .SelectMany(candidate => candidate.FormAResearchTasks)
+            .Select(join => join.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountResearchTaskEffects(
+        ResearchTask researchTask,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .ResearchTasks.Where(candidate => candidate.Id == researchTask.Id)
+            .SelectMany(candidate => candidate.ResearchTasksEffects)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountDistinctFormsA(Contract contract, CancellationToken cancellationToken) =>
+        dbContext
+            .Contracts.Where(candidate => candidate.Id == contract.Id)
+            .SelectMany(candidate => candidate.FormAContracts)
+            .Select(join => join.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountDistinctFormsC(Contract contract, CancellationToken cancellationToken) =>
+        dbContext
+            .Contracts.Where(candidate => candidate.Id == contract.Id)
+            .SelectMany(candidate => candidate.FormsC)
+            .Select(form => form.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormAContracts(Contract contract, CancellationToken cancellationToken) =>
+        dbContext
+            .Contracts.Where(candidate => candidate.Id == contract.Id)
+            .SelectMany(candidate => candidate.FormAContracts)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormsA(
+        ResearchAreaDescription description,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .ResearchAreaDescriptions.Where(candidate => candidate.Id == description.Id)
+            .SelectMany(candidate => candidate.FormsA)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormsC(
+        ResearchAreaDescription description,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .ResearchAreaDescriptions.Where(candidate => candidate.Id == description.Id)
+            .SelectMany(candidate => candidate.FormsC)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormAGuestUnits(
+        GuestUnit guestUnit,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .GuestUnits.Where(candidate => candidate.Id == guestUnit.Id)
+            .SelectMany(candidate => candidate.FormAGuestUnits)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsA(GuestUnit guestUnit, CancellationToken cancellationToken) =>
+        dbContext
+            .GuestUnits.Where(candidate => candidate.Id == guestUnit.Id)
+            .SelectMany(candidate => candidate.FormAGuestUnits)
+            .Select(join => join.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormBGuestUnits(
+        GuestUnit guestUnit,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .GuestUnits.Where(candidate => candidate.Id == guestUnit.Id)
+            .SelectMany(candidate => candidate.FormBGuestUnits)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsB(GuestUnit guestUnit, CancellationToken cancellationToken) =>
+        dbContext
+            .GuestUnits.Where(candidate => candidate.Id == guestUnit.Id)
+            .SelectMany(candidate => candidate.FormBGuestUnits)
+            .Select(join => join.FormB.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormCGuestUnits(
+        GuestUnit guestUnit,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .GuestUnits.Where(candidate => candidate.Id == guestUnit.Id)
+            .SelectMany(candidate => candidate.FormCGuestUnits)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsC(GuestUnit guestUnit, CancellationToken cancellationToken) =>
+        dbContext
+            .GuestUnits.Where(candidate => candidate.Id == guestUnit.Id)
+            .SelectMany(candidate => candidate.FormCGuestUnits)
+            .Select(join => join.FormC.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsA(
+        Publication publication,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .Publications.Where(candidate => candidate.Id == publication.Id)
+            .SelectMany(candidate => candidate.FormAPublications)
+            .Select(join => join.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUserPublications(
+        Publication publication,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .Publications.Where(candidate => candidate.Id == publication.Id)
+            .SelectMany(candidate => candidate.UserPublications)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsA(SpubTask spubTask, CancellationToken cancellationToken) =>
+        dbContext
+            .SpubTasks.Where(candidate => candidate.Id == spubTask.Id)
+            .SelectMany(candidate => candidate.FormASpubTasks)
+            .Select(join => join.FormA.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsC(SpubTask spubTask, CancellationToken cancellationToken) =>
+        dbContext
+            .SpubTasks.Where(candidate => candidate.Id == spubTask.Id)
+            .SelectMany(candidate => candidate.FormsC)
+            .Select(form => form.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormASpubTasks(SpubTask spubTask, CancellationToken cancellationToken) =>
+        dbContext
+            .SpubTasks.Where(candidate => candidate.Id == spubTask.Id)
+            .SelectMany(candidate => candidate.FormASpubTasks)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsB(
+        CrewMember crewMember,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .CrewMembers.Where(candidate => candidate.Id == crewMember.Id)
+            .SelectMany(candidate => candidate.FormsB)
+            .Select(form => form.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private async Task<int> CountFormBAssociations(
+        ResearchEquipment equipment,
+        CancellationToken cancellationToken
+    )
+    {
+        var query = dbContext.ResearchEquipments.Where(candidate => candidate.Id == equipment.Id);
+        return await query
+                .SelectMany(candidate => candidate.FormBShortResearchEquipments)
+                .CountAsync(cancellationToken)
+            + await query
+                .SelectMany(candidate => candidate.FormBLongResearchEquipments)
+                .CountAsync(cancellationToken)
+            + await query
+                .SelectMany(candidate => candidate.FormBResearchEquipments)
+                .CountAsync(cancellationToken);
+    }
+
+    private async Task<int> CountFormCAssociations(
+        ResearchEquipment equipment,
+        CancellationToken cancellationToken
+    )
+    {
+        var query = dbContext.ResearchEquipments.Where(candidate => candidate.Id == equipment.Id);
+        return await query
+                .SelectMany(candidate => candidate.FormCShortResearchEquipments)
+                .CountAsync(cancellationToken)
+            + await query
+                .SelectMany(candidate => candidate.FormCLongResearchEquipments)
+                .CountAsync(cancellationToken)
+            + await query
+                .SelectMany(candidate => candidate.FormCResearchEquipments)
+                .CountAsync(cancellationToken);
+    }
+
+    private Task<int> CountUniqueFormsB(
+        ResearchEquipment equipment,
+        CancellationToken cancellationToken
+    )
+    {
+        var query = dbContext.ResearchEquipments.Where(candidate => candidate.Id == equipment.Id);
+        return query
+            .SelectMany(candidate => candidate.FormBShortResearchEquipments)
+            .Select(join => join.FormB.Id)
+            .Union(
+                query
+                    .SelectMany(candidate => candidate.FormBLongResearchEquipments)
+                    .Select(join => join.FormB.Id)
+            )
+            .Union(
+                query
+                    .SelectMany(candidate => candidate.FormBResearchEquipments)
+                    .Select(join => join.FormB.Id)
+            )
+            .CountAsync(cancellationToken);
+    }
+
+    private Task<int> CountUniqueFormsC(
+        ResearchEquipment equipment,
+        CancellationToken cancellationToken
+    )
+    {
+        var query = dbContext.ResearchEquipments.Where(candidate => candidate.Id == equipment.Id);
+        return query
+            .SelectMany(candidate => candidate.FormCShortResearchEquipments)
+            .Select(join => join.FormC.Id)
+            .Union(
+                query
+                    .SelectMany(candidate => candidate.FormCLongResearchEquipments)
+                    .Select(join => join.FormC.Id)
+            )
+            .Union(
+                query
+                    .SelectMany(candidate => candidate.FormCResearchEquipments)
+                    .Select(join => join.FormC.Id)
+            )
+            .CountAsync(cancellationToken);
+    }
+
+    private Task<int> CountFormBPorts(Port port, CancellationToken cancellationToken) =>
+        dbContext
+            .Ports.Where(candidate => candidate.Id == port.Id)
+            .SelectMany(candidate => candidate.FormBPorts)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountFormCPorts(Port port, CancellationToken cancellationToken) =>
+        dbContext
+            .Ports.Where(candidate => candidate.Id == port.Id)
+            .SelectMany(candidate => candidate.FormCPorts)
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsB(Port port, CancellationToken cancellationToken) =>
+        dbContext
+            .Ports.Where(candidate => candidate.Id == port.Id)
+            .SelectMany(candidate => candidate.FormBPorts)
+            .Select(join => join.FormB.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsC(Port port, CancellationToken cancellationToken) =>
+        dbContext
+            .Ports.Where(candidate => candidate.Id == port.Id)
+            .SelectMany(candidate => candidate.FormCPorts)
+            .Select(join => join.FormC.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsB(
+        CruiseDayDetails cruiseDayDetails,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .CruiseDaysDetails.Where(candidate => candidate.Id == cruiseDayDetails.Id)
+            .SelectMany(candidate => candidate.FormsB)
+            .Select(form => form.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
+
+    private Task<int> CountUniqueFormsC(
+        CruiseDayDetails cruiseDayDetails,
+        CancellationToken cancellationToken
+    ) =>
+        dbContext
+            .CruiseDaysDetails.Where(candidate => candidate.Id == cruiseDayDetails.Id)
+            .SelectMany(candidate => candidate.FormsC)
+            .Select(form => form.Id)
+            .Distinct()
+            .CountAsync(cancellationToken);
 }

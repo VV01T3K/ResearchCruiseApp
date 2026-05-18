@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.FormsFieldsService;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormsA;
 
@@ -12,8 +13,7 @@ internal class FormsAFactory(
     ICurrentUserService currentUserService,
     IIdentityService identityService,
     IFormsFieldsService formsFieldsService,
-    IUgUnitsRepository ugUnitsRepository,
-    IUserPublicationsRepository userPublicationsRepository,
+    ApplicationDbContext dbContext,
     IMapper mapper
 ) : IFormsAFactory
 {
@@ -162,7 +162,7 @@ internal class FormsAFactory(
     {
         foreach (var ugTeamDto in formADto.UgTeams)
         {
-            var ugUnit = await ugUnitsRepository.GetById(ugTeamDto.UgUnitId, cancellationToken);
+            var ugUnit = await dbContext.UgUnits.FindAsync([ugTeamDto.UgUnitId], cancellationToken);
             if (ugUnit is null)
                 return Error.InvalidArgument("Podana jednostka organizacyjna UG nie istnieje.");
 
@@ -222,7 +222,9 @@ internal class FormsAFactory(
 
             if (
                 !alreadyAddedPublications.Contains(publication)
-                && !await userPublicationsRepository.CheckIfExists(publication)
+                && !await dbContext
+                    .UserPublications.Select(userPublication => userPublication.Publication)
+                    .AnyAsync(Publication.EqualsByExpression(publication), cancellationToken)
             )
             {
                 var userPublication = new UserPublication { UserId = formA.CruiseManagerId };

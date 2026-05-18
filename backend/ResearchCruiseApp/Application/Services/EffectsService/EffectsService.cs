@@ -1,18 +1,17 @@
 ﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.FormsFieldsService;
 using ResearchCruiseApp.Domain.Common.Constants;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Application.Services.EffectsService;
 
-public class EffectsService(
-    IResearchTasksRepository researchTasksRepository,
-    IResearchTaskEffectsRepository researchTaskEffectsRepository,
-    IUserEffectsRepository userEffectsRepository,
+internal class EffectsService(
+    ApplicationDbContext dbContext,
     IFormsFieldsService formsFieldsService
 ) : IEffectsService
 {
@@ -56,23 +55,27 @@ public class EffectsService(
         foreach (var researchTaskEffect in formC.ResearchTaskEffects)
         {
             var researchTask = researchTaskEffect.ResearchTask;
-            researchTaskEffectsRepository.Delete(researchTaskEffect);
+            dbContext.ResearchTaskEffects.Remove(researchTaskEffect);
 
             foreach (var userEffect in researchTaskEffect.UserEffects)
             {
-                userEffectsRepository.Delete(userEffect);
+                dbContext.UserEffects.Remove(userEffect);
             }
 
             if (
-                await researchTasksRepository.CountFormAResearchTasks(
-                    researchTask,
-                    cancellationToken
-                ) == 0
-                && await researchTasksRepository.CountUniqueFormsC(researchTask, cancellationToken)
-                    == 1
+                await dbContext
+                    .ResearchTasks.Where(candidate => candidate.Id == researchTask.Id)
+                    .SelectMany(candidate => candidate.FormAResearchTasks)
+                    .CountAsync(cancellationToken) == 0
+                && await dbContext
+                    .ResearchTasks.Where(candidate => candidate.Id == researchTask.Id)
+                    .SelectMany(candidate => candidate.ResearchTasksEffects)
+                    .Select(effect => effect.FormC.Id)
+                    .Distinct()
+                    .CountAsync(cancellationToken) == 1
             ) // The given one
             {
-                researchTasksRepository.Delete(researchTask);
+                dbContext.ResearchTasks.Remove(researchTask);
             }
         }
     }
@@ -244,6 +247,6 @@ public class EffectsService(
             Points = points,
         };
 
-        return userEffectsRepository.Add(userEffect, cancellationToken);
+        return dbContext.UserEffects.AddAsync(userEffect, cancellationToken).AsTask();
     }
 }

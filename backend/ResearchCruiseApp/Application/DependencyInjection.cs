@@ -9,7 +9,6 @@ using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationEvaluationDetailsDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationShortInfoDtos;
-using ResearchCruiseApp.Application.Services.Factories.CruiseBlockadePeriodDtos;
 using ResearchCruiseApp.Application.Services.Factories.CruiseDtos;
 using ResearchCruiseApp.Application.Services.Factories.FileDtos;
 using ResearchCruiseApp.Application.Services.Factories.FormAContractDtos;
@@ -21,7 +20,6 @@ using ResearchCruiseApp.Application.Services.Factories.FormCDtos;
 using ResearchCruiseApp.Application.Services.Factories.FormsA;
 using ResearchCruiseApp.Application.Services.Factories.FormsB;
 using ResearchCruiseApp.Application.Services.Factories.FormsC;
-using ResearchCruiseApp.Application.Services.Factories.FormUserDtos;
 using ResearchCruiseApp.Application.Services.Factories.PermissionDtos;
 using ResearchCruiseApp.Application.Services.Factories.Permissions;
 using ResearchCruiseApp.Application.Services.Factories.Photos;
@@ -67,13 +65,11 @@ public static class DependencyInjection
                 CruiseApplicationEvaluationDetailsDtosFactory
             >()
             .AddScoped<ICruiseDtosFactory, CruiseDtosFactory>()
-            .AddScoped<ICruiseBlockadePeriodDtosFactory, CruiseBlockadePeriodDtosFactory>()
             .AddScoped<
                 ICruiseApplicationShortInfoDtosFactory,
                 CruiseApplicationShortInfoDtosFactory
             >()
             .AddScoped<IFormAInitValuesDtosFactory, FormAInitValuesDtosFactory>()
-            .AddScoped<IFormUserDtosFactory, FormUserDtosFactory>()
             .AddScoped<IFormsBFactory, FormsBFactory>()
             .AddScoped<IFormBDtosFactory, FormBDtosFactory>()
             .AddScoped<IFormBInitValuesDtosFactory, FormBInitValuesDtosFactory>()

@@ -1,27 +1,24 @@
 using System.Diagnostics;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.App_GlobalResources;
 using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Models.DTOs.Forms;
 using ResearchCruiseApp.Application.Models.DTOs.Users;
 using ResearchCruiseApp.Application.Services.Factories.ContractDtos;
-using ResearchCruiseApp.Application.Services.Factories.FormUserDtos;
 using ResearchCruiseApp.Domain.Common.Constants;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Application.Services.Factories.FormAInitValuesDtos;
 
-public class FormAInitValuesDtosFactory(
+internal class FormAInitValuesDtosFactory(
     IIdentityService identityService,
-    IFormUserDtosFactory formUserDtosFactory,
     IContractDtosFactory contractDtosFactory,
-    IResearchAreasRepository researchAreasRepository,
-    IUgUnitsRepository ugUnitsRepository,
-    IUserPublicationsRepository userPublicationsRepository,
-    ICruiseApplicationsRepository cruiseApplicationsRepository,
+    ApplicationDbContext dbContext,
     ICurrentUserService currentUserService,
     IMapper mapper
 ) : IFormAInitValuesDtosFactory
@@ -54,8 +51,8 @@ public class FormAInitValuesDtosFactory(
         var deputy = await identityService.GetUserDtoById(cruiseApplication.FormA.DeputyManagerId);
 
         var result = await CreatePublic(cancellationToken);
-        result.CruiseManagers = manager is not null ? [formUserDtosFactory.Create(manager)] : [];
-        result.DeputyManagers = deputy is not null ? [formUserDtosFactory.Create(deputy)] : [];
+        result.CruiseManagers = manager is not null ? [ToFormUserDto(manager)] : [];
+        result.DeputyManagers = deputy is not null ? [ToFormUserDto(deputy)] : [];
 
         return result;
     }
@@ -80,24 +77,28 @@ public class FormAInitValuesDtosFactory(
         var userId = currentUserService.GetId();
         var cruiseApplications = userId is null
             ? []
-            : await cruiseApplicationsRepository.GetAllByUserIdWithFormA(
-                userId.Value,
-                cancellationToken
-            );
+            : await dbContext
+                .CruiseApplications.IncludeFormA()
+                .IncludeFormAContent()
+                .Where(cruiseApplication =>
+                    cruiseApplication.FormA!.CruiseManagerId == userId.Value
+                    || cruiseApplication.FormA.DeputyManagerId == userId.Value
+                )
+                .ToListAsync(cancellationToken);
 
         return cruiseApplications;
     }
 
     private List<FormUserDto> GetCruiseManagers(IEnumerable<UserDto> allUserDtos)
     {
-        return allUserDtos.Select(formUserDtosFactory.Create).ToList();
+        return allUserDtos.Select(ToFormUserDto).ToList();
     }
 
     private List<FormUserDto> GetDeputyManagers(IEnumerable<UserDto> allUserDtos)
     {
         return allUserDtos
             .Where(u => u.Roles.Contains(RoleName.CruiseManager))
-            .Select(formUserDtosFactory.Create)
+            .Select(ToFormUserDto)
             .ToList();
     }
 
@@ -118,7 +119,11 @@ public class FormAInitValuesDtosFactory(
 
     private async Task<List<ResearchAreaDto>> GetResearchAreas(CancellationToken cancellationToken)
     {
-        return (await researchAreasRepository.GetAllActive(cancellationToken))
+        return (
+            await dbContext
+                .ResearchAreas.Where(area => area.IsActive)
+                .ToListAsync(cancellationToken)
+        )
             .Select(mapper.Map<ResearchAreaDto>)
             .ToList();
     }
@@ -145,7 +150,7 @@ public class FormAInitValuesDtosFactory(
 
     private async Task<List<UgUnitDto>> GetUgUnits(CancellationToken cancellationToken)
     {
-        return (await ugUnitsRepository.GetAllActive(cancellationToken))
+        return (await dbContext.UgUnits.Where(unit => unit.IsActive).ToListAsync(cancellationToken))
             .Select(mapper.Map<UgUnitDto>)
             .ToList();
     }
@@ -207,10 +212,24 @@ public class FormAInitValuesDtosFactory(
         var userId = currentUserService.GetId();
         var publications = userId is null
             ? []
-            : await userPublicationsRepository.GetAllByUserId((Guid)userId, cancellationToken);
+            : await dbContext
+                .UserPublications.Include(userPublication => userPublication.Publication)
+                .Where(userPublication => userPublication.UserId == userId.Value)
+                .ToListAsync(cancellationToken);
 
         return publications
             .Select(userPublication => mapper.Map<PublicationDto>(userPublication.Publication))
             .ToList();
+    }
+
+    private static FormUserDto ToFormUserDto(UserDto userDto)
+    {
+        return new FormUserDto
+        {
+            Id = userDto.Id,
+            Email = userDto.Email,
+            FirstName = userDto.FirstName,
+            LastName = userDto.LastName,
+        };
     }
 }
