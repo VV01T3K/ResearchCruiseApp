@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Factories.CruiseApplicationDtos;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
@@ -20,7 +20,7 @@ public static class ApplicationCatalog
     }
 
     private static async Task<Ok<List<ApplicationResponse>>> GetAll(
-        ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
+        ApplicationProjection projection,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
@@ -39,7 +39,7 @@ public static class ApplicationCatalog
             if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
             {
                 visibleApplications.Add(
-                    ApplicationResponse.From(await cruiseApplicationDtosFactory.Create(application))
+                    ApplicationResponse.From(await projection.Create(application))
                 );
             }
         }

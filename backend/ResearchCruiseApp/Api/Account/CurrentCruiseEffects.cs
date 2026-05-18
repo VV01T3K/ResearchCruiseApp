@@ -1,6 +1,6 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Contracts;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -22,7 +22,6 @@ public static class CurrentCruiseEffects
     private static async Task<Results<Ok<List<UserEffectDto>>, NotFound>> Get(
         ICurrentUserService currentUserService,
         ApplicationDbContext dbContext,
-        IMapper mapper,
         CancellationToken cancellationToken
     )
     {
@@ -38,6 +37,6 @@ public static class CurrentCruiseEffects
             .Where(userEffect => userEffect.UserId == currentUserId.Value)
             .ToListAsync(cancellationToken);
 
-        return TypedResults.Ok(userEffects.Select(mapper.Map<UserEffectDto>).ToList());
+        return TypedResults.Ok(userEffects.Select(ApplicationMappings.ToUserEffectDto).ToList());
     }
 }

@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,7 @@ using NeoSmart.Utils;
 using ResearchCruiseApp.Api.Account.Contracts;
 using ResearchCruiseApp.Api.Common.Constants;
 using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Api.Users.Contracts;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -22,7 +22,6 @@ internal class IdentityService(
     IEmailSender emailSender,
     IRandomGenerator randomGenerator,
     ICurrentUserService currentUserService,
-    IMapper mapper,
     IConfiguration configuration,
     ApplicationDbContext dbContext
 ) : IIdentityService
@@ -67,7 +66,7 @@ internal class IdentityService(
 
         var distinctUsers = users.DistinctBy(u => u.Id).Where(u => u.Accepted).ToList();
 
-        return mapper.Map<List<CruiseManagerOptionDto>>(distinctUsers);
+        return distinctUsers.Select(UserMappings.ToCruiseManagerOptionDto).ToList();
     }
 
     public async Task<bool> UserWithIdExists(Guid id)
@@ -485,7 +484,7 @@ internal class IdentityService(
 
     private async Task<UserDto> CreateUserDto(User user)
     {
-        var userDto = mapper.Map<UserDto>(user);
+        var userDto = UserMappings.ToUserDto(user);
         userDto.Roles = await GetUserRolesNames(userDto.Id);
 
         return userDto;

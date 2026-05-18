@@ -2,8 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.FormCDtos;
-using ResearchCruiseApp.Api.Applications.Factories.FormsC;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Validation;
 using ResearchCruiseApp.Api.Applications.Workflows;
 using ResearchCruiseApp.Api.Common;
@@ -52,7 +51,7 @@ public static class ApplicationFormC
         Guid applicationId,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
-        IFormCDtosFactory formCDtosFactory,
+        FormProjection forms,
         CancellationToken cancellationToken
     )
     {
@@ -71,14 +70,14 @@ public static class ApplicationFormC
         )
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(await formCDtosFactory.Create(application.FormC));
+        return TypedResults.Ok(await forms.Create(application.FormC));
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Update(
         Guid applicationId,
         FormCWriteRequest request,
         IValidator<FormCValidationModel> validator,
-        IFormsCFactory formsCFactory,
+        FormCAssembler forms,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         IFormsService formsService,
@@ -107,7 +106,7 @@ public static class ApplicationFormC
                 .ToProblemHttpResult();
 
         var oldFormC = application.FormC;
-        var formCResult = await formsCFactory.Create(request.Form, cancellationToken);
+        var formCResult = await forms.Create(request.Form, cancellationToken);
         if (!formCResult.IsSuccess)
             return formCResult.Error!.ToProblemHttpResult();
 

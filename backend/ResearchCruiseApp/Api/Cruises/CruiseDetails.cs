@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Factories.CruiseDtos;
 using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Api.Common.ServiceResult;
+using ResearchCruiseApp.Api.Cruises.Projections;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
@@ -47,7 +47,7 @@ public static class CruiseDetails
 
     private static async Task<Results<Ok<CruiseResponse>, NotFound>> Get(
         Guid cruiseId,
-        ICruiseDtosFactory cruiseDtosFactory,
+        CruiseProjection cruises,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
@@ -74,7 +74,7 @@ public static class CruiseDetails
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(CruiseResponse.From(await cruiseDtosFactory.Create(cruise)));
+        return TypedResults.Ok(CruiseResponse.From(await cruises.Create(cruise)));
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(

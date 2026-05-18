@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.CruiseApplicationEvaluationDetailsDtos;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
@@ -24,7 +24,7 @@ public static class ApplicationEvaluation
     private static async Task<Results<Ok<CruiseApplicationEvaluationDetailsDto>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
-        ICruiseApplicationEvaluationDetailsDtosFactory evaluationDetailsDtosFactory,
+        ApplicationProjection applications,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
@@ -44,8 +44,6 @@ public static class ApplicationEvaluation
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(
-            await evaluationDetailsDtosFactory.Create(application, cancellationToken)
-        );
+        return TypedResults.Ok(await applications.CreateEvaluationDetails(application));
     }
 }

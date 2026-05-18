@@ -165,7 +165,7 @@ backend/ResearchCruiseApp
 │   │   ├── CruisePlanning.cs
 │   │   ├── CruiseExport.cs
 │   │   ├── Contracts
-│   │   ├── Mapping
+│   │   ├── Projections
 │   │   └── Workflows
 │   ├── Applications
 │   │   ├── ApplicationCatalog.cs
@@ -179,8 +179,7 @@ backend/ResearchCruiseApp
 │   │   ├── SupervisorReview.cs
 │   │   ├── Contracts
 │   │   ├── Validation
-│   │   ├── Mapping
-│   │   ├── Factories
+│   │   ├── Projections
 │   │   └── Workflows
 │   ├── HttpResultMapping.cs
 │   ├── ProblemDetailsMapping.cs
@@ -248,7 +247,7 @@ Remove from the v2 request path:
 - MediatR-style pipeline behavior that is not deliberately replaced
 - handler classes that only forward to another service
 - repository classes that only expose basic `GetById`, `GetAll`, `Add`, or `Delete`
-- DTO factories that only copy properties without hiding meaningful mapping complexity
+- DTO factory layers that hide simple projections behind mechanical indirection
 - route-specific extension methods that only wrap `Ok`, `NoContent`, or `Created`
 - custom API result wrappers that erase typed HTTP result metadata
 
@@ -268,7 +267,9 @@ Keep or rewrite as focused services:
 After the final convergence cleanup pass, the live request path uses direct EF Core
 throughout. Catalog, detail, export, lifecycle, supervisor-review, current-publication,
 role-management, and shared Form A/B/C workflows all use focused slices/services with
-query extensions kept only for reusable include graphs.
+query extensions kept only for reusable include graphs. Response shaping is explicit
+feature-local code; there is no runtime mapper or generic factory layer on the live
+path.
 
 ## Use-Case File Shape
 
@@ -312,10 +313,9 @@ Use `ProblemDetails` through the platform error pipeline for failures. Expected
 business failures can be represented with a small internal domain/application result
 type, but the endpoint should convert them to typed HTTP results at the boundary.
 
-Use source-generated mapping where mapping becomes repetitive. Mapperly is the
-preferred direction for v2 because it keeps mapping explicit at compile time without
-runtime reflection. Hand-written mapping is still acceptable for very small or
-unusual mappings.
+Use explicit feature-local projection code for response shaping and request-to-entity
+conversion. Prefer small hand-written mappings over runtime reflection or a generic
+cross-feature mapper layer.
 
 Use .NET validation for simple request rules and endpoint-level validators for
 cross-field or business-adjacent validation. Validation failures should produce the

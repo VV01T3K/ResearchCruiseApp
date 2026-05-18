@@ -2,9 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.CruiseApplications;
-using ResearchCruiseApp.Api.Applications.Factories.FormADtos;
-using ResearchCruiseApp.Api.Applications.Factories.FormsA;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Validation;
 using ResearchCruiseApp.Api.Applications.Workflows;
 using ResearchCruiseApp.Api.Common;
@@ -53,9 +51,9 @@ public static class ApplicationFormA
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         FormAWriteRequest request,
         IValidator<FormAValidationModel> validator,
-        IFormsAFactory formsAFactory,
+        FormAAssembler forms,
         ICruisesService cruisesService,
-        ICruiseApplicationsFactory cruiseApplicationsFactory,
+        CruiseApplicationAssembler applications,
         ApplicationDbContext dbContext,
         ICruiseApplicationEvaluator cruiseApplicationEvaluator,
         ICruiseApplicationsService cruiseApplicationsService,
@@ -84,15 +82,11 @@ public static class ApplicationFormA
             cancellationToken
         );
 
-        var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
+        var formAResult = await forms.Create(request.Form, cancellationToken);
         if (!formAResult.IsSuccess)
             return formAResult.Error!.ToProblemHttpResult();
 
-        var application = cruiseApplicationsFactory.Create(
-            formAResult.Data!,
-            request.Form.Note,
-            request.Draft
-        );
+        var application = applications.Create(formAResult.Data!, request.Form.Note, request.Draft);
         await dbContext.CruiseApplications.AddAsync(application, cancellationToken);
         await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -114,7 +108,7 @@ public static class ApplicationFormA
     private static async Task<Results<Ok<FormADto>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
-        IFormADtosFactory formADtosFactory,
+        FormProjection forms,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
@@ -132,7 +126,7 @@ public static class ApplicationFormA
         )
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(await formADtosFactory.Create(application.FormA));
+        return TypedResults.Ok(await forms.Create(application.FormA));
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
@@ -141,7 +135,7 @@ public static class ApplicationFormA
         IValidator<FormAValidationModel> validator,
         IUserPermissionVerifier userPermissionVerifier,
         ApplicationDbContext dbContext,
-        IFormsAFactory formsAFactory,
+        FormAAssembler forms,
         IFormsService formsService,
         ICruisesService cruisesService,
         ICruiseApplicationsService cruiseApplicationsService,
@@ -183,7 +177,7 @@ public static class ApplicationFormA
         );
 
         var oldFormA = application.FormA;
-        var formAResult = await formsAFactory.Create(request.Form, cancellationToken);
+        var formAResult = await forms.Create(request.Form, cancellationToken);
         if (!formAResult.IsSuccess)
             return formAResult.Error!.ToProblemHttpResult();
 

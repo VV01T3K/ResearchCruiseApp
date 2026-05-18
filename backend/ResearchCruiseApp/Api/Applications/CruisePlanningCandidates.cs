@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.CruiseApplicationDtos;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Infrastructure.Persistence;
@@ -22,7 +22,7 @@ public static class CruisePlanningCandidates
     }
 
     private static async Task<Ok<List<CruiseApplicationDto>>> Get(
-        ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
+        ApplicationProjection projection,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
@@ -41,7 +41,7 @@ public static class CruisePlanningCandidates
                 && await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application)
             )
             {
-                visibleApplications.Add(await cruiseApplicationDtosFactory.Create(application));
+                visibleApplications.Add(await projection.Create(application));
             }
         }
 

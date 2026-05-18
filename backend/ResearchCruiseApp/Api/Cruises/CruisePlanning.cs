@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Contracts;
@@ -68,7 +67,6 @@ public static class CruisePlanning
     private static async Task<Ok<List<CruiseBlockadePeriodDto>>> GetBlockades(
         int year,
         ICruisesService cruisesService,
-        IMapper mapper,
         CancellationToken cancellationToken
     )
     {
@@ -77,7 +75,7 @@ public static class CruisePlanning
             cancellationToken
         );
         return TypedResults.Ok(
-            blockingCruises.Select(mapper.Map<CruiseBlockadePeriodDto>).ToList()
+            blockingCruises.Select(CruiseMappings.ToCruiseBlockadePeriodDto).ToList()
         );
     }
 

@@ -2,8 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.FormBDtos;
-using ResearchCruiseApp.Api.Applications.Factories.FormsB;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Validation;
 using ResearchCruiseApp.Api.Applications.Workflows;
 using ResearchCruiseApp.Api.Common;
@@ -53,7 +52,7 @@ public static class ApplicationFormB
     private static async Task<Results<Ok<FormBDto>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
-        IFormBDtosFactory formBDtosFactory,
+        FormProjection forms,
         IUserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
@@ -73,7 +72,7 @@ public static class ApplicationFormB
         )
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(await formBDtosFactory.Create(application.FormB, cancellationToken));
+        return TypedResults.Ok(await forms.Create(application.FormB));
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Update(
@@ -81,7 +80,7 @@ public static class ApplicationFormB
         FormBWriteRequest request,
         IValidator<FormBValidationModel> validator,
         IUserPermissionVerifier userPermissionVerifier,
-        IFormsBFactory formsBFactory,
+        FormBAssembler forms,
         ApplicationDbContext dbContext,
         IFormsService formsService,
         CancellationToken cancellationToken
@@ -108,7 +107,7 @@ public static class ApplicationFormB
                 .ToProblemHttpResult();
 
         var oldFormB = application.FormB;
-        application.FormB = await formsBFactory.Create(request.Form, cancellationToken);
+        application.FormB = await forms.Create(request.Form, cancellationToken);
         if (oldFormB is not null)
             await formsService.DeleteFormB(oldFormB, cancellationToken);
 

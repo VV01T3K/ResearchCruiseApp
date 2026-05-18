@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.FormAInitValuesDtos;
-using ResearchCruiseApp.Api.Applications.Factories.FormBInitValuesDtos;
+using ResearchCruiseApp.Api.Applications.Projections;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -25,18 +24,18 @@ public static class ApplicationFormContext
     }
 
     private static async Task<Ok<FormAInitValuesDto>> GetFormAInitValues(
-        IFormAInitValuesDtosFactory formAInitValuesDtosFactory,
+        FormContextProjection forms,
         CancellationToken cancellationToken
     )
     {
-        return TypedResults.Ok(await formAInitValuesDtosFactory.Create(cancellationToken));
+        return TypedResults.Ok(await forms.CreateFormA(cancellationToken));
     }
 
     private static async Task<Ok<FormBInitValuesDto>> GetFormBInitValues(
-        IFormBInitValuesDtosFactory formBInitValuesDtosFactory,
+        FormContextProjection forms,
         CancellationToken cancellationToken
     )
     {
-        return TypedResults.Ok(await formBInitValuesDtosFactory.Create(cancellationToken));
+        return TypedResults.Ok(await forms.CreateFormB(cancellationToken));
     }
 }

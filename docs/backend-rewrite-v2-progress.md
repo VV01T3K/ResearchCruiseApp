@@ -147,8 +147,8 @@ decision ledger rather than from unfinished internal migration tasks.
   form and response builders intact.
 - Added focused backend tests for year-based cruise numbering and shared-entity
   retention during form replacement cleanup.
-- Rehomed the surviving contracts, validation, mapping, factories, and workflows
-  beside their owning `Api` features; split infrastructure helpers into concern-based
+- Rehomed the surviving contracts, validation, projections, and workflows beside
+  their owning `Api` features; split infrastructure helpers into concern-based
   folders; moved web configuration to root `Configuration`; and removed the old
   top-level `Application` and `Web` folders entirely.
 
@@ -751,8 +751,8 @@ decision ledger rather than from unfinished internal migration tasks.
 
 ### Physical Shape Convergence Follow-up
 
-- Moved API-facing contracts, validators, mapping profiles, factories, and workflow
-  helpers under their owning `Api/Account`, `Api/Users`, `Api/Cruises`, or
+- Moved API-facing contracts, validators, projections, and workflow helpers under
+  their owning `Api/Account`, `Api/Users`, `Api/Cruises`, or
   `Api/Applications` feature areas.
 - Rehomed cross-cutting abstractions and implementations into concern folders under
   `Infrastructure`, moved the old web configuration files to root `Configuration`,
@@ -760,6 +760,15 @@ decision ledger rather than from unfinished internal migration tasks.
 - Search verification found no remaining live `ResearchCruiseApp.Application`
   namespaces.
 - Static verification confirmed no backend `Application/` or `Web/` folder remains.
+
+### Mapping And Factory Removal Follow-up
+
+- Replaced AutoMapper profiles and the remaining application factory layer with
+  explicit feature-local mappings, projections, and form/application assemblers.
+- Removed the AutoMapper package, `Mapping` folders, and `Factories` folder from the
+  backend.
+- Added focused backend tests for Form A period projection, compressed contract and
+  permission payloads, and current-user effect shaping.
 
 ## Known Blockers And Risks
 

@@ -1,19 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.Permissions;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications.Workflows;
 
-internal class FormsFieldsService(
-    IMapper mapper,
-    ApplicationDbContext dbContext,
-    IPermissionsFactory permissionsFactory,
-    IContractsFactory contractsFactory
-) : IFormsFieldsService
+internal class FormsFieldsService(ApplicationDbContext dbContext, ICompressor compressor)
+    : IFormsFieldsService
 {
     public async Task<Permission> GetUniquePermission(
         PermissionDto permissionDto,
@@ -21,7 +14,12 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newPermission = await permissionsFactory.Create(permissionDto);
+        var newPermission = ApplicationMappings.ToPermission(permissionDto);
+        if (permissionDto.Scan is not null)
+        {
+            newPermission.ScanName = permissionDto.Scan.Name;
+            newPermission.ScanContent = await compressor.Compress(permissionDto.Scan.Content);
+        }
         var oldPermission =
             Find(newPermission, permissionsInMemory)
             ?? await dbContext.Permissions.FirstOrDefaultAsync(
@@ -59,7 +57,7 @@ internal class FormsFieldsService(
             }
         }
 
-        var newResearchAreaDescription = mapper.Map<ResearchAreaDescription>(
+        var newResearchAreaDescription = ApplicationMappings.ToResearchAreaDescription(
             researchAreaDescriptionDto
         );
         var oldResearchAreaDescription =
@@ -78,7 +76,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newResearchTask = mapper.Map<ResearchTask>(researchTaskDto);
+        var newResearchTask = ApplicationMappings.ToResearchTask(researchTaskDto);
         var oldResearchTask =
             Find(newResearchTask, researchTasksInMemory)
             ?? await dbContext.ResearchTasks.FirstOrDefaultAsync(
@@ -95,7 +93,20 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newContract = await contractsFactory.Create(contractDto);
+        var newContract = ApplicationMappings.ToContract(contractDto);
+        foreach (var scan in contractDto.Scans)
+        {
+            if (!string.IsNullOrEmpty(scan.Name) && !string.IsNullOrEmpty(scan.Content))
+            {
+                newContract.Files.Add(
+                    new ContractFile
+                    {
+                        FileName = scan.Name,
+                        FileContent = await compressor.Compress(scan.Content),
+                    }
+                );
+            }
+        }
         var oldContract =
             Find(newContract, contractsInMemory)
             ?? await dbContext
@@ -142,7 +153,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newPublication = mapper.Map<Publication>(publicationDto);
+        var newPublication = ApplicationMappings.ToPublication(publicationDto);
         var oldPublication =
             Find(newPublication, publicationInMemory)
             ?? await dbContext.Publications.FirstOrDefaultAsync(
@@ -159,7 +170,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newSpubTask = mapper.Map<SpubTask>(spubTaskDto);
+        var newSpubTask = ApplicationMappings.ToSpubTask(spubTaskDto);
         var oldSpubTask =
             Find(newSpubTask, spubTasksInMemory)
             ?? await dbContext.SpubTasks.FirstOrDefaultAsync(
@@ -176,7 +187,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newGuestUnit = mapper.Map<GuestUnit>(guestTeamDto);
+        var newGuestUnit = ApplicationMappings.ToGuestUnit(guestTeamDto);
         var oldGuestUnit =
             Find(newGuestUnit, guestUnitsInMemory)
             ?? await dbContext.GuestUnits.FirstOrDefaultAsync(
@@ -193,7 +204,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newCrewMember = mapper.Map<CrewMember>(crewMemberDto);
+        var newCrewMember = ApplicationMappings.ToCrewMember(crewMemberDto);
         var oldCrewMember =
             Find(newCrewMember, crewMembersInMemory)
             ?? await dbContext.CrewMembers.FirstOrDefaultAsync(
@@ -210,7 +221,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newResearchEquipment = mapper.Map<ResearchEquipment>(researchEquipmentDto);
+        var newResearchEquipment = ApplicationMappings.ToResearchEquipment(researchEquipmentDto);
         var oldResearchEquipment =
             Find(newResearchEquipment, researchEquipmentsInMemory)
             ?? await dbContext.ResearchEquipments.FirstOrDefaultAsync(
@@ -227,7 +238,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newPort = mapper.Map<Port>(portDto);
+        var newPort = ApplicationMappings.ToPort(portDto);
         var oldPort =
             Find(newPort, portsInMemory)
             ?? await dbContext.Ports.FirstOrDefaultAsync(
@@ -244,7 +255,7 @@ internal class FormsFieldsService(
         CancellationToken cancellationToken
     )
     {
-        var newCruiseDayDetails = mapper.Map<CruiseDayDetails>(cruiseDayDetailsDto);
+        var newCruiseDayDetails = ApplicationMappings.ToCruiseDayDetails(cruiseDayDetailsDto);
         var oldCruiseDayDetails =
             Find(newCruiseDayDetails, cruiseDaysDetailsInMemory)
             ?? await dbContext.CruiseDaysDetails.FirstOrDefaultAsync(

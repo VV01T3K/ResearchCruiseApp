@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Api.Applications.Factories.CruiseDtos;
 using ResearchCruiseApp.Api.Common;
 using ResearchCruiseApp.Api.Cruises;
+using ResearchCruiseApp.Api.Cruises.Projections;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
@@ -25,7 +25,7 @@ public static class ApplicationCruise
         Guid applicationId,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
-        ICruiseDtosFactory cruiseDtosFactory,
+        CruiseProjection cruises,
         CancellationToken cancellationToken
     )
     {
@@ -44,8 +44,6 @@ public static class ApplicationCruise
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(
-            CruiseResponse.From(await cruiseDtosFactory.Create(application.Cruise))
-        );
+        return TypedResults.Ok(CruiseResponse.From(await cruises.Create(application.Cruise)));
     }
 }

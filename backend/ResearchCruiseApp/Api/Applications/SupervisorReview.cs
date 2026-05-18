@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Contracts;
-using ResearchCruiseApp.Api.Applications.Factories.FormADtos;
-using ResearchCruiseApp.Api.Applications.Factories.FormAInitValuesDtos;
+using ResearchCruiseApp.Api.Applications.Projections;
 using ResearchCruiseApp.Api.Applications.Workflows;
 using ResearchCruiseApp.Api.Common.ServiceResult;
 using ResearchCruiseApp.Domain.Logic;
@@ -37,8 +36,8 @@ public static class SupervisorReview
         string code,
         ApplicationDbContext dbContext,
         ICruiseApplicationsService cruiseApplicationsService,
-        IFormADtosFactory formADtosFactory,
-        IFormAInitValuesDtosFactory formAInitValuesDtosFactory,
+        FormProjection forms,
+        FormContextProjection formContext,
         CancellationToken cancellationToken
     )
     {
@@ -55,11 +54,8 @@ public static class SupervisorReview
         )
             return TypedResults.NotFound();
 
-        var form = await formADtosFactory.Create(application.FormA);
-        var initValues = await formAInitValuesDtosFactory.CreateForSupervisor(
-            application,
-            cancellationToken
-        );
+        var form = await forms.Create(application.FormA);
+        var initValues = await formContext.CreateFormAForSupervisor(application, cancellationToken);
 
         return TypedResults.Ok(new SupervisorReviewResponse(form, initValues));
     }

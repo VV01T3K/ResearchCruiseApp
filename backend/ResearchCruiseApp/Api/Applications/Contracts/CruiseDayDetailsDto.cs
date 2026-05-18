@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AutoMapper;
-using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications.Contracts;
 
