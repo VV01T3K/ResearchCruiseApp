@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Api.Account.Contracts;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using ResearchCruiseApp.Api.Common.ServiceResult;
 using ResearchCruiseApp.Api.Users.Contracts;
 

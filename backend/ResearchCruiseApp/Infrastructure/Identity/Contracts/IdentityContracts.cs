@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ResearchCruiseApp.Api.Account.Contracts;
+namespace ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 public class LoginFormDto
 {
@@ -50,4 +50,13 @@ public class RefreshDto
     public string AccessToken { get; set; } = null!;
 
     public string RefreshToken { get; init; } = null!;
+}
+
+public class LoginResponseDto
+{
+    public string AccessToken { get; set; } = null!;
+
+    public DateTime AccessTokenExpirationDate { get; set; }
+    public string RefreshToken { get; set; } = null!;
+    public DateTime RefreshTokenExpirationDate { get; set; }
 }

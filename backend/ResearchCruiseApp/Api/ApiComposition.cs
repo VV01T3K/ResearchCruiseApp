@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ResearchCruiseApp.Api.Account;
+using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Api.Users;
@@ -16,14 +17,11 @@ public static class ApiComposition
             .HasApiVersion(new ApiVersion(2, 0))
             .WithGroupName("v2");
 
+        var auth = v2.MapGroup("/auth").WithTags("Auth");
+        AuthEndpoints.Map(auth);
+
         var account = v2.MapGroup("/account").WithTags("Account");
-        Authentication.Map(account);
-        EmailConfirmation.Map(account);
-        PasswordRecovery.Map(account);
-        Registration.Map(account);
-        CurrentUser.Map(account);
-        CurrentPublications.Map(account);
-        CurrentCruiseEffects.Map(account);
+        AccountEndpoints.Map(account);
 
         var users = v2.MapGroup("/users").WithTags("Users");
         UserDirectory.Map(users);
