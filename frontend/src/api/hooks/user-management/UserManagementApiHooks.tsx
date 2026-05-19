@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 
 import { client } from '@/lib/api';
 import { User } from '@/models/shared/User';
+import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
 
 type Props = {
   editMode: boolean;
@@ -139,5 +140,15 @@ export function useUsersQuery() {
       return client.get('/users');
     },
     select: (data) => data.data as User[],
+  });
+}
+
+export function useAvailableCruiseManagersQuery() {
+  return useSuspenseQuery({
+    queryKey: ['availableCruiseManagers'],
+    queryFn: () => {
+      return client.get('/users/availableCruiseManagers');
+    },
+    select: (data) => data.data as CruiseManagerOption[],
   });
 }
