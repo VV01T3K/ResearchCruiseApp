@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.ApplicationForms.Payloads;
-using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 using ResearchCruiseApp.Results;
+using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -40,7 +40,7 @@ public static class Export
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA)
             .ToListAsync(cancellationToken);
-        var visibleCruises = new List<Cruise>();
+        var visibleCruises = new List<DomainCruise>();
 
         foreach (var cruise in cruises)
         {

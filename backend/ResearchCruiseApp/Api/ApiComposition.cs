@@ -26,11 +26,7 @@ public static class ApiComposition
         var users = v2.MapGroup("/users").WithTags("Users");
         UsersEndpoints.Map(users);
         var cruises = v2.MapGroup("/cruises").WithTags("Cruises");
-        Cruises.Lists.Map(cruises);
-        Records.Map(cruises);
-        Lifecycle.Map(cruises);
-        Planning.Map(cruises);
-        Export.Map(cruises);
+        CruisesEndpoints.Map(cruises);
 
         var applications = v2.MapGroup("/applications").WithTags("Applications");
         ApplicationsEndpoints.Map(applications);

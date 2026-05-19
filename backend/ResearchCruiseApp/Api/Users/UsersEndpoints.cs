@@ -4,8 +4,8 @@ public static class UsersEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
-        Lists.Map(group);
-        Accounts.Map(group);
+        ListsEndpoints.Map(group);
+        AccountsEndpoints.Map(group);
         Acceptance.Map(group);
         Roles.Map(group);
     }

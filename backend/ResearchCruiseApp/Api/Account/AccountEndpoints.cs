@@ -4,8 +4,8 @@ public static class AccountEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
-        Me.Map(group);
-        CruiseEffects.Map(group);
-        Publications.Map(group);
+        MeEndpoints.Map(group);
+        CruiseEffectsEndpoints.Map(group);
+        PublicationsEndpoints.Map(group);
     }
 }

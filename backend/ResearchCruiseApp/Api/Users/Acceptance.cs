@@ -8,72 +8,62 @@ public static class Acceptance
 {
     public static void Map(RouteGroupBuilder group)
     {
-        Accept.Map(group);
-        Deactivate.Map(group);
+        MapAccept(group);
+        MapDeactivate(group);
     }
 
-    public static class Accept
+    private static void MapAccept(RouteGroupBuilder group)
     {
-        public static void Map(RouteGroupBuilder group)
-        {
-            group
-                .MapPut("/{userId:guid}/acceptance", Handle)
-                .WithName("AcceptUserV2")
-                .WithSummary("Accept a managed user.")
-                .ProducesProblem(StatusCodes.Status401Unauthorized)
-                .ProducesProblem(StatusCodes.Status403Forbidden)
-                .ProducesProblem(StatusCodes.Status404NotFound)
-                .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
-        }
-
-        private static async Task<Results<NoContent, ProblemHttpResult>> Handle(
-            Guid userId,
-            IUserPermissionVerifier userPermissionVerifier,
-            IIdentityService identityService
-        )
-        {
-            if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
-            {
-                return Error
-                    .ForbiddenOperation("Nie można zaakceptować tego użytkownika")
-                    .ToProblemHttpResult();
-            }
-
-            var result = await identityService.AcceptUser(userId);
-            return result.IsSuccess
-                ? TypedResults.NoContent()
-                : result.Error!.ToProblemHttpResult();
-        }
+        group
+            .MapPut("/{userId:guid}/acceptance", Accept)
+            .WithName("AcceptUserV2")
+            .WithSummary("Accept a managed user.")
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
-    public static class Deactivate
+    private static void MapDeactivate(RouteGroupBuilder group)
     {
-        public static void Map(RouteGroupBuilder group)
+        group
+            .MapDelete("/{userId:guid}/acceptance", Deactivate)
+            .WithName("DeactivateUserV2")
+            .WithSummary("Deactivate a managed user.")
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> Accept(
+        Guid userId,
+        IUserPermissionVerifier userPermissionVerifier,
+        IIdentityService identityService
+    )
+    {
+        if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
         {
-            group
-                .MapDelete("/{userId:guid}/acceptance", Handle)
-                .WithName("DeactivateUserV2")
-                .WithSummary("Deactivate a managed user.")
-                .ProducesProblem(StatusCodes.Status401Unauthorized)
-                .ProducesProblem(StatusCodes.Status403Forbidden)
-                .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
+            return Error
+                .ForbiddenOperation("Nie można zaakceptować tego użytkownika")
+                .ToProblemHttpResult();
         }
 
-        private static async Task<Results<NoContent, ProblemHttpResult>> Handle(
-            Guid userId,
-            IUserPermissionVerifier userPermissionVerifier,
-            IIdentityService identityService
-        )
-        {
-            if (!await userPermissionVerifier.CanUserDeactivate(userId))
-            {
-                return Error.ForbiddenOperation().ToProblemHttpResult();
-            }
+        var result = await identityService.AcceptUser(userId);
+        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+    }
 
-            var result = await identityService.DeactivateUser(userId);
-            return result.IsSuccess
-                ? TypedResults.NoContent()
-                : result.Error!.ToProblemHttpResult();
+    private static async Task<Results<NoContent, ProblemHttpResult>> Deactivate(
+        Guid userId,
+        IUserPermissionVerifier userPermissionVerifier,
+        IIdentityService identityService
+    )
+    {
+        if (!await userPermissionVerifier.CanUserDeactivate(userId))
+        {
+            return Error.ForbiddenOperation().ToProblemHttpResult();
         }
+
+        var result = await identityService.DeactivateUser(userId);
+        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 }

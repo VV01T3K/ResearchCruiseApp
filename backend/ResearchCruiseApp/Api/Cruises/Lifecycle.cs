@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Logic;
-using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 using ResearchCruiseApp.Results;
@@ -13,6 +12,13 @@ public static class Lifecycle
 {
     public static void Map(RouteGroupBuilder group)
     {
+        MapConfirm(group);
+        MapRemoveConfirmation(group);
+        MapComplete(group);
+    }
+
+    private static void MapConfirm(RouteGroupBuilder group)
+    {
         group
             .MapPut("/{cruiseId:guid}/confirmation", Confirm)
             .WithName("ConfirmCruiseV2")
@@ -21,7 +27,10 @@ public static class Lifecycle
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
+    }
 
+    private static void MapRemoveConfirmation(RouteGroupBuilder group)
+    {
         group
             .MapDelete("/{cruiseId:guid}/confirmation", RemoveConfirmation)
             .WithName("RemoveCruiseConfirmationV2")
@@ -31,7 +40,10 @@ public static class Lifecycle
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
+    }
 
+    private static void MapComplete(RouteGroupBuilder group)
+    {
         group
             .MapPut("/{cruiseId:guid}/completion", Complete)
             .WithName("CompleteCruiseV2")
