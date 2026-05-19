@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import axios, { AxiosError } from 'axios';
 import { toast } from '@/components/shared/layout/toast';
-import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
+import { SupervisorView } from '@/routes/_authed/applications/$applicationId/-components/formA/SupervisorView';
 import {
   useFormAForSupervisorInitValuesQuery,
   useFormAForSupervisorQuery,
