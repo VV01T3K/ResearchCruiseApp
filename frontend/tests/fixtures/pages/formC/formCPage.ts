@@ -10,24 +10,24 @@ import {
   getInitValuesBPayload,
 } from '@tests/fixtures/mockPayloads';
 
-import { FormCAdditionalDescriptionSection } from './FormCAdditionalDescriptionSection';
-import { FormCAdditionalPermissionsSection } from './FormCAdditionalPermissionsSection';
-import { FormCCollectedSamplesSection } from './FormCCollectedSamplesSection';
-import { FormCContractsSection } from './FormCContractsSection';
-import { FormCCruiseDayDetailsSection } from './FormCCruiseDayDetailsSection';
-import { FormCCruiseDetailsSection } from './FormCCruiseDetailsSection';
-import { FormCCruiseGoalSection } from './FormCCruiseGoalSection';
-import { FormCCruiseInfoSection } from './FormCCruiseInfoSection';
-import { FormCCruiseManagerInfoSection } from './FormCCruiseManagerInfoSection';
-import { FormCMembersSection } from './FormCMembersSection';
-import { FormCPublicationsSection } from './FormCPublicationsSection';
-import { FormCResearchAreaSection } from './FormCResearchAreaSection';
-import { FormCResearchEquipmentsSection } from './FormCResearchEquipmentsSection';
-import { FormCResearchTasksSection } from './FormCResearchTasksSection';
-import { FormCShipEquipmentsSection } from './FormCShipEquipmentsSection';
-import { FormCShipUsageSection } from './FormCShipUsageSection';
-import { FormCSPUBReportDataSection } from './FormCSPUBReportDataSection';
-import { FormCSPUBTasksSection } from './FormCSPUBTasksSection';
+import { AdditionalDescriptionSection } from './AdditionalDescriptionSection';
+import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
+import { CollectedSamplesSection } from './CollectedSamplesSection';
+import { ContractsSection } from './ContractsSection';
+import { CruiseDayDetailsSection } from './CruiseDayDetailsSection';
+import { CruiseDetailsSection } from './CruiseDetailsSection';
+import { CruiseGoalSection } from './CruiseGoalSection';
+import { CruiseInfoSection } from './CruiseInfoSection';
+import { CruiseManagerInfoSection } from './CruiseManagerInfoSection';
+import { MembersSection } from './MembersSection';
+import { PublicationsSection } from './PublicationsSection';
+import { ResearchAreaSection } from './ResearchAreaSection';
+import { ResearchEquipmentsSection } from './ResearchEquipmentsSection';
+import { ResearchTasksSection } from './ResearchTasksSection';
+import { ShipEquipmentsSection } from './ShipEquipmentsSection';
+import { ShipUsageSection } from './ShipUsageSection';
+import { SPUBReportDataSection } from './SPUBReportDataSection';
+import { SPUBTasksSection } from './SPUBTasksSection';
 
 export class FormCPage {
   public readonly page: Page;
@@ -123,24 +123,24 @@ export class FormCPage {
     this.page = page;
     this.formId = formId;
     this.sections = {
-      cruiseInfoSection: new FormCCruiseInfoSection(this),
-      cruiseManagerInfoSection: new FormCCruiseManagerInfoSection(this),
-      shipUsageSection: new FormCShipUsageSection(this),
-      additionalPermissionsSection: new FormCAdditionalPermissionsSection(this),
-      researchAreaSection: new FormCResearchAreaSection(this),
-      cruiseGoalSection: new FormCCruiseGoalSection(this),
-      researchTasksSection: new FormCResearchTasksSection(this),
-      contractsSection: new FormCContractsSection(this),
-      membersSection: new FormCMembersSection(this),
-      publicationsSection: new FormCPublicationsSection(this),
-      spubTasksSection: new FormCSPUBTasksSection(this),
-      cruiseDetailsSection: new FormCCruiseDetailsSection(this),
-      cruiseDayDetailsSection: new FormCCruiseDayDetailsSection(this),
-      researchEquipmentsSection: new FormCResearchEquipmentsSection(this),
-      shipEquipmentsSection: new FormCShipEquipmentsSection(this),
-      collectedSamplesSection: new FormCCollectedSamplesSection(this),
-      spubReportDataSection: new FormCSPUBReportDataSection(this),
-      additionalDescriptionSection: new FormCAdditionalDescriptionSection(this),
+      cruiseInfoSection: new CruiseInfoSection(this),
+      cruiseManagerInfoSection: new CruiseManagerInfoSection(this),
+      shipUsageSection: new ShipUsageSection(this),
+      additionalPermissionsSection: new AdditionalPermissionsSection(this),
+      researchAreaSection: new ResearchAreaSection(this),
+      cruiseGoalSection: new CruiseGoalSection(this),
+      researchTasksSection: new ResearchTasksSection(this),
+      contractsSection: new ContractsSection(this),
+      membersSection: new MembersSection(this),
+      publicationsSection: new PublicationsSection(this),
+      spubTasksSection: new SPUBTasksSection(this),
+      cruiseDetailsSection: new CruiseDetailsSection(this),
+      cruiseDayDetailsSection: new CruiseDayDetailsSection(this),
+      researchEquipmentsSection: new ResearchEquipmentsSection(this),
+      shipEquipmentsSection: new ShipEquipmentsSection(this),
+      collectedSamplesSection: new CollectedSamplesSection(this),
+      spubReportDataSection: new SPUBReportDataSection(this),
+      additionalDescriptionSection: new AdditionalDescriptionSection(this),
     } as const;
 
     this.submitButton = this.page.getByRole('button', { name: 'Wyślij' });

@@ -5,7 +5,7 @@ import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDt
 import { CruiseDto } from '@/api/dto/cruises/CruiseDto';
 import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
 
-export type CruiseFromContextType = {
+export type CruiseFormContextType = {
   form: AnyReactFormApi<CruiseFormDto>;
   cruise?: CruiseDto;
   cruiseApplications: CruiseApplicationDto[];
@@ -13,13 +13,13 @@ export type CruiseFromContextType = {
   hasFormBeenSubmitted?: boolean;
 };
 
-const CruiseFormContext = createContext<CruiseFromContextType | undefined>(undefined);
+const CruiseFormContext = createContext<CruiseFormContextType | undefined>(undefined);
 
 // oxlint-disable-next-line react-refresh/only-export-components
 export function useCruiseForm() {
   return use(CruiseFormContext)!;
 }
 
-export function CruiseFormProvider({ value, children }: { value: CruiseFromContextType; children: React.ReactNode }) {
+export function CruiseFormProvider({ value, children }: { value: CruiseFormContextType; children: React.ReactNode }) {
   return <CruiseFormContext value={value}>{children}</CruiseFormContext>;
 }
