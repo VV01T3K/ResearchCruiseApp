@@ -118,7 +118,7 @@ test.describe('session expiration and refresh', () => {
     await expect(page.getByTestId('session-status-badge')).toBeHidden({ timeout: 10_000 });
   });
 
-  test('expired access token on /usermanagement reload keeps route via refresh token', async ({ page }) => {
+  test('expired access token on /user-management reload keeps route via refresh token', async ({ page }) => {
     const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);
 
     await setupAuthMocks(page, {
@@ -133,8 +133,8 @@ test.describe('session expiration and refresh', () => {
     });
 
     await seedAuthAndNavigate(page, getAuthDetailsPayloadWithExpirations(60_000, 24 * 60 * 60 * 1000));
-    await page.goto('/usermanagement');
-    await expect(page).toHaveURL('/usermanagement');
+    await page.goto('/user-management');
+    await expect(page).toHaveURL('/user-management');
 
     await page.evaluate((expiredAccessTokenDateIso) => {
       const raw = window.localStorage.getItem('authDetails');
@@ -156,7 +156,7 @@ test.describe('session expiration and refresh', () => {
     await page.reload();
     await refreshPromise;
 
-    await expect(page).toHaveURL('/usermanagement');
+    await expect(page).toHaveURL('/user-management');
   });
 
   test('manual refresh button calls refresh endpoint and extends session', async ({ page }) => {
@@ -175,8 +175,8 @@ test.describe('session expiration and refresh', () => {
     });
 
     await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(initialSessionMs));
-    await page.goto('/usermanagement');
-    await expect(page).toHaveURL('/usermanagement');
+    await page.goto('/user-management');
+    await expect(page).toHaveURL('/user-management');
 
     const beforeRefreshAuthDetails = await page.evaluate(() => {
       const raw = window.localStorage.getItem('authDetails');
@@ -211,6 +211,6 @@ test.describe('session expiration and refresh', () => {
     expect(new Date(afterRefreshAuthDetails!.refreshTokenExpirationDate).getTime()).toBeGreaterThan(
       new Date(beforeRefreshAuthDetails!.refreshTokenExpirationDate).getTime()
     );
-    await expect(page).toHaveURL('/usermanagement');
+    await expect(page).toHaveURL('/user-management');
   });
 });
