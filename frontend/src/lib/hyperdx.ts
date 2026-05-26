@@ -25,6 +25,12 @@ export function initializeHyperDX() {
     consoleCapture: true,
     advancedNetworkCapture: false,
     maskAllInputs: true,
+    recordCanvas: false,
+    sampling: {
+      mousemove: 100, // Mouse position every 100ms.
+      scroll: 200, // Scroll position every 200ms.
+      input: 'all', // Capture all input changes.
+    },
     otelResourceAttributes: {
       'app.version': config.version,
       'deployment.environment': config.environment,
