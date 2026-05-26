@@ -5,5 +5,6 @@ export default {
   version: APP_VERSION,
   environment: APP_ENVIRONMENT ?? 'local',
   otelServiceName: OTEL_SERVICE_NAME ?? 'research-cruise-app-frontend',
-  grafanaFaroUrl: GRAFANA_FARO_URL ?? '/faro/collect',
+  hyperdxApiKey: HYPERDX_API_KEY ?? '',
+  hyperdxApiUrl: HYPERDX_API_URL ?? 'https://otel.wsiwiec.com',
 };

@@ -3,6 +3,7 @@ import React from 'react';
 
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { client, setAuthToken } from '@/lib/api';
+import { setHyperDXUser } from '@/lib/hyperdx';
 import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
 import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/hooks/user/UserContextApiHooks';
@@ -55,6 +56,12 @@ export function UserContextProvider({ children }: Props) {
   }, [authDetails]);
 
   const profileQuery = useProfileQuery();
+
+  React.useEffect(() => {
+    if (profileQuery.data) {
+      setHyperDXUser(profileQuery.data);
+    }
+  }, [profileQuery.data]);
 
   const updateAuthDetails = React.useCallback(
     async (newAuthDetails: AuthDetails | undefined) => {

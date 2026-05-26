@@ -38,7 +38,8 @@ export default defineConfig({
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
     OTEL_SERVICE_NAME: JSON.stringify(process.env.OTEL_SERVICE_NAME),
-    GRAFANA_FARO_URL: JSON.stringify(process.env.GRAFANA_FARO_URL),
+    HYPERDX_API_KEY: JSON.stringify(process.env.HYPERDX_API_KEY),
+    HYPERDX_API_URL: JSON.stringify(process.env.HYPERDX_API_URL),
   },
   build: { chunkSizeWarningLimit: 2000 },
 });

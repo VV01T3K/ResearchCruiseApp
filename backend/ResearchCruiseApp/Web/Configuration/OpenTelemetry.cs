@@ -12,6 +12,7 @@ public static class OpenTelemetry
     private const string DefaultOtelEndpoint = "http://localhost:4318";
     private const string UseOtelExporterKey = "UseOtlpExporter";
     private const string OtlpExporterEndpointKey = "OtlpExporterEndpoint";
+    private const string OtlpExporterHeadersKey = "OtlpExporterHeaders";
     private const string ServiceNameKey = "ServiceName";
 
     public static void AddOpenTelemetry(
@@ -25,12 +26,19 @@ public static class OpenTelemetry
         );
         var protocol =
             otelEndpoint.Scheme == Uri.UriSchemeHttp
+            || otelEndpoint.Scheme == Uri.UriSchemeHttps
                 ? OtlpExportProtocol.HttpProtobuf
                 : OtlpExportProtocol.Grpc;
 
         if (!useOtelExporter)
         {
             return;
+        }
+
+        var otlpHeaders = configuration.GetValue<string?>(OtlpExporterHeadersKey);
+        if (!string.IsNullOrWhiteSpace(otlpHeaders))
+        {
+            Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_HEADERS", otlpHeaders);
         }
 
         services
