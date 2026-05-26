@@ -60,7 +60,11 @@ public static class OpenTelemetry
                 tracingBuilder
                     .SetSampler(new AlwaysOnSampler())
                     .AddHttpClientInstrumentation()
-                    .AddAspNetCoreInstrumentation()
+                    .AddAspNetCoreInstrumentation(options =>
+                    {
+                        options.Filter = context =>
+                            !context.Request.Path.StartsWithSegments("/health");
+                    })
                     .AddEntityFrameworkCoreInstrumentation();
             })
             .WithMetrics(metricsBuilder =>

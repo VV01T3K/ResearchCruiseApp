@@ -10,7 +10,8 @@ export function initializeHyperDX() {
     apiKey: config.hyperdxApiKey,
     service: config.otelServiceName,
     url: config.hyperdxApiUrl,
-    tracePropagationTargets: [/.*/],
+    tracePropagationTargets: [new RegExp(`^${config.apiUrl}`)],
+    ignoreUrls: [/\/health$/],
     consoleCapture: true,
     advancedNetworkCapture: true,
   });
