@@ -37,7 +37,6 @@ export default defineConfig({
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
-    OTEL_SERVICE_NAME: JSON.stringify(process.env.OTEL_SERVICE_NAME),
     HYPERDX_API_KEY: JSON.stringify(process.env.HYPERDX_API_KEY),
     HYPERDX_API_URL: JSON.stringify(process.env.HYPERDX_API_URL),
   },

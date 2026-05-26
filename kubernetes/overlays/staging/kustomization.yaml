@@ -8,4 +8,3 @@ resources:
 
 patches:
   - path: backend/configmap-patch.yaml
-  - path: frontend/configmap-patch.yaml
