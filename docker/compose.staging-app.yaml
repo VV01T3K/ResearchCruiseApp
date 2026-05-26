@@ -9,7 +9,7 @@ services:
       - Database__LogUserPasswordsWhenSeeding=${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-true}
       - ConnectionStrings__Database=Server=${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
-      - UseOtlpExporter=true
+      - UseOtlpExporter=${USE_OTLP_EXPORTER:-false}
       - OtlpExporterEndpoint=${OTLP_EXPORTER_ENDPOINT:-https://otel.wsiwiec.com}
       - OtlpExporterHeaders=authorization=${HYPERDX_API_KEY}
     networks:

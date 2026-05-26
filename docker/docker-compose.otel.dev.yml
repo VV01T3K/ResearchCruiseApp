@@ -12,7 +12,7 @@ services:
       - Database__LogUserPasswordsWhenSeeding=true
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=http://localhost:8080
-      - UseOtlpExporter=true
+      - UseOtlpExporter=${USE_OTLP_EXPORTER:-false}
       - OtlpExporterEndpoint=https://otel.wsiwiec.com
       - OtlpExporterHeaders=authorization=${HYPERDX_API_KEY}
     depends_on:
