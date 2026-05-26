@@ -25,8 +25,7 @@ public static class OpenTelemetry
             configuration.GetValue(OtlpExporterEndpointKey, defaultValue: DefaultOtelEndpoint)
         );
         var protocol =
-            otelEndpoint.Scheme == Uri.UriSchemeHttp
-            || otelEndpoint.Scheme == Uri.UriSchemeHttps
+            otelEndpoint.Scheme == Uri.UriSchemeHttp || otelEndpoint.Scheme == Uri.UriSchemeHttps
                 ? OtlpExportProtocol.HttpProtobuf
                 : OtlpExportProtocol.Grpc;
 
