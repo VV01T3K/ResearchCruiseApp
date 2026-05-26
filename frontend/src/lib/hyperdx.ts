@@ -23,7 +23,7 @@ export function initializeHyperDX() {
     tracePropagationTargets: [new RegExp(`^${config.apiUrl}`)],
     ignoreUrls: [/\/health$/],
     consoleCapture: true,
-    advancedNetworkCapture: true,
+    advancedNetworkCapture: false,
     maskAllInputs: true,
     otelResourceAttributes: {
       'app.version': config.version,
