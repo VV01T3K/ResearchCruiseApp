@@ -10,14 +10,17 @@ public static class SentryConfiguration
     {
         builder.WebHost.UseSentry(options =>
         {
-            options.Dsn = builder.Configuration["Sentry:Dsn"];
+            options.Dsn =
+                NullIfEmpty(builder.Configuration["Sentry:Dsn"])
+                ?? NullIfEmpty(builder.Configuration["SENTRY_DSN_BACKEND"])
+                ?? NullIfEmpty(builder.Configuration["SENTRY_DSN"]);
             options.Environment =
-                builder.Configuration["Sentry:Environment"]
-                ?? builder.Configuration["SENTRY_ENVIRONMENT"]
+                NullIfEmpty(builder.Configuration["Sentry:Environment"])
+                ?? NullIfEmpty(builder.Configuration["SENTRY_ENVIRONMENT"])
                 ?? builder.Environment.EnvironmentName;
             options.Release =
-                builder.Configuration["Sentry:Release"]
-                ?? builder.Configuration["SENTRY_RELEASE"]
+                NullIfEmpty(builder.Configuration["Sentry:Release"])
+                ?? NullIfEmpty(builder.Configuration["SENTRY_RELEASE"])
                 ?? $"research-cruise-app-backend@{typeof(SentryConfiguration).Assembly.GetName().Version}";
 
             options.SendDefaultPii = false;
@@ -101,4 +104,7 @@ public static class SentryConfiguration
 
         return environment.IsProduction() ? 0.1 : 0;
     }
+
+    private static string? NullIfEmpty(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value;
 }
