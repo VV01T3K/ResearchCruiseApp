@@ -96,7 +96,9 @@ public static class SentryConfiguration
         IWebHostEnvironment environment
     )
     {
-        var configured = configuration["Sentry:ProfilesSampleRate"];
+        var configured =
+            configuration["Sentry:ProfilesSampleRate"]
+            ?? configuration["SENTRY_PROFILES_SAMPLE_RATE"];
         if (double.TryParse(configured, out var parsed))
         {
             return Math.Clamp(parsed, 0, 1);

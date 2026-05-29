@@ -68,6 +68,7 @@ Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local 
 | `SENTRY_ENVIRONMENT` | Both | `local`, `staging`, `production` |
 | `SENTRY_RELEASE` | Both | Git SHA or app version |
 | `SENTRY_TRACES_SAMPLE_RATE` | Both | Performance sampling (e.g. `0.1` in prod) |
+| `SENTRY_PROFILES_SAMPLE_RATE` | Backend | Profiling sampling (e.g. `0.1` in prod) |
 | `SENTRY_AUTH_TOKEN` | CI only | Source map / symbol upload |
 | `SENTRY_ORG` | CI only | Organization slug |
 | `SENTRY_PROJECT_FRONTEND` | CI only | Frontend project slug |
