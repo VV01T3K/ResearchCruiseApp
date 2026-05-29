@@ -7,7 +7,6 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
-import { trackFormSubmit } from '@/lib/hyperdx';
 import { getErrors } from '@/lib/utils';
 import { useForgotPasswordMutation } from '@/api/hooks/user/UserApiHooks';
 import { Result } from '@/models/user/Results';
@@ -32,9 +31,7 @@ function ForgotPasswordPage() {
     validators: {
       onChange: validationSchema,
     },
-    onSubmit: async ({ value, formApi }) => {
-      trackFormSubmit('forgot-password', 'valid', formApi.state);
-
+    onSubmit: async ({ value }) => {
       if (!value.email) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -45,9 +42,6 @@ function ForgotPasswordPage() {
           setEmail(value.email);
         },
       }).catch(() => {});
-    },
-    onSubmitInvalid: ({ formApi }) => {
-      trackFormSubmit('forgot-password', 'invalid', formApi.state);
     },
   });
 

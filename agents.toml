@@ -1,0 +1,10 @@
+version = 1
+agents = ["cursor"]
+
+[[skills]]
+name = "dotagents"
+source = "getsentry/dotagents"
+
+[[skills]]
+name = "*"
+source = "getsentry/sentry-for-ai"

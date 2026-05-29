@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { trackFormSubmit } from '@/lib/hyperdx';
 import { getErrors } from '@/lib/utils';
 import { useChangePasswordMutation } from '@/api/hooks/user/UserApiHooks';
 
@@ -45,8 +44,6 @@ export function ChangePasswordForm() {
       onChange: validationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
-      trackFormSubmit('change-password', 'valid', formApi.state);
-
       if (!value.password || !value.newPassword || !value.repeatedNewPassword) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -57,9 +54,6 @@ export function ChangePasswordForm() {
       }).catch(() => {});
 
       formApi.reset();
-    },
-    onSubmitInvalid: ({ formApi }) => {
-      trackFormSubmit('change-password', 'invalid', formApi.state);
     },
   });
 

@@ -1,13 +1,9 @@
 FROM node:25-alpine AS build
 
 ARG APP_ENVIRONMENT="development"
-ARG HYPERDX_API_KEY=""
-ARG HYPERDX_API_URL="https://otel.wsiwiec.com"
 
 ENV API_URL="/api" \
-    APP_ENVIRONMENT=$APP_ENVIRONMENT \
-    HYPERDX_API_KEY=$HYPERDX_API_KEY \
-    HYPERDX_API_URL=$HYPERDX_API_URL
+    APP_ENVIRONMENT=$APP_ENVIRONMENT
 
 WORKDIR /app
 RUN npm install --global vite-plus@0.1.14

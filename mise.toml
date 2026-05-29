@@ -16,7 +16,6 @@ dotnet = "10.0"
 preinstall = '''
     test -f .mise-setup-done && exit 0
     vp env install
-    cp .env.otel.example .env.otel
 '''
 postinstall = { task = "postinstall-task" }
 [tasks.postinstall-task]

@@ -5,12 +5,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { attachErrorBoundary, initializeHyperDX } from '@/lib/hyperdx';
 import { AppRouter } from '@/router';
 import { UserContextProvider } from '@/providers/UserContextProvider';
-
-initializeHyperDX();
-attachErrorBoundary(ErrorBoundary);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
