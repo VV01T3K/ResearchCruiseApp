@@ -7,30 +7,6 @@
       "skillPath": "skills/btca-cli/SKILL.md",
       "computedHash": "99bc5301f4f839a6f3be99d98955f32f1cd576c218731fa05fa54a003bd20e9b"
     },
-    "sentry-android-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-android-sdk/SKILL.md",
-      "computedHash": "ea55fe4506f115a0fdf3825ab232e2fe9d0a9df948dd195c89850ef344ecf686"
-    },
-    "sentry-browser-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-browser-sdk/SKILL.md",
-      "computedHash": "e3673cf79c5c517f1a4bff46fdfc5103824d5f519ea6135aaeb575108a45b5aa"
-    },
-    "sentry-cloudflare-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-cloudflare-sdk/SKILL.md",
-      "computedHash": "4397959df2b59afa15ca7c4f678848d5344612158f75c018bcb01539b315bd55"
-    },
-    "sentry-cocoa-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-cocoa-sdk/SKILL.md",
-      "computedHash": "159bf7d2a770bf95875ca1c6561b4cb12fef03d5ec6cbc482c6a420971c443af"
-    },
     "sentry-code-review": {
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
@@ -49,53 +25,11 @@
       "skillPath": "skills/sentry-dotnet-sdk/SKILL.md",
       "computedHash": "e7e2dd1184b2668b777f1256db7266a57073516cc6e69510f6b10349c4258cd1"
     },
-    "sentry-elixir-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-elixir-sdk/SKILL.md",
-      "computedHash": "e7a8ee54b9d70a4839f041477fab6dfa3021cdcbc350071046f60480082ec742"
-    },
-    "sentry-feature-setup": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-feature-setup/SKILL.md",
-      "computedHash": "ae104e1c1f9df97f765f2ec87f7efbc3767d9675e185dea637494e7d891aefd9"
-    },
     "sentry-fix-issues": {
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
       "skillPath": "skills/sentry-fix-issues/SKILL.md",
       "computedHash": "0ef2103f20d698acc56d856a07a372a0a68cb02bad654d0dacb4e2ffe87e98b5"
-    },
-    "sentry-flutter-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-flutter-sdk/SKILL.md",
-      "computedHash": "2efdf0b1d74d367b7cf07702231d78b839846e5f69136bfe0a99b94d811255ec"
-    },
-    "sentry-go-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-go-sdk/SKILL.md",
-      "computedHash": "ff2a87adbe2c3a9178b157f075e3d9259b5502aa9cd0389ae35f4cb603634695"
-    },
-    "sentry-nestjs-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-nestjs-sdk/SKILL.md",
-      "computedHash": "3df8b28d3565851db738941a6196d9861394e4e7d8fb180c40902e97a5dc2c25"
-    },
-    "sentry-nextjs-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-nextjs-sdk/SKILL.md",
-      "computedHash": "7a144b78fa9d3df2b7fa1d4376d800297bbcbc981c4e7ea6e0409c13fb07050e"
-    },
-    "sentry-node-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-node-sdk/SKILL.md",
-      "computedHash": "8a1381ed04503d0aa71e7a3138cc1e68762c780fefb84e6cf9793140289090ed"
     },
     "sentry-otel-exporter-setup": {
       "source": "getsentry/sentry-for-ai",
@@ -103,35 +37,11 @@
       "skillPath": "skills/sentry-otel-exporter-setup/SKILL.md",
       "computedHash": "621384dc6f606bc5a028cc1194b3cdbb1e44de6fcaa608cb5566e01a4b89f5a1"
     },
-    "sentry-php-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-php-sdk/SKILL.md",
-      "computedHash": "78930e87b2a0557192a8c740fbe843de7ea5d9893cbb25d0223b4421dfa5579f"
-    },
     "sentry-pr-code-review": {
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
       "skillPath": "skills/sentry-pr-code-review/SKILL.md",
       "computedHash": "50d60bad66edd86ebda5302b67fb2980396b942fb125f70858f103c5a7692eb7"
-    },
-    "sentry-python-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-python-sdk/SKILL.md",
-      "computedHash": "aa14751471a8bc62d3a248f4f6826f257a8d39be75e7147757e84975b5d3e776"
-    },
-    "sentry-react-native-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-react-native-sdk/SKILL.md",
-      "computedHash": "c8ce0f403afb9ff21ac61670f9f2d9fbb66b804859747b9df70367c58fdaeb3b"
-    },
-    "sentry-react-router-framework-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-react-router-framework-sdk/SKILL.md",
-      "computedHash": "e116c9b07c2c669a3399ef2a7bfa34db93bab6b5d99d2f5fabf91b47a1617418"
     },
     "sentry-react-sdk": {
       "source": "getsentry/sentry-for-ai",
@@ -139,47 +49,17 @@
       "skillPath": "skills/sentry-react-sdk/SKILL.md",
       "computedHash": "f97fb5d2ce1543f1c7c31a04023175ecf1bd950a193792c3b999428af9ce7ca0"
     },
-    "sentry-ruby-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-ruby-sdk/SKILL.md",
-      "computedHash": "6dde98213f5f07c8a8460d9e4ebc36c2c085b87434aab4e8e89e6801cfaf6515"
-    },
     "sentry-sdk-setup": {
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
       "skillPath": "skills/sentry-sdk-setup/SKILL.md",
       "computedHash": "a471d03591daf5371c3dacc00532d957c14f7ae7f4120b7305ad3b148ccefbb2"
     },
-    "sentry-sdk-skill-creator": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-sdk-skill-creator/SKILL.md",
-      "computedHash": "d67401477ab99da29eccf7309b41b1948879b7ccdabacf6e6ae7a87732756f3f"
-    },
     "sentry-sdk-upgrade": {
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
       "skillPath": "skills/sentry-sdk-upgrade/SKILL.md",
       "computedHash": "ef1881ddfe80380e6814cc2dcd072c6c238783ebc3985acc46d3141b2c3fdf6b"
-    },
-    "sentry-setup-ai-monitoring": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-setup-ai-monitoring/SKILL.md",
-      "computedHash": "12995e57245f0f98bdad2a279ed8483ccbfa283eeb3195598b861a587514c6e6"
-    },
-    "sentry-svelte-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-svelte-sdk/SKILL.md",
-      "computedHash": "7b534f841456f2bb3dab813c2b0de58752dfcf144a5eb828f01c3b354b36d6c2"
-    },
-    "sentry-tanstack-start-sdk": {
-      "source": "getsentry/sentry-for-ai",
-      "sourceType": "github",
-      "skillPath": "skills/sentry-tanstack-start-sdk/SKILL.md",
-      "computedHash": "e08396b47f0ff52abe6a4602b4f3af47d8de6a9d889b3cd6a9ff210b884c2dc4"
     },
     "sentry-workflow": {
       "source": "getsentry/sentry-for-ai",

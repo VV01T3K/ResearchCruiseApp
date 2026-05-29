@@ -6,20 +6,21 @@ This project is migrating from HyperDX + self-managed OpenTelemetry (OTLP) to [S
 
 Official Sentry skills come from **[getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai)**. They are **not committed** to git — only **`skills-lock.json`** is, with install paths gitignored (`.agents/skills/`, `.cursor/`).
 
-### Install (after clone)
+### Install (optional, after clone)
+
+Not run automatically during `mise` postinstall — run when you want AI Sentry skills locally:
 
 ```bash
-# Restore all skills pinned in skills-lock.json (Sentry + other project skills)
-vp dlx skills experimental_install -y
+pnpm skills:install
+# or: mise run skills:install
+# or: vp dlx skills experimental_install -y
 ```
 
-Add or update Sentry skills:
+`skills-lock.json` pins only skills relevant to this stack (React, ASP.NET Core, workflows) plus `btca-cli`.
+
+Add another Sentry skill:
 
 ```bash
-# All Sentry skills
-vp dlx skills add getsentry/sentry-for-ai -y
-
-# Single skill
 vp dlx skills add getsentry/sentry-for-ai --skill sentry-react-sdk -y
 ```
 
@@ -56,7 +57,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 4. **CI/CD**: upload debug symbols / source maps; set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`.
 5. **Staging/production**: wire `SENTRY_DSN` (and related env) in Docker compose and deployment configs (K8s overlay separately).
 
-Environment variables (to be introduced):
+Environment variables (to be introduced) — see [`.env.sentry.example`](../.env.sentry.example):
 
 | Variable | Where | Purpose |
 |----------|--------|---------|
@@ -65,7 +66,7 @@ Environment variables (to be introduced):
 | `SENTRY_RELEASE` | Both | Git SHA or app version |
 | `SENTRY_TRACES_SAMPLE_RATE` | Both | Performance sampling (e.g. `0.1` in prod) |
 
-Do not commit DSN secrets to git; use env files or secret stores.
+Copy `.env.sentry.example` to `.env.sentry` for local values. Do not commit DSNs or auth tokens.
 
 ## References
 

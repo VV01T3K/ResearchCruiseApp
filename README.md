@@ -11,6 +11,19 @@ The application aims to streamline processes related to the booking, management,
 | -------------------- | --------------------------------------- | ------------------------------ | -------- |
 | `API_URL`            | The address of the backend service      | `http://backend:8000`          | Yes      |
 
+Sentry-related variables (for the upcoming SDK integration) are documented in [`.env.sentry.example`](./.env.sentry.example).
+
+### Agent skills (optional)
+
+Sentry AI assistant skills are pinned in `skills-lock.json` and installed locally (not committed). After clone, run:
+
+```bash
+pnpm skills:install
+# or: mise run skills:install
+```
+
+This downloads skill definitions from GitHub. It is **not** run automatically during `mise` setup.
+
 ### Backend
 
 | Environment Variable                    | Description                                        | Example                                                                         | Required |

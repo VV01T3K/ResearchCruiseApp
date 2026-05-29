@@ -26,9 +26,12 @@ run = '''
     vp install
     (cd frontend && vp exec playwright install --with-deps chromium)
     (cd backend && dotnet restore && dotnet tool restore)
-    vp dlx skills experimental_install -y
     touch .mise-setup-done
 '''
+
+[tasks."skills:install"]
+description = "Install agent skills from skills-lock.json (optional; fetches from GitHub)"
+run = "vp dlx skills experimental_install -y"
 
 [tasks."db:up"]
 description = "Start the database container"
