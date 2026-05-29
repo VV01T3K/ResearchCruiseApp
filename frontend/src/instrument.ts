@@ -20,6 +20,26 @@ function defaultReplaySessionSampleRate(): number {
   return config.environment === 'production' ? 0.1 : 0.5;
 }
 
+function resolveTracePropagationTargets(): (string | RegExp)[] {
+  const targets: (string | RegExp)[] = [/^https?:\/\/localhost(?:|:)/];
+
+  if (typeof window !== 'undefined') {
+    const escapedOrigin = window.location.origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    targets.push(new RegExp(`^${escapedOrigin}`));
+  }
+
+  if (/^https?:\/\//i.test(config.apiUrl)) {
+    try {
+      const apiOrigin = new URL(config.apiUrl).origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      targets.push(new RegExp(`^${apiOrigin}`));
+    } catch {
+      // Relative apiUrl (e.g. /api) is covered by window.location.origin.
+    }
+  }
+
+  return targets;
+}
+
 if (config.sentryDsn) {
   const tracesSampleRate = parseSampleRate(config.sentryTracesSampleRate, defaultTracesSampleRate());
 
@@ -47,7 +67,7 @@ if (config.sentryDsn) {
       }),
     ],
     tracesSampleRate,
-    tracePropagationTargets: ['localhost', config.apiUrl],
+    tracePropagationTargets: resolveTracePropagationTargets(),
     replaysSessionSampleRate: defaultReplaySessionSampleRate(),
     replaysOnErrorSampleRate: 1,
     initialScope: {
