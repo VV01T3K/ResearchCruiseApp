@@ -27,24 +27,9 @@ jobs:
           - component: frontend
             context: .
             dockerfile: frontend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=production
-              SENTRY_DSN=${{ secrets.SENTRY_DSN_FRONTEND }}
-              SENTRY_ENVIRONMENT=production
-              SENTRY_RELEASE=${{ github.sha }}
-              SENTRY_TRACES_SAMPLE_RATE=0.1
-              SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-              SENTRY_ORG=${{ secrets.SENTRY_ORG }}
-              SENTRY_PROJECT_FRONTEND=${{ secrets.SENTRY_PROJECT_FRONTEND }}
-              GITHUB_SHA=${{ github.sha }}
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile
-            build-args: |
-              SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-              SENTRY_ORG=${{ secrets.SENTRY_ORG }}
-              SENTRY_PROJECT_BACKEND=${{ secrets.SENTRY_PROJECT_BACKEND }}
-              GITHUB_SHA=${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v6
@@ -70,6 +55,40 @@ jobs:
             type=ref,event=pr
             type=sha
 
+      - name: Prepare build args
+        id: buildargs
+        env:
+          SENTRY_DSN_FRONTEND: ${{ secrets.SENTRY_DSN_FRONTEND }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT_FRONTEND: ${{ secrets.SENTRY_PROJECT_FRONTEND }}
+          SENTRY_PROJECT_BACKEND: ${{ secrets.SENTRY_PROJECT_BACKEND }}
+        run: |
+          if [ "${{ matrix.component }}" = "frontend" ]; then
+            {
+              echo "args<<EOF"
+              echo "APP_ENVIRONMENT=production"
+              echo "SENTRY_DSN=${SENTRY_DSN_FRONTEND}"
+              echo "SENTRY_ENVIRONMENT=production"
+              echo "SENTRY_RELEASE=${{ github.sha }}"
+              echo "SENTRY_TRACES_SAMPLE_RATE=0.1"
+              echo "SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}"
+              echo "SENTRY_ORG=${SENTRY_ORG}"
+              echo "SENTRY_PROJECT_FRONTEND=${SENTRY_PROJECT_FRONTEND}"
+              echo "GITHUB_SHA=${{ github.sha }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo "args<<EOF"
+              echo "SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}"
+              echo "SENTRY_ORG=${SENTRY_ORG}"
+              echo "SENTRY_PROJECT_BACKEND=${SENTRY_PROJECT_BACKEND}"
+              echo "GITHUB_SHA=${{ github.sha }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -78,7 +97,7 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build-args }}
+          build-args: ${{ steps.buildargs.outputs.args }}
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 

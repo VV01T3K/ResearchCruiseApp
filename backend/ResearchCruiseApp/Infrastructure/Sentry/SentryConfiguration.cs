@@ -27,24 +27,34 @@ public static class SentryConfiguration
             options.MinimumEventLevel = LogLevel.Warning;
             options.EnableLogs = true;
 
-            options.TracesSampleRate = ResolveTracesSampleRate(builder.Configuration, builder.Environment);
-            options.ProfilesSampleRate = ResolveProfilesSampleRate(builder.Configuration, builder.Environment);
+            options.TracesSampleRate = ResolveTracesSampleRate(
+                builder.Configuration,
+                builder.Environment
+            );
+            options.ProfilesSampleRate = ResolveProfilesSampleRate(
+                builder.Configuration,
+                builder.Environment
+            );
 
-            options.SetBeforeSend((@event, _) =>
-            {
-                @event.ServerName = null;
-                return @event;
-            });
-
-            options.SetBeforeSendTransaction((transaction, _) =>
-            {
-                if (transaction.Name.Contains("/health", StringComparison.OrdinalIgnoreCase))
+            options.SetBeforeSend(
+                (@event, _) =>
                 {
-                    return null;
+                    @event.ServerName = null;
+                    return @event;
                 }
+            );
 
-                return transaction;
-            });
+            options.SetBeforeSendTransaction(
+                (transaction, _) =>
+                {
+                    if (transaction.Name.Contains("/health", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return null;
+                    }
+
+                    return transaction;
+                }
+            );
         });
 
         builder.Logging.AddSentry(options =>
@@ -61,18 +71,27 @@ public static class SentryConfiguration
         return app;
     }
 
-    private static double ResolveTracesSampleRate(IConfiguration configuration, IWebHostEnvironment environment)
+    private static double ResolveTracesSampleRate(
+        IConfiguration configuration,
+        IWebHostEnvironment environment
+    )
     {
-        var configured = configuration["Sentry:TracesSampleRate"] ?? configuration["SENTRY_TRACES_SAMPLE_RATE"];
+        var configured =
+            configuration["Sentry:TracesSampleRate"] ?? configuration["SENTRY_TRACES_SAMPLE_RATE"];
         if (double.TryParse(configured, out var parsed))
         {
             return Math.Clamp(parsed, 0, 1);
         }
 
-        return environment.IsProduction() ? 0.1 : environment.IsStaging() ? 0.2 : 1.0;
+        return environment.IsProduction() ? 0.1
+            : environment.IsStaging() ? 0.2
+            : 1.0;
     }
 
-    private static double ResolveProfilesSampleRate(IConfiguration configuration, IWebHostEnvironment environment)
+    private static double ResolveProfilesSampleRate(
+        IConfiguration configuration,
+        IWebHostEnvironment environment
+    )
     {
         var configured = configuration["Sentry:ProfilesSampleRate"];
         if (double.TryParse(configured, out var parsed))

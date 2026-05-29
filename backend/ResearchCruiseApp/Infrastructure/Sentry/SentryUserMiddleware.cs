@@ -14,7 +14,9 @@ public sealed class SentryUserMiddleware(RequestDelegate next)
             {
                 scope.User = new SentryUser
                 {
-                    Id = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub"),
+                    Id =
+                        user.FindFirstValue(ClaimTypes.NameIdentifier)
+                        ?? user.FindFirstValue("sub"),
                     Email = user.FindFirstValue(ClaimTypes.Email),
                     Username = user.FindFirstValue(ClaimTypes.Name) ?? user.Identity?.Name,
                 };
