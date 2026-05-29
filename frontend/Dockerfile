@@ -1,6 +1,13 @@
 FROM node:25-alpine AS build
 
 ARG APP_ENVIRONMENT="development"
+
+ENV API_URL="/api" \
+    APP_ENVIRONMENT=$APP_ENVIRONMENT
+
+WORKDIR /app
+RUN npm install --global vite-plus@0.1.14
+
 ARG SENTRY_DSN=""
 ARG SENTRY_ENVIRONMENT=""
 ARG SENTRY_RELEASE=""
@@ -10,17 +17,13 @@ ARG SENTRY_PROJECT=""
 ARG SENTRY_PROJECT_FRONTEND=""
 ARG GITHUB_SHA=""
 
-ENV API_URL="/api" \
-    APP_ENVIRONMENT=$APP_ENVIRONMENT \
-    SENTRY_DSN=$SENTRY_DSN \
+ENV SENTRY_DSN=$SENTRY_DSN \
     SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-$APP_ENVIRONMENT} \
     SENTRY_RELEASE=${SENTRY_RELEASE:-$GITHUB_SHA} \
     SENTRY_TRACES_SAMPLE_RATE=$SENTRY_TRACES_SAMPLE_RATE \
     SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=${SENTRY_PROJECT_FRONTEND:-$SENTRY_PROJECT}
 
-WORKDIR /app
-RUN npm install --global vite-plus@0.1.14
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json frontend/package.json
 COPY backend/package.json backend/package.json

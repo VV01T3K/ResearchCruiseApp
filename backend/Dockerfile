@@ -28,12 +28,12 @@ RUN --mount=type=secret,id=sentry_auth_token,required=false \
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
+RUN apk add --no-cache curl icu-libs tzdata
+
 ARG SENTRY_RELEASE=""
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     SENTRY_RELEASE=$SENTRY_RELEASE
-
-RUN apk add --no-cache curl icu-libs tzdata
 
 HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl",  "--fail", "http://localhost:8080/health" ]
 USER $APP_UID
