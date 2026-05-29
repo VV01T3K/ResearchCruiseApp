@@ -286,3 +286,9 @@ gen
 .vscode/tasks.json
 .mise-setup-done
 
+# Agent skills (installed from skills-lock.json via `vp dlx skills experimental_install`)
+.agents/skills/
+
+# Cursor-local config (skills symlink, MCP, hooks — not shared in git)
+.cursor/
+

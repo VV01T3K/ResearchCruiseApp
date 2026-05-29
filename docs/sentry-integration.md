@@ -4,23 +4,28 @@ This project is migrating from HyperDX + self-managed OpenTelemetry (OTLP) to [S
 
 ## Agent skills (AI assistants)
 
-Official Sentry skills come from **[getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai)**. Install them with the Skills CLI (Sentry’s recommended path in [Agent Skills docs](https://docs.sentry.io/ai/agent-skills/)):
+Official Sentry skills come from **[getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai)**. They are **not committed** to git — only **`skills-lock.json`** is, with install paths gitignored (`.agents/skills/`, `.cursor/`).
+
+### Install (after clone)
 
 ```bash
-# All Sentry skills (setup + workflow)
-npx skills add getsentry/sentry-for-ai
-
-# Or a single skill, e.g. React SDK setup
-npx skills add getsentry/sentry-for-ai --skill sentry-react-sdk
+# Restore all skills pinned in skills-lock.json (Sentry + other project skills)
+vp dlx skills experimental_install -y
 ```
 
-After install, skills live under `.agents/skills/` and are linked for Cursor at `.cursor/skills/`. Versions are pinned in **`skills-lock.json`** at the repo root (same mechanism as other project skills).
-
-To restore from the lockfile without re-selecting skills:
+Add or update Sentry skills:
 
 ```bash
-npx skills experimental_install
+# All Sentry skills
+vp dlx skills add getsentry/sentry-for-ai -y
+
+# Single skill
+vp dlx skills add getsentry/sentry-for-ai --skill sentry-react-sdk -y
 ```
+
+(`vp dlx` is Vite+’s equivalent of `npx` / `vpx`; see [vpx docs](https://viteplus.dev/guide/vpx).)
+
+Installed files go under `.agents/skills/`; Cursor reads `.cursor/skills/` (generated locally, gitignored).
 
 ### Skills to use for this repo
 
@@ -36,8 +41,6 @@ npx skills experimental_install
 Example prompts: “Add Sentry to my React app”, “Add Sentry to my .NET app”, “Fix the recent Sentry errors”.
 
 Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
-
-> **Note:** [dotagents](https://docs.sentry.io/ai/dotagents/) is an optional package manager that can also install `getsentry/sentry-for-ai`. This repo uses **`npx skills add`** + `skills-lock.json` instead, consistent with existing project skill workflow.
 
 ## What was removed (non-Kubernetes)
 

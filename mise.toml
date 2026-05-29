@@ -26,6 +26,7 @@ run = '''
     vp install
     (cd frontend && vp exec playwright install --with-deps chromium)
     (cd backend && dotnet restore && dotnet tool restore)
+    vp dlx skills experimental_install -y
     touch .mise-setup-done
 '''
 
