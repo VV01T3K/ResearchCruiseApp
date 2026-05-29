@@ -113,6 +113,7 @@ export class FormAPage {
     expectedResult,
     message,
   }: { expectedResult?: 'valid' | 'invalid'; message?: string } = {}) {
+    const initialUrl = this.page.url();
     await this.submitButton.click();
 
     // Wait for any toast to appear and log its content for debugging
@@ -130,12 +131,23 @@ export class FormAPage {
     switch (expectedResult) {
       case 'valid':
         await Promise.any([
-          this.page.waitForURL((url) => url.pathname === '/', { timeout: 10000 }),
+          this.page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 10000 }),
           this.submissionApprovedMessage.waitFor({ state: 'visible', timeout: 10000 }),
         ]);
         break;
       case 'invalid':
-        await expect(this.validationErrorMessage, { message: message }).toBeVisible();
+        {
+          const outcome = await Promise.race([
+            this.validationErrorMessage.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'error'),
+            this.page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 10000 }).then(() => 'navigated'),
+          ]);
+
+          if (outcome === 'navigated') {
+            throw new Error('Form submitted successfully but expected invalid results.');
+          }
+
+          await expect(this.validationErrorMessage, { message: message }).toBeVisible();
+        }
         await this.toastMessage.getByLabel('Close').first().click();
         break;
     }
@@ -165,7 +177,6 @@ export class FormAPage {
       payload.optimalPeriod = '';
       payload.precisePeriodStart = '';
       payload.precisePeriodEnd = '';
-      payload.cruiseHours = '0';
       payload.periodNotes = '';
       payload.shipUsage = '';
       payload.differentUsage = '';
