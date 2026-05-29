@@ -283,4 +283,4 @@ gen
 # Sentry agent skills (lockfile is committed)
 .agents/skills/
 .cursor/
-.env.sentry
+.env.sentrypnpm-lock.yaml
