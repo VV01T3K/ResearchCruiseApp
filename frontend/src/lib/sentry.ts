@@ -27,7 +27,6 @@ export function setSentryUser(user: User | undefined): void {
 
   Sentry.setUser({
     id: String(user.id),
-    email: user.email,
     username: `${user.firstName} ${user.lastName}`,
   });
 

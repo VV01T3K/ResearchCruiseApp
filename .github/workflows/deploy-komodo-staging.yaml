@@ -54,7 +54,6 @@ jobs:
         id: buildargs
         env:
           SENTRY_DSN_FRONTEND: ${{ secrets.SENTRY_DSN_FRONTEND }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT_FRONTEND: ${{ secrets.SENTRY_PROJECT_FRONTEND }}
           SENTRY_PROJECT_BACKEND: ${{ secrets.SENTRY_PROJECT_BACKEND }}
@@ -67,7 +66,6 @@ jobs:
               echo "SENTRY_ENVIRONMENT=staging"
               echo "SENTRY_RELEASE=${{ github.sha }}"
               echo "SENTRY_TRACES_SAMPLE_RATE=0.2"
-              echo "SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}"
               echo "SENTRY_ORG=${SENTRY_ORG}"
               echo "SENTRY_PROJECT_FRONTEND=${SENTRY_PROJECT_FRONTEND}"
               echo "GITHUB_SHA=${{ github.sha }}"
@@ -76,7 +74,6 @@ jobs:
           else
             {
               echo "args<<EOF"
-              echo "SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}"
               echo "SENTRY_ORG=${SENTRY_ORG}"
               echo "SENTRY_PROJECT_BACKEND=${SENTRY_PROJECT_BACKEND}"
               echo "GITHUB_SHA=${{ github.sha }}"
@@ -93,6 +90,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ steps.buildargs.outputs.args }}
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 

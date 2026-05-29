@@ -1,14 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 
 ARG BUILD_CONFIGURATION=Release
-ARG SENTRY_AUTH_TOKEN=""
 ARG SENTRY_ORG=""
 ARG SENTRY_PROJECT=""
 ARG SENTRY_PROJECT_BACKEND=""
 ARG GITHUB_SHA=""
 
-ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN \
-    SENTRY_ORG=$SENTRY_ORG \
+ENV SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=${SENTRY_PROJECT_BACKEND:-$SENTRY_PROJECT} \
     SENTRY_RELEASE=${GITHUB_SHA:-}
 
@@ -20,7 +18,9 @@ RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj"
 COPY . .
 WORKDIR "/src/ResearchCruiseApp"
 
-RUN dotnet publish "ResearchCruiseApp.csproj" \
+RUN --mount=type=secret,id=sentry_auth_token,required=false \
+    export SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || true) && \
+    dotnet publish "ResearchCruiseApp.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     --no-restore \

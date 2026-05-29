@@ -5,7 +5,6 @@ ARG SENTRY_DSN=""
 ARG SENTRY_ENVIRONMENT=""
 ARG SENTRY_RELEASE=""
 ARG SENTRY_TRACES_SAMPLE_RATE=""
-ARG SENTRY_AUTH_TOKEN=""
 ARG SENTRY_ORG=""
 ARG SENTRY_PROJECT=""
 ARG SENTRY_PROJECT_FRONTEND=""
@@ -17,7 +16,6 @@ ENV API_URL="/api" \
     SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-$APP_ENVIRONMENT} \
     SENTRY_RELEASE=${SENTRY_RELEASE:-$GITHUB_SHA} \
     SENTRY_TRACES_SAMPLE_RATE=$SENTRY_TRACES_SAMPLE_RATE \
-    SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN \
     SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=${SENTRY_PROJECT_FRONTEND:-$SENTRY_PROJECT}
 
@@ -31,7 +29,9 @@ RUN --mount=type=cache,id=pnpm,target=/root/.local/share/vp/store \
 
 COPY frontend ./frontend
 WORKDIR /app/frontend
-RUN vp run build
+RUN --mount=type=secret,id=sentry_auth_token,required=false \
+    export SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || true) && \
+    vp run build
 
 FROM nginxinc/nginx-unprivileged:stable-alpine-slim
 

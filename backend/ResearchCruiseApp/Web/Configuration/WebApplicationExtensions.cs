@@ -17,7 +17,7 @@ public static class WebApplicationExtensions
 
         app.UseCors("CustomPolicy");
 
-        app.UseSentryTracing();
+        app.UseResearchCruiseAppSentry();
 
         app.UseAuthentication().UseAuthorization();
 

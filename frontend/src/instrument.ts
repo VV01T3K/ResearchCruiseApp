@@ -55,7 +55,6 @@ if (config.sentryDsn) {
     ],
     tracesSampleRate,
     tracePropagationTargets: ['localhost', apiOriginPattern],
-    denyUrls: [/\/health(?:\/|$)/],
     replaysSessionSampleRate: defaultReplaySessionSampleRate(),
     replaysOnErrorSampleRate: 1,
     beforeSendTransaction(event) {
