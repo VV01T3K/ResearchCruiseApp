@@ -150,14 +150,9 @@ export class FormCPage {
   }
 
   public async fillForm({ except }: { except?: (keyof FormCPage['sections'])[] } = {}) {
-    except ??= [];
-    const sections = Object.entries(this.sections);
-    for (const [key, section] of sections) {
-      if (except.includes(key as keyof FormCPage['sections'])) {
-        continue;
-      }
-      await section.defaultFill();
-    }
+    const payload = this.buildFormCData(except ?? []);
+    await this.setFormCResponse(payload);
+    await this.goto('edit');
   }
 
   public async submitForm({ expectedResult }: { expectedResult?: 'valid' | 'invalid' } = {}) {
@@ -184,5 +179,98 @@ export class FormCPage {
         await this.toastMessage.getByLabel('Close').first().click();
         break;
     }
+  }
+
+  private clonePayload<T>(payload: T): T {
+    return JSON.parse(JSON.stringify(payload)) as T;
+  }
+
+  private buildFormCData(except: (keyof FormCPage['sections'])[] = []) {
+    const formA = this.clonePayload(getFormAPayload());
+    const formB = this.clonePayload(getFormBPayload());
+    const payload = {
+      shipUsage: formA.shipUsage,
+      differentUsage: formA.differentUsage,
+      permissions: formB.permissions,
+      researchAreaDescriptions: formA.researchAreaDescriptions,
+      ugTeams: formB.ugTeams,
+      guestTeams: formB.guestTeams,
+      researchTasksEffects: formA.researchTasks.map((task) => ({
+        ...task,
+        done: 'false',
+        managerConditionMet: 'false',
+        deputyConditionMet: 'false',
+      })),
+      contracts: formA.contracts,
+      spubTasks: formA.spubTasks,
+      shortResearchEquipments: formB.shortResearchEquipments,
+      longResearchEquipments: formB.longResearchEquipments,
+      ports: formB.ports,
+      cruiseDaysDetails: formB.cruiseDaysDetails,
+      researchEquipments: formB.researchEquipments,
+      shipEquipmentsIds: formB.shipEquipmentsIds,
+      collectedSamples: [],
+      spubReportData: '',
+      additionalDescription: '',
+      photos: [],
+    };
+
+    if (except.includes('additionalPermissionsSection')) {
+      payload.permissions = [];
+    }
+
+    if (except.includes('contractsSection')) {
+      payload.contracts = [];
+    }
+
+    if (except.includes('membersSection')) {
+      payload.ugTeams = [];
+      payload.guestTeams = [];
+    }
+
+    if (except.includes('spubTasksSection')) {
+      payload.spubTasks = [];
+    }
+
+    if (except.includes('cruiseDetailsSection')) {
+      payload.shortResearchEquipments = [];
+      payload.longResearchEquipments = [];
+      payload.ports = [];
+    }
+
+    if (except.includes('cruiseDayDetailsSection')) {
+      payload.cruiseDaysDetails = [];
+    }
+
+    if (except.includes('researchEquipmentsSection')) {
+      payload.researchEquipments = [];
+    }
+
+    if (except.includes('collectedSamplesSection')) {
+      payload.collectedSamples = [];
+    }
+
+    if (except.includes('spubReportDataSection')) {
+      payload.spubReportData = '';
+    }
+
+    if (except.includes('additionalDescriptionSection')) {
+      payload.additionalDescription = '';
+      payload.photos = [];
+    }
+
+    return payload;
+  }
+
+  private async setFormCResponse(payload: ReturnType<FormCPage['buildFormCData']>) {
+    const url = `${API_URL}/api/CruiseApplications/${this.formId}/formC`;
+
+    await this.page.unroute(url).catch(() => undefined);
+    await this.page.route(url, (route) => {
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify(payload),
+      });
+    });
   }
 }

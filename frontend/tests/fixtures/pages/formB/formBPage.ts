@@ -5,6 +5,7 @@ import {
   getAuthDetailsPayload,
   getCruisePayload,
   getFormAPayload,
+  getFormBPayload,
   getInitValuesAPayload,
   getInitValuesBPayload,
 } from '@tests/fixtures/mockPayloads';
@@ -136,14 +137,9 @@ export class FormBPage {
   }
 
   public async fillForm({ except }: { except?: (keyof FormBPage['sections'])[] } = {}) {
-    except ??= [];
-    const sections = Object.entries(this.sections);
-    for (const [key, section] of sections) {
-      if (except.includes(key as keyof FormBPage['sections'])) {
-        continue;
-      }
-      await section.defaultFill();
-    }
+    const payload = this.buildFormBData(except ?? []);
+    await this.setFormBResponse(payload);
+    await this.goto('edit');
   }
 
   public async submitForm({ expectedResult }: { expectedResult?: 'valid' | 'invalid' } = {}) {
@@ -170,5 +166,51 @@ export class FormBPage {
         await this.toastMessage.getByLabel('Close').first().click();
         break;
     }
+  }
+
+  private clonePayload<T>(payload: T): T {
+    return JSON.parse(JSON.stringify(payload)) as T;
+  }
+
+  private buildFormBData(except: (keyof FormBPage['sections'])[] = []) {
+    const payload = this.clonePayload(getFormBPayload());
+
+    if (except.includes('membersSection')) {
+      payload.ugTeams = [];
+      payload.guestTeams = [];
+      payload.crewMembers = [];
+    }
+
+    if (except.includes('additionalPermissionsSection')) {
+      payload.permissions = [];
+    }
+
+    if (except.includes('cruiseDetailsSection')) {
+      payload.shortResearchEquipments = [];
+      payload.longResearchEquipments = [];
+      payload.ports = [];
+    }
+
+    if (except.includes('cruiseDayDetailsSection')) {
+      payload.cruiseDaysDetails = [];
+    }
+
+    if (except.includes('researchEquipmentsSection')) {
+      payload.researchEquipments = [];
+    }
+
+    return payload;
+  }
+
+  private async setFormBResponse(payload: ReturnType<typeof getFormBPayload>) {
+    const url = `${API_URL}/api/CruiseApplications/${this.formId}/formB`;
+
+    await this.page.unroute(url).catch(() => undefined);
+    await this.page.route(url, (route) => {
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify(payload),
+      });
+    });
   }
 }
