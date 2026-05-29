@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using Sentry;
 using Sentry.AspNetCore;
 using Sentry.Extensibility;
@@ -22,7 +23,7 @@ public static class SentryConfiguration
             options.Release =
                 NullIfEmpty(builder.Configuration["Sentry:Release"])
                 ?? NullIfEmpty(builder.Configuration["SENTRY_RELEASE"])
-                ?? $"research-cruise-app-backend@{typeof(SentryConfiguration).Assembly.GetName().Version}";
+                ?? $"research-cruise-app-backend@{ResolveBackendAssemblyVersion()}";
 
             options.SendDefaultPii = false;
             options.AttachStacktrace = true;
@@ -124,4 +125,14 @@ public static class SentryConfiguration
 
     private static string? NullIfEmpty(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private static string ResolveBackendAssemblyVersion()
+    {
+        var assembly = typeof(SentryConfiguration).Assembly;
+        return assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                ?.InformationalVersion
+            ?? assembly.GetName().Version?.ToString()
+            ?? "unknown";
+    }
 }
