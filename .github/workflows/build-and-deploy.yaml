@@ -25,9 +25,23 @@ jobs:
       matrix:
         include:
           - component: frontend
-            build-args: APP_ENVIRONMENT=production
+            build-args: |
+              APP_ENVIRONMENT=production
+              SENTRY_ENVIRONMENT=production
+              SENTRY_RELEASE=${{ github.sha }}
+              SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+              SENTRY_TRACES_SAMPLE_RATE=0.2
+              SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.1
+              SENTRY_TUNNEL=/api/sentry-tunnel
+              SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+              SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+              SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
           - component: backend
-            build-args: ""
+            build-args: |
+              SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+              SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+              SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+              SENTRY_RELEASE=${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v4

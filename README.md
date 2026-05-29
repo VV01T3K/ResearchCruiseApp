@@ -10,7 +10,12 @@ The application aims to streamline processes related to the booking, management,
 | Environment Variable | Description                             | Example               | Required |
 | -------------------- | --------------------------------------- | --------------------- | -------- |
 | `API_URL`            | The address of the backend service      | `http://backend:8000` | Yes      |
-| `GRAFANA_FARO_URL`   | The address of the Grafana Faro service | `http://alloy:12347`  | No       |
+| `SENTRY_DSN` | Sentry project DSN (empty disables the SDK) | — | No |
+| `SENTRY_ENVIRONMENT` | Environment tag in Sentry | `local` | No |
+| `SENTRY_RELEASE` | Release version (git SHA or app version) | — | No |
+| `SENTRY_TRACES_SAMPLE_RATE` | Performance trace sampling (0–1) | `1.0` (dev) | No |
+| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Session Replay sampling (0–1) | `0.2` | No |
+| `SENTRY_TUNNEL` | Relay SDK traffic via backend (`/api/sentry-tunnel`) | — | No |
 
 ### Backend
 
@@ -21,8 +26,9 @@ The application aims to streamline processes related to the booking, management,
 | `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                    | `true`                                                                          | No       |
 | `ConnectionStrings__Database`           | Database connection string                         | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
 | `FrontendUrl`                           | Frontend URL - for CORS and email verification     | `http://localhost:3000`                                                         | Yes      |
-| `UseOtlpExporter`                       | Whether to use the OTLP exporter for OpenTelemetry | `true`                                                                          | No       |
-| `OtlpExporterEndpoint`                  | OTLP exporter endpoint                             | `http://alloy:4318` or `grpc://alloy:4317`                                      | No       |
+| `Sentry__Dsn` | Sentry backend DSN (or `SENTRY_DSN`) | — | No |
+| `Sentry__Environment` | Sentry environment | `local` | No |
+| `Sentry__TracesSampleRate` | Backend trace sampling (0–1) | `1.0` (dev) | No |
 | `SmtpSettings__SmtpServer`              | SMTP server address                                | `smtp.gmail.com`                                                                | Yes      |
 | `SmtpSettings__SmtpPort`                | SMTP server port                                   | `465`                                                                           | No       |
 | `SmtpSettings__SmtpUsername`            | SMTP username                                      | `example@gmail.com`                                                             | Yes      |
@@ -42,7 +48,7 @@ The application can be run using Docker compose. Multiple configuration files ar
 
 - `docker-compose.dev.yml` - Development configuration
 - `docker-compose.infra.yml` - MS SQL Database configuration
-- `docker-compose.otel.dev.yml` - Development configuration with OpenTelemetry enabled - contains Grafana, Loki, Tempo, Prometheus and Alloy
+- `docker-compose.otel.dev.yml` - Optional self-hosted Grafana/Loki/Tempo stack (not used by app SDKs; see [docs/sentry-integration.md](./docs/sentry-integration.md))
 - `docker-compose.prod.yml` - Production configuration
 
 ### Kubernetes

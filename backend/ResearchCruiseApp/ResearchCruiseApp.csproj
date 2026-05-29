@@ -10,16 +10,22 @@
     <Version>2.4.0</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <SentryUploadSymbols Condition="'$(SENTRY_AUTH_TOKEN)' != ''">true</SentryUploadSymbols>
+    <SentryUploadSources Condition="'$(SENTRY_AUTH_TOKEN)' != ''">true</SentryUploadSources>
+    <SentryCreateRelease Condition="'$(SENTRY_AUTH_TOKEN)' != ''">true</SentryCreateRelease>
+    <SentrySetCommits Condition="'$(SENTRY_AUTH_TOKEN)' != ''">true</SentrySetCommits>
+    <SentryOrg>$(SENTRY_ORG)</SentryOrg>
+    <SentryProject>$(SENTRY_PROJECT)</SentryProject>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MailKit" Version="4.14.1" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
-    <PackageReference
-      Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
-      Version="10.0.1"
-    />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
@@ -31,18 +37,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
-    <PackageReference Include="OpenTelemetry" Version="1.14.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    <PackageReference
-      Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"
-      Version="1.14.0-beta.2"
-    />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.14.0-beta.2" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
+    <PackageReference Include="Sentry.AspNetCore" Version="6.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
     <PackageReference Include="UrlBase64" Version="2.0.0" />
   </ItemGroup>

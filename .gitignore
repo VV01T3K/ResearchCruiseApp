@@ -279,3 +279,8 @@ gen
 
 # Visual Studio Code options directory
 .vscode/
+
+# Sentry agent skills (lockfile is committed)
+.agents/skills/
+.cursor/
+.env.sentry

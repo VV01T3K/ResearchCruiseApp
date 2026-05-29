@@ -1,4 +1,6 @@
-﻿namespace ResearchCruiseApp.Web.Configuration;
+﻿using ResearchCruiseApp.Web.Controllers;
+
+namespace ResearchCruiseApp.Web.Configuration;
 
 public static class DependencyInjection
 {
@@ -14,6 +16,7 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddHealthChecks();
+        services.AddHttpClient(nameof(SentryTunnelController));
 
         services.AddCors(options =>
         {

@@ -14,6 +14,8 @@ public static class WebApplicationExtensions
 
         app.UseHttpsRedirection();
 
+        app.UseSentryMonitoring();
+
         app.UseCors("CustomPolicy");
 
         app.UseAuthentication().UseAuthorization();

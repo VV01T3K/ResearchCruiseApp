@@ -3,6 +3,7 @@ import React from 'react';
 
 import { SessionExpirationWarning } from '@/core/components/SessionExpirationWarning';
 import { client, setAuthToken } from '@/core/lib/api';
+import { setSentryUser } from '@/core/lib/sentry';
 import { Role } from '@/core/models/Role';
 import { UserContext, UserContextType } from '@/user/contexts/UserContext';
 import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/user/hooks/UserContextApiHooks';
@@ -44,6 +45,10 @@ export function UserContextProvider({ children }: Props) {
   }, [accessTokenValid, authDetails]);
 
   const profileQuery = useProfileQuery();
+
+  React.useEffect(() => {
+    setSentryUser(profileQuery.data ?? null);
+  }, [profileQuery.data]);
 
   const updateAuthDetails = React.useCallback(
     async (newAuthDetails: AuthDetails | undefined) => {

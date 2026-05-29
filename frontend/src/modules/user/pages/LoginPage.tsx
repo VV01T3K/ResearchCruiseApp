@@ -7,6 +7,7 @@ import { AppButton } from '@/core/components/AppButton';
 import { AppLayout } from '@/core/components/AppLayout';
 import { AppLink } from '@/core/components/AppLink';
 import { AppFloatingLabelInput } from '@/core/components/inputs/AppFloatingLabelInput';
+import { trackFormSubmit } from '@/core/lib/sentry';
 import { getErrors } from '@/core/lib/utils';
 import { useUserContext } from '@/user/hooks/UserContextHook';
 import { SignInResult } from '@/user/models/Results';
@@ -36,7 +37,11 @@ export function LoginPage() {
     validators: {
       onChange: validationSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmitInvalid: ({ formApi }) => {
+      trackFormSubmit('login', 'invalid', formApi.state);
+    },
+    onSubmit: async ({ value, formApi }) => {
+      trackFormSubmit('login', 'valid', formApi.state);
       if (!value.email || !value.password) {
         throw new Error('Not all fields are filled despite validation');
       }

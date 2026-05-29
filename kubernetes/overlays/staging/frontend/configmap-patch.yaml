@@ -3,4 +3,7 @@ kind: ConfigMap
 metadata:
   name: research-cruise-app-frontend-config
 data:
-  GRAFANA_FARO_URL: https://faro.grafana.nasus.dev/
+  SENTRY_ENVIRONMENT: staging
+  SENTRY_TUNNEL: /api/sentry-tunnel
+  SENTRY_TRACES_SAMPLE_RATE: "0.2"
+  SENTRY_REPLAYS_SESSION_SAMPLE_RATE: "0.1"
