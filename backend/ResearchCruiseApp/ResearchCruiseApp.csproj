@@ -27,9 +27,6 @@
       Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''"
       >true</SentryCreateRelease
     >
-    <SentrySetCommits Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''"
-      >true</SentrySetCommits
-    >
     <!-- <AnalysisLevel>latest-recommended</AnalysisLevel> -->
     <!-- <RunAnalyzers Condition="'$(Configuration)' == 'Debug'">false</RunAnalyzers> -->
   </PropertyGroup>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Sentry;
 using Sentry.AspNetCore;
 using Sentry.Extensibility;
@@ -81,7 +82,14 @@ public static class SentryConfiguration
     {
         var configured =
             configuration["Sentry:TracesSampleRate"] ?? configuration["SENTRY_TRACES_SAMPLE_RATE"];
-        if (double.TryParse(configured, out var parsed))
+        if (
+            double.TryParse(
+                configured,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out var parsed
+            )
+        )
         {
             return Math.Clamp(parsed, 0, 1);
         }
@@ -99,7 +107,14 @@ public static class SentryConfiguration
         var configured =
             configuration["Sentry:ProfilesSampleRate"]
             ?? configuration["SENTRY_PROFILES_SAMPLE_RATE"];
-        if (double.TryParse(configured, out var parsed))
+        if (
+            double.TryParse(
+                configured,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out var parsed
+            )
+        )
         {
             return Math.Clamp(parsed, 0, 1);
         }
