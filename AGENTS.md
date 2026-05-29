@@ -22,9 +22,20 @@ This is a full-stack monorepo for a research cruise management application (R/V 
 
 ### Starting Services
 
-1. **Database**: `sudo docker compose -f docker/docker-compose.infra.yml up -d db` — wait for health check to pass
-2. **Backend**: `cd backend && dotnet watch run --project ResearchCruiseApp --launch-profile Development` (port 3000)
-3. **Frontend**: `cd frontend && vp dev --host` (port 5173)
+Services must be started manually — they are NOT started by the update script.
+
+1. **Docker daemon** (must start first, required for DB):
+   ```bash
+   sudo mkdir -p /etc/docker
+   printf '{\n  "storage-driver": "fuse-overlayfs"\n}' | sudo tee /etc/docker/daemon.json > /dev/null
+   sudo update-alternatives --set iptables /usr/sbin/iptables-legacy 2>/dev/null
+   sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy 2>/dev/null
+   sudo dockerd &>/tmp/dockerd.log &
+   sleep 3
+   ```
+2. **Database**: `sudo docker compose -f docker/docker-compose.infra.yml up -d db` — wait until `sudo docker inspect --format='{{.State.Health.Status}}' researchcruiseapp-db` returns `healthy`
+3. **Backend**: `cd backend && dotnet watch run --project ResearchCruiseApp --launch-profile Development` (port 3000)
+4. **Frontend**: `cd frontend && vp dev --host` (port 5173)
 
 The frontend defaults API_URL to `http://localhost:3000` when unset.
 
@@ -48,7 +59,7 @@ The frontend defaults API_URL to `http://localhost:3000` when unset.
   UPDATE AspNetUsers SET EmailConfirmed = 1, Accepted = 1 WHERE Email = '...';
   ```
 - **Seed users**: The `Database__SeedAutomatically=true` config seeds roles, units, research areas, and equipment. User seeding requires a `Users` config section (typically via user secrets or env). Seeded users get random passwords logged at startup with `Database__LogUserPasswordsWhenSeeding=true`.
-- **Docker in nested containers**: Requires `fuse-overlayfs` storage driver and `iptables-legacy`. The update script handles Docker daemon startup.
+- **Docker in nested containers**: Requires `fuse-overlayfs` storage driver and `iptables-legacy`. You must start Docker daemon manually before using `docker compose` — see "Starting Services" above.
 - **PATH ordering**: `/exec-daemon/node` may shadow nvm's node. Ensure nvm's node path comes first: `$NVM_DIR/versions/node/v25.8.2/bin` must precede `/exec-daemon/`.
 - **pnpm build scripts warning**: `esbuild` and `protobufjs` build scripts are not in `onlyBuiltDependencies`. This is intentional — the core dev workflow (vp dev/check) does not require them. Storybook may need them.
 
