@@ -31,16 +31,23 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
         .catch(() => {});
     } else if (this.variant === 'menu-with-buttons') {
       const menu = this.page.getByRole('menu');
-      const menuCount = await menu.count();
+      const fallbackButton = this.page
+        .getByRole('button', { name: itemText, exact: true })
+        .and(this.page.locator(':visible'));
 
-      if (menuCount > 0) {
-        await menu.last().getByRole('button', { name: itemText, exact: true }).click();
+      await Promise.race([
+        menu.first().waitFor({ state: 'visible', timeout: 3000 }),
+        fallbackButton.first().waitFor({ state: 'visible', timeout: 3000 }),
+      ]);
+
+      if ((await menu.count()) > 0) {
+        const button = menu.last().getByRole('button', { name: itemText, exact: true });
+        await button.waitFor({ state: 'visible' });
+        await button.click();
       } else {
-        const button = this.page
-          .getByRole('button', { name: itemText, exact: true })
-          .and(this.page.locator(':visible'));
-        await button.first().click();
+        await fallbackButton.first().click();
       }
+
       await this.page.waitForTimeout(100);
     } else if (this.variant === 'datetime-picker') {
       // for now, only day selection is supported

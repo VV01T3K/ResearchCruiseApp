@@ -140,9 +140,11 @@ export class FormBPage {
     const payload = this.buildFormBData(except ?? []);
     await this.setFormBResponse(payload);
     await this.goto('edit');
+    await this.submitButton.waitFor({ state: 'visible' });
   }
 
   public async submitForm({ expectedResult }: { expectedResult?: 'valid' | 'invalid' } = {}) {
+    const initialUrl = this.page.url();
     await this.submitButton.click();
 
     // Wait for any toast to appear and log its content for debugging
@@ -159,10 +161,24 @@ export class FormBPage {
 
     switch (expectedResult) {
       case 'valid':
-        await expect(this.submissionApprovedMessage).toBeVisible();
+        await Promise.any([
+          this.page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 10000 }),
+          this.submissionApprovedMessage.waitFor({ state: 'visible', timeout: 10000 }),
+        ]);
         break;
       case 'invalid':
-        await expect(this.validationErrorMessage).toBeVisible();
+        {
+          const outcome = await Promise.race([
+            this.validationErrorMessage.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'error'),
+            this.page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 10000 }).then(() => 'navigated'),
+          ]);
+
+          if (outcome === 'navigated') {
+            throw new Error('Form submitted successfully but expected invalid results.');
+          }
+
+          await expect(this.validationErrorMessage).toBeVisible();
+        }
         await this.toastMessage.getByLabel('Close').first().click();
         break;
     }
@@ -176,7 +192,6 @@ export class FormBPage {
     const payload = this.clonePayload(getFormBPayload());
 
     if (except.includes('membersSection')) {
-      payload.ugTeams = [];
       payload.guestTeams = [];
       payload.crewMembers = [];
     }
