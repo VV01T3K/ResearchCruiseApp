@@ -14,10 +14,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { error };
   }
 
-  componentDidCatch() {
-    // HyperDX patches this method and calls the original after reporting.
-  }
-
   render() {
     if (this.state.error) {
       return (

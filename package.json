@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "vp run -r dev",
-    "dev:otel": "set -a; . ./.env.otel; vp run -r dev",
+    "skills:install": "vp dlx skills experimental_install -y",
     "build": "vp run --cache -r build",
     "check": "vp run --cache -r check",
     "fix": "vp run --cache -r fix",

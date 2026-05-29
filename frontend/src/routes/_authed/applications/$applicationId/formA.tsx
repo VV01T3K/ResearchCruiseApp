@@ -8,7 +8,6 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/hyperdx';
 import {
   getErrors,
   getFormErrorMessage,
@@ -188,14 +187,12 @@ function FormAPage() {
     await form.validate('change');
 
     if (!form.state.isValid) {
-      trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
       navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
-    trackFormSubmit('form-a', 'valid', form.state);
     saveForm(
       false,
       'Zapisywanie formularza...',

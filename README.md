@@ -10,8 +10,19 @@ The application aims to streamline processes related to the booking, management,
 | Environment Variable | Description                             | Example                        | Required |
 | -------------------- | --------------------------------------- | ------------------------------ | -------- |
 | `API_URL`            | The address of the backend service      | `http://backend:8000`          | Yes      |
-| `HYPERDX_API_KEY`    | HyperDX ingestion API key               | `...`                          | No       |
-| `HYPERDX_API_URL`    | HyperDX OTLP endpoint                   | `https://otel.wsiwiec.com`     | No       |
+
+Sentry-related variables (for the upcoming SDK integration) are documented in [`.env.sentry.example`](./.env.sentry.example).
+
+### Agent skills (optional)
+
+Sentry AI assistant skills are pinned in `skills-lock.json` and installed locally (not committed). After clone, run:
+
+```bash
+pnpm skills:install
+# or: mise run skills:install
+```
+
+This downloads skill definitions from GitHub. It is **not** run automatically during `mise` setup.
 
 ### Backend
 
@@ -22,9 +33,6 @@ The application aims to streamline processes related to the booking, management,
 | `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                    | `true`                                                                          | No       |
 | `ConnectionStrings__Database`           | Database connection string                         | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
 | `FrontendUrl`                           | Frontend URL - for CORS and email verification     | `http://localhost:3000`                                                         | Yes      |
-| `UseOtlpExporter`                       | Whether to use the OTLP exporter for OpenTelemetry | `true`                                                                          | No       |
-| `OtlpExporterEndpoint`                  | OTLP exporter endpoint                             | `https://otel.wsiwiec.com`                                                      | No       |
-| `OtlpExporterHeaders`                   | OTLP exporter headers, for example HyperDX auth    | `authorization=...`                                                             | No       |
 | `SmtpSettings__SmtpServer`              | SMTP server address                                | `smtp.gmail.com`                                                                | Yes      |
 | `SmtpSettings__SmtpPort`                | SMTP server port                                   | `465`                                                                           | No       |
 | `SmtpSettings__SmtpUsername`            | SMTP username                                      | `example@gmail.com`                                                             | Yes      |
@@ -44,7 +52,6 @@ The application can be run using Docker compose. Multiple configuration files ar
 
 - `docker-compose.dev.yml` - Development configuration
 - `docker-compose.infra.yml` - MS SQL Database configuration
-- `docker-compose.otel.dev.yml` - Development configuration with OpenTelemetry enabled
 - `docker-compose.prod.yml` - Production configuration
 
 ### Kubernetes

@@ -51,3 +51,12 @@ The frontend defaults API_URL to `http://localhost:3000` when unset.
 - **Docker in nested containers**: Requires `fuse-overlayfs` storage driver and `iptables-legacy`. The update script handles Docker daemon startup.
 - **PATH ordering**: `/exec-daemon/node` may shadow nvm's node. Ensure nvm's node path comes first: `$NVM_DIR/versions/node/v25.8.2/bin` must precede `/exec-daemon/`.
 - **pnpm build scripts warning**: `esbuild` and `protobufjs` build scripts are not in `onlyBuiltDependencies`. This is intentional — the core dev workflow (vp dev/check) does not require them. Storybook may need them.
+
+### Sentry integration (in progress)
+
+HyperDX and app-level OpenTelemetry were removed from application code (not from `kubernetes/` overlays yet). Use Sentry agent skills and `docs/sentry-integration.md` for the migration.
+
+- **Skills source**: [getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai) — pinned in `skills-lock.json` (React + .NET skills only; not committed under `.agents/skills/`). Install manually: `pnpm skills:install` or `mise run skills:install` (fetches from GitHub; not run on postinstall). `.cursor/` is gitignored.
+- **Relevant skills**: `sentry-react-sdk` (frontend), `sentry-dotnet-sdk` (backend), `sentry-fix-issues`, `sentry-pr-code-review`.
+- **Do not** reintroduce HyperDX or standalone OTLP exporters in app code unless explicitly requested; prefer native Sentry SDKs.
+- **Secrets**: `SENTRY_DSN` and auth tokens via env/secrets only — never commit.

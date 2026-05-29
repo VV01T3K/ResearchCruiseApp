@@ -4,7 +4,6 @@ using ResearchCruiseApp.Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenTelemetry(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddWeb(builder.Configuration);

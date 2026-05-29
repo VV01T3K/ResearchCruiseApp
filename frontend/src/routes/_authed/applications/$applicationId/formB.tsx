@@ -5,7 +5,6 @@ import { isAxiosError } from 'axios';
 import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/hyperdx';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/formB/FormView';
 import {
@@ -83,13 +82,11 @@ function FormBPage() {
     await form.validate('change');
 
     if (!form.state.isValid) {
-      trackFormSubmit('form-b', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
       navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
       return;
     }
 
-    trackFormSubmit('form-b', 'valid', form.state);
     const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(
       {
