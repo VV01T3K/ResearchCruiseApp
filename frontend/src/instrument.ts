@@ -22,7 +22,6 @@ function defaultReplaySessionSampleRate(): number {
 
 if (config.sentryDsn) {
   const tracesSampleRate = parseSampleRate(config.sentryTracesSampleRate, defaultTracesSampleRate());
-  const apiOriginPattern = new RegExp(`^${config.apiUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
 
   Sentry.init({
     dsn: config.sentryDsn,
@@ -48,7 +47,7 @@ if (config.sentryDsn) {
       }),
     ],
     tracesSampleRate,
-    tracePropagationTargets: ['localhost', apiOriginPattern],
+    tracePropagationTargets: ['localhost', config.apiUrl],
     replaysSessionSampleRate: defaultReplaySessionSampleRate(),
     replaysOnErrorSampleRate: 1,
     initialScope: {
