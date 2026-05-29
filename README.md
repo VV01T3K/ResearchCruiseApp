@@ -48,7 +48,6 @@ The application can be run using Docker compose. Multiple configuration files ar
 
 - `docker-compose.dev.yml` - Development configuration
 - `docker-compose.infra.yml` - MS SQL Database configuration
-- `docker-compose.otel.dev.yml` - Optional self-hosted Grafana/Loki/Tempo stack (not used by app SDKs; see [docs/sentry-integration.md](./docs/sentry-integration.md))
 - `docker-compose.prod.yml` - Production configuration
 
 ### Kubernetes

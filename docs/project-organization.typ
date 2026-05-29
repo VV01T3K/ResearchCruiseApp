@@ -157,7 +157,7 @@ Utrzymanie porządku w repozytorium jest głównym zadaniem lidera projektu, jak
 - *Playwright* - framework do automatyzacji testów aplikacji webowych
 
 == Obserwowalność
-- *Grafana* - platforma służąca do wizualizacji danych, monitorowania systemów i analizy metryk w czasie rzeczywistym
+- *Sentry* - monitorowanie błędów, wydajności i sesji użytkownika (frontend i backend)
 
 == Narzędzia AI
 - *Greptile* - agent do przeglądu kodu, który automatycznie analizuje i weryfikuje jego jakość przy każdym pull requestcie na GitHubie.

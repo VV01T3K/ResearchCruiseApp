@@ -57,10 +57,6 @@ See [`.env.sentry.example`](../.env.sentry.example). Never commit DSNs or auth t
 | `SENTRY_TUNNEL` | Frontend | e.g. `/api/sentry-tunnel` |
 | `SENTRY_AUTH_TOKEN` | CI only | Source maps / symbol upload |
 
-## Legacy Grafana / OTLP stacks
-
-`docker/docker-compose.otel.dev.yml` and related Grafana/Alloy configs remain for optional self-hosted observability but are **not** wired from application code. Staging Kubernetes overlays use Sentry env vars instead of `UseOtlpExporter`.
-
 ## References
 
 - [Sentry React](https://docs.sentry.io/platforms/javascript/guides/react/)
