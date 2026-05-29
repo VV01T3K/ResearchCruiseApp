@@ -4,5 +4,5 @@
 declare const APP_VERSION: string;
 declare const API_URL: string;
 declare const APP_ENVIRONMENT: string;
-declare const OTEL_SERVICE_NAME: string;
-declare const GRAFANA_FARO_URL: string;
+declare const HYPERDX_API_KEY: string;
+declare const HYPERDX_API_URL: string;

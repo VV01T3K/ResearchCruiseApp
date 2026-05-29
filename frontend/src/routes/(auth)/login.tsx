@@ -7,6 +7,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { trackFormSubmit } from '@/lib/hyperdx';
 import { getErrors } from '@/lib/utils';
 import { useUserContext } from '@/providers/useUserContext';
 import { SignInResult } from '@/models/user/Results';
@@ -42,7 +43,9 @@ function LoginPage() {
     validators: {
       onChange: validationSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
+      trackFormSubmit('login', 'valid', formApi.state);
+
       if (!value.email || !value.password) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -60,6 +63,9 @@ function LoginPage() {
       setTimeout(() => {
         router.navigate({ to: redirect ?? '/' });
       }, 50);
+    },
+    onSubmitInvalid: ({ formApi }) => {
+      trackFormSubmit('login', 'invalid', formApi.state);
     },
   });
 

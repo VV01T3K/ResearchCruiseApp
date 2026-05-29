@@ -12,6 +12,7 @@ public static class OpenTelemetry
     private const string DefaultOtelEndpoint = "http://localhost:4318";
     private const string UseOtelExporterKey = "UseOtlpExporter";
     private const string OtlpExporterEndpointKey = "OtlpExporterEndpoint";
+    private const string OtlpExporterHeadersKey = "OtlpExporterHeaders";
     private const string ServiceNameKey = "ServiceName";
 
     public static void AddOpenTelemetry(
@@ -24,13 +25,19 @@ public static class OpenTelemetry
             configuration.GetValue(OtlpExporterEndpointKey, defaultValue: DefaultOtelEndpoint)
         );
         var protocol =
-            otelEndpoint.Scheme == Uri.UriSchemeHttp
+            otelEndpoint.Scheme == Uri.UriSchemeHttp || otelEndpoint.Scheme == Uri.UriSchemeHttps
                 ? OtlpExportProtocol.HttpProtobuf
                 : OtlpExportProtocol.Grpc;
 
         if (!useOtelExporter)
         {
             return;
+        }
+
+        var otlpHeaders = configuration.GetValue<string?>(OtlpExporterHeadersKey);
+        if (!string.IsNullOrWhiteSpace(otlpHeaders))
+        {
+            Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_HEADERS", otlpHeaders);
         }
 
         services
@@ -51,8 +58,16 @@ public static class OpenTelemetry
             {
                 tracingBuilder
                     .SetSampler(new AlwaysOnSampler())
-                    .AddHttpClientInstrumentation()
-                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation(options =>
+                    {
+                        options.RecordException = true;
+                    })
+                    .AddAspNetCoreInstrumentation(options =>
+                    {
+                        options.Filter = context =>
+                            !context.Request.Path.StartsWithSegments("/health");
+                        options.RecordException = true;
+                    })
                     .AddEntityFrameworkCoreInstrumentation();
             })
             .WithMetrics(metricsBuilder =>
