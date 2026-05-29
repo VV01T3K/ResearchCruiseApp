@@ -76,7 +76,7 @@ jobs:
               echo "args<<EOF"
               echo "SENTRY_ORG=${SENTRY_ORG}"
               echo "SENTRY_PROJECT_BACKEND=${SENTRY_PROJECT_BACKEND}"
-              echo "GITHUB_SHA=${{ github.sha }}"
+              echo "SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           fi
