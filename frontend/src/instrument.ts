@@ -51,12 +51,6 @@ if (config.sentryDsn) {
     tracePropagationTargets: ['localhost', apiOriginPattern],
     replaysSessionSampleRate: defaultReplaySessionSampleRate(),
     replaysOnErrorSampleRate: 1,
-    beforeSendTransaction(event) {
-      if (event.transaction?.includes('/health')) {
-        return null;
-      }
-      return event;
-    },
     initialScope: {
       tags: {
         app: 'research-cruise-app',

@@ -64,7 +64,7 @@ jobs:
               echo "APP_ENVIRONMENT=staging"
               echo "SENTRY_DSN=${SENTRY_DSN_FRONTEND}"
               echo "SENTRY_ENVIRONMENT=staging"
-              echo "SENTRY_RELEASE=${{ github.sha }}"
+              echo "SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}"
               echo "SENTRY_TRACES_SAMPLE_RATE=0.2"
               echo "SENTRY_ORG=${SENTRY_ORG}"
               echo "SENTRY_PROJECT_FRONTEND=${SENTRY_PROJECT_FRONTEND}"

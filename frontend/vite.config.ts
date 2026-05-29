@@ -11,9 +11,21 @@ import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
 const sentryOrg = process.env.SENTRY_ORG;
 const sentryProject = process.env.SENTRY_PROJECT_FRONTEND ?? process.env.SENTRY_PROJECT;
-const sentryRelease =
-  process.env.SENTRY_RELEASE ??
-  (process.env.GITHUB_SHA ? `research-cruise-app-frontend@${process.env.GITHUB_SHA}` : undefined);
+const frontendReleasePrefix = 'research-cruise-app-frontend@';
+
+function normalizeFrontendRelease(release?: string, gitSha?: string): string | undefined {
+  if (release) {
+    return release.startsWith(frontendReleasePrefix) ? release : `${frontendReleasePrefix}${release}`;
+  }
+
+  if (gitSha) {
+    return `${frontendReleasePrefix}${gitSha}`;
+  }
+
+  return undefined;
+}
+
+const sentryRelease = normalizeFrontendRelease(process.env.SENTRY_RELEASE, process.env.GITHUB_SHA);
 
 export default defineConfig({
   staged: {
