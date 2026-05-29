@@ -59,15 +59,3 @@ export function trackFormSubmit(
     data,
   });
 }
-
-export function captureRouterError(error: Error, errorInfo?: { componentStack?: string }): void {
-  if (!isSentryEnabled()) return;
-
-  Sentry.captureException(error, {
-    contexts: {
-      react: {
-        componentStack: errorInfo?.componentStack,
-      },
-    },
-  });
-}
