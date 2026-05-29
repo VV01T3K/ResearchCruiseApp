@@ -1,27 +1,10 @@
 import BackgroundImageUrl from '@/assets/background.jpg';
-import { routeTree } from '@/routeTree.gen';
-import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
+import { RouterProvider } from '@tanstack/react-router';
 import React from 'react';
 
 import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { useUserContext } from '@/providers/useUserContext';
-
-const router = createRouter({
-  routeTree,
-  context: {
-    userContext: undefined,
-  },
-  history: createBrowserHistory(),
-  defaultPendingComponent: AppLoader,
-  defaultPreload: 'intent',
-  scrollRestoration: true,
-});
-
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
+import { router } from '@/routerInstance';
 
 export function AppRouter() {
   const userContext = useUserContext();

@@ -9,6 +9,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
 import { useResetPasswordMutation } from '@/api/hooks/user/UserApiHooks';
 import { Result } from '@/models/user/Results';
@@ -61,8 +62,11 @@ function ResetPasswordPage() {
 
       await form.validate('change');
       if (!form.state.isValid) {
+        trackFormSubmit('reset-password', 'invalid', form.state);
         return;
       }
+
+      trackFormSubmit('reset-password', 'valid', form.state);
 
       if (!emailBase64 || !resetCode) {
         throw new Error('Not all fields are filled despite validation');
@@ -74,6 +78,9 @@ function ResetPasswordPage() {
         password: value.password,
         passwordConfirm: value.passwordConfirm,
       });
+    },
+    onSubmitInvalid: ({ formApi }) => {
+      trackFormSubmit('reset-password', 'invalid', formApi.state);
     },
   });
 

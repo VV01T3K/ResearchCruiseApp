@@ -27,11 +27,24 @@ jobs:
           - component: frontend
             context: .
             dockerfile: frontend/Dockerfile
-            build-args: APP_ENVIRONMENT=production
+            build-args: |
+              APP_ENVIRONMENT=production
+              SENTRY_DSN=${{ secrets.SENTRY_DSN_FRONTEND }}
+              SENTRY_ENVIRONMENT=production
+              SENTRY_RELEASE=${{ github.sha }}
+              SENTRY_TRACES_SAMPLE_RATE=0.1
+              SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+              SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+              SENTRY_PROJECT_FRONTEND=${{ secrets.SENTRY_PROJECT_FRONTEND }}
+              GITHUB_SHA=${{ github.sha }}
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile
-            build-args: ""
+            build-args: |
+              SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+              SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+              SENTRY_PROJECT_BACKEND=${{ secrets.SENTRY_PROJECT_BACKEND }}
+              GITHUB_SHA=${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v6

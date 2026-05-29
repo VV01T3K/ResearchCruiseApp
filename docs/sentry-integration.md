@@ -1,34 +1,15 @@
 # Sentry integration
 
-This project is migrating from HyperDX + self-managed OpenTelemetry (OTLP) to [Sentry](https://sentry.io). Kubernetes manifests under `kubernetes/` still reference the old OTLP setup until a follow-up change.
+This project uses [Sentry](https://sentry.io) for error monitoring, performance tracing, session replay, and structured logging across the React frontend and ASP.NET Core backend. Kubernetes manifests under `kubernetes/` may still reference the legacy OTLP setup until a follow-up overlay change.
 
 ## Agent skills (AI assistants)
 
 Official Sentry skills come from **[getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai)**. They are **not committed** to git — only **`skills-lock.json`** is, with install paths gitignored (`.agents/skills/`, `.cursor/`).
 
-### Install (optional, after clone)
-
-Not run automatically during `mise` postinstall — run when you want AI Sentry skills locally:
-
 ```bash
 pnpm skills:install
 # or: mise run skills:install
-# or: vp dlx skills experimental_install -y
 ```
-
-`skills-lock.json` pins only skills relevant to this stack (React, ASP.NET Core, workflows) plus `btca-cli`.
-
-Add another Sentry skill:
-
-```bash
-vp dlx skills add getsentry/sentry-for-ai --skill sentry-react-sdk -y
-```
-
-(`vp dlx` is Vite+’s equivalent of `npx` / `vpx`; see [vpx docs](https://viteplus.dev/guide/vpx).)
-
-Installed files go under `.agents/skills/`; Cursor reads `.cursor/skills/` (generated locally, gitignored).
-
-### Skills to use for this repo
 
 | Task | Skill |
 |------|--------|
@@ -36,37 +17,78 @@ Installed files go under `.agents/skills/`; Cursor reads `.cursor/skills/` (gene
 | ASP.NET Core 10 backend | `sentry-dotnet-sdk` |
 | Fix production issues from Sentry | `sentry-fix-issues` |
 | PR / code review with Sentry | `sentry-pr-code-review`, `sentry-code-review` |
-| Alerts and notifications | `sentry-create-alert` |
-| Optional OTLP → Sentry bridge | `sentry-otel-exporter-setup` |
-
-Example prompts: “Add Sentry to my React app”, “Add Sentry to my .NET app”, “Fix the recent Sentry errors”.
 
 Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 
-## What was removed (non-Kubernetes)
+## What is implemented
 
-- **Frontend**: `@hyperdx/browser`, `frontend/src/lib/hyperdx.ts`, form/action telemetry hooks
-- **Backend**: `OpenTelemetry.cs`, OpenTelemetry NuGet packages, `UseOtlpExporter` / OTLP env vars in app docker compose
-- **Dev tooling**: `.env.otel.example`, `docker/docker-compose.otel.dev.yml`, root `dev:otel` script
+### Frontend (`frontend/`)
 
-## Planned Sentry setup (next steps)
+- **`@sentry/react`** initialized in `frontend/src/instrument.ts` (imported first from `main.tsx`)
+- **React 19** error hooks via `reactErrorHandler()` on `createRoot`
+- **TanStack Router** navigation tracing via `tanstackRouterBrowserTracingIntegration`
+- **Session Replay** with masked text/inputs and blocked media
+- **Distributed tracing** to the API (`tracePropagationTargets`, `/health` excluded)
+- **Console capture** for `warn` / `error`
+- **User context** on login/profile load (`setSentryUser` in `UserContextProvider`)
+- **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks)
+- **Class error boundary** reports to Sentry in `componentDidCatch`
+- **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT_FRONTEND` are set (`@sentry/vite-plugin`)
 
-1. Create Sentry projects (frontend + backend) and obtain DSNs.
-2. **Frontend** (`frontend/`): `@sentry/react` with Vite plugin for source maps, `Sentry.init` in app bootstrap, `Sentry.ErrorBoundary` (React 19: `reactErrorHandler`), TanStack Router tracing integration, user context on login, breadcrumbs for forms (replace removed `trackFormSubmit`).
-3. **Backend** (`backend/ResearchCruiseApp/`): `Sentry.AspNetCore` via `WebApplication` / `UseSentry()`, release + environment from build, trace propagation to match frontend, optional profiling and structured logging.
-4. **CI/CD**: upload debug symbols / source maps; set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`.
-5. **Staging/production**: wire `SENTRY_DSN` (and related env) in Docker compose and deployment configs (K8s overlay separately).
+Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend/src/routerInstance.ts`, `frontend/vite.config.ts`.
 
-Environment variables (to be introduced) — see [`.env.sentry.example`](../.env.sentry.example):
+### Backend (`backend/ResearchCruiseApp/`)
+
+- **`Sentry.AspNetCore`** via `builder.AddResearchCruiseAppSentry()` in `Program.cs`
+- **Request tracing** with `UseSentryTracing()`
+- **JWT user enrichment** after authentication (`SentryUserMiddleware`)
+- **ILogger → Sentry** breadcrumbs/events (`MinimumEventLevel: Warning`)
+- **Health check transactions** filtered out
+- **Environment-aware sampling** (1.0 local, 0.2 staging, 0.1 production defaults)
+- **Optional profiling** sample rate (production default 0.1 when enabled)
+- **Debug symbol upload** on Release builds when `SENTRY_AUTH_TOKEN` is present
+
+Key files: `Infrastructure/Sentry/SentryConfiguration.cs`, `Infrastructure/Sentry/SentryUserMiddleware.cs`.
+
+### CI/CD & deployment
+
+- **GitHub Actions** (`build-and-deploy.yaml`, `deploy-komodo-staging.yaml`): frontend source maps + backend symbols when secrets are configured
+- **Docker**: `frontend/Dockerfile` and `backend/Dockerfile` accept Sentry build args
+- **Compose**: `docker/docker-compose.dev.yml`, `docker/compose.staging-app.yaml` pass `Sentry__*` env to backend
+
+## Environment variables
+
+Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local values. **Never commit DSNs or auth tokens.**
 
 | Variable | Where | Purpose |
 |----------|--------|---------|
-| `SENTRY_DSN` | Frontend build / backend runtime | Project DSN |
+| `SENTRY_DSN` | Frontend build / backend runtime | Project DSN (or use split vars below) |
+| `SENTRY_DSN_FRONTEND` | Frontend Docker / CI | Frontend-only DSN (GitHub secret) |
+| `SENTRY_DSN_BACKEND` | Backend runtime / CI | Backend-only DSN (optional) |
 | `SENTRY_ENVIRONMENT` | Both | `local`, `staging`, `production` |
 | `SENTRY_RELEASE` | Both | Git SHA or app version |
 | `SENTRY_TRACES_SAMPLE_RATE` | Both | Performance sampling (e.g. `0.1` in prod) |
+| `SENTRY_AUTH_TOKEN` | CI only | Source map / symbol upload |
+| `SENTRY_ORG` | CI only | Organization slug |
+| `SENTRY_PROJECT_FRONTEND` | CI only | Frontend project slug |
+| `SENTRY_PROJECT_BACKEND` | CI only | Backend project slug |
 
-Copy `.env.sentry.example` to `.env.sentry` for local values. Do not commit DSNs or auth tokens.
+Backend also reads `Sentry:*` keys from `appsettings.json` / `Sentry__*` environment variables.
+
+## HyperDX parity mapping
+
+| Removed HyperDX / OTEL | Sentry replacement |
+|------------------------|-------------------|
+| `initializeHyperDX()` | `Sentry.init()` in `instrument.ts` |
+| `attachErrorBoundary` | `reactErrorHandler()` + `componentDidCatch` |
+| `setHyperDXUser(user)` | `setSentryUser(user)` |
+| `trackFormSubmit(...)` | `trackFormSubmit(...)` → `Sentry.addBreadcrumb` |
+| `AddOpenTelemetry` + OTLP | Native `Sentry.AspNetCore` tracing + logging |
+
+## Follow-up (not in app code)
+
+- Replace OTLP env in `kubernetes/overlays/staging/backend/configmap-patch.yaml` with Sentry env
+- Create Sentry projects and configure GitHub secrets before enabling uploads in CI
 
 ## References
 
