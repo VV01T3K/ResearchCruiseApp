@@ -4,15 +4,23 @@ This project is migrating from HyperDX + self-managed OpenTelemetry (OTLP) to [S
 
 ## Agent skills (AI assistants)
 
-Official Sentry skills are managed with [dotagents](https://docs.sentry.io/ai/dotagents/). They live in `.agents/skills/` and are linked for Cursor at `.cursor/skills/`.
-
-After cloning, install or refresh skills:
+Official Sentry skills come from **[getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai)**. Install them with the Skills CLI (Sentry’s recommended path in [Agent Skills docs](https://docs.sentry.io/ai/agent-skills/)):
 
 ```bash
-npx @sentry/dotagents install
+# All Sentry skills (setup + workflow)
+npx skills add getsentry/sentry-for-ai
+
+# Or a single skill, e.g. React SDK setup
+npx skills add getsentry/sentry-for-ai --skill sentry-react-sdk
 ```
 
-Declared in `agents.toml` (full `getsentry/sentry-for-ai` skill pack). Lockfile: `agents.lock`.
+After install, skills live under `.agents/skills/` and are linked for Cursor at `.cursor/skills/`. Versions are pinned in **`skills-lock.json`** at the repo root (same mechanism as other project skills).
+
+To restore from the lockfile without re-selecting skills:
+
+```bash
+npx skills experimental_install
+```
 
 ### Skills to use for this repo
 
@@ -28,6 +36,8 @@ Declared in `agents.toml` (full `getsentry/sentry-for-ai` skill pack). Lockfile:
 Example prompts: “Add Sentry to my React app”, “Add Sentry to my .NET app”, “Fix the recent Sentry errors”.
 
 Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
+
+> **Note:** [dotagents](https://docs.sentry.io/ai/dotagents/) is an optional package manager that can also install `getsentry/sentry-for-ai`. This repo uses **`npx skills add`** + `skills-lock.json` instead, consistent with existing project skill workflow.
 
 ## What was removed (non-Kubernetes)
 
@@ -58,4 +68,4 @@ Do not commit DSN secrets to git; use env files or secret stores.
 
 - [Sentry React](https://docs.sentry.io/platforms/javascript/guides/react/)
 - [Sentry ASP.NET Core](https://docs.sentry.io/platforms/dotnet/guides/aspnetcore/)
-- [dotagents](https://dotagents.sentry.dev/)
+- [getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai)

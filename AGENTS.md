@@ -56,7 +56,7 @@ The frontend defaults API_URL to `http://localhost:3000` when unset.
 
 HyperDX and app-level OpenTelemetry were removed from application code (not from `kubernetes/` overlays yet). Use Sentry agent skills and `docs/sentry-integration.md` for the migration.
 
-- **Skills**: `npx @sentry/dotagents install` — skills in `.agents/skills/`, Cursor symlink `.cursor/skills/`. Config: `agents.toml`, lock: `agents.lock`.
+- **Skills source**: [getsentry/sentry-for-ai](https://github.com/getsentry/sentry-for-ai) — install with `npx skills add getsentry/sentry-for-ai` (or restore via `npx skills experimental_install` from `skills-lock.json`). Installed under `.agents/skills/`, Cursor at `.cursor/skills/`.
 - **Relevant skills**: `sentry-react-sdk` (frontend), `sentry-dotnet-sdk` (backend), `sentry-fix-issues`, `sentry-pr-code-review`.
 - **Do not** reintroduce HyperDX or standalone OTLP exporters in app code unless explicitly requested; prefer native Sentry SDKs.
 - **Secrets**: `SENTRY_DSN` and auth tokens via env/secrets only — never commit.
