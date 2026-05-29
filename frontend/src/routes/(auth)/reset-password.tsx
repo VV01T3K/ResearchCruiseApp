@@ -62,7 +62,6 @@ function ResetPasswordPage() {
 
       await form.validate('change');
       if (!form.state.isValid) {
-        trackFormSubmit('reset-password', 'invalid', form.state);
         return;
       }
 

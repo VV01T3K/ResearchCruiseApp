@@ -32,7 +32,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **Console capture** for `warn` / `error`
 - **User context** on login/profile load (`setSentryUser` in `UserContextProvider`)
 - **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks)
-- **Class error boundary** reports to Sentry in `componentDidCatch`
+- **Class error boundary** triggers Sentry via `onCaughtError: reactErrorHandler()` registered on `createRoot` (React 19)
 - **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT_FRONTEND` are set (`@sentry/vite-plugin`)
 
 Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend/src/routerInstance.ts`, `frontend/vite.config.ts`.
@@ -81,7 +81,7 @@ Backend also reads `Sentry:*` keys from `appsettings.json` / `Sentry__*` environ
 | Removed HyperDX / OTEL | Sentry replacement |
 |------------------------|-------------------|
 | `initializeHyperDX()` | `Sentry.init()` in `instrument.ts` |
-| `attachErrorBoundary` | `reactErrorHandler()` + `componentDidCatch` |
+| `attachErrorBoundary` | `reactErrorHandler()` on `createRoot` (React 19) |
 | `setHyperDXUser(user)` | `setSentryUser(user)` |
 | `trackFormSubmit(...)` | `trackFormSubmit(...)` → `Sentry.addBreadcrumb` |
 | `AddOpenTelemetry` + OTLP | Native `Sentry.AspNetCore` tracing + logging |

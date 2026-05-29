@@ -67,7 +67,6 @@ function RegisterPage() {
       setHasFormBeenSubmitted(true);
       await form.validate('change');
       if (!form.state.isValid) {
-        trackFormSubmit('register', 'invalid', form.state);
         return;
       }
 
