@@ -1,9 +1,4 @@
-import {
-  browserTracingIntegration,
-  captureConsoleIntegration,
-  replayIntegration,
-  tanstackRouterBrowserTracingIntegration,
-} from '@sentry/react';
+import { captureConsoleIntegration, replayIntegration, tanstackRouterBrowserTracingIntegration } from '@sentry/react';
 import * as Sentry from '@sentry/react';
 
 import config from '@/config';
@@ -39,8 +34,7 @@ if (config.sentryDsn) {
     maxBreadcrumbs: 100,
     enableLogs: true,
     integrations: [
-      tanstackRouterBrowserTracingIntegration(router),
-      browserTracingIntegration({
+      tanstackRouterBrowserTracingIntegration(router, {
         enableInp: true,
         enableLongTask: true,
       }),
