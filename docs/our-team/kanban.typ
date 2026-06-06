@@ -1,5 +1,5 @@
 #import "template.typ": template
-#show: template.with("Scrum: Backlog sprintu", "1.0.0", datetime(day: 3, month: 5, year: 2026))
+#show: template.with("Kanban", "1.0.0", datetime(day: 3, month: 5, year: 2026))
 
 = 1. O projekcie i produkcie
 - *Projekt:* Opracowanie systemu do zarządzania rejsami statku RV Oceanograf dla Biura Armatora Uniwersytetu Gdańskiego.
