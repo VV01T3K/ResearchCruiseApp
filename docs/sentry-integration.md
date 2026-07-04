@@ -29,7 +29,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **TanStack Router** navigation tracing via `tanstackRouterBrowserTracingIntegration`
 - **Session Replay** with masked text/inputs and blocked media
 - **Distributed tracing** to the API (`tracePropagationTargets`, `/health` excluded)
-- **Console capture** for `warn` / `error`
+- **Console `warn` / `error`** forwarded to Sentry Logs (`consoleLoggingIntegration`)
 - **User context** on login/profile load (`setSentryUser` in `UserContextProvider`)
 - **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks)
 - **Class error boundary** triggers Sentry via `onCaughtError: reactErrorHandler()` registered on `createRoot` (React 19)

@@ -1,4 +1,4 @@
-import { captureConsoleIntegration, replayIntegration, tanstackRouterBrowserTracingIntegration } from '@sentry/react';
+import { consoleLoggingIntegration, replayIntegration, tanstackRouterBrowserTracingIntegration } from '@sentry/react';
 import * as Sentry from '@sentry/react';
 
 import config from '@/config';
@@ -21,7 +21,7 @@ function defaultReplaySessionSampleRate(): number {
 }
 
 function resolveTracePropagationTargets(): (string | RegExp)[] {
-  const targets: (string | RegExp)[] = [/^https?:\/\/localhost(?:|:)/];
+  const targets: (string | RegExp)[] = [/^https?:\/\/localhost(?::\d+)?(?:\/|$)/];
 
   if (typeof window !== 'undefined') {
     const escapedOrigin = window.location.origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -62,7 +62,7 @@ if (config.sentryDsn) {
         maskAllInputs: true,
         blockAllMedia: true,
       }),
-      captureConsoleIntegration({
+      consoleLoggingIntegration({
         levels: ['warn', 'error'],
       }),
     ],

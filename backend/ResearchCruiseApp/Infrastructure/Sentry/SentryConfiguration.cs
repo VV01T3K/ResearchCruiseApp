@@ -12,10 +12,12 @@ public static class SentryConfiguration
     {
         builder.WebHost.UseSentry(options =>
         {
+            // An empty DSN disables the SDK; null would make it throw at startup.
             options.Dsn =
                 NullIfEmpty(builder.Configuration["Sentry:Dsn"])
                 ?? NullIfEmpty(builder.Configuration["SENTRY_DSN_BACKEND"])
-                ?? NullIfEmpty(builder.Configuration["SENTRY_DSN"]);
+                ?? NullIfEmpty(builder.Configuration["SENTRY_DSN"])
+                ?? string.Empty;
             options.Environment =
                 NullIfEmpty(builder.Configuration["Sentry:Environment"])
                 ?? NullIfEmpty(builder.Configuration["SENTRY_ENVIRONMENT"])
@@ -60,13 +62,6 @@ public static class SentryConfiguration
                     return transaction;
                 }
             );
-        });
-
-        builder.Logging.AddSentry(options =>
-        {
-            options.InitializeSdk = false;
-            options.MinimumBreadcrumbLevel = LogLevel.Debug;
-            options.MinimumEventLevel = LogLevel.Warning;
         });
     }
 
