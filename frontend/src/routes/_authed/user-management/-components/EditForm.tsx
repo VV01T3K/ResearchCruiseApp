@@ -17,6 +17,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
+import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
 import { getRoleLabel, Role } from '@/models/shared/Role';
 import { User } from '@/models/shared/User';
@@ -89,7 +90,9 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     validators: {
       onChange: validationSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
+      trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'valid', formApi.state);
+
       if (!value.email || !value.firstName || !value.lastName || !value.role) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -119,6 +122,9 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
         }
       }
+    },
+    onSubmitInvalid: ({ formApi }) => {
+      trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'invalid', formApi.state);
     },
   });
 

@@ -1,8 +1,11 @@
 using ResearchCruiseApp.Application;
 using ResearchCruiseApp.Infrastructure;
+using ResearchCruiseApp.Infrastructure.Sentry;
 using ResearchCruiseApp.Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddResearchCruiseAppSentry();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);

@@ -26,11 +26,9 @@ jobs:
           - component: frontend
             context: .
             dockerfile: frontend/Dockerfile
-            build-args: APP_ENVIRONMENT=production
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile
-            build-args: ""
 
     steps:
       - uses: actions/checkout@v6
@@ -52,6 +50,37 @@ jobs:
           images: ghcr.io/${{ github.repository }}/${{ matrix.component }}
           tags: type=raw,value=staging
 
+      - name: Prepare build args
+        id: buildargs
+        env:
+          SENTRY_DSN_FRONTEND: ${{ secrets.SENTRY_DSN_FRONTEND }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT_FRONTEND: ${{ secrets.SENTRY_PROJECT_FRONTEND }}
+          SENTRY_PROJECT_BACKEND: ${{ secrets.SENTRY_PROJECT_BACKEND }}
+        run: |
+          if [ "${{ matrix.component }}" = "frontend" ]; then
+            {
+              echo "args<<EOF"
+              echo "APP_ENVIRONMENT=staging"
+              echo "SENTRY_DSN=${SENTRY_DSN_FRONTEND}"
+              echo "SENTRY_ENVIRONMENT=staging"
+              echo "SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}"
+              echo "SENTRY_TRACES_SAMPLE_RATE=0.2"
+              echo "SENTRY_ORG=${SENTRY_ORG}"
+              echo "SENTRY_PROJECT_FRONTEND=${SENTRY_PROJECT_FRONTEND}"
+              echo "GITHUB_SHA=${{ github.sha }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo "args<<EOF"
+              echo "SENTRY_ORG=${SENTRY_ORG}"
+              echo "SENTRY_PROJECT_BACKEND=${SENTRY_PROJECT_BACKEND}"
+              echo "SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -60,7 +89,9 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build-args }}
+          build-args: ${{ steps.buildargs.outputs.args }}
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 

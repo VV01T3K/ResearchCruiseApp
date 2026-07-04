@@ -1,4 +1,5 @@
 ﻿using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
+using ResearchCruiseApp.Infrastructure.Sentry;
 
 namespace ResearchCruiseApp.Web.Configuration;
 
@@ -16,7 +17,11 @@ public static class WebApplicationExtensions
 
         app.UseCors("CustomPolicy");
 
+        app.UseResearchCruiseAppSentry();
+
         app.UseAuthentication().UseAuthorization();
+
+        app.UseMiddleware<SentryUserMiddleware>();
 
         app.MapControllers();
         app.MapHealthChecks("/health");
