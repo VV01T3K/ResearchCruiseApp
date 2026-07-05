@@ -46,10 +46,27 @@ public static class SentryConfiguration
             options.SetBeforeSend(
                 (@event, _) =>
                 {
+                    // Exception.ToString() also covers inner exception messages.
+                    if (
+                        ContainsSeedUserCredentials(@event.Message?.Formatted)
+                        || ContainsSeedUserCredentials(@event.Message?.Message)
+                        || ContainsSeedUserCredentials(@event.Exception?.ToString())
+                    )
+                    {
+                        return null;
+                    }
+
                     @event.ServerName = null;
                     return @event;
                 }
             );
+
+            options.SetBeforeBreadcrumb(
+                (breadcrumb, _) =>
+                    ContainsSeedUserCredentials(breadcrumb.Message) ? null : breadcrumb
+            );
+
+            options.SetBeforeSendLog(log => ContainsSeedUserCredentials(log.Message) ? null : log);
 
             options.SetBeforeSendTransaction(
                 (transaction, _) =>
@@ -117,6 +134,17 @@ public static class SentryConfiguration
 
         return environment.IsProduction() ? 0.1 : 0;
     }
+
+    /// <summary>
+    /// Prefix of the seed-credentials log message. ApplicationDbContextInitializer logs with it
+    /// and the filters above drop anything containing it, so both sides must use this constant.
+    /// </summary>
+    internal const string SeedUserCreatedLogPrefix = "Seed User Created";
+
+    // Seed user passwords are logged on purpose for local dev convenience
+    // (Database:LogUserPasswordsWhenSeeding) and must never leave the machine.
+    private static bool ContainsSeedUserCredentials(string? message) =>
+        message?.Contains(SeedUserCreatedLogPrefix, StringComparison.OrdinalIgnoreCase) ?? false;
 
     private static string? NullIfEmpty(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value;

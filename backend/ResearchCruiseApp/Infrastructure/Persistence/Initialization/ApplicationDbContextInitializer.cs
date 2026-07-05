@@ -4,6 +4,7 @@ using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
+using ResearchCruiseApp.Infrastructure.Sentry;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 
@@ -51,7 +52,14 @@ internal class ApplicationDbContextInitializer(
                 ?? false
             )
             {
-                logger.LogWarning("Seed User Created: {email} - {password}", user.Email, password);
+                // Information level keeps the credentials out of Sentry (MinimumEventLevel is
+                // Warning) while still printing them to the console for local dev. The prefix
+                // constant is what SentryConfiguration's filters match on.
+                logger.LogInformation(
+                    SentryConfiguration.SeedUserCreatedLogPrefix + ": {email} - {password}",
+                    user.Email,
+                    password
+                );
             }
         }
     }
