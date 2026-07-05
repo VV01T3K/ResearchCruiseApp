@@ -51,7 +51,13 @@ internal class ApplicationDbContextInitializer(
                 ?? false
             )
             {
-                logger.LogWarning("Seed User Created: {email} - {password}", user.Email, password);
+                // Information level keeps the credentials out of Sentry (MinimumEventLevel is
+                // Warning) while still printing them to the console for local dev.
+                logger.LogInformation(
+                    "Seed User Created: {email} - {password}",
+                    user.Email,
+                    password
+                );
             }
         }
     }

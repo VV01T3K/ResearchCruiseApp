@@ -46,10 +46,25 @@ public static class SentryConfiguration
             options.SetBeforeSend(
                 (@event, _) =>
                 {
+                    if (
+                        ContainsSeedUserCredentials(@event.Message?.Formatted)
+                        || ContainsSeedUserCredentials(@event.Message?.Message)
+                    )
+                    {
+                        return null;
+                    }
+
                     @event.ServerName = null;
                     return @event;
                 }
             );
+
+            options.SetBeforeBreadcrumb(
+                (breadcrumb, _) =>
+                    ContainsSeedUserCredentials(breadcrumb.Message) ? null : breadcrumb
+            );
+
+            options.SetBeforeSendLog(log => ContainsSeedUserCredentials(log.Message) ? null : log);
 
             options.SetBeforeSendTransaction(
                 (transaction, _) =>
@@ -117,6 +132,11 @@ public static class SentryConfiguration
 
         return environment.IsProduction() ? 0.1 : 0;
     }
+
+    // Seed user passwords are logged on purpose for local dev convenience
+    // (Database:LogUserPasswordsWhenSeeding) and must never leave the machine.
+    private static bool ContainsSeedUserCredentials(string? message) =>
+        message?.Contains("Seed User Created", StringComparison.OrdinalIgnoreCase) ?? false;
 
     private static string? NullIfEmpty(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value;
