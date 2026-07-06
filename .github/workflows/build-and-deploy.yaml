@@ -87,8 +87,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ steps.buildargs.outputs.args }}
-          secrets: |
-            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+          # No sentry_auth_token here on purpose: source-map/symbol upload happens
+          # only in the staging build (deploy-komodo-staging.yaml). Production will
+          # upload to the on-prem instance once it exists — see
+          # docs/sentry-on-prem-migration.md.
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 

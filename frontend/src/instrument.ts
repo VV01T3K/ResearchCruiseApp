@@ -57,10 +57,15 @@ if (config.sentryDsn) {
         enableInp: true,
         enableLongTask: true,
       }),
+      // Full privacy scrubbing only in production: maskAllText redacts every text
+      // node and blockAllMedia hides all <svg>/<img> (this UI is mostly SVG icons),
+      // which makes replays unreadable — acceptable for prod, useless for staging
+      // testing. Password inputs stay masked in every environment by rrweb's
+      // built-in maskInputOptions defaults.
       replayIntegration({
-        maskAllText: true,
-        maskAllInputs: true,
-        blockAllMedia: true,
+        maskAllText: config.sentryEnvironment === 'production',
+        maskAllInputs: config.sentryEnvironment === 'production',
+        blockAllMedia: config.sentryEnvironment === 'production',
       }),
       consoleLoggingIntegration({
         levels: ['warn', 'error'],
