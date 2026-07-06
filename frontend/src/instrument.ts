@@ -4,10 +4,11 @@ import * as Sentry from '@sentry/react';
 import config from '@/config';
 import { router } from '@/routerInstance';
 
-function parseSampleRate(value: string | undefined, fallback: number): number {
-  if (!value) return fallback;
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : fallback;
+function configuredTracesSampleRate(): number {
+  const configured = Number(config.sentryTracesSampleRate);
+  if (config.sentryTracesSampleRate && Number.isFinite(configured)) return Math.min(1, Math.max(0, configured));
+
+  return defaultTracesSampleRate();
 }
 
 function defaultTracesSampleRate(): number {
@@ -41,11 +42,9 @@ function resolveTracePropagationTargets(): (string | RegExp)[] {
 }
 
 if (config.sentryDsn) {
-  const tracesSampleRate = parseSampleRate(config.sentryTracesSampleRate, defaultTracesSampleRate());
-
   Sentry.init({
     dsn: config.sentryDsn,
-    environment: config.sentryEnvironment,
+    environment: config.environment,
     release: config.sentryRelease || `research-cruise-app-frontend@${config.version}`,
     enabled: true,
     sendDefaultPii: false,
@@ -63,15 +62,15 @@ if (config.sentryDsn) {
       // testing. Password inputs stay masked in every environment by rrweb's
       // built-in maskInputOptions defaults.
       replayIntegration({
-        maskAllText: config.sentryEnvironment === 'production',
-        maskAllInputs: config.sentryEnvironment === 'production',
-        blockAllMedia: config.sentryEnvironment === 'production',
+        maskAllText: config.environment === 'production',
+        maskAllInputs: config.environment === 'production',
+        blockAllMedia: config.environment === 'production',
       }),
       consoleLoggingIntegration({
         levels: ['warn', 'error'],
       }),
     ],
-    tracesSampleRate,
+    tracesSampleRate: configuredTracesSampleRate(),
     tracePropagationTargets: resolveTracePropagationTargets(),
     replaysSessionSampleRate: defaultReplaySessionSampleRate(),
     replaysOnErrorSampleRate: 1,

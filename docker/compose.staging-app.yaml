@@ -11,6 +11,7 @@ services:
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__Environment=${SENTRY_ENVIRONMENT:-staging}
+      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-}
     networks:
       - researchcruiseapp-network
   frontend:
@@ -21,7 +22,7 @@ services:
     restart: unless-stopped
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
-      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-staging}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-}
     expose:
       - 8080
     networks:

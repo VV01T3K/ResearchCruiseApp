@@ -69,7 +69,6 @@ export default defineConfig({
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
     SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN ?? ''),
-    SENTRY_ENVIRONMENT: JSON.stringify(process.env.SENTRY_ENVIRONMENT ?? process.env.APP_ENVIRONMENT ?? 'local'),
     SENTRY_RELEASE: JSON.stringify(sentryRelease ?? ''),
     SENTRY_TRACES_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_TRACES_SAMPLE_RATE ?? ''),
   },

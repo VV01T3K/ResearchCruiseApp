@@ -39,7 +39,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **Centralized React error reporting** via all three `createRoot` hooks (React 19): Sentry handles uncaught, caught,
   and recoverable errors when configured; otherwise React retains its default console reporting
 - **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` are set (`@sentry/vite-plugin`)
-- **Runtime configuration**: the Docker image does **not** bake the DSN. `frontend/docker-entrypoint.d/90-runtime-config.sh` writes `/runtime-config.js` from `SENTRY_DSN` / `SENTRY_ENVIRONMENT` / `SENTRY_RELEASE` / `SENTRY_TRACES_SAMPLE_RATE` env vars on every container start (loaded before the app bundle; overrides build-time values when non-empty). Deploy with these unset to ship Sentry dormant, then set them in compose and restart the container to connect — no rebuild. Only the release id (source-map matching) and upload credentials remain build-time.
+- **Runtime configuration**: `frontend/docker-entrypoint.d/90-runtime-config.sh` exposes `SENTRY_DSN` and `SENTRY_TRACES_SAMPLE_RATE` to the browser when the container starts. The environment and release come from the environment-specific build. Change either runtime value in Compose and restart the container; leave the DSN unset to disable Sentry.
 
 Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend/src/routerInstance.ts`, `frontend/vite.config.ts`.
 
@@ -71,9 +71,9 @@ Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local 
 | `SENTRY_DSN`                  | Frontend container runtime / backend runtime  | Project DSN (or use split vars below)         |
 | `SENTRY_DSN_FRONTEND`         | Compose env (mapped to frontend `SENTRY_DSN`) | Frontend-only DSN                             |
 | `SENTRY_DSN_BACKEND`          | Backend runtime / CI                          | Backend-only DSN (optional)                   |
-| `SENTRY_ENVIRONMENT`          | Both                                          | `local`, `staging`, `production`              |
-| `SENTRY_RELEASE`              | Both                                          | Git SHA or app version                        |
-| `SENTRY_TRACES_SAMPLE_RATE`   | Both                                          | Performance sampling (e.g. `0.1` in prod)     |
+| `SENTRY_ENVIRONMENT`          | Backend runtime                               | `local`, `staging`, `production`              |
+| `SENTRY_RELEASE`              | Frontend build / backend runtime               | Git SHA or app version                        |
+| `SENTRY_TRACES_SAMPLE_RATE`   | Frontend and backend runtime                  | Performance sampling (e.g. `0.1` in prod)     |
 | `SENTRY_PROFILES_SAMPLE_RATE` | Backend                                       | Profiling sampling (e.g. `0.1` in prod)       |
 | `SENTRY_AUTH_TOKEN`           | CI only (GitHub secret)                       | Source map / symbol upload                    |
 | `SENTRY_ORG`                  | Dockerfile ARG default (`cruiseteam`)                           | Organization slug; override via build arg |

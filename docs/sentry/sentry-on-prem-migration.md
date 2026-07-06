@@ -12,10 +12,10 @@ The app code is instance-agnostic — nothing needs to change in `frontend/src/`
 - Both SDKs send to whatever DSN they are given; an on-prem DSN
   (`https://<key>@sentry.<our-domain>/<project-id>`) is handled identically to a cloud one.
 - The frontend Docker image does **not** bake the DSN: `docker-entrypoint.d/90-runtime-config.sh`
-  injects `SENTRY_DSN` / `SENTRY_ENVIRONMENT` / `SENTRY_RELEASE` / `SENTRY_TRACES_SAMPLE_RATE`
-  from container env at startup. The backend reads `Sentry__*` env at runtime.
-- Deploying with those env vars unset ships both apps with Sentry present but disabled, so the
-  cutover is: set env vars, restart containers.
+  exposes `SENTRY_DSN` and `SENTRY_TRACES_SAMPLE_RATE` when the container starts. Its environment
+  and release remain tied to the build. The backend reads `Sentry__*` env at runtime.
+- Deploying without a DSN ships both apps with Sentry present but disabled, so the cutover is:
+  set the DSNs and restart the containers.
 
 **Hard rule:** the frontend and backend of one environment must point at the **same** Sentry
 instance. Distributed traces and replay→backend links are stitched inside a single instance —
@@ -76,8 +76,8 @@ In the production compose/host environment set:
 ```
 SENTRY_DSN_FRONTEND=<frontend-production DSN>
 SENTRY_DSN_BACKEND=<backend-production DSN>
-SENTRY_ENVIRONMENT=production
-SENTRY_TRACES_SAMPLE_RATE=0.1   # keep low; on-prem disk is ours
+SENTRY_ENVIRONMENT=production   # backend; frontend is set by its production build
+SENTRY_TRACES_SAMPLE_RATE=0.1   # both frontend and backend
 ```
 
 then restart the containers. No image rebuild needed for event reporting — only readable stack

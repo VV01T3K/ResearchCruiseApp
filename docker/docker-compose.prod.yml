@@ -10,6 +10,7 @@ services:
       - FrontendUrl=http://localhost:8080
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__Environment=${SENTRY_ENVIRONMENT:-production}
+      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
@@ -19,6 +20,6 @@ services:
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
-      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-production}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-}
     ports:
       - 8080:8080

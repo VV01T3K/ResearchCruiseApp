@@ -5,15 +5,10 @@ declare const APP_VERSION: string;
 declare const API_URL: string;
 declare const APP_ENVIRONMENT: string;
 declare const SENTRY_DSN: string;
-declare const SENTRY_ENVIRONMENT: string;
 declare const SENTRY_RELEASE: string;
 declare const SENTRY_TRACES_SAMPLE_RATE: string;
 
 interface Window {
-  __RUNTIME_CONFIG__?: {
-    sentryDsn?: string;
-    sentryEnvironment?: string;
-    sentryRelease?: string;
-    sentryTracesSampleRate?: string;
-  };
+  __SENTRY_DSN__?: string;
+  __SENTRY_TRACES_SAMPLE_RATE__?: string;
 }

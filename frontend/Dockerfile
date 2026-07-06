@@ -1,6 +1,6 @@
 FROM node:25-alpine AS build
 
-ARG APP_ENVIRONMENT="development"
+ARG APP_ENVIRONMENT="local"
 
 ENV API_URL="/api" \
     APP_ENVIRONMENT=$APP_ENVIRONMENT
@@ -8,10 +8,6 @@ ENV API_URL="/api" \
 WORKDIR /app
 RUN npm install --global vite-plus@0.1.14
 
-# Sentry DSN/environment/sample rate are intentionally NOT baked into the image;
-# they are injected at container startup via docker-entrypoint.d/90-runtime-config.sh.
-# Only the release id (must match uploaded source maps) and upload credentials
-# remain build-time concerns.
 ARG SENTRY_RELEASE
 ARG SENTRY_ORG="cruiseteam"
 ARG SENTRY_PROJECT="frontend-staging"
