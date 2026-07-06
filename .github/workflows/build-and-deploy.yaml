@@ -27,9 +27,15 @@ jobs:
           - component: frontend
             context: .
             dockerfile: frontend/Dockerfile
+            build-args: |
+              APP_ENVIRONMENT=production
+              SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
+              GITHUB_SHA=${{ github.sha }}
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile
+            build-args: |
+              SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v6
@@ -55,29 +61,6 @@ jobs:
             type=ref,event=pr
             type=sha
 
-      - name: Prepare build args
-        id: buildargs
-        run: |
-          # Sentry DSN/environment/sample rate are injected at container startup
-          # (frontend/docker-entrypoint.d/90-runtime-config.sh), not baked into the image.
-          # Sentry org/project slugs are hardcoded as ARG defaults in the Dockerfiles;
-          # override here once the on-prem production Sentry (different org/projects) exists.
-          if [ "${{ matrix.component }}" = "frontend" ]; then
-            {
-              echo "args<<EOF"
-              echo "APP_ENVIRONMENT=production"
-              echo "SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}"
-              echo "GITHUB_SHA=${{ github.sha }}"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
-          else
-            {
-              echo "args<<EOF"
-              echo "SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -86,9 +69,9 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ steps.buildargs.outputs.args }}
+          build-args: ${{ matrix.build-args }}
           # No sentry_auth_token here on purpose: source-map/symbol upload happens
-          # only in the staging build (deploy-komodo-staging.yaml). Production will
+          # only in the staging build (deploy-komodo-staging.yaml). Production should
           # upload to the on-prem instance once it exists — see
           # docs/sentry-on-prem-migration.md.
           cache-from: type=gha,scope=${{ matrix.component }}
