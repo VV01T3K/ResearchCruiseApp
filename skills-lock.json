@@ -23,7 +23,7 @@
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
       "skillPath": "skills/sentry-dotnet-sdk/SKILL.md",
-      "computedHash": "e7e2dd1184b2668b777f1256db7266a57073516cc6e69510f6b10349c4258cd1"
+      "computedHash": "0f70165af32a49f44e49ad09db5ca6532eda08ec7e1a117194c6214cb0e79ac6"
     },
     "sentry-fix-issues": {
       "source": "getsentry/sentry-for-ai",
@@ -47,7 +47,7 @@
       "source": "getsentry/sentry-for-ai",
       "sourceType": "github",
       "skillPath": "skills/sentry-react-sdk/SKILL.md",
-      "computedHash": "f97fb5d2ce1543f1c7c31a04023175ecf1bd950a193792c3b999428af9ce7ca0"
+      "computedHash": "96861ec4739b27971da3fd9fda59654bbf09e72392bc875f627083ddbd19da3c"
     },
     "sentry-sdk-setup": {
       "source": "getsentry/sentry-for-ai",
