@@ -11,8 +11,6 @@ services:
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__Environment=${SENTRY_ENVIRONMENT:-staging}
-      - Sentry__Release=${SENTRY_RELEASE:-}
-      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.2}
     networks:
       - researchcruiseapp-network
   frontend:
@@ -22,12 +20,8 @@ services:
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
     restart: unless-stopped
     environment:
-      # Empty/unset SENTRY_DSN leaves the frontend Sentry SDK disabled;
-      # fill these in to connect without rebuilding the image.
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-staging}
-      - SENTRY_RELEASE=${SENTRY_RELEASE:-}
-      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.2}
     expose:
       - 8080
     networks:

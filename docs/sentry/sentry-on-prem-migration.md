@@ -58,9 +58,10 @@ env var but default to `https://sentry.io`. This is the **only missing plumbing*
 - `backend/ResearchCruiseApp/ResearchCruiseApp.csproj`: add
   `<SentryUrl Condition="'$(SENTRY_URL)' != ''">$(SENTRY_URL)</SentryUrl>` next to `SentryOrg`.
 - `.github/workflows/build-and-deploy.yaml` (production pipeline): in the frontend/backend build
-  args, override the slug defaults and add the URL:
-  `SENTRY_URL=https://sentry.<our-domain>`, `SENTRY_PROJECT_FRONTEND=frontend-production`,
-  `SENTRY_PROJECT_BACKEND=backend-production` (and `SENTRY_ORG` if the on-prem slug differs).
+  args, override the slug defaults and add the URL: `SENTRY_URL=https://sentry.<our-domain>` and
+  `SENTRY_PROJECT=frontend-production` for the frontend build, and
+  `SENTRY_PROJECT=backend-production` for the backend build (plus `SENTRY_ORG` if the on-prem slug
+  differs).
   Add a second GitHub secret (e.g. `SENTRY_AUTH_TOKEN_PROD`) holding the on-prem token and pass
   it as the `sentry_auth_token` build secret in that workflow.
   The staging workflow (`deploy-komodo-staging.yaml`) stays untouched — it keeps uploading to

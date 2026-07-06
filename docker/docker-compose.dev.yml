@@ -14,8 +14,6 @@ services:
       - FrontendUrl=http://localhost:8080
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__Environment=${SENTRY_ENVIRONMENT:-local}
-      - Sentry__Release=${SENTRY_RELEASE:-}
-      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-1.0}
     ports:
       - 3000:8080
     depends_on:
@@ -26,13 +24,9 @@ services:
     build:
       context: ..
       dockerfile: frontend/Dockerfile
-      args:
-        SENTRY_RELEASE: ${SENTRY_RELEASE:-}
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-local}
-      - SENTRY_RELEASE=${SENTRY_RELEASE:-}
-      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-1.0}
     ports:
       - 8080:8080
     depends_on:

@@ -30,7 +30,6 @@ jobs:
             build-args: |
               APP_ENVIRONMENT=production
               SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
-              GITHUB_SHA=${{ github.sha }}
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile

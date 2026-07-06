@@ -35,7 +35,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
   standalone outcome tracking. See the [TanStack Form observability design](tanstack-form-observability.md) for the
   proposed replacement.
 - **Class error boundary** triggers Sentry via `onCaughtError: reactErrorHandler()` registered on `createRoot` (React 19)
-- **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT_FRONTEND` are set (`@sentry/vite-plugin`)
+- **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` are set (`@sentry/vite-plugin`)
 - **Runtime configuration**: the Docker image does **not** bake the DSN. `frontend/docker-entrypoint.d/90-runtime-config.sh` writes `/runtime-config.js` from `SENTRY_DSN` / `SENTRY_ENVIRONMENT` / `SENTRY_RELEASE` / `SENTRY_TRACES_SAMPLE_RATE` env vars on every container start (loaded before the app bundle; overrides build-time values when non-empty). Deploy with these unset to ship Sentry dormant, then set them in compose and restart the container to connect — no rebuild. Only the release id (source-map matching) and upload credentials remain build-time.
 
 Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend/src/routerInstance.ts`, `frontend/vite.config.ts`.
@@ -73,9 +73,8 @@ Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local 
 | `SENTRY_TRACES_SAMPLE_RATE`   | Both                                          | Performance sampling (e.g. `0.1` in prod)     |
 | `SENTRY_PROFILES_SAMPLE_RATE` | Backend                                       | Profiling sampling (e.g. `0.1` in prod)       |
 | `SENTRY_AUTH_TOKEN`           | CI only (GitHub secret)                       | Source map / symbol upload                    |
-| `SENTRY_ORG`                  | Dockerfile ARG default (`cruiseteam`)         | Organization slug; override via build arg     |
-| `SENTRY_PROJECT_FRONTEND`     | Dockerfile ARG default (`frontend-staging`)   | Frontend project slug; override via build arg |
-| `SENTRY_PROJECT_BACKEND`      | Dockerfile ARG default (`backend-staging`)    | Backend project slug; override via build arg  |
+| `SENTRY_ORG`                  | Dockerfile ARG default (`cruiseteam`)                           | Organization slug; override via build arg |
+| `SENTRY_PROJECT`              | Dockerfile ARG (`frontend-staging` / `backend-staging`)         | Project slug; override per image build     |
 
 Backend also reads `Sentry:*` keys from `appsettings.json` / `Sentry__*` environment variables.
 

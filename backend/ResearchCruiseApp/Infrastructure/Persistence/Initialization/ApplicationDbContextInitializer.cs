@@ -52,9 +52,6 @@ internal class ApplicationDbContextInitializer(
                 ?? false
             )
             {
-                // Information level keeps the credentials out of Sentry (MinimumEventLevel is
-                // Warning) while still printing them to the console for local dev. The prefix
-                // constant is what SentryConfiguration's filters match on.
                 logger.LogInformation(
                     SentryConfiguration.SeedUserCreatedLogPrefix + ": {email} - {password}",
                     user.Email,

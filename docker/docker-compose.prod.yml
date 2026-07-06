@@ -8,6 +8,8 @@ services:
       - Database__LogUserPasswordsWhenSeeding=false
       - ConnectionStrings__Database=Server=host.docker.internal,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=http://localhost:8080
+      - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
+      - Sentry__Environment=${SENTRY_ENVIRONMENT:-production}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
@@ -15,5 +17,8 @@ services:
   frontend:
     container_name: researchcruiseapp-frontend
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-production}
     ports:
       - 8080:8080

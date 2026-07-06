@@ -8,27 +8,13 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
     <Version>2.4.0</Version>
-    <SentryOrg Condition="'$(SENTRY_ORG)' != ''">$(SENTRY_ORG)</SentryOrg>
-    <SentryProject Condition="'$(SENTRY_PROJECT_BACKEND)' != ''"
-      >$(SENTRY_PROJECT_BACKEND)</SentryProject
-    >
-    <SentryProject Condition="'$(SENTRY_PROJECT_BACKEND)' == '' and '$(SENTRY_PROJECT)' != ''"
-      >$(SENTRY_PROJECT)</SentryProject
-    >
-    <SentryUploadSymbols
-      Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''"
-      >true</SentryUploadSymbols
-    >
-    <SentryUploadSources
-      Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''"
-      >true</SentryUploadSources
-    >
-    <SentryCreateRelease
-      Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''"
-      >true</SentryCreateRelease
-    >
     <!-- <AnalysisLevel>latest-recommended</AnalysisLevel> -->
     <!-- <RunAnalyzers Condition="'$(Configuration)' == 'Debug'">false</RunAnalyzers> -->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''">
+    <SentryUploadSymbols>true</SentryUploadSymbols>
+    <SentryUploadSources>true</SentryUploadSources>
   </PropertyGroup>
 
   <ItemGroup>

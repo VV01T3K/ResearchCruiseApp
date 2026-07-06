@@ -12,15 +12,13 @@ RUN npm install --global vite-plus@0.1.14
 # they are injected at container startup via docker-entrypoint.d/90-runtime-config.sh.
 # Only the release id (must match uploaded source maps) and upload credentials
 # remain build-time concerns.
-ARG SENTRY_RELEASE=""
+ARG SENTRY_RELEASE
 ARG SENTRY_ORG="cruiseteam"
-ARG SENTRY_PROJECT=""
-ARG SENTRY_PROJECT_FRONTEND="frontend-staging"
-ARG GITHUB_SHA=""
+ARG SENTRY_PROJECT="frontend-staging"
 
-ENV SENTRY_RELEASE=${SENTRY_RELEASE:-$GITHUB_SHA} \
+ENV SENTRY_RELEASE=$SENTRY_RELEASE \
     SENTRY_ORG=$SENTRY_ORG \
-    SENTRY_PROJECT=${SENTRY_PROJECT_FRONTEND:-$SENTRY_PROJECT}
+    SENTRY_PROJECT=$SENTRY_PROJECT
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json frontend/package.json
