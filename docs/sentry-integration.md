@@ -11,12 +11,12 @@ pnpm skills:install
 # or: mise run skills:install
 ```
 
-| Task | Skill |
-|------|--------|
-| React 19 + Vite frontend | `sentry-react-sdk` |
-| ASP.NET Core 10 backend | `sentry-dotnet-sdk` |
-| Fix production issues from Sentry | `sentry-fix-issues` |
-| PR / code review with Sentry | `sentry-pr-code-review`, `sentry-code-review` |
+| Task                              | Skill                                         |
+| --------------------------------- | --------------------------------------------- |
+| React 19 + Vite frontend          | `sentry-react-sdk`                            |
+| ASP.NET Core 10 backend           | `sentry-dotnet-sdk`                           |
+| Fix production issues from Sentry | `sentry-fix-issues`                           |
+| PR / code review with Sentry      | `sentry-pr-code-review`, `sentry-code-review` |
 
 Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 
@@ -34,6 +34,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks)
 - **Class error boundary** triggers Sentry via `onCaughtError: reactErrorHandler()` registered on `createRoot` (React 19)
 - **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT_FRONTEND` are set (`@sentry/vite-plugin`)
+- **Runtime configuration**: the Docker image does **not** bake the DSN. `frontend/docker-entrypoint.d/90-runtime-config.sh` writes `/runtime-config.js` from `SENTRY_DSN` / `SENTRY_ENVIRONMENT` / `SENTRY_RELEASE` / `SENTRY_TRACES_SAMPLE_RATE` env vars on every container start (loaded before the app bundle; overrides build-time values when non-empty). Deploy with these unset to ship Sentry dormant, then set them in compose and restart the container to connect — no rebuild. Only the release id (source-map matching) and upload credentials remain build-time.
 
 Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend/src/routerInstance.ts`, `frontend/vite.config.ts`.
 
@@ -60,36 +61,37 @@ Key files: `Infrastructure/Sentry/SentryConfiguration.cs`, `Infrastructure/Sentr
 
 Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local values. **Never commit DSNs or auth tokens.**
 
-| Variable | Where | Purpose |
-|----------|--------|---------|
-| `SENTRY_DSN` | Frontend build / backend runtime | Project DSN (or use split vars below) |
-| `SENTRY_DSN_FRONTEND` | Frontend Docker / CI | Frontend-only DSN (GitHub secret) |
-| `SENTRY_DSN_BACKEND` | Backend runtime / CI | Backend-only DSN (optional) |
-| `SENTRY_ENVIRONMENT` | Both | `local`, `staging`, `production` |
-| `SENTRY_RELEASE` | Both | Git SHA or app version |
-| `SENTRY_TRACES_SAMPLE_RATE` | Both | Performance sampling (e.g. `0.1` in prod) |
-| `SENTRY_PROFILES_SAMPLE_RATE` | Backend | Profiling sampling (e.g. `0.1` in prod) |
-| `SENTRY_AUTH_TOKEN` | CI only | Source map / symbol upload |
-| `SENTRY_ORG` | CI only | Organization slug |
-| `SENTRY_PROJECT_FRONTEND` | CI only | Frontend project slug |
-| `SENTRY_PROJECT_BACKEND` | CI only | Backend project slug |
+| Variable                      | Where                                         | Purpose                                       |
+| ----------------------------- | --------------------------------------------- | --------------------------------------------- |
+| `SENTRY_DSN`                  | Frontend container runtime / backend runtime  | Project DSN (or use split vars below)         |
+| `SENTRY_DSN_FRONTEND`         | Compose env (mapped to frontend `SENTRY_DSN`) | Frontend-only DSN                             |
+| `SENTRY_DSN_BACKEND`          | Backend runtime / CI                          | Backend-only DSN (optional)                   |
+| `SENTRY_ENVIRONMENT`          | Both                                          | `local`, `staging`, `production`              |
+| `SENTRY_RELEASE`              | Both                                          | Git SHA or app version                        |
+| `SENTRY_TRACES_SAMPLE_RATE`   | Both                                          | Performance sampling (e.g. `0.1` in prod)     |
+| `SENTRY_PROFILES_SAMPLE_RATE` | Backend                                       | Profiling sampling (e.g. `0.1` in prod)       |
+| `SENTRY_AUTH_TOKEN`           | CI only (GitHub secret)                       | Source map / symbol upload                    |
+| `SENTRY_ORG`                  | Dockerfile ARG default (`cruiseteam`)         | Organization slug; override via build arg     |
+| `SENTRY_PROJECT_FRONTEND`     | Dockerfile ARG default (`frontend-staging`)   | Frontend project slug; override via build arg |
+| `SENTRY_PROJECT_BACKEND`      | Dockerfile ARG default (`backend-staging`)    | Backend project slug; override via build arg  |
 
 Backend also reads `Sentry:*` keys from `appsettings.json` / `Sentry__*` environment variables.
 
 ## HyperDX parity mapping
 
-| Removed HyperDX / OTEL | Sentry replacement |
-|------------------------|-------------------|
-| `initializeHyperDX()` | `Sentry.init()` in `instrument.ts` |
-| `attachErrorBoundary` | `reactErrorHandler()` on `createRoot` (React 19) |
-| `setHyperDXUser(user)` | `setSentryUser(user)` |
-| `trackFormSubmit(...)` | `trackFormSubmit(...)` → `Sentry.addBreadcrumb` |
-| `AddOpenTelemetry` + OTLP | Native `Sentry.AspNetCore` tracing + logging |
+| Removed HyperDX / OTEL    | Sentry replacement                               |
+| ------------------------- | ------------------------------------------------ |
+| `initializeHyperDX()`     | `Sentry.init()` in `instrument.ts`               |
+| `attachErrorBoundary`     | `reactErrorHandler()` on `createRoot` (React 19) |
+| `setHyperDXUser(user)`    | `setSentryUser(user)`                            |
+| `trackFormSubmit(...)`    | `trackFormSubmit(...)` → `Sentry.addBreadcrumb`  |
+| `AddOpenTelemetry` + OTLP | Native `Sentry.AspNetCore` tracing + logging     |
 
 ## Follow-up (not in app code)
 
 - Replace OTLP env in `kubernetes/overlays/staging/backend/configmap-patch.yaml` with Sentry env
-- Create Sentry projects and configure GitHub secrets before enabling uploads in CI
+- Production will run on a **self-hosted Sentry instance** — see the
+  [on-prem migration plan](sentry-on-prem-migration.md) for the handoff steps
 
 ## References
 
