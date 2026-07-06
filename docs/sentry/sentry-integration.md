@@ -31,7 +31,9 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **Distributed tracing** to the API (`tracePropagationTargets`, `/health` excluded)
 - **Console `warn` / `error`** forwarded to Sentry Logs (`consoleLoggingIntegration`)
 - **User context** on login/profile load (`setSentryUser` in `UserContextProvider`)
-- **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks)
+- **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks); this is diagnostic context rather than
+  standalone outcome tracking. See the [TanStack Form observability design](tanstack-form-observability.md) for the
+  proposed replacement.
 - **Class error boundary** triggers Sentry via `onCaughtError: reactErrorHandler()` registered on `createRoot` (React 19)
 - **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT_FRONTEND` are set (`@sentry/vite-plugin`)
 - **Runtime configuration**: the Docker image does **not** bake the DSN. `frontend/docker-entrypoint.d/90-runtime-config.sh` writes `/runtime-config.js` from `SENTRY_DSN` / `SENTRY_ENVIRONMENT` / `SENTRY_RELEASE` / `SENTRY_TRACES_SAMPLE_RATE` env vars on every container start (loaded before the app bundle; overrides build-time values when non-empty). Deploy with these unset to ship Sentry dormant, then set them in compose and restart the container to connect — no rebuild. Only the release id (source-map matching) and upload credentials remain build-time.
