@@ -21,6 +21,13 @@ services:
     container_name: researchcruiseapp-frontend
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
     restart: unless-stopped
+    environment:
+      # Empty/unset SENTRY_DSN leaves the frontend Sentry SDK disabled;
+      # fill these in to connect without rebuilding the image.
+      - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-staging}
+      - SENTRY_RELEASE=${SENTRY_RELEASE:-}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.2}
     expose:
       - 8080
     networks:

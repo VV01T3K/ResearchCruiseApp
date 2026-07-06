@@ -57,30 +57,22 @@ jobs:
 
       - name: Prepare build args
         id: buildargs
-        env:
-          SENTRY_DSN_FRONTEND: ${{ secrets.SENTRY_DSN_FRONTEND }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT_FRONTEND: ${{ secrets.SENTRY_PROJECT_FRONTEND }}
-          SENTRY_PROJECT_BACKEND: ${{ secrets.SENTRY_PROJECT_BACKEND }}
         run: |
+          # Sentry DSN/environment/sample rate are injected at container startup
+          # (frontend/docker-entrypoint.d/90-runtime-config.sh), not baked into the image.
+          # Sentry org/project slugs are hardcoded as ARG defaults in the Dockerfiles;
+          # override here once the on-prem production Sentry (different org/projects) exists.
           if [ "${{ matrix.component }}" = "frontend" ]; then
             {
               echo "args<<EOF"
               echo "APP_ENVIRONMENT=production"
-              echo "SENTRY_DSN=${SENTRY_DSN_FRONTEND}"
-              echo "SENTRY_ENVIRONMENT=production"
               echo "SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}"
-              echo "SENTRY_TRACES_SAMPLE_RATE=0.1"
-              echo "SENTRY_ORG=${SENTRY_ORG}"
-              echo "SENTRY_PROJECT_FRONTEND=${SENTRY_PROJECT_FRONTEND}"
               echo "GITHUB_SHA=${{ github.sha }}"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           else
             {
               echo "args<<EOF"
-              echo "SENTRY_ORG=${SENTRY_ORG}"
-              echo "SENTRY_PROJECT_BACKEND=${SENTRY_PROJECT_BACKEND}"
               echo "SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"

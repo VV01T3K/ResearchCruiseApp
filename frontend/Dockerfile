@@ -8,19 +8,17 @@ ENV API_URL="/api" \
 WORKDIR /app
 RUN npm install --global vite-plus@0.1.14
 
-ARG SENTRY_DSN=""
-ARG SENTRY_ENVIRONMENT=""
+# Sentry DSN/environment/sample rate are intentionally NOT baked into the image;
+# they are injected at container startup via docker-entrypoint.d/90-runtime-config.sh.
+# Only the release id (must match uploaded source maps) and upload credentials
+# remain build-time concerns.
 ARG SENTRY_RELEASE=""
-ARG SENTRY_TRACES_SAMPLE_RATE=""
-ARG SENTRY_ORG=""
+ARG SENTRY_ORG="cruiseteam"
 ARG SENTRY_PROJECT=""
-ARG SENTRY_PROJECT_FRONTEND=""
+ARG SENTRY_PROJECT_FRONTEND="frontend-staging"
 ARG GITHUB_SHA=""
 
-ENV SENTRY_DSN=$SENTRY_DSN \
-    SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-$APP_ENVIRONMENT} \
-    SENTRY_RELEASE=${SENTRY_RELEASE:-$GITHUB_SHA} \
-    SENTRY_TRACES_SAMPLE_RATE=$SENTRY_TRACES_SAMPLE_RATE \
+ENV SENTRY_RELEASE=${SENTRY_RELEASE:-$GITHUB_SHA} \
     SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=${SENTRY_PROJECT_FRONTEND:-$SENTRY_PROJECT}
 
@@ -44,6 +42,7 @@ ENV API_URL=$API_URL
 
 WORKDIR /app
 COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
+COPY --chmod=755 frontend/docker-entrypoint.d/90-runtime-config.sh /docker-entrypoint.d/90-runtime-config.sh
 COPY --from=build --chown=nginx:nginx /app/frontend/dist /app/
 
 EXPOSE 8080

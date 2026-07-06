@@ -27,10 +27,12 @@ services:
       context: ..
       dockerfile: frontend/Dockerfile
       args:
-        SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
-        SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-local}
         SENTRY_RELEASE: ${SENTRY_RELEASE:-}
-        SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1.0}
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-local}
+      - SENTRY_RELEASE=${SENTRY_RELEASE:-}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-1.0}
     ports:
       - 8080:8080
     depends_on:
