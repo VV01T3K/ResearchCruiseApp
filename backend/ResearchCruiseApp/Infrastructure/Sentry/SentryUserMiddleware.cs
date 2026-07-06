@@ -12,12 +12,12 @@ public sealed class SentryUserMiddleware(RequestDelegate next)
             var user = context.User;
             SentrySdk.ConfigureScope(scope =>
             {
+                // Data minimization (GDPR): only an opaque id is sent, never names or emails.
                 scope.User = new SentryUser
                 {
                     Id =
                         user.FindFirstValue(ClaimTypes.NameIdentifier)
                         ?? user.FindFirstValue("sub"),
-                    Username = user.FindFirstValue(ClaimTypes.Name) ?? user.Identity?.Name,
                 };
 
                 var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray();

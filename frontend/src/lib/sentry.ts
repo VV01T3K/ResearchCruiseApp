@@ -25,9 +25,9 @@ export function setSentryUser(user: User | undefined): void {
     return;
   }
 
+  // Data minimization (GDPR): only an opaque id is sent, never names or emails.
   Sentry.setUser({
     id: String(user.id),
-    username: `${user.firstName} ${user.lastName}`,
   });
 
   Sentry.setContext('user_roles', { roles: user.roles });

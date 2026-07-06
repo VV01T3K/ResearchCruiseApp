@@ -14,6 +14,12 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { error };
   }
 
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    // Console fallback: onCaughtError on createRoot replaces React's default
+    // logging, so without this nothing is logged when Sentry is disabled.
+    console.error('ErrorBoundary caught:', error, info.componentStack);
+  }
+
   render() {
     if (this.state.error) {
       return (
