@@ -4,8 +4,11 @@
 # so Sentry can be (dis)connected from compose config without rebuilding the image.
 set -eu
 
+# Escapes a value for embedding in a double-quoted JS string literal.
+# Newlines/CRs are stripped (never valid in these values) so a mis-set env var
+# cannot produce a SyntaxError that would silently disable the whole config.
 esc() {
-  printf '%s' "${1:-}" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
+  printf '%s' "${1:-}" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | tr -d '\r\n'
 }
 
 cat > /app/runtime-config.js <<EOF

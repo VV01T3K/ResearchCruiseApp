@@ -71,7 +71,7 @@ public static class SentryConfiguration
             options.SetBeforeSendTransaction(
                 (transaction, _) =>
                 {
-                    if (transaction.Name.Contains("/health", StringComparison.OrdinalIgnoreCase))
+                    if (transaction.Name.EndsWith("/health", StringComparison.OrdinalIgnoreCase))
                     {
                         return null;
                     }
