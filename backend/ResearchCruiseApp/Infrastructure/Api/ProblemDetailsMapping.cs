@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using ResearchCruiseApp.Results;
+using ResearchCruiseApp.Domain;
 
-namespace ResearchCruiseApp.Api;
+namespace ResearchCruiseApp.Infrastructure.Api;
 
 public static class ProblemDetailsMapping
 {

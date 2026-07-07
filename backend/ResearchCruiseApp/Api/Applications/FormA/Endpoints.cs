@@ -6,7 +6,6 @@ using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
-using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Applications;
 

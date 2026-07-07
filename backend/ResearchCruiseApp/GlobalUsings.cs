@@ -1,3 +1,4 @@
+global using ResearchCruiseApp.Infrastructure.Api;
 global using ResearchCruiseApp.Infrastructure.Email;
 global using ResearchCruiseApp.Infrastructure.Exports;
 global using ResearchCruiseApp.Infrastructure.Files;

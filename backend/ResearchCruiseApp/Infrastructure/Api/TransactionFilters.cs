@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
-namespace ResearchCruiseApp.Api;
+namespace ResearchCruiseApp.Infrastructure.Api;
 
 public static class TransactionFilters
 {

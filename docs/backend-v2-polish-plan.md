@@ -43,8 +43,13 @@ history.
    per-slice contexts or migrations.
 5. **Infrastructure is plumbing.** It does not own endpoint contracts or feature
    workflow decisions.
-6. **`Results.cs` remains top-level.** `Result` and `Error` are genuinely consumed
-   by both API and Infrastructure.
+6. **Shared code has a home by nature, not a junk drawer.** Following the
+   community VSA guidance (Milan Jovanović's three-tier model), cross-cutting
+   code is placed by what it *is*: the `Result`/`Error` primitive and wire
+   status codes live in `Domain`; API request-pipeline plumbing (validation and
+   transaction filters, ProblemDetails mapping, authorization policies) lives in
+   `Infrastructure/Api`; feature-internal reuse lives in a feature `Shared/`
+   folder. `Api/` holds only feature folders plus the `ApiComposition` atlas.
 
 ## Final Route Alignment
 
@@ -88,6 +93,7 @@ Final verification on 2026-07-07:
 | 7 — Closeout | done | End state audited; completed plan pruned; follow-ups parked. |
 | 8 — De-ceremony pass | done | Dead code and unearned interfaces removed; taxonomy folders and composition shells collapsed; single-form mappings localized. |
 | 9 — Entity ownership | done | The shared EF model was organized into Applications/FormA–C/Shared, Cruises, and Users ownership folders without namespace or model changes. |
+| 10 — Shared code by nature | done | `Results.cs` split into `Domain` (Result/Error/ErrorType/ValidationResultExtensions); `WorkflowStatusCodes` to `Domain`; validation/transaction filters, ProblemDetails mapping, and authorization policies to `Infrastructure/Api`. `Api/` now holds only feature folders plus `ApiComposition`. Route table, model, and tests unchanged. |
 
 ## De-ceremony Pass
 

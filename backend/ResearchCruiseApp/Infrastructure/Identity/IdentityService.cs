@@ -10,7 +10,6 @@ using NeoSmart.Utils;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using ResearchCruiseApp.Infrastructure.Persistence;
-using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Infrastructure.Identity;
 

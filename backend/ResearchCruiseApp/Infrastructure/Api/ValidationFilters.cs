@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace ResearchCruiseApp.Api;
+namespace ResearchCruiseApp.Infrastructure.Api;
 
 public static class ValidationFilters
 {

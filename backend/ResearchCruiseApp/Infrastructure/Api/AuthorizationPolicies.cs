@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
-namespace ResearchCruiseApp.Api;
+namespace ResearchCruiseApp.Infrastructure.Api;
 
 public static class AuthorizationPolicies
 {

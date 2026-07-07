@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
-using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Users;
 

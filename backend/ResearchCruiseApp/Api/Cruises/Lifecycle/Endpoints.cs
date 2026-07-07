@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Persistence;
-using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Cruises;
 

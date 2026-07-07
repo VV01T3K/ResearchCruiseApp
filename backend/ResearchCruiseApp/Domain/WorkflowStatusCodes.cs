@@ -1,6 +1,4 @@
-using ResearchCruiseApp.Domain;
-
-namespace ResearchCruiseApp.Api;
+namespace ResearchCruiseApp.Domain;
 
 public static class WorkflowStatusCodes
 {
