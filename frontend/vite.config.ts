@@ -8,20 +8,23 @@ import tailwindcss from '@tailwindcss/vite';
 // import babel from '@rolldown/plugin-babel';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
-const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
-const sentryOrg = process.env.SENTRY_ORG;
-const sentryProject = process.env.SENTRY_PROJECT;
-const frontendReleasePrefix = 'research-cruise-app-frontend@';
+const {
+  SENTRY_AUTH_TOKEN: sentryAuthToken,
+  SENTRY_ORG: sentryOrg,
+  SENTRY_PROJECT: sentryProject,
+  SENTRY_RELEASE: sentryRelease,
+} = process.env;
 
-function normalizeFrontendRelease(release?: string): string | undefined {
-  if (release) {
-    return release.startsWith(frontendReleasePrefix) ? release : `${frontendReleasePrefix}${release}`;
-  }
-
-  return undefined;
-}
-
-const sentryRelease = normalizeFrontendRelease(process.env.SENTRY_RELEASE);
+const sentryPlugin =
+  sentryAuthToken && sentryOrg && sentryProject
+    ? sentryVitePlugin({
+        authToken: sentryAuthToken,
+        org: sentryOrg,
+        project: sentryProject,
+        release: { name: sentryRelease },
+        sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+      })
+    : undefined;
 
 export default defineConfig({
   staged: {
@@ -45,21 +48,7 @@ export default defineConfig({
     tanstackRouter(),
     viteReact(),
     tailwindcss(),
-    ...(sentryAuthToken && sentryOrg && sentryProject
-      ? [
-          sentryVitePlugin({
-            org: sentryOrg,
-            project: sentryProject,
-            authToken: sentryAuthToken,
-            release: {
-              name: sentryRelease,
-            },
-            sourcemaps: {
-              filesToDeleteAfterUpload: ['./dist/**/*.map'],
-            },
-          }),
-        ]
-      : []),
+    sentryPlugin,
     // babel({ // Breaks tests and some forms etc FIXME: Re-enable and fix
     //   presets: [reactCompilerPreset()],
     // }),
@@ -74,6 +63,6 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 2000,
-    sourcemap: sentryAuthToken && sentryOrg && sentryProject ? 'hidden' : false,
+    sourcemap: sentryPlugin ? 'hidden' : false,
   },
 });
