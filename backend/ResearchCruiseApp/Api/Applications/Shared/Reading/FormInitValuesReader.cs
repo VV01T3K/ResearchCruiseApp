@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
-using ResearchCruiseApp.Domain.Constants;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using ResearchCruiseApp.Infrastructure.Persistence;

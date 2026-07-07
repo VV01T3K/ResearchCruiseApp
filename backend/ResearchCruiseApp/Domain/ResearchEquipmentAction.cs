@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Enums;
+﻿namespace ResearchCruiseApp.Domain;
 
 public enum ResearchEquipmentAction
 {

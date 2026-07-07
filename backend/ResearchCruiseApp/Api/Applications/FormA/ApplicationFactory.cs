@@ -1,5 +1,5 @@
-﻿using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Enums;
+﻿using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure;
 
 namespace ResearchCruiseApp.Api.Applications;

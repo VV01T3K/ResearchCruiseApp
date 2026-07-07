@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Constants;
+﻿namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public static class EvaluationConstants
 {

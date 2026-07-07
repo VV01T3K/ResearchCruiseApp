@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NeoSmart.Utils;
-using ResearchCruiseApp.Domain.Constants;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Results;

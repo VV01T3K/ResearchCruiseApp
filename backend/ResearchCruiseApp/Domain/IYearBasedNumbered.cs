@@ -1,4 +1,4 @@
-namespace ResearchCruiseApp.Domain.Interfaces;
+namespace ResearchCruiseApp.Domain;
 
 public interface IYearBasedNumbered
 {

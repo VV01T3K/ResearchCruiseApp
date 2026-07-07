@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Shared;
-using ResearchCruiseApp.Domain.Enums;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Results;
 

@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Domain.Enums;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Domain.Entities;
 

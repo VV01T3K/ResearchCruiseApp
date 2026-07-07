@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ResearchCruiseApp.Domain.Interfaces;
+namespace ResearchCruiseApp.Domain;
 
 public interface IEquatableByExpression<T>
 {

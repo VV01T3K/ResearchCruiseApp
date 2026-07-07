@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Extensions;
+﻿namespace ResearchCruiseApp.Domain;
 
 public static class StringExtensions
 {

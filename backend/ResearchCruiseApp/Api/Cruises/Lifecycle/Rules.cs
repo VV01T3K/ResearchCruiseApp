@@ -1,5 +1,5 @@
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Enums;
 
 namespace ResearchCruiseApp.Api.Cruises;
 

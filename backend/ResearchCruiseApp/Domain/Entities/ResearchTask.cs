@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using ResearchCruiseApp.Domain.Enums;
-using ResearchCruiseApp.Domain.Interfaces;
+using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Domain.Entities;
 

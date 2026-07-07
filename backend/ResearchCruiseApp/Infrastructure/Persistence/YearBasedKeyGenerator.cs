@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 

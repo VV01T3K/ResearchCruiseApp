@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Constants;
+﻿namespace ResearchCruiseApp.Domain;
 
 public static class RoleName
 {

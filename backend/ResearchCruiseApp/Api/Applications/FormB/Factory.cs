@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Enums;
-using ResearchCruiseApp.Domain.Extensions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications;
