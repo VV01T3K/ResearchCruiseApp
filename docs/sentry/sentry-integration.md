@@ -38,7 +38,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **Centralized React error reporting** via all three `createRoot` hooks (React 19): Sentry handles uncaught, caught,
   and recoverable errors when configured; otherwise React retains its default console reporting
 - **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` are set (`@sentry/vite-plugin`)
-- **Runtime configuration**: `frontend/docker-entrypoint.d/90-runtime-config.sh` exposes `SENTRY_DSN` and `SENTRY_TRACES_SAMPLE_RATE` to the browser when the container starts. The environment and release come from the environment-specific build; leave the DSN unset to disable Sentry.
+- **Runtime configuration**: `frontend/docker-entrypoint.d/90-runtime-config.sh` exposes `SENTRY_DSN`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` to the browser when the container starts. The environment and release come from the environment-specific build; leave the DSN unset to disable Sentry.
 
 Key files: `frontend/src/lib/sentry.ts`, `frontend/src/router.tsx`, `frontend/vite.config.ts`.
 
@@ -70,6 +70,7 @@ Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local 
 | `SENTRY_DSN_FRONTEND`       | Compose env (mapped to frontend `SENTRY_DSN`)           | Frontend-only DSN                         |
 | `SENTRY_DSN_BACKEND`        | Compose env (mapped to backend `Sentry__Dsn`)           | Backend-only DSN (optional)               |
 | `SENTRY_TRACES_SAMPLE_RATE` | Frontend and backend runtime                            | Trace sampling; defaults to `0.1`         |
+| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend container runtime                     | Session Replay sampling; defaults to `0.1` (staging compose defaults to `1`) |
 | `APP_ENVIRONMENT`           | Frontend and backend image build                        | `local`, `staging`, `production`          |
 | `SENTRY_RELEASE`            | Frontend and backend image build                        | Git SHA or app version                    |
 | `SENTRY_AUTH_TOKEN`         | CI only (GitHub secret)                                 | Source map / symbol upload                |

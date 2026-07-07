@@ -22,7 +22,7 @@ export function initializeSentry(router: unknown): void {
     ],
     tracesSampleRate: Number(config.sentryTracesSampleRate || 0.1),
     tracePropagationTargets: [config.apiUrl],
-    replaysSessionSampleRate: 0.1,
+    replaysSessionSampleRate: Number(config.sentryReplaysSessionSampleRate || 0.1),
     replaysOnErrorSampleRate: 1,
   });
 }
