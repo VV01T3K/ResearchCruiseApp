@@ -75,7 +75,9 @@ public static class PasswordEndpoints
         IIdentityService identityService
     )
     {
-        await identityService.EnablePasswordReset(new ForgotPasswordFormDto { Email = request.Email });
+        await identityService.EnablePasswordReset(
+            new ForgotPasswordFormDto { Email = request.Email }
+        );
         return TypedResults.NoContent();
     }
 

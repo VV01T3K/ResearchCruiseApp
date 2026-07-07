@@ -11,8 +11,7 @@ public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordRe
     }
 }
 
-public sealed class RequestPasswordResetValidator
-    : AbstractValidator<RequestPasswordResetRequest>
+public sealed class RequestPasswordResetValidator : AbstractValidator<RequestPasswordResetRequest>
 {
     public RequestPasswordResetValidator()
     {

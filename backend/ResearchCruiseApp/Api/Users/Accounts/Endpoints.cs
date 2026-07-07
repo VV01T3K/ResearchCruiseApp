@@ -73,7 +73,9 @@ public static class AccountsEndpoints
 
         if (await identityService.UserWithEmailExists(request.Email))
         {
-            return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje").ToProblemHttpResult();
+            return Error
+                .Conflict("Użytkownik o tym adresie e-mail już istnieje")
+                .ToProblemHttpResult();
         }
 
         var roles = await identityService.GetAllRoleNames(cancellationToken);

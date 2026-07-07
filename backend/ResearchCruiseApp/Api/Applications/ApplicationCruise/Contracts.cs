@@ -43,13 +43,15 @@ public sealed record ApplicationCruiseResponse(
                 deputy?.LastName ?? string.Empty
             ),
             cruise
-                .CruiseApplications.Select(application => new ApplicationCruiseApplicationSummaryResponse(
-                    application.Id,
-                    application.FormA?.CruiseManagerId ?? Guid.Empty,
-                    application.FormA?.DeputyManagerId ?? Guid.Empty,
-                    application.Number.ToString(),
-                    evaluator.GetPointsSum(application).ToString()
-                ))
+                .CruiseApplications.Select(
+                    application => new ApplicationCruiseApplicationSummaryResponse(
+                        application.Id,
+                        application.FormA?.CruiseManagerId ?? Guid.Empty,
+                        application.FormA?.DeputyManagerId ?? Guid.Empty,
+                        application.Number.ToString(),
+                        evaluator.GetPointsSum(application).ToString()
+                    )
+                )
                 .ToList(),
             cruise.Status.ToCode(),
             cruise.Title,

@@ -323,7 +323,7 @@ Update this table as phases land; keep notes short and factual.
 
 | Phase | Status | Notes |
 | --- | --- | --- |
-| 0 — Route-table guardrail | pending | |
+| 0 — Route-table guardrail | done | Exact endpoint method/template set pinned by a WebApplicationFactory test. |
 | 1 — Dissolve Domain/Logic | pending | |
 | 2 — REPR convergence | pending | |
 | 3 — Dissolve ApplicationForms | pending | |

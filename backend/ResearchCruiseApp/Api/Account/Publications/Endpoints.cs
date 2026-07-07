@@ -145,7 +145,7 @@ public static class PublicationsEndpoints
     }
 
     private static async Task<Results<NoContent, NotFound>> Delete(
-        DeletePublicationRequest request,
+        [AsParameters] DeletePublicationRequest request,
         ICurrentUserService currentUserService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken

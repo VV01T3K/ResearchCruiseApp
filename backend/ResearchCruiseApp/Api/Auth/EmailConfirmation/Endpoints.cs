@@ -37,7 +37,7 @@ public static class EmailConfirmationEndpoints
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
-        ConfirmEmailRequest request,
+        [AsParameters] ConfirmEmailRequest request,
         HttpContext httpContext,
         IIdentityService identityService
     )
