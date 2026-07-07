@@ -435,8 +435,8 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
     {
         RuleForEach(command => command.FormADto.Contracts)
             .Must(contractDto =>
-                contractDto.Category == ContractCategory.Domestic.GetStringValue()
-                || contractDto.Category == ContractCategory.International.GetStringValue()
+                contractDto.Category == ContractCategory.Domestic
+                || contractDto.Category == ContractCategory.International
             )
             .WithMessage("Należy podać poprawną kategorię umowy.");
 
@@ -527,8 +527,8 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
     {
         RuleForEach(command => command.FormADto.Publications)
             .Must(publicationDto =>
-                publicationDto.Category == PublicationCategory.Postscript.GetStringValue()
-                || publicationDto.Category == PublicationCategory.Subject.GetStringValue()
+                publicationDto.Category == PublicationCategory.Postscript
+                || publicationDto.Category == PublicationCategory.Subject
             )
             .WithMessage("Należy podać poprawną kategorię publikacji");
 

@@ -108,9 +108,9 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
         {
             var contract = formAContract.Contract;
 
-            if (contract.Category == ContractCategory.Domestic.GetStringValue())
+            if (contract.Category == ContractCategory.Domestic)
                 formAContract.Points = EvaluationConstants.PointsForDomesticContract;
-            if (contract.Category == ContractCategory.International.GetStringValue())
+            if (contract.Category == ContractCategory.International)
                 formAContract.Points = EvaluationConstants.PointsForInternationalContract;
         }
     }
@@ -141,10 +141,10 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
             var publication = formAPublication.Publication;
 
             double ministerialPointsRatio = 0;
-            if (publication.Category == PublicationCategory.Subject.GetStringValue())
+            if (publication.Category == PublicationCategory.Subject)
                 ministerialPointsRatio =
                     EvaluationConstants.MinisterialPointsRatioForSubjectPublication;
-            if (publication.Category == PublicationCategory.Postscript.GetStringValue())
+            if (publication.Category == PublicationCategory.Postscript)
                 ministerialPointsRatio =
                     EvaluationConstants.MinisterialPointsRatioForPostscriptPublication;
 
