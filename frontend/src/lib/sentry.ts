@@ -5,6 +5,13 @@ import { User } from '@/models/shared/User';
 
 type FieldMeta = { errors: Array<unknown> };
 
+// Parses a runtime-config sample rate, falling back to `fallback` for empty or
+// malformed values (e.g. "10%", "abc") so a bad env never yields NaN.
+function parseSampleRate(value: string, fallback: number): number {
+  const parsed = Number(value);
+  return value !== '' && Number.isFinite(parsed) ? parsed : fallback;
+}
+
 export function initializeSentry(router: unknown): void {
   if (!config.sentryDsn) return;
 
@@ -20,9 +27,9 @@ export function initializeSentry(router: unknown): void {
         blockAllMedia: false,
       }),
     ],
-    tracesSampleRate: Number(config.sentryTracesSampleRate || 0.1),
+    tracesSampleRate: parseSampleRate(config.sentryTracesSampleRate, 0.1),
     tracePropagationTargets: [config.apiUrl],
-    replaysSessionSampleRate: Number(config.sentryReplaysSessionSampleRate || 0.1),
+    replaysSessionSampleRate: parseSampleRate(config.sentryReplaysSessionSampleRate, 0.1),
     replaysOnErrorSampleRate: 1,
   });
 }
