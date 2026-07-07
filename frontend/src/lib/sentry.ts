@@ -15,9 +15,9 @@ export function initializeSentry(router: unknown): void {
     integrations: [
       Sentry.tanstackRouterBrowserTracingIntegration(router),
       Sentry.replayIntegration({
-        maskAllText: true,
-        maskAllInputs: true,
-        blockAllMedia: true,
+        maskAllText: false,
+        maskAllInputs: false,
+        blockAllMedia: false,
       }),
     ],
     tracesSampleRate: Number(config.sentryTracesSampleRate || 0.1),
