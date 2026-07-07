@@ -21,9 +21,6 @@ Completed and verified against the current tree:
 
 Known defects and unfinished work:
 
-- **Live frontend smoke pending.** Hooks and Playwright mocks are aligned with the
-  frozen `/v2` route table, and focused browser suites are green. A live-data smoke
-  still needs a safe seeded environment with known credentials and an email sink.
 - **Mixed physical patterns.** Some slices follow the REPR folder shape
   (`Contracts.cs` / `Endpoints.cs` / `Validators.cs`), others are still single
   files.
@@ -313,5 +310,5 @@ Update this table as phases land; keep notes short and factual.
 | 3 — Dissolve ApplicationForms | done | Slice-owned form code localized; shared form code moved under Applications/Shared. |
 | 4 — Domain/Infrastructure cleanup | done | Repository vestiges removed; Domain flattened; EF annotations made fluent; NU1903 cleared. |
 | 5 — Contract decisions | done | Final route table frozen; password change returned to account/me. |
-| 6 — Frontend realignment | in progress | Hooks/mocks aligned; 113 focused browser tests pass; live-data smoke pending. |
+| 6 — Frontend realignment | done | Hooks/mocks aligned; 113 browser tests and isolated live-data smoke passed. |
 | 7 — Closeout | pending | |
