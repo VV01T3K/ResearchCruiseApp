@@ -11,7 +11,7 @@ public class Port : Entity, IEquatable<Port>, IEquatableByExpression<Port>
 
     public List<FormCPort> FormCPorts { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((Port?)other);
+    public override bool Equals(object? obj) => Equals((Port?)obj);
 
     public override int GetHashCode()
     {

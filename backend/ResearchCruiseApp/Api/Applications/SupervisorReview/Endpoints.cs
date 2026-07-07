@@ -91,7 +91,9 @@ public static class SupervisorReviewEndpoints
                 SupervisorDecisionResult.AlreadyAnswered => Error
                     .ForbiddenOperation("Odpowiedź od przełożonego została już udzielona.")
                     .ToProblemHttpResult(),
-                _ => throw new ArgumentOutOfRangeException(),
+                _ => throw new InvalidOperationException(
+                    $"Unexpected supervisor decision result: {decisionResult}"
+                ),
             };
         }
 

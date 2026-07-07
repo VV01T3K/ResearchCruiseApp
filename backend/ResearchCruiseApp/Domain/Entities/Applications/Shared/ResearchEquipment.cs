@@ -22,7 +22,7 @@ public class ResearchEquipment
 
     public List<FormCResearchEquipment> FormCResearchEquipments { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((ResearchEquipment?)other);
+    public override bool Equals(object? obj) => Equals((ResearchEquipment?)obj);
 
     public override int GetHashCode()
     {

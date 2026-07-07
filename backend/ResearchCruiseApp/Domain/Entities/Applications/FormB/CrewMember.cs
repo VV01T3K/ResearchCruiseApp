@@ -16,7 +16,7 @@ public class CrewMember : Entity, IEquatable<CrewMember>, IEquatableByExpression
 
     public List<FormB> FormsB { get; set; } = [];
 
-    public override bool Equals(object? other) => Equals((CrewMember?)other);
+    public override bool Equals(object? obj) => Equals((CrewMember?)obj);
 
     public override int GetHashCode()
     {

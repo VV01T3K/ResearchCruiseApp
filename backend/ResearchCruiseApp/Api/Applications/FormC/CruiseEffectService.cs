@@ -60,10 +60,10 @@ internal class CruiseEffectService(
             }
 
             if (
-                await dbContext
+                !await dbContext
                     .ResearchTasks.Where(candidate => candidate.Id == researchTask.Id)
                     .SelectMany(candidate => candidate.FormAResearchTasks)
-                    .CountAsync(cancellationToken) == 0
+                    .AnyAsync(cancellationToken)
                 && await dbContext
                     .ResearchTasks.Where(candidate => candidate.Id == researchTask.Id)
                     .SelectMany(candidate => candidate.ResearchTasksEffects)

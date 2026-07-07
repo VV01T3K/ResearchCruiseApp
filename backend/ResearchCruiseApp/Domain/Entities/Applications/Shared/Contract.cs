@@ -17,7 +17,7 @@ public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Con
 
     public List<FormC> FormsC { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((Contract?)other);
+    public override bool Equals(object? obj) => Equals((Contract?)obj);
 
     public override int GetHashCode()
     {

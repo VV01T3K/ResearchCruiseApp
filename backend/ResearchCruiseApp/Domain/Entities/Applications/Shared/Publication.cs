@@ -17,7 +17,7 @@ public class Publication : Entity, IEquatable<Publication>, IEquatableByExpressi
 
     public List<UserPublication> UserPublications { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((Publication?)other);
+    public override bool Equals(object? obj) => Equals((Publication?)obj);
 
     public override int GetHashCode()
     {

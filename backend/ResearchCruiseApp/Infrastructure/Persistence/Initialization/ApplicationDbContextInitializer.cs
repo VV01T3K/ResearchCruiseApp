@@ -53,7 +53,7 @@ internal class ApplicationDbContextInitializer(
             );
             if (configuration.GetValue<bool>("Database:LogUserPasswordsWhenSeeding"))
             {
-                logger.LogWarning("Seed User Created: {email} - {password}", user.Email, password);
+                logger.LogWarning("Seed User Created: {Email} - {Password}", user.Email, password);
             }
         }
     }

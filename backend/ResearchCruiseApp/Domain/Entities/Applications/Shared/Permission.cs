@@ -37,7 +37,7 @@ public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression
 
     public List<FormC> FormsC { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((Permission?)other);
+    public override bool Equals(object? obj) => Equals((Permission?)obj);
 
     public override int GetHashCode()
     {

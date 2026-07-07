@@ -13,7 +13,7 @@ public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<G
 
     public List<FormCGuestUnit> FormCGuestUnits { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((GuestUnit?)other);
+    public override bool Equals(object? obj) => Equals((GuestUnit?)obj);
 
     public override int GetHashCode()
     {

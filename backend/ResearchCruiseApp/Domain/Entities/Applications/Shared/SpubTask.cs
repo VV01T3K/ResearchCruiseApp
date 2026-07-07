@@ -13,7 +13,7 @@ public class SpubTask : Entity, IEquatable<SpubTask>, IEquatableByExpression<Spu
 
     public List<FormC> FormsC { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((SpubTask?)other);
+    public override bool Equals(object? obj) => Equals((SpubTask?)obj);
 
     public override int GetHashCode()
     {

@@ -16,7 +16,7 @@ public class ResearchAreaDescription
 
     public List<FormC> FormsC { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((ResearchAreaDescription?)other);
+    public override bool Equals(object? obj) => Equals((ResearchAreaDescription?)obj);
 
     public override int GetHashCode()
     {

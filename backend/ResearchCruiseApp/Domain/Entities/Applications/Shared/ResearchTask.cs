@@ -23,7 +23,7 @@ public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpres
 
     public List<ResearchTaskEffect> ResearchTasksEffects { get; set; } = [];
 
-    public override bool Equals(object? other) => Equals((ResearchTask?)other);
+    public override bool Equals(object? obj) => Equals((ResearchTask?)obj);
 
     public override int GetHashCode()
     {

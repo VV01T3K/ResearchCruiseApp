@@ -19,7 +19,7 @@ public class CruiseDayDetails
 
     public List<FormC> FormsC { get; init; } = [];
 
-    public override bool Equals(object? other) => Equals((CruiseDayDetails?)other);
+    public override bool Equals(object? obj) => Equals((CruiseDayDetails?)obj);
 
     public override int GetHashCode()
     {

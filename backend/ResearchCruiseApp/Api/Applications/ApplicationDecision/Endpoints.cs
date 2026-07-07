@@ -53,7 +53,9 @@ public static class ApplicationDecisionEndpoints
                 ApplicationDecisionResult.RemoveFromCruiseFirst => Error
                     .ForbiddenOperation("Najpierw usuń zgłoszenie z rejsu")
                     .ToProblemHttpResult(),
-                _ => throw new ArgumentOutOfRangeException(),
+                _ => throw new InvalidOperationException(
+                    $"Unexpected application decision result: {decisionResult}"
+                ),
             };
         }
 
