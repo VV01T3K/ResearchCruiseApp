@@ -8,15 +8,13 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { FatalErrorBoundary } from '@/components/shared/FatalErrorBoundary';
-import { isSentryEnabled } from '@/lib/sentry';
+import config from '@/config';
 import { AppRouter } from '@/router';
 import { UserContextProvider } from '@/providers/UserContextProvider';
 
-const sentryErrorHandlers = isSentryEnabled()
+const sentryErrorHandlers = config.sentryDsn
   ? {
-      onUncaughtError: reactErrorHandler((error, errorInfo) => {
-        console.error('Uncaught error:', error, errorInfo.componentStack);
-      }),
+      onUncaughtError: reactErrorHandler(),
       onCaughtError: reactErrorHandler(),
       onRecoverableError: reactErrorHandler(),
     }

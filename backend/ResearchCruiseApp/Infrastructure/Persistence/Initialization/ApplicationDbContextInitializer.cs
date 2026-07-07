@@ -4,7 +4,6 @@ using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
-using ResearchCruiseApp.Infrastructure.Sentry;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 
@@ -13,8 +12,7 @@ internal class ApplicationDbContextInitializer(
     RoleManager<IdentityRole> roleManager,
     IIdentityService identityService,
     IRandomGenerator randomGenerator,
-    IConfiguration configuration,
-    ILogger<ApplicationDbContextInitializer> logger
+    IConfiguration configuration
 )
 {
     public async Task Initialize()
@@ -52,11 +50,8 @@ internal class ApplicationDbContextInitializer(
                 ?? false
             )
             {
-                logger.LogInformation(
-                    SentryConfiguration.SeedUserCreatedLogPrefix + ": {email} - {password}",
-                    user.Email,
-                    password
-                );
+                // Keep opt-in seed credentials out of application telemetry.
+                Console.WriteLine($"Seed User Created: {user.Email} - {password}");
             }
         }
     }

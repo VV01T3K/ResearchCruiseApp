@@ -3,11 +3,11 @@ name: Build images & deploy to staging
 on:
   push:
     branches: [main]
-    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+    paths-ignore: ['docs/**', '**.md', '.gitignore']
   pull_request:
     branches: [main]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
+    paths-ignore: ['docs/**', '**.md', '.gitignore']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -69,10 +69,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
-          # No sentry_auth_token here on purpose: source-map/symbol upload happens
-          # only in the staging build (deploy-komodo-staging.yaml). Production should
-          # upload to the on-prem instance once it exists — see
-          # docs/sentry-on-prem-migration.md.
+          # Production should upload to the on-prem instance once it
+          # exists — see docs/sentry-on-prem-migration.md.
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 

@@ -10,7 +10,7 @@ services:
       - FrontendUrl=http://localhost:8080
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__Environment=${SENTRY_ENVIRONMENT:-production}
-      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-}
+      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:

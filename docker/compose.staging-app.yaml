@@ -11,7 +11,7 @@ services:
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__Environment=${SENTRY_ENVIRONMENT:-staging}
-      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-}
+      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     networks:
       - researchcruiseapp-network
   frontend:

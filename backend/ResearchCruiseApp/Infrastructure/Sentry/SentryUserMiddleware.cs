@@ -12,7 +12,6 @@ public sealed class SentryUserMiddleware(RequestDelegate next, IHub hub)
             var user = context.User;
             hub.ConfigureScope(scope =>
             {
-                // Data minimization (GDPR): only an opaque id is sent, never names or emails.
                 scope.User = new SentryUser
                 {
                     Id =

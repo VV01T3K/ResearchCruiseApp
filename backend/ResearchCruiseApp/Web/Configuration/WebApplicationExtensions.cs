@@ -17,8 +17,6 @@ public static class WebApplicationExtensions
 
         app.UseCors("CustomPolicy");
 
-        app.UseResearchCruiseAppSentry();
-
         app.UseAuthentication().UseAuthorization();
 
         app.UseMiddleware<SentryUserMiddleware>();
