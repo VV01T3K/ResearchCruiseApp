@@ -7,6 +7,7 @@ import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
+import { trackFormSubmit } from '@/lib/sentry';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { FormView } from './-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/_authed/cruises/-schemas/form.schema';
@@ -61,10 +62,13 @@ function NewCruisePage() {
     setHasFormBeenSubmitted(true);
     form.validateAllFields('change');
     if (!form.state.isValid) {
+      trackFormSubmit('new-cruise', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, CRUISE_FIELD_TO_SECTION));
       navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
       return;
     }
+
+    trackFormSubmit('new-cruise', 'valid', form.state);
 
     const dto = removeEmptyValues(form.state.values, [
       'managersTeam.mainCruiseManagerId',

@@ -27,11 +27,15 @@ jobs:
           - component: frontend
             context: .
             dockerfile: frontend/Dockerfile
-            build-args: APP_ENVIRONMENT=production
+            build-args: |
+              APP_ENVIRONMENT=production
+              SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile
-            build-args: ""
+            build-args: |
+              APP_ENVIRONMENT=production
+              SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v6
@@ -66,6 +70,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
+          # Production should upload to the on-prem instance once it
+          # exists — see docs/sentry-on-prem-migration.md.
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 

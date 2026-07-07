@@ -6,7 +6,7 @@ import React from 'react';
 import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { useUserContext } from '@/providers/useUserContext';
 
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   context: {
     userContext: undefined,

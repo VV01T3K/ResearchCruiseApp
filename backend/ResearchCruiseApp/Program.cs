@@ -1,10 +1,12 @@
 using ResearchCruiseApp.Application;
 using ResearchCruiseApp.Infrastructure;
+using ResearchCruiseApp.Infrastructure.Sentry;
 using ResearchCruiseApp.Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenTelemetry(builder.Configuration);
+builder.AddResearchCruiseAppSentry();
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddWeb(builder.Configuration);

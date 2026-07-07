@@ -29,6 +29,10 @@ run = '''
     touch .mise-setup-done
 '''
 
+[tasks."skills:install"]
+description = "Install agent skills from skills-lock.json (optional; fetches from GitHub)"
+run = "vp dlx skills experimental_install -y"
+
 [tasks."db:up"]
 description = "Start the database container"
 run = "docker compose -f docker/docker-compose.infra.yml up -d db"
