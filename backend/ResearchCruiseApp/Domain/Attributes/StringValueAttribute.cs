@@ -1,4 +1,4 @@
-namespace ResearchCruiseApp.Domain.Common.Attributes;
+namespace ResearchCruiseApp.Domain.Attributes;
 
 [AttributeUsage(AttributeTargets.Field)]
 public class StringValueAttribute : Attribute

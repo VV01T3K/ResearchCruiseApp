@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Common.Enums;
+﻿namespace ResearchCruiseApp.Domain.Enums;
 
 public enum CruiseFunction
 {

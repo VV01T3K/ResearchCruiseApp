@@ -1,7 +1,7 @@
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
-using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 

@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Enums;
 
 namespace ResearchCruiseApp.Api;
 

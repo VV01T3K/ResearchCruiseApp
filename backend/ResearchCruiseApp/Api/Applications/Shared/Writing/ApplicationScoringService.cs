@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Domain.Common.Constants;
-using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Common.Extensions;
+using ResearchCruiseApp.Domain.Constants;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Enums;
+using ResearchCruiseApp.Domain.Extensions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;

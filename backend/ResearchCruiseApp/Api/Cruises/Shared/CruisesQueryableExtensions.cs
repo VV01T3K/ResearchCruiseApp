@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using ResearchCruiseApp.Domain.Entities;
 
-namespace ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
+namespace ResearchCruiseApp.Api.Cruises.Shared;
 
 internal static class CruisesQueryableExtensions
 {

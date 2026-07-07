@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.Domain.Common.Constants;
+using ResearchCruiseApp.Domain.Constants;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using ResearchCruiseApp.Results;
 

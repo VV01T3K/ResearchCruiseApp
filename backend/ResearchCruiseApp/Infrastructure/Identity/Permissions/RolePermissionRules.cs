@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Domain.Common.Constants;
+using ResearchCruiseApp.Domain.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 

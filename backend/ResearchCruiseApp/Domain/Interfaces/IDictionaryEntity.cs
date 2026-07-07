@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Common.Interfaces;
+﻿namespace ResearchCruiseApp.Domain.Interfaces;
 
 public interface IDictionaryEntity
 {

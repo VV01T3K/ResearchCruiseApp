@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using FluentValidation;
-using ResearchCruiseApp.Domain.Common.Constants;
-using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Common.Extensions;
+using ResearchCruiseApp.Domain.Constants;
+using ResearchCruiseApp.Domain.Enums;
+using ResearchCruiseApp.Domain.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 

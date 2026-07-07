@@ -1,4 +1,4 @@
-﻿using ResearchCruiseApp.Domain.Common.Interfaces;
+﻿using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 

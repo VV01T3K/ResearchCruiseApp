@@ -1,5 +1,5 @@
-using ResearchCruiseApp.Domain.Common.Interfaces;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 

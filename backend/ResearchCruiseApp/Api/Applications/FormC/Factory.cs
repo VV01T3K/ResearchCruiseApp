@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
-using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Enums;
+using ResearchCruiseApp.Domain.Extensions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Results;
 

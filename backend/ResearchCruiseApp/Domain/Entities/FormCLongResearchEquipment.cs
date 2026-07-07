@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Enums;
 
 namespace ResearchCruiseApp.Domain.Entities;
 

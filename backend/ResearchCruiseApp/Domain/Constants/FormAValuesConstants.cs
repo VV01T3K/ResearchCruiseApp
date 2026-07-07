@@ -1,4 +1,4 @@
-﻿namespace ResearchCruiseApp.Domain.Common.Constants;
+﻿namespace ResearchCruiseApp.Domain.Constants;
 
 public static class FormAValuesConstants
 {

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
-using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Cruises;
 

@@ -1,6 +1,6 @@
-using ResearchCruiseApp.Domain.Common.Constants;
-using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Constants;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Domain.Enums;
 
 namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 

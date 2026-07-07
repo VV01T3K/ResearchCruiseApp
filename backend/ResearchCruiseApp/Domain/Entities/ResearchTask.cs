@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
-using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Common.Interfaces;
+using ResearchCruiseApp.Domain.Enums;
+using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 

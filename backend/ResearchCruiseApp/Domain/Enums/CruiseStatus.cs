@@ -1,6 +1,6 @@
-using ResearchCruiseApp.Domain.Common.Attributes;
+using ResearchCruiseApp.Domain.Attributes;
 
-namespace ResearchCruiseApp.Domain.Common.Enums;
+namespace ResearchCruiseApp.Domain.Enums;
 
 public enum CruiseStatus
 {
