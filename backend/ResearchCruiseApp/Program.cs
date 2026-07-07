@@ -126,10 +126,7 @@ var version = typeof(Program)
     .Aggregate((current, next) => $"{current}.{next}");
 app.MapGet(
         "/version",
-        () =>
-            version is not null
-                ? global::Microsoft.AspNetCore.Http.Results.Ok(version)
-                : global::Microsoft.AspNetCore.Http.Results.NotFound()
+        IResult () => version is not null ? TypedResults.Ok(version) : TypedResults.NotFound()
     )
     .ExcludeFromDescription();
 

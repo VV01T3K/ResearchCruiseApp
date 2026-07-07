@@ -19,7 +19,7 @@ internal class ApplicationDbContextInitializer(
     {
         await Migrate();
 
-        if (configuration.GetSection("Database:SeedAutomatically").Value?.ToBool() ?? false)
+        if (configuration.GetValue<bool>("Database:SeedAutomatically"))
         {
             await SeedRoleData();
             await SeedUsersData();
@@ -51,10 +51,7 @@ internal class ApplicationDbContextInitializer(
                 password,
                 [user.Role!]
             );
-            if (
-                configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
-                ?? false
-            )
+            if (configuration.GetValue<bool>("Database:LogUserPasswordsWhenSeeding"))
             {
                 logger.LogWarning("Seed User Created: {email} - {password}", user.Email, password);
             }
