@@ -2,7 +2,7 @@ using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-public class ResearchArea : Entity, IDictionaryEntity
+public class ResearchArea : Entity
 {
     public string Name { get; init; } = null!;
 

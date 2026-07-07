@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-public class ShipEquipment : Entity, IDictionaryEntity
+public class ShipEquipment : Entity
 {
     public string Name { get; init; } = null!;
 

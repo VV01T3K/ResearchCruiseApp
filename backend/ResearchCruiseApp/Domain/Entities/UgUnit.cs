@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-public class UgUnit : Entity, IDictionaryEntity
+public class UgUnit : Entity
 {
     public string Name { get; init; } = null!;
 

@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Domain.Entities;
 
-public class FormASpubTask : Entity, IEvaluated
+public class FormASpubTask : Entity
 {
     public FormA FormA { get; init; } = null!;
 
