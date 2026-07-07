@@ -60,6 +60,7 @@ export default defineConfig({
     SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN ?? ''),
     SENTRY_RELEASE: JSON.stringify(sentryRelease ?? ''),
     SENTRY_TRACES_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_TRACES_SAMPLE_RATE ?? ''),
+    SENTRY_REPLAYS_SESSION_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_REPLAYS_SESSION_SAMPLE_RATE ?? ''),
   },
   build: {
     chunkSizeWarningLimit: 2000,
