@@ -2,8 +2,6 @@
 # Exposes container-level Sentry settings to the static frontend.
 set -eu
 
-# Drop characters that would break the JS string literals below; none of them
-# can appear in a valid DSN or sample rate.
 sanitize() { printf '%s' "${1:-}" | tr -d '\\"\r\n'; }
 
 cat > /app/runtime-config.js <<EOF
