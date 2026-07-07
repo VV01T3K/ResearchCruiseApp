@@ -4,5 +4,11 @@
 declare const APP_VERSION: string;
 declare const API_URL: string;
 declare const APP_ENVIRONMENT: string;
-declare const OTEL_SERVICE_NAME: string;
-declare const GRAFANA_FARO_URL: string;
+declare const SENTRY_DSN: string;
+declare const SENTRY_RELEASE: string;
+declare const SENTRY_TRACES_SAMPLE_RATE: string;
+
+interface Window {
+  __SENTRY_DSN__?: string;
+  __SENTRY_TRACES_SAMPLE_RATE__?: string;
+}

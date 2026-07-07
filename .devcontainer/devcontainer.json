@@ -14,9 +14,10 @@
     "PATH": "/home/vscode/.local/share/mise/shims:/home/vscode/.local/bin:${containerEnv:PATH}"
   },
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
       "moby": false,
-      "azureDnsAutoDetection": false
+      "azureDnsAutoDetection": false,
+      "iptablesSwitchAtRuntime": true
     }
   },
   "customizations": {
