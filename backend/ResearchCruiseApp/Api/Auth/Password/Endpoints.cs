@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
-using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Auth;
@@ -9,23 +8,8 @@ public static class PasswordEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
-        MapChange(group);
         MapRequestReset(group);
         MapReset(group);
-    }
-
-    private static void MapChange(RouteGroupBuilder group)
-    {
-        group
-            .MapPatch("/password", Change)
-            .WithName("ChangeCurrentUserPasswordV2")
-            .WithSummary("Change the current account password.")
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithRequestValidation<ChangePasswordRequest>()
-            .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
     private static void MapRequestReset(RouteGroupBuilder group)
@@ -52,22 +36,6 @@ public static class PasswordEndpoints
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResetPasswordRequest>()
             .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
-    }
-
-    private static async Task<Results<NoContent, ProblemHttpResult>> Change(
-        ChangePasswordRequest request,
-        IIdentityService identityService
-    )
-    {
-        var result = await identityService.ChangePassword(
-            new ChangePasswordFormDto
-            {
-                Password = request.Password,
-                NewPassword = request.NewPassword,
-            }
-        );
-
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 
     private static async Task<NoContent> RequestReset(

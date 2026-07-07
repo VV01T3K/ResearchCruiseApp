@@ -86,7 +86,6 @@ the final route table frozen in Phase 5.
 | `GET /v2/account/confirm-email` | `GET /v2/auth/confirm-email` |
 | `POST /v2/account/password-reset-request` | `POST /v2/auth/password-reset-request` |
 | `POST /v2/account/password-reset` | `POST /v2/auth/password-reset` |
-| `PATCH /v2/account/me/password` | `PATCH /v2/auth/password` |
 | `GET/POST/DELETE /v2/account/me/publications…` | same paths under `/v2/account/publications…` |
 | `GET /v2/account/me/cruise-effects` | `GET /v2/account/cruise-effects` |
 | `GET /v2/applications/form-a/init-values` | `GET /v2/applications/form-a/context` |
@@ -247,22 +246,22 @@ guardrail green.
 Freeze the final route table before any frontend work. Each item is a deliberate
 decision recorded by updating the Phase 0 guardrail test in the same commit.
 
-1. **Password change placement.** Recommendation: move
+1. **Password change placement.** Decision: move
    `PATCH /v2/auth/password` back to `PATCH /v2/account/me/password`.
    Authenticated self-service belongs with the account; `/auth` keeps the
    anonymous credential flows (login, refresh, register, confirm, reset). Side
    benefit: removes one row from the drift table.
-2. **`/account` naming consistency.** Recommendation: keep the current shape —
+2. **`/account` naming consistency.** Decision: keep the current shape —
    `GET /v2/account/me` for the profile read, with `publications` and
    `cruise-effects` directly under `/v2/account`. Treat `/account` as the
    current-user root; do not reintroduce the `/me/` prefix on sub-resources.
-3. **`resend-confirmation-email`.** Keep the route; decide whether the frontend
-   should regain a caller (it had one on v1). Feeds Phase 6 scope.
+3. **`resend-confirmation-email`.** Keep the route and restore its frontend caller
+   in Phase 6 (the v1 client exposed this flow).
 4. **Error message strategy.** Endpoint handlers currently return hardcoded Polish
-   `ProblemDetails` strings. Recommendation: machine-readable error codes with
+   `ProblemDetails` strings. Machine-readable error codes with
    frontend-owned labels, consistent with the status-code normalization — but this
-   is a product-visible change; it stays in Open Product Decisions unless
-   deliberately scheduled.
+   is a product-visible change; the decision remains parked in Open Product
+   Decisions.
 
 Exit criteria: guardrail test encodes the final v2 route table; this document's
 drift table updated to match; backend done.
@@ -328,6 +327,6 @@ Update this table as phases land; keep notes short and factual.
 | 2 — REPR convergence | done | Remaining endpoint modules moved into REPR slice folders. |
 | 3 — Dissolve ApplicationForms | done | Slice-owned form code localized; shared form code moved under Applications/Shared. |
 | 4 — Domain/Infrastructure cleanup | done | Repository vestiges removed; Domain flattened; EF annotations made fluent; NU1903 cleared. |
-| 5 — Contract decisions | pending | |
+| 5 — Contract decisions | done | Final route table frozen; password change returned to account/me. |
 | 6 — Frontend realignment | pending | |
 | 7 — Closeout | pending | |

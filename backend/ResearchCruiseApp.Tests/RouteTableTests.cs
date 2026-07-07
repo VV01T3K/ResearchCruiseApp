@@ -40,7 +40,7 @@ public sealed class RouteTableTests
         "GET /v2/users/",
         "GET /v2/users/available-cruise-managers",
         "GET /version",
-        "PATCH /v2/auth/password",
+        "PATCH /v2/account/me/password",
         "PATCH /v2/cruises/{cruiseId:guid}",
         "PATCH /v2/users/{userId:guid}",
         "POST /v2/account/publications/import",
