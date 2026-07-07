@@ -8,7 +8,7 @@ import { client } from '@/lib/api';
 export function useCurrentPublicationsQuery() {
   return useSuspenseQuery({
     queryKey: ['currentPublications'],
-    queryFn: async () => client.get<CurrentPublicationResponse[]>('/v2/account/me/publications'),
+    queryFn: async () => client.get<CurrentPublicationResponse[]>('/v2/account/publications'),
     select: (response) =>
       response.data.map(
         (publication): Publication => ({
@@ -27,7 +27,7 @@ export function useDeleteCurrentPublicationMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => client.delete(`/v2/account/me/publications/${id}`),
+    mutationFn: async (id: string) => client.delete(`/v2/account/publications/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentPublications'] });
     },
@@ -38,7 +38,7 @@ export function useDeleteAllCurrentPublicationsMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => client.delete('/v2/account/me/publications'),
+    mutationFn: async () => client.delete('/v2/account/publications'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentPublications'] });
     },
@@ -50,7 +50,7 @@ export function useImportCurrentPublicationsMutation() {
 
   return useMutation({
     mutationFn: async (publications: CurrentPublicationImportRequest[]) =>
-      client.post('/v2/account/me/publications/import', publications),
+      client.post('/v2/account/publications/import', publications),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentPublications'] });
     },
@@ -60,7 +60,7 @@ export function useImportCurrentPublicationsMutation() {
 export function useCurrentCruiseEffectsQuery() {
   return useSuspenseQuery({
     queryKey: ['currentCruiseEffects'],
-    queryFn: async () => client.get<UserEffectDto[]>('/v2/account/me/cruise-effects'),
+    queryFn: async () => client.get<UserEffectDto[]>('/v2/account/cruise-effects'),
     select: (response) => response.data,
   });
 }

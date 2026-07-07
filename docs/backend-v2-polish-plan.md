@@ -21,12 +21,9 @@ Completed and verified against the current tree:
 
 Known defects and unfinished work:
 
-- **Frontend route drift (blocking for merge, fixed last by design).** The
-  post-cutover reorganization renamed live `/v2` routes backend-side only. The
-  frontend still calls the old URLs, so login, registration, password flows,
-  publications, cruise effects, and form init-values would 404 against a real
-  backend. Playwright did not catch this because tests mock routes with the same
-  stale URLs the hooks use. See the drift table below.
+- **Live frontend smoke pending.** Hooks and Playwright mocks are aligned with the
+  frozen `/v2` route table, and focused browser suites are green. A live-data smoke
+  still needs a safe seeded environment with known credentials and an email sink.
 - **Mixed physical patterns.** Some slices follow the REPR folder shape
   (`Contracts.cs` / `Endpoints.cs` / `Validators.cs`), others are still single
   files.
@@ -72,27 +69,15 @@ phase; do not re-litigate them per file.
 6. **`Results/` stays top-level.** `Result`/`Error` are consumed by both `Api` and
    `Infrastructure`; they are genuinely cross-cutting.
 
-## Route Drift Reference
+## Route Alignment Reference
 
-What the frontend calls today versus what the backend serves today. The fix is
-deliberately deferred to Phase 6 so the frontend is updated exactly once, against
-the final route table frozen in Phase 5.
+Frontend hooks and Playwright mocks now match the final Phase 5 guardrail:
 
-| Frontend calls | Backend serves |
-| --- | --- |
-| `POST /v2/account/login` | `POST /v2/auth/login` |
-| `POST /v2/account/refresh` | `POST /v2/auth/refresh` |
-| `POST /v2/account/register` | `POST /v2/auth/register` |
-| `GET /v2/account/confirm-email` | `GET /v2/auth/confirm-email` |
-| `POST /v2/account/password-reset-request` | `POST /v2/auth/password-reset-request` |
-| `POST /v2/account/password-reset` | `POST /v2/auth/password-reset` |
-| `GET/POST/DELETE /v2/account/me/publications…` | same paths under `/v2/account/publications…` |
-| `GET /v2/account/me/cruise-effects` | `GET /v2/account/cruise-effects` |
-| `GET /v2/applications/form-a/init-values` | `GET /v2/applications/form-a/context` |
-| `GET /v2/applications/form-b/init-values` | `GET /v2/applications/form-b/context` |
-
-Unchanged and working: `GET /v2/account/me`, all `/v2/users…`, `/v2/cruises…`, and
-the remaining `/v2/applications…` routes.
+- anonymous account flows use `/v2/auth`;
+- current-user publications and cruise effects use `/v2/account`;
+- form initialization uses the Form A/B `/context` routes;
+- authenticated password change uses `/v2/account/me/password`;
+- resend-confirmation is exposed again from account settings.
 
 ## Verification Baseline
 
@@ -328,5 +313,5 @@ Update this table as phases land; keep notes short and factual.
 | 3 — Dissolve ApplicationForms | done | Slice-owned form code localized; shared form code moved under Applications/Shared. |
 | 4 — Domain/Infrastructure cleanup | done | Repository vestiges removed; Domain flattened; EF annotations made fluent; NU1903 cleared. |
 | 5 — Contract decisions | done | Final route table frozen; password change returned to account/me. |
-| 6 — Frontend realignment | pending | |
+| 6 — Frontend realignment | in progress | Hooks/mocks aligned; 113 focused browser tests pass; live-data smoke pending. |
 | 7 — Closeout | pending | |

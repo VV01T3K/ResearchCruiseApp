@@ -7,7 +7,7 @@ const code = 'confirmation-code';
 
 test('confirm email uses the v2 route and renders success', async ({ page }) => {
   let requestUrl = '';
-  await page.route(`${API_URL}/v2/account/confirm-email?*`, async (route) => {
+  await page.route(`${API_URL}/v2/auth/confirm-email?*`, async (route) => {
     requestUrl = route.request().url();
     await route.fulfill({ status: 204 });
   });
@@ -15,13 +15,13 @@ test('confirm email uses the v2 route and renders success', async ({ page }) => 
   await page.goto(`/confirm-email?userId=${userId}&code=${code}`);
 
   await expect(page.getByText('Email został potwierdzony')).toBeVisible();
-  expect(requestUrl).toContain('/v2/account/confirm-email?');
+  expect(requestUrl).toContain('/v2/auth/confirm-email?');
   expect(requestUrl).toContain(`userId=${userId}`);
   expect(requestUrl).toContain(`code=${code}`);
 });
 
 test('confirm email keeps the existing error state on failure', async ({ page }) => {
-  await page.route(`${API_URL}/v2/account/confirm-email?*`, (route) => {
+  await page.route(`${API_URL}/v2/auth/confirm-email?*`, (route) => {
     route.fulfill({
       status: 401,
       body: JSON.stringify({

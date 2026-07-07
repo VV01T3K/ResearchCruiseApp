@@ -29,7 +29,10 @@ function AccountSettingsPage() {
             </p>
             <p>
               {userContext.currentUser?.email}{' '}
-              <EmailConfirmationBadge emailConfirmed={userContext.currentUser.emailConfirmed} />
+              <EmailConfirmationBadge
+                email={userContext.currentUser.email}
+                emailConfirmed={userContext.currentUser.emailConfirmed}
+              />
             </p>
           </div>
         </header>

@@ -11,7 +11,7 @@ import { client } from '@/lib/api';
 export function useFormAInitValuesQuery() {
   return useSuspenseQuery({
     queryKey: ['formAInitValues'],
-    queryFn: async () => client.get('/v2/applications/form-a/init-values'),
+    queryFn: async () => client.get('/v2/applications/form-a/context'),
     select: (res) => res.data as FormAInitValuesDto,
   });
 }
@@ -19,7 +19,7 @@ export function useFormAInitValuesQuery() {
 export function useFormBInitValuesQuery() {
   return useSuspenseQuery({
     queryKey: ['formBInitValues'],
-    queryFn: async () => client.get('/v2/applications/form-b/init-values'),
+    queryFn: async () => client.get('/v2/applications/form-b/context'),
     select: (res) => res.data as FormBInitValuesDto,
   });
 }

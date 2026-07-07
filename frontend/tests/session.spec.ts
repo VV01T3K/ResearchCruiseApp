@@ -48,11 +48,11 @@ async function setupAuthMocks(
   });
 
   if (options.refreshHangs) {
-    await page.route(`${API_URL}/v2/account/refresh`, () => {
+    await page.route(`${API_URL}/v2/auth/refresh`, () => {
       // Intentionally never respond — simulates a hanging request
     });
   } else if (options.refreshResponse) {
-    await page.route(`${API_URL}/v2/account/refresh`, (route) => {
+    await page.route(`${API_URL}/v2/auth/refresh`, (route) => {
       route.fulfill({
         status: options.refreshResponse!.status,
         body: options.refreshResponse!.body ? JSON.stringify(options.refreshResponse!.body) : undefined,
@@ -150,7 +150,7 @@ test.describe('session expiration and refresh', () => {
     }, new Date(Date.now() - 5_000).toISOString());
 
     const refreshPromise = page.waitForResponse(
-      (res) => res.url().includes('/v2/account/refresh') && res.request().method() === 'POST' && res.status() === 200
+      (res) => res.url().includes('/v2/auth/refresh') && res.request().method() === 'POST' && res.status() === 200
     );
 
     await page.reload();
@@ -189,7 +189,7 @@ test.describe('session expiration and refresh', () => {
     await expect(refreshBtn).toBeVisible();
 
     const refreshPromise = page.waitForResponse(
-      (res) => res.url().includes('/v2/account/refresh') && res.request().method() === 'POST' && res.status() === 200
+      (res) => res.url().includes('/v2/auth/refresh') && res.request().method() === 'POST' && res.status() === 200
     );
 
     await refreshBtn.click();

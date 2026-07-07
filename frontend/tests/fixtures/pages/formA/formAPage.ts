@@ -23,7 +23,7 @@ export class FormAPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page): Promise<FormAPage> {
-    page.route(`${API_URL}/v2/applications/form-a/init-values`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesAPayload()),

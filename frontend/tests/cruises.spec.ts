@@ -246,7 +246,7 @@ test('cruise list actions use v2 auto-plan, export, and blockade routes', async 
       contentType: 'application/json',
     });
   });
-  await page.route(`${API_URL}/v2/applications/form-a/init-values`, (route) => {
+  await page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify(getInitValuesAPayload()),

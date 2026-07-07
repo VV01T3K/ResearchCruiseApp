@@ -141,7 +141,7 @@ export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: P
         throw new Error('This method should be called only for existing users');
       }
 
-      return await client.post('/v2/account/password-reset-request', { email });
+      return await client.post('/v2/auth/password-reset-request', { email });
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas inicjowania zmiany hasła'));

@@ -32,7 +32,7 @@ const publication = {
 test('current publications load from the v2 route', async ({ page }) => {
   await seedAuthenticatedUser(page);
   let requested = false;
-  await page.route(`${API_URL}/v2/account/me/publications`, async (route) => {
+  await page.route(`${API_URL}/v2/account/publications`, async (route) => {
     requested = true;
     await route.fulfill({
       status: 200,
@@ -50,14 +50,14 @@ test('current publications load from the v2 route', async ({ page }) => {
 test('current publication import uses the v2 route', async ({ page }) => {
   await seedAuthenticatedUser(page);
   let requestBody: unknown;
-  await page.route(`${API_URL}/v2/account/me/publications`, (route) => {
+  await page.route(`${API_URL}/v2/account/publications`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify([]),
       contentType: 'application/json',
     });
   });
-  await page.route(`${API_URL}/v2/account/me/publications/import`, async (route) => {
+  await page.route(`${API_URL}/v2/account/publications/import`, async (route) => {
     requestBody = route.request().postDataJSON();
     await route.fulfill({ status: 204 });
   });
@@ -91,7 +91,7 @@ test('current publications delete one and all through v2 routes', async ({ page 
   await seedAuthenticatedUser(page);
   let deletedOne = false;
   let deletedAll = false;
-  await page.route(`${API_URL}/v2/account/me/publications`, (route) => {
+  await page.route(`${API_URL}/v2/account/publications`, (route) => {
     if (route.request().method() === 'DELETE') {
       deletedAll = true;
       return route.fulfill({ status: 204 });
@@ -103,7 +103,7 @@ test('current publications delete one and all through v2 routes', async ({ page 
       contentType: 'application/json',
     });
   });
-  await page.route(`${API_URL}/v2/account/me/publications/${publication.id}`, async (route) => {
+  await page.route(`${API_URL}/v2/account/publications/${publication.id}`, async (route) => {
     deletedOne = true;
     await route.fulfill({ status: 204 });
   });
@@ -120,7 +120,7 @@ test('current publications delete one and all through v2 routes', async ({ page 
 test('current cruise effects load from the v2 route', async ({ page }) => {
   await seedAuthenticatedUser(page);
   let requested = false;
-  await page.route(`${API_URL}/v2/account/me/cruise-effects`, async (route) => {
+  await page.route(`${API_URL}/v2/account/cruise-effects`, async (route) => {
     requested = true;
     await route.fulfill({
       status: 200,

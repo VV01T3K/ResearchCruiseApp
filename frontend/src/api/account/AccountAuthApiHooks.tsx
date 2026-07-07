@@ -55,7 +55,7 @@ export function useProfileQuery() {
 export function useLoginMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
     mutationFn: (request: LoginRequest) => {
-      return client.post<AuthResponse>('/v2/account/login', request);
+      return client.post<AuthResponse>('/v2/auth/login', request);
     },
     onSuccess: async ({ data }) => {
       const authDetails: AuthDetails = {
@@ -80,7 +80,7 @@ export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
       const refreshClient = axios.create({
         baseURL: client.defaults.baseURL,
       });
-      return refreshClient.post<AuthResponse>('/v2/account/refresh', {
+      return refreshClient.post<AuthResponse>('/v2/auth/refresh', {
         accessToken,
         refreshToken,
       });
@@ -103,7 +103,7 @@ export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
 export function useRegisterMutation({ setResult }: RegisterProps) {
   return useMutation({
     mutationFn: async (request: RegisterRequest) => {
-      return await client.post('/v2/account/register', request);
+      return await client.post('/v2/auth/register', request);
     },
     onSuccess: async () => {
       setResult('success');

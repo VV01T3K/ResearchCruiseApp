@@ -39,14 +39,14 @@ export class FormCPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page, formId: string = TESTED_FORM_ID): Promise<FormCPage> {
-    page.route(`${API_URL}/v2/applications/form-a/init-values`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesAPayload()),
       });
     });
 
-    page.route(`${API_URL}/v2/applications/form-b/init-values`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-b/context`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesBPayload()),

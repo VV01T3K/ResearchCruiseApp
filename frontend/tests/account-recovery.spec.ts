@@ -3,7 +3,7 @@ import { expect, Page } from '@playwright/test';
 import { API_URL, test } from './fixtures/fixtures';
 import { getAdminAccountPayload, getAuthDetailsPayload } from './fixtures/mockPayloads';
 
-async function seedAuthenticatedUser(page: Page) {
+async function seedAuthenticatedUser(page: Page, emailConfirmed = true) {
   await page.goto('/');
   await page.evaluate(
     (authDetails) => window.localStorage.setItem('authDetails', authDetails),
@@ -12,15 +12,30 @@ async function seedAuthenticatedUser(page: Page) {
   await page.route(`${API_URL}/v2/account/me`, (route) => {
     route.fulfill({
       status: 200,
-      body: JSON.stringify(getAdminAccountPayload()),
+      body: JSON.stringify({ ...getAdminAccountPayload(), emailConfirmed }),
       contentType: 'application/json',
     });
   });
 }
 
+test('resend confirmation uses the v2 auth route', async ({ page }) => {
+  let requestBody: unknown;
+  await seedAuthenticatedUser(page, false);
+  await page.route(`${API_URL}/v2/auth/resend-confirmation-email`, async (route) => {
+    requestBody = route.request().postDataJSON();
+    await route.fulfill({ status: 204 });
+  });
+
+  await page.goto('/account-settings');
+  await page.getByRole('button', { name: 'Wyślij ponownie' }).click();
+
+  await expect(page.getByText('Wiadomość potwierdzająca została wysłana ponownie')).toBeVisible();
+  expect(requestBody).toEqual({ email: getAdminAccountPayload().email });
+});
+
 test('forgot password uses the v2 reset-request route', async ({ page }) => {
   let requestBody: unknown;
-  await page.route(`${API_URL}/v2/account/password-reset-request`, async (route) => {
+  await page.route(`${API_URL}/v2/auth/password-reset-request`, async (route) => {
     requestBody = route.request().postDataJSON();
     await route.fulfill({ status: 204 });
   });
@@ -35,7 +50,7 @@ test('forgot password uses the v2 reset-request route', async ({ page }) => {
 
 test('reset password uses the v2 reset route', async ({ page }) => {
   let requestBody: unknown;
-  await page.route(`${API_URL}/v2/account/password-reset`, async (route) => {
+  await page.route(`${API_URL}/v2/auth/password-reset`, async (route) => {
     requestBody = route.request().postDataJSON();
     await route.fulfill({ status: 204 });
   });

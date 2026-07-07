@@ -164,7 +164,7 @@ export function UserContextProvider({ children }: Props) {
       (response) => response,
       async (error) => {
         // Rule 1: Never intercept refresh requests
-        if (error.config?.url?.includes('/v2/account/refresh')) {
+        if (error.config?.url?.includes('/v2/auth/refresh')) {
           return Promise.reject(error);
         }
 

@@ -24,6 +24,10 @@ export type ConfirmEmailRequest = {
   code: string;
 };
 
+export type ResendConfirmationEmailRequest = {
+  email: string;
+};
+
 export type ResetPasswordRequest = {
   emailBase64: string;
   resetCode: string;
