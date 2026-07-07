@@ -4,12 +4,12 @@ public static class ApplicationsEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
-        Applications.Map(group);
+        CatalogEndpoints.Map(group);
         ApplicationCruiseEndpoints.Map(group);
-        ApplicationEvaluation.Map(group);
+        EvaluationEndpoints.Map(group);
         ApplicationDecisionEndpoints.Map(group);
-        CruisePlanningApplications.Map(group);
-        FormContext.Map(group);
+        CruisePlanningEndpoints.Map(group);
+        FormContextEndpoints.Map(group);
         FormAEndpoints.Map(group);
         FormBEndpoints.Map(group);
         FormCEndpoints.Map(group);

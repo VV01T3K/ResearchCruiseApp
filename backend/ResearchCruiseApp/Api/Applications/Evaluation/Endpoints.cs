@@ -8,7 +8,7 @@ using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
-public static class ApplicationEvaluation
+public static class EvaluationEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {

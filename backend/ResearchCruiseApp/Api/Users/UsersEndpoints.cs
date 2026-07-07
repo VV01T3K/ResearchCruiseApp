@@ -6,7 +6,7 @@ public static class UsersEndpoints
     {
         ListsEndpoints.Map(group);
         AccountsEndpoints.Map(group);
-        Acceptance.Map(group);
-        Roles.Map(group);
+        AcceptanceEndpoints.Map(group);
+        RolesEndpoints.Map(group);
     }
 }

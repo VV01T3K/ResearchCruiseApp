@@ -6,8 +6,8 @@ public static class CruisesEndpoints
     {
         ListsEndpoints.Map(group);
         CruiseEndpoints.Map(group);
-        Lifecycle.Map(group);
+        LifecycleEndpoints.Map(group);
         PlanningEndpoints.Map(group);
-        Export.Map(group);
+        ExportEndpoints.Map(group);
     }
 }

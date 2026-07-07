@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.ApplicationForms.Payloads;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
@@ -9,7 +8,7 @@ using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
-public static class Export
+public static class ExportEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
@@ -22,7 +21,7 @@ public static class Export
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Results<Ok<FileDto>, ProblemHttpResult>> Handle(
+    private static async Task<Results<Ok<ExportResponse>, ProblemHttpResult>> Handle(
         string year,
         ApplicationDbContext dbContext,
         IUserPermissionVerifier userPermissionVerifier,
@@ -50,6 +49,7 @@ public static class Export
             }
         }
 
-        return TypedResults.Ok(await csvExporter.ExportCruisesToGoogleCalendar(visibleCruises));
+        var file = await csvExporter.ExportCruisesToGoogleCalendar(visibleCruises);
+        return TypedResults.Ok(ExportResponse.From(file));
     }
 }

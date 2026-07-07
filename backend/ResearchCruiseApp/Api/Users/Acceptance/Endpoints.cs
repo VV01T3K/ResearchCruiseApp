@@ -4,7 +4,7 @@ using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Users;
 
-public static class Acceptance
+public static class AcceptanceEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {

@@ -5,7 +5,7 @@ using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
-public static class FormContext
+public static class FormContextEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {

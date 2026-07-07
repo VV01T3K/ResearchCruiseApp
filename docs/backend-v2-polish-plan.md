@@ -325,7 +325,7 @@ Update this table as phases land; keep notes short and factual.
 | --- | --- | --- |
 | 0 — Route-table guardrail | done | Exact endpoint method/template set pinned by a WebApplicationFactory test. |
 | 1 — Dissolve Domain/Logic | done | Rules moved to their sole consumer slices; wire status codes moved to Api. |
-| 2 — REPR convergence | pending | |
+| 2 — REPR convergence | done | Remaining endpoint modules moved into REPR slice folders. |
 | 3 — Dissolve ApplicationForms | pending | |
 | 4 — Domain/Infrastructure cleanup | pending | |
 | 5 — Contract decisions | pending | |

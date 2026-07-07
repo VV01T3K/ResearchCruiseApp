@@ -7,7 +7,7 @@ using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
-public static class Lifecycle
+public static class LifecycleEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {

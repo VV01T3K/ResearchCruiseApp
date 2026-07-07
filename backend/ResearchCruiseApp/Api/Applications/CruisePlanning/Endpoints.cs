@@ -9,7 +9,7 @@ using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
-public static class CruisePlanningApplications
+public static class CruisePlanningEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {

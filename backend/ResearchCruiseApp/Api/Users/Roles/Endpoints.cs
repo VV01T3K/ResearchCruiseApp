@@ -4,7 +4,7 @@ using ResearchCruiseApp.Results;
 
 namespace ResearchCruiseApp.Api.Users;
 
-public static class Roles
+public static class RolesEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {

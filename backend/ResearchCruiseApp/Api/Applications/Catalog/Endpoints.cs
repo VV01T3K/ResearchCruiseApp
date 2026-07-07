@@ -7,7 +7,7 @@ using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 
 namespace ResearchCruiseApp.Api.Applications;
 
-public static class Applications
+public static class CatalogEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
