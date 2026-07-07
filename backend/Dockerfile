@@ -27,9 +27,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
 RUN apk add --no-cache curl icu-libs tzdata
 
+ARG APP_ENVIRONMENT="local"
 ARG SENTRY_RELEASE
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    SENTRY_ENVIRONMENT=$APP_ENVIRONMENT \
     SENTRY_RELEASE=$SENTRY_RELEASE
 
 HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=10 CMD [ "curl",  "--fail", "http://localhost:8080/health" ]

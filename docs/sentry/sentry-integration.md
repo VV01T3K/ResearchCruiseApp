@@ -24,7 +24,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 
 ### Frontend (`frontend/`)
 
-- **`@sentry/react`** initialized in `frontend/src/instrument.ts` (imported first from `main.tsx`)
+- **`@sentry/react`** initialized from `main.tsx` through `frontend/src/lib/sentry.ts`
 - **React 19** error hooks via `reactErrorHandler()` on `createRoot`
 - **TanStack Router** navigation tracing via `tanstackRouterBrowserTracingIntegration`
 - **Session Replay** with masked text/inputs and blocked media
@@ -38,9 +38,9 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **Centralized React error reporting** via all three `createRoot` hooks (React 19): Sentry handles uncaught, caught,
   and recoverable errors when configured; otherwise React retains its default console reporting
 - **Source maps** uploaded in CI when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` are set (`@sentry/vite-plugin`)
-- **Runtime configuration**: `frontend/docker-entrypoint.d/90-runtime-config.sh` exposes `SENTRY_DSN` and `SENTRY_TRACES_SAMPLE_RATE` to the browser when the container starts. The environment and release come from the environment-specific build. Change either runtime value in Compose and restart the container; leave the DSN unset to disable Sentry.
+- **Runtime configuration**: `frontend/docker-entrypoint.d/90-runtime-config.sh` exposes `SENTRY_DSN` and `SENTRY_TRACES_SAMPLE_RATE` to the browser when the container starts. The environment and release come from the environment-specific build; leave the DSN unset to disable Sentry.
 
-Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend/src/router.tsx`, `frontend/vite.config.ts`.
+Key files: `frontend/src/lib/sentry.ts`, `frontend/src/router.tsx`, `frontend/vite.config.ts`.
 
 ### Backend (`backend/ResearchCruiseApp/`)
 
@@ -49,7 +49,7 @@ Key files: `frontend/src/lib/sentry.ts`, `frontend/src/instrument.ts`, `frontend
 - **JWT user enrichment** after authentication (`SentryUserMiddleware`)
 - **ILogger → Sentry** breadcrumbs/events using SDK defaults
 - **Health check transactions** filtered out
-- **Environment-aware sampling** from configuration (1.0 local; 0.1 staging and production defaults)
+- **Runtime-configurable trace sampling**, defaulting to 10% in every environment
 - **Debug symbol upload** on Release builds when `SENTRY_AUTH_TOKEN` is present
 
 Key files: `Infrastructure/Sentry/SentryConfiguration.cs`, `Infrastructure/Sentry/SentryUserMiddleware.cs`.
@@ -57,7 +57,7 @@ Key files: `Infrastructure/Sentry/SentryConfiguration.cs`, `Infrastructure/Sentr
 ### CI/CD & deployment
 
 - **GitHub Actions** (`build-and-deploy.yaml`, `deploy-komodo-staging.yaml`): frontend source maps + backend symbols when secrets are configured
-- **Docker**: `frontend/Dockerfile` and `backend/Dockerfile` accept Sentry build args
+- **Docker**: both images bake in `APP_ENVIRONMENT`; release identifiers are also set at build time
 - **Compose**: `docker/docker-compose.dev.yml`, `docker/compose.staging-app.yaml` pass `Sentry__*` env to backend
 
 ## Environment variables
@@ -69,20 +69,20 @@ Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local 
 | `SENTRY_DSN`                | Frontend container runtime / backend runtime            | Project DSN (or use split vars below)     |
 | `SENTRY_DSN_FRONTEND`       | Compose env (mapped to frontend `SENTRY_DSN`)           | Frontend-only DSN                         |
 | `SENTRY_DSN_BACKEND`        | Compose env (mapped to backend `Sentry__Dsn`)           | Backend-only DSN (optional)               |
-| `SENTRY_ENVIRONMENT`        | Backend runtime                                         | `local`, `staging`, `production`          |
-| `SENTRY_RELEASE`            | Frontend build / backend runtime                        | Git SHA or app version                    |
-| `SENTRY_TRACES_SAMPLE_RATE` | Frontend and backend runtime                            | Performance sampling (e.g. `0.1` in prod) |
+| `SENTRY_TRACES_SAMPLE_RATE` | Frontend and backend runtime                            | Trace sampling; defaults to `0.1`         |
+| `APP_ENVIRONMENT`           | Frontend and backend image build                        | `local`, `staging`, `production`          |
+| `SENTRY_RELEASE`            | Frontend and backend image build                        | Git SHA or app version                    |
 | `SENTRY_AUTH_TOKEN`         | CI only (GitHub secret)                                 | Source map / symbol upload                |
 | `SENTRY_ORG`                | Dockerfile ARG default (`cruiseteam`)                   | Organization slug; override via build arg |
 | `SENTRY_PROJECT`            | Dockerfile ARG (`frontend-staging` / `backend-staging`) | Project slug; override per image build    |
 
-Backend also reads `Sentry:*` keys from `appsettings.json` / `Sentry__*` environment variables.
+The backend image exposes `APP_ENVIRONMENT` to the SDK as `SENTRY_ENVIRONMENT`. Backend runtime options also read `Sentry:*` keys from `appsettings.json` / `Sentry__*` environment variables.
 
 ## HyperDX parity mapping
 
 | Removed HyperDX / OTEL    | Sentry replacement                                           |
 | ------------------------- | ------------------------------------------------------------ |
-| `initializeHyperDX()`     | `Sentry.init()` in `instrument.ts`                           |
+| `initializeHyperDX()`     | `initializeSentry()` in `lib/sentry.ts`                      |
 | `attachErrorBoundary`     | Conditional `reactErrorHandler()` on `createRoot` (React 19) |
 | `setHyperDXUser(user)`    | `setSentryUser(user)`                                        |
 | `trackFormSubmit(...)`    | `trackFormSubmit(...)` → `Sentry.addBreadcrumb`              |

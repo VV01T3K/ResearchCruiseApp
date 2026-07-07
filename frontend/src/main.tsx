@@ -1,5 +1,3 @@
-import './instrument';
-
 import './styles/index.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,8 +7,11 @@ import { createRoot } from 'react-dom/client';
 
 import { FatalErrorBoundary } from '@/components/shared/FatalErrorBoundary';
 import config from '@/config';
-import { AppRouter } from '@/router';
+import { initializeSentry } from '@/lib/sentry';
+import { AppRouter, router } from '@/router';
 import { UserContextProvider } from '@/providers/UserContextProvider';
+
+initializeSentry(router);
 
 const sentryErrorHandlers = config.sentryDsn
   ? {

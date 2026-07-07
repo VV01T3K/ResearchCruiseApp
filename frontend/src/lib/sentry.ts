@@ -1,8 +1,31 @@
 import * as Sentry from '@sentry/react';
 
+import config from '@/config';
 import { User } from '@/models/shared/User';
 
 type FieldMeta = { errors: Array<unknown> };
+
+export function initializeSentry(router: unknown): void {
+  if (!config.sentryDsn) return;
+
+  Sentry.init({
+    dsn: config.sentryDsn,
+    environment: config.environment,
+    release: config.sentryRelease || `research-cruise-app-frontend@${config.version}`,
+    integrations: [
+      Sentry.tanstackRouterBrowserTracingIntegration(router),
+      Sentry.replayIntegration({
+        maskAllText: true,
+        maskAllInputs: true,
+        blockAllMedia: true,
+      }),
+    ],
+    tracesSampleRate: Number(config.sentryTracesSampleRate || 0.1),
+    tracePropagationTargets: [config.apiUrl],
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+  });
+}
 
 export function setSentryUser(user: User | undefined): void {
   Sentry.setUser(user ? { id: String(user.id) } : null);

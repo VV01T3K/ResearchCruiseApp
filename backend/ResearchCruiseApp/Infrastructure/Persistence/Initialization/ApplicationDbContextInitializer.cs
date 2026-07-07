@@ -50,7 +50,6 @@ internal class ApplicationDbContextInitializer(
                 ?? false
             )
             {
-                // Keep opt-in seed credentials out of application telemetry.
                 Console.WriteLine($"Seed User Created: {user.Email} - {password}");
             }
         }

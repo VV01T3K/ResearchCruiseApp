@@ -76,12 +76,12 @@ In the production compose/host environment set:
 ```
 SENTRY_DSN_FRONTEND=<frontend-production DSN>
 SENTRY_DSN_BACKEND=<backend-production DSN>
-SENTRY_ENVIRONMENT=production   # backend; frontend is set by its production build
-SENTRY_TRACES_SAMPLE_RATE=0.1   # both frontend and backend
+SENTRY_TRACES_SAMPLE_RATE=0.1
 ```
 
-then restart the containers. No image rebuild needed for event reporting — only readable stack
-traces depend on Step 3 having run for the deployed release.
+then restart the containers. Both application environments are already set by their production
+builds. No image rebuild is needed for event reporting — only readable stack traces depend on Step
+3 having run for the deployed release.
 
 ## Step 5 — verification checklist (mirror of how staging was verified)
 

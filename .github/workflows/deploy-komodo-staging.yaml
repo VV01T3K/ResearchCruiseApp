@@ -33,6 +33,7 @@ jobs:
             context: backend
             dockerfile: backend/Dockerfile
             build-args: |
+              APP_ENVIRONMENT=staging
               SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
 
     steps:

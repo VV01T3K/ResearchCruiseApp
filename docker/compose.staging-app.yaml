@@ -10,7 +10,6 @@ services:
       - ConnectionStrings__Database=Server=${DB_SERVER:-researchcruiseapp-db},${DB_PORT:-1433};Database=${DB_NAME:-ResearchCruiseApp};User Id=${DB_USER:-sa};Password=${DB_PASSWORD:-p@ssw0rd};Encrypt=False
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
-      - Sentry__Environment=${SENTRY_ENVIRONMENT:-staging}
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     networks:
       - researchcruiseapp-network
@@ -22,7 +21,7 @@ services:
     restart: unless-stopped
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
-      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     expose:
       - 8080
     networks:
