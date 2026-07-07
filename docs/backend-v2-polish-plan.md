@@ -13,9 +13,8 @@ history.
   `Domain` / `Infrastructure`.
 - `Domain/Logic`, `Domain/Common`, top-level `ApplicationForms`, and the
   repository-era `Infrastructure/Persistence/Repositories` tree are gone.
-- Domain contains the shared EF entity model and shared attributes, constants,
-  enums, extensions, and interfaces. Relational configuration is fluent and has
-  no pending model changes.
+- Domain contains the shared EF entity model plus a small, flat shared vocabulary.
+  Relational configuration is fluent and has no pending model changes.
 - Infrastructure contains plumbing for persistence, identity, email, files,
   exports, localization, and security.
 - Pure business rules are static `Rules.cs` files in their owning slices.
@@ -41,8 +40,8 @@ history.
    are no per-slice contexts or migrations.
 5. **Infrastructure is plumbing.** It does not own endpoint contracts or feature
    workflow decisions.
-6. **`Results/` remains top-level.** `Result` and `Error` are genuinely consumed by
-   both API and Infrastructure.
+6. **`Results.cs` remains top-level.** `Result` and `Error` are genuinely consumed
+   by both API and Infrastructure.
 
 ## Final Route Alignment
 
@@ -84,6 +83,45 @@ Final verification on 2026-07-07:
 | 5 — Contract decisions | done | Final route table frozen; password change returned to account/me. |
 | 6 — Frontend realignment | done | Hooks, mocks, browser suites, and isolated live smoke aligned. |
 | 7 — Closeout | done | End state audited; completed plan pruned; follow-ups parked. |
+| 8 — De-ceremony pass | done | Dead code and unearned interfaces removed; taxonomy folders and composition shells collapsed; single-form mappings localized. |
+
+## De-ceremony Pass
+
+Completed 2026-07-07 as seven ordered commits with the route table and EF model
+held fixed throughout.
+
+- Deleted the unused HTTP result mapper and the two unconsumed entity marker
+  interfaces, removing their markers from eight entities.
+- Removed eleven single-implementation infrastructure interfaces and injected the
+  concrete implementations directly with their original scoped lifetimes.
+- Replaced reflection-backed contract/publication category enums with application
+  string constants, localized `CruiseFunction` to Form C, and removed the dead
+  `StringValue` attribute/enum extension machinery and labels.
+- Moved evaluation and Form A value constants to `Applications/Shared`; flattened
+  shared domain vocabulary directly under `Domain/` and removed its by-kind
+  folders. `Domain/Entities` remains the shared EF model.
+- Made `Program.cs` the startup atlas, moved OpenTelemetry to Infrastructure,
+  inlined the version endpoint, merged API composition/registration/rate-policy
+  shells, collapsed the four result files into top-level `Results.cs`, and moved
+  URL prefixes into their two consumers. `Configuration/`,
+  `Infrastructure/Common/`, and the old `Results/` folder are gone.
+- Moved Form A/B/C mapping partials into their owning slices while retaining the
+  genuinely multi-form mapping partials in `Applications/Shared/Mapping`.
+- Left the optional factory renames out: the existing names avoid churn, and the
+  database-dedup workflow implementation was not changed.
+
+Deviation found during required consumer re-verification: `StringExtensions.cs`
+was specified as dead, but its `ToBool` and `ToEnum` methods have live production
+callers in application reading, validation, mapping, factories, scoring, effects,
+and database initialization. It was therefore retained unchanged in behavior and
+moved from `Domain/Extensions/` to flat `Domain/StringExtensions.cs`.
+
+The resulting backend has feature slices under `Api/`; application-wide helpers
+under `Api/Applications/Shared`; a flat `Domain/` vocabulary plus
+`Domain/Entities`; plumbing grouped by purpose under `Infrastructure`; startup in
+`Program.cs` with OpenTelemetry as its sole extracted startup concern; and one
+top-level `Results.cs`. The targeted taxonomy-by-kind and single-use composition
+folders are gone.
 
 ## Parked Product Decisions
 
