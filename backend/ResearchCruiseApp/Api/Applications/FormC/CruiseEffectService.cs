@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 

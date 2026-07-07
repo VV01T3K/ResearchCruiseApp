@@ -1,10 +1,11 @@
 ﻿using System.Text;
-using ResearchCruiseApp.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Files;
 
 public class FileInspector
 {
+    private const string Base64Prefix = "base64,";
+
     public bool IsFilePdf(string contentAsBase64Url)
     {
         const int fileHeaderLength = 4;
@@ -39,13 +40,13 @@ public class FileInspector
     private static byte[] GetFileBytes(string contentAsBase64Url)
     {
         var base64prefixStartIndex = contentAsBase64Url.IndexOf(
-            UrlPrefixes.Base64Prefix,
+            Base64Prefix,
             StringComparison.Ordinal
         );
         if (base64prefixStartIndex >= 0)
         {
             contentAsBase64Url = string.Concat(
-                contentAsBase64Url.Skip(base64prefixStartIndex + UrlPrefixes.Base64Prefix.Length)
+                contentAsBase64Url.Skip(base64prefixStartIndex + Base64Prefix.Length)
             );
         }
         return Convert.FromBase64String(contentAsBase64Url);

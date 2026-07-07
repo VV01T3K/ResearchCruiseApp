@@ -1,5 +1,4 @@
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;

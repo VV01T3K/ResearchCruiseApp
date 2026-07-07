@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Domain.Entities;
 

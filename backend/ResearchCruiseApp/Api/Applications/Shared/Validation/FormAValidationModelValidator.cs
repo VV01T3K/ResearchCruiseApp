@@ -1,8 +1,6 @@
 ﻿using System.Globalization;
 using FluentValidation;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 

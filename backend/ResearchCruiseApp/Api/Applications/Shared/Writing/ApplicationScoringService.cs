@@ -2,8 +2,6 @@ using System.Diagnostics;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 

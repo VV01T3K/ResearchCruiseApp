@@ -2,7 +2,6 @@
 using NeoSmart.Utils;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Exports;
 
@@ -14,6 +13,7 @@ internal class CsvExporter(
     private const string GoogleCalendarCruisesHeader =
         "Subject,Start Date,Start Time,End Date,End Time,Description";
     private const string ExportedCruisesFileName = "Rejsy.csv";
+    private const string CsvBase64Prefix = "data:text/csv;base64,";
 
     public async Task<FileDto> ExportCruisesToGoogleCalendar(List<Cruise> cruises)
     {
@@ -30,7 +30,7 @@ internal class CsvExporter(
         var file = new FileDto
         {
             Name = ExportedCruisesFileName,
-            Content = $"{UrlPrefixes.CsvBase64Prefix}{csvContentEncoded}",
+            Content = $"{CsvBase64Prefix}{csvContentEncoded}",
         };
         return file;
     }

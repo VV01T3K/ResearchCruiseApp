@@ -1,14 +1,40 @@
 using Asp.Versioning;
+using FluentValidation;
 using ResearchCruiseApp.Api.Account;
 using ResearchCruiseApp.Api.Applications;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Api.Users;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api;
 
 public static class ApiComposition
 {
+    public static void AddApplication(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssembly(typeof(ApiComposition).Assembly);
+
+        services
+            .AddScoped<FormAFactory>()
+            .AddScoped<FormBFactory>()
+            .AddScoped<FormCFactory>()
+            .AddScoped<ApplicationFactory>()
+            .AddScoped<FileReader>()
+            .AddScoped<ContractReader>()
+            .AddScoped<PermissionReader>()
+            .AddScoped<FormReader>()
+            .AddScoped<ApplicationReader>()
+            .AddScoped<FormInitValuesReader>()
+            .AddScoped<SupervisorInvitationService>()
+            .AddScoped<ApplicationScoringService>()
+            .AddScoped<CruiseEffectService>()
+            .AddScoped<UniqueFormFieldResolver>()
+            .AddScoped<UserPermissionVerifier>()
+            .AddScoped<FormDeletionService>();
+    }
+
     public static IEndpointRouteBuilder MapApi(this IEndpointRouteBuilder app)
     {
         var api = app.NewVersionedApi("ResearchCruiseApp");
@@ -33,4 +59,9 @@ public static class ApiComposition
 
         return app;
     }
+}
+
+public static class RateLimitingPolicies
+{
+    public const string AuthSensitive = nameof(AuthSensitive);
 }
