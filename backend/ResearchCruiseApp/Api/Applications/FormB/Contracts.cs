@@ -1,4 +1,4 @@
-using ResearchCruiseApp.ApplicationForms.Payloads;
+using ResearchCruiseApp.Api.Applications.Shared;
 
 namespace ResearchCruiseApp.Api.Applications;
 

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using ResearchCruiseApp.ApplicationForms.Payloads;
-using ResearchCruiseApp.ApplicationForms.Reading;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api.Applications;

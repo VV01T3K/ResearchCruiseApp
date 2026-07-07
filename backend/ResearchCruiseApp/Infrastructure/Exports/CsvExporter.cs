@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using NeoSmart.Utils;
-using ResearchCruiseApp.ApplicationForms.Payloads;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Common.Constants;
 

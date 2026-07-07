@@ -1,4 +1,4 @@
-using ResearchCruiseApp.ApplicationForms.Writing;
+using ResearchCruiseApp.Api.Applications.Shared;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.Api.Cruises;

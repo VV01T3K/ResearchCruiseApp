@@ -1,4 +1,4 @@
-﻿using ResearchCruiseApp.ApplicationForms.Payloads;
+﻿using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Exports;

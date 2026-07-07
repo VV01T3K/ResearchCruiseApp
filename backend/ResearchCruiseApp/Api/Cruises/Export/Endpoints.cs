@@ -50,6 +50,6 @@ public static class ExportEndpoints
         }
 
         var file = await csvExporter.ExportCruisesToGoogleCalendar(visibleCruises);
-        return TypedResults.Ok(ExportResponse.From(file));
+        return TypedResults.Ok(new ExportResponse(file.Name, file.Content));
     }
 }

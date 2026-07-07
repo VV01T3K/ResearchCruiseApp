@@ -1,6 +1,6 @@
 using FluentValidation;
-using ResearchCruiseApp.ApplicationForms.Reading;
-using ResearchCruiseApp.ApplicationForms.Writing;
+using ResearchCruiseApp.Api.Applications;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Api;

@@ -1,10 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.ApplicationForms.Payloads;
-using ResearchCruiseApp.ApplicationForms.Reading;
-using ResearchCruiseApp.ApplicationForms.Validation;
-using ResearchCruiseApp.ApplicationForms.Writing;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;

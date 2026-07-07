@@ -1,5 +1,5 @@
 using ResearchCruiseApp.Api;
-using ResearchCruiseApp.ApplicationForms.Writing;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
 

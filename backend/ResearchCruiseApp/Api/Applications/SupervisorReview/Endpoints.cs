@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.ApplicationForms.Reading;
-using ResearchCruiseApp.ApplicationForms.Writing;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 using ResearchCruiseApp.Results;

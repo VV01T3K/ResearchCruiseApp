@@ -1,6 +1,4 @@
-using ResearchCruiseApp.ApplicationForms.Mapping;
-using ResearchCruiseApp.ApplicationForms.Payloads;
-using ResearchCruiseApp.ApplicationForms.Reading;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Files;
 using Xunit;
