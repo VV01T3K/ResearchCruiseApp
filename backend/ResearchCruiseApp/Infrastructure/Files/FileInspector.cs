@@ -3,7 +3,7 @@ using ResearchCruiseApp.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Files;
 
-internal class FileInspector : IFileInspector
+public class FileInspector
 {
     public bool IsFilePdf(string contentAsBase64Url)
     {

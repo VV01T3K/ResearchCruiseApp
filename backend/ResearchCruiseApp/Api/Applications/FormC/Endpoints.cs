@@ -46,7 +46,7 @@ public static class FormCEndpoints
     private static async Task<Results<Ok<FormCDto>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         FormReader forms,
         CancellationToken cancellationToken
     )
@@ -75,7 +75,7 @@ public static class FormCEndpoints
         IValidator<FormCValidationModel> validator,
         FormCFactory forms,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         FormDeletionService formsService,
         CruiseEffectService effectsService,
         CancellationToken cancellationToken

@@ -42,8 +42,8 @@ public static class RolesEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Add(
         Guid userId,
         string roleName,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
@@ -72,8 +72,8 @@ public static class RolesEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Remove(
         Guid userId,
         string roleName,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {

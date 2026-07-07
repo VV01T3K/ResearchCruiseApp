@@ -7,8 +7,8 @@ using ResearchCruiseApp.Results;
 namespace ResearchCruiseApp.Api.Applications;
 
 internal class FormAFactory(
-    ICurrentUserService currentUserService,
-    IIdentityService identityService,
+    CurrentUserService currentUserService,
+    IdentityService identityService,
     UniqueFormFieldResolver formsFieldsService,
     ApplicationDbContext dbContext
 )

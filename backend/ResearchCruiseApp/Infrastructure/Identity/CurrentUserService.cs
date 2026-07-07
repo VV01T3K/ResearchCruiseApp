@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Infrastructure.Identity;
 
-internal class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
+internal class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 {
     public Guid? GetId()
     {

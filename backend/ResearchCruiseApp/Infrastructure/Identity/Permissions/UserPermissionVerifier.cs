@@ -4,10 +4,10 @@ using ResearchCruiseApp.Domain.Enums;
 
 namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
-public class UserPermissionVerifier(
-    IIdentityService identityService,
-    ICurrentUserService currentUserService
-) : IUserPermissionVerifier
+internal class UserPermissionVerifier(
+    IdentityService identityService,
+    CurrentUserService currentUserService
+)
 {
     public async Task<bool> CanCurrentUserAssignRole(string roleName)
     {

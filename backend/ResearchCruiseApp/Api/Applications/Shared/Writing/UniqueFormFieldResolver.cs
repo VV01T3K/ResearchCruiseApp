@@ -4,7 +4,7 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
-internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, ICompressor compressor)
+internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compressor compressor)
 {
     public async Task<Permission> GetUniquePermission(
         PermissionDto permissionDto,

@@ -40,7 +40,7 @@ public static class SessionsEndpoints
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Login(
         LoginRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         if (!await identityService.CanUserLogin(request.Email, request.Password))
@@ -56,7 +56,7 @@ public static class SessionsEndpoints
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Refresh(
         RefreshTokensRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         var result = await identityService.RefreshUserTokens(

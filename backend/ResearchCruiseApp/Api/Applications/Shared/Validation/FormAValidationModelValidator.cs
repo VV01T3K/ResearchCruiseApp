@@ -8,9 +8,9 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public sealed class FormAValidationModelValidator : AbstractValidator<FormAValidationModel>
 {
-    private readonly IFileInspector _fileInspector;
+    private readonly FileInspector _fileInspector;
 
-    public FormAValidationModelValidator(IFileInspector fileInspector)
+    public FormAValidationModelValidator(FileInspector fileInspector)
     {
         _fileInspector = fileInspector;
 

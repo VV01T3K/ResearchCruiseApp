@@ -20,7 +20,7 @@ public sealed record ApplicationCruiseResponse(
 {
     internal static async Task<ApplicationCruiseResponse> From(
         Cruise cruise,
-        IIdentityService identityService,
+        IdentityService identityService,
         ApplicationScoringService evaluator
     )
     {

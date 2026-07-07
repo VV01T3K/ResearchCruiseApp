@@ -22,7 +22,7 @@ public static class PasswordEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Handle(
         ChangePasswordRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         var result = await identityService.ChangePassword(

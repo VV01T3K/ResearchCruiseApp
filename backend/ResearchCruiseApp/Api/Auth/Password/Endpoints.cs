@@ -40,7 +40,7 @@ public static class PasswordEndpoints
 
     private static async Task<NoContent> RequestReset(
         RequestPasswordResetRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         await identityService.EnablePasswordReset(
@@ -51,7 +51,7 @@ public static class PasswordEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Reset(
         ResetPasswordRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         var result = await identityService.ResetPassword(

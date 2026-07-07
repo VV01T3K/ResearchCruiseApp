@@ -61,7 +61,7 @@ public static class PublicationsEndpoints
     }
 
     private static async Task<Results<Ok<List<PublicationResponse>>, NotFound>> Get(
-        ICurrentUserService currentUserService,
+        CurrentUserService currentUserService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -87,7 +87,7 @@ public static class PublicationsEndpoints
 
     private static async Task<Results<NoContent, NotFound>> Import(
         ImportPublicationRequest[] requests,
-        ICurrentUserService currentUserService,
+        CurrentUserService currentUserService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -146,7 +146,7 @@ public static class PublicationsEndpoints
 
     private static async Task<Results<NoContent, NotFound>> Delete(
         [AsParameters] DeletePublicationRequest request,
-        ICurrentUserService currentUserService,
+        CurrentUserService currentUserService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -177,7 +177,7 @@ public static class PublicationsEndpoints
     }
 
     private static async Task<Results<NoContent, NotFound>> DeleteAll(
-        ICurrentUserService currentUserService,
+        CurrentUserService currentUserService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )

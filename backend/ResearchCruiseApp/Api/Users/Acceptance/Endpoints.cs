@@ -37,8 +37,8 @@ public static class AcceptanceEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Accept(
         Guid userId,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService
     )
     {
         if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
@@ -54,8 +54,8 @@ public static class AcceptanceEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Deactivate(
         Guid userId,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService
     )
     {
         if (!await userPermissionVerifier.CanUserDeactivate(userId))

@@ -19,7 +19,7 @@ public static class CruiseEffectsEndpoints
     }
 
     private static async Task<Results<Ok<List<CruiseEffectResponse>>, NotFound>> Handle(
-        ICurrentUserService currentUserService,
+        CurrentUserService currentUserService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )

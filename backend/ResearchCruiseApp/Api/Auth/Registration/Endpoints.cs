@@ -21,7 +21,7 @@ public static class RegistrationEndpoints
 
     private static async Task<Results<Created, ProblemHttpResult>> Handle(
         RegisterAccountRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         var result = await identityService.RegisterUser(

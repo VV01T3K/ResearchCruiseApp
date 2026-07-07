@@ -29,7 +29,7 @@ public static class CatalogEndpoints
     private static async Task<Ok<List<ApplicationResponse>>> GetAll(
         ApplicationReader projection,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
@@ -58,7 +58,7 @@ public static class CatalogEndpoints
         Guid applicationId,
         ApplicationReader applications,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {

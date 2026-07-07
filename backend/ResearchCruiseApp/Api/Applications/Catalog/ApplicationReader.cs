@@ -7,7 +7,7 @@ namespace ResearchCruiseApp.Api.Applications;
 
 internal class ApplicationReader(
     ApplicationScoringService evaluator,
-    IIdentityService identityService,
+    IdentityService identityService,
     ContractReader contracts
 )
 {

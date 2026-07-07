@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Infrastructure.Security;
 
-internal class RandomGenerator : IRandomGenerator
+internal class RandomGenerator
 {
     private const int SecureCodeBytesSize = 512;
     private const int SecurePasswordLength = 24;

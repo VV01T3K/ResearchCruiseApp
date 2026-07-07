@@ -61,7 +61,7 @@ public static class CruiseEndpoints
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         CreateRequest request,
-        IYearBasedKeyGenerator yearBasedKeyGenerator,
+        YearBasedKeyGenerator yearBasedKeyGenerator,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -119,7 +119,7 @@ public static class CruiseEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid cruiseId,
         UpdateRequest request,
-        IIdentityService identityService,
+        IdentityService identityService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -231,7 +231,7 @@ public static class CruiseEndpoints
     private static async Task<Result> UpdateManagers(
         DomainCruise cruise,
         UpdateRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         if (

@@ -39,7 +39,7 @@ public static class EmailConfirmationEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
         [AsParameters] ConfirmEmailRequest request,
         HttpContext httpContext,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         if (httpContext.Request.Query.ContainsKey("changedEmail"))
@@ -54,7 +54,7 @@ public static class EmailConfirmationEndpoints
 
     private static async Task<NoContent> Resend(
         ResendConfirmationEmailRequest request,
-        IIdentityService identityService
+        IdentityService identityService
     )
     {
         await identityService.ResendEmailConfirmationEmail(request.Email, RoleName.CruiseManager);

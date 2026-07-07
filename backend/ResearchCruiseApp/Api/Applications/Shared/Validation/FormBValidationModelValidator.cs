@@ -4,7 +4,7 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public sealed class FormBValidationModelValidator : AbstractValidator<FormBValidationModel>
 {
-    public FormBValidationModelValidator(IFileInspector fileInspector)
+    public FormBValidationModelValidator(FileInspector fileInspector)
     {
         When(
             model => !model.IsDraft,

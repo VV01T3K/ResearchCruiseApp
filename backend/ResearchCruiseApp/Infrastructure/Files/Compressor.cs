@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ResearchCruiseApp.Infrastructure.Files;
 
-internal class Compressor : ICompressor
+internal class Compressor
 {
     public async Task<byte[]> Compress(string input)
     {

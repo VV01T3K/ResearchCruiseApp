@@ -17,12 +17,12 @@ namespace ResearchCruiseApp.Infrastructure.Identity;
 internal class IdentityService(
     UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager,
-    IEmailSender emailSender,
-    IRandomGenerator randomGenerator,
-    ICurrentUserService currentUserService,
+    EmailSender emailSender,
+    RandomGenerator randomGenerator,
+    CurrentUserService currentUserService,
     IConfiguration configuration,
     ApplicationDbContext dbContext
-) : IIdentityService
+)
 {
     public async Task<UserDto?> GetUserDtoById(Guid id)
     {

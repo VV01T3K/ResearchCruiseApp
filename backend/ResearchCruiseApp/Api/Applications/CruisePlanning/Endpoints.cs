@@ -22,7 +22,7 @@ public static class CruisePlanningEndpoints
     private static async Task<Ok<List<CruiseApplicationDto>>> Get(
         ApplicationReader projection,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {

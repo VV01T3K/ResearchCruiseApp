@@ -4,7 +4,7 @@ using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 
-internal class YearBasedKeyGenerator : IYearBasedKeyGenerator
+internal class YearBasedKeyGenerator
 {
     public async Task<string> GenerateKey<T>(
         IQueryable<T> entities,

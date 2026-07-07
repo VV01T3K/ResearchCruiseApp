@@ -9,8 +9,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    IIdentityService identityService,
-    IRandomGenerator randomGenerator,
+    IdentityService identityService,
+    RandomGenerator randomGenerator,
     IConfiguration configuration,
     ILogger<ApplicationDbContextInitializer> logger
 )

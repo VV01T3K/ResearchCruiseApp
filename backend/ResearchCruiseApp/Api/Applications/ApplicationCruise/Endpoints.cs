@@ -22,8 +22,8 @@ public static class ApplicationCruiseEndpoints
     private static async Task<Results<Ok<ApplicationCruiseResponse>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         ApplicationScoringService evaluator,
         CancellationToken cancellationToken
     )

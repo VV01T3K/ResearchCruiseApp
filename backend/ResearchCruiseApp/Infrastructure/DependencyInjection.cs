@@ -23,15 +23,15 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         services
-            .AddScoped<IFileInspector, FileInspector>()
-            .AddScoped<ICompressor, Compressor>()
-            .AddScoped<IRandomGenerator, RandomGenerator>()
-            .AddScoped<IEmailSender, EmailSender>()
-            .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
-            .AddScoped<ITemplateFileReader, TemplateFileReader>()
-            .AddScoped<ICurrentUserService, CurrentUserService>()
-            .AddScoped<IGlobalizationService, GlobalizationService>()
-            .AddScoped<ICsvExporter, CsvExporter>();
+            .AddScoped<FileInspector>()
+            .AddScoped<Compressor>()
+            .AddScoped<RandomGenerator>()
+            .AddScoped<EmailSender>()
+            .AddScoped<YearBasedKeyGenerator>()
+            .AddScoped<TemplateFileReader>()
+            .AddScoped<CurrentUserService>()
+            .AddScoped<GlobalizationService>()
+            .AddScoped<CsvExporter>();
     }
 
     private static void AddCustomIdentity(
@@ -79,7 +79,7 @@ public static class DependencyInjection
             options.Password.RequireNonAlphanumeric = false;
         });
 
-        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IdentityService>();
     }
 
     private static void AddPersistence(

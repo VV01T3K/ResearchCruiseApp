@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Infrastructure.Localization;
 
-public class GlobalizationService : IGlobalizationService
+public class GlobalizationService
 {
     private const string CultureInfoId = "pl-pl";
     private const string TimeZoneInfoId = "Central European Standard Time";

@@ -24,8 +24,8 @@ public static class ExportEndpoints
     private static async Task<Results<Ok<ExportResponse>, ProblemHttpResult>> Handle(
         string year,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
-        ICsvExporter csvExporter,
+        UserPermissionVerifier userPermissionVerifier,
+        CsvExporter csvExporter,
         CancellationToken cancellationToken
     )
     {

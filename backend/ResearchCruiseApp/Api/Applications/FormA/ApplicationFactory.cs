@@ -5,8 +5,8 @@ using ResearchCruiseApp.Infrastructure;
 namespace ResearchCruiseApp.Api.Applications;
 
 internal class ApplicationFactory(
-    IRandomGenerator randomGenerator,
-    IGlobalizationService globalizationService
+    RandomGenerator randomGenerator,
+    GlobalizationService globalizationService
 )
 {
     public CruiseApplication Create(FormA formA, string? note, bool isDraft = false)

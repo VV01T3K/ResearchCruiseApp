@@ -13,9 +13,9 @@ namespace ResearchCruiseApp.Infrastructure.Email;
 
 internal class EmailSender(
     IConfiguration configuration,
-    ITemplateFileReader templateFileReader,
-    IGlobalizationService globalizationService
-) : IEmailSender
+    TemplateFileReader templateFileReader,
+    GlobalizationService globalizationService
+)
 {
     public async Task SendEmailConfirmationEmail(
         UserDto userDto,

@@ -6,10 +6,10 @@ using ResearchCruiseApp.Infrastructure.Common.Constants;
 
 namespace ResearchCruiseApp.Infrastructure.Exports;
 
-public class CsvExporter(
-    IGlobalizationService globalizationService,
-    IIdentityService identityService
-) : ICsvExporter
+internal class CsvExporter(
+    GlobalizationService globalizationService,
+    IdentityService identityService
+)
 {
     private const string GoogleCalendarCruisesHeader =
         "Subject,Start Date,Start Time,End Date,End Time,Description";

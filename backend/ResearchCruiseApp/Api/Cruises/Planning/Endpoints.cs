@@ -39,9 +39,9 @@ public static class PlanningEndpoints
     }
 
     private static async Task<NoContent> AutoPlan(
-        IYearBasedKeyGenerator yearBasedKeyGenerator,
+        YearBasedKeyGenerator yearBasedKeyGenerator,
         ApplicationDbContext dbContext,
-        IGlobalizationService globalizationService,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -110,7 +110,7 @@ public static class PlanningEndpoints
 
     private static DomainCruise? CreateCruise(
         CruiseApplication application,
-        IGlobalizationService globalizationService
+        GlobalizationService globalizationService
     )
     {
         if (application.FormA is null)
@@ -131,7 +131,7 @@ public static class PlanningEndpoints
 
     private static (string Start, string End) GetAutoCalculatedDates(
         FormA formA,
-        IGlobalizationService globalizationService
+        GlobalizationService globalizationService
     )
     {
         if (formA is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null })

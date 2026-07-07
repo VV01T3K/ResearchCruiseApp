@@ -16,8 +16,8 @@ public static class MeEndpoints
     }
 
     private static async Task<Results<Ok<CurrentUserResponse>, NotFound>> Handle(
-        ICurrentUserService currentUserService,
-        IIdentityService identityService
+        CurrentUserService currentUserService,
+        IdentityService identityService
     )
     {
         var currentUserId = currentUserService.GetId();

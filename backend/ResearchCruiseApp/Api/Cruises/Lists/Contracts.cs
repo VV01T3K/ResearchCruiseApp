@@ -18,7 +18,7 @@ public sealed record CruiseResponse(
 {
     internal static async Task<CruiseResponse> From(
         DomainCruise cruise,
-        IIdentityService identityService,
+        IdentityService identityService,
         ApplicationScoringService evaluator
     )
     {

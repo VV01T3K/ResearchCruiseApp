@@ -37,10 +37,10 @@ public static class ListsEndpoints
     }
 
     private static async Task<Ok<List<CruiseResponse>>> GetAll(
-        IIdentityService identityService,
+        IdentityService identityService,
         ApplicationScoringService evaluator,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
@@ -75,10 +75,10 @@ public static class ListsEndpoints
 
     private static async Task<Results<Ok<CruiseResponse>, NotFound>> GetById(
         Guid cruiseId,
-        IIdentityService identityService,
+        IdentityService identityService,
         ApplicationScoringService evaluator,
         ApplicationDbContext dbContext,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {

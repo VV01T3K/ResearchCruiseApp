@@ -1,9 +1,0 @@
-﻿using ResearchCruiseApp.Api.Applications.Shared;
-using ResearchCruiseApp.Domain.Entities;
-
-namespace ResearchCruiseApp.Infrastructure.Exports;
-
-public interface ICsvExporter
-{
-    Task<FileDto> ExportCruisesToGoogleCalendar(List<Cruise> cruises);
-}

@@ -12,7 +12,7 @@ internal class FormCFactory(
     ApplicationDbContext dbContext,
     UniqueFormFieldResolver formsFieldsService,
     CruiseEffectService effectsService,
-    ICompressor compressor
+    Compressor compressor
 )
 {
     public async Task<Result<FormC>> Create(FormCDto formCDto, CancellationToken cancellationToken)

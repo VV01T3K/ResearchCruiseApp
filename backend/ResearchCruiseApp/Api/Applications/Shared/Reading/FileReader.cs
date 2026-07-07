@@ -2,7 +2,7 @@ using System.Text;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
-internal class FileReader(ICompressor compressor)
+internal class FileReader(Compressor compressor)
 {
     public async Task<FileDto> FromCompressed(string name, byte[] content) =>
         new() { Name = name, Content = await compressor.Decompress(content) };

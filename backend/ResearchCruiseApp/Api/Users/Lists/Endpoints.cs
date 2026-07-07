@@ -34,8 +34,8 @@ public static class ListsEndpoints
     }
 
     private static async Task<Ok<List<UserResponse>>> GetAll(
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
@@ -54,7 +54,7 @@ public static class ListsEndpoints
     }
 
     private static async Task<Ok<List<CruiseManagerResponse>>> GetAvailableCruiseManagers(
-        IIdentityService identityService,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {

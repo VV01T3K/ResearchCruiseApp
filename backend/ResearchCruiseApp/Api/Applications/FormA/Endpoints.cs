@@ -103,7 +103,7 @@ public static class FormAEndpoints
         Guid applicationId,
         ApplicationDbContext dbContext,
         FormReader forms,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
@@ -127,7 +127,7 @@ public static class FormAEndpoints
         Guid applicationId,
         FormAWriteRequest request,
         IValidator<FormAValidationModel> validator,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         ApplicationDbContext dbContext,
         FormAFactory forms,
         FormDeletionService formsService,

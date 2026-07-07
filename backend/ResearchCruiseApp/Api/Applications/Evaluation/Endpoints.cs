@@ -23,7 +23,7 @@ public static class EvaluationEndpoints
         Guid applicationId,
         ApplicationDbContext dbContext,
         ApplicationReader applications,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {

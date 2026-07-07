@@ -26,7 +26,7 @@ public static class DependencyInjection
             .AddScoped<ApplicationScoringService>()
             .AddScoped<CruiseEffectService>()
             .AddScoped<UniqueFormFieldResolver>()
-            .AddScoped<IUserPermissionVerifier, UserPermissionVerifier>()
+            .AddScoped<UserPermissionVerifier>()
             .AddScoped<FormDeletionService>();
     }
 }

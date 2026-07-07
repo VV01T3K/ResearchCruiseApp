@@ -8,10 +8,10 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal class FormInitValuesReader(
-    IIdentityService identityService,
+    IdentityService identityService,
     ContractReader contracts,
     ApplicationDbContext dbContext,
-    ICurrentUserService currentUserService
+    CurrentUserService currentUserService
 )
 {
     public async Task<FormAInitValuesDto> CreateFormA(CancellationToken cancellationToken)

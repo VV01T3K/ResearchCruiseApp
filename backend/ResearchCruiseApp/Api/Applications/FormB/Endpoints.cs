@@ -48,7 +48,7 @@ public static class FormBEndpoints
         Guid applicationId,
         ApplicationDbContext dbContext,
         FormReader forms,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
@@ -74,7 +74,7 @@ public static class FormBEndpoints
         Guid applicationId,
         FormBWriteRequest request,
         IValidator<FormBValidationModel> validator,
-        IUserPermissionVerifier userPermissionVerifier,
+        UserPermissionVerifier userPermissionVerifier,
         FormBFactory forms,
         ApplicationDbContext dbContext,
         FormDeletionService formsService,

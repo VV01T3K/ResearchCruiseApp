@@ -57,9 +57,9 @@ public static class AccountsEndpoints
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         CreateUserRequest request,
-        IRandomGenerator randomGenerator,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        RandomGenerator randomGenerator,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
@@ -98,8 +98,8 @@ public static class AccountsEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid userId,
         UpdateUserRequest request,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
@@ -123,8 +123,8 @@ public static class AccountsEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(
         Guid userId,
-        IUserPermissionVerifier userPermissionVerifier,
-        IIdentityService identityService,
+        UserPermissionVerifier userPermissionVerifier,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {

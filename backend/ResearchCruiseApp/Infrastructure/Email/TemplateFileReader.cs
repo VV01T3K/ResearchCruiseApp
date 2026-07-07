@@ -1,6 +1,6 @@
 namespace ResearchCruiseApp.Infrastructure.Email;
 
-internal class TemplateFileReader : ITemplateFileReader
+internal class TemplateFileReader
 {
     private readonly string _emailTemplatesPath;
 

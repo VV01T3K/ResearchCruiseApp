@@ -57,8 +57,8 @@ public static class LifecycleEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
         Guid cruiseId,
         ApplicationDbContext dbContext,
-        IEmailSender emailSender,
-        IIdentityService identityService,
+        EmailSender emailSender,
+        IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
