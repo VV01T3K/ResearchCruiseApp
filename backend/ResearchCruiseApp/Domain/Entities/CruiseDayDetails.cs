@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
@@ -9,22 +8,11 @@ public class CruiseDayDetails
         IEquatable<CruiseDayDetails>,
         IEquatableByExpression<CruiseDayDetails>
 {
-    [StringLength(1024)]
     public string Number { get; init; } = null!;
-
-    [StringLength(1024)]
     public string Hours { get; init; } = null!;
-
-    [StringLength(1024)]
     public string TaskName { get; init; } = null!;
-
-    [StringLength(1024)]
     public string Region { get; init; } = null!;
-
-    [StringLength(1024)]
     public string Position { get; init; } = null!;
-
-    [StringLength(1024)]
     public string Comment { get; init; } = null!;
 
     public List<FormB> FormsB { get; init; } = [];

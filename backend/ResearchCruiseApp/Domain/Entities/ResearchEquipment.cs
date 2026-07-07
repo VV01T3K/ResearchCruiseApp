@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
@@ -9,7 +8,6 @@ public class ResearchEquipment
         IEquatable<ResearchEquipment>,
         IEquatableByExpression<ResearchEquipment>
 {
-    [StringLength(1024)]
     public string Name { get; init; } = null!;
 
     public List<FormBShortResearchEquipment> FormBShortResearchEquipments { get; init; } = [];

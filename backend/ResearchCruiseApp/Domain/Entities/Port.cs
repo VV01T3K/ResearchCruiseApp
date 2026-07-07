@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
 public class Port : Entity, IEquatable<Port>, IEquatableByExpression<Port>
 {
-    [StringLength(1024)]
     public string Name { get; init; } = null!;
 
     public List<FormBPort> FormBPorts { get; init; } = [];

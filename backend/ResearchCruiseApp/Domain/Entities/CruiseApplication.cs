@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using ResearchCruiseApp.Domain.Enums;
 
 namespace ResearchCruiseApp.Domain.Entities;
@@ -22,7 +21,5 @@ public class CruiseApplication : Entity
     public Cruise? Cruise { get; set; }
 
     public int EffectsPoints { get; set; }
-
-    [StringLength(1024)]
     public string? Note { get; set; }
 }

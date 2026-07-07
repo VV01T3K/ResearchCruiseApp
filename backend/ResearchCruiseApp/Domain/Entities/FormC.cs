@@ -1,13 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ResearchCruiseApp.Domain.Entities;
+﻿namespace ResearchCruiseApp.Domain.Entities;
 
 public class FormC : Entity
 {
-    [StringLength(1024)]
     public string ShipUsage { get; init; } = null!;
-
-    [StringLength(1024)]
     public string DifferentUsage { get; init; } = null!;
 
     public List<Permission> Permissions { get; init; } = [];
@@ -37,11 +32,7 @@ public class FormC : Entity
     public List<ShipEquipment> ShipEquipments { get; init; } = [];
 
     public List<CollectedSample> CollectedSamples { get; init; } = [];
-
-    [StringLength(10240)]
     public string? SpubReportData { get; init; }
-
-    [StringLength(10240)]
     public string? AdditionalDescription { get; init; }
 
     public List<Photo> Photos { get; set; } = [];

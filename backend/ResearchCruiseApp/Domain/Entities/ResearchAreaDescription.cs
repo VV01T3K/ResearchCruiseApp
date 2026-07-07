@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
@@ -10,11 +9,7 @@ public class ResearchAreaDescription
         IEquatableByExpression<ResearchAreaDescription>
 {
     public Guid? AreaId { get; init; }
-
-    [StringLength(1024)]
     public string? DifferentName { get; init; }
-
-    [StringLength(10240)]
     public string? Info { get; init; }
 
     public List<FormA> FormsA { get; init; } = [];

@@ -327,7 +327,7 @@ Update this table as phases land; keep notes short and factual.
 | 1 — Dissolve Domain/Logic | done | Rules moved to their sole consumer slices; wire status codes moved to Api. |
 | 2 — REPR convergence | done | Remaining endpoint modules moved into REPR slice folders. |
 | 3 — Dissolve ApplicationForms | done | Slice-owned form code localized; shared form code moved under Applications/Shared. |
-| 4 — Domain/Infrastructure cleanup | pending | |
+| 4 — Domain/Infrastructure cleanup | done | Repository vestiges removed; Domain flattened; EF annotations made fluent; NU1903 cleared. |
 | 5 — Contract decisions | pending | |
 | 6 — Frontend realignment | pending | |
 | 7 — Closeout | pending | |

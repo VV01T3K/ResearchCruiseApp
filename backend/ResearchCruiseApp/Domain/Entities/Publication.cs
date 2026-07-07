@@ -1,30 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
 public class Publication : Entity, IEquatable<Publication>, IEquatableByExpression<Publication>
 {
-    [StringLength(1024)]
     public string Category { get; init; } = null!;
-
-    [StringLength(1024)]
     public string? Doi { get; init; }
-
-    [StringLength(1024)]
     public string? Authors { get; init; }
-
-    [StringLength(1024)]
     public string? Title { get; init; }
-
-    [StringLength(1024)]
     public string? Magazine { get; init; }
-
-    [StringLength(1024)]
     public string? Year { get; init; }
-
-    [StringLength(1024)]
     public string MinisterialPoints { get; init; } = null!;
 
     public List<FormAPublication> FormAPublications { get; init; } = [];

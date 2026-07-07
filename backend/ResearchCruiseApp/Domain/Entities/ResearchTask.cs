@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Enums;
 using ResearchCruiseApp.Domain.Interfaces;
@@ -8,41 +7,17 @@ namespace ResearchCruiseApp.Domain.Entities;
 public class ResearchTask : Entity, IEquatable<ResearchTask>, IEquatableByExpression<ResearchTask>
 {
     public ResearchTaskType Type { get; init; }
-
-    [StringLength(1024)]
     public string? Title { get; init; }
-
-    [StringLength(1024)]
     public string? Magazine { get; init; }
-
-    [StringLength(1024)]
     public string? Author { get; init; }
-
-    [StringLength(1024)]
     public string? Institution { get; init; }
-
-    [StringLength(1024)]
     public string? Date { get; init; }
-
-    [StringLength(1024)]
     public string? StartDate { get; init; }
-
-    [StringLength(1024)]
     public string? EndDate { get; init; }
-
-    [StringLength(1024)]
     public string? FinancingAmount { get; init; }
-
-    [StringLength(10240)]
     public string? Description { get; init; }
-
-    [StringLength(1024)]
     public string? FinancingApproved { get; init; } = "false";
-
-    [StringLength(1024)]
     public string? SecuredAmount { get; set; }
-
-    [StringLength(1024)]
     public string? MinisterialPoints { get; set; }
 
     public List<FormAResearchTask> FormAResearchTasks { get; set; } = [];

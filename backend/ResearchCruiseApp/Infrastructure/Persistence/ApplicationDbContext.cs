@@ -62,6 +62,7 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
         base.OnModelCreating(builder);
 
         EntityConfiguration.Apply(builder);
-        builder.ApplyConfiguration(new CruiseApplicationConfiguration());
+        StringLengthConfiguration.Apply(builder);
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }

@@ -1,18 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
 public class SpubTask : Entity, IEquatable<SpubTask>, IEquatableByExpression<SpubTask>
 {
-    [StringLength(1024)]
     public string? Name { get; init; }
-
-    [StringLength(1024)]
     public string? YearFrom { get; init; }
-
-    [StringLength(1024)]
     public string? YearTo { get; init; }
 
     public List<FormASpubTask> FormASpubTasks { get; init; } = [];

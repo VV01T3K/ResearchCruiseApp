@@ -10,9 +10,9 @@ internal class ContractFileConfiguration : IEntityTypeConfiguration<ContractFile
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.FileName).HasMaxLength(1024).IsRequired();
+        builder.Property(x => x.FileName).HasMaxLength(1024);
 
-        builder.Property(x => x.FileContent).IsRequired();
+        builder.Property(x => x.FileContent);
 
         builder
             .HasOne(x => x.Contract)

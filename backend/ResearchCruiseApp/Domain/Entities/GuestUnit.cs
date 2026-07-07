@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
 public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<GuestUnit>
 {
-    [StringLength(1024)]
     public string? Name { get; init; }
 
     public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];

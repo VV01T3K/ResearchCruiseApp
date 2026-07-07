@@ -1,24 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using ResearchCruiseApp.Domain.Interfaces;
 
 namespace ResearchCruiseApp.Domain.Entities;
 
 public class Contract : Entity, IEquatable<Contract>, IEquatableByExpression<Contract>
 {
-    [StringLength(1024)]
     public string Category { get; init; } = null!;
-
-    [StringLength(1024)]
     public string? InstitutionName { get; init; }
-
-    [StringLength(1024)]
     public string? InstitutionUnit { get; init; }
-
-    [StringLength(1024)]
     public string? InstitutionLocalization { get; init; }
-
-    [StringLength(10240)]
     public string? Description { get; init; }
 
     public List<ContractFile> Files { get; init; } = [];
