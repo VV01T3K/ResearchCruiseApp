@@ -13,8 +13,10 @@ history.
   `Domain` / `Infrastructure`.
 - `Domain/Logic`, `Domain/Common`, top-level `ApplicationForms`, and the
   repository-era `Infrastructure/Persistence/Repositories` tree are gone.
-- Domain contains the shared EF entity model plus a small, flat shared vocabulary.
-  Relational configuration is fluent and has no pending model changes.
+- Domain contains a small, flat shared vocabulary plus the EF entity model grouped
+  by aggregate ownership under `Entities/Applications`, `Entities/Cruises`, and
+  `Entities/Users`. Relational configuration is fluent and has no pending model
+  changes.
 - Infrastructure contains plumbing for persistence, identity, email, files,
   exports, localization, and security.
 - Pure business rules are static `Rules.cs` files in their owning slices.
@@ -36,8 +38,9 @@ history.
 3. **No mandatory service layer.** Pure decisions are static rules; shared
    orchestration has a specific name in feature `Shared/`; single-slice
    orchestration remains co-located.
-4. **One EF model.** `Domain/Entities` remains the shared persistence model; there
-   are no per-slice contexts or migrations.
+4. **One EF model.** `Domain/Entities` remains the shared persistence model and
+   uses ownership folders without namespace-per-folder churn; there are no
+   per-slice contexts or migrations.
 5. **Infrastructure is plumbing.** It does not own endpoint contracts or feature
    workflow decisions.
 6. **`Results.cs` remains top-level.** `Result` and `Error` are genuinely consumed
@@ -84,6 +87,7 @@ Final verification on 2026-07-07:
 | 6 — Frontend realignment | done | Hooks, mocks, browser suites, and isolated live smoke aligned. |
 | 7 — Closeout | done | End state audited; completed plan pruned; follow-ups parked. |
 | 8 — De-ceremony pass | done | Dead code and unearned interfaces removed; taxonomy folders and composition shells collapsed; single-form mappings localized. |
+| 9 — Entity ownership | done | The shared EF model was organized into Applications/FormA–C/Shared, Cruises, and Users ownership folders without namespace or model changes. |
 
 ## De-ceremony Pass
 
@@ -107,6 +111,10 @@ held fixed throughout.
   `Infrastructure/Common/`, and the old `Results/` folder are gone.
 - Moved Form A/B/C mapping partials into their owning slices while retaining the
   genuinely multi-form mapping partials in `Applications/Shared/Mapping`.
+- Organized the shared EF entity files by aggregate ownership: form-specific
+  entities live under their application form, multi-form entities under
+  `Applications/Shared`, and cruise/user records under their corresponding roots.
+  All entities retain the single `ResearchCruiseApp.Domain.Entities` namespace.
 - Left the optional factory renames out: the existing names avoid churn, and the
   database-dedup workflow implementation was not changed.
 
