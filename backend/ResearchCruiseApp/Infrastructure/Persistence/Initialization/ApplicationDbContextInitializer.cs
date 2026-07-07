@@ -12,8 +12,7 @@ internal class ApplicationDbContextInitializer(
     RoleManager<IdentityRole> roleManager,
     IIdentityService identityService,
     IRandomGenerator randomGenerator,
-    IConfiguration configuration,
-    ILogger<ApplicationDbContextInitializer> logger
+    IConfiguration configuration
 )
 {
     public async Task Initialize()
@@ -51,7 +50,7 @@ internal class ApplicationDbContextInitializer(
                 ?? false
             )
             {
-                logger.LogWarning("Seed User Created: {email} - {password}", user.Email, password);
+                Console.WriteLine($"Seed User Created: {user.Email} - {password}");
             }
         }
     }

@@ -1,0 +1,32 @@
+using System.Security.Claims;
+using Sentry;
+
+namespace ResearchCruiseApp.Infrastructure.Sentry;
+
+public sealed class SentryUserMiddleware(RequestDelegate next, IHub hub)
+{
+    public async Task InvokeAsync(HttpContext context)
+    {
+        if (context.User.Identity?.IsAuthenticated == true)
+        {
+            var user = context.User;
+            hub.ConfigureScope(scope =>
+            {
+                scope.User = new SentryUser
+                {
+                    Id =
+                        user.FindFirstValue(ClaimTypes.NameIdentifier)
+                        ?? user.FindFirstValue("sub"),
+                };
+
+                var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray();
+                if (roles.Length > 0)
+                {
+                    scope.SetTag("user.roles", string.Join(',', roles));
+                }
+            });
+        }
+
+        await next(context);
+    }
+}
