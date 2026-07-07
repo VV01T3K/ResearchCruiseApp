@@ -1,7 +1,7 @@
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
 
-namespace ResearchCruiseApp.Domain.Logic;
+namespace ResearchCruiseApp.Api.Applications;
 
 public static class ApplicationDecisionRules
 {

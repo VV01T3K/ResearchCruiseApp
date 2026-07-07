@@ -1,7 +1,10 @@
+using ResearchCruiseApp.Api;
+using ResearchCruiseApp.Api.Applications;
+using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain.Common.Constants;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Logic;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using Xunit;
 
 namespace ResearchCruiseApp.Tests;

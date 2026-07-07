@@ -1,4 +1,4 @@
-namespace ResearchCruiseApp.Domain.Logic;
+namespace ResearchCruiseApp.Api.Applications;
 
 public static class CruiseBlockadeRules
 {

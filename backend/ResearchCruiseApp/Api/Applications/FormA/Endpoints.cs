@@ -8,7 +8,6 @@ using ResearchCruiseApp.ApplicationForms.Writing;
 using ResearchCruiseApp.Domain.Common.Enums;
 using ResearchCruiseApp.Domain.Common.Extensions;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;

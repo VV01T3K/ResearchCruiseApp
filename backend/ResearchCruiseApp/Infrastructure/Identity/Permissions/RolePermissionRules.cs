@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Domain.Common.Constants;
 
-namespace ResearchCruiseApp.Domain.Logic;
+namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 public static class RolePermissionRules
 {

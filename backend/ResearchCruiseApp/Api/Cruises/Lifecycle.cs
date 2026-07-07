@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Common.Enums;
-using ResearchCruiseApp.Domain.Logic;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Repositories.Extensions;
 using ResearchCruiseApp.Results;

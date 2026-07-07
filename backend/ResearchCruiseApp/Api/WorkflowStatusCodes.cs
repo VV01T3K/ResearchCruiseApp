@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Domain.Common.Enums;
 
-namespace ResearchCruiseApp.Domain.Logic;
+namespace ResearchCruiseApp.Api;
 
 public static class WorkflowStatusCodes
 {

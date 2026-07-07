@@ -1,5 +1,4 @@
 using ResearchCruiseApp.ApplicationForms.Writing;
-using ResearchCruiseApp.Domain.Logic;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.Api.Cruises;
