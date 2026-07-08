@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Sentry.Extensibility;
 
 namespace ResearchCruiseApp.Infrastructure.Sentry;
@@ -13,18 +12,6 @@ public static class SentryConfiguration
         "Cookie",
         "Set-Cookie",
         "X-Api-Key",
-    ];
-
-    // JSON keys whose values are redacted from captured request bodies.
-    private static readonly string[] SensitiveBodyKeys =
-    [
-        "password",
-        "currentPassword",
-        "newPassword",
-        "confirmPassword",
-        "token",
-        "accessToken",
-        "refreshToken",
     ];
 
     public static void AddResearchCruiseAppSentry(this WebApplicationBuilder builder)
@@ -69,24 +56,5 @@ public static class SentryConfiguration
             }
         }
         request.Cookies = null;
-
-        if (request.Data is string body && body.Length > 0)
-        {
-            request.Data = RedactSensitiveBodyValues(body);
-        }
-    }
-
-    private static string RedactSensitiveBodyValues(string body)
-    {
-        foreach (var key in SensitiveBodyKeys)
-        {
-            body = Regex.Replace(
-                body,
-                $"(\"{Regex.Escape(key)}\"\\s*:\\s*)\"[^\"]*\"",
-                "$1\"[REDACTED]\"",
-                RegexOptions.IgnoreCase
-            );
-        }
-        return body;
     }
 }
