@@ -10,6 +10,9 @@ services:
       - FrontendUrl=http://localhost:8080
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
+      # Off by default: never capture full request bodies / PII against real user
+      # data without a privacy review. Set to true only during on-prem pre-launch.
+      - Sentry__CaptureFullRequestData=${SENTRY_CAPTURE_FULL_REQUEST_DATA:-false}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:

@@ -6,14 +6,22 @@ public static class SentryConfiguration
 {
     public static void AddResearchCruiseAppSentry(this WebApplicationBuilder builder)
     {
+        // Opt-in, off by default. Enable only where there is no real user data
+        // (staging / on-prem pre-launch) to maximize diagnostic signal; never enable
+        // for a real-data deployment without a privacy review. When on, Sentry
+        // captures request headers, cookies, client IP, the authenticated user and
+        // full request bodies so failing requests can be replayed.
+        var captureFullRequestData = builder.Configuration.GetValue<bool>(
+            "Sentry:CaptureFullRequestData"
+        );
+
         builder.WebHost.UseSentry(options =>
         {
-            // Maximize diagnostic signal while there is no real user data (staging /
-            // on-prem pre-launch). Revisit before a real-data production launch.
-            // Captures request headers, cookies, client IP and the authenticated user.
-            options.SendDefaultPii = true;
-            // Attach request bodies to events so failing requests can be replayed.
-            options.MaxRequestBodySize = RequestSize.Always;
+            if (captureFullRequestData)
+            {
+                options.SendDefaultPii = true;
+                options.MaxRequestBodySize = RequestSize.Always;
+            }
 
             options.SetBeforeSend(
                 (@event, _) =>

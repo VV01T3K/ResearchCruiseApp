@@ -11,6 +11,8 @@ services:
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-1}
+      # Full request/PII capture is safe on staging (no real user data).
+      - Sentry__CaptureFullRequestData=${SENTRY_CAPTURE_FULL_REQUEST_DATA:-true}
     networks:
       - researchcruiseapp-network
   frontend:
