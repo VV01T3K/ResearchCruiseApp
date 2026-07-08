@@ -1,3 +1,20 @@
+## 2.5.0 - 2026-07-08
+#### Changes since *2.4.0*:
+* feat(sentry): searchable user roles and fuller diagnostic capture (#352)
+* feat(sentry): make replay session sample rate runtime-configurable (#351)
+* feat(sentry): full-stack error monitoring with React and ASP.NET Core SDKs (#344)
+* fix: devcontainer stuck couse of playwright install
+* refactor(frontend): reorganize frontend files by layer - part 2/2 (#339)
+* fix: improve access control with bug fixes and refactoring (#338)
+* feat: add devcontainer lock file for Docker-in-Docker feature
+* refactor: improve group user actions and fix data sync (#336)
+* feat: remove asterisks in details view (#337)
+* refactor(frontend): reorganize source files by layer - part 1/2 (#334)
+* fix: disable blocked backend commit hook
+* feat: Calendar drag and drop (#332)
+* feat: upgrade development tooling and improve TypeScript and Vite setup (#322)
+* chore: RPI project (#348)
+
 ## 2.4.0 - 2026-03-31
 #### Changes since *2.3.1*:
 * style(formA): corrected the messages in the cruise period/precise date
