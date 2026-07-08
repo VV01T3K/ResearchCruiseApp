@@ -35,8 +35,20 @@ export function initializeSentry(router: unknown): void {
 }
 
 export function setSentryUser(user: User | undefined): void {
-  Sentry.setUser(user ? { id: String(user.id) } : null);
-  Sentry.setContext('user_roles', user ? { roles: user.roles } : null);
+  if (!user) {
+    Sentry.setUser(null);
+    Sentry.setTag('user.roles', undefined);
+    Sentry.setTag('user.multiple_roles', undefined);
+    return;
+  }
+
+  const roles = user.roles ?? [];
+  // Roles live on the user object (visible at a glance in the issue/replay user
+  // card) *and* as a tag (searchable/alertable). `user.multiple_roles` flags the
+  // anomaly where a user unexpectedly holds more than one role.
+  Sentry.setUser({ id: String(user.id), roles });
+  Sentry.setTag('user.roles', roles.join(','));
+  Sentry.setTag('user.multiple_roles', roles.length > 1);
 }
 
 export function trackFormSubmit(
