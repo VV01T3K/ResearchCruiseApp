@@ -31,10 +31,6 @@ public static class SentryConfiguration
     {
         builder.WebHost.UseSentry(options =>
         {
-            // Capture rich request context (headers, body, authenticated user) so
-            // production issues can be diagnosed and replicated. Sensitive fields
-            // (auth/session headers, client IP, credentials in the body) are scrubbed
-            // in SetBeforeSend below.
             options.SendDefaultPii = true;
             options.MaxRequestBodySize = RequestSize.Always;
 
@@ -84,7 +80,6 @@ public static class SentryConfiguration
     {
         foreach (var key in SensitiveBodyKeys)
         {
-            // Replace the string value of "<key>": "..." with a placeholder.
             body = Regex.Replace(
                 body,
                 $"(\"{Regex.Escape(key)}\"\\s*:\\s*)\"[^\"]*\"",

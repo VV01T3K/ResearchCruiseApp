@@ -18,8 +18,6 @@ public sealed class SentryUserMiddleware(RequestDelegate next, IHub hub)
                     Id =
                         user.FindFirstValue(ClaimTypes.NameIdentifier)
                         ?? user.FindFirstValue("sub"),
-                    // Roles on the user object (visible in the user card) in addition
-                    // to the searchable tag below.
                     Other = { ["roles"] = string.Join(',', roles) },
                 };
 
@@ -27,7 +25,6 @@ public sealed class SentryUserMiddleware(RequestDelegate next, IHub hub)
                 {
                     scope.SetTag("user.roles", string.Join(',', roles));
                 }
-
                 // Flags the anomaly where a user unexpectedly holds more than one role.
                 scope.SetTag("user.multiple_roles", (roles.Length > 1).ToString());
             });

@@ -43,11 +43,9 @@ export function setSentryUser(user: User | undefined): void {
   }
 
   const roles = user.roles ?? [];
-  // Roles live on the user object (visible at a glance in the issue/replay user
-  // card) *and* as a tag (searchable/alertable). `user.multiple_roles` flags the
-  // anomaly where a user unexpectedly holds more than one role.
   Sentry.setUser({ id: String(user.id), roles });
   Sentry.setTag('user.roles', roles.join(','));
+  // Flags the anomaly where a user unexpectedly holds more than one role.
   Sentry.setTag('user.multiple_roles', roles.length > 1);
 }
 
