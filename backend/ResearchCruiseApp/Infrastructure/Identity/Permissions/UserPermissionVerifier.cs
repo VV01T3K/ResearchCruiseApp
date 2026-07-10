@@ -95,9 +95,6 @@ internal class UserPermissionVerifier(
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
-        if (currentUserRoles.Contains(RoleName.Administrator))
-            return true;
-
         if (cruiseApplication.FormA is null)
             return false;
 
@@ -105,8 +102,12 @@ internal class UserPermissionVerifier(
         if (currentUserId is null)
             return false;
 
-        return cruiseApplication.FormA.CruiseManagerId == currentUserId
-            || cruiseApplication.FormA.DeputyManagerId == currentUserId;
+        return RolePermissionRules.CanAddApplicationForm(
+            currentUserRoles,
+            currentUserId.Value,
+            cruiseApplication.FormA.CruiseManagerId,
+            cruiseApplication.FormA.DeputyManagerId
+        );
     }
 
     public async Task<bool> CanCurrentUserViewForm(CruiseApplication cruiseApplication)

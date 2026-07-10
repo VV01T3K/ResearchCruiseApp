@@ -7,12 +7,17 @@
     <RootNamespace>ResearchCruiseApp</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
-    <Version>2.4.0</Version>
+    <Version>2.5.0</Version>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <!-- Accept legacy findings that require API, culture, DI, or generated-migration changes. -->
     <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(SENTRY_AUTH_TOKEN)' != ''">
+    <SentryUploadSymbols>true</SentryUploadSymbols>
+    <SentryUploadSources>true</SentryUploadSources>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,19 +44,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
     <PackageReference Include="NuGet.Packaging" Version="6.14.3" />
     <PackageReference Include="NuGet.Protocol" Version="6.14.3" />
-    <PackageReference Include="OpenTelemetry" Version="1.15.3" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.3" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
-    <PackageReference
-      Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"
-      Version="1.15.1-beta.1"
-    />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.15.1-beta.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
+    <PackageReference Include="Sentry.AspNetCore" Version="6.6.0" />
     <PackageReference Include="UrlBase64" Version="2.0.0" />
   </ItemGroup>
 

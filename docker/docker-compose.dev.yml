@@ -12,6 +12,8 @@ services:
       - Database__LogUserPasswordsWhenSeeding=true
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=http://localhost:8080
+      - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
+      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     ports:
       - 3000:8080
     depends_on:
@@ -22,6 +24,10 @@ services:
     build:
       context: ..
       dockerfile: frontend/Dockerfile
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
+      - SENTRY_REPLAYS_SESSION_SAMPLE_RATE=${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-0.1}
     ports:
       - 8080:8080
     depends_on:

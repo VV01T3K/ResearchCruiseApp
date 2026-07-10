@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.RateLimiting;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
+using ResearchCruiseApp.Infrastructure.Sentry;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenTelemetry(builder.Configuration);
+builder.AddResearchCruiseAppSentry();
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -116,6 +118,7 @@ app.UseHttpsRedirection();
 app.UseCors("CustomPolicy");
 app.UseRateLimiter();
 app.UseAuthentication().UseAuthorization();
+app.UseMiddleware<SentryUserMiddleware>();
 
 app.MapApi();
 

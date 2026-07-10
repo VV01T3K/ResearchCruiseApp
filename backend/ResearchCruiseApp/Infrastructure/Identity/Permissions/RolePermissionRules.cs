@@ -35,4 +35,22 @@ public static class RolePermissionRules
             && !otherUserRoles.Contains(RoleName.Administrator)
             && !otherUserRoles.Contains(RoleName.Shipowner);
     }
+
+    public static bool CanAddApplicationForm(
+        IList<string> currentUserRoles,
+        Guid currentUserId,
+        Guid? cruiseManagerId,
+        Guid? deputyManagerId
+    )
+    {
+        if (
+            currentUserRoles.Contains(RoleName.Administrator)
+            || currentUserRoles.Contains(RoleName.Shipowner)
+        )
+        {
+            return true;
+        }
+
+        return currentUserId == cruiseManagerId || currentUserId == deputyManagerId;
+    }
 }

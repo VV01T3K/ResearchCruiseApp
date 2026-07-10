@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: research-cruise-app-frontend-config
-data:
-  GRAFANA_FARO_URL: https://faro.grafana.nasus.dev/

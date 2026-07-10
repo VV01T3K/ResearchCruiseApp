@@ -7,6 +7,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
 import { useRegisterMutation } from '@/api/account/AccountAuthApiHooks';
 import { Result } from '@/models/user/Results';
@@ -69,6 +70,8 @@ function RegisterPage() {
         return;
       }
 
+      trackFormSubmit('register', 'valid', form.state);
+
       if (!value.email || !value.firstName || !value.lastName || !value.password) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -78,6 +81,9 @@ function RegisterPage() {
           await navigate({ to: '/login' });
         },
       }).catch(() => {});
+    },
+    onSubmitInvalid: ({ formApi }) => {
+      trackFormSubmit('register', 'invalid', formApi.state);
     },
   });
 

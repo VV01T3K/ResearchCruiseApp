@@ -6,6 +6,7 @@ import { isAxiosError } from 'axios';
 import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
+import { trackFormSubmit } from '@/lib/sentry';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/formC/FormView';
 import {
@@ -101,10 +102,13 @@ function FormCPage() {
     await form.validate('change');
 
     if (!form.state.canSubmit) {
+      trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
       navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
       return;
     }
+
+    trackFormSubmit('form-c', 'valid', form.state);
 
     const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(

@@ -7,6 +7,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
 import { useForgotPasswordMutation } from '@/api/account/AccountRecoveryApiHooks';
 import { Result } from '@/models/user/Results';
@@ -31,7 +32,9 @@ function ForgotPasswordPage() {
     validators: {
       onChange: validationSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
+      trackFormSubmit('forgot-password', 'valid', formApi.state);
+
       if (!value.email) {
         throw new Error('Not all fields are filled despite validation');
       }
@@ -45,6 +48,9 @@ function ForgotPasswordPage() {
           },
         }
       ).catch(() => {});
+    },
+    onSubmitInvalid: ({ formApi }) => {
+      trackFormSubmit('forgot-password', 'invalid', formApi.state);
     },
   });
 

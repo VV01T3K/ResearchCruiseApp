@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite-plus';
 // import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
 import viteReact from '@vitejs/plugin-react';
@@ -6,6 +7,24 @@ import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 // import babel from '@rolldown/plugin-babel';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
+
+const {
+  SENTRY_AUTH_TOKEN: sentryAuthToken,
+  SENTRY_ORG: sentryOrg,
+  SENTRY_PROJECT: sentryProject,
+  SENTRY_RELEASE: sentryRelease,
+} = process.env;
+
+const sentryPlugin =
+  sentryAuthToken && sentryOrg && sentryProject
+    ? sentryVitePlugin({
+        authToken: sentryAuthToken,
+        org: sentryOrg,
+        project: sentryProject,
+        release: { name: sentryRelease },
+        sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+      })
+    : undefined;
 
 export default defineConfig({
   staged: {
@@ -29,6 +48,7 @@ export default defineConfig({
     tanstackRouter(),
     viteReact(),
     tailwindcss(),
+    sentryPlugin,
     // babel({ // Breaks tests and some forms etc FIXME: Re-enable and fix
     //   presets: [reactCompilerPreset()],
     // }),
@@ -37,8 +57,13 @@ export default defineConfig({
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
-    OTEL_SERVICE_NAME: JSON.stringify(process.env.OTEL_SERVICE_NAME),
-    GRAFANA_FARO_URL: JSON.stringify(process.env.GRAFANA_FARO_URL),
+    SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN ?? ''),
+    SENTRY_RELEASE: JSON.stringify(sentryRelease ?? ''),
+    SENTRY_TRACES_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_TRACES_SAMPLE_RATE ?? ''),
+    SENTRY_REPLAYS_SESSION_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_REPLAYS_SESSION_SAMPLE_RATE ?? ''),
   },
-  build: { chunkSizeWarningLimit: 2000 },
+  build: {
+    chunkSizeWarningLimit: 2000,
+    sourcemap: sentryPlugin ? 'hidden' : false,
+  },
 });

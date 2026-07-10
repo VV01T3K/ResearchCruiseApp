@@ -3,6 +3,7 @@ import React from 'react';
 
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { client, setAuthToken } from '@/lib/api';
+import { setSentryUser } from '@/lib/sentry';
 import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
 import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/account/AccountAuthApiHooks';
@@ -258,6 +259,10 @@ export function UserContextProvider({ children }: Props) {
 
     return () => clearInterval(timeoutId);
   }, [context, authDetails]);
+
+  React.useEffect(() => {
+    setSentryUser(profileQuery.data);
+  }, [profileQuery.data]);
 
   React.useEffect(() => {
     if (!authDetails?.refreshTokenExpirationDate) {

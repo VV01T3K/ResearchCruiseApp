@@ -45,7 +45,7 @@ history.
    workflow decisions.
 6. **Shared code has a home by nature, not a junk drawer.** Following the
    community VSA guidance (Milan Jovanović's three-tier model), cross-cutting
-   code is placed by what it *is*: the `Result`/`Error` primitive and wire
+   code is placed by what it _is_: the `Result`/`Error` primitive and wire
    status codes live in `Domain`; API request-pipeline plumbing (validation and
    transaction filters, ProblemDetails mapping, authorization policies) lives in
    `Infrastructure/Api`; feature-internal reuse lives in a feature `Shared/`
@@ -81,19 +81,19 @@ Final verification on 2026-07-07:
 
 ## Progress Log
 
-| Phase | Status | Notes |
-| --- | --- | --- |
-| 0 — Route-table guardrail | done | Exact endpoint method/template set pinned by a WebApplicationFactory test. |
-| 1 — Dissolve Domain/Logic | done | Rules localized; wire status codes moved to Api. |
-| 2 — REPR convergence | done | Remaining endpoint modules moved into slice folders. |
-| 3 — Dissolve ApplicationForms | done | Slice code localized; shared code moved under Applications/Shared. |
-| 4 — Domain/Infrastructure cleanup | done | Repository vestiges removed; Domain flattened; EF made fluent; NU1903 cleared. |
-| 5 — Contract decisions | done | Final route table frozen; password change returned to account/me. |
-| 6 — Frontend realignment | done | Hooks, mocks, browser suites, and isolated live smoke aligned. |
-| 7 — Closeout | done | End state audited; completed plan pruned; follow-ups parked. |
-| 8 — De-ceremony pass | done | Dead code and unearned interfaces removed; taxonomy folders and composition shells collapsed; single-form mappings localized. |
-| 9 — Entity ownership | done | The shared EF model was organized into Applications/FormA–C/Shared, Cruises, and Users ownership folders without namespace or model changes. |
-| 10 — Shared code by nature | done | `Results.cs` split into `Domain` (Result/Error/ErrorType/ValidationResultExtensions); `WorkflowStatusCodes` to `Domain`; validation/transaction filters, ProblemDetails mapping, and authorization policies to `Infrastructure/Api`. `Api/` now holds only feature folders plus `ApiComposition`. Route table, model, and tests unchanged. |
+| Phase                             | Status | Notes                                                                                                                                                                                                                                                                                                                                      |
+| --------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 — Route-table guardrail         | done   | Exact endpoint method/template set pinned by a WebApplicationFactory test.                                                                                                                                                                                                                                                                 |
+| 1 — Dissolve Domain/Logic         | done   | Rules localized; wire status codes moved to Api.                                                                                                                                                                                                                                                                                           |
+| 2 — REPR convergence              | done   | Remaining endpoint modules moved into slice folders.                                                                                                                                                                                                                                                                                       |
+| 3 — Dissolve ApplicationForms     | done   | Slice code localized; shared code moved under Applications/Shared.                                                                                                                                                                                                                                                                         |
+| 4 — Domain/Infrastructure cleanup | done   | Repository vestiges removed; Domain flattened; EF made fluent; NU1903 cleared.                                                                                                                                                                                                                                                             |
+| 5 — Contract decisions            | done   | Final route table frozen; password change returned to account/me.                                                                                                                                                                                                                                                                          |
+| 6 — Frontend realignment          | done   | Hooks, mocks, browser suites, and isolated live smoke aligned.                                                                                                                                                                                                                                                                             |
+| 7 — Closeout                      | done   | End state audited; completed plan pruned; follow-ups parked.                                                                                                                                                                                                                                                                               |
+| 8 — De-ceremony pass              | done   | Dead code and unearned interfaces removed; taxonomy folders and composition shells collapsed; single-form mappings localized.                                                                                                                                                                                                              |
+| 9 — Entity ownership              | done   | The shared EF model was organized into Applications/FormA–C/Shared, Cruises, and Users ownership folders without namespace or model changes.                                                                                                                                                                                               |
+| 10 — Shared code by nature        | done   | `Results.cs` split into `Domain` (Result/Error/ErrorType/ValidationResultExtensions); `WorkflowStatusCodes` to `Domain`; validation/transaction filters, ProblemDetails mapping, and authorization policies to `Infrastructure/Api`. `Api/` now holds only feature folders plus `ApiComposition`. Route table, model, and tests unchanged. |
 
 ## De-ceremony Pass
 
@@ -110,7 +110,7 @@ held fixed throughout.
 - Moved evaluation and Form A value constants to `Applications/Shared`; flattened
   shared domain vocabulary directly under `Domain/` and removed its by-kind
   folders. `Domain/Entities` remains the shared EF model.
-- Made `Program.cs` the startup atlas, moved OpenTelemetry to Infrastructure,
+- Made `Program.cs` the startup atlas, with Sentry as its sole extracted startup concern,
   inlined the version endpoint, merged API composition/registration/rate-policy
   shells, collapsed the four result files into top-level `Results.cs`, and moved
   URL prefixes into their two consumers. `Configuration/`,
@@ -133,7 +133,7 @@ moved from `Domain/Extensions/` to flat `Domain/StringExtensions.cs`.
 The resulting backend has feature slices under `Api/`; application-wide helpers
 under `Api/Applications/Shared`; a flat `Domain/` vocabulary plus
 `Domain/Entities`; plumbing grouped by purpose under `Infrastructure`; startup in
-`Program.cs` with OpenTelemetry as its sole extracted startup concern; and one
+`Program.cs` with Sentry as its sole extracted startup concern; and one
 top-level `Results.cs`. The targeted taxonomy-by-kind and single-use composition
 folders are gone.
 
