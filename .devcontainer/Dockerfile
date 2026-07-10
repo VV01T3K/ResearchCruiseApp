@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/devcontainers/base:trixie
 RUN apt-get update && apt-get install -y --no-install-recommends xdg-utils
 USER vscode
 
-RUN curl -fsSL https://vite.plus | bash
+RUN curl -fsSL https://vite.plus | bash && test -x ~/.vite-plus/bin/vp
 RUN curl -fsSL https://mise.run | sh \
     && echo 'eval "$(mise activate bash)"' >> ~/.bashrc \
     && echo 'eval "$(mise activate zsh)"' >> "${ZDOTDIR-$HOME}/.zshrc"
