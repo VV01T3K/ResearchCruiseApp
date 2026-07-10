@@ -1,0 +1,386 @@
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { allowOnly } from '@/lib/guards';
+import { useForm } from '@tanstack/react-form';
+import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
+import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
+import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import PencilIcon from 'bootstrap-icons/icons/pencil.svg?react';
+import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import React from 'react';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { toast } from '@/components/shared/layout/toast';
+import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
+import { useApplicationsQuery } from '@/api/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, ApplicationStatus } from '@/api/applications/contracts';
+import { FormView } from '../-components/FormView';
+import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
+import {
+  useConfirmCruiseMutation,
+  useCompleteCruiseMutation,
+  useCruiseQuery,
+  useDeleteCruiseMutation,
+  useRemoveCruiseConfirmationMutation,
+  useUpdateCruiseMutation,
+} from '@/api/cruises/CruisesApiHooks';
+import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
+import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/applications/dto/CruiseApplicationDto';
+
+export const Route = createFileRoute('/cruises/$cruiseId/')({
+  component: CruiseDetailsPage,
+  beforeLoad: allowOnly.authenticated(),
+});
+
+const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
+  startDate: 1,
+  endDate: 1,
+  'managersTeam.mainCruiseManagerId': 2,
+  'managersTeam.mainDeputyManagerId': 2,
+  cruiseApplicationsIds: 3,
+  title: 4,
+};
+
+function CruiseDetailsPage() {
+  const { cruiseId } = Route.useParams();
+
+  const cruiseQuery = useCruiseQuery(cruiseId);
+  const applicationQuery = useApplicationsQuery();
+  const updateCruiseMutation = useUpdateCruiseMutation(cruiseId);
+  const confirmCruiseMutation = useConfirmCruiseMutation(cruiseId);
+  const deleteCruiseMutation = useDeleteCruiseMutation();
+  const endCruiseMutation = useCompleteCruiseMutation(cruiseId);
+  const revertCruiseStatusMutation = useRemoveCruiseConfirmationMutation(cruiseId);
+
+  const navigate = useNavigate();
+
+  const [editMode, setEditMode] = React.useState(false);
+  const [isConfirmAcceptanceModalOpen, setIsConfirmAcceptanceModalOpen] = React.useState(false);
+  const [isConfirmDeletionModalOpen, setIsConfirmDeletionModalOpen] = React.useState(false);
+  const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
+  const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
+
+  const form = useForm({
+    defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormValues,
+    validators: {
+      onChange: getCruiseFormValidationSchema(),
+    },
+  });
+
+  function handleCruiseUpdate() {
+    form.validateAllFields('change');
+    if (!form.state.isValid) {
+      toast.error(getFormErrorMessage(form, CRUISE_FIELD_TO_SECTION));
+      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+      return;
+    }
+
+    const dto = removeEmptyValues(form.state.values, [
+      'managersTeam.mainCruiseManagerId',
+      'managersTeam.mainDeputyManagerId',
+    ]);
+
+    updateCruiseMutation.mutate(dto, {
+      onSuccess: () => {
+        setEditMode(false);
+        toast.success('Rejs został zaktualizowany pomyślnie.');
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+      },
+    });
+  }
+
+  function getButtons() {
+    if (editMode) {
+      return (
+        <>
+          <AppButton
+            className="w-36 !justify-center gap-4 lg:w-48"
+            variant="primaryOutline"
+            onClick={() => {
+              form.reset();
+              setEditMode(false);
+            }}
+          >
+            <XLgIcon className="h-4 w-4" />
+            Anuluj
+          </AppButton>
+          <AppButton
+            className="w-36 !justify-center gap-4 lg:w-48"
+            variant="primaryOutline"
+            onClick={() => form.reset()}
+          >
+            <ArrowClockwiseIcon className="h-4 w-4" />
+            Cofnij zmiany
+          </AppButton>
+          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={handleCruiseUpdate}>
+            <FloppyFillIcon className="h-4 w-4" />
+            Zapisz rejs
+          </AppButton>
+        </>
+      );
+    }
+
+    switch (cruiseQuery.data?.status) {
+      case 'new':
+        return (
+          <>
+            <AppButton
+              className="w-36 !justify-center gap-4 lg:w-64"
+              variant="primaryOutline"
+              onClick={() => setEditMode(true)}
+            >
+              <PencilIcon className="h-4 w-4" />
+              Edytuj
+            </AppButton>
+            <AppButton
+              className="w-36 !justify-center gap-4 lg:w-64"
+              onClick={() => setIsConfirmAcceptanceModalOpen(true)}
+            >
+              <CheckLgIcon className="h-4 w-4" />
+              Zatwierdź rejs
+            </AppButton>
+          </>
+        );
+      case 'confirmed':
+        return (
+          <>
+            <AppButton
+              className="w-32 !justify-center gap-4 lg:w-40"
+              variant="primaryOutline"
+              onClick={() => setEditMode(true)}
+            >
+              <PencilIcon className="h-4 w-4" />
+              Edytuj
+            </AppButton>
+            <AppButton
+              className="w-32 !justify-center gap-4 lg:w-40"
+              variant="primaryOutline"
+              onClick={() => setIsConfirmRevertModalOpen(true)}
+            >
+              <ArrowClockwiseIcon className="h-4 w-4" />
+              Cofnij status
+            </AppButton>
+            <AppButton
+              className="w-32 !justify-center gap-4 lg:w-40"
+              variant="dangerOutline"
+              onClick={() => setIsConfirmDeletionModalOpen(true)}
+            >
+              <TrashIcon className="h-4 w-4" />
+              Usuń rejs
+            </AppButton>
+            <AppButton className="w-32 !justify-center gap-4 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
+              <CheckLgIcon className="h-4 w-4" />
+              Zakończ rejs
+            </AppButton>
+          </>
+        );
+      case 'ended':
+        return (
+          <>
+            <AppButton
+              className="w-36 !justify-center gap-4 lg:w-48"
+              variant="primaryOutline"
+              onClick={() => setEditMode(true)}
+            >
+              <PencilIcon className="h-4 w-4" />
+              Edytuj
+            </AppButton>
+            <AppButton
+              className="w-36 !justify-center gap-4 lg:w-48"
+              variant="dangerOutline"
+              onClick={() => setIsConfirmRevertModalOpen(true)}
+            >
+              <ArrowClockwiseIcon className="h-4 w-4" />
+              Cofnij status
+            </AppButton>
+          </>
+        );
+      default:
+        return null;
+    }
+  }
+
+  function filterValidCruiseApplications(cruise: CruiseResponse, cruiseApplications: ApplicationResponse[]) {
+    return cruiseApplications
+      .filter(
+        (application) =>
+          application.status === ApplicationStatus.Accepted || cruise.applications.some((x) => x.id === application.id)
+      )
+      .map(mapApplicationToLegacyCruiseApplication);
+  }
+
+  return (
+    <>
+      <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
+        <FormView
+          context={{
+            form,
+            cruise: cruiseQuery.data,
+            cruiseApplications: filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data),
+            isReadonly: !editMode,
+          }}
+          buttons={getButtons()}
+        />
+      </AppLayout>
+
+      <AppModal
+        title={`Czy na pewno chcesz zatwierdzić rejs nr. ${cruiseQuery.data?.number}?`}
+        isOpen={isConfirmAcceptanceModalOpen}
+        onClose={() => setIsConfirmAcceptanceModalOpen(false)}
+      >
+        <div className="mt-8 flex flex-row gap-4">
+          <AppButton
+            variant="primary"
+            className="basis-2/3"
+            onClick={async () => {
+              await confirmCruiseMutation.mutateAsync();
+              setIsConfirmAcceptanceModalOpen(false);
+            }}
+            disabled={confirmCruiseMutation.isPending}
+          >
+            Potwierdź rejs nr. {cruiseQuery.data?.number}
+          </AppButton>
+          <AppButton
+            variant="primaryOutline"
+            className="basis-1/3"
+            onClick={() => {
+              setIsConfirmAcceptanceModalOpen(false);
+            }}
+            disabled={confirmCruiseMutation.isPending}
+          >
+            Anuluj
+          </AppButton>
+        </div>
+      </AppModal>
+
+      <AppModal
+        title={`Czy na pewno chcesz awaryjnie usunąć rejs nr. ${cruiseQuery.data?.number}?`}
+        isOpen={isConfirmDeletionModalOpen}
+        onClose={() => setIsConfirmDeletionModalOpen(false)}
+      >
+        Do wszystkich kierowników zgłoszeń i ich zastępców zostanie wysłane powiadomienie o anulowaniu rejsu.
+        <div className="mt-4 flex flex-row gap-4">
+          <AppButton
+            variant="danger"
+            className="basis-2/3"
+            onClick={async () => {
+              await deleteCruiseMutation.mutateAsync(cruiseId);
+              navigate({ to: '/cruises' });
+            }}
+            disabled={deleteCruiseMutation.isPending}
+          >
+            Potwierdź usunięcie rejsu nr. {cruiseQuery.data?.number}
+          </AppButton>
+          <AppButton
+            variant="primaryOutline"
+            className="basis-1/3"
+            onClick={() => {
+              setIsConfirmDeletionModalOpen(false);
+            }}
+            disabled={deleteCruiseMutation.isPending}
+          >
+            Anuluj
+          </AppButton>
+        </div>
+      </AppModal>
+
+      <AppModal
+        title={`Czy na pewno chcesz oznaczyć rejs nr. ${cruiseQuery.data?.number} jako zakończony?`}
+        isOpen={isConfirmEndModalOpen}
+        onClose={() => setIsConfirmEndModalOpen(false)}
+      >
+        <div className="mt-8 flex flex-row gap-4">
+          <AppButton
+            variant="primary"
+            className="basis-2/3"
+            onClick={async () => {
+              await endCruiseMutation.mutateAsync();
+              setIsConfirmEndModalOpen(false);
+            }}
+            disabled={endCruiseMutation.isPending}
+          >
+            Oznacz rejs nr. {cruiseQuery.data?.number} jako zakończony
+          </AppButton>
+          <AppButton
+            variant="primaryOutline"
+            className="basis-1/3"
+            onClick={() => {
+              setIsConfirmEndModalOpen(false);
+            }}
+            disabled={endCruiseMutation.isPending}
+          >
+            Anuluj
+          </AppButton>
+        </div>
+      </AppModal>
+
+      <AppModal
+        title={`Czy na pewno chcesz cofnąć status rejsu nr. ${cruiseQuery.data?.number}?`}
+        isOpen={isConfirmRevertModalOpen}
+        onClose={() => setIsConfirmRevertModalOpen(false)}
+      >
+        {cruiseQuery.data?.status === 'confirmed' && <>Status rejsu zostanie zmieniony z "Potwierdzony" na "Nowy".</>}
+        {cruiseQuery.data?.status === 'ended' && <>Status rejsu zostanie zmieniony z "Zakończony" na "Potwierdzony".</>}
+        <div className="mt-4 flex flex-row gap-4">
+          <AppButton
+            variant="dangerOutline"
+            className="basis-2/3"
+            onClick={async () => {
+              await revertCruiseStatusMutation.mutateAsync();
+              setIsConfirmRevertModalOpen(false);
+            }}
+            disabled={revertCruiseStatusMutation.isPending}
+          >
+            Cofnij status rejsu nr. {cruiseQuery.data?.number}
+          </AppButton>
+          <AppButton
+            variant="primaryOutline"
+            className="basis-1/3"
+            onClick={() => {
+              setIsConfirmRevertModalOpen(false);
+            }}
+            disabled={revertCruiseStatusMutation.isPending}
+          >
+            Anuluj
+          </AppButton>
+        </div>
+      </AppModal>
+    </>
+  );
+}
+
+function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationDto {
+  return {
+    ...application,
+    status: application.status as unknown as CruiseApplicationStatus,
+    cruiseManagerId: application.mainManager.id,
+    cruiseManagerEmail: application.mainManager.email,
+    cruiseManagerFirstName: application.mainManager.firstName,
+    cruiseManagerLastName: application.mainManager.lastName,
+    deputyManagerId: application.deputyManager.id,
+    deputyManagerEmail: application.deputyManager.email,
+    deputyManagerFirstName: application.deputyManager.firstName,
+    deputyManagerLastName: application.deputyManager.lastName,
+    cruiseHours: application.cruiseHours ?? '',
+  };
+}
+
+function mapCruiseToForm(cruise: CruiseResponse): CruiseFormValues {
+  return {
+    startDate: cruise.startDate,
+    endDate: cruise.endDate,
+    managersTeam: {
+      mainCruiseManagerId: cruise.mainManager.id,
+      mainDeputyManagerId: cruise.deputyManager.id,
+    },
+    cruiseApplicationsIds: cruise.applications.map((x) => x.id),
+    status: cruise.status,
+    title: cruise.title || '',
+    shipUnavailable: cruise.shipUnavailable,
+  };
+}

@@ -30,15 +30,15 @@ public static class SentryConfiguration
                 }
             );
             options.SetBeforeSendTransaction(
-                (transaction, _) =>
-                    transaction.Name.EndsWith("/health", StringComparison.OrdinalIgnoreCase)
-                        ? null
-                        : transaction
+                (transaction, _) => IsHealthTransaction(transaction.Name) ? null : transaction
             );
         });
     }
 
-    private static void ScrubSensitiveData(SentryEvent @event)
+    internal static bool IsHealthTransaction(string transactionName) =>
+        transactionName.EndsWith("/health", StringComparison.OrdinalIgnoreCase);
+
+    internal static void ScrubSensitiveData(SentryEvent @event)
     {
         // Never send the client IP address.
         if (@event.User is not null)
@@ -50,7 +50,10 @@ public static class SentryConfiguration
 
         if (request.Headers is not null)
         {
-            foreach (var header in SensitiveHeaders)
+            var sensitiveKeys = request.Headers.Keys.Where(key =>
+                SensitiveHeaders.Contains(key, StringComparer.OrdinalIgnoreCase)
+            );
+            foreach (var header in sensitiveKeys.ToArray())
             {
                 request.Headers.Remove(header);
             }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
@@ -10,8 +9,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    IIdentityService identityService,
-    IRandomGenerator randomGenerator,
+    IdentityService identityService,
+    RandomGenerator randomGenerator,
     IConfiguration configuration
 )
 {
@@ -19,7 +18,7 @@ internal class ApplicationDbContextInitializer(
     {
         await Migrate();
 
-        if (configuration.GetSection("Database:SeedAutomatically").Value?.ToBool() ?? false)
+        if (configuration.GetValue<bool>("Database:SeedAutomatically"))
         {
             await SeedRoleData();
             await SeedUsersData();
@@ -44,10 +43,16 @@ internal class ApplicationDbContextInitializer(
         foreach (var user in users)
         {
             var password = randomGenerator.CreateSecurePassword();
-            await identityService.AddUserWithRole(user, password, user.Role!);
+            var result = await identityService.AddUserWithRoles(
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                password,
+                [user.Role!]
+            );
             if (
-                configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
-                ?? false
+                result.IsSuccess
+                && configuration.GetValue<bool>("Database:LogUserPasswordsWhenSeeding")
             )
             {
                 Console.WriteLine($"Seed User Created: {user.Email} - {password}");

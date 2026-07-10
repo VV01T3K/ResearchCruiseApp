@@ -1,6 +1,6 @@
 # Sentry integration
 
-This project uses [Sentry](https://sentry.io) for error monitoring and performance tracing across the React frontend and ASP.NET Core backend, with session replay in the frontend. Kubernetes manifests under `kubernetes/` may still reference the legacy OTLP setup until a follow-up overlay change.
+This project uses [Sentry](https://sentry.io) for error monitoring and performance tracing across the React frontend and ASP.NET Core backend, with session replay in the frontend.
 
 ## Agent skills (AI assistants)
 
@@ -27,7 +27,7 @@ Docs: [Agent Skills](https://docs.sentry.io/ai/agent-skills/).
 - **`@sentry/react`** initialized from `main.tsx` through `frontend/src/lib/sentry.ts`
 - **React 19** error hooks via `reactErrorHandler()` on `createRoot`
 - **TanStack Router** navigation tracing via `tanstackRouterBrowserTracingIntegration`
-- **Session Replay** with masked text/inputs and blocked media
+- **Session Replay** with staging's full diagnostic capture settings
 - **Distributed tracing** to the configured API
 - **User context** on login/profile load (`setSentryUser` in `UserContextProvider`)
 - **Form breadcrumbs** via `trackFormSubmit` (replaces removed HyperDX hooks); this is diagnostic context rather than
@@ -64,22 +64,22 @@ Key files: `Infrastructure/Sentry/SentryConfiguration.cs`, `Infrastructure/Sentr
 
 Copy [`.env.sentry.example`](../.env.sentry.example) to `.env.sentry` for local values. **Never commit DSNs or auth tokens.**
 
-| Variable                    | Where                                                   | Purpose                                   |
-| --------------------------- | ------------------------------------------------------- | ----------------------------------------- |
-| `SENTRY_DSN`                | Frontend container runtime / backend runtime            | Project DSN (or use split vars below)     |
-| `SENTRY_DSN_FRONTEND`       | Compose env (mapped to frontend `SENTRY_DSN`)           | Frontend-only DSN                         |
-| `SENTRY_DSN_BACKEND`        | Compose env (mapped to backend `Sentry__Dsn`)           | Backend-only DSN (optional)               |
-| `SENTRY_TRACES_SAMPLE_RATE` | Frontend and backend runtime                            | Trace sampling; defaults to `0.1`         |
-| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend container runtime                     | Session Replay sampling; defaults to `0.1` (staging compose defaults to `1`) |
-| `APP_ENVIRONMENT`           | Frontend and backend image build                        | `local`, `staging`, `production`          |
-| `SENTRY_RELEASE`            | Frontend and backend image build                        | Git SHA or app version                    |
-| `SENTRY_AUTH_TOKEN`         | CI only (GitHub secret)                                 | Source map / symbol upload                |
-| `SENTRY_ORG`                | Dockerfile ARG default (`cruiseteam`)                   | Organization slug; override via build arg |
-| `SENTRY_PROJECT`            | Dockerfile ARG (`frontend-staging` / `backend-staging`) | Project slug; override per image build    |
+| Variable                             | Where                                                   | Purpose                                                                      |
+| ------------------------------------ | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `SENTRY_DSN`                         | Frontend container runtime / backend runtime            | Project DSN (or use split vars below)                                        |
+| `SENTRY_DSN_FRONTEND`                | Compose env (mapped to frontend `SENTRY_DSN`)           | Frontend-only DSN                                                            |
+| `SENTRY_DSN_BACKEND`                 | Compose env (mapped to backend `Sentry__Dsn`)           | Backend-only DSN (optional)                                                  |
+| `SENTRY_TRACES_SAMPLE_RATE`          | Frontend and backend runtime                            | Trace sampling; defaults to `0.1`                                            |
+| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend container runtime                              | Session Replay sampling; defaults to `0.1` (staging compose defaults to `1`) |
+| `APP_ENVIRONMENT`                    | Frontend and backend image build                        | `local`, `staging`, `production`                                             |
+| `SENTRY_RELEASE`                     | Frontend and backend image build                        | Git SHA or app version                                                       |
+| `SENTRY_AUTH_TOKEN`                  | CI only (GitHub secret)                                 | Source map / symbol upload                                                   |
+| `SENTRY_ORG`                         | Dockerfile ARG default (`cruiseteam`)                   | Organization slug; override via build arg                                    |
+| `SENTRY_PROJECT`                     | Dockerfile ARG (`frontend-staging` / `backend-staging`) | Project slug; override per image build                                       |
 
 The backend image exposes `APP_ENVIRONMENT` to the SDK as `SENTRY_ENVIRONMENT`. Backend runtime options also read `Sentry:*` keys from `appsettings.json` / `Sentry__*` environment variables.
 
-## HyperDX parity mapping
+## Previous telemetry parity mapping
 
 | Removed HyperDX / OTEL    | Sentry replacement                                           |
 | ------------------------- | ------------------------------------------------------------ |
@@ -91,7 +91,6 @@ The backend image exposes `APP_ENVIRONMENT` to the SDK as `SENTRY_ENVIRONMENT`. 
 
 ## Follow-up (not in app code)
 
-- Replace OTLP env in `kubernetes/overlays/staging/backend/configmap-patch.yaml` with Sentry env
 - Production will run on a **self-hosted Sentry instance** — see the
   [on-prem migration plan](sentry-on-prem-migration.md) for the handoff steps
 

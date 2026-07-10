@@ -1,11 +1,10 @@
 import { createContext, use } from 'react';
 
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
-import { EvaluationDto } from '@/api/dto/applications/EvaluationDto';
+import { ApplicationResponse, EvaluationResponse } from '@/api/applications/contracts';
 
 export type ApplicationDetailsContextType = {
-  application: CruiseApplicationDto;
-  evaluation: EvaluationDto;
+  application: ApplicationResponse;
+  evaluation: EvaluationResponse;
 };
 
 const ApplicationDetailsContext = createContext<ApplicationDetailsContextType | undefined>(undefined);
