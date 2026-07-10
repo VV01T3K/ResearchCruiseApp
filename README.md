@@ -46,7 +46,7 @@ The application can be run using Docker compose. Multiple configuration files ar
 - `docker-compose.infra.yml` - MS SQL Database configuration
 - `docker-compose.prod.yml` - Production configuration
 
-See [the Sentry integration guide](docs/sentry/sentry-integration.md) for split DSNs, release uploads, and runtime sampling configuration.
+See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
 
 ### Kubernetes
 
