@@ -21,7 +21,8 @@ public static class PasswordEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RequestPasswordResetRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .AllowAnonymous();
     }
 
     private static void MapReset(RouteGroupBuilder group)
@@ -35,7 +36,8 @@ public static class PasswordEndpoints
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResetPasswordRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .AllowAnonymous();
     }
 
     private static async Task<NoContent> RequestReset(
