@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
-import axios, { AxiosError } from 'axios';
+import { ApiError } from '@/api/fetch';
 import { ProblemDetails } from '@/api/account/contracts';
 import {
   useSupervisorReviewDecisionMutation,
@@ -84,10 +84,10 @@ function SupervisorViewPage() {
           navigate({ to: '/' });
           toast.success('Zgłoszenie zostało zaakceptowane');
         },
-        onError: (err: Error | AxiosError) => {
+        onError: (err: Error) => {
           console.error(err);
-          if (axios.isAxiosError<ProblemDetails>(err) && err.response?.status === 403) {
-            toast.error('Niedozwolona operacja: ' + (err.response.data.detail ?? ''));
+          if (err instanceof ApiError && err.status === 403) {
+            toast.error('Niedozwolona operacja: ' + ((err.data as ProblemDetails)?.detail ?? ''));
           } else {
             toast.error('Wystąpił błąd: Nie udało się zaakceptować zgłoszenia');
           }
@@ -108,10 +108,10 @@ function SupervisorViewPage() {
           navigate({ to: '/' });
           toast.success('Zgłoszenie zostało odrzucone');
         },
-        onError: (err: Error | AxiosError) => {
+        onError: (err: Error) => {
           console.error(err);
-          if (axios.isAxiosError<ProblemDetails>(err) && err.response?.status === 403) {
-            toast.error('Niedozwolona operacja: ' + (err.response.data.detail ?? ''));
+          if (err instanceof ApiError && err.status === 403) {
+            toast.error('Niedozwolona operacja: ' + ((err.data as ProblemDetails)?.detail ?? ''));
           } else {
             toast.error('Wystąpił błąd: Nie udało się odrzucić zgłoszenia');
           }

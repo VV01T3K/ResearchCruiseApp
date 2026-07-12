@@ -39,9 +39,7 @@ public static class ApiComposition
     {
         var api = app.NewVersionedApi("ResearchCruiseApp");
 
-        var v2 = api.MapGroup("/v{version:apiVersion}")
-            .HasApiVersion(new ApiVersion(2, 0))
-            .WithGroupName("v2");
+        var v2 = api.MapGroup("/v2").HasApiVersion(new ApiVersion(2, 0)).WithGroupName("v2");
 
         var auth = v2.MapGroup("/auth").WithTags("Auth");
         AuthEndpoints.Map(auth);

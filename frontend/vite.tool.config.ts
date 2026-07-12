@@ -45,7 +45,7 @@ export const lintConfig = {
     '@tanstack/query/no-void-query-fn': 'error',
     '@tanstack/query/mutation-property-order': 'error',
   },
-  ignorePatterns: ['dist', 'src/routeTree.gen.ts', '.storybook'],
+  ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/generated', '.storybook'],
   overrides: [
     {
       files: ['**/*.{ts,tsx}'],

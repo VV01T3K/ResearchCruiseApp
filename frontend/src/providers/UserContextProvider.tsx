@@ -2,14 +2,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
-import { client, setAuthToken } from '@/lib/api';
+import { ApiError } from '@/api/fetch';
 import { setSentryUser } from '@/lib/sentry';
 import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
 import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/account/AccountAuthApiHooks';
 import { AuthDetails } from '@/models/user/AuthDetails';
 import { SignInResult } from '@/models/user/Results';
-import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
+import { AUTH_DETAILS_CHANGED_EVENT, getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
 type Props = {
   children: React.ReactNode;
@@ -34,40 +34,27 @@ export function UserContextProvider({ children }: Props) {
     };
   }, []);
 
-  React.useLayoutEffect(() => {
-    if (!authDetails) {
-      setAuthToken(undefined);
-      return;
-    }
-
-    const remainingMs = authDetails.accessTokenExpirationDate.getTime() - Date.now();
-    if (remainingMs <= 0) {
-      setAuthToken(undefined);
-      return;
-    }
-
-    setAuthToken(authDetails);
-
-    const timeoutId = window.setTimeout(() => {
-      setAuthToken(undefined);
-    }, remainingMs);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [authDetails]);
-
   const profileQuery = useProfileQuery();
+
+  React.useEffect(() => {
+    const syncAuthDetails = (event: Event) => {
+      const details = (event as CustomEvent<AuthDetails | undefined>).detail;
+      setAuthDetails(details);
+      if (!details) queryClient.removeQueries({ queryKey: ['userProfile'] });
+    };
+    window.addEventListener(AUTH_DETAILS_CHANGED_EVENT, syncAuthDetails);
+    return () => window.removeEventListener(AUTH_DETAILS_CHANGED_EVENT, syncAuthDetails);
+  }, [queryClient]);
 
   const updateAuthDetails = React.useCallback(
     async (newAuthDetails: AuthDetails | undefined) => {
       if (newAuthDetails) {
         setAuthDetails(newAuthDetails);
         setStoredAuthDetails(newAuthDetails);
-        setAuthToken(newAuthDetails);
         await queryClient.fetchQuery({ queryKey: ['userProfile'] });
       } else {
         setAuthDetails(undefined);
         setStoredAuthDetails(undefined);
-        setAuthToken(undefined);
         queryClient.removeQueries({ queryKey: ['userProfile'] });
       }
     },
@@ -79,23 +66,12 @@ export function UserContextProvider({ children }: Props) {
 
   const signIn = React.useCallback(
     async (email: string, password: string): Promise<SignInResult> => {
-      const res = await loginMutateAsync({ email, password }).catch((error) => {
-        return error.response;
-      });
-
-      if (!res) {
-        return 'error';
-      }
-
-      if (res.status === 200) {
+      try {
+        await loginMutateAsync({ email, password });
         return 'success';
+      } catch (error) {
+        return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
       }
-
-      if (res.status === 401) {
-        return 'invalid_credentials';
-      }
-
-      return 'error';
     },
     [loginMutateAsync]
   );
@@ -153,59 +129,6 @@ export function UserContextProvider({ children }: Props) {
     ]
   );
 
-  // Refs keep the interceptor stable while accessing latest functions
-  const refreshUserRef = React.useRef(refreshUser);
-  React.useEffect(() => {
-    refreshUserRef.current = refreshUser;
-  }, [refreshUser]);
-  const refreshPromiseRef = React.useRef<Promise<void> | null>(null);
-
-  React.useEffect(() => {
-    const interceptorId = client.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        // Rule 1: Never intercept refresh requests
-        if (error.config?.url?.includes('/v2/auth/refresh')) {
-          return Promise.reject(error);
-        }
-
-        // Rule 2: Only retry once per failed request
-        if (error.response?.status === 401 && !error.config?._retry) {
-          error.config._retry = true;
-
-          try {
-            if (!refreshPromiseRef.current) {
-              refreshPromiseRef.current = refreshUserRef
-                .current()
-                .then(() => {
-                  refreshPromiseRef.current = null;
-                })
-                .catch((err) => {
-                  refreshPromiseRef.current = null;
-                  throw err;
-                });
-            }
-            await refreshPromiseRef.current;
-
-            const updatedToken = getStoredAuthDetails()?.accessToken;
-            if (updatedToken) {
-              error.config.headers['Authorization'] = `Bearer ${updatedToken}`;
-              return client(error.config);
-            }
-          } catch (refreshError) {
-            return Promise.reject(refreshError);
-          }
-        }
-
-        return Promise.reject(error);
-      }
-    );
-
-    return () => {
-      client.interceptors.response.eject(interceptorId);
-    };
-  }, []);
-
   const initRefreshRef = React.useRef(false);
   React.useEffect(() => {
     if (initRefreshRef.current) return;
@@ -213,18 +136,7 @@ export function UserContextProvider({ children }: Props) {
 
     const stored = getStoredAuthDetails();
     if (stored && stored.accessTokenExpirationDate <= new Date()) {
-      if (!refreshPromiseRef.current) {
-        refreshPromiseRef.current = refreshUserRef
-          .current()
-          .then(() => {
-            refreshPromiseRef.current = null;
-          })
-          .catch((err) => {
-            refreshPromiseRef.current = null;
-            throw err;
-          });
-      }
-      refreshPromiseRef.current
+      refreshUser()
         .then(
           () => queryClient.invalidateQueries({ queryKey: ['userProfile'] }),
           () => {} // refresh failure is handled inside refreshUser (signs out)
@@ -235,7 +147,7 @@ export function UserContextProvider({ children }: Props) {
     } else {
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     }
-  }, [queryClient]);
+  }, [queryClient, refreshUser]);
 
   const readyRef = React.useRef(false);
   React.useEffect(() => {

@@ -1,35 +1,43 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { CurrentPublicationImportRequest, CurrentPublicationResponse } from '@/api/account/contracts';
-import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
 import { Publication } from '@/api/publications/dto/Publication';
-import { client } from '@/lib/api';
+import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
+import {
+  getGetCurrentUserPublicationsV2QueryKey,
+  importCurrentUserPublicationsV2,
+  useDeleteAllCurrentUserPublicationsV2,
+  useDeleteCurrentUserPublicationV2,
+  useGetCurrentUserPublicationsV2Suspense,
+  useGetCurrentUserCruiseEffectsV2Suspense,
+  useImportCurrentUserPublicationsV2,
+} from '@/api/generated/endpoints';
+import { ImportPublicationRequest } from '@/api/generated/model';
+import { validateRequest } from '@/api/validateRequest';
 
 export function useCurrentPublicationsQuery() {
-  return useSuspenseQuery({
-    queryKey: ['currentPublications'],
-    queryFn: async () => client.get<CurrentPublicationResponse[]>('/v2/account/publications'),
-    select: (response) =>
-      response.data.map(
-        (publication): Publication => ({
-          ...publication,
-          doi: publication.doi ?? '',
-          authors: publication.authors ?? '',
-          title: publication.title ?? '',
-          magazine: publication.magazine ?? '',
-          year: publication.year ?? '',
-        })
-      ),
+  return useGetCurrentUserPublicationsV2Suspense({
+    query: {
+      select: (publications) =>
+        publications.map(
+          (publication): Publication => ({
+            ...publication,
+            doi: publication.doi ?? '',
+            authors: publication.authors ?? '',
+            title: publication.title ?? '',
+            magazine: publication.magazine ?? '',
+            year: publication.year ?? '',
+          })
+        ),
+    },
   });
 }
 
 export function useDeleteCurrentPublicationMutation() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (id: string) => client.delete(`/v2/account/publications/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentPublications'] });
+  return useDeleteCurrentUserPublicationV2({
+    mutation: {
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsV2QueryKey() }),
     },
   });
 }
@@ -37,10 +45,9 @@ export function useDeleteCurrentPublicationMutation() {
 export function useDeleteAllCurrentPublicationsMutation() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async () => client.delete('/v2/account/publications'),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentPublications'] });
+  return useDeleteAllCurrentUserPublicationsV2({
+    mutation: {
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsV2QueryKey() }),
     },
   });
 }
@@ -48,19 +55,17 @@ export function useDeleteAllCurrentPublicationsMutation() {
 export function useImportCurrentPublicationsMutation() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (publications: CurrentPublicationImportRequest[]) =>
-      client.post('/v2/account/publications/import', publications),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentPublications'] });
+  return useImportCurrentUserPublicationsV2({
+    mutation: {
+      mutationFn: ({ data }) =>
+        importCurrentUserPublicationsV2(validateRequest('import-publications', ImportPublicationRequest.array(), data)),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsV2QueryKey() }),
     },
   });
 }
 
 export function useCurrentCruiseEffectsQuery() {
-  return useSuspenseQuery({
-    queryKey: ['currentCruiseEffects'],
-    queryFn: async () => client.get<UserEffectDto[]>('/v2/account/cruise-effects'),
-    select: (response) => response.data,
+  return useGetCurrentUserCruiseEffectsV2Suspense<UserEffectDto[]>({
+    query: { select: (effects) => effects as UserEffectDto[] },
   });
 }

@@ -57,6 +57,15 @@ jobs:
         with:
           version: 10.33.0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: frontend/.node-version
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: ..
+
       - name: Restore .NET tools
         run: dotnet tool restore
 
@@ -65,3 +74,7 @@ jobs:
 
       - name: Run checks
         run: pnpm run check
+
+      - name: Check generated API artifacts
+        run: pnpm --filter frontend api:check
+        working-directory: ..
