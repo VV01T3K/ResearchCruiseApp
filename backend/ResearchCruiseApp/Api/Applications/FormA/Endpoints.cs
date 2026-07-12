@@ -43,7 +43,7 @@ public static class FormAEndpoints
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         FormAWriteRequest request,
-        IValidator<FormAValidationModel> validator,
+        IValidator<FormAWriteRequest> validator,
         FormAFactory forms,
         ApplicationFactory applications,
         ApplicationDbContext dbContext,
@@ -52,10 +52,7 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(
-            new FormAValidationModel(request.Form, request.Draft),
-            cancellationToken
-        );
+        var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
@@ -70,6 +67,7 @@ public static class FormAEndpoints
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
+        // Commit before sending the supervisor email below.
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
             cancellationToken
         );
@@ -84,13 +82,9 @@ public static class FormAEndpoints
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
-        Result<CruiseApplication> createResult = application;
-        if (!createResult.IsSuccess)
-            return createResult.Error!.ToProblemHttpResult();
-
         if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
-                createResult.Data!,
+                application,
                 request.Form.SupervisorEmail
             );
 
@@ -124,7 +118,7 @@ public static class FormAEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid applicationId,
         FormAWriteRequest request,
-        IValidator<FormAValidationModel> validator,
+        IValidator<FormAWriteRequest> validator,
         UserPermissionVerifier userPermissionVerifier,
         ApplicationDbContext dbContext,
         FormAFactory forms,
@@ -134,10 +128,7 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(
-            new FormAValidationModel(request.Form, request.Draft),
-            cancellationToken
-        );
+        var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
@@ -163,6 +154,7 @@ public static class FormAEndpoints
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
+        // Commit before sending the supervisor email below.
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
             cancellationToken
         );
@@ -188,10 +180,6 @@ public static class FormAEndpoints
 
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-
-        var result = Result.Empty;
-        if (!result.IsSuccess)
-            return result.Error!.ToProblemHttpResult();
 
         if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
