@@ -76,7 +76,7 @@ export function useFormBQuery(applicationId: string) {
         throw error;
       }
     },
-    select: (response) => response as FormBDto,
+    select: (response): FormBDto | null => response as FormBDto | null,
     retry: false,
   });
 }
@@ -92,7 +92,7 @@ export function useFormCQuery(applicationId: string) {
         throw error;
       }
     },
-    select: (response) => response as FormCDto,
+    select: (response): FormCDto | null => response as FormCDto | null,
     retry: false,
   });
 }
