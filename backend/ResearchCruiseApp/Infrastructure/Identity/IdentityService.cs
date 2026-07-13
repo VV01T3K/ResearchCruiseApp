@@ -276,7 +276,13 @@ internal class IdentityService(
 
         identityResult = await userManager.AddToRolesAsync(user, roleNames);
         if (!identityResult.Succeeded)
+        {
+            var deleteResult = await userManager.DeleteAsync(user);
+            if (!deleteResult.Succeeded)
+                return deleteResult.ToApplicationResult();
+
             return identityResult.ToApplicationResult();
+        }
 
         var userDto = await CreateUserDto(user);
         await emailSender.SendAccountCreatedMessage(userDto, roleNames.First(), password);
