@@ -52,8 +52,21 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          working-directory: backend
+          node-version-file: ../frontend/.node-version
+          cache: true
+
       - name: Restore .NET tools
         run: dotnet tool restore
 
-      - name: Check formatting
-        run: dotnet csharpier check .
+      - name: Restore dependencies
+        run: dotnet restore ResearchCruiseApp.sln
+
+      - name: Run checks
+        run: vp run check
+
+      - name: Run tests
+        run: vp run test

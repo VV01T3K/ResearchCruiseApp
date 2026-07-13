@@ -7,6 +7,7 @@
     "build": "dotnet build ResearchCruiseApp.sln",
     "fix": "dotnet csharpier format .",
     "check": "dotnet csharpier check . && dotnet build ResearchCruiseApp.sln --no-restore --no-incremental --warnaserror",
+    "test": "dotnet test ResearchCruiseApp.sln --no-restore --no-build",
     "staged": "dotnet csharpier format",
     "seed": "mise run seed",
     "ef:drop": "dotnet ef database drop --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -f",
