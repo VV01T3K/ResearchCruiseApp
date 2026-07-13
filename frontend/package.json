@@ -14,7 +14,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "api:generate": "../scripts/generate-api.sh",
-    "api:check": "pnpm api:generate && git diff --exit-code -- ../backend/openapi/v2.json src/api/generated",
+    "api:check": "vp run api:generate && git diff --exit-code -- ../backend/openapi/v2.json src/api/generated",
     "test": "playwright test",
     "test:ui": "playwright test --ui"
   },
