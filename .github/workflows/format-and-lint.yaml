@@ -64,7 +64,7 @@ jobs:
 
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
-        working-directory: ..
+        working-directory: .
 
       - name: Restore .NET tools
         run: dotnet tool restore
@@ -77,4 +77,4 @@ jobs:
 
       - name: Check generated API artifacts
         run: pnpm --filter frontend api:check
-        working-directory: ..
+        working-directory: .

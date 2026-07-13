@@ -1,7 +1,38 @@
-# OpenAPI Frontend Client Migration Plan
+# OpenAPI Frontend Client Migration Plan — Completed
 
 Created 2026-07-11 for `t3code/openapi-query-zod`, based on
 `origin/feature/backend-v2-rewrite` at `90891b91`.
+
+Completed 2026-07-13 on `t3code/auto-generation-review`.
+
+## Final State
+
+- Orval 8.9 generates the committed v2 TanStack Query client, types, and Zod
+  schemas from `backend/openapi/v2.json` into `frontend/src/api/generated/`.
+- Feature hooks use the generated client while retaining only UI mapping, cache
+  invalidation, and special error handling.
+- One native Fetch transport preserves bearer tokens, single-flight refresh,
+  one retry after a 401, logout after refresh failure, binary responses, and
+  typed non-success errors.
+- Form A/B/C writes and publication imports run generated request schemas before
+  sending data. Contract failures report only a schema label to Sentry.
+- Axios and its handwritten client are removed. `/health` and `/version` remain
+  small handwritten calls because they are outside the v2 OpenAPI document.
+- `api:generate` refreshes the specification and generated client; CI rejects
+  drift in either committed artifact.
+
+## Progress
+
+| Step | Status | Result |
+| --- | --- | --- |
+| 1 — Prove one slice | done | Fetch refresh/retry and redacted contract-failure tests pass. |
+| 2 — Migrate API files | done | Account, applications, cruises, publications, and users use generated operations. |
+| 3 — Delete Axios | done | No frontend Axios dependency or caller remains. |
+| 4 — Add guardrail | done | Committed spec/client generation is checked in CI. |
+
+Runtime response parsing remains deliberately deferred, as allowed by Step 1;
+Orval's custom Fetch mutator provides generated response types but does not apply
+the generated Zod response schemas automatically.
 
 ## Goal
 
@@ -128,4 +159,3 @@ reorganization.
 - generating localized form messages from OpenAPI;
 - validating every response through custom generated-code rewriting;
 - reorganizing the frontend.
-
