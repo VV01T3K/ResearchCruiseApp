@@ -37,7 +37,7 @@ async function seedAuthenticatedAdmin(page: Page) {
     (authDetails) => window.localStorage.setItem('authDetails', authDetails),
     JSON.stringify(getAuthDetailsPayload())
   );
-  await page.route(`${API_URL}/v2/account/me`, (route) => {
+  await page.route(`${API_URL}/v2/users/me`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify(getAdminAccountPayload()),

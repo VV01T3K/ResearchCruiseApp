@@ -2,14 +2,14 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public static class PasswordEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
         group
-            .MapPatch("/me/password", Handle)
+            .MapPatch("/password", Handle)
             .WithName("ChangeCurrentUserPasswordV2")
             .WithSummary("Change the current account password.")
             .ProducesValidationProblem()

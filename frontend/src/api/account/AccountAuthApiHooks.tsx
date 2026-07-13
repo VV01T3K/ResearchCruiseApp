@@ -34,7 +34,7 @@ export function useProfileQuery() {
       }
 
       try {
-        const response = await client.get<CurrentUserResponse>('/v2/account/me', {
+        const response = await client.get<CurrentUserResponse>('/v2/users/me', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

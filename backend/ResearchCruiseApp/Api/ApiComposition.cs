@@ -1,6 +1,5 @@
 using Asp.Versioning;
 using FluentValidation;
-using ResearchCruiseApp.Api.Account;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Auth;
@@ -46,11 +45,9 @@ public static class ApiComposition
         var auth = v2.MapGroup("/auth").WithTags("Auth");
         AuthEndpoints.Map(auth);
 
-        var account = v2.MapGroup("/account").WithTags("Account");
-        AccountEndpoints.Map(account);
-
         var users = v2.MapGroup("/users").WithTags("Users");
         UsersEndpoints.Map(users);
+
         var cruises = v2.MapGroup("/cruises").WithTags("Cruises");
         CruisesEndpoints.Map(cruises);
 

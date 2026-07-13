@@ -14,7 +14,7 @@ export class LoginPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.page.route(`${API_URL}/v2/account/me`, (route) => {
+    this.page.route(`${API_URL}/v2/users/me`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),

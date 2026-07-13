@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Domain.Entities;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public sealed record ImportPublicationRequest(
     string Category,

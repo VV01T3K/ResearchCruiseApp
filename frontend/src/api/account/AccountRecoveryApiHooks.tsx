@@ -70,7 +70,7 @@ export function useResetPasswordMutation({ setResult }: Props) {
 export function useChangePasswordMutation({ setResult }: Props) {
   return useMutation({
     mutationFn: async (request: ChangePasswordRequest) => {
-      return await client.patch('/v2/account/me/password', request);
+      return await client.patch('/v2/users/me/password', request);
     },
     onSuccess: () => {
       setResult('success');
