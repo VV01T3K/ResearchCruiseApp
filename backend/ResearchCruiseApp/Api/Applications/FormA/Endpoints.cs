@@ -67,7 +67,6 @@ public static class FormAEndpoints
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
-        // Commit before sending the supervisor email below.
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
             cancellationToken
         );
@@ -80,7 +79,6 @@ public static class FormAEndpoints
         await dbContext.CruiseApplications.AddAsync(application, cancellationToken);
         await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
@@ -88,6 +86,7 @@ public static class FormAEndpoints
                 request.Form.SupervisorEmail
             );
 
+        await transaction.CommitAsync(cancellationToken);
         return TypedResults.Created();
     }
 
@@ -154,7 +153,6 @@ public static class FormAEndpoints
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
-        // Commit before sending the supervisor email below.
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
             cancellationToken
         );
@@ -179,7 +177,6 @@ public static class FormAEndpoints
             await formsService.DeleteFormA(oldFormA, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
@@ -187,6 +184,7 @@ public static class FormAEndpoints
                 request.Form.SupervisorEmail
             );
 
+        await transaction.CommitAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
