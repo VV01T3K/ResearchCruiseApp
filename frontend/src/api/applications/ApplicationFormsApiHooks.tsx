@@ -28,12 +28,14 @@ import {
 } from '@/api/generated/model';
 import { validateRequest } from '@/api/validateRequest';
 
-function formARequest(form: FormADto, draft: boolean) {
+export function formARequest(form: FormADto, draft: boolean) {
   return {
     form: {
       ...form,
       acceptablePeriod: form.acceptablePeriod || null,
       optimalPeriod: form.optimalPeriod || null,
+      precisePeriodStart: form.precisePeriodStart || null,
+      precisePeriodEnd: form.precisePeriodEnd || null,
     },
     draft,
   };
