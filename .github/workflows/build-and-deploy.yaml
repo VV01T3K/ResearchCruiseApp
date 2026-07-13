@@ -70,8 +70,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
           # Production should upload to the on-prem instance once it
-          # exists — see docs/sentry-on-prem-migration.md.
+          # exists — see docs/sentry/sentry-on-prem-migration.md.
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 
