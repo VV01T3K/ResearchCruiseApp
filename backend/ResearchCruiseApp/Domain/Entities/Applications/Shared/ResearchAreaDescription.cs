@@ -1,0 +1,44 @@
+using System.Linq.Expressions;
+using ResearchCruiseApp.Domain;
+
+namespace ResearchCruiseApp.Domain.Entities;
+
+public class ResearchAreaDescription
+    : Entity,
+        IEquatable<ResearchAreaDescription>,
+        IEquatableByExpression<ResearchAreaDescription>
+{
+    public Guid? AreaId { get; init; }
+    public string? DifferentName { get; init; }
+    public string? Info { get; init; }
+
+    public List<FormA> FormsA { get; init; } = [];
+
+    public List<FormC> FormsC { get; init; } = [];
+
+    public override bool Equals(object? obj) => Equals((ResearchAreaDescription?)obj);
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, DifferentName, Info);
+    }
+
+    public bool Equals(ResearchAreaDescription? other)
+    {
+        return other is not null
+            && other.Id == Id
+            && other.DifferentName == DifferentName
+            && other.Info == Info;
+    }
+
+    public static Expression<Func<ResearchAreaDescription, bool>> EqualsByExpression(
+        ResearchAreaDescription? other
+    )
+    {
+        return researchAreaDescription =>
+            other != null
+            && researchAreaDescription.Id == other.Id
+            && other.DifferentName == researchAreaDescription.DifferentName
+            && other.Info == researchAreaDescription.Info;
+    }
+}
