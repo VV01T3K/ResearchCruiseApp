@@ -1,0 +1,32 @@
+﻿using System.Linq.Expressions;
+using ResearchCruiseApp.Domain;
+
+namespace ResearchCruiseApp.Domain.Entities;
+
+public class GuestUnit : Entity, IEquatable<GuestUnit>, IEquatableByExpression<GuestUnit>
+{
+    public string? Name { get; init; }
+
+    public List<FormAGuestUnit> FormAGuestUnits { get; init; } = [];
+
+    public List<FormBGuestUnit> FormBGuestUnits { get; init; } = [];
+
+    public List<FormCGuestUnit> FormCGuestUnits { get; init; } = [];
+
+    public override bool Equals(object? obj) => Equals((GuestUnit?)obj);
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name);
+    }
+
+    public bool Equals(GuestUnit? other)
+    {
+        return other is not null && other.Name == Name;
+    }
+
+    public static Expression<Func<GuestUnit, bool>> EqualsByExpression(GuestUnit? other)
+    {
+        return guestUnit => other != null && other.Name == guestUnit.Name;
+    }
+}
