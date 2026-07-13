@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordRequest>
 {

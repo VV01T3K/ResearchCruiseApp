@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public static class PublicationsEndpoints
 {
@@ -33,8 +34,10 @@ public static class PublicationsEndpoints
             .MapPost("/publications/import", Import)
             .WithName("ImportCurrentUserPublicationsV2")
             .WithSummary("Import publications for the current user.")
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithRequestValidation<ImportPublicationRequest[]>()
             .RequireAuthorization(AuthorizationPolicies.CurrentUserPublications);
     }
 

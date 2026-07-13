@@ -39,7 +39,7 @@ async function setupAuthMocks(
   page: Page,
   options: { refreshResponse?: { status: number; body?: object }; refreshHangs?: boolean } = {}
 ) {
-  await page.route(`${API_URL}/v2/account/me`, (route) => {
+  await page.route(`${API_URL}/v2/users/me`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify(getAdminAccountPayload()),
@@ -74,7 +74,7 @@ async function seedAuthAndNavigate(page: Page, authPayload: ReturnType<typeof ge
 test.describe('session expiration and refresh', () => {
   test('profile server error is not treated as a logged-out session', async ({ page }) => {
     let profileRequests = 0;
-    await page.route(`${API_URL}/v2/account/me`, (route) => {
+    await page.route(`${API_URL}/v2/users/me`, (route) => {
       profileRequests += 1;
       return route.fulfill({ status: 500 });
     });
