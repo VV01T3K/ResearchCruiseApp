@@ -14,7 +14,7 @@ export class LoginPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.page.route(`${API_URL}/account`, (route) => {
+    this.page.route(`${API_URL}/v2/account/me`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),
@@ -42,7 +42,7 @@ export class LoginPage {
 
   async mockLoginResult(result: 'success' | 'failure') {
     if (result === 'success') {
-      await this.page.route(`${API_URL}/account/login`, (route) => {
+      await this.page.route(`${API_URL}/v2/auth/login`, (route) => {
         route.fulfill({
           status: 200,
           body: JSON.stringify(getAuthDetailsPayload()),
@@ -50,7 +50,7 @@ export class LoginPage {
         });
       });
     } else {
-      await this.page.route(`${API_URL}/account/login`, (route) => {
+      await this.page.route(`${API_URL}/v2/auth/login`, (route) => {
         route.fulfill({ status: 401 });
       });
     }

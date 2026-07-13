@@ -1,0 +1,214 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { allowOnly } from '@/lib/guards';
+import { ColumnDef } from '@tanstack/react-table';
+import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import dayjs from 'dayjs';
+import { AppAvatar } from '@/components/shared/AppAvatar';
+import { AppBadge } from '@/components/shared/AppBadge';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppGuard } from '@/components/shared/AppGuard';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { getDisplayPeriod } from '@/lib/applications/periodUtils';
+import { useApplicationsQuery } from '@/api/applications/ApplicationCatalogApiHooks';
+import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/applications/contracts';
+
+export const Route = createFileRoute('/applications/')({
+  component: ApplicationsPage,
+  beforeLoad: allowOnly.authenticated(),
+});
+
+const dateFormat = 'DD.MM.YYYY';
+
+function ApplicationsPage() {
+  const applicationsQuery = useApplicationsQuery();
+
+  const columns: ColumnDef<ApplicationResponse>[] = [
+    {
+      id: 'number',
+      header: 'Nr',
+      accessorFn: (row) => row.number,
+      sortDescFirst: true,
+      size: 2,
+    },
+    {
+      header: 'Data',
+      accessorFn: (row) => row.date,
+      size: 5,
+    },
+    {
+      header: 'Rok rejsu',
+      accessorFn: (row) => row.year.toString(),
+      size: 5,
+    },
+    {
+      header: 'Liczba dni',
+      accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
+      size: 5,
+    },
+    {
+      header: 'Okres optymalny / dopuszczalny',
+      cell: ({ row }) => {
+        const { start, end } = getDisplayPeriod(row.original);
+        if (start && end) {
+          return (
+            <div className="text-sm">
+              <div>od: {dayjs(start).format(dateFormat)}</div>
+              <div>do: {dayjs(end).format(dateFormat)}</div>
+            </div>
+          );
+        }
+        return '-';
+      },
+      enableColumnFilter: false,
+      enableSorting: false,
+      size: 15,
+    },
+    {
+      header: 'Data rejsu',
+      cell: ({ row }) => {
+        if (row.original.startDate && row.original.endDate) {
+          return (
+            <div className="text-sm">
+              <div>od: {dayjs(row.original.startDate).format(dateFormat)}</div>
+              <div>do: {dayjs(row.original.endDate).format(dateFormat)}</div>
+            </div>
+          );
+        }
+        return '-';
+      },
+      enableColumnFilter: false,
+      enableSorting: false,
+      size: 20,
+    },
+    {
+      header: 'Kierownik',
+      accessorFn: (row) => `${row.mainManager.firstName} ${row.mainManager.lastName}`,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <AppAvatar
+            fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
+            variant="small"
+          />
+          <span>{`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}</span>
+        </div>
+      ),
+      size: 20,
+    },
+    {
+      header: 'Formularze',
+      cell: ({ row }) => {
+        const isFormBReadOnly =
+          row.original.status !== ApplicationStatus.FormBFilled && row.original.status !== ApplicationStatus.Undertaken;
+        return (
+          <div className="flex flex-col gap-1">
+            <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
+              Formularz A
+            </AppLink>
+            <AppLink
+              disabled={!row.original.hasFormB}
+              href={`/applications/${row.original.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
+            >
+              Formularz B
+            </AppLink>
+            <AppLink disabled={!row.original.hasFormC} href={`/applications/${row.original.id}/formC`}>
+              Formularz C
+            </AppLink>
+          </div>
+        );
+      },
+      size: 15,
+    },
+    {
+      header: 'Punkty',
+      accessorFn: (row) => `${row.points} pkt.`,
+      cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      size: 5,
+    },
+    {
+      header: 'Status',
+      accessorFn: (row) => row.status,
+      cell: ({ row }) => (
+        <>
+          <p className="mb-2 text-right italic sm:text-center">
+            {getApplicationStatusLabel(row.original.status)}
+            {row.original.status === ApplicationStatus.Draft ? ` (${row.original.note})` : null}
+          </p>
+          {row.original.status === ApplicationStatus.Draft && (
+            <AppButton
+              className="ml-auto sm:mx-auto"
+              size="sm"
+              type="link"
+              href={`/applications/${row.original.id}/formA?mode=edit`}
+            >
+              Kontynuuj wypełnianie
+            </AppButton>
+          )}
+          {row.original.status === ApplicationStatus.FormBRequired && (
+            <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
+              <AppButton
+                className="ml-auto sm:mx-auto"
+                size="sm"
+                type="link"
+                href={`/applications/${row.original.id}/formB?mode=edit`}
+              >
+                Wypełnij
+              </AppButton>
+            </AppGuard>
+          )}
+          {row.original.status === ApplicationStatus.Undertaken && (
+            <div className="flex flex-col items-center gap-2">
+              <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
+                <AppButton
+                  className="ml-auto sm:mx-auto"
+                  size="sm"
+                  type="link"
+                  href={`/applications/${row.original.id}/formC?mode=edit`}
+                >
+                  Wypełnij formularz C
+                </AppButton>
+              </AppGuard>
+              <div>
+                <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
+              </div>
+            </div>
+          )}
+        </>
+      ),
+      size: 20,
+    },
+    {
+      header: 'Akcje',
+      cell: ({ row }) => (
+        <>
+          <AppButton type="link" href={`/applications/${row.original.id}/details`} className="flex gap-2">
+            Szczegóły
+            <ZoomInIcon className="h-4 w-4" />
+          </AppButton>
+        </>
+      ),
+      size: 5,
+    },
+  ];
+
+  const initialSortingState = [
+    {
+      id: 'number',
+      desc: true,
+    },
+  ];
+
+  return (
+    <>
+      <AppLayout title="Zgłoszenia" variant="wide">
+        <AppTable
+          data={applicationsQuery.data}
+          columns={columns}
+          buttons={(defaultButtons) => [...defaultButtons]}
+          initialSortingState={initialSortingState}
+        />
+      </AppLayout>
+    </>
+  );
+}

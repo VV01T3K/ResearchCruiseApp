@@ -1,12 +1,22 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
 
-import { MOCK_IMAGE_FILEPATH, MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { API_URL, MOCK_IMAGE_FILEPATH, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
 
 test('valid form C', async ({ formCPage }) => {
   await formCPage.fillForm(); // Fill the form with default values
   await formCPage.submitForm({ expectedResult: 'valid' });
+});
+
+test('missing form B shows not found', async ({ formCPage }) => {
+  await formCPage.page.route(`${API_URL}/v2/applications/${formCPage.formId}/form-b`, (route) =>
+    route.fulfill({ status: 404 })
+  );
+
+  await formCPage.goto();
+
+  await expect(formCPage.page.getByText('Strona nie znaleziona')).toBeVisible();
 });
 
 test.describe('additional permissions section tests', () => {

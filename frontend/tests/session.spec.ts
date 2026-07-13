@@ -39,7 +39,7 @@ async function setupAuthMocks(
   page: Page,
   options: { refreshResponse?: { status: number; body?: object }; refreshHangs?: boolean } = {}
 ) {
-  await page.route(`${API_URL}/account`, (route) => {
+  await page.route(`${API_URL}/v2/account/me`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify(getAdminAccountPayload()),
@@ -48,11 +48,11 @@ async function setupAuthMocks(
   });
 
   if (options.refreshHangs) {
-    await page.route(`${API_URL}/account/refresh`, () => {
+    await page.route(`${API_URL}/v2/auth/refresh`, () => {
       // Intentionally never respond — simulates a hanging request
     });
   } else if (options.refreshResponse) {
-    await page.route(`${API_URL}/account/refresh`, (route) => {
+    await page.route(`${API_URL}/v2/auth/refresh`, (route) => {
       route.fulfill({
         status: options.refreshResponse!.status,
         body: options.refreshResponse!.body ? JSON.stringify(options.refreshResponse!.body) : undefined,
@@ -72,6 +72,20 @@ async function seedAuthAndNavigate(page: Page, authPayload: ReturnType<typeof ge
 }
 
 test.describe('session expiration and refresh', () => {
+  test('profile server error is not treated as a logged-out session', async ({ page }) => {
+    let profileRequests = 0;
+    await page.route(`${API_URL}/v2/account/me`, (route) => {
+      profileRequests += 1;
+      return route.fulfill({ status: 500 });
+    });
+
+    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
+
+    await expect.poll(() => profileRequests).toBeGreaterThan(1);
+    await expect(page).not.toHaveURL(/\/login/);
+    expect(await page.evaluate(() => window.localStorage.getItem('authDetails'))).not.toBeNull();
+  });
+
   test('warning modal appears ~1 minute before session expires', async ({ page }) => {
     await page.clock.install({ time: Date.now() });
     await setupAuthMocks(page, {
@@ -124,7 +138,7 @@ test.describe('session expiration and refresh', () => {
     await setupAuthMocks(page, {
       refreshResponse: { status: 200, body: extendedAuth },
     });
-    await page.route(`${API_URL}/users`, (route) => {
+    await page.route(`${API_URL}/v2/users`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),
@@ -150,7 +164,7 @@ test.describe('session expiration and refresh', () => {
     }, new Date(Date.now() - 5_000).toISOString());
 
     const refreshPromise = page.waitForResponse(
-      (res) => res.url().includes('/account/refresh') && res.request().method() === 'POST' && res.status() === 200
+      (res) => res.url().includes('/v2/auth/refresh') && res.request().method() === 'POST' && res.status() === 200
     );
 
     await page.reload();
@@ -166,7 +180,7 @@ test.describe('session expiration and refresh', () => {
     await setupAuthMocks(page, {
       refreshResponse: { status: 200, body: extendedAuth },
     });
-    await page.route(`${API_URL}/users`, (route) => {
+    await page.route(`${API_URL}/v2/users`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),
@@ -189,7 +203,7 @@ test.describe('session expiration and refresh', () => {
     await expect(refreshBtn).toBeVisible();
 
     const refreshPromise = page.waitForResponse(
-      (res) => res.url().includes('/account/refresh') && res.request().method() === 'POST' && res.status() === 200
+      (res) => res.url().includes('/v2/auth/refresh') && res.request().method() === 'POST' && res.status() === 200
     );
 
     await refreshBtn.click();
