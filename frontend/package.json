@@ -13,6 +13,8 @@
     "preview": "vp preview --host",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "api:generate": "../scripts/generate-api.sh",
+    "api:check": "vp run api:generate && git diff --exit-code -- ../backend/openapi/v2.json src/api/generated",
     "test": "playwright test",
     "test:ui": "playwright test --ui"
   },
@@ -27,7 +29,6 @@
     "@tanstack/react-router": "^1.159.5",
     "@tanstack/react-router-devtools": "^1.159.5",
     "@tanstack/react-table": "^8.21.3",
-    "axios": "^1.13.5",
     "bootstrap-icons": "^1.13.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
@@ -38,7 +39,7 @@
     "react-to-print": "^3.2.0",
     "tailwind-merge": "^3.4.0",
     "xlsx": "^0.18.5",
-    "zod": "^4.3.6"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
@@ -61,11 +62,13 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^17.3.0",
+    "orval": "8.9.0",
     "storybook": "^10.2.8",
     "tailwindcss": "^4.2.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vite-plugin-svgr": "^5.2.0",
-    "vite-plus": "^0.1.16"
+    "vite-plus": "^0.1.16",
+    "vitest": "^4.1.10"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",

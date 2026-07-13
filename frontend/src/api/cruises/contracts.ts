@@ -23,7 +23,7 @@ export type CruiseResponse = {
   deputyManager: CruisePersonResponse;
   applications: CruiseApplicationSummaryResponse[];
   status: CruiseStatus;
-  title?: string;
+  title: string | null;
   shipUnavailable: boolean;
 };
 
@@ -33,7 +33,7 @@ export type CruiseWriteRequest = {
   mainManagerId: string;
   deputyManagerId: string;
   cruiseApplicationIds: string[];
-  title?: string;
+  title: string | null;
   shipUnavailable: boolean;
 };
 
@@ -46,7 +46,7 @@ export type CruiseFormValues = {
   };
   cruiseApplicationsIds: string[];
   status?: string;
-  title?: string;
+  title?: string | null;
   shipUnavailable: boolean;
 };
 

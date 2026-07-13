@@ -1,19 +1,15 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import axios, { isAxiosError } from 'axios';
 
-import { client } from '@/lib/api';
+import { getCurrentUserV2, loginV2, registerAccountV2 } from '@/api/generated/endpoints';
+import { LoginV2Body, RegisterAccountV2Body } from '@/api/generated/model';
+import { ApiError } from '@/api/fetch';
+import { validateRequest } from '@/api/validateRequest';
 import { AuthDetails } from '@/models/user/AuthDetails';
+import { User } from '@/models/shared/User';
 import { Result } from '@/models/user/Results';
 import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
-import {
-  AuthResponse,
-  CurrentUserResponse,
-  LoginRequest,
-  ProblemDetails,
-  RegisterRequest,
-  RefreshRequest,
-} from './contracts';
+import { LoginRequest, ProblemDetails, RegisterRequest } from './contracts';
 
 type MutationProps = {
   updateAuthDetails: (newAuthDetails: AuthDetails | undefined) => Promise<void>;
@@ -34,20 +30,17 @@ export function useProfileQuery() {
       }
 
       try {
-        const response = await client.get<CurrentUserResponse>('/v2/account/me', {
+        return await getCurrentUserV2({
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        return response;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          return null;
-        }
+        if (error instanceof ApiError && error.status === 401) return null;
         throw error;
       }
     },
-    select: (res) => res?.data,
+    select: (user) => (user ? (user as User) : undefined),
     refetchOnWindowFocus: false,
   });
 }
@@ -55,37 +48,9 @@ export function useProfileQuery() {
 export function useLoginMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
     mutationFn: (request: LoginRequest) => {
-      return client.post<AuthResponse>('/v2/auth/login', request);
+      return loginV2(validateRequest('login', LoginV2Body, request));
     },
-    onSuccess: async ({ data }) => {
-      const authDetails: AuthDetails = {
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        accessTokenExpirationDate: new Date(data.accessTokenExpirationDate),
-        refreshTokenExpirationDate: new Date(data.refreshTokenExpirationDate),
-      };
-      updateAuthDetails(authDetails);
-    },
-    onError: () => {
-      updateAuthDetails(undefined);
-    },
-  });
-}
-
-export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
-  return useMutation({
-    mutationFn: ({ accessToken, refreshToken }: RefreshRequest) => {
-      // We create a new client here since the main one is paused while refreshing.
-      // Don't copy client.defaults to avoid sending an expired Authorization header.
-      const refreshClient = axios.create({
-        baseURL: client.defaults.baseURL,
-      });
-      return refreshClient.post<AuthResponse>('/v2/auth/refresh', {
-        accessToken,
-        refreshToken,
-      });
-    },
-    onSuccess: async ({ data }) => {
+    onSuccess: async (data) => {
       const authDetails: AuthDetails = {
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
@@ -103,13 +68,13 @@ export function useRefreshTokenMutation({ updateAuthDetails }: MutationProps) {
 export function useRegisterMutation({ setResult }: RegisterProps) {
   return useMutation({
     mutationFn: async (request: RegisterRequest) => {
-      return await client.post('/v2/auth/register', request);
+      return registerAccountV2(validateRequest('register-account', RegisterAccountV2Body, request));
     },
     onSuccess: async () => {
       setResult('success');
     },
     onError: async (error) => {
-      if (isAxiosError<ProblemDetails>(error) && error.response?.data.detail?.includes('taken')) {
+      if (error instanceof ApiError && (error.data as ProblemDetails)?.detail?.includes('taken')) {
         setResult('username-taken');
         return;
       }

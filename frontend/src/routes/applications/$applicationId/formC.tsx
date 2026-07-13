@@ -2,7 +2,7 @@ import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
-import { isAxiosError } from 'axios';
+import { ApiError } from '@/api/fetch';
 import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
@@ -125,7 +125,7 @@ function FormCPage() {
           toast.success('Formularz został wysłany pomyślnie.');
         },
         onError: (err) => {
-          if (isAxiosError(err) && err.response?.status === 403) {
+          if (err instanceof ApiError && err.status === 403) {
             toast.error(
               'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
             );
@@ -158,7 +158,7 @@ function FormCPage() {
           toast.success('Wersja robocza formularza została zapisana pomyślnie.');
         },
         onError: (err) => {
-          if (isAxiosError(err) && err.response?.status === 403) {
+          if (err instanceof ApiError && err.status === 403) {
             toast.error(
               'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
             );

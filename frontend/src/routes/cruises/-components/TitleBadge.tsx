@@ -4,7 +4,7 @@ import { AppBadge } from '@/components/shared/AppBadge';
 import { cn } from '@/lib/utils';
 
 type Props = {
-  title?: string;
+  title?: string | null;
   shipUnavailable: boolean;
 };
 export function TitleBadge({ title, shipUnavailable }: Props) {

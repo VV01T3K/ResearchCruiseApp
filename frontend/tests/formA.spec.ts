@@ -1,12 +1,47 @@
 import { expect } from '@playwright/test';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
-import { formTest as test } from './fixtures/fixtures';
+import { API_URL, formTest as test } from './fixtures/fixtures';
+import { getAdminAccountPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
 
 test('valid form A', async ({ formAPage }) => {
   await formAPage.fillForm(); // Fill the form with default values
   await formAPage.submitForm({ expectedResult: 'valid' });
+});
+
+test('generated contract blocks submission and shows a generic error', async ({ formAPage, page }) => {
+  let submissions = 0;
+  await page.route(`${API_URL}/v2/account/me`, (route) =>
+    route.fulfill({ status: 200, body: JSON.stringify({ ...getAdminAccountPayload(), id: 'not-a-guid' }) })
+  );
+  await page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
+    const values = getInitValuesAPayload();
+    const replaceAdminId = (manager: (typeof values.cruiseManagers)[number]) =>
+      manager.email === 'admin@gmail.com' ? { ...manager, id: 'not-a-guid' } : manager;
+    return route.fulfill({
+      status: 200,
+      body: JSON.stringify({
+        ...values,
+        cruiseManagers: values.cruiseManagers.map(replaceAdminId),
+        deputyManagers: values.deputyManagers.map(replaceAdminId),
+      }),
+    });
+  });
+  await page.route(`${API_URL}/v2/applications`, (route) => {
+    submissions += 1;
+    return route.fulfill({ status: 200 });
+  });
+
+  await formAPage.goto();
+  await formAPage.fillForm();
+  await formAPage.submitForm({
+    expectedResult: 'invalid',
+    message: 'A contract mismatch should show the generic form submission error',
+  });
+
+  expect(submissions).toBe(0);
+  await expect(formAPage.validationErrorMessage).toContainText('Nie udało się zapisać formularza');
 });
 
 test.describe('cruise manager info section tests', () => {

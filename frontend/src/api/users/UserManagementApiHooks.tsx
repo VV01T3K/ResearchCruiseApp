@@ -1,15 +1,24 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ProblemDetails } from '@/api/account/contracts';
+import { UserCreateRequest, UserProfilePatchRequest, UserWriteRequest } from '@/api/users/contracts';
+import { CruiseManagerOptionResponse, UserResponse } from '@/api/users/contracts';
 import {
-  CruiseManagerOptionResponse,
-  UserCreateRequest,
-  UserProfilePatchRequest,
-  UserResponse,
-  UserWriteRequest,
-} from '@/api/users/contracts';
-import { client } from '@/lib/api';
+  acceptUserV2,
+  addUserRoleV2,
+  createUserV2,
+  deactivateUserV2,
+  deleteUserV2,
+  getGetUsersV2QueryKey,
+  removeUserRoleV2,
+  requestPasswordResetV2,
+  updateUserV2,
+  useGetAvailableCruiseManagersV2Suspense,
+  useGetUsersV2Suspense,
+} from '@/api/generated/endpoints';
+import { CreateUserV2Body, RequestPasswordResetV2Body, UpdateUserV2Body } from '@/api/generated/model';
+import { ApiError } from '@/api/fetch';
+import { validateRequest } from '@/api/validateRequest';
 
 type Props = {
   editMode: boolean;
@@ -17,8 +26,8 @@ type Props = {
 };
 
 function getProblemDetail(error: unknown, fallback: string) {
-  if (isAxiosError<ProblemDetails>(error)) {
-    return error.response?.data.detail ?? fallback;
+  if (error instanceof ApiError) {
+    return (error.data as ProblemDetails)?.detail ?? fallback;
   }
 
   return fallback;
@@ -37,7 +46,7 @@ export function useNewUserMutation({ editMode, setSubmitError }: Props) {
         lastName: data.lastName,
         roles: [data.role],
       };
-      return await client.post('/v2/users', request);
+      return createUserV2(validateRequest('create-user', CreateUserV2Body, request));
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas dodawania użytkownika'));
@@ -57,7 +66,7 @@ export function useUpdateUserMutation({ editMode, setSubmitError }: Props) {
         firstName: data.firstName,
         lastName: data.lastName,
       };
-      return await client.patch(`/v2/users/${userId}`, request);
+      return updateUserV2(userId, validateRequest('update-user', UpdateUserV2Body, request));
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas aktualizacji użytkownika'));
@@ -67,15 +76,13 @@ export function useUpdateUserMutation({ editMode, setSubmitError }: Props) {
 
 export function useAddUserRoleMutation() {
   return useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: string }) =>
-      client.put(`/v2/users/${userId}/roles/${role}`),
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) => addUserRoleV2(userId, role),
   });
 }
 
 export function useRemoveUserRoleMutation() {
   return useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: string }) =>
-      client.delete(`/v2/users/${userId}/roles/${role}`),
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) => removeUserRoleV2(userId, role),
   });
 }
 
@@ -86,7 +93,7 @@ export function useDeleteUserMutation({ editMode, setSubmitError }: Props) {
         throw new Error('This method should be called only for existing users');
       }
 
-      return await client.delete(`/v2/users/${userId}`);
+      return deleteUserV2(userId);
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas usuwania użytkownika'));
@@ -103,10 +110,10 @@ export function useAcceptUserMutation({ editMode, setSubmitError }: Props) {
         throw new Error('This method should be called only for existing users');
       }
 
-      return await client.put(`/v2/users/${userId}/acceptance`);
+      return acceptUserV2(userId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: getGetUsersV2QueryKey() });
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas akceptacji użytkownika'));
@@ -123,10 +130,10 @@ export function useUnAcceptUserMutation({ editMode, setSubmitError }: Props) {
         throw new Error('This method should be called only for existing users');
       }
 
-      return await client.delete(`/v2/users/${userId}/acceptance`);
+      return deactivateUserV2(userId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: getGetUsersV2QueryKey() });
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas cofania akceptacji użytkownika'));
@@ -141,7 +148,7 @@ export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: P
         throw new Error('This method should be called only for existing users');
       }
 
-      return await client.post('/v2/auth/password-reset-request', { email });
+      return requestPasswordResetV2(validateRequest('request-password-reset', RequestPasswordResetV2Body, { email }));
     },
     onError: (error) => {
       setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas inicjowania zmiany hasła'));
@@ -150,17 +157,11 @@ export function useInitiatePasswordResetMutation({ editMode, setSubmitError }: P
 }
 
 export function useUsersQuery() {
-  return useSuspenseQuery({
-    queryKey: ['users'],
-    queryFn: async () => client.get<UserResponse[]>('/v2/users'),
-    select: (response) => response.data,
-  });
+  return useGetUsersV2Suspense<UserResponse[]>({ query: { select: (users) => users as UserResponse[] } });
 }
 
 export function useAvailableCruiseManagersQuery() {
-  return useSuspenseQuery({
-    queryKey: ['availableCruiseManagers'],
-    queryFn: async () => client.get<CruiseManagerOptionResponse[]>('/v2/users/available-cruise-managers'),
-    select: (response) => response.data,
+  return useGetAvailableCruiseManagersV2Suspense<CruiseManagerOptionResponse[]>({
+    query: { select: (managers) => managers as CruiseManagerOptionResponse[] },
   });
 }

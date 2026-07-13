@@ -59,6 +59,10 @@ jobs:
           node-version-file: ../frontend/.node-version
           cache: true
 
+      - name: Install frontend dependencies
+        run: vp install --frozen-lockfile
+        working-directory: frontend
+
       - name: Restore .NET tools
         run: dotnet tool restore
 
@@ -70,3 +74,7 @@ jobs:
 
       - name: Run tests
         run: vp run test
+
+      - name: Check generated API artifacts
+        run: vp run api:check
+        working-directory: frontend
