@@ -27,5 +27,5 @@ kill "$server_pid" 2>/dev/null || true
 wait "$server_pid" 2>/dev/null || true
 
 cd "$root/frontend"
-pnpm exec orval --config ./orval.config.ts
+vp exec orval --config ./orval.config.ts
 vp fmt src/api/generated
