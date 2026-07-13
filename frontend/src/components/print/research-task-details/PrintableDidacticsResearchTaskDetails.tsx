@@ -1,4 +1,4 @@
-import { DidacticsResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { DidacticsResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
 
 type Props = {
   data: DidacticsResearchTaskDto;
