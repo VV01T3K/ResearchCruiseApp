@@ -25,7 +25,6 @@ dist-ssr
 *.sw?
 
 *storybook.log
-.tanstack/tmp/*
 
 # Playwright
 /test-results/

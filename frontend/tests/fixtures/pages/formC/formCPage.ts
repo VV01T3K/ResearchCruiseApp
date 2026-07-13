@@ -39,63 +39,63 @@ export class FormCPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page, formId: string = TESTED_FORM_ID): Promise<FormCPage> {
-    page.route(`${API_URL}/forms/InitValues/A`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesAPayload()),
       });
     });
 
-    page.route(`${API_URL}/forms/InitValues/B`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-b/context`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesBPayload()),
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/cruise`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/cruise`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getCruisePayload()),
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/formA`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/form-a`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getFormAPayload()),
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/formB`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/form-b`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getFormBPayload()),
       });
     });
 
-    // Form C is not yet created, so we mock a 404 response
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/formC`, (route) => {
+    page.route(`${API_URL}/v2/applications/${formId}/form-c`, (route) => {
+      if (route.request().method() === 'PUT') {
+        return route.fulfill({
+          status: 200,
+        });
+      }
+
+      // Form C is not yet created, so we mock a 404 response
       route.fulfill({
         status: 404,
       });
     });
 
-    page.route(`${API_URL}/account`, (route) => {
+    page.route(`${API_URL}/v2/account/me`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications/${formId}/FormC?isDraft=false`, (route) => {
-      route.fulfill({
-        status: 200,
-      });
-    });
-
     // return empty list of applications
-    page.route(`${API_URL}/api/CruiseApplications`, (route) => {
+    page.route(`${API_URL}/v2/applications`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),
