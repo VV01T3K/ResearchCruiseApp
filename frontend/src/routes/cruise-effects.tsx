@@ -6,7 +6,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useCurrentCruiseEffectsQuery } from '@/api/account/AccountCurrentDataApiHooks';
+import { useCurrentCruiseEffectsQuery } from '@/api/users/CurrentUserApiHooks';
 import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
 import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
 

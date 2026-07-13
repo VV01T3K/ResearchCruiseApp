@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public static class CruiseEffectsEndpoints
 {

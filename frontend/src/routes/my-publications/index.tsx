@@ -16,7 +16,7 @@ import {
   useDeleteAllCurrentPublicationsMutation,
   useDeleteCurrentPublicationMutation,
   useImportCurrentPublicationsMutation,
-} from '@/api/account/AccountCurrentDataApiHooks';
+} from '@/api/users/CurrentUserApiHooks';
 import { Publication } from '@/api/publications/dto/Publication';
 
 export const Route = createFileRoute('/my-publications/')({

@@ -76,7 +76,7 @@ export class FormBPage {
       });
     });
 
-    page.route(`${API_URL}/v2/account/me`, (route) => {
+    page.route(`${API_URL}/v2/users/me`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),
