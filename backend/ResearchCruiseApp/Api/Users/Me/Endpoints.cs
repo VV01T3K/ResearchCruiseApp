@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public static class MeEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
         group
-            .MapGet("/me", Handle)
+            .MapGet("", Handle)
             .WithName("GetCurrentUserV2")
             .WithSummary("Get the current account.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)

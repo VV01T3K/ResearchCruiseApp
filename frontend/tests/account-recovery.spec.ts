@@ -9,7 +9,7 @@ async function seedAuthenticatedUser(page: Page, emailConfirmed = true) {
     (authDetails) => window.localStorage.setItem('authDetails', authDetails),
     JSON.stringify(getAuthDetailsPayload())
   );
-  await page.route(`${API_URL}/v2/account/me`, (route) => {
+  await page.route(`${API_URL}/v2/users/me`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify({ ...getAdminAccountPayload(), emailConfirmed }),
@@ -72,7 +72,7 @@ test('reset password uses the v2 reset route', async ({ page }) => {
 test('change password uses the v2 current-user route', async ({ page }) => {
   let requestBody: unknown;
   await seedAuthenticatedUser(page);
-  await page.route(`${API_URL}/v2/account/me/password`, async (route) => {
+  await page.route(`${API_URL}/v2/users/me/password`, async (route) => {
     requestBody = route.request().postDataJSON();
     await route.fulfill({ status: 204 });
   });
