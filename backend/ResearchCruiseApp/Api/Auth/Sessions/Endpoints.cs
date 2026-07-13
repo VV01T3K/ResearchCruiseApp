@@ -22,7 +22,8 @@ public static class SessionsEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<LoginRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .AllowAnonymous();
     }
 
     private static void MapRefresh(RouteGroupBuilder group)
@@ -35,7 +36,8 @@ public static class SessionsEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RefreshTokensRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .AllowAnonymous();
     }
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Login(

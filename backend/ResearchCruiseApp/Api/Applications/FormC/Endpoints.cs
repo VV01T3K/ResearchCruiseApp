@@ -70,7 +70,7 @@ public static class FormCEndpoints
     private static async Task<Results<Created, ProblemHttpResult>> Update(
         Guid applicationId,
         FormCWriteRequest request,
-        IValidator<FormCValidationModel> validator,
+        IValidator<FormCWriteRequest> validator,
         FormCFactory forms,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -79,10 +79,7 @@ public static class FormCEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(
-            new FormCValidationModel(request.Form, request.Draft),
-            cancellationToken
-        );
+        var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
@@ -112,10 +109,6 @@ public static class FormCEndpoints
             await formsService.DeleteFormC(oldFormC, cancellationToken);
         if (!request.Draft)
             await effectsService.EvaluateEffects(application, cancellationToken);
-
-        var result = Result.Empty;
-        if (!result.IsSuccess)
-            return result.Error!.ToProblemHttpResult();
 
         return TypedResults.Created();
     }
