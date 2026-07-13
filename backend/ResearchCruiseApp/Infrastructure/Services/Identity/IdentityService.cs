@@ -290,7 +290,10 @@ public class IdentityService(
         identityResult = await userManager.AddToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
         {
-            await userManager.DeleteAsync(user);
+            var deleteResult = await userManager.DeleteAsync(user);
+            if (!deleteResult.Succeeded)
+                return deleteResult.ToApplicationResult();
+
             return identityResult.ToApplicationResult();
         }
 
