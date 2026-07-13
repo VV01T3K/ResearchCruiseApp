@@ -52,8 +52,16 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
       - name: Restore .NET tools
         run: dotnet tool restore
 
-      - name: Check formatting
-        run: dotnet csharpier check .
+      - name: Restore dependencies
+        run: dotnet restore ResearchCruiseApp.sln
+
+      - name: Run checks
+        run: pnpm run check
