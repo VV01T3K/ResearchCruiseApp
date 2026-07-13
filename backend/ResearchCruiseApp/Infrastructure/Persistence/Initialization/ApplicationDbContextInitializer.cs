@@ -12,7 +12,8 @@ internal class ApplicationDbContextInitializer(
     RoleManager<IdentityRole> roleManager,
     IIdentityService identityService,
     IRandomGenerator randomGenerator,
-    IConfiguration configuration
+    IConfiguration configuration,
+    ILogger<ApplicationDbContextInitializer> logger
 )
 {
     public async Task Initialize()
@@ -43,14 +44,28 @@ internal class ApplicationDbContextInitializer(
 
         foreach (var user in users)
         {
+            if (await identityService.UserWithEmailExists(user.Email))
+                continue;
+
             var password = randomGenerator.CreateSecurePassword();
-            await identityService.AddUserWithRole(user, password, user.Role!);
+            var result = await identityService.AddUserWithRole(user, password, user.Role!);
+
+            if (!result.IsSuccess)
+            {
+                logger.LogWarning(
+                    "Seed user was not created: {Email} - {Error}",
+                    user.Email,
+                    result.Error?.Message
+                );
+                continue;
+            }
+
             if (
                 configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
                 ?? false
             )
             {
-                Console.WriteLine($"Seed User Created: {user.Email} - {password}");
+                logger.LogWarning("Seed User Created: {Email} - {Password}", user.Email, password);
             }
         }
     }

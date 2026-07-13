@@ -289,7 +289,10 @@ public class IdentityService(
 
         identityResult = await userManager.AddToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
+        {
+            await userManager.DeleteAsync(user);
             return identityResult.ToApplicationResult();
+        }
 
         var userDto = await CreateUserDto(user);
         await emailSender.SendAccountCreatedMessage(userDto, roleName, password);
