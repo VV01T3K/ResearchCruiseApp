@@ -4,14 +4,12 @@ using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    UserManager<User> userManager,
     IIdentityService identityService,
     IRandomGenerator randomGenerator,
     IConfiguration configuration,
@@ -46,26 +44,8 @@ internal class ApplicationDbContextInitializer(
 
         foreach (var user in users)
         {
-            var existingUser = await userManager.FindByEmailAsync(user.Email);
-            if (existingUser is not null)
-            {
-                if (await userManager.IsInRoleAsync(existingUser, user.Role!))
-                    continue;
-
-                var deleteResult = await userManager.DeleteAsync(existingUser);
-                if (!deleteResult.Succeeded)
-                {
-                    logger.LogWarning(
-                        "Incomplete seed user could not be removed: {Email} - {Error}",
-                        user.Email,
-                        string.Join(", ", deleteResult.Errors.Select(error => error.Description))
-                    );
-                    continue;
-                }
-            }
-
             var password = randomGenerator.CreateSecurePassword();
-            var result = await identityService.AddUserWithRole(user, password, user.Role!);
+            var result = await identityService.EnsureSeedUserWithRole(user, password, user.Role!);
 
             if (!result.IsSuccess)
             {
@@ -78,8 +58,11 @@ internal class ApplicationDbContextInitializer(
             }
 
             if (
-                configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
-                ?? false
+                result.Data == SeedUserStatus.Created
+                && (
+                    configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
+                    ?? false
+                )
             )
             {
                 logger.LogWarning("Seed User Created: {Email} - {Password}", user.Email, password);

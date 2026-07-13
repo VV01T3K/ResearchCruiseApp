@@ -25,7 +25,8 @@ public class IdentityService(
     ICurrentUserService currentUserService,
     IMapper mapper,
     IConfiguration configuration,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    ILogger<IdentityService> logger
 ) : IIdentityService
 {
     public async Task<UserDto?> GetUserDtoById(Guid id)
@@ -276,7 +277,67 @@ public class IdentityService(
         return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
     }
 
+    public async Task<Result<SeedUserStatus>> EnsureSeedUserWithRole(
+        AddUserFormDto addUserFormDto,
+        string password,
+        string roleName
+    )
+    {
+        var existingUser = await userManager.FindByEmailAsync(addUserFormDto.Email);
+        if (existingUser is not null)
+        {
+            if (await userManager.IsInRoleAsync(existingUser, roleName))
+                return SeedUserStatus.AlreadyComplete;
+
+            var deleteResult = await userManager.DeleteAsync(existingUser);
+            if (!deleteResult.Succeeded)
+                return deleteResult.ToApplicationResult().Error!;
+        }
+
+        var result = await CreateUserWithRole(addUserFormDto, password, roleName);
+        if (!result.IsSuccess)
+            return result.Error!;
+
+        try
+        {
+            await emailSender.SendAccountCreatedMessage(
+                await CreateUserDto(result.Data!),
+                roleName,
+                password
+            );
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(
+                exception,
+                "Seed user notification failed: {Email}",
+                addUserFormDto.Email
+            );
+        }
+
+        return SeedUserStatus.Created;
+    }
+
     public async Task<Result> AddUserWithRole(
+        AddUserFormDto addUserFormDto,
+        string password,
+        string roleName
+    )
+    {
+        var result = await CreateUserWithRole(addUserFormDto, password, roleName);
+        if (!result.IsSuccess)
+            return result.Error!;
+
+        await emailSender.SendAccountCreatedMessage(
+            await CreateUserDto(result.Data!),
+            roleName,
+            password
+        );
+
+        return Result.Empty;
+    }
+
+    private async Task<Result<User>> CreateUserWithRole(
         AddUserFormDto addUserFormDto,
         string password,
         string roleName
@@ -285,22 +346,16 @@ public class IdentityService(
         var user = CreateUser(addUserFormDto);
         var identityResult = await userManager.CreateAsync(user, password);
         if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
+            return identityResult.ToApplicationResult().Error!;
 
         identityResult = await userManager.AddToRoleAsync(user, roleName);
-        if (!identityResult.Succeeded)
-        {
-            var deleteResult = await userManager.DeleteAsync(user);
-            if (!deleteResult.Succeeded)
-                return deleteResult.ToApplicationResult();
+        if (identityResult.Succeeded)
+            return user;
 
-            return identityResult.ToApplicationResult();
-        }
-
-        var userDto = await CreateUserDto(user);
-        await emailSender.SendAccountCreatedMessage(userDto, roleName, password);
-
-        return Result.Empty;
+        var deleteResult = await userManager.DeleteAsync(user);
+        return (deleteResult.Succeeded ? identityResult : deleteResult)
+            .ToApplicationResult()
+            .Error!;
     }
 
     public async Task<IList<string>> GetUserRolesNames(Guid userId)

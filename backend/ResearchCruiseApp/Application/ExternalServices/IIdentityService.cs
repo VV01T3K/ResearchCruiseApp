@@ -4,6 +4,12 @@ using ResearchCruiseApp.Application.Models.DTOs.Users;
 
 namespace ResearchCruiseApp.Application.ExternalServices;
 
+public enum SeedUserStatus
+{
+    AlreadyComplete,
+    Created,
+}
+
 public interface IIdentityService
 {
     Task<UserDto?> GetUserDtoById(Guid id);
@@ -40,6 +46,12 @@ public interface IIdentityService
     Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto);
 
     Task<Result> AddUserWithRole(AddUserFormDto addUserFormDto, string password, string roleName);
+
+    Task<Result<SeedUserStatus>> EnsureSeedUserWithRole(
+        AddUserFormDto addUserFormDto,
+        string password,
+        string roleName
+    );
 
     Task<IList<string>> GetUserRolesNames(Guid userId);
 
