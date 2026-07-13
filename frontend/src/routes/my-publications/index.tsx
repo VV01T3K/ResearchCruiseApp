@@ -34,7 +34,9 @@ function MyPublicationsPage() {
   const uploadPublicationsMutation = useImportCurrentPublicationsMutation();
 
   function deleteSelectedPublications() {
-    Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync(id));
+    Object.keys(selectedPublications).forEach((publicationId) =>
+      deleteOwnPublicationMutation.mutateAsync({ publicationId })
+    );
     setSelectedPublications({});
   }
 
@@ -101,7 +103,9 @@ function MyPublicationsPage() {
         <AppButton
           variant="dangerOutline"
           size="xs"
-          onClick={() => deleteOwnPublicationMutation.mutateAsync(cell.row.original.id).catch(() => {})}
+          onClick={() =>
+            deleteOwnPublicationMutation.mutateAsync({ publicationId: cell.row.original.id }).catch(() => {})
+          }
         >
           <TrashIcon className="mr-2 h-3 w-3" />
           Usuń
@@ -122,7 +126,7 @@ function MyPublicationsPage() {
           getRowId={(row) => row.id}
           emptyTableMessage="Nie dodano żadnej publikacji"
           buttons={(defaultButtons) => [
-            <UploadButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
+            <UploadButton key="upload" onUpload={(data) => uploadPublicationsMutation.mutate({ data })} />,
             <AppButton
               key="goToRepository"
               type="link"

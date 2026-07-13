@@ -10,11 +10,6 @@ export type LoginRequest = {
   password: string;
 };
 
-export type RefreshRequest = {
-  accessToken: string;
-  refreshToken: string;
-};
-
 export type PasswordResetRequest = {
   email: string;
 };

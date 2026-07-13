@@ -1,54 +1,47 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-
-import { client } from '@/lib/api';
+import { useMutation } from '@tanstack/react-query';
+import {
+  updateApplicationDecisionV2,
+  useGetApplicationsV2Suspense,
+  useGetApplicationCruiseV2Suspense,
+  useGetApplicationEvaluationV2Suspense,
+  useGetApplicationV2Suspense,
+} from '@/api/generated/endpoints';
+import { UpdateApplicationDecisionV2Body } from '@/api/generated/model';
+import { validateRequest } from '@/api/validateRequest';
 import { CruiseResponse } from '@/api/cruises/contracts';
-
 import { ApplicationResponse, EvaluationResponse } from './contracts';
 
 export function useApplicationsQuery() {
-  return useSuspenseQuery({
-    queryKey: ['applications'],
-    queryFn: async () => {
-      return client.get('/v2/applications');
-    },
-    select: (res) => res.data as ApplicationResponse[],
+  return useGetApplicationsV2Suspense<ApplicationResponse[]>({
+    query: { select: (applications) => applications as ApplicationResponse[] },
   });
 }
 
 export function useApplicationQuery(applicationId: string) {
-  return useSuspenseQuery({
-    queryKey: ['applications', applicationId],
-    queryFn: async () => {
-      return client.get(`/v2/applications/${applicationId}`);
-    },
-    select: (res) => res.data as ApplicationResponse,
+  return useGetApplicationV2Suspense<ApplicationResponse>(applicationId, {
+    query: { select: (application) => application as ApplicationResponse },
   });
 }
 
 export function useApplicationCruiseQuery(applicationId: string) {
-  return useSuspenseQuery({
-    queryKey: ['applications', applicationId, 'cruise'],
-    queryFn: async () => {
-      return client.get(`/v2/applications/${applicationId}/cruise`);
-    },
-    select: (res) => res.data as CruiseResponse,
+  return useGetApplicationCruiseV2Suspense<CruiseResponse>(applicationId, {
+    query: { select: (cruise) => cruise as CruiseResponse },
   });
 }
 
 export function useApplicationEvaluationQuery(applicationId: string) {
-  return useSuspenseQuery({
-    queryKey: ['applications', applicationId, 'evaluation'],
-    queryFn: async () => {
-      return client.get(`/v2/applications/${applicationId}/evaluation`);
-    },
-    select: (res) => res.data as EvaluationResponse,
+  return useGetApplicationEvaluationV2Suspense<EvaluationResponse>(applicationId, {
+    query: { select: (evaluation) => evaluation as EvaluationResponse },
   });
 }
 
 export function useAcceptApplicationMutation() {
   return useMutation({
     mutationFn: async (applicationId: string) => {
-      return client.put(`/v2/applications/${applicationId}/decision`, { accept: true });
+      return updateApplicationDecisionV2(
+        applicationId,
+        validateRequest('accept-application', UpdateApplicationDecisionV2Body, { accept: true })
+      );
     },
   });
 }
@@ -56,7 +49,10 @@ export function useAcceptApplicationMutation() {
 export function useRejectApplicationMutation() {
   return useMutation({
     mutationFn: async (applicationId: string) => {
-      return client.put(`/v2/applications/${applicationId}/decision`, { accept: false });
+      return updateApplicationDecisionV2(
+        applicationId,
+        validateRequest('reject-application', UpdateApplicationDecisionV2Body, { accept: false })
+      );
     },
   });
 }

@@ -1,15 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { client } from '@/lib/api';
+import { apiFetch } from '@/api/fetch';
 
 export function useBackendVersionQuery() {
   return useSuspenseQuery({
     queryKey: ['backendVersion'],
     queryFn: () => {
-      return client.get('/version', { headers: { Authorization: '' } });
-    },
-    select: (response) => {
-      return response.data;
+      return apiFetch<string>('/version', { headers: { Authorization: '' } });
     },
     retry: false,
   });

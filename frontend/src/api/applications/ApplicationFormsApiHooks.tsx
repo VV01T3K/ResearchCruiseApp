@@ -1,71 +1,98 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 
 import { FormADto } from '@/api/applications/dto/FormADto';
 import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
 import { FormBDto } from '@/api/applications/dto/FormBDto';
 import { FormBInitValuesDto } from '@/api/applications/dto/FormBInitValuesDto';
 import { FormCDto } from '@/api/applications/dto/FormCDto';
-import { client } from '@/lib/api';
+import { ApiError } from '@/api/fetch';
+import {
+  createApplicationV2,
+  getApplicationFormBV2,
+  getApplicationFormCV2,
+  getGetApplicationFormBV2QueryKey,
+  getGetApplicationFormCV2QueryKey,
+  refillApplicationFormBV2,
+  updateApplicationFormAV2,
+  updateApplicationFormBV2,
+  updateApplicationFormCV2,
+  useGetApplicationFormAContextV2Suspense,
+  useGetApplicationFormAV2Suspense,
+  useGetApplicationFormBContextV2Suspense,
+} from '@/api/generated/endpoints';
+import {
+  CreateApplicationV2Body,
+  UpdateApplicationFormAV2Body,
+  UpdateApplicationFormBV2Body,
+  UpdateApplicationFormCV2Body,
+} from '@/api/generated/model';
+import { validateRequest } from '@/api/validateRequest';
+
+function formARequest(form: FormADto, draft: boolean) {
+  return {
+    form: {
+      ...form,
+      acceptablePeriod: form.acceptablePeriod || null,
+      optimalPeriod: form.optimalPeriod || null,
+    },
+    draft,
+  };
+}
 
 export function useFormAInitValuesQuery() {
-  return useSuspenseQuery({
-    queryKey: ['formAInitValues'],
-    queryFn: async () => client.get('/v2/applications/form-a/context'),
-    select: (res) => res.data as FormAInitValuesDto,
+  return useGetApplicationFormAContextV2Suspense<FormAInitValuesDto>({
+    query: { select: (values) => values as FormAInitValuesDto },
   });
 }
 
 export function useFormBInitValuesQuery() {
-  return useSuspenseQuery({
-    queryKey: ['formBInitValues'],
-    queryFn: async () => client.get('/v2/applications/form-b/context'),
-    select: (res) => res.data as FormBInitValuesDto,
+  return useGetApplicationFormBContextV2Suspense<FormBInitValuesDto>({
+    query: { select: (values) => values as FormBInitValuesDto },
   });
 }
 
 export function useFormAQuery(applicationId: string) {
-  return useSuspenseQuery({
-    queryKey: ['formA', applicationId],
-    queryFn: async () => client.get(`/v2/applications/${applicationId}/form-a`),
-    select: (res) => {
-      const dto = res.data as FormADto;
-      dto.note ??= '';
-      dto.precisePeriodStart ??= '';
-      dto.precisePeriodEnd ??= '';
-      return dto;
+  return useGetApplicationFormAV2Suspense(applicationId, {
+    query: {
+      select: (response) => {
+        const dto = response as FormADto;
+        dto.note ??= '';
+        dto.precisePeriodStart ??= '';
+        dto.precisePeriodEnd ??= '';
+        return dto;
+      },
     },
   });
 }
 
 export function useFormBQuery(applicationId: string) {
   return useSuspenseQuery({
-    queryKey: ['formB', applicationId],
+    queryKey: getGetApplicationFormBV2QueryKey(applicationId),
     queryFn: async () => {
       try {
-        return await client.get(`/v2/applications/${applicationId}/form-b`);
+        return await getApplicationFormBV2(applicationId);
       } catch (error) {
-        if ((error as AxiosError).status === 404) return { data: null };
+        if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
-    select: (res) => res.data as FormBDto,
+    select: (response) => response as FormBDto,
     retry: false,
   });
 }
 
 export function useFormCQuery(applicationId: string) {
   return useSuspenseQuery({
-    queryKey: ['formC', applicationId],
+    queryKey: getGetApplicationFormCV2QueryKey(applicationId),
     queryFn: async () => {
       try {
-        return await client.get(`/v2/applications/${applicationId}/form-c`);
+        return await getApplicationFormCV2(applicationId);
       } catch (error) {
-        if ((error as AxiosError).status === 404) return { data: null };
+        if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
-    select: (res) => res.data as FormCDto,
+    select: (response) => response as FormCDto,
     retry: false,
   });
 }
@@ -73,33 +100,36 @@ export function useFormCQuery(applicationId: string) {
 export function useSaveFormAMutation() {
   return useMutation({
     mutationFn: async ({ form, draft }: { form: FormADto; draft: boolean }) =>
-      client.post('/v2/applications', { form, draft }),
+      createApplicationV2(validateRequest('create-form-a', CreateApplicationV2Body, formARequest(form, draft))),
   });
 }
 
 export function useUpdateFormAMutation() {
   return useMutation({
     mutationFn: async ({ id, form, draft }: { id: string; form: FormADto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-a`, { form: { ...form, id }, draft }),
+      updateApplicationFormAV2(
+        id,
+        validateRequest('update-form-a', UpdateApplicationFormAV2Body, formARequest({ ...form, id }, draft))
+      ),
   });
 }
 
 export function useUpdateFormBMutation() {
   return useMutation({
     mutationFn: async ({ id, form, draft }: { id: string; form: FormBDto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-b`, { form, draft }),
+      updateApplicationFormBV2(id, validateRequest('update-form-b', UpdateApplicationFormBV2Body, { form, draft })),
   });
 }
 
 export function useUpdateFormCMutation() {
   return useMutation({
     mutationFn: async ({ id, form, draft }: { id: string; form: FormCDto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-c`, { form, draft }),
+      updateApplicationFormCV2(id, validateRequest('update-form-c', UpdateApplicationFormCV2Body, { form, draft })),
   });
 }
 
 export function useRevertFormBToEditMutation() {
   return useMutation({
-    mutationFn: async ({ id }: { id: string }) => client.put(`/v2/applications/${id}/form-b/refill`),
+    mutationFn: async ({ id }: { id: string }) => refillApplicationFormBV2(id),
   });
 }

@@ -1,7 +1,10 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-
-import { client } from '@/lib/api';
-
+import { useMutation } from '@tanstack/react-query';
+import {
+  updateApplicationSupervisorReviewDecisionV2,
+  useGetApplicationSupervisorReviewV2Suspense,
+} from '@/api/generated/endpoints';
+import { UpdateApplicationSupervisorReviewDecisionV2Body } from '@/api/generated/model';
+import { validateRequest } from '@/api/validateRequest';
 import { SupervisorReviewResponse } from './contracts';
 
 type SupervisorReviewQueryProps = {
@@ -10,22 +13,32 @@ type SupervisorReviewQueryProps = {
 };
 
 export function useSupervisorReviewQuery({ applicationId, code }: SupervisorReviewQueryProps) {
-  return useSuspenseQuery({
-    queryKey: ['supervisorReview', applicationId, code],
-    queryFn: async () => client.get(`/v2/applications/${applicationId}/supervisor-review?code=${code}`),
-    select: (res) => {
-      const review = res.data as SupervisorReviewResponse;
-      review.form.note ??= '';
-      review.form.periodSelectionType =
-        review.form.precisePeriodEnd || review.form.precisePeriodStart ? 'precise' : 'period';
-      return review;
-    },
-  });
+  return useGetApplicationSupervisorReviewV2Suspense<SupervisorReviewResponse>(
+    applicationId,
+    { code },
+    {
+      query: {
+        select: (response) => {
+          const review = response as SupervisorReviewResponse;
+          review.form.note ??= '';
+          review.form.periodSelectionType =
+            review.form.precisePeriodEnd || review.form.precisePeriodStart ? 'precise' : 'period';
+          return review;
+        },
+      },
+    }
+  );
 }
 
 export function useSupervisorReviewDecisionMutation() {
   return useMutation({
     mutationFn: async ({ applicationId, accept, code }: SupervisorReviewQueryProps & { accept: boolean }) =>
-      client.put(`/v2/applications/${applicationId}/supervisor-review/decision`, { accept, code }),
+      updateApplicationSupervisorReviewDecisionV2(
+        applicationId,
+        validateRequest('supervisor-review-decision', UpdateApplicationSupervisorReviewDecisionV2Body, {
+          accept,
+          code,
+        })
+      ),
   });
 }

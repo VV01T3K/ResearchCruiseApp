@@ -1,6 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { client } from '@/lib/api';
+import {
+  changeCurrentUserPasswordV2,
+  confirmEmailV2,
+  requestPasswordResetV2,
+  resendConfirmationEmailV2,
+  resetPasswordV2,
+} from '@/api/generated/endpoints';
+import {
+  ChangeCurrentUserPasswordV2Body,
+  RequestPasswordResetV2Body,
+  ResendConfirmationEmailV2Body,
+  ResetPasswordV2Body,
+} from '@/api/generated/model';
+import { validateRequest } from '@/api/validateRequest';
 import { Result } from '@/models/user/Results';
 
 import {
@@ -18,7 +31,7 @@ type Props = {
 export function useForgotPasswordMutation({ setResult }: Props) {
   return useMutation({
     mutationFn: async (request: PasswordResetRequest) => {
-      return await client.post('/v2/auth/password-reset-request', request);
+      return requestPasswordResetV2(validateRequest('request-password-reset', RequestPasswordResetV2Body, request));
     },
     onSuccess: () => {
       setResult('success');
@@ -32,9 +45,7 @@ export function useForgotPasswordMutation({ setResult }: Props) {
 export function useConfirmEmailMutation({ setResult }: Props) {
   return useMutation({
     mutationFn: async (request: ConfirmEmailRequest) => {
-      return await client.get('/v2/auth/confirm-email', {
-        params: request,
-      });
+      return confirmEmailV2(request);
     },
     onSuccess: () => {
       setResult('success');
@@ -48,7 +59,9 @@ export function useConfirmEmailMutation({ setResult }: Props) {
 export function useResendConfirmationEmailMutation() {
   return useMutation({
     mutationFn: async (request: ResendConfirmationEmailRequest) => {
-      return await client.post('/v2/auth/resend-confirmation-email', request);
+      return resendConfirmationEmailV2(
+        validateRequest('resend-confirmation-email', ResendConfirmationEmailV2Body, request)
+      );
     },
   });
 }
@@ -56,7 +69,7 @@ export function useResendConfirmationEmailMutation() {
 export function useResetPasswordMutation({ setResult }: Props) {
   return useMutation({
     mutationFn: async (request: ResetPasswordRequest) => {
-      return await client.post('/v2/auth/password-reset', request);
+      return resetPasswordV2(validateRequest('reset-password', ResetPasswordV2Body, request));
     },
     onSuccess: () => {
       setResult('success');
@@ -70,7 +83,7 @@ export function useResetPasswordMutation({ setResult }: Props) {
 export function useChangePasswordMutation({ setResult }: Props) {
   return useMutation({
     mutationFn: async (request: ChangePasswordRequest) => {
-      return await client.patch('/v2/account/me/password', request);
+      return changeCurrentUserPasswordV2(validateRequest('change-password', ChangeCurrentUserPasswordV2Body, request));
     },
     onSuccess: () => {
       setResult('success');

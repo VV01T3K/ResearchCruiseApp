@@ -36,6 +36,29 @@ builder.Services.AddOpenApi(
                     StringComparison.OrdinalIgnoreCase
                 ) == true
             );
+        options.AddSchemaTransformer(
+            (schema, context, _) =>
+            {
+                var type =
+                    Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
+                    ?? context.JsonTypeInfo.Type;
+                if (type == typeof(Guid))
+                {
+                    schema.Format = "guid";
+                    schema.Pattern =
+                        "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+        options.AddDocumentTransformer(
+            (document, _, _) =>
+            {
+                document.Servers = [];
+                return Task.CompletedTask;
+            }
+        );
     }
 );
 builder.Services.AddApiVersioning(options =>
@@ -102,9 +125,13 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
 {
     app.MapOpenApi("/openapi/{documentName}.json");
+}
+
+if (app.Environment.IsDevelopment())
+{
     app.MapScalarApiReference(options =>
     {
         options
