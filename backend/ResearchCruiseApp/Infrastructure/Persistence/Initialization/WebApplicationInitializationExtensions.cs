@@ -4,6 +4,9 @@ internal static class WebApplicationInitializationExtensions
 {
     public static async Task InitializeDatabase(this WebApplication app)
     {
+        if (app.Environment.IsEnvironment("Testing"))
+            return;
+
         using var scope = app.Services.CreateScope();
 
         var initializer =
