@@ -1,18 +1,19 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios, { isAxiosError } from 'axios';
 
-import { client } from '@/lib/api';
+import { client, ProblemDetails } from '@/lib/api';
 import { AuthDetails } from '@/models/user/AuthDetails';
 import { Result } from '@/models/user/Results';
-import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
 import {
   AuthResponse,
-  CurrentUserResponse,
+  ConfirmEmailRequest,
   LoginRequest,
-  ProblemDetails,
-  RegisterRequest,
+  PasswordResetRequest,
   RefreshRequest,
+  RegisterRequest,
+  ResendConfirmationEmailRequest,
+  ResetPasswordRequest,
 } from './contracts';
 
 type MutationProps = {
@@ -23,34 +24,9 @@ type RegisterProps = {
   setResult: (result: Result | 'username-taken') => void;
 };
 
-/* Returns NULL when no access token has been set or the session is unauthorized. */
-export function useProfileQuery() {
-  return useSuspenseQuery({
-    queryKey: ['userProfile'],
-    queryFn: async () => {
-      const accessToken = getStoredAuthDetails()?.accessToken;
-      if (!accessToken) {
-        return null;
-      }
-
-      try {
-        const response = await client.get<CurrentUserResponse>('/v2/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        return response;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          return null;
-        }
-        throw error;
-      }
-    },
-    select: (res) => res?.data,
-    refetchOnWindowFocus: false,
-  });
-}
+type ResultProps = {
+  setResult: (result: Result) => void;
+};
 
 export function useLoginMutation({ updateAuthDetails }: MutationProps) {
   return useMutation({
@@ -114,6 +90,58 @@ export function useRegisterMutation({ setResult }: RegisterProps) {
         return;
       }
 
+      setResult('error');
+    },
+  });
+}
+
+export function useConfirmEmailMutation({ setResult }: ResultProps) {
+  return useMutation({
+    mutationFn: async (request: ConfirmEmailRequest) => {
+      return await client.get('/v2/auth/confirm-email', {
+        params: request,
+      });
+    },
+    onSuccess: () => {
+      setResult('success');
+    },
+    onError: () => {
+      setResult('error');
+    },
+  });
+}
+
+export function useResendConfirmationEmailMutation() {
+  return useMutation({
+    mutationFn: async (request: ResendConfirmationEmailRequest) => {
+      return await client.post('/v2/auth/resend-confirmation-email', request);
+    },
+  });
+}
+
+export function useForgotPasswordMutation({ setResult }: ResultProps) {
+  return useMutation({
+    mutationFn: async (request: PasswordResetRequest) => {
+      return await client.post('/v2/auth/password-reset-request', request);
+    },
+    onSuccess: () => {
+      setResult('success');
+    },
+    onError: () => {
+      setResult('error');
+    },
+  });
+}
+
+export function useResetPasswordMutation({ setResult }: ResultProps) {
+  return useMutation({
+    mutationFn: async (request: ResetPasswordRequest) => {
+      return await client.post('/v2/auth/password-reset', request);
+    },
+    onSuccess: () => {
+      setResult('success');
+    },
+    onError: () => {
       setResult('error');
     },
   });

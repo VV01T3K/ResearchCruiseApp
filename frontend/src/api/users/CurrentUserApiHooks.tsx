@@ -1,9 +1,65 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-import { CurrentPublicationImportRequest, CurrentPublicationResponse } from '@/api/account/contracts';
 import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
 import { Publication } from '@/api/publications/dto/Publication';
 import { client } from '@/lib/api';
+import { Result } from '@/models/user/Results';
+import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
+
+import {
+  ChangePasswordRequest,
+  CurrentPublicationImportRequest,
+  CurrentPublicationResponse,
+  CurrentUserResponse,
+} from './contracts';
+
+type ResultProps = {
+  setResult: (result: Result) => void;
+};
+
+/* Returns NULL when no access token has been set or the session is unauthorized. */
+export function useProfileQuery() {
+  return useSuspenseQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const accessToken = getStoredAuthDetails()?.accessToken;
+      if (!accessToken) {
+        return null;
+      }
+
+      try {
+        const response = await client.get<CurrentUserResponse>('/v2/users/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        return response;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          return null;
+        }
+        throw error;
+      }
+    },
+    select: (res) => res?.data,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useChangePasswordMutation({ setResult }: ResultProps) {
+  return useMutation({
+    mutationFn: async (request: ChangePasswordRequest) => {
+      return await client.patch('/v2/users/me/password', request);
+    },
+    onSuccess: () => {
+      setResult('success');
+    },
+    onError: () => {
+      setResult('error');
+    },
+  });
+}
 
 export function useCurrentPublicationsQuery() {
   return useSuspenseQuery({

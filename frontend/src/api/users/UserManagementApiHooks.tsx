@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
-import { ProblemDetails } from '@/api/account/contracts';
+import { ProblemDetails } from '@/lib/api';
 import {
   CruiseManagerOptionResponse,
   UserCreateRequest,
