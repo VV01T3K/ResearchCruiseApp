@@ -23,7 +23,7 @@ type RegisterProps = {
   setResult: (result: Result | 'username-taken') => void;
 };
 
-/* Returns NULL when no access token has been set or profile couldn't be fetched. */
+/* Returns NULL when no access token has been set or the session is unauthorized. */
 export function useProfileQuery() {
   return useSuspenseQuery({
     queryKey: ['userProfile'],
@@ -44,7 +44,7 @@ export function useProfileQuery() {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           return null;
         }
-        return null;
+        throw error;
       }
     },
     select: (res) => res?.data,

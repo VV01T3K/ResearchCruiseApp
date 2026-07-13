@@ -1,5 +1,5 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 import { FormADto } from '@/api/applications/dto/FormADto';
 import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
@@ -43,13 +43,13 @@ export function useFormBQuery(applicationId: string) {
     queryKey: ['formB', applicationId],
     queryFn: async () => {
       try {
-        return await client.get(`/v2/applications/${applicationId}/form-b`);
+        return await client.get<FormBDto>(`/v2/applications/${applicationId}/form-b`);
       } catch (error) {
-        if ((error as AxiosError).status === 404) return { data: null };
+        if (isAxiosError(error) && error.response?.status === 404) return { data: null };
         throw error;
       }
     },
-    select: (res) => res.data as FormBDto,
+    select: (res): FormBDto | null => res.data,
     retry: false,
   });
 }
@@ -59,13 +59,13 @@ export function useFormCQuery(applicationId: string) {
     queryKey: ['formC', applicationId],
     queryFn: async () => {
       try {
-        return await client.get(`/v2/applications/${applicationId}/form-c`);
+        return await client.get<FormCDto>(`/v2/applications/${applicationId}/form-c`);
       } catch (error) {
-        if ((error as AxiosError).status === 404) return { data: null };
+        if (isAxiosError(error) && error.response?.status === 404) return { data: null };
         throw error;
       }
     },
-    select: (res) => res.data as FormCDto,
+    select: (res): FormCDto | null => res.data,
     retry: false,
   });
 }
