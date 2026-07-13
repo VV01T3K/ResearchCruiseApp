@@ -1,29 +1,30 @@
 using FluentValidation;
+using ResearchCruiseApp.Api.Applications.Shared;
 
-namespace ResearchCruiseApp.Api.Applications.Shared;
+namespace ResearchCruiseApp.Api.Applications;
 
-public sealed class FormCValidationModelValidator : AbstractValidator<FormCValidationModel>
+public sealed class FormBWriteRequestValidator : AbstractValidator<FormBWriteRequest>
 {
-    public FormCValidationModelValidator(FileInspector fileInspector)
+    public FormBWriteRequestValidator(FileInspector fileInspector)
     {
         When(
-            model => !model.IsDraft,
+            request => !request.Draft,
             () =>
             {
-                RuleForEach(model => model.FormCDto.Permissions)
+                RuleForEach(request => request.Form.Permissions)
                     .Must(permissionDto => permissionDto.Scan is not null)
                     .WithMessage(
-                        "Na etapie Formularza C wymagane jest przesłanie skanów pozwoleń."
+                        "Na etapie Formularza B wymagane jest przesłanie skanów pozwoleń."
                     );
 
-                RuleForEach(model => model.FormCDto.Permissions)
+                RuleForEach(request => request.Form.Permissions)
                     .Must(contractDto =>
                         contractDto.Scan is not null
                         && fileInspector.IsFilePdf(contractDto.Scan.Content)
                     )
                     .WithMessage("Skan pozwolenia musi być plikiem PDF.");
 
-                RuleForEach(model => model.FormCDto.Permissions)
+                RuleForEach(request => request.Form.Permissions)
                     .Must(contractDto =>
                         contractDto.Scan is not null
                         && fileInspector.IsFileSizeValid(

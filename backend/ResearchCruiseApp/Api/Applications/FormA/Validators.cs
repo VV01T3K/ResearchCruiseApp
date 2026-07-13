@@ -1,14 +1,15 @@
 ﻿using System.Globalization;
 using FluentValidation;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 
-namespace ResearchCruiseApp.Api.Applications.Shared;
+namespace ResearchCruiseApp.Api.Applications;
 
-public sealed class FormAValidationModelValidator : AbstractValidator<FormAValidationModel>
+public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteRequest>
 {
     private readonly FileInspector _fileInspector;
 
-    public FormAValidationModelValidator(FileInspector fileInspector)
+    public FormAWriteRequestValidator(FileInspector fileInspector)
     {
         _fileInspector = fileInspector;
 
@@ -19,7 +20,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
     private void AddDraftValidation()
     {
         When(
-            command => command.IsDraft,
+            request => request.Draft,
             () =>
             {
                 AddCruiseHoursDraftValidation();
@@ -35,7 +36,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
     private void AddNonDraftValidation()
     {
         When(
-            command => !command.IsDraft,
+            request => !request.Draft,
             () =>
             {
                 AddManagersTeamNonDraftValidation();
@@ -67,7 +68,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddManagersTeamNonDraftValidation()
     {
-        RuleFor(command => command.FormADto)
+        RuleFor(request => request.Form)
             .Must(formADto => formADto.DeputyManagerId is not null)
             .WithMessage("Wybranie kierownika i zastępcy jest wymagane.");
     }
@@ -75,15 +76,15 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
     private void AddPeriodsCommonValidation()
     {
         When(
-            command =>
-                command.FormADto.PrecisePeriodStart is not null
-                || command.FormADto.PrecisePeriodEnd is not null,
+            request =>
+                request.Form.PrecisePeriodStart is not null
+                || request.Form.PrecisePeriodEnd is not null,
             () =>
             {
-                RuleFor(command => command.FormADto.AcceptablePeriod).Null();
-                RuleFor(command => command.FormADto.OptimalPeriod).Null();
+                RuleFor(request => request.Form.AcceptablePeriod).Null();
+                RuleFor(request => request.Form.OptimalPeriod).Null();
 
-                RuleFor(command => command.FormADto)
+                RuleFor(request => request.Form)
                     .Must(dto =>
                         dto.PrecisePeriodStart is not null
                         && dto.PrecisePeriodEnd is not null
@@ -91,9 +92,9 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
                     )
                     .WithMessage("PrecisePeriod must not start after it's end");
 
-                RuleFor(command => command.FormADto)
+                RuleFor(request => request.Form)
                     .Must(HasEnoughPrecisePeriodForCruise)
-                    .When(command => uint.TryParse(command.FormADto.CruiseHours, out _))
+                    .When(request => uint.TryParse(request.Form.CruiseHours, out _))
                     .WithMessage(
                         "Dokładny okres rejsu musi być równy lub dłuższy niż liczba planowanych godzin rejsowych."
                     );
@@ -101,34 +102,32 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
         );
 
         When(
-            command =>
-                command.FormADto.PrecisePeriodStart is null
-                && command.FormADto.PrecisePeriodEnd is null,
+            request =>
+                request.Form.PrecisePeriodStart is null && request.Form.PrecisePeriodEnd is null,
             () =>
             {
-                RuleFor(command => command.FormADto.AcceptablePeriod)
+                RuleFor(request => request.Form.AcceptablePeriod)
                     .Must(period => period?.Count == 2);
 
-                RuleFor(command => command.FormADto.OptimalPeriod)
-                    .Must(period => period?.Count == 2);
+                RuleFor(request => request.Form.OptimalPeriod).Must(period => period?.Count == 2);
 
-                RuleForEach(command => command.FormADto.AcceptablePeriod)
+                RuleForEach(request => request.Form.AcceptablePeriod)
                     .Must(edge =>
                         uint.TryParse(edge, out var edgeInt)
                         && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
                     )
                     .WithMessage("Granice dopuszczalnego okresu są w niepoprawnym formacie");
 
-                RuleForEach(command => command.FormADto.OptimalPeriod)
+                RuleForEach(request => request.Form.OptimalPeriod)
                     .Must(edge =>
                         uint.TryParse(edge, out var edgeInt)
                         && edgeInt <= FormAValuesConstants.MaxPeriodEdgeValue
                     )
                     .WithMessage("Granice optymalnego okresu są w niepoprawnym formacie");
 
-                RuleFor(command => command.FormADto)
+                RuleFor(request => request.Form)
                     .Must(HasEnoughPeriodsForCruise)
-                    .When(command => uint.TryParse(command.FormADto.CruiseHours, out _))
+                    .When(request => uint.TryParse(request.Form.CruiseHours, out _))
                     .WithMessage(
                         "Okres dopuszczalny i optymalny muszą być równe lub dłuższe niż liczba planowanych godzin rejsowych."
                     );
@@ -203,14 +202,14 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddCruiseHoursDraftValidation()
     {
-        RuleFor(command => command.FormADto.CruiseHours)
+        RuleFor(request => request.Form.CruiseHours)
             .Must(cruiseHours => uint.TryParse(cruiseHours, out _))
             .WithMessage("Podana liczba godzin rejsowych jest w niepoprawnym formacie.");
     }
 
     private void AddCruiseHoursNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.CruiseHours)
+        RuleFor(request => request.Form.CruiseHours)
             .Must(cruiseHours =>
                 uint.TryParse(cruiseHours, out var cruiseHoursInt)
                 && cruiseHoursInt is > 0 and <= FormAValuesConstants.MaxCruiseHours
@@ -223,7 +222,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddShipUsageDraftValidation()
     {
-        RuleFor(command => command.FormADto.ShipUsage)
+        RuleFor(request => request.Form.ShipUsage)
             .Must(shipUsage =>
                 string.IsNullOrEmpty(shipUsage)
                 || (!string.IsNullOrEmpty(shipUsage) && IsValidShipUsage(shipUsage))
@@ -233,15 +232,15 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddShipUsageNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.ShipUsage)
+        RuleFor(request => request.Form.ShipUsage)
             .Must(IsValidShipUsage)
             .WithMessage("Wybrany sposób wykorzystania statku jest niepoprawny.");
 
         When(
-            command => IsDifferentUsage(command.FormADto.ShipUsage),
+            request => IsDifferentUsage(request.Form.ShipUsage),
             () =>
             {
-                RuleFor(command => command.FormADto.DifferentUsage)
+                RuleFor(request => request.Form.DifferentUsage)
                     .Must(differentUsage => !string.IsNullOrEmpty(differentUsage))
                     .WithMessage("Nie opisano innego sposobu wykorzystania statku.");
             }
@@ -250,7 +249,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddPermissionsNonDraftValidation()
     {
-        RuleForEach(command => command.FormADto.Permissions)
+        RuleForEach(request => request.Form.Permissions)
             .Must(permissionDto =>
                 !string.IsNullOrEmpty(permissionDto.Description)
                 && !string.IsNullOrEmpty(permissionDto.Executive)
@@ -260,18 +259,18 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddPermissionsCommonValidation()
     {
-        RuleForEach(command => command.FormADto.Permissions)
+        RuleForEach(request => request.Form.Permissions)
             .Must(permissionDto => permissionDto.Scan is null)
             .WithMessage("Na etapie formularza A nie jest dozwolone przesyłanie skanów pozwoleń.");
     }
 
     private void AddResearchAreaNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.ResearchAreaDescriptions)
+        RuleFor(request => request.Form.ResearchAreaDescriptions)
             .Must(descriptions => descriptions.Count > 0)
             .WithMessage("Wymagane jest podanie przynajmniej jednego obszaru badawczego.");
 
-        RuleForEach(command => command.FormADto.ResearchAreaDescriptions)
+        RuleForEach(request => request.Form.ResearchAreaDescriptions)
             .Where(descriptionDto => descriptionDto.AreaId is null)
             .Must(descriptionDto => !string.IsNullOrEmpty(descriptionDto.DifferentName))
             .WithMessage(
@@ -281,7 +280,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddCruiseGoalDraftValidation()
     {
-        RuleFor(command => command.FormADto.CruiseGoal)
+        RuleFor(request => request.Form.CruiseGoal)
             .Must(cruiseGoal =>
                 string.IsNullOrEmpty(cruiseGoal)
                 || (!string.IsNullOrEmpty(cruiseGoal) && IsValidCruiseGoal(cruiseGoal))
@@ -291,18 +290,18 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddCruiseGoalNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.CruiseGoal)
+        RuleFor(request => request.Form.CruiseGoal)
             .Must(IsValidCruiseGoal)
             .WithMessage("Podanie celu rejsu jest wymagane.");
 
-        RuleFor(command => command.FormADto.CruiseGoalDescription)
+        RuleFor(request => request.Form.CruiseGoalDescription)
             .Must(description => !string.IsNullOrEmpty(description))
             .WithMessage("Opisanie celu rejsu jest wymagane.");
     }
 
     private void AddResearchTaskDraftValidation()
     {
-        RuleForEach(command => command.FormADto.ResearchTasks)
+        RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskDto =>
             {
                 try
@@ -333,11 +332,11 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddResearchTasksNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.ResearchTasks)
+        RuleFor(request => request.Form.ResearchTasks)
             .Must(researchTasks => researchTasks.Count > 0)
             .WithMessage("Wymagane jest podanie przynajmniej jednego zadania badawczego.");
 
-        RuleForEach(command => command.FormADto.ResearchTasks)
+        RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskDto =>
             {
                 try
@@ -397,7 +396,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddResearchTasksCommonValidation()
     {
-        RuleForEach(command => command.FormADto.ResearchTasks)
+        RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskDto =>
                 (
                     string.IsNullOrEmpty(researchTaskDto.FinancingAmount)
@@ -419,7 +418,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddContractsNonDraftValidation()
     {
-        RuleForEach(command => command.FormADto.Contracts)
+        RuleForEach(request => request.Form.Contracts)
             .Must(contractDto =>
                 !string.IsNullOrEmpty(contractDto.InstitutionName)
                 && !string.IsNullOrEmpty(contractDto.InstitutionUnit)
@@ -431,20 +430,20 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddContractsCommonValidation()
     {
-        RuleForEach(command => command.FormADto.Contracts)
+        RuleForEach(request => request.Form.Contracts)
             .Must(contractDto =>
                 contractDto.Category == ContractCategory.Domestic
                 || contractDto.Category == ContractCategory.International
             )
             .WithMessage("Należy podać poprawną kategorię umowy.");
 
-        RuleForEach(command => command.FormADto.Contracts)
+        RuleForEach(request => request.Form.Contracts)
             .Must(contractDto =>
                 contractDto.Scans.All(scan => scan.Content == "" || scan.Name != "")
             )
             .WithMessage("Każdy plik musi posiadać nazwę.");
 
-        RuleForEach(command => command.FormADto.Contracts)
+        RuleForEach(request => request.Form.Contracts)
             .Must(contractDto =>
                 contractDto.Scans.All(scan =>
                     scan is { Name: "", Content: "" }
@@ -459,7 +458,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddUgTeamsDraftValidation()
     {
-        RuleForEach(command => command.FormADto.UgTeams)
+        RuleForEach(request => request.Form.UgTeams)
             .Must(ugTeamDto => TryCountCrewMembers(ugTeamDto, out _))
             .WithMessage(
                 "Liczebność uczestników z jednostki organizacyjnej UG podano w niepoprawnym formacie."
@@ -468,17 +467,17 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddUgTeamsNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.UgTeams)
+        RuleFor(request => request.Form.UgTeams)
             .Must(ugTeams => ugTeams.Count > 0)
             .WithMessage(
                 "Należy podać przynajmniej jeden zespół badawczy z jednostki organizacyjnej UG."
             );
 
-        RuleFor(command => command.FormADto.UgTeams)
+        RuleFor(request => request.Form.UgTeams)
             .Must(ugTeams => ugTeams.DistinctBy(ugTeam => ugTeam.UgUnitId).Count() == ugTeams.Count)
             .WithMessage("Jedną jednostkę organizacyjną UG można wybrać maksymalnie raz.");
 
-        RuleForEach(command => command.FormADto.UgTeams)
+        RuleForEach(request => request.Form.UgTeams)
             .Must(ugTeamDto => TryCountCrewMembers(ugTeamDto, out var count) && count > 0)
             .WithMessage(
                 "Z każdej wybranej jednostki w rejsie musi uczestniczyć co najmniej jedna osoba."
@@ -487,7 +486,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddGuestTeamsDraftValidation()
     {
-        RuleForEach(command => command.FormADto.GuestTeams)
+        RuleForEach(request => request.Form.GuestTeams)
             .Must(guestTeamDto => TryCountCrewMembers(guestTeamDto, out _))
             .WithMessage(
                 "Liczebność uczestników z jednostki organizacyjnej UG podano w niepoprawnym formacie."
@@ -496,7 +495,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddGuestTeamsNonDraftValidation()
     {
-        RuleForEach(command => command.FormADto.GuestTeams)
+        RuleForEach(request => request.Form.GuestTeams)
             .Must(guestTeamDto =>
                 !string.IsNullOrEmpty(guestTeamDto.Name)
                 && TryCountCrewMembers(guestTeamDto, out var count)
@@ -510,7 +509,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddPublicationsNonDraftValidation()
     {
-        RuleForEach(command => command.FormADto.Publications)
+        RuleForEach(request => request.Form.Publications)
             .Must(publicationDto =>
                 !string.IsNullOrEmpty(publicationDto.Doi)
                 && !string.IsNullOrEmpty(publicationDto.Authors)
@@ -523,14 +522,14 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddPublicationsCommonValidation()
     {
-        RuleForEach(command => command.FormADto.Publications)
+        RuleForEach(request => request.Form.Publications)
             .Must(publicationDto =>
                 publicationDto.Category == PublicationCategory.Postscript
                 || publicationDto.Category == PublicationCategory.Subject
             )
             .WithMessage("Należy podać poprawną kategorię publikacji");
 
-        RuleForEach(command => command.FormADto.Publications)
+        RuleForEach(request => request.Form.Publications)
             .Must(publicationDto => uint.TryParse(publicationDto.MinisterialPoints, out _))
             .WithMessage(
                 "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
@@ -539,7 +538,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddSpubTasksNonDraftValidation()
     {
-        RuleForEach(command => command.FormADto.SpubTasks)
+        RuleForEach(request => request.Form.SpubTasks)
             .Must(spubTaskDto =>
                 !string.IsNullOrEmpty(spubTaskDto.Name)
                 && !string.IsNullOrEmpty(spubTaskDto.YearFrom)
@@ -550,7 +549,7 @@ public sealed class FormAValidationModelValidator : AbstractValidator<FormAValid
 
     private void AddSupervisorEmailNonDraftValidation()
     {
-        RuleFor(command => command.FormADto.SupervisorEmail)
+        RuleFor(request => request.Form.SupervisorEmail)
             .Must(email => !string.IsNullOrEmpty(email))
             .WithMessage("Należy podać adres e-mail przełożonego.");
     }
