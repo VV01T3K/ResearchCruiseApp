@@ -9,6 +9,7 @@ public sealed class ImportPublicationsValidator : AbstractValidator<ImportPublic
     public ImportPublicationsValidator()
     {
         RuleForEach(requests => requests)
+            .NotNull()
             .ChildRules(publication =>
             {
                 publication
