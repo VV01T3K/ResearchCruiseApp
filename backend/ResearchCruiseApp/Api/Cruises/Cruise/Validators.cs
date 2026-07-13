@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
-public sealed class CreateValidator : AbstractValidator<CreateRequest>
+public sealed class CreateRequestValidator : AbstractValidator<CreateRequest>
 {
-    public CreateValidator()
+    public CreateRequestValidator()
     {
         RuleFor(request => request.StartDate)
             .NotEmpty()
@@ -28,9 +28,9 @@ public sealed class CreateValidator : AbstractValidator<CreateRequest>
     }
 }
 
-public sealed class UpdateValidator : AbstractValidator<UpdateRequest>
+public sealed class UpdateRequestValidator : AbstractValidator<UpdateRequest>
 {
-    public UpdateValidator()
+    public UpdateRequestValidator()
     {
         RuleFor(request => request.StartDate)
             .NotEmpty()

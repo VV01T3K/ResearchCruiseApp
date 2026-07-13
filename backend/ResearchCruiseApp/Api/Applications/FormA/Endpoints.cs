@@ -43,7 +43,7 @@ public static class FormAEndpoints
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         FormAWriteRequest request,
-        IValidator<FormAValidationModel> validator,
+        IValidator<FormAWriteRequest> validator,
         FormAFactory forms,
         ApplicationFactory applications,
         ApplicationDbContext dbContext,
@@ -52,10 +52,7 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(
-            new FormAValidationModel(request.Form, request.Draft),
-            cancellationToken
-        );
+        var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
@@ -82,18 +79,14 @@ public static class FormAEndpoints
         await dbContext.CruiseApplications.AddAsync(application, cancellationToken);
         await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-
-        Result<CruiseApplication> createResult = application;
-        if (!createResult.IsSuccess)
-            return createResult.Error!.ToProblemHttpResult();
 
         if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
-                createResult.Data!,
+                application,
                 request.Form.SupervisorEmail
             );
 
+        await transaction.CommitAsync(cancellationToken);
         return TypedResults.Created();
     }
 
@@ -124,7 +117,7 @@ public static class FormAEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid applicationId,
         FormAWriteRequest request,
-        IValidator<FormAValidationModel> validator,
+        IValidator<FormAWriteRequest> validator,
         UserPermissionVerifier userPermissionVerifier,
         ApplicationDbContext dbContext,
         FormAFactory forms,
@@ -134,10 +127,7 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(
-            new FormAValidationModel(request.Form, request.Draft),
-            cancellationToken
-        );
+        var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
@@ -187,11 +177,6 @@ public static class FormAEndpoints
             await formsService.DeleteFormA(oldFormA, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-
-        var result = Result.Empty;
-        if (!result.IsSuccess)
-            return result.Error!.ToProblemHttpResult();
 
         if (!request.Draft)
             await cruiseApplicationsService.SendRequestToSupervisor(
@@ -199,6 +184,7 @@ public static class FormAEndpoints
                 request.Form.SupervisorEmail
             );
 
+        await transaction.CommitAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 

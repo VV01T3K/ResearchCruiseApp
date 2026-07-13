@@ -71,7 +71,7 @@ public static class FormBEndpoints
     private static async Task<Results<Created, ProblemHttpResult>> Update(
         Guid applicationId,
         FormBWriteRequest request,
-        IValidator<FormBValidationModel> validator,
+        IValidator<FormBWriteRequest> validator,
         UserPermissionVerifier userPermissionVerifier,
         FormBFactory forms,
         ApplicationDbContext dbContext,
@@ -79,10 +79,7 @@ public static class FormBEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(
-            new FormBValidationModel(request.Form, request.Draft),
-            cancellationToken
-        );
+        var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
             return validation.ToApplicationResult().Error!.ToProblemHttpResult();
 
