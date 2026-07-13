@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
 import axios, { AxiosError } from 'axios';
-import { ProblemDetails } from '@/api/account/contracts';
+import { ProblemDetails } from '@/lib/api';
 import {
   useSupervisorReviewDecisionMutation,
   useSupervisorReviewQuery,

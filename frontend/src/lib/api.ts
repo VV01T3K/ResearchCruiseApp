@@ -7,6 +7,10 @@ export const client = axios.create({
   baseURL: config.apiUrl,
 });
 
+export type ProblemDetails = {
+  detail?: string;
+};
+
 export function setAuthToken(authDetails: AuthDetails | undefined) {
   if (authDetails && authDetails.accessToken) {
     client.defaults.headers.Authorization = `Bearer ${authDetails.accessToken}`;

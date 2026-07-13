@@ -1,6 +1,6 @@
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
-namespace ResearchCruiseApp.Api.Account;
+namespace ResearchCruiseApp.Api.Users;
 
 public sealed record CurrentUserResponse(
     Guid Id,

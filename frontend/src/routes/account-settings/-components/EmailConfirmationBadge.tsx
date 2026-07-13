@@ -1,7 +1,7 @@
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
-import { useResendConfirmationEmailMutation } from '@/api/account/AccountRecoveryApiHooks';
+import { useResendConfirmationEmailMutation } from '@/api/auth/AuthApiHooks';
 
 type Props = {
   email: string;
