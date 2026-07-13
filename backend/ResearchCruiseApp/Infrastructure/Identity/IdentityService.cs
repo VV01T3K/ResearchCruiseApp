@@ -13,6 +13,12 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Infrastructure.Identity;
 
+internal enum SeedUserStatus
+{
+    AlreadyComplete,
+    Created,
+}
+
 internal class IdentityService(
     UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager,
@@ -20,7 +26,8 @@ internal class IdentityService(
     RandomGenerator randomGenerator,
     CurrentUserService currentUserService,
     IConfiguration configuration,
-    ApplicationDbContext dbContext
+    ApplicationDbContext dbContext,
+    ILogger<IdentityService> logger
 )
 {
     public async Task<UserDto?> GetUserDtoById(Guid id)
@@ -261,7 +268,67 @@ internal class IdentityService(
         return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
     }
 
+    public async Task<Result<SeedUserStatus>> EnsureSeedUserWithRole(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        string roleName
+    )
+    {
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser is not null)
+        {
+            if (await userManager.IsInRoleAsync(existingUser, roleName))
+                return SeedUserStatus.AlreadyComplete;
+
+            var deleteResult = await userManager.DeleteAsync(existingUser);
+            if (!deleteResult.Succeeded)
+                return deleteResult.ToApplicationResult().Error!;
+        }
+
+        var result = await CreateUserWithRoles(email, firstName, lastName, password, [roleName]);
+        if (!result.IsSuccess)
+            return result.Error!;
+
+        try
+        {
+            await emailSender.SendAccountCreatedMessage(
+                await CreateUserDto(result.Data!),
+                roleName,
+                password
+            );
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(exception, "Seed user notification failed: {Email}", email);
+        }
+
+        return SeedUserStatus.Created;
+    }
+
     public async Task<Result> AddUserWithRoles(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        IReadOnlyCollection<string> roleNames
+    )
+    {
+        var result = await CreateUserWithRoles(email, firstName, lastName, password, roleNames);
+        if (!result.IsSuccess)
+            return result.Error!;
+
+        await emailSender.SendAccountCreatedMessage(
+            await CreateUserDto(result.Data!),
+            roleNames.First(),
+            password
+        );
+
+        return Result.Empty;
+    }
+
+    private async Task<Result<User>> CreateUserWithRoles(
         string email,
         string firstName,
         string lastName,
@@ -272,22 +339,16 @@ internal class IdentityService(
         var user = CreateUser(email, firstName, lastName, true, true);
         var identityResult = await userManager.CreateAsync(user, password);
         if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
+            return identityResult.ToApplicationResult().Error!;
 
         identityResult = await userManager.AddToRolesAsync(user, roleNames);
-        if (!identityResult.Succeeded)
-        {
-            var deleteResult = await userManager.DeleteAsync(user);
-            if (!deleteResult.Succeeded)
-                return deleteResult.ToApplicationResult();
+        if (identityResult.Succeeded)
+            return user;
 
-            return identityResult.ToApplicationResult();
-        }
-
-        var userDto = await CreateUserDto(user);
-        await emailSender.SendAccountCreatedMessage(userDto, roleNames.First(), password);
-
-        return Result.Empty;
+        var deleteResult = await userManager.DeleteAsync(user);
+        return (deleteResult.Succeeded ? identityResult : deleteResult)
+            .ToApplicationResult()
+            .Error!;
     }
 
     public async Task<IList<string>> GetUserRolesNames(Guid userId)

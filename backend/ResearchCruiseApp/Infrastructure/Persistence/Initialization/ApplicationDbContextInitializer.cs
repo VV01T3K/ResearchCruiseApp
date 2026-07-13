@@ -9,7 +9,6 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    UserManager<User> userManager,
     IdentityService identityService,
     RandomGenerator randomGenerator,
     IConfiguration configuration,
@@ -44,31 +43,13 @@ internal class ApplicationDbContextInitializer(
 
         foreach (var user in users)
         {
-            var existingUser = await userManager.FindByEmailAsync(user.Email);
-            if (existingUser is not null)
-            {
-                if (await userManager.IsInRoleAsync(existingUser, user.Role!))
-                    continue;
-
-                var deleteResult = await userManager.DeleteAsync(existingUser);
-                if (!deleteResult.Succeeded)
-                {
-                    logger.LogWarning(
-                        "Incomplete seed user could not be removed: {Email} - {Error}",
-                        user.Email,
-                        string.Join(", ", deleteResult.Errors.Select(error => error.Description))
-                    );
-                    continue;
-                }
-            }
-
             var password = randomGenerator.CreateSecurePassword();
-            var result = await identityService.AddUserWithRoles(
+            var result = await identityService.EnsureSeedUserWithRole(
                 user.Email,
                 user.FirstName,
                 user.LastName,
                 password,
-                [user.Role!]
+                user.Role!
             );
 
             if (!result.IsSuccess)
@@ -81,7 +62,10 @@ internal class ApplicationDbContextInitializer(
                 continue;
             }
 
-            if (configuration.GetValue<bool>("Database:LogUserPasswordsWhenSeeding"))
+            if (
+                result.Data == SeedUserStatus.Created
+                && configuration.GetValue<bool>("Database:LogUserPasswordsWhenSeeding")
+            )
                 logger.LogWarning("Seed User Created: {Email} - {Password}", user.Email, password);
         }
     }
