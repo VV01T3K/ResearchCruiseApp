@@ -23,7 +23,15 @@ internal class SupervisorInvitationService(IdentityService identityService, Emai
 
     public bool CheckSupervisorCode(byte[] cruiseApplicationCodeBytes, string requestCode)
     {
-        var supervisorCodeBytes = Base64UrlEncoder.DecodeBytes(requestCode);
+        byte[]? supervisorCodeBytes;
+        try
+        {
+            supervisorCodeBytes = Base64UrlEncoder.DecodeBytes(requestCode);
+        }
+        catch (Exception exception) when (exception is ArgumentException or FormatException)
+        {
+            return false;
+        }
 
         return supervisorCodeBytes is not null
             && cruiseApplicationCodeBytes.SequenceEqual(supervisorCodeBytes);
