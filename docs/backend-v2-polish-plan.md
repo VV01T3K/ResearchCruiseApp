@@ -19,20 +19,26 @@ history.
   changes.
 - Infrastructure contains plumbing for persistence, identity, email, files,
   exports, localization, and security.
-- Pure business rules are static `Rules.cs` files in their owning slices.
-  Multi-slice Applications orchestration lives under `Api/Applications/Shared`.
-- The exact HTTP method/route-template set is pinned by a
-  `WebApplicationFactory` test. Native OpenAPI remains available at runtime in
-  development.
+- Pure business rules are static rule classes in their owning slices, with files
+  named after the contained class. Multi-slice Applications orchestration lives
+  under `Api/Applications/Shared`.
+- The exact HTTP method/route-template set was reverified with the temporarily
+  restored `WebApplicationFactory` guardrail. The guardrail is not committed;
+  native OpenAPI remains available at runtime in development.
 - Frontend hooks and Playwright mocks match the frozen v2 route table. The
   resend-confirmation flow is exposed again from account settings.
+- Form A/B/C validators live beside their owning endpoints and validate the
+  write requests directly. Their manual invocation remains temporarily because
+  it preserves the shipped `ProblemDetails` response until the planned contract
+  redesign.
 
 ## Architecture Conventions
 
 1. **Vertical slices with REPR.** Each slice is a folder
    `Api/<Feature>/<Slice>/` containing `Endpoints.cs` plus `Contracts.cs`,
-   `Validators.cs`, `Rules.cs`, or a readability-focused workflow/factory file as
-   needed. Feature endpoint files only compose slices onto route groups.
+   `Validators.cs`, a specifically named rule file, or a readability-focused
+   workflow/factory file as needed. Feature endpoint files only compose slices
+   onto route groups.
 2. **Narrow ownership.** Code stays in its slice until a second slice needs it,
    then moves only as far as the narrowest shared owner.
 3. **No mandatory service layer.** Pure decisions are static rules; shared
@@ -59,22 +65,25 @@ history.
 - Form initialization uses `/v2/applications/form-a/context` and
   `/v2/applications/form-b/context`.
 - `POST /v2/auth/resend-confirmation-email` is retained and has a frontend caller.
-- The route-table guardrail is the source of truth for the complete method/path
-  set.
+- The frozen method/path set was reverified with the temporarily restored route
+  guardrail; OpenAPI exposes the current runtime contract.
 
 ## Verification Evidence
 
-Final verification on 2026-07-07:
+Initial verification on 2026-07-07, refreshed on 2026-07-12:
 
-- `vpr -F backend check` — passed.
+- `vp run -F backend check` — passed.
 - `dotnet build backend/ResearchCruiseApp.sln` — passed with zero warnings.
-- `dotnet test backend/ResearchCruiseApp.sln` — 28 passed.
+- `dotnet test backend/ResearchCruiseApp.sln` — 10 committed tests passed.
+- Temporarily restored route, domain, persistence, and projection tests plus a
+  form-validation characterization test — 36 passed; all temporary test changes
+  were removed before merge.
 - `dotnet ef migrations has-pending-model-changes` — no changes.
 - NuGet vulnerable-package audit — no vulnerable packages.
-- `vpr -F frontend check` — passed with no warnings or lint errors.
-- `vpr -F frontend type` — passed.
-- Focused Playwright suites — 113 passed, 3 skipped, 0 failed.
-- Isolated live-data smoke against Kestrel + SQL — login/refresh, Form A/B/C
+- `vp run -F frontend check` — passed with no warnings or lint errors.
+- `vp run -F frontend type` — passed.
+- Initial focused Playwright suites on 2026-07-07 — 113 passed, 3 skipped, 0 failed.
+- Initial isolated live-data smoke on 2026-07-07 against Kestrel + SQL — login/refresh, Form A/B/C
   saves, publication import/read/delete, cruise effects, form context, and
   supervisor review/decision passed; disposable records were removed.
 - Stale frontend route-literal sweep — empty.
@@ -83,7 +92,7 @@ Final verification on 2026-07-07:
 
 | Phase                             | Status | Notes                                                                                                                                                                                                                                                                                                                                      |
 | --------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0 — Route-table guardrail         | done   | Exact endpoint method/template set pinned by a WebApplicationFactory test.                                                                                                                                                                                                                                                                 |
+| 0 — Route-table guardrail         | done   | Exact endpoint method/template set reverified with the temporarily restored WebApplicationFactory test; the test is not committed.                                                                                                                                                                                                         |
 | 1 — Dissolve Domain/Logic         | done   | Rules localized; wire status codes moved to Api.                                                                                                                                                                                                                                                                                           |
 | 2 — REPR convergence              | done   | Remaining endpoint modules moved into slice folders.                                                                                                                                                                                                                                                                                       |
 | 3 — Dissolve ApplicationForms     | done   | Slice code localized; shared code moved under Applications/Shared.                                                                                                                                                                                                                                                                         |
@@ -94,6 +103,30 @@ Final verification on 2026-07-07:
 | 8 — De-ceremony pass              | done   | Dead code and unearned interfaces removed; taxonomy folders and composition shells collapsed; single-form mappings localized.                                                                                                                                                                                                              |
 | 9 — Entity ownership              | done   | The shared EF model was organized into Applications/FormA–C/Shared, Cruises, and Users ownership folders without namespace or model changes.                                                                                                                                                                                               |
 | 10 — Shared code by nature        | done   | `Results.cs` split into `Domain` (Result/Error/ErrorType/ValidationResultExtensions); `WorkflowStatusCodes` to `Domain`; validation/transaction filters, ProblemDetails mapping, and authorization policies to `Infrastructure/Api`. `Api/` now holds only feature folders plus `ApiComposition`. Route table, model, and tests unchanged. |
+
+## Merge-Readiness Refresh — 2026-07-12
+
+- Moved Form A/B/C validators from `Applications/Shared/Validation` into their
+  owning form slices and made them validate `FormAWriteRequest`,
+  `FormBWriteRequest`, and `FormCWriteRequest` directly.
+- Kept manual form validation to preserve the existing flat `ProblemDetails`
+  error body. Simple request validators continue to use the shared endpoint
+  filter.
+- Renamed generic `Rules.cs` files after their contained rule classes and made
+  anonymous auth endpoint metadata explicit without changing access behavior.
+- Added the 10 committed backend tests to the backend CI check command.
+- Verified locked backend restore, formatting, warning-free builds, committed and
+  temporary backend tests, no pending EF model changes, the NuGet vulnerability
+  audit, frozen frontend install, frontend check/type/build, Docker builds,
+  Compose configuration, and `git diff --check`.
+- The 2026-07-12 focused Playwright run produced 105 passes and 3 skips. One
+  cruise date assertion is timezone-sensitive in Europe/Warsaw and passed when
+  rerun under UTC; no test files were changed.
+- A disposable SQL database verified health, login, refresh, current-user data,
+  publication import/delete, successful Form A/B/C persistence and reads,
+  supervisor review/decision, office decision, cruise create/update, and the
+  preserved live Form A/B/C validation responses. The database and temporary
+  files were removed afterward.
 
 ## De-ceremony Pass
 
@@ -160,3 +193,6 @@ OpenAPI-to-frontend client generation (for example Orval-generated TanStack Quer
 hooks and Zod schemas) was considered and is deliberately out of scope. It should
 be scheduled separately if the team wants to replace handwritten hooks and make
 future backend/frontend contract drift structurally impossible.
+
+That contract pass should also revisit the Form A/B/C payloads, unify validation
+error responses, and introduce stable machine-readable error codes.

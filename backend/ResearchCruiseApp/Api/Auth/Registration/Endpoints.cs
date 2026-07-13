@@ -15,7 +15,8 @@ public static class RegistrationEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RegisterAccountRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive);
+            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .AllowAnonymous();
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Handle(
