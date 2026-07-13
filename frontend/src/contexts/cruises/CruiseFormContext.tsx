@@ -1,13 +1,12 @@
 import { createContext, use } from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
-import { CruiseDto } from '@/api/dto/cruises/CruiseDto';
-import { CruiseFormDto } from '@/api/dto/cruises/CruiseFormDto';
+import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
+import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
 
 export type CruiseFormContextType = {
-  form: AnyReactFormApi<CruiseFormDto>;
-  cruise?: CruiseDto;
+  form: AnyReactFormApi<CruiseFormValues>;
+  cruise?: CruiseResponse;
   cruiseApplications: CruiseApplicationDto[];
   isReadonly: boolean;
   hasFormBeenSubmitted?: boolean;

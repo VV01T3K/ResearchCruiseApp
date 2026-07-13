@@ -6,7 +6,7 @@ import { client, setAuthToken } from '@/lib/api';
 import { setSentryUser } from '@/lib/sentry';
 import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
-import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/hooks/user/UserContextApiHooks';
+import { useLoginMutation, useProfileQuery, useRefreshTokenMutation } from '@/api/account/AccountAuthApiHooks';
 import { AuthDetails } from '@/models/user/AuthDetails';
 import { SignInResult } from '@/models/user/Results';
 import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
@@ -165,7 +165,7 @@ export function UserContextProvider({ children }: Props) {
       (response) => response,
       async (error) => {
         // Rule 1: Never intercept refresh requests
-        if (error.config?.url?.includes('/account/refresh')) {
+        if (error.config?.url?.includes('/v2/auth/refresh')) {
           return Promise.reject(error);
         }
 

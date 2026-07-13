@@ -49,7 +49,7 @@ async function resolveCurrentUser(userContext?: UserContextType): Promise<User |
   }
 
   try {
-    const response = await client.get('/account', {
+    const response = await client.get('/v2/account/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

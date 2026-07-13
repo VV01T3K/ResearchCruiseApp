@@ -23,27 +23,27 @@ export class FormAPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page): Promise<FormAPage> {
-    page.route(`${API_URL}/forms/InitValues/A`, (route) => {
+    page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getInitValuesAPayload()),
       });
     });
 
-    page.route(`${API_URL}/account`, (route) => {
+    page.route(`${API_URL}/v2/account/me`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),
       });
     });
 
-    page.route(`${API_URL}/api/Cruises/blockades/*`, (route) => {
+    page.route(`${API_URL}/v2/cruises/blockades?*`, (route) => {
       route.fulfill({
         status: 404,
       });
     });
 
-    page.route(`${API_URL}/api/CruiseApplications?isDraft=false`, (route) => {
+    page.route(`${API_URL}/v2/applications`, (route) => {
       // add payload verification if needed
       route.fulfill({
         status: 200,

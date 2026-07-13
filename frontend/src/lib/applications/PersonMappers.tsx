@@ -1,6 +1,6 @@
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
-import { FormUserDto } from '@/api/dto/applications/FormUserDto';
+import { FormUserDto } from '@/api/applications/dto/FormUserDto';
 
 export function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption {
   return {

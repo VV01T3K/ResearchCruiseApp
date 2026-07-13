@@ -1,9 +1,9 @@
 import { createContext, use } from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { FormADto } from '@/api/dto/applications/FormADto';
-import { FormAInitValuesDto } from '@/api/dto/applications/FormAInitValuesDto';
-import { BlockadePeriodDto } from '@/api/dto/cruises/CruiseDto';
+import { FormADto } from '@/api/applications/dto/FormADto';
+import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
+import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
 
 export type FormAContextType = {
   initValues: FormAInitValuesDto;
