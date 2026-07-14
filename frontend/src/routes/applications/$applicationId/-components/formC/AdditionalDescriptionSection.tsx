@@ -10,7 +10,7 @@ export const AdditionalDescriptionSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function AdditionalDescriptionSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     return (
       <AppAccordion
@@ -32,7 +32,7 @@ export const AdditionalDescriptionSection = withForm({
               onBlur={field.handleBlur}
               type="textarea"
               className="h-48"
-              errors={getErrors(field.state.meta, submissionAttempts)}
+              errors={getErrors(field.state.meta)}
               label="Dodatkowy opis"
               placeholder="Dodatkowy opis"
               disabled={isReadonly}
@@ -50,7 +50,7 @@ export const AdditionalDescriptionSection = withForm({
               label="Załączniki"
               onChange={field.handleChange}
               onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, submissionAttempts)}
+              errors={getErrors(field.state.meta)}
               disabled={isReadonly}
               allowMultiple
               maxSizeInMb={10}

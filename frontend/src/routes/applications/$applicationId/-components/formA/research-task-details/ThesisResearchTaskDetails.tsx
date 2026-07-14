@@ -9,9 +9,8 @@ import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-
 type Props = {
   row: Row<ThesisResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function ThesisResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function ThesisResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -23,7 +22,7 @@ export function ThesisResearchTaskDetails({ row, disabled, submissionAttempts }:
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Autor"
             placeholder="Wprowadź autora"
             disabled={disabled}
@@ -39,7 +38,7 @@ export function ThesisResearchTaskDetails({ row, disabled, submissionAttempts }:
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             disabled={disabled}

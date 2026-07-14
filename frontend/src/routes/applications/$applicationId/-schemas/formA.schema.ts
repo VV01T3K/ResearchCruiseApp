@@ -666,7 +666,7 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
         authors: publication.authors || null,
         title: publication.title || null,
         magazine: publication.magazine || null,
-        year: String(publication.year),
+        year: publication.year === null ? null : String(publication.year),
         ministerialPoints: String(publication.ministerialPoints),
       })),
       spubTasks: form.spubTasks.map((task) => ({
@@ -749,7 +749,7 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
       authors: publication.authors ?? '',
       title: publication.title ?? '',
       magazine: publication.magazine ?? '',
-      year: toNumber(publication.year),
+      year: toNullableNumber(publication.year),
       ministerialPoints: toNumber(publication.ministerialPoints),
     })),
     spubTasks: form.spubTasks.map((task) => ({
@@ -848,7 +848,7 @@ export function mapFormAOptions(options: GeneratedFormAOptions): FormAOptions {
       authors: publication.authors ?? '',
       title: publication.title ?? '',
       magazine: publication.magazine ?? '',
-      year: toNumber(publication.year),
+      year: toNullableNumber(publication.year),
       ministerialPoints: toNumber(publication.ministerialPoints),
     })),
   };
@@ -857,4 +857,10 @@ export function mapFormAOptions(options: GeneratedFormAOptions): FormAOptions {
 function toNumber(value: string | null | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function toNullableNumber(value: string | null | undefined): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }

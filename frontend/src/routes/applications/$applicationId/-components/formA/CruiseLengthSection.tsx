@@ -93,7 +93,7 @@ export const CruiseLengthSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function CruiseLengthSection({ form, context }) {
-    const { isReadonly, initValues, submissionAttempts, blockades } = context;
+    const { isReadonly, initValues, blockades } = context;
 
     const year = useSelector(form.store, (state) => state.values.year);
     const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
@@ -220,7 +220,7 @@ export const CruiseLengthSection = withForm({
                       value={field.state.value}
                       onChange={(newValue) => field.handleChange(newValue ?? '')}
                       onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, submissionAttempts)}
+                      errors={getErrors(field.state.meta)}
                       label="Dokładny termin rozpoczęcia rejsu"
                       type="date"
                       showRequiredAsterisk
@@ -244,7 +244,7 @@ export const CruiseLengthSection = withForm({
                             form.validateField('precisePeriodStart', 'change');
                           }}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, submissionAttempts)}
+                          errors={getErrors(field.state.meta)}
                           label="Dokładny termin zakończenia rejsu"
                           type="date"
                           showRequiredAsterisk
@@ -275,7 +275,7 @@ export const CruiseLengthSection = withForm({
                       value={field.state.value}
                       onChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, submissionAttempts)}
+                      errors={getErrors(field.state.meta)}
                       label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                       showRequiredAsterisk
                       disabled={isReadonly}
@@ -295,7 +295,7 @@ export const CruiseLengthSection = withForm({
                           value={field.state.value}
                           onChange={field.handleChange}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, submissionAttempts)}
+                          errors={getErrors(field.state.meta)}
                           maxValues={acceptablePeriod}
                           label="Optymalny okres, w którym miałby się odbywać rejs"
                           showRequiredAsterisk
@@ -356,7 +356,7 @@ export const CruiseLengthSection = withForm({
                     form.setFieldValue('cruiseHours', value * 24);
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   label="Liczba planowanych dób rejsowych"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -379,7 +379,7 @@ export const CruiseLengthSection = withForm({
                     form.setFieldValue('cruiseDays', value / 24);
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   label="Liczba planowanych godzin rejsowych"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -399,7 +399,7 @@ export const CruiseLengthSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Uwagi dotyczące terminu"
                     placeholder='np. "Rejs w okresie wakacyjnym"'
                     disabled={isReadonly}
@@ -418,7 +418,7 @@ export const CruiseLengthSection = withForm({
                     value={field.state.value as string}
                     onChange={(e) => field.handleChange(e as string)}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Statek na potrzeby badań będzie wykorzystywany"
                     showRequiredAsterisk
                     allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
@@ -452,7 +452,7 @@ export const CruiseLengthSection = withForm({
                               value={field.state.value}
                               onChange={field.handleChange}
                               onBlur={field.handleBlur}
-                              errors={getErrors(field.state.meta, submissionAttempts)}
+                              errors={getErrors(field.state.meta)}
                               label="Inny sposób użycia"
                               placeholder="np. statek badawczy"
                               showRequiredAsterisk

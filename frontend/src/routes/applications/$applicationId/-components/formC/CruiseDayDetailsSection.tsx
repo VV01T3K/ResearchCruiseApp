@@ -15,7 +15,6 @@ import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/t
 const cruiseDayDetailsColumns = (
   form: FormCFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<CruiseDayValues>[] => [
   {
@@ -32,7 +31,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -56,7 +55,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -80,7 +79,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -103,7 +102,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -126,7 +125,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -149,7 +148,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -178,7 +177,7 @@ export const CruiseDayDetailsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function CruiseDayDetailsSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     return (
       <AppAccordion
@@ -199,7 +198,6 @@ export const CruiseDayDetailsSection = withForm({
                   field.handleChange((prev) => prev);
                   field.handleBlur();
                 },
-                submissionAttempts,
                 isReadonly
               )}
               buttons={() => [

@@ -105,6 +105,7 @@ test.describe('members section tests', () => {
     await expect(guestTeamRow.teamNameInput.errors.required).toBeVisible();
 
     await guestTeamRow.teamNameInput.fill('Jakiś zespół');
+    await guestTeamRow.teamNameInput.input.blur();
     await expect(guestTeamRow.teamNameInput.errors.required).toBeHidden();
 
     await formBPage.submitForm({ expectedResult: 'invalid' });

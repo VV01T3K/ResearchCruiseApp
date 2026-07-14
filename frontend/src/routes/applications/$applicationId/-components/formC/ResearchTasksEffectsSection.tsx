@@ -15,7 +15,7 @@ export const ResearchTasksEffectsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ResearchTasksEffectsSection({ form, context }) {
-    const { isReadonly, submissionAttempts } = context;
+    const { isReadonly } = context;
 
     const columns: ColumnDef<ResearchTaskEffectValues>[] = [
       {
@@ -52,7 +52,7 @@ export const ResearchTasksEffectsSection = withForm({
                           field.handleChange(value ? 'true' : 'false');
                         }}
                         onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, submissionAttempts)}
+                        errors={getErrors(field.state.meta)}
                         label="Zrealizowane"
                         labelPosition="top"
                         disabled={isReadonly}
@@ -72,7 +72,7 @@ export const ResearchTasksEffectsSection = withForm({
                           checked={field.state.value === 'true'}
                           onChange={(value) => field.handleChange(value ? 'true' : 'false')}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, submissionAttempts)}
+                          errors={getErrors(field.state.meta)}
                           label="Czy naliczyć punkty kierownikowi?"
                           labelPosition="top"
                           disabled={isReadonly || taskDone === 'false'}
@@ -93,7 +93,7 @@ export const ResearchTasksEffectsSection = withForm({
                           checked={field.state.value === 'true'}
                           onChange={(value) => field.handleChange(value ? 'true' : 'false')}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, submissionAttempts)}
+                          errors={getErrors(field.state.meta)}
                           label="Czy naliczyć punkty zastępcy?"
                           labelPosition="top"
                           disabled={isReadonly || taskDone === 'false'}

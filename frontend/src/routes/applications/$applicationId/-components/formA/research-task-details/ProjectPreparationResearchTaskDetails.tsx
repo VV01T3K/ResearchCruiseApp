@@ -11,9 +11,8 @@ import { ProjectPreparationResearchTaskValues } from '@/routes/applications/$app
 type Props = {
   row: Row<ProjectPreparationResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function ProjectPreparationResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function ProjectPreparationResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -25,7 +24,7 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled, submissio
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
@@ -44,7 +43,7 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled, submissio
             onChange={(value) => field.handleChange(value ?? '')}
             label="Przewidywany termin składania"
             disabled={disabled}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
           />
         )}
       />
@@ -63,7 +62,7 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled, submissio
             ]}
             label="Otrzymano decyzję o finansowaniu?"
             disabled={disabled}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
           />
         )}
       />

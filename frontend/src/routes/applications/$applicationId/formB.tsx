@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic, useSelector } from '@tanstack/react-form';
+import { revalidateLogic } from '@tanstack/react-form';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
@@ -80,7 +80,6 @@ function FormBPage() {
       navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
     },
   });
-  const submissionAttempts = useSelector(form.store, (state) => state.submissionAttempts);
   const context = {
     form,
     formA: formA.data,
@@ -88,7 +87,6 @@ function FormBPage() {
     formBInitValues: formBInitValues.data,
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
-    submissionAttempts,
     onSubmit: () => form.handleSubmit(),
     onSaveDraft: handleDraftSave,
     onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,

@@ -199,6 +199,7 @@ test.describe('research area section tests', () => {
     await researchAreaRow.additionalInfoInput.fill('Dodatkowe informacje o rejonie badań');
 
     await researchAreaRow.nameInput.fill(''); // make sure the input is empty
+    await researchAreaRow.nameInput.input.blur();
     await expect(researchAreaRow.nameInput.errors.required).toBeVisible();
     await formAPage.submitForm();
     await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
@@ -369,6 +370,7 @@ test.describe('members section tests', () => {
     await expect(membersSection.emptyGuestTeamNameMessage).toBeVisible();
 
     await membersSection.guestTeamRow('first').teamNameInput.fill('Jakiś zespół');
+    await membersSection.guestTeamRow('first').teamNameInput.blur();
     await expect(membersSection.emptyGuestTeamNameMessage).toBeHidden();
 
     await formAPage.submitForm({ expectedResult: 'invalid' });

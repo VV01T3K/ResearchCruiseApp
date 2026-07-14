@@ -9,7 +9,7 @@ export const SPUBReportDataSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function SPUBReportDataSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     return (
       <AppAccordion
@@ -34,7 +34,7 @@ export const SPUBReportDataSection = withForm({
               label="Dodatkowe dane do raportu SPUB"
               type="textarea"
               className="h-48"
-              errors={getErrors(field.state.meta, submissionAttempts)}
+              errors={getErrors(field.state.meta)}
               placeholder="Wpisz dodatkowe dane do raportu SPUB"
               disabled={isReadonly}
             />

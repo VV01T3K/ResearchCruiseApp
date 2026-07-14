@@ -191,6 +191,7 @@ test.describe('members section tests', () => {
     await expect(guestTeamRow.teamNameInput.errors.required).toBeVisible();
 
     await guestTeamRow.teamNameInput.fill('Jakiś zespół');
+    await guestTeamRow.teamNameInput.input.blur();
     await expect(guestTeamRow.teamNameInput.errors.required).toBeHidden();
 
     await formCPage.submitForm({ expectedResult: 'invalid' });
@@ -435,6 +436,7 @@ test.describe('SPUB report data section tests', () => {
     const spubReportDataSection = formCPage.sections.spubReportDataSection;
 
     await spubReportDataSection.reportInput.fill('A'.repeat(LENGHT_LIMIT + 1));
+    await spubReportDataSection.reportInput.input.blur();
     await expect(spubReportDataSection.reportInput.errors.tooLong).toBeVisible();
     await formCPage.submitForm({ expectedResult: 'invalid' });
 
@@ -467,6 +469,7 @@ test.describe('additional description section tests', () => {
     const additionalDescriptionSection = formCPage.sections.additionalDescriptionSection;
 
     await additionalDescriptionSection.descriptionInput.fill('A'.repeat(LENGHT_LIMIT + 1));
+    await additionalDescriptionSection.descriptionInput.input.blur();
     await expect(additionalDescriptionSection.descriptionInput.errors.tooLong).toBeVisible();
     await formCPage.submitForm({ expectedResult: 'invalid' });
 

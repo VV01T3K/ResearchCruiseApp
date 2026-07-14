@@ -20,26 +20,18 @@ import {
 type Props = {
   row: Row<ResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function ResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function ResearchTaskDetails({ row, disabled }: Props) {
   switch (row.original.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:
     case ResearchTaskType.DoctoralThesis:
-      return (
-        <ThesisResearchTaskDetails
-          row={row as Row<ThesisResearchTaskValues>}
-          disabled={disabled}
-          submissionAttempts={submissionAttempts}
-        />
-      );
+      return <ThesisResearchTaskDetails row={row as Row<ThesisResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.ProjectPreparation:
       return (
         <ProjectPreparationResearchTaskDetails
           row={row as Row<ProjectPreparationResearchTaskValues>}
           disabled={disabled}
-          submissionAttempts={submissionAttempts}
         />
       );
     case ResearchTaskType.DomesticProject:
@@ -47,37 +39,13 @@ export function ResearchTaskDetails({ row, disabled, submissionAttempts }: Props
     case ResearchTaskType.InternalUgProject:
     case ResearchTaskType.OtherProject:
     case ResearchTaskType.CommercialProject:
-      return (
-        <ProjectResearchTaskDetails
-          row={row as Row<ProjectResearchTaskValues>}
-          disabled={disabled}
-          submissionAttempts={submissionAttempts}
-        />
-      );
+      return <ProjectResearchTaskDetails row={row as Row<ProjectResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.Didactics:
-      return (
-        <DidacticsResearchTaskDetails
-          row={row as Row<DidacticsResearchTaskValues>}
-          disabled={disabled}
-          submissionAttempts={submissionAttempts}
-        />
-      );
+      return <DidacticsResearchTaskDetails row={row as Row<DidacticsResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.OwnResearchTask:
-      return (
-        <OwnResearchTaskDetails
-          row={row as Row<OwnResearchTaskValues>}
-          disabled={disabled}
-          submissionAttempts={submissionAttempts}
-        />
-      );
+      return <OwnResearchTaskDetails row={row as Row<OwnResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.OtherResearchTask:
-      return (
-        <OtherResearchTaskDetails
-          row={row as Row<OtherResearchTaskValues>}
-          disabled={disabled}
-          submissionAttempts={submissionAttempts}
-        />
-      );
+      return <OtherResearchTaskDetails row={row as Row<OtherResearchTaskValues>} disabled={disabled} />;
     default:
       throw new Error(`Unknown research task type`);
   }

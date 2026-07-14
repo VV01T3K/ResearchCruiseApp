@@ -15,7 +15,6 @@ import { CollectedSampleValues } from '@/routes/applications/$applicationId/-sch
 const collectedSamplesColumns = (
   form: FormCFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<CollectedSampleValues>[] => [
   {
@@ -29,7 +28,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Wpisz rodzaj materiału badawczego/próbek/danych"
             disabled={isReadonly}
           />
@@ -49,7 +48,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
           />
         )}
@@ -68,7 +67,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Wpisz zakres analiz"
             disabled={isReadonly}
           />
@@ -88,7 +87,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Wpisz informacje o upublicznieniu danych"
             disabled={isReadonly}
           />
@@ -112,7 +111,7 @@ export const CollectedSamplesSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function CollectedSamplesSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     return (
       <AppAccordion
@@ -126,12 +125,7 @@ export const CollectedSamplesSection = withForm({
           children={(field) => (
             <AppTable
               data={field.state.value}
-              columns={collectedSamplesColumns(
-                form,
-                (index) => field.removeValue(index),
-                submissionAttempts,
-                isReadonly
-              )}
+              columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
               buttons={() => [
                 <AppButton
                   key="new"

@@ -2,7 +2,6 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
@@ -19,7 +18,7 @@ export const MembersSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function MembersSection({ form, context }) {
-    const { isReadonly, initValues, submissionAttempts } = context;
+    const { isReadonly, initValues } = context;
 
     function getUgTeamsColumns(
       notifyRowsChanged: () => void,
@@ -55,7 +54,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -83,7 +82,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -126,19 +125,10 @@ export const MembersSection = withForm({
           header: 'Instytucja',
           accessorFn: (row) => row.name,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`guestTeams[${row.index}].name`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  containerClassName="mx-4"
-                  showRequiredAsterisk
-                  disabled={isReadonly}
-                />
+                <field.TextField containerClassName="mx-4" showRequiredAsterisk disabled={isReadonly} />
               )}
             />
           ),
@@ -162,7 +152,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -240,13 +230,10 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   data-testid="form-a-ug-teams-table"
                 />
-                <AppInputErrorsList
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  data-testid="form-a-ug-teams-errors"
-                />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-ug-teams-errors" />
               </div>
             )}
           />
@@ -300,13 +287,10 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   data-testid="form-a-guest-teams-table"
                 />
-                <AppInputErrorsList
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  data-testid="form-a-guest-teams-errors"
-                />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-guest-teams-errors" />
               </div>
             )}
           />

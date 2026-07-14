@@ -11,9 +11,8 @@ import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/
 type Props = {
   row: Row<ProjectResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function ProjectResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function ProjectResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -25,7 +24,7 @@ export function ProjectResearchTaskDetails({ row, disabled, submissionAttempts }
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
@@ -42,7 +41,7 @@ export function ProjectResearchTaskDetails({ row, disabled, submissionAttempts }
             value={field.state.value as string}
             onBlur={field.handleBlur}
             onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Data rozpoczęcia"
             disabled={disabled}
           />
@@ -57,7 +56,7 @@ export function ProjectResearchTaskDetails({ row, disabled, submissionAttempts }
             value={field.state.value as string}
             onBlur={field.handleBlur}
             onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Data zakończenia"
             disabled={disabled}
           />
@@ -74,7 +73,7 @@ export function ProjectResearchTaskDetails({ row, disabled, submissionAttempts }
             minimum={0}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Kwota finansowania [zł]"
             disabled={disabled}
           />
@@ -91,7 +90,7 @@ export function ProjectResearchTaskDetails({ row, disabled, submissionAttempts }
             minimum={0}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Środki zabezpieczone na realizację rejsu [zł]"
             disabled={disabled}
           />

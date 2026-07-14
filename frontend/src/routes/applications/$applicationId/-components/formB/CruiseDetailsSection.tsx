@@ -21,7 +21,6 @@ import { ShortResearchEquipmentValues } from '@/routes/applications/$application
 const shortResearchEquipmentColumns = (
   form: FormBFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean,
   allowPastDates: boolean
 ): ColumnDef<ShortResearchEquipmentValues>[] => [
@@ -54,7 +53,7 @@ const shortResearchEquipmentColumns = (
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimalDate={allowPastDates ? undefined : new Date()}
           />
@@ -82,7 +81,7 @@ const shortResearchEquipmentColumns = (
                 value={field.state.value}
                 onChange={(newValue) => field.handleChange(newValue ?? '')}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
                 disabled={isReadonly}
                 selectionStartDate={startDate ? new Date(startDate) : undefined}
                 minimalDate={startDate ? new Date(startDate) : undefined}
@@ -110,7 +109,7 @@ const shortResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -132,7 +131,6 @@ const shortResearchEquipmentColumns = (
 const longResearchEquipmentColumns = (
   form: FormBFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentValues>[] => [
   {
@@ -154,7 +152,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={(e) => field.handleChange(e as LongResearchEquipmentValues['action'])}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             allOptions={[
               { value: 'Put', inlineLabel: 'Pozostawienie' },
@@ -182,7 +180,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Czas"
             disabled={isReadonly}
           />
@@ -207,7 +205,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -229,7 +227,6 @@ const longResearchEquipmentColumns = (
 const portColumns = (
   form: FormBFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean,
   allowPastDates: boolean
 ): ColumnDef<PortCallValues>[] => [
@@ -262,7 +259,7 @@ const portColumns = (
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             type="datetime"
             minimalDate={allowPastDates ? undefined : new Date()}
@@ -291,7 +288,7 @@ const portColumns = (
                 value={field.state.value}
                 onChange={(newValue) => field.handleChange(newValue ?? '')}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
                 disabled={isReadonly}
                 type="datetime"
                 selectionStartDate={startTime ? new Date(startTime) : undefined}
@@ -320,7 +317,7 @@ const portColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Nazwa portu"
             disabled={isReadonly}
           />
@@ -343,7 +340,7 @@ export const CruiseDetailsSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function CruiseDetailsSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     const [includeShortResearchEquipments, setIncludeShortResearchEquipments] = useState(false);
     const [includePorts, setIncludePorts] = useState(false);
@@ -367,7 +364,6 @@ export const CruiseDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly,
                   includeShortResearchEquipments
                 )}
@@ -425,7 +421,6 @@ export const CruiseDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly
                 )}
                 data={field.state.value}
@@ -476,7 +471,6 @@ export const CruiseDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly,
                   includePorts
                 )}

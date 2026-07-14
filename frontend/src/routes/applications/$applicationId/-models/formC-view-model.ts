@@ -27,6 +27,5 @@ export type FormCViewModel = {
   formA: FormAValues;
   formB: FormBValues;
   cruise: CruiseResponse;
-  submissionAttempts: number;
   isReadonly: boolean;
 };

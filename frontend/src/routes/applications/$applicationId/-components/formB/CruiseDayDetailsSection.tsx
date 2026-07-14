@@ -23,7 +23,6 @@ import {
 const cruiseDayDetailsColumns = (
   form: FormBFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<CruiseDayValues>[] => [
   {
@@ -42,7 +41,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -68,7 +67,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -94,7 +93,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -119,7 +118,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -144,7 +143,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -169,7 +168,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -197,7 +196,7 @@ export const CruiseDayDetailsSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function CruiseDayDetailsSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -264,7 +263,6 @@ export const CruiseDayDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly
                 )}
                 buttons={() => {

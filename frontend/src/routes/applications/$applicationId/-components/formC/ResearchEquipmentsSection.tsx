@@ -17,7 +17,6 @@ import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-s
 const researchEquipmentsColumns = (
   form: FormCFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<ResearchEquipmentValues>[] => [
   {
@@ -36,7 +35,7 @@ const researchEquipmentsColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Wpisz nazwę sprzętu / aparatury"
             disabled={isReadonly}
           />
@@ -57,7 +56,7 @@ const researchEquipmentsColumns = (
               value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e ?? '')}
               onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, submissionAttempts)}
+              errors={getErrors(field.state.meta)}
               label="Data rozpoczęcia ubezpieczenia"
               disabled={isReadonly}
             />
@@ -81,7 +80,7 @@ const researchEquipmentsColumns = (
                     value={field.state.value ?? ''}
                     onChange={(e) => field.handleChange(e ?? '')}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
                     selectionStartDate={startDate ? new Date(startDate) : undefined}
@@ -108,7 +107,7 @@ const researchEquipmentsColumns = (
             checked={field.state.value === 'true'}
             onChange={(value) => field.handleChange(value ? 'true' : 'false')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -137,7 +136,7 @@ export const ResearchEquipmentsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ResearchEquipmentsSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     return (
       <AppAccordion
@@ -158,7 +157,6 @@ export const ResearchEquipmentsSection = withForm({
                   field.handleChange((prev) => prev);
                   field.handleBlur();
                 },
-                submissionAttempts,
                 isReadonly
               )}
               buttons={() => [

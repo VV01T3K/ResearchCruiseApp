@@ -9,11 +9,7 @@ import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applic
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
 
-const shipEquipmentColumns = (
-  form: FormCFormApi,
-  submissionAttempts: number,
-  isReadonly: boolean
-): ColumnDef<ShipEquipmentOption>[] => [
+const shipEquipmentColumns = (form: FormCFormApi, isReadonly: boolean): ColumnDef<ShipEquipmentOption>[] => [
   {
     header: 'Element',
     cell: ({ row }) => row.original.name,
@@ -35,7 +31,7 @@ const shipEquipmentColumns = (
               )
             }
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -49,7 +45,7 @@ export const ShipEquipmentsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ShipEquipmentsSection({ form, context }) {
-    const { formBInitValues, submissionAttempts, isReadonly } = context;
+    const { formBInitValues, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -62,7 +58,7 @@ export const ShipEquipmentsSection = withForm({
           children={() => (
             <AppTable
               data={formBInitValues.shipEquipments}
-              columns={shipEquipmentColumns(form, submissionAttempts, isReadonly)}
+              columns={shipEquipmentColumns(form, isReadonly)}
               buttons={() => []}
               variant="form"
               disabled={isReadonly}

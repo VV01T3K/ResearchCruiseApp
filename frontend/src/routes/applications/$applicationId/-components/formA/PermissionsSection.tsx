@@ -16,7 +16,7 @@ export const PermissionsSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function PermissionsSection({ form, context }) {
-    const { isReadonly, submissionAttempts } = context;
+    const { isReadonly } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<PermissionValues>[] {
       return [
@@ -39,7 +39,7 @@ export const PermissionsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -62,7 +62,7 @@ export const PermissionsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />

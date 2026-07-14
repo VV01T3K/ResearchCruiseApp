@@ -25,6 +25,5 @@ export type FormBViewModel = {
   formBInitValues: FormBOptions;
   formA: FormAValues;
   cruise: CruiseResponse;
-  submissionAttempts: number;
   isReadonly: boolean;
 };

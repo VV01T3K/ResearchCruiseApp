@@ -24,7 +24,7 @@ export const ResearchTasksSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function ResearchTasksSection({ form, context }) {
-    const { isReadonly, initValues, submissionAttempts } = context;
+    const { isReadonly, initValues } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchTaskValues>[] {
       return [
@@ -47,9 +47,7 @@ export const ResearchTasksSection = withForm({
         },
         {
           header: 'Szczegóły',
-          cell: ({ row }) => (
-            <ResearchTaskDetails row={row} disabled={isReadonly} submissionAttempts={submissionAttempts} />
-          ),
+          cell: ({ row }) => <ResearchTaskDetails row={row} disabled={isReadonly} />,
         },
         {
           id: 'actions',
@@ -138,13 +136,10 @@ export const ResearchTasksSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zadania."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   data-testid="form-a-research-tasks-table"
                 />
-                <AppInputErrorsList
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  data-testid="form-a-research-tasks-errors"
-                />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-research-tasks-errors" />
               </>
             )}
           />

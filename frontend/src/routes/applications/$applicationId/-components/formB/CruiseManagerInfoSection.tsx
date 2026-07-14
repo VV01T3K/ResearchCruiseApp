@@ -10,7 +10,7 @@ export const CruiseManagerInfoSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function CruiseManagerInfoSection({ form, context }) {
-    const { formA, formAInitValues, submissionAttempts, isReadonly } = context;
+    const { formA, formAInitValues, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -53,7 +53,7 @@ export const CruiseManagerInfoSection = withForm({
                   checked={field.state.value === 'true'}
                   onChange={(value) => field.handleChange(value ? 'true' : 'false')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   label="Czy kierownik jest obecny na rejsie?"
                   disabled={isReadonly}
                 />

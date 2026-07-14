@@ -20,7 +20,7 @@ export const ContractsSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function ContractsSection({ form, context }) {
-    const { isReadonly, initValues, submissionAttempts } = context;
+    const { isReadonly, initValues } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<ContractValues>[] {
       return [
@@ -53,7 +53,7 @@ export const ContractsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Nazwa instytucji"
                     placeholder='np. "Uniwersytet Gdański"'
                     disabled={isReadonly}
@@ -68,7 +68,7 @@ export const ContractsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Jednostka"
                     placeholder='np. "Wydział Biologii"'
                     disabled={isReadonly}
@@ -83,7 +83,7 @@ export const ContractsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Lokalizacja instytucji"
                     placeholder='np. "Gdańsk"'
                     disabled={isReadonly}
@@ -106,7 +106,7 @@ export const ContractsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   label="Opis"
                   placeholder='np. "Umowa o współpracy"'
                   disabled={isReadonly}
@@ -131,7 +131,7 @@ export const ContractsSection = withForm({
                   allowMultiple={true}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   label="Skany"
                   uploadMessage="Kliknij lub przeciągnij pliki"
                   maxSizeInMb={2}
@@ -225,13 +225,10 @@ export const ContractsSection = withForm({
                   emptyTableMessage="Nie dodano żadnej umowy."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   data-testid="form-a-contracts-table"
                 />
-                <AppInputErrorsList
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  data-testid="form-a-contracts-errors"
-                />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-contracts-errors" />
               </>
             )}
           />

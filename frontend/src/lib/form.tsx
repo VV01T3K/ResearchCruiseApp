@@ -7,7 +7,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { getFieldErrors } from '@/lib/form-errors';
+import { extractErrorMessage } from '@/lib/form-errors';
 import type { FormFileValues } from '@/types/form-file-values';
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts();
@@ -15,7 +15,10 @@ export const { fieldContext, formContext, useFieldContext, useFormContext } = cr
 function useErrors() {
   const field = useFieldContext<unknown>();
   const submissionAttempts = useSelector(field.form.store, (state) => state.submissionAttempts);
-  return getFieldErrors(field.state.meta, submissionAttempts);
+  const meta = useSelector(field.store, (state) => state.meta);
+  const errors = meta.errors;
+  if ((!meta.isTouched && submissionAttempts === 0) || errors.length === 0) return undefined;
+  return errors.map(extractErrorMessage);
 }
 
 type TextProps = Omit<

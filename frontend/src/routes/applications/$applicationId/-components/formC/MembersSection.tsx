@@ -21,7 +21,7 @@ export const MembersSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function MembersSection({ form, context }) {
-    const { formB, isReadonly, formAInitValues, submissionAttempts } = context;
+    const { formB, isReadonly, formAInitValues } = context;
 
     function getUgTeamsColumns(
       notifyRowsChanged: () => void,
@@ -60,7 +60,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -87,7 +87,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -139,7 +139,7 @@ export const MembersSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -166,7 +166,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -308,9 +308,9 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                 />
-                <AppInputErrorsList errors={getErrors(field.state.meta, submissionAttempts)} />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} />
               </div>
             )}
           />
@@ -362,9 +362,9 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                 />
-                <AppInputErrorsList errors={getErrors(field.state.meta, submissionAttempts)} />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} />
               </div>
             )}
           />

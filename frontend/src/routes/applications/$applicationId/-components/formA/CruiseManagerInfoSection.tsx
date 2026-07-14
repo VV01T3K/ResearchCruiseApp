@@ -10,7 +10,7 @@ export const CruiseManagerInfoSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function CruiseManagerInfoSection({ form, context }) {
-    const { isReadonly, initValues, submissionAttempts } = context;
+    const { isReadonly, initValues } = context;
 
     return (
       <AppAccordion
@@ -27,7 +27,7 @@ export const CruiseManagerInfoSection = withForm({
                 value={field.state.value}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
                 label="Kierownik rejsu"
                 showRequiredAsterisk
                 placeholder="Wybierz kierownika rejsu"
@@ -46,7 +46,7 @@ export const CruiseManagerInfoSection = withForm({
                 value={field.state.value}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
                 label="Zastępca kierownika rejsu"
                 showRequiredAsterisk
                 placeholder="Wybierz zastępcę kierownika rejsu"
@@ -66,7 +66,7 @@ export const CruiseManagerInfoSection = withForm({
                 value={field.state.value}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
                 label="Rok"
                 showRequiredAsterisk
                 placeholder="Wybierz rok"

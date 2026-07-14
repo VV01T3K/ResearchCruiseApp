@@ -19,7 +19,6 @@ import { ShortResearchEquipmentValues } from '@/routes/applications/$application
 const shortResearchEquipmentColumns = (
   form: FormCFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentValues>[] => [
   {
@@ -41,7 +40,7 @@ const shortResearchEquipmentColumns = (
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
           />
         )}
@@ -70,7 +69,7 @@ const shortResearchEquipmentColumns = (
                   value={field.state.value}
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   disabled={isReadonly}
                   selectionStartDate={state ? new Date(state) : undefined}
                   minimalDate={state ? new Date(state) : undefined}
@@ -97,7 +96,7 @@ const shortResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -124,7 +123,6 @@ const shortResearchEquipmentColumns = (
 const longResearchEquipmentColumns = (
   form: FormCFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentValues>[] => [
   {
@@ -146,7 +144,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={(e) => field.handleChange(e as LongResearchEquipmentValues['action'])}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             allOptions={[
               { value: 'Put', inlineLabel: 'Pozostawienie' },
@@ -172,7 +170,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Czas"
             disabled={isReadonly}
           />
@@ -195,7 +193,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -222,7 +220,6 @@ const longResearchEquipmentColumns = (
 const portColumns = (
   form: FormCFormApi,
   removeRow: (index: number) => void,
-  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<PortCallValues>[] => [
   {
@@ -244,7 +241,7 @@ const portColumns = (
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             type="datetime"
           />
@@ -274,7 +271,7 @@ const portColumns = (
                   value={field.state.value}
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   disabled={isReadonly}
                   type="datetime"
                   selectionStartDate={state ? new Date(state) : undefined}
@@ -302,7 +299,7 @@ const portColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             placeholder="Nazwa portu"
             disabled={isReadonly}
           />
@@ -330,7 +327,7 @@ export const CruiseDetailsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function CruiseDetailsSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     return (
       <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-c-cruise-details-section">
@@ -350,7 +347,6 @@ export const CruiseDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly
                 )}
                 data={field.state.value}
@@ -391,7 +387,6 @@ export const CruiseDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly
                 )}
                 data={field.state.value}
@@ -440,7 +435,6 @@ export const CruiseDetailsSection = withForm({
                     field.handleChange((prev) => prev);
                     field.handleBlur();
                   },
-                  submissionAttempts,
                   isReadonly
                 )}
                 data={field.state.value}

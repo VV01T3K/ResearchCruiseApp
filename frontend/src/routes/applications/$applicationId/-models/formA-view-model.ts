@@ -3,7 +3,6 @@ import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas
 
 export type FormAViewModel = {
   initValues: FormAOptions;
-  submissionAttempts: number;
   isReadonly: boolean;
   blockades?: BlockadeResponse[];
 };

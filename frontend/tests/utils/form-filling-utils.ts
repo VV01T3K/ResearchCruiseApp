@@ -23,6 +23,7 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
   }
 
   async selectOption(itemText: string) {
+    await this.dropdown.evaluate((element) => element.scrollIntoView({ block: 'center' }));
     await this.dropdown.click();
     if (this.variant === 'menuitems') {
       await this.page.getByRole('option', { name: itemText }).click();
@@ -100,4 +101,5 @@ export class FormInput<TErrors extends Record<string, Locator> = Record<string, 
 export async function touchInput(input: Locator | FormInput) {
   await input.fill('a');
   await input.fill('');
+  await (input instanceof FormInput ? input.input : input).blur();
 }

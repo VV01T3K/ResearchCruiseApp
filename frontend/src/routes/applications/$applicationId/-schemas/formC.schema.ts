@@ -26,7 +26,7 @@ import {
   LongResearchEquipmentValuesInputSchema,
   LongResearchEquipmentValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
-import { PermissionValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import { PermissionWithFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 import {
   PortCallValuesInputSchema,
   PortCallValuesSchema,
@@ -146,13 +146,7 @@ const ShipUsageValidationSchema = z
 
 const OtherValidationSchema = (formAInitValues: FormAOptions) =>
   z.object({
-    permissions: PermissionValuesSchema.array().superRefine((permissions, ctx) => {
-      permissions.forEach((permission, index) => {
-        if (!permission.scan || !permission.scan.name.endsWith('.pdf')) {
-          ctx.addIssue({ code: 'custom', path: [index, 'scan'], message: 'Plik musi być w formacie PDF' });
-        }
-      });
-    }),
+    permissions: PermissionWithFileValuesSchema.array(),
     researchAreaDescriptions: getResearchAreaValuesSchema(formAInitValues)
       .array()
       .min(1, 'Co najmniej jeden rejon badań jest wymagany'),

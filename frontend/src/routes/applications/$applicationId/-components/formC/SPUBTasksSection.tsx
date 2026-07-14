@@ -18,7 +18,7 @@ export const SPUBTasksSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function SPUBTasksSection({ form, context }) {
-    const { isReadonly, formAInitValues, submissionAttempts } = context;
+    const { isReadonly, formAInitValues } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<SpubTaskValues>[] {
       return [
@@ -49,7 +49,7 @@ export const SPUBTasksSection = withForm({
                   value={field.state.value ? parseInt(field.state.value) : undefined}
                   onChange={(e) => field.handleChange(e?.toString() ?? '')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   disabled={isReadonly}
                 />
               )}
@@ -71,7 +71,7 @@ export const SPUBTasksSection = withForm({
                   value={field.state.value ? parseInt(field.state.value) : undefined}
                   onChange={(e) => field.handleChange(e?.toString() ?? '')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   disabled={isReadonly}
                 />
               )}
@@ -93,7 +93,7 @@ export const SPUBTasksSection = withForm({
                   value={field.state.value as string}
                   onChange={(e) => field.handleChange(e as string)}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   allOptions={formAInitValues?.standardSpubTasks.map((taskName) => ({
                     value: taskName,
                     inlineLabel: taskName,
@@ -173,9 +173,9 @@ export const SPUBTasksSection = withForm({
                   emptyTableMessage="Brak zadań SPUB"
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                 />
-                <AppInputErrorsList errors={getErrors(field.state.meta, submissionAttempts)} />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} />
               </>
             )}
           />

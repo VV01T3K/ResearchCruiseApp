@@ -74,7 +74,7 @@ export function PublicationsSection() {
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`publications[${row.index}].publication.year`}
-          value={row.original.publication.year}
+          value={row.original.publication.year ?? undefined}
           showRequiredAsterisk
           disabled
         />

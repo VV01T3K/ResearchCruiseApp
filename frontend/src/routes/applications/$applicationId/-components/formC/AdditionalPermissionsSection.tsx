@@ -17,7 +17,7 @@ export const AdditionalPermissionsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function AdditionalPermissionsSection({ form, context }) {
-    const { submissionAttempts, isReadonly } = context;
+    const { isReadonly } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<PermissionValues>[] {
       return [
@@ -40,7 +40,7 @@ export const AdditionalPermissionsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -63,7 +63,7 @@ export const AdditionalPermissionsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -87,7 +87,7 @@ export const AdditionalPermissionsSection = withForm({
                   acceptedMimeTypes={['application/pdf']}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   disabled={isReadonly}
                 />
               )}
@@ -147,7 +147,7 @@ export const AdditionalPermissionsSection = withForm({
                 emptyTableMessage="Nie dodano żadnego pozwolenia."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta)} />
             </>

@@ -18,7 +18,7 @@ export const ResearchAreaSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ResearchAreaSection({ form, context }) {
-    const { isReadonly, formAInitValues, submissionAttempts } = context;
+    const { isReadonly, formAInitValues } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchAreaValues>[] {
       return [
@@ -52,7 +52,7 @@ export const ResearchAreaSection = withForm({
                     }
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     placeholder="Nazwa rejonu"
                     disabled={isReadonly}
                   />
@@ -73,7 +73,7 @@ export const ResearchAreaSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                   disabled={isReadonly}
                 />
@@ -136,9 +136,9 @@ export const ResearchAreaSection = withForm({
                 emptyTableMessage="Nie dodano żadnego rejonu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, submissionAttempts)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta)} />
             </>
           )}
         />

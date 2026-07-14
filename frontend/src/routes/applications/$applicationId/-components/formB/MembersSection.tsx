@@ -22,7 +22,7 @@ export const MembersSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function MembersSection({ form, context }) {
-    const { isReadonly, formAInitValues, submissionAttempts } = context;
+    const { isReadonly, formAInitValues } = context;
 
     function getUgTeamsColumns(
       removeRow: (index: number) => void,
@@ -62,7 +62,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -90,7 +90,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -145,7 +145,7 @@ export const MembersSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -174,7 +174,7 @@ export const MembersSection = withForm({
                     notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -227,7 +227,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Tytuł"
                     disabled={isReadonly}
                   />
@@ -244,7 +244,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Imiona"
                     containerClassName="col-span-2"
                     disabled={isReadonly}
@@ -262,7 +262,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Nazwisko"
                     containerClassName="col-span-2"
                     disabled={isReadonly}
@@ -289,7 +289,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Miejsce urodzenia"
                     disabled={isReadonly}
                   />
@@ -306,7 +306,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={(e) => field.handleChange(e ?? '')}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Data urodzenia"
                     disabled={isReadonly}
                   />
@@ -323,7 +323,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Numer ID dokumentu"
                     disabled={isReadonly}
                   />
@@ -340,7 +340,7 @@ export const MembersSection = withForm({
                     value={field.state.value as string}
                     onChange={(e) => field.handleChange(e ?? '')}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Data ważności dokumentu"
                     disabled={isReadonly}
                   />
@@ -366,7 +366,7 @@ export const MembersSection = withForm({
                   value={field.state.value as string}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   placeholder="Wprowadź nazwę jednostki"
                   disabled={isReadonly}
                 />
@@ -435,12 +435,9 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                 />
-                <AppInputErrorsList
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  data-testid="form-b-ug-teams-errors"
-                />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-ug-teams-errors" />
               </div>
             )}
           />
@@ -493,12 +490,9 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                 />
-                <AppInputErrorsList
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  data-testid="form-b-guest-teams-errors"
-                />
+                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-guest-teams-errors" />
               </div>
             )}
           />
@@ -541,7 +535,7 @@ export const MembersSection = withForm({
                 emptyTableMessage="Nie dodano żadnego członka załogi."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
               />
               <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-crew-members-errors" />
             </>

@@ -9,9 +9,8 @@ import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-s
 type Props = {
   row: Row<OtherResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function OtherResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function OtherResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
@@ -23,7 +22,7 @@ export function OtherResearchTaskDetails({ row, disabled, submissionAttempts }: 
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Opis zadania"
             placeholder="Wprowadź opis zadania"
             disabled={disabled}

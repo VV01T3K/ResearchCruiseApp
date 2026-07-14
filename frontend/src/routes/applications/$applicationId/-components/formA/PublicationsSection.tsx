@@ -24,7 +24,7 @@ export const PublicationsSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function PublicationsSection({ form, context }) {
-    const { isReadonly, initValues, submissionAttempts } = context;
+    const { isReadonly, initValues } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<PublicationValues>[] {
       return [
@@ -47,7 +47,7 @@ export const PublicationsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange as (value: string) => void}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   allOptions={Object.values(PublicationCategory).map((role) => ({
                     value: role,
                     inlineLabel: getPublicationCategoryLabel(role),
@@ -74,7 +74,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="DOI"
                     placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
                     disabled={isReadonly}
@@ -91,7 +91,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Autorzy"
                     placeholder='np. "Kowalski J., Nowak A."'
                     disabled={isReadonly}
@@ -108,7 +108,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Tytuł"
                     placeholder='np. "The impact of sea level rise on the coastal zone"'
                     disabled={isReadonly}
@@ -125,7 +125,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, submissionAttempts)}
+                    errors={getErrors(field.state.meta)}
                     label="Czasopismo"
                     placeholder='np. "Journal of Marine Systems"'
                     disabled={isReadonly}
@@ -143,19 +143,21 @@ export const PublicationsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].year`}
               children={(field) => (
-                <AppYearPickerInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(value) => field.handleChange(value ?? 0)}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
-                  label="Rok"
-                  disabled={isReadonly}
-                  data-testid-button="form-a-publication-year-button"
-                />
+                <div>
+                  <AppYearPickerInput
+                    name={field.name}
+                    value={field.state.value ?? undefined}
+                    onChange={(value) => field.handleChange(value ?? null)}
+                    onBlur={field.handleBlur}
+                    label="Rok"
+                    disabled={isReadonly}
+                    data-testid-button="form-a-publication-year-button"
+                  />
+                  <field.FieldErrors />
+                </div>
               )}
             />
           ),
@@ -177,7 +179,7 @@ export const PublicationsSection = withForm({
                   step={10}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   label="Punkty"
                   disabled={isReadonly}
                   data-testid-input="form-a-publication-points-input"
@@ -261,7 +263,7 @@ export const PublicationsSection = withForm({
                             authors: '',
                             title: '',
                             magazine: '',
-                            year: new Date().getFullYear(),
+                            year: null,
                             ministerialPoints: 0,
                           });
                           field.handleChange((prev: PublicationValues[]) => prev);
@@ -335,7 +337,7 @@ export const PublicationsSection = withForm({
                   ]}
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, submissionAttempts)}
+                  errors={getErrors(field.state.meta)}
                   data-testid="form-a-publications-table"
                 />
                 <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />

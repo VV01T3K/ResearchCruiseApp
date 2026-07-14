@@ -12,7 +12,7 @@ export const ShipUsageSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ShipUsageSection({ form, context }) {
-    const { isReadonly, formAInitValues, submissionAttempts } = context;
+    const { isReadonly, formAInitValues } = context;
 
     return (
       <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-c-ship-usage-section">
@@ -25,7 +25,7 @@ export const ShipUsageSection = withForm({
                 value={field.state.value as string}
                 onChange={(e) => field.handleChange(e as string)}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, submissionAttempts)}
+                errors={getErrors(field.state.meta)}
                 label="Statek na potrzeby badań był wykorzystywany"
                 allOptions={formAInitValues?.shipUsages.map((shipUsage, i) => ({
                   value: i.toString(),
@@ -57,7 +57,7 @@ export const ShipUsageSection = withForm({
                           value={field.state.value}
                           onChange={field.handleChange}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, submissionAttempts)}
+                          errors={getErrors(field.state.meta)}
                           label="Inny sposób użycia"
                           placeholder="np. statek badawczy"
                           disabled={isReadonly}

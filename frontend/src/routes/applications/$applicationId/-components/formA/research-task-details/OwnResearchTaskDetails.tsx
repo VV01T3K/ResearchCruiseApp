@@ -11,9 +11,8 @@ import { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-sch
 type Props = {
   row: Row<OwnResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function OwnResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function OwnResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -25,7 +24,7 @@ export function OwnResearchTaskDetails({ row, disabled, submissionAttempts }: Pr
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
             disabled={disabled}
@@ -41,7 +40,7 @@ export function OwnResearchTaskDetails({ row, disabled, submissionAttempts }: Pr
             value={field.state.value as string}
             onBlur={field.handleBlur}
             onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Przewidywany termin składania"
             disabled={disabled}
           />
@@ -56,7 +55,7 @@ export function OwnResearchTaskDetails({ row, disabled, submissionAttempts }: Pr
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Czasopismo"
             placeholder="Wprowadź czasopismo"
             disabled={disabled}
@@ -74,7 +73,7 @@ export function OwnResearchTaskDetails({ row, disabled, submissionAttempts }: Pr
             step={10}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Przewidywane punkty ministerialne"
             disabled={disabled}
           />

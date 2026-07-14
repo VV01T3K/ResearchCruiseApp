@@ -9,9 +9,8 @@ import { DidacticsResearchTaskValues } from '@/routes/applications/$applicationI
 type Props = {
   row: Row<DidacticsResearchTaskValues>;
   disabled?: boolean;
-  submissionAttempts?: number;
 };
-export function DidacticsResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+export function DidacticsResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
@@ -23,7 +22,7 @@ export function DidacticsResearchTaskDetails({ row, disabled, submissionAttempts
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, submissionAttempts)}
+            errors={getErrors(field.state.meta)}
             label="Opis zajęcia dydaktycznego"
             placeholder="Wprowadź opis zajęcia dydaktycznego"
             disabled={disabled}

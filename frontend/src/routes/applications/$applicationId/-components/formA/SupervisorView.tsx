@@ -28,7 +28,6 @@ export const SupervisorView = withForm({
     const context = {
       initValues: formInitValues,
       isReadonly: true,
-      submissionAttempts: 0,
     };
     return (
       <AppLayout title="Formularz A">
