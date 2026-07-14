@@ -22,9 +22,7 @@ export const Route = createFileRoute('/applications/')({
 const dateFormat = 'DD.MM.YYYY';
 
 function ApplicationsPage() {
-  const applicationsQuery = useGetApplicationsSuspense({
-    query: { select: (applications) => applications as ApplicationResponse[] },
-  });
+  const applicationsQuery = useGetApplicationsSuspense();
 
   const columns: ColumnDef<ApplicationResponse>[] = [
     {

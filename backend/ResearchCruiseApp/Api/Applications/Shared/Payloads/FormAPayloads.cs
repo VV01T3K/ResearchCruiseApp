@@ -175,6 +175,7 @@ public class CruiseApplicationDto
 
     public string? CruiseHours { get; init; }
 
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
     public float? CruiseDays { get; set; }
 
     public string? AcceptablePeriodBeg { get; init; }

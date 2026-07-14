@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
@@ -53,6 +54,20 @@ builder.Services.AddOpenApi(
                 {
                     schema.Format = null;
                     schema.Pattern = dotNetGuidPattern;
+                }
+
+                var strictNumber =
+                    context
+                        .JsonPropertyInfo?.AttributeProvider?.GetCustomAttributes(
+                            typeof(JsonNumberHandlingAttribute),
+                            true
+                        )
+                        .OfType<JsonNumberHandlingAttribute>()
+                        .Any(attribute => attribute.Handling == JsonNumberHandling.Strict) == true;
+                if (strictNumber)
+                {
+                    schema.Type &= ~JsonSchemaType.String;
+                    schema.Pattern = null;
                 }
 
                 return Task.CompletedTask;

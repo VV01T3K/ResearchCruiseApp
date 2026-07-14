@@ -2,8 +2,4 @@ import type { CruiseApplicationDto as GeneratedCruiseApplicationDto } from '@/ap
 
 import type { DeepRequired } from '@/types/utils';
 
-type GeneratedApplication = DeepRequired<GeneratedCruiseApplicationDto>;
-
-export type CruiseApplicationDto = Omit<GeneratedApplication, 'cruiseDays'> & {
-  cruiseDays: number | null;
-};
+export type CruiseApplicationDto = DeepRequired<GeneratedCruiseApplicationDto>;

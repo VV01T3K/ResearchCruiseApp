@@ -4,7 +4,6 @@ import { CruiseApplicationStatus } from './cruiseApplicationStatus.gen.ts';
 export const cruiseApplicationDtoIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 export const cruiseApplicationDtoCruiseManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 export const cruiseApplicationDtoDeputyManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
-export const cruiseApplicationDtoCruiseDaysRegExpTwo = new RegExp('^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$');
 
 
 export const CruiseApplicationDto = zod.object({
@@ -28,7 +27,7 @@ export const CruiseApplicationDto = zod.object({
   "effectsDoneRate": zod.string().optional(),
   "note": zod.string().nullish(),
   "cruiseHours": zod.string().nullish(),
-  "cruiseDays": zod.union([zod.number(),zod.stringFormat('float', cruiseApplicationDtoCruiseDaysRegExpTwo)]).nullish(),
+  "cruiseDays": zod.number().nullish(),
   "acceptablePeriodBeg": zod.string().nullish(),
   "acceptablePeriodEnd": zod.string().nullish(),
   "optimalPeriodBeg": zod.string().nullish(),

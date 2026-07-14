@@ -51,9 +51,7 @@ function CruiseDetailsPage() {
   const queryClient = useQueryClient();
   const invalidateCruiseDetail = () => queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
-  const applicationQuery = useGetApplicationsSuspense({
-    query: { select: (applications) => applications as ApplicationResponse[] },
-  });
+  const applicationQuery = useGetApplicationsSuspense();
   const updateCruiseMutation = useUpdateCruise({ mutation: { onSuccess: invalidateCruiseDetail } });
   const confirmCruiseMutation = useConfirmCruise({ mutation: { onSuccess: invalidateCruiseDetail } });
   const deleteCruiseMutation = useDeleteCruise({

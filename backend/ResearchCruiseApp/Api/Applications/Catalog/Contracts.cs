@@ -26,7 +26,7 @@ public sealed record ApplicationResponse(
     string EffectsDoneRate,
     string? Note,
     string? CruiseHours,
-    float? CruiseDays,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] float? CruiseDays,
     string? AcceptablePeriodBeg,
     string? AcceptablePeriodEnd,
     string? OptimalPeriodBeg,

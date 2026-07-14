@@ -3,7 +3,6 @@ import { ApplicationPersonResponse } from './applicationPersonResponse.gen.ts';
 import { CruiseApplicationStatus } from './cruiseApplicationStatus.gen.ts';
 
 export const applicationResponseIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
-export const applicationResponseCruiseDaysRegExpTwo = new RegExp('^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$');
 
 
 export const ApplicationResponse = zod.object({
@@ -21,7 +20,7 @@ export const ApplicationResponse = zod.object({
   "effectsDoneRate": zod.string(),
   "note": zod.string().nullable(),
   "cruiseHours": zod.string().nullable(),
-  "cruiseDays": zod.union([zod.number(),zod.stringFormat('float', applicationResponseCruiseDaysRegExpTwo)]).nullable(),
+  "cruiseDays": zod.number().nullable(),
   "acceptablePeriodBeg": zod.string().nullable(),
   "acceptablePeriodEnd": zod.string().nullable(),
   "optimalPeriodBeg": zod.string().nullable(),

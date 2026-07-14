@@ -50,9 +50,7 @@ export function getApplicationStatusLabel(status: ApplicationStatus): string {
   }
 }
 
-export type ApplicationResponse = Omit<GeneratedApplicationResponse, 'cruiseDays'> & {
-  cruiseDays: number | null;
-};
+export type ApplicationResponse = GeneratedApplicationResponse;
 type GeneratedEvaluation = DeepPresent<CruiseApplicationEvaluationDetailsDto>;
 type GeneratedResearchTask = GeneratedEvaluation['formAResearchTasks'][number];
 type GeneratedContract = GeneratedEvaluation['formAContracts'][number];
