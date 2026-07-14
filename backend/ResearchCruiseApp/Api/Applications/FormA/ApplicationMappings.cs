@@ -53,10 +53,12 @@ internal static partial class ApplicationMappings
             PeriodNotes = form.PeriodNotes,
             ShipUsage = form.ShipUsage,
             DifferentUsage = form.DifferentUsage,
+            Permissions = [],
             ResearchAreaDescriptions = form
                 .ResearchAreaDescriptions.Select(ToResearchAreaSelection)
                 .ToList(),
             ResearchTasks = form.FormAResearchTasks.Select(ToResearchTaskFields).ToList(),
+            Contracts = [],
             UgTeams = form.FormAUgUnits.Select(ToUgTeamFields).ToList(),
             GuestTeams = form.FormAGuestUnits.Select(ToGuestTeamFields).ToList(),
             Publications = form.FormAPublications.Select(ToPublicationFields).ToList(),
@@ -64,6 +66,7 @@ internal static partial class ApplicationMappings
             CruiseGoal = form.CruiseGoal,
             CruiseGoalDescription = form.CruiseGoalDescription,
             SupervisorEmail = form.SupervisorEmail,
+            Note = null,
         };
     }
 
