@@ -176,7 +176,7 @@ function NewCruiseApplicationPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <FormView context={context} />
+        <FormView form={form} context={context} />
       </AppLayout>
 
       <AppModal

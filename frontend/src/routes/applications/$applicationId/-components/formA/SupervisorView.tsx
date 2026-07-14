@@ -1,5 +1,5 @@
 import { AppLayout } from '@/components/shared/AppLayout';
-import { AnyReactFormApi } from '@/lib/form';
+import { withForm } from '@/lib/form';
 import { ContractsSection } from '@/routes/applications/$applicationId/-components/formA/ContractsSection';
 import { CruiseGoalSection } from '@/routes/applications/$applicationId/-components/formA/CruiseGoalSection';
 import { CruiseLengthSection } from '@/routes/applications/$applicationId/-components/formA/CruiseLengthSection';
@@ -12,46 +12,43 @@ import { ResearchAreaSection } from '@/routes/applications/$applicationId/-compo
 import { ResearchTasksSection } from '@/routes/applications/$applicationId/-components/formA/ResearchTasksSection';
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
-import { FormAProvider } from '@/contexts/applications/FormAContext';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
-export function SupervisorView({
-  form,
-  formInitValues,
-  handleAcceptForm,
-  handleDenyForm,
-}: {
-  form: AnyReactFormApi<FormAValues>;
+type Props = {
   formInitValues: FormAOptions;
   handleAcceptForm: () => void;
   handleDenyForm: () => void;
-}) {
-  return (
-    <AppLayout title="Formularz A">
-      <div className="space-y-8">
-        <FormAProvider
-          value={{
-            form,
-            initValues: formInitValues,
-            isReadonly: true,
-            hasFormBeenSubmitted: false,
-          }}
-        >
-          <CruiseManagerInfoSection />
-          <CruiseLengthSection />
-          <PermissionsSection />
-          <ResearchAreaSection />
-          <CruiseGoalSection />
-          <ResearchTasksSection />
-          <ContractsSection />
-          <MembersSection />
-          <PublicationsSection />
-          <SPUBTasksSection />
-          <SupervisorInfoSection />
-          <SupervisorActionsSection onAccept={handleAcceptForm} onDeny={handleDenyForm} />
-        </FormAProvider>
-      </div>
-    </AppLayout>
-  );
-}
+};
+
+export const SupervisorView = withForm({
+  defaultValues: formADefaultValues,
+  props: {} as Props,
+  render: function SupervisorView({ form, formInitValues, handleAcceptForm, handleDenyForm }) {
+    const context = {
+      initValues: formInitValues,
+      isReadonly: true,
+      hasFormBeenSubmitted: false,
+    };
+    return (
+      <AppLayout title="Formularz A">
+        <form.AppForm>
+          <div className="space-y-8">
+            <CruiseManagerInfoSection form={form} context={context} />
+            <CruiseLengthSection form={form} context={context} />
+            <PermissionsSection form={form} context={context} />
+            <ResearchAreaSection form={form} context={context} />
+            <CruiseGoalSection form={form} context={context} />
+            <ResearchTasksSection form={form} context={context} />
+            <ContractsSection form={form} context={context} />
+            <MembersSection form={form} context={context} />
+            <PublicationsSection form={form} context={context} />
+            <SPUBTasksSection form={form} context={context} />
+            <SupervisorInfoSection form={form} context={context} />
+            <SupervisorActionsSection onAccept={handleAcceptForm} onDeny={handleDenyForm} />
+          </div>
+        </form.AppForm>
+      </AppLayout>
+    );
+  },
+});

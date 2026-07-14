@@ -9,7 +9,9 @@ import { getErrors, groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { ResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ResearchTaskDetails';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { withForm } from '@/lib/form';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
   getEmptyTask,
   getTaskName,
@@ -18,135 +20,139 @@ import {
   taskTypes,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
-export function ResearchTasksSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export const ResearchTasksSection = withForm({
+  defaultValues: formADefaultValues,
+  props: {} as { context: FormAViewModel },
+  render: function ResearchTasksSection({ form, context }) {
+    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskValues>[] {
-    return [
-      {
-        header: 'Lp.',
-        cell: ({ row }) => `${row.index + 1}. `,
-        size: 5,
-      },
-      {
-        header: 'Zadanie',
-        accessorFn: (row) => getTaskName(row.type),
-        cell: ({ row }) => (
-          <form.Field
-            key={row.index}
-            name={`researchTasks[${row.index}].type`}
-            children={(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
-          />
-        ),
-        size: 20,
-      },
-      {
-        header: 'Szczegóły',
-        cell: ({ row }) => (
-          <ResearchTaskDetails
-            form={form}
-            row={row}
-            disabled={isReadonly}
-            hasFormBeenSubmitted={hasFormBeenSubmitted}
-          />
-        ),
-      },
-      {
-        id: 'actions',
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <AppTableDeleteRowButton
-              onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: ResearchTaskValues[]) => prev);
-                field.handleBlur();
-              }}
-              disabled={isReadonly}
+    function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskValues>[] {
+      return [
+        {
+          header: 'Lp.',
+          cell: ({ row }) => `${row.index + 1}. `,
+          size: 5,
+        },
+        {
+          header: 'Zadanie',
+          accessorFn: (row) => getTaskName(row.type),
+          cell: ({ row }) => (
+            <form.Field
+              key={row.index}
+              name={`researchTasks[${row.index}].type`}
+              children={(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
             />
-          </div>
-        ),
-        size: 5,
-      },
-    ];
-  }
+          ),
+          size: 20,
+        },
+        {
+          header: 'Szczegóły',
+          cell: ({ row }) => (
+            <ResearchTaskDetails
+              form={form}
+              row={row}
+              disabled={isReadonly}
+              hasFormBeenSubmitted={hasFormBeenSubmitted}
+            />
+          ),
+        },
+        {
+          id: 'actions',
+          cell: ({ row }) => (
+            <div className="flex justify-end">
+              <AppTableDeleteRowButton
+                onClick={() => {
+                  field.removeValue(row.index);
+                  field.handleChange((prev: ResearchTaskValues[]) => prev);
+                  field.handleBlur();
+                }}
+                disabled={isReadonly}
+              />
+            </div>
+          ),
+          size: 5,
+        },
+      ];
+    }
 
-  return (
-    <AppAccordion
-      title="6. Zadania do zrealizowania w trakcie rejsu"
-      expandedByDefault
-      data-testid="form-a-research-tasks-section"
-    >
-      <div>
-        <form.Field
-          name="researchTasks"
-          mode="array"
-          children={(field) => (
-            <>
-              <AppTable
-                columns={getColumns(field)}
-                data={field.state.value}
-                showRequiredAsterisk
-                buttons={() => [
-                  <DropdownElementSelectorButton
-                    key="new"
-                    options={taskTypes.map((type) => ({
-                      value: getTaskName(type),
-                      onClick: () => {
-                        field.pushValue(getEmptyTask(type));
-                        field.handleChange((prev: ResearchTaskValues[]) => prev);
-                        field.handleBlur();
-                      },
-                    }))}
-                    variant="primary"
-                    disabled={isReadonly}
-                    data-testid="form-a-add-research-task-btn"
-                  >
-                    Dodaj nowe efekty rejsu
-                  </DropdownElementSelectorButton>,
-                  <DropdownElementSelectorButton
-                    key="historical"
-                    options={groupBy(initValues.historicalResearchTasks, (x) => x.type).flatMap(([type, tasks]) => [
-                      ...[
-                        {
-                          value: type,
-                          content: (
-                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
-                              {getTaskName(type as ResearchTaskType)}
-                            </div>
-                          ),
-                        },
-                      ],
-                      ...tasks.map((task) => ({
-                        value: JSON.stringify(task),
-                        content: <ResearchTaskThumbnail task={task} />,
+    return (
+      <AppAccordion
+        title="6. Zadania do zrealizowania w trakcie rejsu"
+        expandedByDefault
+        data-testid="form-a-research-tasks-section"
+      >
+        <div>
+          <form.Field
+            name="researchTasks"
+            mode="array"
+            children={(field) => (
+              <>
+                <AppTable
+                  columns={getColumns(field)}
+                  data={field.state.value}
+                  showRequiredAsterisk
+                  buttons={() => [
+                    <DropdownElementSelectorButton
+                      key="new"
+                      options={taskTypes.map((type) => ({
+                        value: getTaskName(type),
                         onClick: () => {
-                          field.pushValue(task);
+                          field.pushValue(getEmptyTask(type));
                           field.handleChange((prev: ResearchTaskValues[]) => prev);
                           field.handleBlur();
                         },
-                      })),
-                    ])}
-                    variant="primaryOutline"
-                    disabled={isReadonly}
-                    data-testid="form-a-add-historical-research-task-btn"
-                  >
-                    Dodaj historyczne efekty rejsu
-                  </DropdownElementSelectorButton>,
-                ]}
-                emptyTableMessage="Nie dodano żadnego zadania."
-                variant="form"
-                disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-research-tasks-table"
-              />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                data-testid="form-a-research-tasks-errors"
-              />
-            </>
-          )}
-        />
-      </div>
-    </AppAccordion>
-  );
-}
+                      }))}
+                      variant="primary"
+                      disabled={isReadonly}
+                      data-testid="form-a-add-research-task-btn"
+                    >
+                      Dodaj nowe efekty rejsu
+                    </DropdownElementSelectorButton>,
+                    <DropdownElementSelectorButton
+                      key="historical"
+                      options={groupBy(initValues.historicalResearchTasks, (x) => x.type).flatMap(([type, tasks]) => [
+                        ...[
+                          {
+                            value: type,
+                            content: (
+                              <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                                {getTaskName(type as ResearchTaskType)}
+                              </div>
+                            ),
+                          },
+                        ],
+                        ...tasks.map((task) => ({
+                          value: JSON.stringify(task),
+                          content: <ResearchTaskThumbnail task={task} />,
+                          onClick: () => {
+                            field.pushValue(task);
+                            field.handleChange((prev: ResearchTaskValues[]) => prev);
+                            field.handleBlur();
+                          },
+                        })),
+                      ])}
+                      variant="primaryOutline"
+                      disabled={isReadonly}
+                      data-testid="form-a-add-historical-research-task-btn"
+                    >
+                      Dodaj historyczne efekty rejsu
+                    </DropdownElementSelectorButton>,
+                  ]}
+                  emptyTableMessage="Nie dodano żadnego zadania."
+                  variant="form"
+                  disabled={isReadonly}
+                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  data-testid="form-a-research-tasks-table"
+                />
+                <AppInputErrorsList
+                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  data-testid="form-a-research-tasks-errors"
+                />
+              </>
+            )}
+          />
+        </div>
+      </AppAccordion>
+    );
+  },
+});

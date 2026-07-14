@@ -53,6 +53,35 @@ export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   note: 11,
 };
 
+export const formADefaultValues: FormAValues = {
+  id: undefined,
+  cruiseManagerId: '',
+  deputyManagerId: '',
+  year: '',
+  acceptablePeriod: '',
+  optimalPeriod: '',
+  precisePeriodStart: '',
+  precisePeriodEnd: '',
+  periodSelectionType: 'period',
+  cruiseDays: 0,
+  cruiseHours: 0,
+  periodNotes: '',
+  shipUsage: '',
+  differentUsage: '',
+  permissions: [],
+  researchAreaDescriptions: [],
+  cruiseGoal: '',
+  cruiseGoalDescription: '',
+  researchTasks: [],
+  contracts: [],
+  ugTeams: [],
+  guestTeams: [],
+  publications: [],
+  spubTasks: [],
+  supervisorEmail: '',
+  note: '',
+} satisfies FormAValues;
+
 const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 function hasEnoughDaysInPeriod(period: [string, string], year: number, cruiseDurationDays: number): boolean {

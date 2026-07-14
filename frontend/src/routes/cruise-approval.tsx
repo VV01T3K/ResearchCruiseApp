@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
-import { useForm } from '@tanstack/react-form';
 import {
   useGetApplicationSupervisorReviewSuspense,
   useUpdateApplicationSupervisorReviewDecision,
@@ -9,6 +8,7 @@ import { ApiError, getProblemDetail } from '@/lib/custom-fetch';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
 import { mapFormAOptions, mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { useAppForm } from '@/lib/form';
 
 export const Route = createFileRoute('/cruise-approval')({
   component: SupervisorViewPage,
@@ -40,7 +40,7 @@ function SupervisorViewPage() {
   const answerMutation = useUpdateApplicationSupervisorReviewDecision();
   const formA = supervisorReview.data.form;
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: formA,
   });
 
