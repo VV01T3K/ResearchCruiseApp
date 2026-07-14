@@ -40,6 +40,7 @@ export default defineConfig({
       optionsParamRequired: false,
       urlEncodeParameters: false,
       override: {
+        header: false,
         mutator: {
           path: 'src/lib/custom-fetch.ts',
           name: 'customFetch',
@@ -105,10 +106,30 @@ export default defineConfig({
           runtimeValidation: false,
         },
         operations: {
+          ConfirmEmail: {
+            query: {
+              useSuspenseQuery: false,
+            },
+          },
+          ExportCruises: {
+            query: {
+              useSuspenseQuery: false,
+            },
+          },
           GetCruiseBlockades: {
             query: {
               useQuery: true,
               useSuspenseQuery: false,
+            },
+          },
+          RefreshTokens: {
+            query: {
+              useMutation: false,
+            },
+          },
+          RefillApplicationFormC: {
+            query: {
+              useMutation: false,
             },
           },
         },
