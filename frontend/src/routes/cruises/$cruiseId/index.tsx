@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
+import { useQueryClient } from '@tanstack/react-query';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
@@ -13,20 +14,26 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { useApplicationsQuery } from '@/api/applications/ApplicationCatalogApiHooks';
-import { ApplicationResponse, ApplicationStatus } from '@/api/applications/contracts';
+import { useGetApplicationsSuspense } from '@/api/gen/endpoints/applications.gen';
+import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
 import { FormView } from '../-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
 import {
-  useConfirmCruiseMutation,
-  useCompleteCruiseMutation,
-  useCruiseQuery,
-  useDeleteCruiseMutation,
-  useRemoveCruiseConfirmationMutation,
-  useUpdateCruiseMutation,
-} from '@/api/cruises/CruisesApiHooks';
-import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
-import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/applications/dto/CruiseApplicationDto';
+  getGetCruiseQueryKey,
+  getGetCruisesQueryKey,
+  useCompleteCruise,
+  useConfirmCruise,
+  useDeleteCruise,
+  useGetCruiseSuspense,
+  useRemoveCruiseConfirmation,
+  useUpdateCruise,
+} from '@/api/gen/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/gen/model';
+import { CruiseFormValues, toCruiseRequest } from '@/routes/cruises/-types';
+import {
+  CruiseApplicationDto,
+  CruiseApplicationStatus,
+} from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -45,13 +52,22 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 function CruiseDetailsPage() {
   const { cruiseId } = Route.useParams();
 
-  const cruiseQuery = useCruiseQuery(cruiseId);
-  const applicationQuery = useApplicationsQuery();
-  const updateCruiseMutation = useUpdateCruiseMutation(cruiseId);
-  const confirmCruiseMutation = useConfirmCruiseMutation(cruiseId);
-  const deleteCruiseMutation = useDeleteCruiseMutation();
-  const endCruiseMutation = useCompleteCruiseMutation(cruiseId);
-  const revertCruiseStatusMutation = useRemoveCruiseConfirmationMutation(cruiseId);
+  const queryClient = useQueryClient();
+  const invalidateCruise = () => {
+    queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+    return queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
+  };
+  const cruiseQuery = useGetCruiseSuspense(cruiseId);
+  const applicationQuery = useGetApplicationsSuspense({
+    query: { select: (applications) => applications as ApplicationResponse[] },
+  });
+  const updateCruiseMutation = useUpdateCruise({ mutation: { onSuccess: invalidateCruise } });
+  const confirmCruiseMutation = useConfirmCruise({ mutation: { onSuccess: invalidateCruise } });
+  const deleteCruiseMutation = useDeleteCruise({ mutation: { onSuccess: invalidateCruise } });
+  const endCruiseMutation = useCompleteCruise({ mutation: { onSuccess: invalidateCruise } });
+  const revertCruiseStatusMutation = useRemoveCruiseConfirmation({
+    mutation: { onSuccess: invalidateCruise },
+  });
 
   const navigate = useNavigate();
 
@@ -81,17 +97,20 @@ function CruiseDetailsPage() {
       'managersTeam.mainDeputyManagerId',
     ]);
 
-    updateCruiseMutation.mutate(dto, {
-      onSuccess: () => {
-        setEditMode(false);
-        toast.success('Rejs został zaktualizowany pomyślnie.');
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-        navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-      },
-    });
+    updateCruiseMutation.mutate(
+      { cruiseId, data: toCruiseRequest(dto) },
+      {
+        onSuccess: () => {
+          setEditMode(false);
+          toast.success('Rejs został zaktualizowany pomyślnie.');
+        },
+        onError: (error) => {
+          console.error(error);
+          toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+          navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+        },
+      }
+    );
   }
 
   function getButtons() {
@@ -238,7 +257,7 @@ function CruiseDetailsPage() {
             variant="primary"
             className="basis-2/3"
             onClick={async () => {
-              await confirmCruiseMutation.mutateAsync();
+              await confirmCruiseMutation.mutateAsync({ cruiseId });
               setIsConfirmAcceptanceModalOpen(false);
             }}
             disabled={confirmCruiseMutation.isPending}
@@ -269,7 +288,7 @@ function CruiseDetailsPage() {
             variant="danger"
             className="basis-2/3"
             onClick={async () => {
-              await deleteCruiseMutation.mutateAsync(cruiseId);
+              await deleteCruiseMutation.mutateAsync({ cruiseId });
               navigate({ to: '/cruises' });
             }}
             disabled={deleteCruiseMutation.isPending}
@@ -299,7 +318,7 @@ function CruiseDetailsPage() {
             variant="primary"
             className="basis-2/3"
             onClick={async () => {
-              await endCruiseMutation.mutateAsync();
+              await endCruiseMutation.mutateAsync({ cruiseId });
               setIsConfirmEndModalOpen(false);
             }}
             disabled={endCruiseMutation.isPending}
@@ -331,7 +350,7 @@ function CruiseDetailsPage() {
             variant="dangerOutline"
             className="basis-2/3"
             onClick={async () => {
-              await revertCruiseStatusMutation.mutateAsync();
+              await revertCruiseStatusMutation.mutateAsync({ cruiseId });
               setIsConfirmRevertModalOpen(false);
             }}
             disabled={revertCruiseStatusMutation.isPending}

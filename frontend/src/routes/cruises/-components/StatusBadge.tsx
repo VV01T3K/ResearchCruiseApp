@@ -1,8 +1,8 @@
 import { AppBadge } from '@/components/shared/AppBadge';
-import { CruiseStatus } from '@/api/cruises/contracts';
+import type { CruiseResponse } from '@/api/gen/model';
 
 type Props = {
-  status: CruiseStatus;
+  status: CruiseResponse['status'];
 };
 export function StatusBadge({ status }: Props) {
   if (status === 'new') {

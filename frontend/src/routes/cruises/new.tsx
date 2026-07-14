@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
+import { useQueryClient } from '@tanstack/react-query';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
@@ -12,9 +13,10 @@ import { trackFormSubmit } from '@/lib/sentry';
 import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
 import { FormView } from './-components/FormView';
 import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
-import { useCreateCruiseMutation } from '@/api/cruises/CruisesApiHooks';
-import { useCruisePlanningCandidatesQuery } from '@/api/applications/CruisePlanningApiHooks';
-import { CruiseFormValues } from '@/api/cruises/contracts';
+import { getGetCruisesQueryKey, useCreateCruise } from '@/api/gen/endpoints/cruises.gen';
+import { useGetApplicationsForCruisePlanningSuspense } from '@/api/gen/endpoints/applications.gen';
+import type { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
+import { CruiseFormValues, toCruiseRequest } from '@/routes/cruises/-types';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -36,8 +38,15 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 function NewCruisePage() {
-  const cruiseApplicationsQuery = useCruisePlanningCandidatesQuery();
-  const createCruiseMutation = useCreateCruiseMutation();
+  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense({
+    query: { select: (applications) => applications as CruiseApplicationDto[] },
+  });
+  const queryClient = useQueryClient();
+  const createCruiseMutation = useCreateCruise({
+    mutation: {
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
+    },
+  });
   const search = Route.useSearch();
 
   const navigate = useNavigate();
@@ -77,17 +86,20 @@ function NewCruisePage() {
       'managersTeam.mainCruiseManagerId',
       'managersTeam.mainDeputyManagerId',
     ]);
-    await createCruiseMutation.mutateAsync(dto, {
-      onSuccess: () => {
-        navigate({ to: '/cruises' });
-        toast.success('Rejs został utworzony pomyślnie.');
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-        navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-      },
-    });
+    await createCruiseMutation.mutateAsync(
+      { data: toCruiseRequest(dto) },
+      {
+        onSuccess: () => {
+          navigate({ to: '/cruises' });
+          toast.success('Rejs został utworzony pomyślnie.');
+        },
+        onError: (error) => {
+          console.error(error);
+          toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+          navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+        },
+      }
+    );
   }
 
   const buttons = (

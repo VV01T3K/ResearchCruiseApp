@@ -1,10 +1,10 @@
 import React from 'react';
+import { useMutation } from '@tanstack/react-query';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { FileDto } from '@/api/applications/dto/FileDto';
-import { useCruiseCsvExportMutation } from '@/api/cruises/CruisesApiHooks';
-import { CruiseResponse } from '@/api/cruises/contracts';
+import { exportCruises } from '@/api/gen/endpoints/cruises.gen';
+import type { CruiseResponse, ExportResponse } from '@/api/gen/model';
 
 type Props = {
   cruises: CruiseResponse[];
@@ -30,9 +30,12 @@ export function ExportForm({ cruises, onDone }: Props) {
   );
 
   const anchorRef = React.useRef<HTMLAnchorElement>(null);
-  const cruiseCsvExportMutation = useCruiseCsvExportMutation(handleExportedFile);
+  const cruiseCsvExportMutation = useMutation({
+    mutationFn: (year: string) => exportCruises({ year }),
+    onSuccess: handleExportedFile,
+  });
 
-  function handleExportedFile(file: FileDto) {
+  function handleExportedFile(file: ExportResponse) {
     anchorRef.current?.setAttribute('href', file.content);
     anchorRef.current?.setAttribute('download', file.name);
     anchorRef.current?.click();

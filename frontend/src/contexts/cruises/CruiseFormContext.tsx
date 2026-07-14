@@ -1,8 +1,9 @@
 import { createContext, use } from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
-import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
+import { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
+import type { CruiseResponse } from '@/api/gen/model';
+import type { CruiseFormValues } from '@/routes/cruises/-types';
 
 export type CruiseFormContextType = {
   form: AnyReactFormApi<CruiseFormValues>;

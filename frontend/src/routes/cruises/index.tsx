@@ -3,6 +3,7 @@ import { allowOnly } from '@/lib/guards';
 import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -13,8 +14,13 @@ import { Role } from '@/models/shared/Role';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
-import { useAutoPlanCruisesMutation, useCruisesQuery, useDeleteCruiseMutation } from '@/api/cruises/CruisesApiHooks';
-import { CruiseResponse } from '@/api/cruises/contracts';
+import {
+  getGetCruisesQueryKey,
+  useAutoPlanCruises,
+  useDeleteCruise,
+  useGetCruisesSuspense,
+} from '@/api/gen/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/gen/model';
 
 export const Route = createFileRoute('/cruises/')({
   component: CruisesPage,
@@ -22,9 +28,11 @@ export const Route = createFileRoute('/cruises/')({
 });
 
 function CruisesPage() {
-  const cruisesQuery = useCruisesQuery();
-  const deleteCruiseMutation = useDeleteCruiseMutation();
-  const autoAddCruisesMutation = useAutoPlanCruisesMutation();
+  const queryClient = useQueryClient();
+  const invalidateCruises = () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+  const cruisesQuery = useGetCruisesSuspense();
+  const deleteCruiseMutation = useDeleteCruise({ mutation: { onSuccess: invalidateCruises } });
+  const autoAddCruisesMutation = useAutoPlanCruises({ mutation: { onSuccess: invalidateCruises } });
 
   const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseResponse | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -86,7 +94,7 @@ function CruisesPage() {
             variant="danger"
             className="basis-2/3"
             onClick={async () => {
-              await deleteCruiseMutation.mutateAsync(cruiseSelectedForDeletion!.id!);
+              await deleteCruiseMutation.mutateAsync({ cruiseId: cruiseSelectedForDeletion!.id });
               setCruiseSelectedForDeletion(undefined);
             }}
             disabled={deleteCruiseMutation.isPending}

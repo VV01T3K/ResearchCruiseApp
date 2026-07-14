@@ -1,17 +1,27 @@
 import React from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { useUpdateCruiseByIdMutation } from '@/api/cruises/CruisesApiHooks';
-import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
+import { getGetCruiseQueryKey, getGetCruisesQueryKey, useUpdateCruise } from '@/api/gen/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/gen/model';
+import { CruiseFormValues, toCruiseRequest } from '@/routes/cruises/-types';
 
 type Props = {
   cruises: CruiseResponse[];
   buttons: React.ReactNode[];
 };
 export function Calendar({ cruises, buttons }: Props) {
-  const updateCruiseByIdMutation = useUpdateCruiseByIdMutation();
+  const queryClient = useQueryClient();
+  const updateCruiseByIdMutation = useUpdateCruise({
+    mutation: {
+      onSuccess: (_, variables) => {
+        queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(variables.cruiseId) });
+      },
+    },
+  });
   const [isCalendarEditMode, setIsCalendarEditMode] = React.useState(false);
 
   function getTitle(cruise: CruiseResponse) {
@@ -59,8 +69,8 @@ export function Calendar({ cruises, buttons }: Props) {
 
     await updateCruiseByIdMutation.mutateAsync(
       {
-        id: cruise.id,
-        cruise: mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd),
+        cruiseId: cruise.id,
+        data: toCruiseRequest(mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
       },
       {
         onSuccess: () => {
