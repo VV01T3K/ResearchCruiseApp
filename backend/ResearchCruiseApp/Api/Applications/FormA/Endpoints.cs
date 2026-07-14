@@ -15,7 +15,7 @@ public static class FormAEndpoints
     {
         group
             .MapPost("", Create)
-            .WithName("CreateApplicationV2")
+            .WithName("CreateApplication")
             .WithSummary("Create an application from Form A.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -24,7 +24,7 @@ public static class FormAEndpoints
 
         group
             .MapGet("/{applicationId:guid}/form-a", Get)
-            .WithName("GetApplicationFormAV2")
+            .WithName("GetApplicationFormA")
             .WithSummary("Get Form A.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -32,7 +32,7 @@ public static class FormAEndpoints
 
         group
             .MapPut("/{applicationId:guid}/form-a", Update)
-            .WithName("UpdateApplicationFormAV2")
+            .WithName("UpdateApplicationFormA")
             .WithSummary("Update Form A.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
