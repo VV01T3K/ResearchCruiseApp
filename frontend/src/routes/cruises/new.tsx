@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
-import { useQueryClient } from '@tanstack/react-query';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import React from 'react';
@@ -13,7 +12,7 @@ import { trackFormSubmit } from '@/lib/sentry';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/FormView';
 import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
-import { getGetCruisesQueryKey, useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
+import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 
@@ -40,12 +39,7 @@ function NewCruisePage() {
   const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense({
     query: { select: (applications) => applications as CruiseApplicationCandidate[] },
   });
-  const queryClient = useQueryClient();
-  const createCruiseMutation = useCreateCruise({
-    mutation: {
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
-    },
-  });
+  const createCruiseMutation = useCreateCruise();
   const search = Route.useSearch();
 
   const navigate = useNavigate();

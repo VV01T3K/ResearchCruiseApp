@@ -3,7 +3,6 @@ import { allowOnly } from '@/lib/guards';
 import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -14,12 +13,7 @@ import { Role } from '@/types/user';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
-import {
-  getGetCruisesQueryKey,
-  useAutoPlanCruises,
-  useDeleteCruise,
-  useGetCruisesSuspense,
-} from '@/api/generated/endpoints/cruises.gen';
+import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/')({
@@ -28,11 +22,9 @@ export const Route = createFileRoute('/cruises/')({
 });
 
 function CruisesPage() {
-  const queryClient = useQueryClient();
-  const invalidateCruises = () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
   const cruisesQuery = useGetCruisesSuspense();
-  const deleteCruiseMutation = useDeleteCruise({ mutation: { onSuccess: invalidateCruises } });
-  const autoAddCruisesMutation = useAutoPlanCruises({ mutation: { onSuccess: invalidateCruises } });
+  const deleteCruiseMutation = useDeleteCruise();
+  const autoAddCruisesMutation = useAutoPlanCruises();
 
   const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseResponse | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);

@@ -1,10 +1,12 @@
 import {
   useMutation,
+  useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   MutationFunction,
+  MutationFunctionContext,
   QueryClient,
   QueryFunction,
   QueryKey,
@@ -512,7 +514,7 @@ export const updateApplicationDecision = async (applicationId: string,
 
 
 export const getUpdateApplicationDecisionMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext> => {
 
 const mutationKey = ['updateApplicationDecision'];
@@ -531,12 +533,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  updateApplicationDecision(applicationId,data,requestOptions)
         }
 
+  const onSuccess = (data: Awaited<ReturnType<typeof updateApplicationDecision>>, variables: {applicationId: string;data: ApplicationDecisionRequest}, onMutateResult: TContext, context: MutationFunctionContext) => {
+        if (!options?.skipInvalidation) {
+        queryClient.invalidateQueries({ queryKey: getGetApplicationQueryKey(variables.applicationId) });
+        }
+        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
+      };
 
 
 
 
-
-  return  { mutationFn, ...mutationOptions }}
+  return  { ...mutationOptions, mutationFn, onSuccess }}
 
     export type UpdateApplicationDecisionMutationResult = NonNullable<Awaited<ReturnType<typeof updateApplicationDecision>>>
     export type UpdateApplicationDecisionMutationBody = ApplicationDecisionRequest
@@ -546,14 +553,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Accept or reject an application.
  */
 export const useUpdateApplicationDecision = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateApplicationDecision>>,
         TError,
         {applicationId: string;data: ApplicationDecisionRequest},
         TContext
       > => {
-      return useMutation(getUpdateApplicationDecisionMutationOptions(options), queryClient);
+      const backupQueryClient = useQueryClient();
+      return useMutation(getUpdateApplicationDecisionMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
     export const getGetApplicationsForCruisePlanningUrl = () => {
 

@@ -12,14 +12,12 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { UploadButton } from './-components/UploadButton';
 import {
-  getGetCurrentUserPublicationsQueryKey,
   useDeleteAllCurrentUserPublications,
   useDeleteCurrentUserPublication,
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
 import type { PublicationResponse } from '@/api/generated/schemas';
-import { useQueryClient } from '@tanstack/react-query';
 import { mapNullsToEmptyStrings } from '@/lib/utils';
 import type { DeepPresent } from '@/types/utils';
 
@@ -33,24 +31,14 @@ export const Route = createFileRoute('/my-publications/')({
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
-  const queryClient = useQueryClient();
-
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
     query: {
       select: (publications) => publications.map(mapNullsToEmptyStrings) as Publication[],
     },
   });
-  const invalidatePublications = () =>
-    queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
-  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication({
-    mutation: { onSuccess: invalidatePublications },
-  });
-  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications({
-    mutation: { onSuccess: invalidatePublications },
-  });
-  const uploadPublicationsMutation = useImportCurrentUserPublications({
-    mutation: { onSuccess: invalidatePublications },
-  });
+  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
+  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
+  const uploadPublicationsMutation = useImportCurrentUserPublications();
 
   function deleteSelectedPublications() {
     Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync({ publicationId: id }));

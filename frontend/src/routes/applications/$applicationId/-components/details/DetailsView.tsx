@@ -1,8 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query';
-
 import { toast } from '@/components/shared/layout/toast';
 import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationDetailsContext';
-import { getGetApplicationQueryKey, useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
+import { useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, EvaluationResponse } from '@/routes/applications/-types';
 
 import { ActionsSection } from './ActionsSection';
@@ -19,8 +17,6 @@ type Props = {
   evaluation: EvaluationResponse;
 };
 export function DetailsView({ application, evaluation }: Props) {
-  const queryClient = useQueryClient();
-
   const decisionMutation = useUpdateApplicationDecision();
 
   function acceptApplication() {
@@ -28,7 +24,6 @@ export function DetailsView({ application, evaluation }: Props) {
       { applicationId: application.id, data: { accept: true } },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetApplicationQueryKey(application.id) });
           toast.success('Formularz został zaakceptowany');
         },
         onError: (err) => {
@@ -44,7 +39,6 @@ export function DetailsView({ application, evaluation }: Props) {
       { applicationId: application.id, data: { accept: false } },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetApplicationQueryKey(application.id) });
           toast.success('Formularz został odrzucony');
         },
         onError: (err) => {

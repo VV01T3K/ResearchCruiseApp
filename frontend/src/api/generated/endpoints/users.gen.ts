@@ -1,10 +1,12 @@
 import {
   useMutation,
+  useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   MutationFunction,
+  MutationFunctionContext,
   QueryClient,
   QueryFunction,
   QueryKey,
@@ -416,7 +418,7 @@ export const deleteAllCurrentUserPublications = async ( options?: RequestInit): 
 
 
 export const getDeleteAllCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext> => {
 
 const mutationKey = ['deleteAllCurrentUserPublications'];
@@ -435,12 +437,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  deleteAllCurrentUserPublications(requestOptions)
         }
 
+  const onSuccess = (data: Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, variables: void, onMutateResult: TContext, context: MutationFunctionContext) => {
+        if (!options?.skipInvalidation) {
+        queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
+        }
+        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
+      };
 
 
 
 
-
-  return  { mutationFn, ...mutationOptions }}
+  return  { ...mutationOptions, mutationFn, onSuccess }}
 
     export type DeleteAllCurrentUserPublicationsMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>>
 
@@ -450,14 +457,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Delete all publications from the current user.
  */
 export const useDeleteAllCurrentUserPublications = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getDeleteAllCurrentUserPublicationsMutationOptions(options), queryClient);
+      const backupQueryClient = useQueryClient();
+      return useMutation(getDeleteAllCurrentUserPublicationsMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
     export const getImportCurrentUserPublicationsUrl = () => {
 
@@ -486,7 +494,7 @@ export const importCurrentUserPublications = async (importPublicationRequest: Im
 
 
 export const getImportCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext> => {
 
 const mutationKey = ['importCurrentUserPublications'];
@@ -505,12 +513,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  importCurrentUserPublications(data,requestOptions)
         }
 
+  const onSuccess = (data: Awaited<ReturnType<typeof importCurrentUserPublications>>, variables: {data: ImportPublicationRequest[]}, onMutateResult: TContext, context: MutationFunctionContext) => {
+        if (!options?.skipInvalidation) {
+        queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
+        }
+        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
+      };
 
 
 
 
-
-  return  { mutationFn, ...mutationOptions }}
+  return  { ...mutationOptions, mutationFn, onSuccess }}
 
     export type ImportCurrentUserPublicationsMutationResult = NonNullable<Awaited<ReturnType<typeof importCurrentUserPublications>>>
     export type ImportCurrentUserPublicationsMutationBody = ImportPublicationRequest[]
@@ -520,14 +533,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Import publications for the current user.
  */
 export const useImportCurrentUserPublications = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof importCurrentUserPublications>>,
         TError,
         {data: ImportPublicationRequest[]},
         TContext
       > => {
-      return useMutation(getImportCurrentUserPublicationsMutationOptions(options), queryClient);
+      const backupQueryClient = useQueryClient();
+      return useMutation(getImportCurrentUserPublicationsMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
     export const getDeleteCurrentUserPublicationUrl = (publicationId: string,) => {
 
@@ -556,7 +570,7 @@ export const deleteCurrentUserPublication = async (publicationId: string, option
 
 
 export const getDeleteCurrentUserPublicationMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext> => {
 
 const mutationKey = ['deleteCurrentUserPublication'];
@@ -575,12 +589,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  deleteCurrentUserPublication(publicationId,requestOptions)
         }
 
+  const onSuccess = (data: Awaited<ReturnType<typeof deleteCurrentUserPublication>>, variables: {publicationId: string}, onMutateResult: TContext, context: MutationFunctionContext) => {
+        if (!options?.skipInvalidation) {
+        queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
+        }
+        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
+      };
 
 
 
 
-
-  return  { mutationFn, ...mutationOptions }}
+  return  { ...mutationOptions, mutationFn, onSuccess }}
 
     export type DeleteCurrentUserPublicationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCurrentUserPublication>>>
 
@@ -590,14 +609,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Delete one publication from the current user.
  */
 export const useDeleteCurrentUserPublication = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCurrentUserPublication>>,
         TError,
         {publicationId: string},
         TContext
       > => {
-      return useMutation(getDeleteCurrentUserPublicationMutationOptions(options), queryClient);
+      const backupQueryClient = useQueryClient();
+      return useMutation(getDeleteCurrentUserPublicationMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
     export const getGetUsersUrl = () => {
 

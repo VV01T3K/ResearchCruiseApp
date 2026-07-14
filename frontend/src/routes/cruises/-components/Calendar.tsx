@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { getGetCruiseQueryKey, getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
+import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 
@@ -16,10 +16,7 @@ export function Calendar({ cruises, buttons }: Props) {
   const queryClient = useQueryClient();
   const updateCruiseByIdMutation = useUpdateCruise({
     mutation: {
-      onSuccess: (_, variables) => {
-        queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
-        queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(variables.cruiseId) });
-      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
     },
   });
   const [isCalendarEditMode, setIsCalendarEditMode] = React.useState(false);
