@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
@@ -12,12 +12,16 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { UploadButton } from './-components/UploadButton';
 import {
-  useCurrentPublicationsQuery,
-  useDeleteAllCurrentPublicationsMutation,
-  useDeleteCurrentPublicationMutation,
-  useImportCurrentPublicationsMutation,
-} from '@/api/users/CurrentUserApiHooks';
-import { Publication } from '@/api/publications/dto/Publication';
+  useDeleteAllCurrentUserPublications,
+  useDeleteCurrentUserPublication,
+  useGetCurrentUserPublicationsSuspense,
+  useImportCurrentUserPublications,
+} from '@/api/generated/endpoints/users.gen';
+import type { PublicationResponse } from '@/api/generated/schemas';
+import { mapNullsToEmptyStrings } from '@/lib/utils';
+import type { DeepPresent } from '@/types/utils';
+
+type Publication = DeepPresent<PublicationResponse>;
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -27,14 +31,17 @@ export const Route = createFileRoute('/my-publications/')({
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
-
-  const ownPublicationsQuery = useCurrentPublicationsQuery();
-  const deleteOwnPublicationMutation = useDeleteCurrentPublicationMutation();
-  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentPublicationsMutation();
-  const uploadPublicationsMutation = useImportCurrentPublicationsMutation();
+  const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
+    query: {
+      select: (publications) => publications.map(mapNullsToEmptyStrings) as Publication[],
+    },
+  });
+  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
+  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
+  const uploadPublicationsMutation = useImportCurrentUserPublications();
 
   function deleteSelectedPublications() {
-    Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync(id));
+    Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync({ publicationId: id }));
     setSelectedPublications({});
   }
 
@@ -101,7 +108,9 @@ function MyPublicationsPage() {
         <AppButton
           variant="dangerOutline"
           size="xs"
-          onClick={() => deleteOwnPublicationMutation.mutateAsync(cell.row.original.id).catch(() => {})}
+          onClick={() =>
+            deleteOwnPublicationMutation.mutateAsync({ publicationId: cell.row.original.id }).catch(() => {})
+          }
         >
           <TrashIcon className="mr-2 h-3 w-3" />
           Usuń
@@ -122,7 +131,10 @@ function MyPublicationsPage() {
           getRowId={(row) => row.id}
           emptyTableMessage="Nie dodano żadnej publikacji"
           buttons={(defaultButtons) => [
-            <UploadButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
+            <UploadButton
+              key="upload"
+              onUpload={(publications) => uploadPublicationsMutation.mutate({ data: publications })}
+            />,
             <AppButton
               key="goToRepository"
               type="link"

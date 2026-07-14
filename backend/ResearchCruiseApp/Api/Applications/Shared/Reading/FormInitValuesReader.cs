@@ -14,22 +14,22 @@ internal class FormInitValuesReader(
     CurrentUserService currentUserService
 )
 {
-    public async Task<FormAInitValuesDto> CreateFormA(CancellationToken cancellationToken)
+    public async Task<FormAOptions> CreateFormA(CancellationToken cancellationToken)
     {
         var users = await identityService.GetAllUsersDtos(cancellationToken);
         var applications = await GetApplicationsForCurrentUser(cancellationToken);
 
         var result = await CreatePublicFormA(cancellationToken);
-        result.CruiseManagers = users.Select(ToFormUserDto).ToList();
+        result.CruiseManagers = users.Select(ToUserOption).ToList();
         result.DeputyManagers = users
             .Where(user => user.Roles.Contains(RoleName.CruiseManager))
-            .Select(ToFormUserDto)
+            .Select(ToUserOption)
             .ToList();
         result.HistoricalResearchTasks = applications
             .SelectMany(application => application.FormA?.FormAResearchTasks ?? [])
             .Select(task => task.ResearchTask)
             .Distinct()
-            .Select(ApplicationMappings.ToResearchTaskDto)
+            .Select(ApplicationMappings.ToResearchTaskFields)
             .ToList();
         result.HistoricalContracts = await CreateHistoricalContracts(applications);
         result.HistoricalGuestInstitutions = applications
@@ -42,14 +42,14 @@ internal class FormInitValuesReader(
             .SelectMany(application => application.FormA?.FormASpubTasks ?? [])
             .Select(task => task.SpubTask)
             .Distinct()
-            .Select(ApplicationMappings.ToSpubTaskDto)
+            .Select(ApplicationMappings.ToSpubTaskFields)
             .ToList();
         result.HistoricalPublications = await GetHistoricalPublications(cancellationToken);
 
         return result;
     }
 
-    public async Task<FormAInitValuesDto> CreateFormAForSupervisor(
+    public async Task<FormAOptions> CreateFormAForSupervisor(
         CruiseApplication application,
         CancellationToken cancellationToken
     )
@@ -60,12 +60,12 @@ internal class FormInitValuesReader(
 
         var manager = await identityService.GetUserDtoById(application.FormA.CruiseManagerId);
         var deputy = await identityService.GetUserDtoById(application.FormA.DeputyManagerId);
-        result.CruiseManagers = manager is not null ? [ToFormUserDto(manager)] : [];
-        result.DeputyManagers = deputy is not null ? [ToFormUserDto(deputy)] : [];
+        result.CruiseManagers = manager is not null ? [ToUserOption(manager)] : [];
+        result.DeputyManagers = deputy is not null ? [ToUserOption(deputy)] : [];
         return result;
     }
 
-    public async Task<FormBInitValuesDto> CreateFormB(CancellationToken cancellationToken) =>
+    public async Task<FormBOptions> CreateFormB(CancellationToken cancellationToken) =>
         new()
         {
             ShipEquipments = (
@@ -73,11 +73,11 @@ internal class FormInitValuesReader(
                     .ShipEquipments.Where(equipment => equipment.IsActive)
                     .ToListAsync(cancellationToken)
             )
-                .Select(ApplicationMappings.ToShipEquipmentDto)
+                .Select(ApplicationMappings.ToShipEquipmentOption)
                 .ToList(),
         };
 
-    private async Task<FormAInitValuesDto> CreatePublicFormA(CancellationToken cancellationToken) =>
+    private async Task<FormAOptions> CreatePublicFormA(CancellationToken cancellationToken) =>
         new()
         {
             Years = [DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString()],
@@ -88,13 +88,13 @@ internal class FormInitValuesReader(
                     .ResearchAreas.Where(area => area.IsActive)
                     .ToListAsync(cancellationToken)
             )
-                .Select(ApplicationMappings.ToResearchAreaDto)
+                .Select(ApplicationMappings.ToResearchAreaOption)
                 .ToList(),
             CruiseGoals = FormAValuesConstants.CruiseGoals,
             UgUnits = (
                 await dbContext.UgUnits.Where(unit => unit.IsActive).ToListAsync(cancellationToken)
             )
-                .Select(ApplicationMappings.ToUgUnitDto)
+                .Select(ApplicationMappings.ToUgUnitOption)
                 .ToList(),
         };
 
@@ -115,7 +115,7 @@ internal class FormInitValuesReader(
                 .ToListAsync(cancellationToken);
     }
 
-    private async Task<List<ContractDto>> CreateHistoricalContracts(
+    private async Task<List<ContractFields>> CreateHistoricalContracts(
         IEnumerable<CruiseApplication> applications
     )
     {
@@ -128,7 +128,7 @@ internal class FormInitValuesReader(
         return (await Task.WhenAll(tasks)).ToList();
     }
 
-    private async Task<List<PublicationDto>> GetHistoricalPublications(
+    private async Task<List<PublicationFields>> GetHistoricalPublications(
         CancellationToken cancellationToken
     )
     {
@@ -142,11 +142,11 @@ internal class FormInitValuesReader(
                 .Where(publication => publication.UserId == userId.Value)
                 .ToListAsync(cancellationToken)
         )
-            .Select(publication => ApplicationMappings.ToPublicationDto(publication.Publication))
+            .Select(publication => ApplicationMappings.ToPublicationFields(publication.Publication))
             .ToList();
     }
 
-    private static FormUserDto ToFormUserDto(UserDto user) =>
+    private static UserOption ToUserOption(UserDto user) =>
         new()
         {
             Id = user.Id,

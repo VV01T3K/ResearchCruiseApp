@@ -7,11 +7,11 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInput, AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { getErrors } from '@/lib/utils';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
-import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
-import { FormUserDto } from '@/api/applications/dto/FormUserDto';
+import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
+import { UserOption } from '@/routes/applications/$applicationId/-schemas/types/UserOption';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
-import { useAvailableCruiseManagersQuery } from '@/api/users/UserManagementApiHooks';
-import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
+import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
+import type { CruiseManagerResponse } from '@/api/generated/schemas';
 
 export function ManagerSelectionSection() {
   const { isReadonly } = useCruiseForm();
@@ -66,7 +66,7 @@ function ManagerSelectionReadonly() {
 
 function ManagerSelectionEditable() {
   const { form, cruiseApplications } = useCruiseForm();
-  const usersQuery = useAvailableCruiseManagersQuery();
+  const usersQuery = useGetAvailableCruiseManagersSuspense();
 
   const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
   const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
@@ -102,7 +102,7 @@ function ManagerSelectionLayout({
   showWarnings,
 }: {
   users: AppDropdownInputOption[];
-  cruiseManagersNotAssignedToApplication: CruiseManagerOption[];
+  cruiseManagersNotAssignedToApplication: CruiseManagerResponse[];
   isReadonly: boolean;
   showWarnings: boolean;
 }) {
@@ -171,7 +171,7 @@ function ManagerSelectionLayout({
 
 function checkIfCruiseManagerIsAssignedToAnyApplication(
   managerId: string,
-  cruiseApplications: CruiseApplicationDto[],
+  cruiseApplications: CruiseApplicationCandidate[],
   selectedCruiseApplicationsIds: string[]
 ) {
   return cruiseApplications.some(
@@ -182,11 +182,11 @@ function checkIfCruiseManagerIsAssignedToAnyApplication(
 }
 
 function getCruiseManagersNotAssignedToApplication(
-  users: CruiseManagerOption[],
+  users: CruiseManagerResponse[],
   selectedUsersIds: string[],
-  cruiseApplications: CruiseApplicationDto[],
+  cruiseApplications: CruiseApplicationCandidate[],
   selectedCruiseApplicationsIds: string[]
-): CruiseManagerOption[] {
+): CruiseManagerResponse[] {
   return selectedUsersIds
     .map((userId) => users.find((user) => user.id === userId))
     .filter((user) => {
@@ -196,15 +196,15 @@ function getCruiseManagersNotAssignedToApplication(
         cruiseApplications,
         selectedCruiseApplicationsIds
       );
-    }) as CruiseManagerOption[];
+    }) as CruiseManagerResponse[];
 }
 
 function getAllUsersForDropdown(
-  users: CruiseManagerOption[],
-  cruiseApplications: CruiseApplicationDto[],
+  users: CruiseManagerResponse[],
+  cruiseApplications: CruiseApplicationCandidate[],
   selectedCruiseApplicationsIds: string[]
 ): AppDropdownInputOption[] {
-  const formUsers: FormUserDto[] = users.map((user) => ({
+  const formUsers: UserOption[] = users.map((user) => ({
     id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,

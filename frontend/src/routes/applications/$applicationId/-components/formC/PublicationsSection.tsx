@@ -3,12 +3,15 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { getPublicationCategoryLabel, PublicationDto } from '@/api/applications/dto/PublicationDto';
+import {
+  getPublicationCategoryLabel,
+  PublicationValues,
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const { formA } = useFormC();
 
-  const columns: ColumnDef<PublicationDto>[] = [
+  const columns: ColumnDef<PublicationValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

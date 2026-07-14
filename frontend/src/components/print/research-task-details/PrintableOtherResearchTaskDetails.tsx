@@ -1,7 +1,7 @@
-import { OtherResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: OtherResearchTaskDto;
+  data: OtherResearchTaskValues;
 };
 export function PrintableOtherResearchTaskDetails({ data }: Props) {
   return (

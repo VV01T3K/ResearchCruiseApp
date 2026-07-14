@@ -69,7 +69,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddManagersTeamNonDraftValidation()
     {
         RuleFor(request => request.Form)
-            .Must(formADto => formADto.DeputyManagerId is not null)
+            .Must(formAFields => formAFields.DeputyManagerId is not null)
             .WithMessage("Wybranie kierownika i zastępcy jest wymagane.");
     }
 
@@ -135,7 +135,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         );
     }
 
-    private static bool HasEnoughPrecisePeriodForCruise(FormADto dto)
+    private static bool HasEnoughPrecisePeriodForCruise(FormAFields dto)
     {
         if (dto.PrecisePeriodStart is null || dto.PrecisePeriodEnd is null)
             return false;
@@ -146,7 +146,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         return periodDays >= cruiseDurationDays;
     }
 
-    private static bool HasEnoughPeriodsForCruise(FormADto dto)
+    private static bool HasEnoughPeriodsForCruise(FormAFields dto)
     {
         if (!TryGetCruiseDurationDays(dto.CruiseHours, out var cruiseDurationDays))
             return false;
@@ -250,9 +250,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddPermissionsNonDraftValidation()
     {
         RuleForEach(request => request.Form.Permissions)
-            .Must(permissionDto =>
-                !string.IsNullOrEmpty(permissionDto.Description)
-                && !string.IsNullOrEmpty(permissionDto.Executive)
+            .Must(permissionFields =>
+                !string.IsNullOrEmpty(permissionFields.Description)
+                && !string.IsNullOrEmpty(permissionFields.Executive)
             )
             .WithMessage("Opis pozwolenia i podanie organu wydającego je są obowiązkowe.");
     }
@@ -260,7 +260,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddPermissionsCommonValidation()
     {
         RuleForEach(request => request.Form.Permissions)
-            .Must(permissionDto => permissionDto.Scan is null)
+            .Must(permissionFields => permissionFields.Scan is null)
             .WithMessage("Na etapie formularza A nie jest dozwolone przesyłanie skanów pozwoleń.");
     }
 
@@ -271,8 +271,10 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Wymagane jest podanie przynajmniej jednego obszaru badawczego.");
 
         RuleForEach(request => request.Form.ResearchAreaDescriptions)
-            .Where(descriptionDto => descriptionDto.AreaId is null)
-            .Must(descriptionDto => !string.IsNullOrEmpty(descriptionDto.DifferentName))
+            .Where(researchAreaSelection => researchAreaSelection.AreaId is null)
+            .Must(researchAreaSelection =>
+                !string.IsNullOrEmpty(researchAreaSelection.DifferentName)
+            )
             .WithMessage(
                 "Wybranie obszaru badawczego albo podanie alternatywnej nazwy jest wymagane."
             );
@@ -302,11 +304,11 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddResearchTaskDraftValidation()
     {
         RuleForEach(request => request.Form.ResearchTasks)
-            .Must(researchTaskDto =>
+            .Must(researchTaskFields =>
             {
                 try
                 {
-                    var type = researchTaskDto.Type.ToEnum<ResearchTaskType>();
+                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
 
                     return type
                         is ResearchTaskType.BachelorThesis
@@ -337,48 +339,48 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Wymagane jest podanie przynajmniej jednego zadania badawczego.");
 
         RuleForEach(request => request.Form.ResearchTasks)
-            .Must(researchTaskDto =>
+            .Must(researchTaskFields =>
             {
                 try
                 {
-                    var type = researchTaskDto.Type.ToEnum<ResearchTaskType>();
+                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
 
                     switch (type)
                     {
                         case ResearchTaskType.BachelorThesis:
                         case ResearchTaskType.MasterThesis:
                         case ResearchTaskType.DoctoralThesis:
-                            return !string.IsNullOrEmpty(researchTaskDto.Author)
-                                && !string.IsNullOrEmpty(researchTaskDto.Title);
+                            return !string.IsNullOrEmpty(researchTaskFields.Author)
+                                && !string.IsNullOrEmpty(researchTaskFields.Title);
 
                         case ResearchTaskType.ProjectPreparation:
-                            return !string.IsNullOrEmpty(researchTaskDto.Title)
-                                && !string.IsNullOrEmpty(researchTaskDto.Title)
-                                && !string.IsNullOrEmpty(researchTaskDto.Date)
-                                && !string.IsNullOrEmpty(researchTaskDto.FinancingApproved);
+                            return !string.IsNullOrEmpty(researchTaskFields.Title)
+                                && !string.IsNullOrEmpty(researchTaskFields.Title)
+                                && !string.IsNullOrEmpty(researchTaskFields.Date)
+                                && !string.IsNullOrEmpty(researchTaskFields.FinancingApproved);
 
                         case ResearchTaskType.DomesticProject:
                         case ResearchTaskType.ForeignProject:
                         case ResearchTaskType.InternalUgProject:
                         case ResearchTaskType.OtherProject:
                         case ResearchTaskType.CommercialProject:
-                            return !string.IsNullOrEmpty(researchTaskDto.Title)
-                                && !string.IsNullOrEmpty(researchTaskDto.FinancingAmount)
-                                && !string.IsNullOrEmpty(researchTaskDto.StartDate)
-                                && !string.IsNullOrEmpty(researchTaskDto.EndDate)
-                                && !string.IsNullOrEmpty(researchTaskDto.SecuredAmount);
+                            return !string.IsNullOrEmpty(researchTaskFields.Title)
+                                && !string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
+                                && !string.IsNullOrEmpty(researchTaskFields.StartDate)
+                                && !string.IsNullOrEmpty(researchTaskFields.EndDate)
+                                && !string.IsNullOrEmpty(researchTaskFields.SecuredAmount);
 
                         case ResearchTaskType.Didactics:
-                            return !string.IsNullOrEmpty(researchTaskDto.Description);
+                            return !string.IsNullOrEmpty(researchTaskFields.Description);
 
                         case ResearchTaskType.OwnResearchTask:
-                            return !string.IsNullOrEmpty(researchTaskDto.Title)
-                                && !string.IsNullOrEmpty(researchTaskDto.Date)
-                                && !string.IsNullOrEmpty(researchTaskDto.Magazine)
-                                && !string.IsNullOrEmpty(researchTaskDto.MinisterialPoints);
+                            return !string.IsNullOrEmpty(researchTaskFields.Title)
+                                && !string.IsNullOrEmpty(researchTaskFields.Date)
+                                && !string.IsNullOrEmpty(researchTaskFields.Magazine)
+                                && !string.IsNullOrEmpty(researchTaskFields.MinisterialPoints);
 
                         case ResearchTaskType.OtherResearchTask:
-                            return !string.IsNullOrEmpty(researchTaskDto.Description);
+                            return !string.IsNullOrEmpty(researchTaskFields.Description);
 
                         default:
                             return false;
@@ -397,18 +399,18 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddResearchTasksCommonValidation()
     {
         RuleForEach(request => request.Form.ResearchTasks)
-            .Must(researchTaskDto =>
+            .Must(researchTaskFields =>
                 (
-                    string.IsNullOrEmpty(researchTaskDto.FinancingAmount)
-                    || IsNonNegativeDouble(researchTaskDto.FinancingAmount)
+                    string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
+                    || IsNonNegativeDouble(researchTaskFields.FinancingAmount)
                 )
                 && (
-                    string.IsNullOrEmpty(researchTaskDto.SecuredAmount)
-                    || IsNonNegativeDouble(researchTaskDto.SecuredAmount)
+                    string.IsNullOrEmpty(researchTaskFields.SecuredAmount)
+                    || IsNonNegativeDouble(researchTaskFields.SecuredAmount)
                 )
                 && (
-                    string.IsNullOrEmpty(researchTaskDto.MinisterialPoints)
-                    || uint.TryParse(researchTaskDto.MinisterialPoints, out _)
+                    string.IsNullOrEmpty(researchTaskFields.MinisterialPoints)
+                    || uint.TryParse(researchTaskFields.MinisterialPoints, out _)
                 )
             )
             .WithMessage(
@@ -419,11 +421,11 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddContractsNonDraftValidation()
     {
         RuleForEach(request => request.Form.Contracts)
-            .Must(contractDto =>
-                !string.IsNullOrEmpty(contractDto.InstitutionName)
-                && !string.IsNullOrEmpty(contractDto.InstitutionUnit)
-                && !string.IsNullOrEmpty(contractDto.InstitutionLocalization)
-                && !string.IsNullOrEmpty(contractDto.Description)
+            .Must(contractFields =>
+                !string.IsNullOrEmpty(contractFields.InstitutionName)
+                && !string.IsNullOrEmpty(contractFields.InstitutionUnit)
+                && !string.IsNullOrEmpty(contractFields.InstitutionLocalization)
+                && !string.IsNullOrEmpty(contractFields.Description)
             )
             .WithMessage("Wymagane jest podanie wszystkich szczegółów umów współpracy.");
     }
@@ -431,21 +433,21 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddContractsCommonValidation()
     {
         RuleForEach(request => request.Form.Contracts)
-            .Must(contractDto =>
-                contractDto.Category == ContractCategory.Domestic
-                || contractDto.Category == ContractCategory.International
+            .Must(contractFields =>
+                contractFields.Category == ContractCategory.Domestic
+                || contractFields.Category == ContractCategory.International
             )
             .WithMessage("Należy podać poprawną kategorię umowy.");
 
         RuleForEach(request => request.Form.Contracts)
-            .Must(contractDto =>
-                contractDto.Scans.All(scan => scan.Content == "" || scan.Name != "")
+            .Must(contractFields =>
+                contractFields.Scans.All(scan => scan.Content == "" || scan.Name != "")
             )
             .WithMessage("Każdy plik musi posiadać nazwę.");
 
         RuleForEach(request => request.Form.Contracts)
-            .Must(contractDto =>
-                contractDto.Scans.All(scan =>
+            .Must(contractFields =>
+                contractFields.Scans.All(scan =>
                     scan is { Name: "", Content: "" }
                     || _fileInspector.IsFileSizeValid(
                         scan.Content,
@@ -459,7 +461,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddUgTeamsDraftValidation()
     {
         RuleForEach(request => request.Form.UgTeams)
-            .Must(ugTeamDto => TryCountCrewMembers(ugTeamDto, out _))
+            .Must(ugTeamFields => TryCountCrewMembers(ugTeamFields, out _))
             .WithMessage(
                 "Liczebność uczestników z jednostki organizacyjnej UG podano w niepoprawnym formacie."
             );
@@ -478,7 +480,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Jedną jednostkę organizacyjną UG można wybrać maksymalnie raz.");
 
         RuleForEach(request => request.Form.UgTeams)
-            .Must(ugTeamDto => TryCountCrewMembers(ugTeamDto, out var count) && count > 0)
+            .Must(ugTeamFields => TryCountCrewMembers(ugTeamFields, out var count) && count > 0)
             .WithMessage(
                 "Z każdej wybranej jednostki w rejsie musi uczestniczyć co najmniej jedna osoba."
             );
@@ -487,7 +489,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddGuestTeamsDraftValidation()
     {
         RuleForEach(request => request.Form.GuestTeams)
-            .Must(guestTeamDto => TryCountCrewMembers(guestTeamDto, out _))
+            .Must(guestTeamFields => TryCountCrewMembers(guestTeamFields, out _))
             .WithMessage(
                 "Liczebność uczestników z jednostki organizacyjnej UG podano w niepoprawnym formacie."
             );
@@ -496,9 +498,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddGuestTeamsNonDraftValidation()
     {
         RuleForEach(request => request.Form.GuestTeams)
-            .Must(guestTeamDto =>
-                !string.IsNullOrEmpty(guestTeamDto.Name)
-                && TryCountCrewMembers(guestTeamDto, out var count)
+            .Must(guestTeamFields =>
+                !string.IsNullOrEmpty(guestTeamFields.Name)
+                && TryCountCrewMembers(guestTeamFields, out var count)
                 && count > 0
             )
             .WithMessage(
@@ -510,12 +512,12 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddPublicationsNonDraftValidation()
     {
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationDto =>
-                !string.IsNullOrEmpty(publicationDto.Doi)
-                && !string.IsNullOrEmpty(publicationDto.Authors)
-                && !string.IsNullOrEmpty(publicationDto.Title)
-                && !string.IsNullOrEmpty(publicationDto.Magazine)
-                && !string.IsNullOrEmpty(publicationDto.Year)
+            .Must(publicationFields =>
+                !string.IsNullOrEmpty(publicationFields.Doi)
+                && !string.IsNullOrEmpty(publicationFields.Authors)
+                && !string.IsNullOrEmpty(publicationFields.Title)
+                && !string.IsNullOrEmpty(publicationFields.Magazine)
+                && !string.IsNullOrEmpty(publicationFields.Year)
             )
             .WithMessage("Podane wszystkich szczegółów publikacji jest wymagane.");
     }
@@ -523,14 +525,14 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddPublicationsCommonValidation()
     {
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationDto =>
-                publicationDto.Category == PublicationCategory.Postscript
-                || publicationDto.Category == PublicationCategory.Subject
+            .Must(publicationFields =>
+                publicationFields.Category == PublicationCategory.Postscript
+                || publicationFields.Category == PublicationCategory.Subject
             )
             .WithMessage("Należy podać poprawną kategorię publikacji");
 
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationDto => uint.TryParse(publicationDto.MinisterialPoints, out _))
+            .Must(publicationFields => uint.TryParse(publicationFields.MinisterialPoints, out _))
             .WithMessage(
                 "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
             );
@@ -539,10 +541,10 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddSpubTasksNonDraftValidation()
     {
         RuleForEach(request => request.Form.SpubTasks)
-            .Must(spubTaskDto =>
-                !string.IsNullOrEmpty(spubTaskDto.Name)
-                && !string.IsNullOrEmpty(spubTaskDto.YearFrom)
-                && !string.IsNullOrEmpty(spubTaskDto.YearTo)
+            .Must(spubTaskFields =>
+                !string.IsNullOrEmpty(spubTaskFields.Name)
+                && !string.IsNullOrEmpty(spubTaskFields.YearFrom)
+                && !string.IsNullOrEmpty(spubTaskFields.YearTo)
             )
             .WithMessage("Należy podać wszystkiego szczegóły podanych zadań SPUB.");
     }
@@ -580,11 +582,11 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             && cruiseGoalUint < FormAValuesConstants.CruiseGoals.Count;
     }
 
-    private static bool TryCountCrewMembers(UgTeamDto ugTeamDto, out uint result)
+    private static bool TryCountCrewMembers(UgTeamFields ugTeamFields, out uint result)
     {
         if (
-            uint.TryParse(ugTeamDto.NoOfEmployees, out var noOfEmployees)
-            && uint.TryParse(ugTeamDto.NoOfStudents, out var noOfStudents)
+            uint.TryParse(ugTeamFields.NoOfEmployees, out var noOfEmployees)
+            && uint.TryParse(ugTeamFields.NoOfStudents, out var noOfStudents)
         )
         {
             result = noOfEmployees + noOfStudents;
@@ -595,9 +597,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         return false;
     }
 
-    private static bool TryCountCrewMembers(GuestTeamDto guestTeamDto, out uint result)
+    private static bool TryCountCrewMembers(GuestTeamFields guestTeamFields, out uint result)
     {
-        if (uint.TryParse(guestTeamDto.NoOfPersons, out var noOfPersonsUint))
+        if (uint.TryParse(guestTeamFields.NoOfPersons, out var noOfPersonsUint))
         {
             result = noOfPersonsUint;
             return true;

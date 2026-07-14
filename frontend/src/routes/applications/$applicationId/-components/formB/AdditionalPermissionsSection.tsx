@@ -9,13 +9,13 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { PermissionDto } from '@/api/applications/dto/PermissionDto';
+import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 
 export function AdditionalPermissionsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
 
   // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  function getColumns(field: any): ColumnDef<PermissionDto>[] {
+  function getColumns(field: any): ColumnDef<PermissionValues>[] {
     return [
       {
         header: 'Lp.',
@@ -113,7 +113,7 @@ export function AdditionalPermissionsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: PermissionDto[]) => prev);
+                field.handleChange((prev: PermissionValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -145,7 +145,7 @@ export function AdditionalPermissionsSection() {
                   data-testid="form-b-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
-                    field.handleChange((prev: PermissionDto[]) => prev);
+                    field.handleChange((prev: PermissionValues[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}

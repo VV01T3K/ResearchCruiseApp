@@ -1,17 +1,24 @@
 import React from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { useUpdateCruiseByIdMutation } from '@/api/cruises/CruisesApiHooks';
-import { CruiseFormValues, CruiseResponse } from '@/api/cruises/contracts';
+import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/generated/schemas';
+import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 
 type Props = {
   cruises: CruiseResponse[];
   buttons: React.ReactNode[];
 };
 export function Calendar({ cruises, buttons }: Props) {
-  const updateCruiseByIdMutation = useUpdateCruiseByIdMutation();
+  const queryClient = useQueryClient();
+  const updateCruiseByIdMutation = useUpdateCruise({
+    mutation: {
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
+    },
+  });
   const [isCalendarEditMode, setIsCalendarEditMode] = React.useState(false);
 
   function getTitle(cruise: CruiseResponse) {
@@ -41,7 +48,6 @@ export function Calendar({ cruises, buttons }: Props) {
         mainDeputyManagerId: cruise.deputyManager.id,
       },
       cruiseApplicationsIds: cruise.applications.map((x) => x.id),
-      status: cruise.status,
       title: cruise.title || '',
       shipUnavailable: cruise.shipUnavailable,
     };
@@ -59,8 +65,8 @@ export function Calendar({ cruises, buttons }: Props) {
 
     await updateCruiseByIdMutation.mutateAsync(
       {
-        id: cruise.id,
-        cruise: mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd),
+        cruiseId: cruise.id,
+        data: getCruiseFormSchema().parse(mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
       },
       {
         onSuccess: () => {

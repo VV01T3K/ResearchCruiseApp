@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 
-import { ProjectPreparationResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { ProjectPreparationResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: ProjectPreparationResearchTaskDto;
+  data: ProjectPreparationResearchTaskValues;
 };
 export function PrintableProjectPreparationResearchTaskDetails({ data }: Props) {
   return (

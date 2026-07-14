@@ -1,8 +1,11 @@
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
@@ -19,9 +22,14 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.MaxDepth = 64;
+    options.SerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+    );
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddProblemDetails();
+const string dotNetGuidPattern =
+    "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 builder.Services.AddOpenApi(
     "v2",
     options =>
@@ -36,6 +44,35 @@ builder.Services.AddOpenApi(
                     StringComparison.OrdinalIgnoreCase
                 ) == true
             );
+        options.AddSchemaTransformer(
+            (schema, context, _) =>
+            {
+                var type =
+                    Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
+                    ?? context.JsonTypeInfo.Type;
+                if (type == typeof(Guid))
+                {
+                    schema.Format = null;
+                    schema.Pattern = dotNetGuidPattern;
+                }
+
+                var strictNumber =
+                    context
+                        .JsonPropertyInfo?.AttributeProvider?.GetCustomAttributes(
+                            typeof(JsonNumberHandlingAttribute),
+                            true
+                        )
+                        .OfType<JsonNumberHandlingAttribute>()
+                        .Any(attribute => attribute.Handling == JsonNumberHandling.Strict) == true;
+                if (strictNumber)
+                {
+                    schema.Type &= ~JsonSchemaType.String;
+                    schema.Pattern = null;
+                }
+
+                return Task.CompletedTask;
+            }
+        );
     }
 );
 builder

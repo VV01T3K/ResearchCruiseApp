@@ -7,21 +7,21 @@ import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-co
 import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
 import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectResearchTaskDetails';
 import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ThesisResearchTaskDetails';
-import { FormADto } from '@/api/applications/dto/FormADto';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import {
-  DidacticsResearchTaskDto,
-  OtherResearchTaskDto,
-  OwnResearchTaskDto,
-  ProjectPreparationResearchTaskDto,
-  ProjectResearchTaskDto,
-  ResearchTaskDto,
+  DidacticsResearchTaskValues,
+  OtherResearchTaskValues,
+  OwnResearchTaskValues,
+  ProjectPreparationResearchTaskValues,
+  ProjectResearchTaskValues,
+  ResearchTaskValues,
   ResearchTaskType,
-  ThesisResearchTaskDto,
-} from '@/api/applications/dto/ResearchTaskDto';
+  ThesisResearchTaskValues,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormADto>;
-  row: Row<ResearchTaskDto>;
+  form: AnyReactFormApi<FormAValues>;
+  row: Row<ResearchTaskValues>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;
 };
@@ -33,7 +33,7 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
       return (
         <ThesisResearchTaskDetails
           form={form}
-          row={row as Row<ThesisResearchTaskDto>}
+          row={row as Row<ThesisResearchTaskValues>}
           disabled={disabled}
           hasFormBeenSubmitted={hasFormBeenSubmitted}
         />
@@ -42,7 +42,7 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
       return (
         <ProjectPreparationResearchTaskDetails
           form={form}
-          row={row as Row<ProjectPreparationResearchTaskDto>}
+          row={row as Row<ProjectPreparationResearchTaskValues>}
           disabled={disabled}
           hasFormBeenSubmitted={hasFormBeenSubmitted}
         />
@@ -55,7 +55,7 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
       return (
         <ProjectResearchTaskDetails
           form={form}
-          row={row as Row<ProjectResearchTaskDto>}
+          row={row as Row<ProjectResearchTaskValues>}
           disabled={disabled}
           hasFormBeenSubmitted={hasFormBeenSubmitted}
         />
@@ -64,7 +64,7 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
       return (
         <DidacticsResearchTaskDetails
           form={form}
-          row={row as Row<DidacticsResearchTaskDto>}
+          row={row as Row<DidacticsResearchTaskValues>}
           disabled={disabled}
           hasFormBeenSubmitted={hasFormBeenSubmitted}
         />
@@ -73,7 +73,7 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
       return (
         <OwnResearchTaskDetails
           form={form}
-          row={row as Row<OwnResearchTaskDto>}
+          row={row as Row<OwnResearchTaskValues>}
           disabled={disabled}
           hasFormBeenSubmitted={hasFormBeenSubmitted}
         />
@@ -82,7 +82,7 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
       return (
         <OtherResearchTaskDetails
           form={form}
-          row={row as Row<OtherResearchTaskDto>}
+          row={row as Row<OtherResearchTaskValues>}
           disabled={disabled}
           hasFormBeenSubmitted={hasFormBeenSubmitted}
         />

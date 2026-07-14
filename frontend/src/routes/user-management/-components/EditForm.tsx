@@ -19,18 +19,19 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { getRoleLabel, Role } from '@/models/shared/Role';
-import { User } from '@/models/shared/User';
+import { getRoleLabel, Role } from '@/types/user';
+import { User } from '@/types/user';
 import {
-  useAcceptUserMutation,
-  useDeleteUserMutation,
-  useInitiatePasswordResetMutation,
-  useNewUserMutation,
-  useAddUserRoleMutation,
-  useRemoveUserRoleMutation,
-  useUnAcceptUserMutation,
-  useUpdateUserMutation,
-} from '@/api/users/UserManagementApiHooks';
+  useAcceptUser,
+  useAddUserRole,
+  useCreateUser,
+  useDeactivateUser,
+  useDeleteUser,
+  useRemoveUserRole,
+  useUpdateUser,
+} from '@/api/generated/endpoints/users.gen';
+import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
+import { getProblemDetail } from '@/lib/custom-fetch';
 
 type Props = {
   user?: User;
@@ -74,15 +75,39 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
   const [passwordResetSent, setPasswordResetSent] = React.useState(false);
 
-  const mutationContext = { editMode, setSubmitError };
-  const addNewUserMutation = useNewUserMutation(mutationContext);
-  const updateUserMutation = useUpdateUserMutation(mutationContext);
-  const addUserRoleMutation = useAddUserRoleMutation();
-  const removeUserRoleMutation = useRemoveUserRoleMutation();
-  const deleteUserMutation = useDeleteUserMutation(mutationContext);
-  const acceptUserMutation = useAcceptUserMutation(mutationContext);
-  const unAcceptUserMutation = useUnAcceptUserMutation(mutationContext);
-  const initiatePasswordResetMutation = useInitiatePasswordResetMutation(mutationContext);
+  const addNewUserMutation = useCreateUser({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas dodawania użytkownika')),
+    },
+  });
+  const updateUserMutation = useUpdateUser({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas aktualizacji użytkownika')),
+    },
+  });
+  const addUserRoleMutation = useAddUserRole();
+  const removeUserRoleMutation = useRemoveUserRole();
+  const deleteUserMutation = useDeleteUser({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas usuwania użytkownika')),
+    },
+  });
+  const acceptUserMutation = useAcceptUser({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas akceptacji użytkownika')),
+    },
+  });
+  const unAcceptUserMutation = useDeactivateUser({
+    mutation: {
+      onError: (error) =>
+        setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas cofania akceptacji użytkownika')),
+    },
+  });
+  const initiatePasswordResetMutation = useRequestPasswordReset({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas inicjowania zmiany hasła')),
+    },
+  });
 
   const form = useForm({
     defaultValues: {
@@ -104,11 +129,14 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       if (editMode) {
         const loading = toast.loading('Zapisywanie zmian...');
         try {
-          await updateUserMutation.mutateAsync({ userId: user.id, data: value });
+          await updateUserMutation.mutateAsync({
+            userId: user.id,
+            data: { email: value.email, firstName: value.firstName, lastName: value.lastName },
+          });
           const currentRole = user.roles[0];
           if (currentRole && currentRole !== value.role) {
-            await removeUserRoleMutation.mutateAsync({ userId: user.id, role: currentRole });
-            await addUserRoleMutation.mutateAsync({ userId: user.id, role: value.role });
+            await removeUserRoleMutation.mutateAsync({ userId: user.id, roleName: currentRole });
+            await addUserRoleMutation.mutateAsync({ userId: user.id, roleName: value.role });
           }
           toast.dismiss(loading);
           close();
@@ -121,7 +149,14 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       } else {
         const loading = toast.loading('Dodawanie użytkownika...');
         try {
-          await addNewUserMutation.mutateAsync(value);
+          await addNewUserMutation.mutateAsync({
+            data: {
+              email: value.email,
+              firstName: value.firstName,
+              lastName: value.lastName,
+              roles: [value.role],
+            },
+          });
           toast.dismiss(loading);
           close();
           toast.success('Utworzono nowego użytkownika');
@@ -164,7 +199,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
     const loading = toast.loading('Usuwanie użytkownika...');
     try {
-      await deleteUserMutation.mutateAsync(user.id);
+      await deleteUserMutation.mutateAsync({ userId: user.id });
       toast.dismiss(loading);
       close();
       toast.success('Użytkownik został usunięty');
@@ -183,7 +218,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     if (!user.accepted) {
       const loading = toast.loading('Akceptowanie konta użytkownika...');
       try {
-        await acceptUserMutation.mutateAsync(user.id);
+        await acceptUserMutation.mutateAsync({ userId: user.id });
         toast.dismiss(loading);
         close();
         toast.success('Zaakceptowano konto użytkownika');
@@ -195,7 +230,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     } else {
       const loading = toast.loading('Cofanie akceptacji konta użytkownika...');
       try {
-        await unAcceptUserMutation.mutateAsync(user.id);
+        await unAcceptUserMutation.mutateAsync({ userId: user.id });
         toast.dismiss(loading);
         close();
         toast.success('Cofnięto akceptację konta użytkownika');
@@ -213,11 +248,14 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     }
 
     await initiatePasswordResetMutation
-      .mutateAsync(user.email, {
-        onSuccess: () => {
-          setPasswordResetSent(true);
-        },
-      })
+      .mutateAsync(
+        { data: { email: user.email } },
+        {
+          onSuccess: () => {
+            setPasswordResetSent(true);
+          },
+        }
+      )
       .catch(() => {});
   }
 

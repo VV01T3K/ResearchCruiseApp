@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
-import { isAxiosError } from 'axios';
 import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
@@ -12,18 +11,22 @@ import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
   getFormBValidationSchema,
+  getFormBWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { useApplicationCruiseQuery } from '@/api/applications/ApplicationCatalogApiHooks';
+import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  useFormAInitValuesQuery,
-  useFormAQuery,
-  useFormBInitValuesQuery,
-  useFormBQuery,
-  useRevertFormBToEditMutation,
-  useUpdateFormBMutation,
-} from '@/api/applications/ApplicationFormsApiHooks';
-import { CruiseDayDetailsDtoValidationSchema } from '@/api/applications/dto/CruiseDayDetailsDto';
-import { FormBDto } from '@/api/applications/dto/FormBDto';
+  useGetApplicationFormAContextSuspense,
+  useGetApplicationFormBContextSuspense,
+  useRefillApplicationFormB,
+  useUpdateApplicationFormB,
+} from '@/api/generated/endpoints/applications.gen';
+import { FormBWriteRequest } from '@/api/generated/schemas';
+import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
+import { ApiError } from '@/lib/custom-fetch';
+import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
@@ -41,11 +44,15 @@ function FormBPage() {
 
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
-  const formAInitValues = useFormAInitValuesQuery();
-  const formBInitValues = useFormBInitValuesQuery();
-  const cruise = useApplicationCruiseQuery(applicationId);
-  const updateMutation = useUpdateFormBMutation();
-  const revertToEditMutation = useRevertFormBToEditMutation();
+  const formAInitValues = useGetApplicationFormAContextSuspense({
+    query: { select: (context) => context as FormAOptions },
+  });
+  const formBInitValues = useGetApplicationFormBContextSuspense({
+    query: { select: (context) => context as FormBOptions },
+  });
+  const cruise = useGetApplicationCruiseSuspense(applicationId);
+  const updateMutation = useUpdateApplicationFormB();
+  const revertToEditMutation = useRefillApplicationFormB();
 
   const form = useForm({
     defaultValues: (formB.data ?? {
@@ -60,7 +67,7 @@ function FormBPage() {
       cruiseDaysDetails: [],
       researchEquipments: [],
       shipEquipmentsIds: [],
-    }) as FormBDto,
+    }) as FormBValues,
     validators: {
       onChange: getFormBValidationSchema(),
     },
@@ -97,9 +104,8 @@ function FormBPage() {
     const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(
       {
-        id: applicationId,
-        form: form.state.values,
-        draft: false,
+        applicationId,
+        data: getFormBWriteSchema(false).parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -107,7 +113,7 @@ function FormBPage() {
           toast.success('Formularz został wysłany pomyślnie.');
         },
         onError: (err) => {
-          if (isAxiosError(err) && err.response?.status === 403) {
+          if (err instanceof ApiError && err.status === 403) {
             toast.error(
               'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
             );
@@ -131,7 +137,7 @@ function FormBPage() {
   async function handleDraftSave() {
     const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
     const commentError = cruiseDaysDetails
-      ?.map((day) => CruiseDayDetailsDtoValidationSchema.shape.comment.safeParse(day.comment))
+      ?.map((day) => CruiseDayValuesSchema.shape.comment.safeParse(day.comment))
       .find((result) => !result.success);
 
     if (commentError && !commentError.success) {
@@ -145,9 +151,8 @@ function FormBPage() {
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     await updateMutation.mutateAsync(
       {
-        id: applicationId,
-        form: form.state.values,
-        draft: true,
+        applicationId,
+        data: FormBWriteRequest.parse({ form: form.state.values, draft: true }),
       },
       {
         onSuccess: () => {
@@ -155,7 +160,7 @@ function FormBPage() {
           toast.success('Wersja robocza formularza została zapisana.');
         },
         onError: (err) => {
-          if (isAxiosError(err) && err.response?.status === 403) {
+          if (err instanceof ApiError && err.status === 403) {
             toast.error(
               'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
             );
@@ -177,7 +182,7 @@ function FormBPage() {
   async function handleRevertToEdit() {
     const loading = toast.loading('Cofanie formularza do edycji...');
     await revertToEditMutation.mutateAsync(
-      { id: applicationId },
+      { applicationId },
       {
         onSuccess: async () => {
           await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });

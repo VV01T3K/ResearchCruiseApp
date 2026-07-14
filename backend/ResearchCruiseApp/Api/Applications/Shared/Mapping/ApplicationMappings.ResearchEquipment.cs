@@ -4,10 +4,12 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal static partial class ApplicationMappings
 {
-    public static ResearchEquipment ToResearchEquipment(IResearchEquipmentDto dto) =>
+    public static ResearchEquipment ToResearchEquipment(IResearchEquipmentFields dto) =>
         new() { Name = dto.Name };
 
-    public static ResearchEquipmentDto ToResearchEquipmentDto(FormBResearchEquipment equipment) =>
+    public static ResearchEquipmentFields ToResearchEquipmentFields(
+        FormBResearchEquipment equipment
+    ) =>
         new()
         {
             Name = equipment.ResearchEquipment.Name,
@@ -16,7 +18,9 @@ internal static partial class ApplicationMappings
             Permission = equipment.Permission,
         };
 
-    public static ResearchEquipmentDto ToResearchEquipmentDto(FormCResearchEquipment equipment) =>
+    public static ResearchEquipmentFields ToResearchEquipmentFields(
+        FormCResearchEquipment equipment
+    ) =>
         new()
         {
             Name = equipment.ResearchEquipment.Name,
@@ -25,7 +29,7 @@ internal static partial class ApplicationMappings
             Permission = equipment.Permission,
         };
 
-    public static ShortResearchEquipmentDto ToShortResearchEquipmentDto(
+    public static ShortTermResearchEquipmentFields ToShortTermResearchEquipmentFields(
         FormBShortResearchEquipment equipment
     ) =>
         new()
@@ -35,7 +39,7 @@ internal static partial class ApplicationMappings
             EndDate = equipment.EndDate,
         };
 
-    public static ShortResearchEquipmentDto ToShortResearchEquipmentDto(
+    public static ShortTermResearchEquipmentFields ToShortTermResearchEquipmentFields(
         FormCShortResearchEquipment equipment
     ) =>
         new()
@@ -45,7 +49,7 @@ internal static partial class ApplicationMappings
             EndDate = equipment.EndDate,
         };
 
-    public static LongResearchEquipmentDto ToLongResearchEquipmentDto(
+    public static LongTermResearchEquipmentFields ToLongTermResearchEquipmentFields(
         FormBLongResearchEquipment equipment
     ) =>
         new()
@@ -55,7 +59,7 @@ internal static partial class ApplicationMappings
             Duration = equipment.Duration,
         };
 
-    public static LongResearchEquipmentDto ToLongResearchEquipmentDto(
+    public static LongTermResearchEquipmentFields ToLongTermResearchEquipmentFields(
         FormCLongResearchEquipment equipment
     ) =>
         new()
@@ -65,9 +69,9 @@ internal static partial class ApplicationMappings
             Duration = equipment.Duration,
         };
 
-    public static Port ToPort(PortDto dto) => new() { Name = dto.Name };
+    public static Port ToPort(PortCallFields dto) => new() { Name = dto.Name };
 
-    public static PortDto ToPortDto(FormBPort port) =>
+    public static PortCallFields ToPortCallFields(FormBPort port) =>
         new()
         {
             Name = port.Port.Name,
@@ -75,7 +79,7 @@ internal static partial class ApplicationMappings
             EndTime = port.EndTime,
         };
 
-    public static PortDto ToPortDto(FormCPort port) =>
+    public static PortCallFields ToPortCallFields(FormCPort port) =>
         new()
         {
             Name = port.Port.Name,

@@ -1,12 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query';
-
 import { toast } from '@/components/shared/layout/toast';
 import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationDetailsContext';
-import {
-  useAcceptApplicationMutation,
-  useRejectApplicationMutation,
-} from '@/api/applications/ApplicationCatalogApiHooks';
-import { ApplicationResponse, EvaluationResponse } from '@/api/applications/contracts';
+import { useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
+import { ApplicationResponse, EvaluationResponse } from '@/routes/applications/-types';
 
 import { ActionsSection } from './ActionsSection';
 import { ContractsSection } from './ContractsSection';
@@ -22,35 +17,36 @@ type Props = {
   evaluation: EvaluationResponse;
 };
 export function DetailsView({ application, evaluation }: Props) {
-  const queryClient = useQueryClient();
-
-  const acceptMutation = useAcceptApplicationMutation();
-  const rejectMutation = useRejectApplicationMutation();
+  const decisionMutation = useUpdateApplicationDecision();
 
   function acceptApplication() {
-    acceptMutation.mutate(application.id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['applications', application.id] });
-        toast.success('Formularz został zaakceptowany');
-      },
-      onError: (err) => {
-        console.error(err);
-        toast.error('Nie udało się zaakceptować formularza');
-      },
-    });
+    decisionMutation.mutate(
+      { applicationId: application.id, data: { accept: true } },
+      {
+        onSuccess: () => {
+          toast.success('Formularz został zaakceptowany');
+        },
+        onError: (err) => {
+          console.error(err);
+          toast.error('Nie udało się zaakceptować formularza');
+        },
+      }
+    );
   }
 
   function rejectApplication() {
-    rejectMutation.mutate(application.id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['applications', application.id] });
-        toast.success('Formularz został odrzucony');
-      },
-      onError: (err) => {
-        console.error(err);
-        toast.error('Nie udało się odrzucić formularza');
-      },
-    });
+    decisionMutation.mutate(
+      { applicationId: application.id, data: { accept: false } },
+      {
+        onSuccess: () => {
+          toast.success('Formularz został odrzucony');
+        },
+        onError: (err) => {
+          console.error(err);
+          toast.error('Nie udało się odrzucić formularza');
+        },
+      }
+    );
   }
 
   return (

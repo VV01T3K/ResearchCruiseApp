@@ -1,16 +1,16 @@
 import * as XLSX from 'xlsx';
 
 import { toast } from '@/components/shared/layout/toast';
-import { CruiseDayDetailsDto } from '@/api/applications/dto/CruiseDayDetailsDto';
+import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 
 /**
- * Parses a CSV string and converts it to an array of CruiseDayDetailsDto objects
+ * Parses a CSV string and converts it to an array of CruiseDayValues objects
  * Expected CSV columns: number/day/dzien, hours/godziny/liczba godzin, taskName/task name/nazwa zadania/zadanie, region/rejon, position/pozycja, comment/uwagi etc
  * The columns can't contain the polish letters like 'ń'
  * Supports both comma and semicolon as delimiters
  * Missing columns will be filled with empty strings instead of throwing an error
  */
-export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetailsDto[] {
+export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValues[] {
   const lines = csvContent.trim().split('\n');
 
   if (lines.length < 2) {
@@ -86,7 +86,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
     );
   }
 
-  const rows: CruiseDayDetailsDto[] = [];
+  const rows: CruiseDayValues[] = [];
 
   for (let i = headerRowIndex + 1; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -127,7 +127,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayDetai
       }
     }
 
-    const row: CruiseDayDetailsDto = {
+    const row: CruiseDayValues = {
       number: String(values[columnIndices.number] || '0').trim(),
       hours: String(values[columnIndices.hours] || '0').trim(),
       taskName: String(values[columnIndices.taskName] || '').trim(),
@@ -193,11 +193,11 @@ export async function readFileAsText(file: File): Promise<string> {
   });
 }
 /**
- * Parses an XLSX file and converts it to an array of CruiseDayDetailsDto objects
+ * Parses an XLSX file and converts it to an array of CruiseDayValues objects
  * Supports the same columns as CSV: number/day/dzien, hours/godziny/liczba godzin, taskName/task name/nazwa zadania/zadanie, region/rejon, position/pozycja, comment/uwagi
  * Missing columns will be filled with empty strings instead of throwing an error
  */
-export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseDayDetailsDto[]> {
+export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseDayValues[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -291,7 +291,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
           return;
         }
 
-        const rows: CruiseDayDetailsDto[] = [];
+        const rows: CruiseDayValues[] = [];
 
         for (let i = headerRowIndex + 1; i < data.length; i++) {
           const row = data[i] as unknown as unknown[];
@@ -330,7 +330,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
             }
           }
 
-          const cruiseDay: CruiseDayDetailsDto = {
+          const cruiseDay: CruiseDayValues = {
             number: String(row[columnIndices.number] || '0').trim(),
             hours: String(row[columnIndices.hours] || '0').trim(),
             taskName: String(row[columnIndices.taskName] || '').trim(),
@@ -367,7 +367,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
  * Parses either CSV or XLSX file based on file extension
  * Missing columns will be filled with empty strings instead of throwing an error
  */
-export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseDayDetailsDto[]> {
+export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseDayValues[]> {
   const fileName = file.name.toLowerCase();
 
   if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
@@ -426,9 +426,9 @@ function parsePositionString(position: string): {
 }
 
 /**
- * Exports CruiseDayDetailsDto array to XLSX file and triggers download
+ * Exports CruiseDayValues array to XLSX file and triggers download
  */
-export function exportCruiseDayDetailsToXlsx(data: CruiseDayDetailsDto[], fileName: string = 'rejsu-dane.xlsx'): void {
+export function exportCruiseDayDetailsToXlsx(data: CruiseDayValues[], fileName: string = 'rejsu-dane.xlsx'): void {
   try {
     const headers = ['LAT', '', '', 'LONG', '', '', 'Nazwa Punktu'];
 

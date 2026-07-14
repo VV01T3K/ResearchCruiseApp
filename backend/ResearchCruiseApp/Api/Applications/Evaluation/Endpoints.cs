@@ -19,7 +19,7 @@ public static class EvaluationEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Results<Ok<CruiseApplicationEvaluationDetailsDto>, NotFound>> Get(
+    private static async Task<Results<Ok<CruiseApplicationEvaluation>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
         ApplicationReader applications,

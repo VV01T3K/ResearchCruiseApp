@@ -3,7 +3,7 @@ import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { getErrors } from '@/lib/utils';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { CruiseGoal } from '@/api/applications/dto/FormADto';
+import { CruiseGoal } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 
 export function CruiseGoalSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

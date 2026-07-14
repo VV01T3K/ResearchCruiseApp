@@ -1,0 +1,19 @@
+import { z as zod } from 'zod';
+
+export const updateRequestMainManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+export const updateRequestDeputyManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+export const updateRequestCruiseApplicationIdsItemRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+
+
+export const UpdateRequest = zod.object({
+  "startDate": zod.string(),
+  "endDate": zod.string(),
+  "mainManagerId": zod.string().regex(updateRequestMainManagerIdRegExp),
+  "deputyManagerId": zod.string().regex(updateRequestDeputyManagerIdRegExp),
+  "cruiseApplicationIds": zod.array(zod.string().regex(updateRequestCruiseApplicationIdsItemRegExp)),
+  "title": zod.string().nullable(),
+  "shipUnavailable": zod.boolean()
+});
+
+export type UpdateRequest = zod.input<typeof UpdateRequest>;
+export type UpdateRequestOutput = zod.output<typeof UpdateRequest>;

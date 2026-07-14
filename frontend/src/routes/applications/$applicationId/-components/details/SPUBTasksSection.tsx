@@ -5,7 +5,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationFormASpubTask } from '@/api/applications/contracts';
+import { EvaluationFormASpubTask } from '@/routes/applications/-types';
 
 export function SPUBTasksSection() {
   const { evaluation } = useApplicationDetails();

@@ -1,8 +1,8 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 
-import { client } from '@/lib/api';
-import { Role } from '@/models/shared/Role';
-import { User } from '@/models/shared/User';
+import { getCurrentUser } from '@/api/generated/endpoints/users.gen';
+import { Role } from '@/types/user';
+import { User } from '@/types/user';
 import { UserContextType } from '@/providers/UserContext';
 import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
@@ -29,33 +29,8 @@ async function resolveCurrentUser(userContext?: UserContextType): Promise<User |
     return undefined;
   }
 
-  if (storedAuthDetails.refreshTokenExpirationDate <= new Date()) {
-    return undefined;
-  }
-
-  let accessToken = storedAuthDetails.accessToken;
-
-  if (storedAuthDetails.accessTokenExpirationDate <= new Date() && userContext) {
-    try {
-      await userContext.refreshUser();
-      accessToken = getStoredAuthDetails()?.accessToken ?? '';
-    } catch {
-      return undefined;
-    }
-  }
-
-  if (!accessToken) {
-    return undefined;
-  }
-
   try {
-    const response = await client.get('/v2/users/me', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data as User;
+    return (await getCurrentUser()) as User;
   } catch {
     return undefined;
   }

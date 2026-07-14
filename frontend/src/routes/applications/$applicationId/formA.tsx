@@ -10,25 +10,22 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import {
-  getErrors,
-  getFormErrorMessage,
-  mapNullsToEmptyStrings,
-  navigateToFirstError,
-  removeEmptyValues,
-} from '@/lib/utils';
+import { getErrors, getFormErrorMessage, mapNullsToEmptyStrings, navigateToFirstError } from '@/lib/utils';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
+  getFormAWriteSchema,
+  parseFormADraft,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  useFormAInitValuesQuery,
-  useFormAQuery,
-  useUpdateFormAMutation,
-} from '@/api/applications/ApplicationFormsApiHooks';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { useBlockadesQuery } from '@/api/cruises/CruisesApiHooks';
+  useGetApplicationFormAContextSuspense,
+  useUpdateApplicationFormA,
+} from '@/api/generated/endpoints/applications.gen';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
@@ -45,8 +42,10 @@ function FormAPage() {
 
   const navigate = useNavigate();
   const userContext = useUserContext();
-  const initialStateQuery = useFormAInitValuesQuery();
-  const saveMutation = useUpdateFormAMutation();
+  const initialStateQuery = useGetApplicationFormAContextSuspense({
+    query: { select: (context) => context as FormAOptions },
+  });
+  const saveMutation = useUpdateApplicationFormA();
   const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';
@@ -106,14 +105,14 @@ function FormAPage() {
           spubTasks: [],
           supervisorEmail: '',
           note: '',
-        }) as FormADto,
+        }) as FormAValues,
     validators: {
       onChange: getFormAValidationSchema(initialStateQuery.data),
     },
   });
 
   const year = useStore(form.store, (state) => state.values.year);
-  const blockadesQuery = useBlockadesQuery(+year);
+  const blockadesQuery = useGetCruiseBlockades({ year: +year });
 
   useEffect(() => {
     const newValidators = {
@@ -140,22 +139,13 @@ function FormAPage() {
     actionsDisabled: saveMutation.isPending,
   };
 
-  function isCurrentUserManagerOrDeputy(dto: FormADto) {
+  function isCurrentUserManagerOrDeputy(dto: FormAValues) {
     const userId = userContext.currentUser!.id;
     return dto.cruiseManagerId === userId || dto.deputyManagerId === userId;
   }
 
   function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
-    const dto = removeEmptyValues(form.state.values, [
-      'year',
-      'periodNotes',
-      'differentUsage',
-      'supervisorEmail',
-      'cruiseGoalDescription',
-      'researchAreaInfo',
-    ]);
-
-    if (!isCurrentUserManagerOrDeputy(dto)) {
+    if (!isCurrentUserManagerOrDeputy(form.state.values)) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       return;
@@ -163,7 +153,14 @@ function FormAPage() {
 
     const loading = toast.loading(loadingMessage);
     saveMutation.mutate(
-      { id: applicationId, form: dto, draft },
+      {
+        applicationId,
+        data: draft
+          ? parseFormADraft(form.state.values, applicationId)
+          : getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data, applicationId).parse(
+              form.state.values
+            ),
+      },
       {
         onSuccess: () => {
           navigate({ to: '/' });

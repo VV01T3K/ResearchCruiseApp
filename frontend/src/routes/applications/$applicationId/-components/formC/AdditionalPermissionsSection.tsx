@@ -10,12 +10,12 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { PermissionDto } from '@/api/applications/dto/PermissionDto';
+import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 
 export function AdditionalPermissionsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<PermissionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<PermissionValues>[] {
     return [
       {
         header: 'Lp.',
@@ -98,7 +98,7 @@ export function AdditionalPermissionsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: PermissionDto[]) => prev);
+                field.handleChange((prev: PermissionValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -130,7 +130,7 @@ export function AdditionalPermissionsSection() {
                   data-testid="form-c-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
-                    field.handleChange((prev: PermissionDto[]) => prev);
+                    field.handleChange((prev: PermissionValues[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}

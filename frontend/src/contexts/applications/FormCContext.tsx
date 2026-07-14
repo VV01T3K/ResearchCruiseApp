@@ -1,19 +1,19 @@
 import React from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { CruiseResponse } from '@/api/cruises/contracts';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { FormBDto } from '@/api/applications/dto/FormBDto';
-import { FormBInitValuesDto } from '@/api/applications/dto/FormBInitValuesDto';
-import { FormCDto } from '@/api/applications/dto/FormCDto';
+import type { CruiseResponse } from '@/api/generated/schemas';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
+import { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
+import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 
 export type FormCContextType = {
-  formAInitValues: FormAInitValuesDto;
-  formBInitValues: FormBInitValuesDto;
-  form: AnyReactFormApi<FormCDto>;
-  formA: FormADto;
-  formB: FormBDto;
+  formAInitValues: FormAOptions;
+  formBInitValues: FormBOptions;
+  form: AnyReactFormApi<FormCValues>;
+  formA: FormAValues;
+  formB: FormBValues;
   cruise: CruiseResponse;
   hasFormBeenSubmitted: boolean;
   isReadonly: boolean;

@@ -11,8 +11,8 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
-import { useApplicationsQuery } from '@/api/applications/ApplicationCatalogApiHooks';
-import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/applications/contracts';
+import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
+import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/routes/applications/-types';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/applications/')({
 const dateFormat = 'DD.MM.YYYY';
 
 function ApplicationsPage() {
-  const applicationsQuery = useApplicationsQuery();
+  const applicationsQuery = useGetApplicationsSuspense();
 
   const columns: ColumnDef<ApplicationResponse>[] = [
     {

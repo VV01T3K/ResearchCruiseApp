@@ -1,0 +1,36 @@
+import { CollectedSampleValues } from './CollectedSampleValues';
+import { ContractValues } from './ContractValues';
+import { CruiseDayValues } from './CruiseDayValues';
+import { FormFileValues } from './FormFileValues';
+import { GuestTeamValues } from './GuestTeamValues';
+import { LongResearchEquipmentValues } from './LongResearchEquipmentValues';
+import { PermissionValues } from './PermissionValues';
+import { PortCallValues } from './PortCallValues';
+import { ResearchAreaValues } from './ResearchAreaValues';
+import { ResearchEquipmentValues } from './ResearchEquipmentValues';
+import { ResearchTaskEffectValues } from './ResearchTaskEffectValues';
+import { ShortResearchEquipmentValues } from './ShortResearchEquipmentValues';
+import { SpubTaskValues } from './SpubTaskValues';
+import { UgTeamValues } from './UgTeamValues';
+
+export type FormCValues = {
+  shipUsage: string;
+  differentUsage: string;
+  permissions: PermissionValues[];
+  researchAreaDescriptions: ResearchAreaValues[];
+  ugTeams: UgTeamValues[];
+  guestTeams: GuestTeamValues[];
+  researchTasksEffects: ResearchTaskEffectValues[];
+  contracts: ContractValues[];
+  spubTasks: SpubTaskValues[];
+  shortResearchEquipments: ShortResearchEquipmentValues[];
+  longResearchEquipments: LongResearchEquipmentValues[];
+  ports: PortCallValues[];
+  cruiseDaysDetails: CruiseDayValues[];
+  researchEquipments: ResearchEquipmentValues[];
+  shipEquipmentsIds: string[];
+  collectedSamples: CollectedSampleValues[];
+  spubReportData?: string;
+  additionalDescription?: string;
+  photos: FormFileValues[];
+};

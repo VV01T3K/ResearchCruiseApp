@@ -3,12 +3,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { SpubTaskDto } from '@/api/applications/dto/SpubTaskDto';
+import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
 
 export function SPUBTasksSection() {
   const { formA, isReadonly } = useFormB();
 
-  const columns: ColumnDef<SpubTaskDto>[] = [
+  const columns: ColumnDef<SpubTaskValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

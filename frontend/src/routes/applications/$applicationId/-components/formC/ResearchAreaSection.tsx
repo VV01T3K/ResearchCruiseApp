@@ -8,15 +8,15 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { ResearchAreaDescriptionDto } from '@/api/applications/dto/ResearchAreaDescriptionDto';
-import { getResearchAreaName } from '@/api/applications/dto/ResearchAreaDto';
+import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
 
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 
 export function ResearchAreaSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaDescriptionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaValues>[] {
     return [
       {
         header: 'Lp.',
@@ -84,7 +84,7 @@ export function ResearchAreaSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: ResearchAreaDescriptionDto[]) => prev);
+                field.handleChange((prev: ResearchAreaValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}

@@ -9,8 +9,9 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useRegisterMutation } from '@/api/auth/AuthApiHooks';
-import { Result } from '@/models/user/Results';
+import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
+import { getProblemDetail } from '@/lib/custom-fetch';
+import { Result } from '@/types/user';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
@@ -51,7 +52,12 @@ function RegisterPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
-  const { mutateAsync } = useRegisterMutation({ setResult });
+  const { mutateAsync } = useRegisterAccount({
+    mutation: {
+      onSuccess: () => setResult('success'),
+      onError: (error) => setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error'),
+    },
+  });
   const form = useForm({
     defaultValues: {
       email: '',
@@ -76,11 +82,14 @@ function RegisterPage() {
         throw new Error('Not all fields are filled despite validation');
       }
 
-      await mutateAsync(value, {
-        onSuccess: async () => {
-          await navigate({ to: '/login' });
-        },
-      }).catch(() => {});
+      await mutateAsync(
+        { data: value },
+        {
+          onSuccess: async () => {
+            await navigate({ to: '/login' });
+          },
+        }
+      ).catch(() => {});
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);

@@ -4,9 +4,9 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal class FormReader(PermissionReader permissions, ContractReader contracts, FileReader files)
 {
-    public async Task<FormADto> Create(FormA form)
+    public async Task<FormAFields> Create(FormA form)
     {
-        var dto = ApplicationMappings.ToFormADto(form);
+        var dto = ApplicationMappings.ToFormAFields(form);
         foreach (var permission in form.Permissions)
         {
             dto.Permissions.Add(await permissions.Create(permission));
@@ -20,9 +20,9 @@ internal class FormReader(PermissionReader permissions, ContractReader contracts
         return dto;
     }
 
-    public async Task<FormBDto> Create(FormB form)
+    public async Task<FormBFields> Create(FormB form)
     {
-        var dto = ApplicationMappings.ToFormBDto(form);
+        var dto = ApplicationMappings.ToFormBFields(form);
         foreach (var permission in form.Permissions)
         {
             dto.Permissions.Add(await permissions.Create(permission));
@@ -31,9 +31,9 @@ internal class FormReader(PermissionReader permissions, ContractReader contracts
         return dto;
     }
 
-    public async Task<FormCDto> Create(FormC form)
+    public async Task<FormCFields> Create(FormC form)
     {
-        var dto = ApplicationMappings.ToFormCDto(form);
+        var dto = ApplicationMappings.ToFormCFields(form);
         foreach (var permission in form.Permissions)
         {
             dto.Permissions.Add(await permissions.Create(permission));

@@ -11,9 +11,9 @@ internal class ApplicationReader(
     ContractReader contracts
 )
 {
-    public async Task<CruiseApplicationDto> Create(CruiseApplication application)
+    public async Task<CruiseApplicationSummary> Create(CruiseApplication application)
     {
-        var dto = new CruiseApplicationDto
+        var dto = new CruiseApplicationSummary
         {
             Id = application.Id,
             Number = application.Number.ToString(),
@@ -24,7 +24,7 @@ internal class ApplicationReader(
             HasFormA = application.FormA is not null,
             HasFormB = application.FormB is not null,
             HasFormC = application.FormC is not null,
-            Status = application.Status.ToCode(),
+            Status = application.Status,
             Note = application.Note,
             CruiseHours = application.FormA?.CruiseHours,
             AcceptablePeriodBeg = application.FormA?.AcceptablePeriodBeg,
@@ -52,32 +52,31 @@ internal class ApplicationReader(
         return dto;
     }
 
-    public async Task<CruiseApplicationEvaluationDetailsDto> CreateEvaluationDetails(
+    public async Task<CruiseApplicationEvaluation> CreateEvaluationDetails(
         CruiseApplication application
     )
     {
         var form = application.FormA;
-        return new CruiseApplicationEvaluationDetailsDto
+        return new CruiseApplicationEvaluation
         {
             FormAResearchTasks =
-                form?.FormAResearchTasks.Select(ApplicationMappings.ToFormAResearchTaskDto).ToList()
+                form?.FormAResearchTasks.Select(ApplicationMappings.ToScoredResearchTask).ToList()
                 ?? [],
             FormAContracts = await CreateContracts(form),
-            UgTeams =
-                form?.FormAUgUnits.Select(ApplicationMappings.ToUgTeamWithNameDto).ToList() ?? [],
+            UgTeams = form?.FormAUgUnits.Select(ApplicationMappings.ToNamedUgTeam).ToList() ?? [],
             GuestTeams =
-                form?.FormAGuestUnits.Select(ApplicationMappings.ToGuestTeamDto).ToList() ?? [],
+                form?.FormAGuestUnits.Select(ApplicationMappings.ToGuestTeamFields).ToList() ?? [],
             UgUnitsPoints = form?.UgUnitsPoints ?? "0",
             FormAPublications =
-                form?.FormAPublications.Select(ApplicationMappings.ToFormAPublicationDto).ToList()
+                form?.FormAPublications.Select(ApplicationMappings.ToScoredPublication).ToList()
                 ?? [],
             FormASpubTasks =
-                form?.FormASpubTasks.Select(ApplicationMappings.ToFormASpubTaskDto).ToList() ?? [],
+                form?.FormASpubTasks.Select(ApplicationMappings.ToScoredSpubTask).ToList() ?? [],
             EffectsPoints = application.EffectsPoints.ToString(),
         };
     }
 
-    private async Task AddManagers(CruiseApplication application, CruiseApplicationDto dto)
+    private async Task AddManagers(CruiseApplication application, CruiseApplicationSummary dto)
     {
         if (application.FormA?.CruiseManagerId is { } managerId)
         {
@@ -96,7 +95,10 @@ internal class ApplicationReader(
         }
     }
 
-    private static void AddEffectsDoneRate(CruiseApplication application, CruiseApplicationDto dto)
+    private static void AddEffectsDoneRate(
+        CruiseApplication application,
+        CruiseApplicationSummary dto
+    )
     {
         if (application.FormC is null)
             return;
@@ -106,7 +108,7 @@ internal class ApplicationReader(
         dto.EffectsDoneRate = $"{100 * (float)doneEffects / effects.Count:f2}%";
     }
 
-    private static void AddCruiseDays(CruiseApplicationDto dto)
+    private static void AddCruiseDays(CruiseApplicationSummary dto)
     {
         if (string.IsNullOrEmpty(dto.CruiseHours))
         {
@@ -121,12 +123,12 @@ internal class ApplicationReader(
         }
     }
 
-    private async Task<List<FormAContractDto>> CreateContracts(FormA? form)
+    private async Task<List<ScoredContract>> CreateContracts(FormA? form)
     {
         if (form is null)
             return [];
 
-        var result = new List<FormAContractDto>();
+        var result = new List<ScoredContract>();
         foreach (var contract in form.FormAContracts)
         {
             result.Add(await contracts.Create(contract));

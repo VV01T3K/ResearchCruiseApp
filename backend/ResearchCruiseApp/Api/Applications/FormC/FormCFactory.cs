@@ -13,42 +13,45 @@ internal class FormCFactory(
     Compressor compressor
 )
 {
-    public async Task<Result<FormC>> Create(FormCDto formCDto, CancellationToken cancellationToken)
+    public async Task<Result<FormC>> Create(
+        FormCFields formCFields,
+        CancellationToken cancellationToken
+    )
     {
-        var formC = ApplicationMappings.ToFormC(formCDto);
+        var formC = ApplicationMappings.ToFormC(formCFields);
 
-        await AddPermissions(formC, formCDto, cancellationToken);
-        await AddResearchAreaDescriptions(formC, formCDto, cancellationToken);
-        await AddFormCUgUnits(formC, formCDto, cancellationToken);
-        await AddFormCGuestUnits(formC, formCDto, cancellationToken);
+        await AddPermissions(formC, formCFields, cancellationToken);
+        await AddResearchAreaDescriptions(formC, formCFields, cancellationToken);
+        await AddFormCUgUnits(formC, formCFields, cancellationToken);
+        await AddFormCGuestUnits(formC, formCFields, cancellationToken);
         await effectsService.AddResearchTasksEffects(
             formC,
-            formCDto.ResearchTasksEffects,
+            formCFields.ResearchTasksEffects,
             cancellationToken
         );
-        await AddContracts(formC, formCDto, cancellationToken);
-        await AddFormCSpubTasks(formC, formCDto, cancellationToken);
-        await AddFormCPorts(formC, formCDto, cancellationToken);
-        await AddCruiseDaysDetails(formC, formCDto, cancellationToken);
-        await AddShipEquipments(formC, formCDto, cancellationToken);
-        await AddPhotos(formC, formCDto, cancellationToken);
+        await AddContracts(formC, formCFields, cancellationToken);
+        await AddFormCSpubTasks(formC, formCFields, cancellationToken);
+        await AddFormCPorts(formC, formCFields, cancellationToken);
+        await AddCruiseDaysDetails(formC, formCFields, cancellationToken);
+        await AddShipEquipments(formC, formCFields, cancellationToken);
+        await AddPhotos(formC, formCFields, cancellationToken);
 
         var alreadyAddedResearchEquipments = new HashSet<ResearchEquipment>();
         await AddFormCShortResearchEquipments(
             formC,
-            formCDto,
+            formCFields,
             alreadyAddedResearchEquipments,
             cancellationToken
         );
         await AddFormCLongResearchEquipments(
             formC,
-            formCDto,
+            formCFields,
             alreadyAddedResearchEquipments,
             cancellationToken
         );
         await AddFormCResearchEquipments(
             formC,
-            formCDto,
+            formCFields,
             alreadyAddedResearchEquipments,
             cancellationToken
         );
@@ -58,16 +61,16 @@ internal class FormCFactory(
 
     private async Task AddPermissions(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedPermissions = new HashSet<Permission>();
 
-        foreach (var permissionDto in formCDto.Permissions)
+        foreach (var permissionFields in formCFields.Permissions)
         {
             var permission = await formsFieldsService.GetUniquePermission(
-                permissionDto,
+                permissionFields,
                 alreadyAddedPermissions,
                 cancellationToken
             );
@@ -79,16 +82,16 @@ internal class FormCFactory(
 
     private async Task AddResearchAreaDescriptions(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedResearchAreaDescriptions = new HashSet<ResearchAreaDescription>();
 
-        foreach (var researchAreaDescriptionDto in formCDto.ResearchAreaDescriptions)
+        foreach (var researchAreaSelection in formCFields.ResearchAreaDescriptions)
         {
             var researchAreaDescription = await formsFieldsService.GetUniqueResearchAreaDescription(
-                researchAreaDescriptionDto,
+                researchAreaSelection,
                 alreadyAddedResearchAreaDescriptions,
                 cancellationToken
             );
@@ -100,21 +103,24 @@ internal class FormCFactory(
 
     private async Task AddFormCUgUnits(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
-        foreach (var ugTeamDto in formCDto.UgTeams)
+        foreach (var ugTeamFields in formCFields.UgTeams)
         {
-            var ugUnit = await dbContext.UgUnits.FindAsync([ugTeamDto.UgUnitId], cancellationToken);
+            var ugUnit = await dbContext.UgUnits.FindAsync(
+                [ugTeamFields.UgUnitId],
+                cancellationToken
+            );
             if (ugUnit is null)
                 continue;
 
             var formCUgUnit = new FormCUgUnit
             {
                 UgUnit = ugUnit,
-                NoOfEmployees = ugTeamDto.NoOfEmployees,
-                NoOfStudents = ugTeamDto.NoOfStudents,
+                NoOfEmployees = ugTeamFields.NoOfEmployees,
+                NoOfStudents = ugTeamFields.NoOfStudents,
             };
             formC.FormCUgUnits.Add(formCUgUnit);
         }
@@ -122,16 +128,16 @@ internal class FormCFactory(
 
     private async Task AddFormCGuestUnits(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedGuestUnits = new HashSet<GuestUnit>();
 
-        foreach (var guestTeamDto in formCDto.GuestTeams)
+        foreach (var guestTeamFields in formCFields.GuestTeams)
         {
             var guestUnit = await formsFieldsService.GetUniqueGuestUnit(
-                guestTeamDto,
+                guestTeamFields,
                 alreadyAddedGuestUnits,
                 cancellationToken
             );
@@ -140,7 +146,7 @@ internal class FormCFactory(
             var formCGuestUnit = new FormCGuestUnit
             {
                 GuestUnit = guestUnit,
-                NoOfPersons = guestTeamDto.NoOfPersons,
+                NoOfPersons = guestTeamFields.NoOfPersons,
             };
             formC.FormCGuestUnits.Add(formCGuestUnit);
         }
@@ -148,16 +154,16 @@ internal class FormCFactory(
 
     private async Task AddContracts(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedContracts = new HashSet<Contract>();
 
-        foreach (var contractDto in formCDto.Contracts)
+        foreach (var contractFields in formCFields.Contracts)
         {
             var contract = await formsFieldsService.GetUniqueContract(
-                contractDto,
+                contractFields,
                 alreadyAddedContracts,
                 cancellationToken
             );
@@ -169,16 +175,16 @@ internal class FormCFactory(
 
     private async Task AddFormCSpubTasks(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedSpubTasks = new HashSet<SpubTask>();
 
-        foreach (var spubTaskDto in formCDto.SpubTasks)
+        foreach (var spubTaskFields in formCFields.SpubTasks)
         {
             var spubTask = await formsFieldsService.GetUniqueSpubTask(
-                spubTaskDto,
+                spubTaskFields,
                 alreadyAddedSpubTasks,
                 cancellationToken
             );
@@ -190,15 +196,15 @@ internal class FormCFactory(
 
     private async Task AddFormCShortResearchEquipments(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         HashSet<ResearchEquipment> alreadyAddedResearchEquipments,
         CancellationToken cancellationToken
     )
     {
-        foreach (var shortResearchEquipmentDto in formCDto.ShortResearchEquipments)
+        foreach (var shortTermEquipmentFields in formCFields.ShortResearchEquipments)
         {
             var researchEquipment = await formsFieldsService.GetUniqueResearchEquipment(
-                shortResearchEquipmentDto,
+                shortTermEquipmentFields,
                 alreadyAddedResearchEquipments,
                 cancellationToken
             );
@@ -207,8 +213,8 @@ internal class FormCFactory(
             var formCShortResearchEquipment = new FormCShortResearchEquipment
             {
                 ResearchEquipment = researchEquipment,
-                StartDate = shortResearchEquipmentDto.StartDate,
-                EndDate = shortResearchEquipmentDto.EndDate,
+                StartDate = shortTermEquipmentFields.StartDate,
+                EndDate = shortTermEquipmentFields.EndDate,
             };
             formC.FormCShortResearchEquipments.Add(formCShortResearchEquipment);
         }
@@ -216,15 +222,15 @@ internal class FormCFactory(
 
     private async Task AddFormCLongResearchEquipments(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         HashSet<ResearchEquipment> alreadyAddedResearchEquipments,
         CancellationToken cancellationToken
     )
     {
-        foreach (var longResearchEquipmentDto in formCDto.LongResearchEquipments)
+        foreach (var longTermEquipmentFields in formCFields.LongResearchEquipments)
         {
             var researchEquipment = await formsFieldsService.GetUniqueResearchEquipment(
-                longResearchEquipmentDto,
+                longTermEquipmentFields,
                 alreadyAddedResearchEquipments,
                 cancellationToken
             );
@@ -233,8 +239,8 @@ internal class FormCFactory(
             var formCLongResearchEquipment = new FormCLongResearchEquipment
             {
                 ResearchEquipment = researchEquipment,
-                Action = longResearchEquipmentDto.Action.ToEnum<ResearchEquipmentAction>(),
-                Duration = longResearchEquipmentDto.Duration,
+                Action = longTermEquipmentFields.Action.ToEnum<ResearchEquipmentAction>(),
+                Duration = longTermEquipmentFields.Duration,
             };
             formC.FormCLongResearchEquipments.Add(formCLongResearchEquipment);
         }
@@ -242,16 +248,16 @@ internal class FormCFactory(
 
     private async Task AddFormCPorts(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedPorts = new HashSet<Port>();
 
-        foreach (var portDto in formCDto.Ports)
+        foreach (var portCallFields in formCFields.Ports)
         {
             var port = await formsFieldsService.GetUniquePort(
-                portDto,
+                portCallFields,
                 alreadyAddedPorts,
                 cancellationToken
             );
@@ -260,8 +266,8 @@ internal class FormCFactory(
             var formCPort = new FormCPort
             {
                 Port = port,
-                StartTime = portDto.StartTime,
-                EndTime = portDto.EndTime,
+                StartTime = portCallFields.StartTime,
+                EndTime = portCallFields.EndTime,
             };
             formC.FormCPorts.Add(formCPort);
         }
@@ -269,16 +275,16 @@ internal class FormCFactory(
 
     private async Task AddCruiseDaysDetails(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedCruiseDaysDetails = new HashSet<CruiseDayDetails>();
 
-        foreach (var cruiseDayDetailsDto in formCDto.CruiseDaysDetails)
+        foreach (var cruiseDayFields in formCFields.CruiseDaysDetails)
         {
             var cruiseDayDetails = await formsFieldsService.GetUniqueCruiseDayDetails(
-                cruiseDayDetailsDto,
+                cruiseDayFields,
                 alreadyAddedCruiseDaysDetails,
                 cancellationToken
             );
@@ -290,15 +296,15 @@ internal class FormCFactory(
 
     private async Task AddFormCResearchEquipments(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         HashSet<ResearchEquipment> alreadyAddedResearchEquipments,
         CancellationToken cancellationToken
     )
     {
-        foreach (var researchEquipmentDto in formCDto.ResearchEquipments)
+        foreach (var researchEquipmentFields in formCFields.ResearchEquipments)
         {
             var researchEquipment = await formsFieldsService.GetUniqueResearchEquipment(
-                researchEquipmentDto,
+                researchEquipmentFields,
                 alreadyAddedResearchEquipments,
                 cancellationToken
             );
@@ -307,9 +313,9 @@ internal class FormCFactory(
             var formCResearchEquipment = new FormCResearchEquipment
             {
                 ResearchEquipment = researchEquipment,
-                InsuranceStartDate = researchEquipmentDto.InsuranceStartDate,
-                InsuranceEndDate = researchEquipmentDto.InsuranceEndDate,
-                Permission = researchEquipmentDto.Permission,
+                InsuranceStartDate = researchEquipmentFields.InsuranceStartDate,
+                InsuranceEndDate = researchEquipmentFields.InsuranceEndDate,
+                Permission = researchEquipmentFields.Permission,
             };
             formC.FormCResearchEquipments.Add(formCResearchEquipment);
         }
@@ -317,11 +323,11 @@ internal class FormCFactory(
 
     private async Task AddShipEquipments(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
-        foreach (var shipEquipmentId in formCDto.ShipEquipmentsIds)
+        foreach (var shipEquipmentId in formCFields.ShipEquipmentsIds)
         {
             var shipEquipment = await dbContext.ShipEquipments.FindAsync(
                 [shipEquipmentId],
@@ -336,18 +342,14 @@ internal class FormCFactory(
 
     private async Task AddPhotos(
         FormC formC,
-        FormCDto formCDto,
+        FormCFields formCFields,
         CancellationToken cancellationToken
     )
     {
-        foreach (var photoDto in formCDto.Photos)
+        foreach (var photo in formCFields.Photos)
         {
             formC.Photos.Add(
-                new Photo
-                {
-                    Name = photoDto.Name,
-                    Content = await compressor.Compress(photoDto.Content),
-                }
+                new Photo { Name = photo.Name, Content = await compressor.Compress(photo.Content) }
             );
         }
     }

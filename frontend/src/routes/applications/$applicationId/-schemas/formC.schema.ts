@@ -1,21 +1,22 @@
 import { z } from 'zod';
 
+import { FormCWriteRequest } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
-import { CollectedSampleDtoValidationSchema } from '@/api/applications/dto/CollectedSampleDto';
-import { ContractDtoValidationSchema } from '@/api/applications/dto/ContractDto';
-import { CruiseDayDetailsDtoValidationSchema } from '@/api/applications/dto/CruiseDayDetailsDto';
-import { FileDtoValidationSchema } from '@/api/applications/dto/FileDto';
-import { GuestTeamDtoValidationSchema } from '@/api/applications/dto/GuestTeamDto';
-import { LongResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/LongResearchEquipmentDto';
-import { PermissionDtoWithFileValidationSchema } from '@/api/applications/dto/PermissionDto';
-import { PortDtoValidationSchema } from '@/api/applications/dto/PortDto';
-import { ResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/ResearchEquipmentDto';
-import { ResearchTaskEffectDtoValidationSchema } from '@/api/applications/dto/ResearchTaskEffectDto';
-import { ShortResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/ShortResearchEquipmentDto';
-import { SpubTaskDtoValidationSchema } from '@/api/applications/dto/SpubTaskDto';
-import { UGTeamDtoValidationSchema } from '@/api/applications/dto/UGTeamDto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/applications/dto/ResearchAreaDescriptionDto';
+import { CollectedSampleValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
+import { ContractValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import { FormFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
+import { GuestTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import { LongResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+import { PermissionWithFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import { PortCallValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+import { ResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+import { ResearchTaskEffectValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import { ShortResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
+import { SpubTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 
 export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
   shipUsage: 3,
@@ -56,13 +57,13 @@ const ShipUsageValidationSchema = z
     }
   });
 
-const OtherValidationSchema = (formAInitValues: FormAInitValuesDto) =>
+const OtherValidationSchema = (formAInitValues: FormAOptions) =>
   z.object({
-    permissions: PermissionDtoWithFileValidationSchema.array(),
-    researchAreaDescriptions: getResearchAreaDescriptionDtoValidationSchema(formAInitValues)
+    permissions: PermissionWithFileValuesSchema.array(),
+    researchAreaDescriptions: getResearchAreaValuesSchema(formAInitValues)
       .array()
       .min(1, 'Co najmniej jeden rejon badań jest wymagany'),
-    ugTeams: UGTeamDtoValidationSchema.array()
+    ugTeams: UgTeamValuesSchema.array()
       .min(1, 'Co najmniej jeden zespół UG jest wymagany')
       .refine(
         (val) => val.every((x) => parseInt(x.noOfEmployees, 10) + parseInt(x.noOfStudents, 10) > 0),
@@ -72,8 +73,8 @@ const OtherValidationSchema = (formAInitValues: FormAInitValuesDto) =>
         (val) => groupBy(val, (x) => x.ugUnitId).filter((x) => x[1].length > 1).length === 0,
         'Nie można dodać dwóch zespołów UG z tego samego wydziału'
       ),
-    guestTeams: GuestTeamDtoValidationSchema.array(),
-    researchTasksEffects: ResearchTaskEffectDtoValidationSchema.array()
+    guestTeams: GuestTeamValuesSchema.array(),
+    researchTasksEffects: ResearchTaskEffectValuesSchema.array()
       .min(1, 'Co najmniej jedno zadanie badawcze jest wymagane')
       .refine(
         (val) =>
@@ -82,20 +83,26 @@ const OtherValidationSchema = (formAInitValues: FormAInitValuesDto) =>
           ),
         'Jeżeli zadanie badawcze nie zostało skończone, nie można naliczyć punktów'
       ),
-    contracts: ContractDtoValidationSchema.array(),
-    spubTasks: SpubTaskDtoValidationSchema.array(),
-    shortResearchEquipments: ShortResearchEquipmentDtoValidationSchema.array(),
-    longResearchEquipments: LongResearchEquipmentDtoValidationSchema.array(),
-    ports: PortDtoValidationSchema.array(),
-    cruiseDaysDetails: CruiseDayDetailsDtoValidationSchema.array(),
-    researchEquipments: ResearchEquipmentDtoValidationSchema.array(),
+    contracts: ContractValuesSchema.array(),
+    spubTasks: SpubTaskValuesSchema.array(),
+    shortResearchEquipments: ShortResearchEquipmentValuesSchema.array(),
+    longResearchEquipments: LongResearchEquipmentValuesSchema.array(),
+    ports: PortCallValuesSchema.array(),
+    cruiseDaysDetails: CruiseDayValuesSchema.array(),
+    researchEquipments: ResearchEquipmentValuesSchema.array(),
     shipEquipmentsIds: z.array(z.string()),
-    collectedSamples: CollectedSampleDtoValidationSchema.array(),
+    collectedSamples: CollectedSampleValuesSchema.array(),
     spubReportData: z.string().max(10240, 'Maksymalna długość to 10240 znaków'),
     additionalDescription: z.string().max(10240, 'Maksymalna długość to 10240 znaków'),
-    photos: FileDtoValidationSchema.array(),
+    photos: FormFileValuesSchema.array(),
   });
 
-export function getFormCValidationSchema(formAInitValues: FormAInitValuesDto) {
+export function getFormCValidationSchema(formAInitValues: FormAOptions) {
   return ShipUsageValidationSchema.and(OtherValidationSchema(formAInitValues));
+}
+
+export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolean) {
+  return getFormCValidationSchema(formAInitValues)
+    .transform((form): z.input<typeof FormCWriteRequest> => ({ form, draft }))
+    .pipe(FormCWriteRequest);
 }

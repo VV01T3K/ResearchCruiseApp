@@ -5,12 +5,12 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { ProjectResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormADto>;
-  row: Row<ProjectResearchTaskDto>;
+  form: AnyReactFormApi<FormAValues>;
+  row: Row<ProjectResearchTaskValues>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;
 };
