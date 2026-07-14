@@ -47,8 +47,8 @@ const collectedSamplesColumns = (
         children={(field) => (
           <AppNumberInput
             name={field.name}
-            value={parseInt(field.state.value, 10) || 0}
-            onChange={(value) => field.handleChange(value.toString())}
+            value={field.state.value}
+            onChange={field.handleChange}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
@@ -132,10 +132,10 @@ export function CollectedSamplesSection() {
                 onClick={() => {
                   field.pushValue({
                     type: '',
-                    amount: '0',
+                    amount: 0,
                     analysis: '',
                     publishing: '',
-                  } as CollectedSampleValues);
+                  } satisfies CollectedSampleValues);
                   field.handleChange((prev: CollectedSampleValues[]) => prev);
                   field.handleBlur();
                 }}

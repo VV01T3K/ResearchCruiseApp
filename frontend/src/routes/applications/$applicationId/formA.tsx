@@ -24,7 +24,7 @@ import {
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
 import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
@@ -43,7 +43,7 @@ function FormAPage() {
   const navigate = useNavigate();
   const userContext = useUserContext();
   const initialStateQuery = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAOptions },
+    query: { select: mapFormAOptions },
   });
   const saveMutation = useUpdateApplicationFormA();
   const formA = useFormAQuery(applicationId);
@@ -89,7 +89,8 @@ function FormAPage() {
           precisePeriodStart: '',
           precisePeriodEnd: '',
           periodSelectionType: 'period',
-          cruiseHours: '0',
+          cruiseDays: 0,
+          cruiseHours: 0,
           periodNotes: '',
           shipUsage: '',
           differentUsage: '',

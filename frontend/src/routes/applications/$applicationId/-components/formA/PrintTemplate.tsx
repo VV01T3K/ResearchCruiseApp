@@ -68,7 +68,7 @@ export function PrintTemplate({ ref }: Props) {
           )}
 
           <span>Liczba planowanych dób rejsowych: </span>
-          <span>{parseInt(values.cruiseHours) / 24}</span>
+          <span>{values.cruiseDays}</span>
           <span>Liczba planowanych godzin rejsowych:</span>
           <span>{values.cruiseHours} h</span>
           <span>Uwagi dotyczące terminu:</span>

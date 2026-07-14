@@ -30,8 +30,8 @@ const cruiseDayDetailsColumns = (
         children={(field) => (
           <AppNumberInput
             name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
+            value={field.state.value}
+            onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
@@ -54,8 +54,8 @@ const cruiseDayDetailsColumns = (
         children={(field) => (
           <AppNumberInput
             name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
+            value={field.state.value}
+            onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
@@ -198,8 +198,8 @@ export function CruiseDayDetailsSection() {
                 key="new"
                 onClick={() => {
                   field.pushValue({
-                    number: '0',
-                    hours: '0',
+                    number: 0,
+                    hours: 0,
                     taskName: '',
                     region: '',
                     position: '',

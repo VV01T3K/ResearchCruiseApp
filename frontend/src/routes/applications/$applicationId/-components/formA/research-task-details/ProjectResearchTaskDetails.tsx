@@ -69,10 +69,10 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
         children={(field) => (
           <AppNumberInput
             name={field.name}
-            value={parseFloat(field.state.value as string)}
+            value={field.state.value as number}
             type="float"
             minimum={0}
-            onChange={(e) => field.handleChange(e.toString())}
+            onChange={field.handleChange}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Kwota finansowania [zł]"
@@ -86,10 +86,10 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
         children={(field) => (
           <AppNumberInput
             name={field.name}
-            value={parseFloat(field.state.value as string)}
+            value={field.state.value as number}
             type="float"
             minimum={0}
-            onChange={(e) => field.handleChange(e.toString())}
+            onChange={field.handleChange}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Środki zabezpieczone na realizację rejsu [zł]"

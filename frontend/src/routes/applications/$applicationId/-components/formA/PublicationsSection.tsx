@@ -143,8 +143,8 @@ export function PublicationsSection() {
             children={(field) => (
               <AppYearPickerInput
                 name={field.name}
-                value={field.state.value ? parseInt(field.state.value) : undefined}
-                onChange={(e) => field.handleChange(e?.toString() ?? '')}
+                value={field.state.value}
+                onChange={(value) => field.handleChange(value ?? 0)}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Rok"
@@ -167,10 +167,10 @@ export function PublicationsSection() {
             children={(field) => (
               <AppNumberInput
                 name={field.name}
-                value={parseInt(field.state.value)}
+                value={field.state.value}
                 minimum={0}
                 step={10}
-                onChange={(x: number) => field.handleChange(x.toString())}
+                onChange={field.handleChange}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Punkty"
@@ -254,8 +254,8 @@ export function PublicationsSection() {
                           authors: '',
                           title: '',
                           magazine: '',
-                          year: '',
-                          ministerialPoints: '0',
+                          year: new Date().getFullYear(),
+                          ministerialPoints: 0,
                         });
                         field.handleChange((prev: PublicationValues[]) => prev);
                         field.handleBlur();

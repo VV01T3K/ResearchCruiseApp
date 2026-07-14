@@ -336,61 +336,53 @@ export function CruiseLengthSection() {
             </div>
           )}
 
-          <form.Subscribe
-            selector={(state) => state.values.cruiseHours}
-            children={(cruiseHours) => {
-              return (
-                <form.Field
-                  name="cruiseHours"
-                  children={(field) => (
-                    <AppNumberInput
-                      name={field.name}
-                      value={parseFloat(cruiseHours) / 24}
-                      minimum={0}
-                      maximum={60}
-                      step={1}
-                      type="float"
-                      onChange={(x: number) => field.handleChange((x * 24).toString())}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Liczba planowanych dób rejsowych"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                      data-testid="form-a-cruise-days"
-                      data-testid-input="form-a-cruise-days-input"
-                    />
-                  )}
-                />
-              );
-            }}
+          <form.Field
+            name="cruiseDays"
+            children={(field) => (
+              <AppNumberInput
+                name={field.name}
+                value={field.state.value}
+                minimum={0}
+                maximum={60}
+                step={1}
+                type="float"
+                onChange={(value) => {
+                  field.handleChange(value);
+                  form.setFieldValue('cruiseHours', value * 24);
+                }}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                label="Liczba planowanych dób rejsowych"
+                showRequiredAsterisk
+                disabled={isReadonly}
+                data-testid="form-a-cruise-days"
+                data-testid-input="form-a-cruise-days-input"
+              />
+            )}
           />
 
-          <form.Subscribe
-            selector={(state) => state.values.cruiseHours}
-            children={(cruiseHours) => {
-              return (
-                <form.Field
-                  name="cruiseHours"
-                  children={(field) => (
-                    <AppNumberInput
-                      name={field.name}
-                      value={parseFloat(cruiseHours)}
-                      minimum={0}
-                      maximum={1440}
-                      onChange={(x: number) => field.handleChange(x.toString())}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Liczba planowanych godzin rejsowych"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                      data-testid="form-a-cruise-hours"
-                      data-testid-input="form-a-cruise-hours-input"
-                      data-testid-errors="form-a-cruise-hours-errors"
-                    />
-                  )}
-                />
-              );
-            }}
+          <form.Field
+            name="cruiseHours"
+            children={(field) => (
+              <AppNumberInput
+                name={field.name}
+                value={field.state.value}
+                minimum={0}
+                maximum={1440}
+                onChange={(value) => {
+                  field.handleChange(value);
+                  form.setFieldValue('cruiseDays', value / 24);
+                }}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                label="Liczba planowanych godzin rejsowych"
+                showRequiredAsterisk
+                disabled={isReadonly}
+                data-testid="form-a-cruise-hours"
+                data-testid-input="form-a-cruise-hours-input"
+                data-testid-errors="form-a-cruise-hours-errors"
+              />
+            )}
           />
 
           <form.Field

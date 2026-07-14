@@ -68,13 +68,13 @@ export function PublicationsSection() {
     },
     {
       header: 'Rok wydania',
-      accessorFn: (row) => parseInt(row.publication.year),
+      accessorFn: (row) => row.publication.year,
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`publications[${row.index}].publication.year`}
-          value={parseInt(row.original.publication.year)}
+          value={row.original.publication.year}
           showRequiredAsterisk
           disabled
         />
@@ -89,7 +89,7 @@ export function PublicationsSection() {
       cell: ({ row }) => (
         <AppNumberInput
           name={`publications[${row.index}].publication.ministerialPoints`}
-          value={parseInt(row.original.publication.ministerialPoints)}
+          value={row.original.publication.ministerialPoints}
           minimum={0}
           showRequiredAsterisk
           disabled

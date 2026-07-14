@@ -9,6 +9,8 @@ import type { GuestTeamValues } from '@/routes/applications/$applicationId/-sche
 import type { PublicationValues } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 import type { ResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import type { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const ApplicationStatus = {
   Draft: 'draft',
@@ -80,3 +82,78 @@ export type EvaluationResponse = Omit<
   formAPublications: EvaluationFormAPublication[];
   formASpubTasks: EvaluationFormASpubTask[];
 };
+
+export function mapEvaluationResponse(evaluation: CruiseApplicationEvaluation): EvaluationResponse {
+  return {
+    formAResearchTasks: (evaluation.formAResearchTasks ?? []).map((item) => ({
+      id: item.id ?? '',
+      points: item.points ?? '',
+      researchTask: mapResearchTaskToValues(
+        item.researchTask ?? {
+          type: '11',
+          title: null,
+          magazine: null,
+          author: null,
+          institution: null,
+          date: null,
+          startDate: null,
+          endDate: null,
+          financingAmount: null,
+          financingApproved: null,
+          description: null,
+          securedAmount: null,
+          ministerialPoints: null,
+        }
+      ),
+    })),
+    formAContracts: (evaluation.formAContracts ?? []).map((item) => ({
+      id: item.id ?? '',
+      points: item.points ?? '',
+      contract: {
+        category: item.contract?.category === 'international' ? 'international' : 'domestic',
+        institutionName: item.contract?.institutionName ?? '',
+        institutionUnit: item.contract?.institutionUnit ?? '',
+        institutionLocalization: item.contract?.institutionLocalization ?? '',
+        description: item.contract?.description ?? '',
+        scans: item.contract?.scans ?? [],
+      },
+    })),
+    ugTeams: (evaluation.ugTeams ?? []).map((team) => ({
+      ugUnitName: team.ugUnitName ?? '',
+      noOfEmployees: team.noOfEmployees ?? '',
+      noOfStudents: team.noOfStudents ?? '',
+    })),
+    guestTeams: (evaluation.guestTeams ?? []).map((team) => ({
+      name: team.name ?? '',
+      noOfPersons: Number(team.noOfPersons) || 0,
+    })),
+    ugUnitsPoints: evaluation.ugUnitsPoints ?? '',
+    formAPublications: (evaluation.formAPublications ?? []).map((item) => ({
+      id: item.id ?? '',
+      points: item.points ?? '',
+      publication: {
+        id: item.publication?.id ?? '',
+        category:
+          item.publication?.category === PublicationCategory.Postscript
+            ? PublicationCategory.Postscript
+            : PublicationCategory.Subject,
+        doi: item.publication?.doi ?? '',
+        authors: item.publication?.authors ?? '',
+        title: item.publication?.title ?? '',
+        magazine: item.publication?.magazine ?? '',
+        year: Number(item.publication?.year) || 0,
+        ministerialPoints: Number(item.publication?.ministerialPoints) || 0,
+      },
+    })),
+    formASpubTasks: (evaluation.formASpubTasks ?? []).map((item) => ({
+      id: item.id ?? '',
+      points: item.points ?? '',
+      spubTask: {
+        name: item.spubTask?.name ?? '',
+        yearFrom: item.spubTask?.yearFrom ?? '',
+        yearTo: item.spubTask?.yearTo ?? '',
+      },
+    })),
+    effectsPoints: evaluation.effectsPoints ?? '',
+  };
+}

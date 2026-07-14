@@ -5,7 +5,7 @@ import {
   useGetApplicationEvaluationSuspense,
   useGetApplicationSuspense,
 } from '@/api/generated/endpoints/applications.gen';
-import type { EvaluationResponse } from '@/routes/applications/-types';
+import { mapEvaluationResponse } from '@/routes/applications/-types';
 import { DetailsView } from './-components/details/DetailsView';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({
@@ -18,7 +18,7 @@ function DetailsPage() {
 
   const applicationQuery = useGetApplicationSuspense(applicationId);
   const evaluationQuery = useGetApplicationEvaluationSuspense(applicationId, {
-    query: { select: (evaluation) => evaluation as EvaluationResponse },
+    query: { select: mapEvaluationResponse },
   });
 
   return (

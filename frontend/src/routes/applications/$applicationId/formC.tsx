@@ -25,7 +25,7 @@ import {
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
 import { FormCWriteRequest } from '@/api/generated/schemas';
-import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
 import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
@@ -49,7 +49,7 @@ function FormCPage() {
   const formB = useFormBQuery(applicationId);
   const formC = useFormCQuery(applicationId);
   const formAInitValues = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAOptions },
+    query: { select: mapFormAOptions },
   });
   const formBInitValues = useGetApplicationFormBContextSuspense({
     query: { select: (context) => context as FormBOptions },

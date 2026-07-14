@@ -22,7 +22,7 @@ import {
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
 import { FormBWriteRequest } from '@/api/generated/schemas';
-import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
 import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
@@ -45,7 +45,7 @@ function FormBPage() {
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
   const formAInitValues = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAOptions },
+    query: { select: mapFormAOptions },
   });
   const formBInitValues = useGetApplicationFormBContextSuspense({
     query: { select: (context) => context as FormBOptions },

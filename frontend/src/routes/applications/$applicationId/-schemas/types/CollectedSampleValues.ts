@@ -5,13 +5,7 @@ export const CollectedSampleValuesSchema = z.object({
     .string()
     .nonempty('Typ próbki nie może być pusty')
     .max(10240, 'Typ próbki nie może być dłuższy niż 10240 znaków'),
-  amount: z
-    .string()
-    .refine((val) => {
-      const parsed = parseInt(val, 10);
-      return !isNaN(parsed) && parsed > 0;
-    }, 'Ilość musi być liczbą dodatnią')
-    .refine((val) => val.length <= 10240, 'Ilość nie może być dłuższa niż 10240 znaków'),
+  amount: z.number().positive('Ilość musi być liczbą dodatnią'),
   analysis: z
     .string()
     .nonempty('Analiza próbki nie może być pusta')

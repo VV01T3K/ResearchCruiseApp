@@ -42,10 +42,10 @@ export function MembersSection() {
             children={(field) => (
               <AppNumberInput
                 name={field.name}
-                value={parseInt(field.state.value)}
+                value={field.state.value}
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
+                  field.handleChange(x);
                   tableField.handleChange((prev: UgTeamValues[]) => prev);
                 }}
                 onBlur={field.handleBlur}
@@ -70,10 +70,10 @@ export function MembersSection() {
             children={(field) => (
               <AppNumberInput
                 name={field.name}
-                value={parseInt(field.state.value)}
+                value={field.state.value}
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
+                  field.handleChange(x);
                   tableField.handleChange((prev: UgTeamValues[]) => prev);
                 }}
                 onBlur={field.handleBlur}
@@ -150,10 +150,10 @@ export function MembersSection() {
             children={(field) => (
               <AppNumberInput
                 name={field.name}
-                value={parseInt(field.state.value)}
+                value={field.state.value}
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
+                  field.handleChange(x);
                   tableField.handleChange((prev: GuestTeamValues[]) => prev);
                 }}
                 onBlur={field.handleBlur}
@@ -214,8 +214,8 @@ export function MembersSection() {
                       onClick: () => {
                         field.pushValue({
                           ugUnitId: unit.id,
-                          noOfEmployees: '0',
-                          noOfStudents: '0',
+                          noOfEmployees: 0,
+                          noOfStudents: 0,
                         });
                         field.handleChange((prev: UgTeamValues[]) => prev);
                         field.handleBlur();
@@ -254,7 +254,7 @@ export function MembersSection() {
                     key="new"
                     variant="primary"
                     onClick={() => {
-                      field.pushValue({ name: '', noOfPersons: '0' });
+                      field.pushValue({ name: '', noOfPersons: 0 });
                       field.handleChange((prev: GuestTeamValues[]) => prev);
                       field.handleBlur();
                     }}
@@ -269,7 +269,7 @@ export function MembersSection() {
                     options={initValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
                       onClick: () => {
-                        field.pushValue({ name: institution, noOfPersons: '0' });
+                        field.pushValue({ name: institution, noOfPersons: 0 });
                         field.handleChange((prev: GuestTeamValues[]) => prev);
                         field.handleBlur();
                       },

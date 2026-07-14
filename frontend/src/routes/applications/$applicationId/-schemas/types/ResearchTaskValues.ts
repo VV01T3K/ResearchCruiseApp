@@ -41,16 +41,10 @@ export const ProjectResearchTaskValuesSchema = z.object({
     ResearchTaskType.CommercialProject,
   ]),
   title: z.string().nonempty('Tytuł nie może być pusty'),
-  financingAmount: z.string().refine((val) => {
-    const parsed = parseFloat(val);
-    return !isNaN(parsed) && parsed >= 0;
-  }, 'Kwota finansowania musi być poprawną kwotą większą lub równą 0.00'),
+  financingAmount: z.number().nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00'),
   startDate: z.string().nonempty('Data rozpoczęcia nie może być pusta'),
   endDate: z.string().nonempty('Data zakończenia nie może być pusta'),
-  securedAmount: z.string().refine((val) => {
-    const parsed = parseFloat(val);
-    return !isNaN(parsed) && parsed >= 0;
-  }, 'Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
+  securedAmount: z.number().nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
 });
 export type ProjectResearchTaskValues = z.infer<typeof ProjectResearchTaskValuesSchema>;
 
@@ -65,15 +59,10 @@ export const OwnResearchTaskValuesSchema = z.object({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
   magazine: z.string().nonempty('Czasopismo nie może być puste'),
-  ministerialPoints: z.string().refine(
-    (val) => {
-      const parsed = parseInt(val, 10);
-      return !isNaN(parsed) && parsed >= 0;
-    },
-    {
-      error: 'Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0',
-    }
-  ),
+  ministerialPoints: z
+    .number()
+    .int('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
+    .nonnegative('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0'),
 });
 export type OwnResearchTaskValues = z.infer<typeof OwnResearchTaskValuesSchema>;
 
@@ -176,10 +165,10 @@ export function getEmptyTask(taskType: ResearchTaskType) {
       return {
         type: taskType,
         title: '',
-        financingAmount: '0.00',
+        financingAmount: 0,
         startDate: '',
         endDate: '',
-        securedAmount: '0.00',
+        securedAmount: 0,
       } as ProjectResearchTaskValues;
     case ResearchTaskType.Didactics:
       return { type: ResearchTaskType.Didactics, description: '' } as DidacticsResearchTaskValues;
@@ -189,7 +178,7 @@ export function getEmptyTask(taskType: ResearchTaskType) {
         title: '',
         date: '',
         magazine: '',
-        ministerialPoints: '0',
+        ministerialPoints: 0,
       } as OwnResearchTaskValues;
     case ResearchTaskType.OtherResearchTask:
       return { type: ResearchTaskType.OtherResearchTask, description: '' } as OtherResearchTaskValues;

@@ -46,10 +46,10 @@ export function PublicationsSection() {
     {
       header: 'Rok wydania',
       accessorFn: (row) => {
-        if (row.year === '0') {
+        if (row.year === 0) {
           return 1900;
         } else {
-          return parseInt(row.year);
+          return row.year;
         }
       },
       enableColumnFilter: false,

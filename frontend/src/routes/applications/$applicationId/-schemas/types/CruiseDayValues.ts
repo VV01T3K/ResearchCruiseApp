@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const CruiseDayValuesSchema = z.object({
-  number: z.string().nonempty('Numer dnia rejsu jest wymagany'),
-  hours: z.string().nonempty('Godziny są wymagane'),
+  number: z.number().nonnegative('Numer dnia rejsu jest wymagany'),
+  hours: z.number().nonnegative('Godziny są wymagane'),
   taskName: z.string().nonempty('Nazwa zadania jest wymagana'),
   region: z.string().nonempty('Region jest wymagany'),
   position: z.string().nonempty('Pozycja jest wymagana'),

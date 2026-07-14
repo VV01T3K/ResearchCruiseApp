@@ -19,7 +19,8 @@ export type FormAValues = {
   optimalPeriod: CruisePeriodType | '';
   precisePeriodStart: string | '';
   precisePeriodEnd: string | '';
-  cruiseHours: string;
+  cruiseDays: number;
+  cruiseHours: number;
   periodNotes: string;
   shipUsage?: string;
   differentUsage: string;

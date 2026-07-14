@@ -35,6 +35,7 @@ export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   precisePeriodStart: 2,
   precisePeriodEnd: 2,
   cruiseHours: 2,
+  cruiseDays: 2,
   periodNotes: 2,
   shipUsage: 2,
   differentUsage: 2,
@@ -231,16 +232,15 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   function hasEnoughFreeSlotInPrecisePeriod(
     precisePeriodStart: string,
     precisePeriodEnd: string,
-    cruiseHours: string
+    cruiseHours: number
   ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
     if (!precisePeriodStart || !precisePeriodEnd) return { canFitCruise: true, overlappingBlockades: [] };
 
-    const parsedHours = parseInt(cruiseHours, 10);
-    if (Number.isNaN(parsedHours) || parsedHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
+    if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
 
     const start = new Date(precisePeriodStart);
     const end = new Date(precisePeriodEnd);
-    const cruiseDurationDays = parsedHours / 24;
+    const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
   }
@@ -248,7 +248,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   function hasEnoughFreeSlotInPeriod(
     year: string,
     period: [string, string],
-    cruiseHours: string
+    cruiseHours: number
   ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
     if (!period || period.length !== 2) {
       return { canFitCruise: true, overlappingBlockades: [] };
@@ -257,25 +257,23 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     const parsedYear = parseInt(year, 10);
     const startEdge = parseInt(period[0], 10);
     const endEdge = parseInt(period[1], 10);
-    const parsedHours = parseInt(cruiseHours, 10);
 
     if (
       Number.isNaN(parsedYear) ||
       Number.isNaN(startEdge) ||
       Number.isNaN(endEdge) ||
-      Number.isNaN(parsedHours) ||
       startEdge < 0 ||
       endEdge < 0 ||
       startEdge > MAX_PERIOD_EDGE_VALUE ||
       endEdge > MAX_PERIOD_EDGE_VALUE ||
-      parsedHours <= 0
+      cruiseHours <= 0
     ) {
       return { canFitCruise: true, overlappingBlockades: [] };
     }
 
     const start = getPeriodEdgeDatePoint(parsedYear, startEdge);
     const end = getPeriodEdgeDatePoint(parsedYear, endEdge);
-    const cruiseDurationDays = parsedHours / 24;
+    const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
   }
@@ -288,7 +286,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
       precisePeriodEnd: z.string().or(literal('')),
-      cruiseHours: z.string(),
+      cruiseDays: z.number().min(0).max(60),
+      cruiseHours: z.number().min(0).max(1440),
     })
     .superRefine(
       (
@@ -299,10 +298,14 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
           optimalPeriod,
           precisePeriodStart,
           precisePeriodEnd,
+          cruiseDays,
           cruiseHours,
         },
         ctx
       ) => {
+        if (cruiseHours !== cruiseDays * 24) {
+          ctx.addIssue({ code: 'custom', message: 'Liczba dni i godzin rejsu musi być zgodna', path: ['cruiseHours'] });
+        }
         if (periodSelectionType === 'period') {
           if (acceptablePeriod !== '') {
             const acceptableAnalysis = hasEnoughFreeSlotInPeriod(year, acceptablePeriod, cruiseHours);
@@ -336,8 +339,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
 
         const start = new Date(precisePeriodStart);
         const end = new Date(precisePeriodEnd);
-        const parsedHours = parseInt(cruiseHours, 10);
-        const cruiseDurationDays = parsedHours / 24;
+        const cruiseDurationDays = cruiseHours / 24;
 
         if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
           ctx.addIssue({
@@ -377,10 +379,11 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
       precisePeriodEnd: z.string().or(literal('')),
-      cruiseHours: z.string().refine((val) => {
-        const parsed = parseInt(val, 10);
-        return !isNaN(parsed) && parsed > 0 && parsed <= 1440;
-      }, 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)'),
+      cruiseDays: z.number().min(0).max(60),
+      cruiseHours: z
+        .number()
+        .positive('Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)')
+        .max(1440, 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)'),
       periodNotes: z.string(),
       permissions: PermissionValuesSchema.array().refine(
         (val) => val.every((x) => !x.scan),
@@ -394,7 +397,7 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
       ugTeams: UgTeamValuesSchema.array()
         .min(1, 'Co najmniej jeden zespół UG jest wymagany')
         .refine(
-          (val) => val.every((x) => parseInt(x.noOfEmployees, 10) + parseInt(x.noOfStudents, 10) > 0),
+          (val) => val.every((x) => x.noOfEmployees + x.noOfStudents > 0),
           'Zespół UG musi składać się z co najmniej jednej osoby'
         )
         .refine(
@@ -476,11 +479,10 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
         }
 
         if (acceptablePeriod !== '' && optimalPeriod !== '') {
-          const parsedHours = parseInt(val.cruiseHours, 10);
           const year = parseInt(val.year, 10);
 
-          if (!Number.isNaN(parsedHours) && parsedHours > 0 && !Number.isNaN(year)) {
-            const cruiseDurationDays = parsedHours / 24;
+          if (val.cruiseHours > 0 && !Number.isNaN(year)) {
+            const cruiseDurationDays = val.cruiseHours / 24;
 
             if (!hasEnoughDaysInPeriod(acceptablePeriod, year, cruiseDurationDays)) {
               ctx.addIssue({
@@ -544,7 +546,7 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
       periodSelectionType: form.periodSelectionType ?? null,
       precisePeriodStart: toApiDateTime(form.precisePeriodStart),
       precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
-      cruiseHours: form.cruiseHours,
+      cruiseHours: String(form.cruiseHours),
       periodNotes: form.periodNotes,
       shipUsage: form.shipUsage || null,
       differentUsage: form.differentUsage,
@@ -565,15 +567,19 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
         date: 'date' in task ? task.date : null,
         startDate: 'startDate' in task ? task.startDate : null,
         endDate: 'endDate' in task ? task.endDate : null,
-        financingAmount: 'financingAmount' in task ? task.financingAmount : null,
+        financingAmount: 'financingAmount' in task ? String(task.financingAmount) : null,
         financingApproved: 'financingApproved' in task ? task.financingApproved : null,
         description: 'description' in task ? task.description : null,
-        securedAmount: 'securedAmount' in task ? task.securedAmount : null,
-        ministerialPoints: 'ministerialPoints' in task ? task.ministerialPoints : null,
+        securedAmount: 'securedAmount' in task ? String(task.securedAmount) : null,
+        ministerialPoints: 'ministerialPoints' in task ? String(task.ministerialPoints) : null,
       })),
       contracts: form.contracts,
-      ugTeams: form.ugTeams,
-      guestTeams: form.guestTeams.map((team) => ({ ...team, name: team.name || null })),
+      ugTeams: form.ugTeams.map((team) => ({
+        ...team,
+        noOfEmployees: String(team.noOfEmployees),
+        noOfStudents: String(team.noOfStudents),
+      })),
+      guestTeams: form.guestTeams.map((team) => ({ name: team.name || null, noOfPersons: String(team.noOfPersons) })),
       publications: form.publications.map((publication) => ({
         ...publication,
         id: publication.id || '00000000-0000-0000-0000-000000000000',
@@ -581,7 +587,8 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
         authors: publication.authors || null,
         title: publication.title || null,
         magazine: publication.magazine || null,
-        year: publication.year || null,
+        year: String(publication.year),
+        ministerialPoints: String(publication.ministerialPoints),
       })),
       spubTasks: form.spubTasks.map((task) => ({
         name: task.name || null,
@@ -620,7 +627,8 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
           : 'period',
     precisePeriodStart: form.precisePeriodStart ?? '',
     precisePeriodEnd: form.precisePeriodEnd ?? '',
-    cruiseHours: form.cruiseHours,
+    cruiseDays: toNumber(form.cruiseHours) / 24,
+    cruiseHours: toNumber(form.cruiseHours),
     periodNotes: form.periodNotes,
     shipUsage: form.shipUsage ?? '',
     differentUsage: form.differentUsage,
@@ -646,8 +654,12 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
       description: contract.description ?? '',
       scans: contract.scans,
     })),
-    ugTeams: form.ugTeams,
-    guestTeams: form.guestTeams.map((team) => ({ ...team, name: team.name ?? '' })),
+    ugTeams: form.ugTeams.map((team) => ({
+      ...team,
+      noOfEmployees: toNumber(team.noOfEmployees),
+      noOfStudents: toNumber(team.noOfStudents),
+    })),
+    guestTeams: form.guestTeams.map((team) => ({ name: team.name ?? '', noOfPersons: toNumber(team.noOfPersons) })),
     publications: form.publications.map((publication) => ({
       id: publication.id,
       category:
@@ -658,8 +670,8 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
       authors: publication.authors ?? '',
       title: publication.title ?? '',
       magazine: publication.magazine ?? '',
-      year: publication.year ?? '',
-      ministerialPoints: publication.ministerialPoints,
+      year: toNumber(publication.year),
+      ministerialPoints: toNumber(publication.ministerialPoints),
     })),
     spubTasks: form.spubTasks.map((task) => ({
       name: task.name ?? '',
@@ -671,7 +683,7 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
   };
 }
 
-function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
+export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
   switch (task.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:
@@ -692,10 +704,10 @@ function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researc
       return {
         type: task.type,
         title: task.title ?? '',
-        financingAmount: task.financingAmount ?? '',
+        financingAmount: toNumber(task.financingAmount),
         startDate: task.startDate ?? '',
         endDate: task.endDate ?? '',
-        securedAmount: task.securedAmount ?? '',
+        securedAmount: toNumber(task.securedAmount),
       };
     case ResearchTaskType.Didactics:
       return { type: task.type, description: task.description ?? '' };
@@ -705,7 +717,7 @@ function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researc
         title: task.title ?? '',
         date: task.date ?? '',
         magazine: task.magazine ?? '',
-        ministerialPoints: task.ministerialPoints ?? '',
+        ministerialPoints: toNumber(task.ministerialPoints),
       };
     default:
       return { type: ResearchTaskType.OtherResearchTask, description: task.description ?? '' };
@@ -757,8 +769,13 @@ export function mapFormAOptions(options: GeneratedFormAOptions): FormAOptions {
       authors: publication.authors ?? '',
       title: publication.title ?? '',
       magazine: publication.magazine ?? '',
-      year: publication.year ?? '',
-      ministerialPoints: publication.ministerialPoints,
+      year: toNumber(publication.year),
+      ministerialPoints: toNumber(publication.ministerialPoints),
     })),
   };
+}
+
+function toNumber(value: string | null | undefined): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }

@@ -69,10 +69,10 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
         children={(field) => (
           <AppNumberInput
             name={field.name}
-            value={parseInt(field.state.value as string)}
+            value={field.state.value as number}
             minimum={0}
             step={10}
-            onChange={(value) => field.handleChange(String(value))}
+            onChange={field.handleChange}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Przewidywane punkty ministerialne"

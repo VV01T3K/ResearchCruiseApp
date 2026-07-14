@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FormCWriteRequest } from '@/api/generated/schemas';
+import { FormCFields, FormCWriteRequest } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
 import { CollectedSampleValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
 import { ContractValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
@@ -17,6 +17,8 @@ import { SpubTaskValuesSchema } from '@/routes/applications/$applicationId/-sche
 import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
   shipUsage: 3,
@@ -66,7 +68,7 @@ const OtherValidationSchema = (formAInitValues: FormAOptions) =>
     ugTeams: UgTeamValuesSchema.array()
       .min(1, 'Co najmniej jeden zespół UG jest wymagany')
       .refine(
-        (val) => val.every((x) => parseInt(x.noOfEmployees, 10) + parseInt(x.noOfStudents, 10) > 0),
+        (val) => val.every((x) => x.noOfEmployees + x.noOfStudents > 0),
         'Zespół UG musi składać się z co najmniej jednej osoby'
       )
       .refine(
@@ -107,6 +109,18 @@ export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolea
       (form): z.input<typeof FormCWriteRequest> => ({
         form: {
           ...form,
+          ugTeams: form.ugTeams.map((team) => ({
+            ...team,
+            noOfEmployees: String(team.noOfEmployees),
+            noOfStudents: String(team.noOfStudents),
+          })),
+          guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
+          cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+            ...day,
+            number: String(day.number),
+            hours: String(day.hours),
+          })),
+          collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: String(sample.amount) })),
           researchTasksEffects: form.researchTasksEffects.map((task) => ({
             type: task.type,
             title: 'title' in task ? task.title : null,
@@ -116,11 +130,13 @@ export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolea
             date: 'date' in task ? task.date : null,
             startDate: 'startDate' in task ? task.startDate : null,
             endDate: 'endDate' in task ? task.endDate : null,
-            financingAmount: 'financingAmount' in task ? task.financingAmount : null,
+            financingAmount:
+              'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
             financingApproved: 'financingApproved' in task ? task.financingApproved : null,
             description: 'description' in task ? task.description : null,
-            securedAmount: 'securedAmount' in task ? task.securedAmount : null,
-            ministerialPoints: 'ministerialPoints' in task ? task.ministerialPoints : null,
+            securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
+            ministerialPoints:
+              'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
             publicationMinisterialPoints: null,
             done: task.done,
             managerConditionMet: task.managerConditionMet,
@@ -133,4 +149,64 @@ export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolea
       })
     )
     .pipe(FormCWriteRequest);
+}
+
+export function mapFormCToValues(form: FormCFields): FormCValues {
+  return {
+    ...form,
+    permissions: form.permissions.map((permission) => ({
+      description: permission.description ?? '',
+      executive: permission.executive ?? '',
+      scan: permission.scan ?? undefined,
+    })),
+    ugTeams: form.ugTeams.map((team) => ({
+      ...team,
+      noOfEmployees: toNumber(team.noOfEmployees),
+      noOfStudents: toNumber(team.noOfStudents),
+    })),
+    guestTeams: form.guestTeams.map((team) => ({
+      name: team.name ?? '',
+      noOfPersons: toNumber(team.noOfPersons),
+    })),
+    contracts: form.contracts.map((contract) => ({
+      ...contract,
+      category: contract.category === 'international' ? 'international' : 'domestic',
+      institutionName: contract.institutionName ?? '',
+      institutionUnit: contract.institutionUnit ?? '',
+      institutionLocalization: contract.institutionLocalization ?? '',
+      description: contract.description ?? '',
+    })),
+    spubTasks: form.spubTasks.map((task) => ({
+      name: task.name ?? '',
+      yearFrom: task.yearFrom ?? '',
+      yearTo: task.yearTo ?? '',
+    })),
+    longResearchEquipments: form.longResearchEquipments.map((equipment) => ({
+      ...equipment,
+      action: equipment.action === 'Collect' ? 'Collect' : 'Put',
+    })),
+    researchTasksEffects: form.researchTasksEffects.map((task) => ({
+      ...mapResearchTaskToValues(task),
+      done: task.done === 'true' ? 'true' : 'false',
+      managerConditionMet: task.managerConditionMet === 'true' ? 'true' : 'false',
+      deputyConditionMet: task.deputyConditionMet === 'true' ? 'true' : 'false',
+    })),
+    cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+      ...day,
+      number: toNumber(day.number),
+      hours: toNumber(day.hours),
+    })),
+    collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: toNumber(sample.amount) })),
+    researchEquipments: form.researchEquipments.map((equipment) => ({
+      ...equipment,
+      permission: equipment.permission === 'true' ? 'true' : 'false',
+    })),
+    spubReportData: form.spubReportData ?? '',
+    additionalDescription: form.additionalDescription ?? '',
+  };
+}
+
+function toNumber(value: string): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }

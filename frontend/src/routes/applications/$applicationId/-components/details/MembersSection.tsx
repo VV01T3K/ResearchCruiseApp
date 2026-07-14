@@ -84,7 +84,7 @@ export function MembersSection() {
       cell: ({ row }) => (
         <AppNumberInput
           name={`guestTeams[${row.index}].noOfPersons`}
-          value={parseInt(row.original.noOfPersons)}
+          value={row.original.noOfPersons}
           minimum={0}
           className="mx-4"
           showRequiredAsterisk

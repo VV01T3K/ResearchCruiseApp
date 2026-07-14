@@ -38,8 +38,8 @@ const cruiseDayDetailsColumns = (
             data-testid-input="cruise-day-number-input"
             data-testid-errors="cruise-day-number-errors"
             name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
+            value={field.state.value}
+            onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
@@ -64,8 +64,8 @@ const cruiseDayDetailsColumns = (
             data-testid-input="cruise-day-hours-input"
             data-testid-errors="cruise-day-hours-errors"
             name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
+            value={field.state.value}
+            onChange={field.setValue}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
@@ -270,8 +270,8 @@ export function CruiseDayDetailsSection() {
                       data-testid="form-b-add-cruise-day-task-btn"
                       onClick={() => {
                         field.pushValue({
-                          number: '0',
-                          hours: '0',
+                          number: 0,
+                          hours: 0,
                           taskName: '',
                           region: '',
                           position: '',

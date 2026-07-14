@@ -12,6 +12,8 @@ import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 import { ApiError } from '@/lib/custom-fetch';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 export function useFormAQuery(applicationId: string) {
   return useSuspenseQuery({
@@ -27,7 +29,7 @@ export function useFormBQuery(applicationId: string) {
     queryKey: getGetApplicationFormBQueryKey(applicationId),
     queryFn: async (): Promise<FormBValues | null> => {
       try {
-        return (await getApplicationFormB(applicationId)) as FormBValues;
+        return mapFormBToValues(await getApplicationFormB(applicationId));
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
@@ -42,7 +44,7 @@ export function useFormCQuery(applicationId: string) {
     queryKey: getGetApplicationFormCQueryKey(applicationId),
     queryFn: async (): Promise<FormCValues | null> => {
       try {
-        return (await getApplicationFormC(applicationId)) as FormCValues;
+        return mapFormCToValues(await getApplicationFormC(applicationId));
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
