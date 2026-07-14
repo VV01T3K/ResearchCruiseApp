@@ -184,8 +184,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           {
@@ -664,8 +664,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -859,8 +859,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -932,8 +932,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -987,8 +987,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1040,8 +1040,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1085,8 +1085,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           {
@@ -1156,8 +1156,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           {
@@ -1325,8 +1325,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1375,8 +1375,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1448,8 +1448,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1513,8 +1513,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1566,8 +1566,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1631,8 +1631,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1916,8 +1916,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -1968,8 +1968,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2020,8 +2020,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2031,7 +2031,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CruiseApplicationEvaluationDetailsDto"
+                  "$ref": "#/components/schemas/CruiseApplicationEvaluation"
                 }
               }
             }
@@ -2072,8 +2072,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2149,7 +2149,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CruiseApplicationDto"
+                    "$ref": "#/components/schemas/CruiseApplicationSummary"
                   }
                 }
               }
@@ -2181,7 +2181,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormAInitValuesDto"
+                  "$ref": "#/components/schemas/FormAOptions"
                 }
               }
             }
@@ -2212,7 +2212,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormBInitValuesDto"
+                  "$ref": "#/components/schemas/FormBOptions"
                 }
               }
             }
@@ -2243,8 +2243,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2254,7 +2254,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormADto"
+                  "$ref": "#/components/schemas/FormAFields"
                 }
               }
             }
@@ -2293,8 +2293,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2368,8 +2368,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2379,7 +2379,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormBDto"
+                  "$ref": "#/components/schemas/FormBFields"
                 }
               }
             }
@@ -2418,8 +2418,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2493,8 +2493,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2548,8 +2548,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2559,7 +2559,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormCDto"
+                  "$ref": "#/components/schemas/FormCFields"
                 }
               }
             }
@@ -2598,8 +2598,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2673,8 +2673,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2728,8 +2728,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           {
@@ -2778,8 +2778,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         ],
@@ -2844,16 +2844,16 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "cruiseManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "deputyManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "number": {
             "type": "string"
@@ -2872,8 +2872,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "firstName": {
             "type": "string"
@@ -2899,8 +2899,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "number": {
             "type": "string"
@@ -2924,7 +2924,7 @@
             }
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseStatus"
           },
           "title": {
             "type": [
@@ -2958,8 +2958,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "email": {
             "type": "string"
@@ -3001,8 +3001,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "number": {
             "type": "string"
@@ -3012,11 +3012,7 @@
             "format": "date"
           },
           "year": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "mainManager": {
@@ -3035,15 +3031,11 @@
             "type": "boolean"
           },
           "points": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseApplicationStatus"
           },
           "effectsDoneRate": {
             "type": "string"
@@ -3061,11 +3053,9 @@
             ]
           },
           "cruiseDays": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
               "null",
-              "number",
-              "string"
+              "number"
             ],
             "format": "float"
           },
@@ -3134,16 +3124,16 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "cruiseManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "deputyManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "number": {
             "type": "string"
@@ -3189,7 +3179,7 @@
           }
         }
       },
-      "CollectedSampleDto": {
+      "CollectedSampleFields": {
         "type": "object",
         "properties": {
           "type": {
@@ -3214,7 +3204,7 @@
           }
         }
       },
-      "ContractDto": {
+      "ContractFields": {
         "type": "object",
         "properties": {
           "category": {
@@ -3247,7 +3237,7 @@
           "scans": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FileDto"
+              "$ref": "#/components/schemas/FileContent"
             }
           }
         }
@@ -3271,18 +3261,18 @@
             "type": "string"
           },
           "mainManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "deputyManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "cruiseApplicationIds": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           "title": {
@@ -3322,7 +3312,7 @@
           }
         }
       },
-      "CrewMemberDto": {
+      "CrewMemberFields": {
         "type": "object",
         "properties": {
           "title": {
@@ -3367,12 +3357,73 @@
           }
         }
       },
-      "CruiseApplicationDto": {
+      "CruiseApplicationEvaluation": {
+        "type": "object",
+        "properties": {
+          "formAResearchTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredResearchTask"
+            }
+          },
+          "formAContracts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredContract"
+            }
+          },
+          "ugTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedUgTeam"
+            }
+          },
+          "guestTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuestTeamFields"
+            }
+          },
+          "ugUnitsPoints": {
+            "type": "string"
+          },
+          "formAPublications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredPublication"
+            }
+          },
+          "formASpubTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredSpubTask"
+            }
+          },
+          "effectsPoints": {
+            "type": "string"
+          }
+        }
+      },
+      "CruiseApplicationStatus": {
+        "enum": [
+          "draft",
+          "waitingForSupervisor",
+          "acceptedBySupervisor",
+          "deniedBySupervisor",
+          "accepted",
+          "denied",
+          "formBRequired",
+          "formBFilled",
+          "undertaken",
+          "reported"
+        ]
+      },
+      "CruiseApplicationSummary": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "number": {
             "type": "string"
@@ -3382,16 +3433,12 @@
             "format": "date"
           },
           "year": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "cruiseManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "cruiseManagerEmail": {
             "type": "string"
@@ -3403,8 +3450,8 @@
             "type": "string"
           },
           "deputyManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "deputyManagerEmail": {
             "type": "string"
@@ -3425,15 +3472,11 @@
             "type": "boolean"
           },
           "points": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseApplicationStatus"
           },
           "effectsDoneRate": {
             "type": "string"
@@ -3451,11 +3494,9 @@
             ]
           },
           "cruiseDays": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
               "null",
-              "number",
-              "string"
+              "number"
             ],
             "format": "float"
           },
@@ -3513,54 +3554,7 @@
           }
         }
       },
-      "CruiseApplicationEvaluationDetailsDto": {
-        "type": "object",
-        "properties": {
-          "formAResearchTasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormAResearchTaskDto"
-            }
-          },
-          "formAContracts": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormAContractDto"
-            }
-          },
-          "ugTeams": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UgTeamWithNameDto"
-            }
-          },
-          "guestTeams": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
-            }
-          },
-          "ugUnitsPoints": {
-            "type": "string"
-          },
-          "formAPublications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormAPublicationDto"
-            }
-          },
-          "formASpubTasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormASpubTaskDto"
-            }
-          },
-          "effectsPoints": {
-            "type": "string"
-          }
-        }
-      },
-      "CruiseDayDetailsDto": {
+      "CruiseDayFields": {
         "type": "object",
         "properties": {
           "number": {
@@ -3606,12 +3600,12 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "userId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "effect": {
             "$ref": "#/components/schemas/EffectResponse"
@@ -3634,8 +3628,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "email": {
             "type": "string"
@@ -3664,8 +3658,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "number": {
             "type": "string"
@@ -3689,7 +3683,7 @@
             }
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseStatus"
           },
           "title": {
             "type": [
@@ -3701,6 +3695,13 @@
             "type": "boolean"
           }
         }
+      },
+      "CruiseStatus": {
+        "enum": [
+          "new",
+          "confirmed",
+          "ended"
+        ]
       },
       "CurrentUserResponse": {
         "required": [
@@ -3715,8 +3716,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "email": {
             "type": "string"
@@ -3870,7 +3871,7 @@
           }
         }
       },
-      "FileDto": {
+      "FileContent": {
         "type": "object",
         "properties": {
           "name": {
@@ -3883,41 +3884,26 @@
           }
         }
       },
-      "FormAContractDto": {
+      "FormAFields": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "contract": {
-            "$ref": "#/components/schemas/ContractDto"
-          },
-          "points": {
-            "type": "string"
-          }
-        }
-      },
-      "FormADto": {
-        "type": "object",
-        "properties": {
-          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
             "type": [
               "null",
               "string"
-            ],
-            "format": "uuid"
+            ]
           },
           "cruiseManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "deputyManagerId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
             "type": [
               "null",
               "string"
-            ],
-            "format": "uuid"
+            ]
           },
           "year": {
             "maxLength": 4,
@@ -3990,13 +3976,13 @@
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionDto"
+              "$ref": "#/components/schemas/PermissionFields"
             }
           },
           "researchAreaDescriptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchAreaDescriptionDto"
+              "$ref": "#/components/schemas/ResearchAreaSelection"
             }
           },
           "cruiseGoal": {
@@ -4013,37 +3999,37 @@
           "researchTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchTaskDto"
+              "$ref": "#/components/schemas/ResearchTaskFields"
             }
           },
           "contracts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ContractDto"
+              "$ref": "#/components/schemas/ContractFields"
             }
           },
           "ugTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgTeamDto"
+              "$ref": "#/components/schemas/UgTeamFields"
             }
           },
           "guestTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
+              "$ref": "#/components/schemas/GuestTeamFields"
             }
           },
           "publications": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PublicationDto"
+              "$ref": "#/components/schemas/PublicationFields"
             }
           },
           "spubTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SpubTaskDto"
+              "$ref": "#/components/schemas/SpubTaskFields"
             }
           },
           "supervisorEmail": {
@@ -4061,19 +4047,19 @@
           }
         }
       },
-      "FormAInitValuesDto": {
+      "FormAOptions": {
         "type": "object",
         "properties": {
           "cruiseManagers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormUserDto"
+              "$ref": "#/components/schemas/UserOption"
             }
           },
           "deputyManagers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormUserDto"
+              "$ref": "#/components/schemas/UserOption"
             }
           },
           "years": {
@@ -4097,7 +4083,7 @@
           "researchAreas": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchAreaDto"
+              "$ref": "#/components/schemas/ResearchAreaOption"
             }
           },
           "cruiseGoals": {
@@ -4109,19 +4095,19 @@
           "historicalResearchTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchTaskDto"
+              "$ref": "#/components/schemas/ResearchTaskFields"
             }
           },
           "historicalContracts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ContractDto"
+              "$ref": "#/components/schemas/ContractFields"
             }
           },
           "ugUnits": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgUnitDto"
+              "$ref": "#/components/schemas/UgUnitOption"
             }
           },
           "historicalGuestInstitutions": {
@@ -4133,59 +4119,14 @@
           "historicalSpubTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SpubTaskDto"
+              "$ref": "#/components/schemas/SpubTaskFields"
             }
           },
           "historicalPublications": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PublicationDto"
+              "$ref": "#/components/schemas/PublicationFields"
             }
-          }
-        }
-      },
-      "FormAPublicationDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "publication": {
-            "$ref": "#/components/schemas/PublicationDto"
-          },
-          "points": {
-            "type": "string"
-          }
-        }
-      },
-      "FormAResearchTaskDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "researchTask": {
-            "$ref": "#/components/schemas/ResearchTaskDto"
-          },
-          "points": {
-            "type": "string"
-          }
-        }
-      },
-      "FormASpubTaskDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "spubTask": {
-            "$ref": "#/components/schemas/SpubTaskDto"
-          },
-          "points": {
-            "type": "string"
           }
         }
       },
@@ -4197,14 +4138,14 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormADto"
+            "$ref": "#/components/schemas/FormAFields"
           },
           "draft": {
             "type": "boolean"
           }
         }
       },
-      "FormBDto": {
+      "FormBFields": {
         "type": "object",
         "properties": {
           "isCruiseManagerPresent": {
@@ -4215,73 +4156,73 @@
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionDto"
+              "$ref": "#/components/schemas/PermissionFields"
             }
           },
           "ugTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgTeamDto"
+              "$ref": "#/components/schemas/UgTeamFields"
             }
           },
           "guestTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
+              "$ref": "#/components/schemas/GuestTeamFields"
             }
           },
           "crewMembers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CrewMemberDto"
+              "$ref": "#/components/schemas/CrewMemberFields"
             }
           },
           "shortResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShortResearchEquipmentDto"
+              "$ref": "#/components/schemas/ShortTermResearchEquipmentFields"
             }
           },
           "longResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/LongResearchEquipmentDto"
+              "$ref": "#/components/schemas/LongTermResearchEquipmentFields"
             }
           },
           "ports": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PortDto"
+              "$ref": "#/components/schemas/PortCallFields"
             }
           },
           "cruiseDaysDetails": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CruiseDayDetailsDto"
+              "$ref": "#/components/schemas/CruiseDayFields"
             }
           },
           "researchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchEquipmentDto"
+              "$ref": "#/components/schemas/ResearchEquipmentFields"
             }
           },
           "shipEquipmentsIds": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           }
         }
       },
-      "FormBInitValuesDto": {
+      "FormBOptions": {
         "type": "object",
         "properties": {
           "shipEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShipEquipmentDto"
+              "$ref": "#/components/schemas/ShipEquipmentOption"
             }
           }
         }
@@ -4294,14 +4235,14 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormBDto"
+            "$ref": "#/components/schemas/FormBFields"
           },
           "draft": {
             "type": "boolean"
           }
         }
       },
-      "FormCDto": {
+      "FormCFields": {
         "type": "object",
         "properties": {
           "shipUsage": {
@@ -4317,86 +4258,86 @@
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionDto"
+              "$ref": "#/components/schemas/PermissionFields"
             }
           },
           "researchAreaDescriptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchAreaDescriptionDto"
+              "$ref": "#/components/schemas/ResearchAreaSelection"
             }
           },
           "ugTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgTeamDto"
+              "$ref": "#/components/schemas/UgTeamFields"
             }
           },
           "guestTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
+              "$ref": "#/components/schemas/GuestTeamFields"
             }
           },
           "researchTasksEffects": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchTaskEffectDto"
+              "$ref": "#/components/schemas/ResearchTaskEffectFields"
             }
           },
           "contracts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ContractDto"
+              "$ref": "#/components/schemas/ContractFields"
             }
           },
           "spubTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SpubTaskDto"
+              "$ref": "#/components/schemas/SpubTaskFields"
             }
           },
           "shortResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShortResearchEquipmentDto"
+              "$ref": "#/components/schemas/ShortTermResearchEquipmentFields"
             }
           },
           "longResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/LongResearchEquipmentDto"
+              "$ref": "#/components/schemas/LongTermResearchEquipmentFields"
             }
           },
           "ports": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PortDto"
+              "$ref": "#/components/schemas/PortCallFields"
             }
           },
           "cruiseDaysDetails": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CruiseDayDetailsDto"
+              "$ref": "#/components/schemas/CruiseDayFields"
             }
           },
           "researchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchEquipmentDto"
+              "$ref": "#/components/schemas/ResearchEquipmentFields"
             }
           },
           "shipEquipmentsIds": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           "collectedSamples": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CollectedSampleDto"
+              "$ref": "#/components/schemas/CollectedSampleFields"
             }
           },
           "spubReportData": {
@@ -4418,7 +4359,7 @@
           "photos": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FileDto"
+              "$ref": "#/components/schemas/FileContent"
             }
           }
         }
@@ -4431,32 +4372,14 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormCDto"
+            "$ref": "#/components/schemas/FormCFields"
           },
           "draft": {
             "type": "boolean"
           }
         }
       },
-      "FormUserDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "email": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          }
-        }
-      },
-      "GuestTeamDto": {
+      "GuestTeamFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4582,7 +4505,7 @@
           }
         }
       },
-      "LongResearchEquipmentDto": {
+      "LongTermResearchEquipmentFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4602,7 +4525,27 @@
           }
         }
       },
-      "PermissionDto": {
+      "NamedUgTeam": {
+        "type": "object",
+        "properties": {
+          "ugUnitName": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "noOfEmployees": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "noOfStudents": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "PermissionFields": {
         "type": "object",
         "properties": {
           "description": {
@@ -4627,7 +4570,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/FileDto"
+                "$ref": "#/components/schemas/FileContent"
               }
             ]
           }
@@ -4642,8 +4585,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "firstName": {
             "type": "string"
@@ -4653,7 +4596,7 @@
           }
         }
       },
-      "PortDto": {
+      "PortCallFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4711,12 +4654,12 @@
           }
         }
       },
-      "PublicationDto": {
+      "PublicationFields": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "category": {
             "type": "string"
@@ -4770,8 +4713,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "category": {
             "type": "string"
@@ -4860,15 +4803,31 @@
           }
         }
       },
-      "ResearchAreaDescriptionDto": {
+      "ResearchAreaOption": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ResearchAreaSelection": {
         "type": "object",
         "properties": {
           "areaId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
             "type": [
               "null",
               "string"
-            ],
-            "format": "uuid"
+            ]
           },
           "differentName": {
             "maxLength": 1024,
@@ -4885,23 +4844,7 @@
           }
         }
       },
-      "ResearchAreaDto": {
-        "required": [
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "ResearchEquipmentDto": {
+      "ResearchEquipmentFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4932,87 +4875,7 @@
           }
         }
       },
-      "ResearchTaskDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "magazine": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "author": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "institution": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "date": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "startDate": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "endDate": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "financingAmount": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "financingApproved": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "description": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "securedAmount": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "ministerialPoints": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      },
-      "ResearchTaskEffectDto": {
+      "ResearchTaskEffectFields": {
         "type": "object",
         "properties": {
           "type": {
@@ -5107,6 +4970,86 @@
           }
         }
       },
+      "ResearchTaskFields": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "magazine": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "author": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "institution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "date": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingApproved": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "securedAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ministerialPoints": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ResendConfirmationEmailRequest": {
         "required": [
           "email"
@@ -5141,19 +5084,79 @@
           }
         }
       },
-      "ShipEquipmentDto": {
+      "ScoredContract": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "contract": {
+            "$ref": "#/components/schemas/ContractFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ScoredPublication": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "publication": {
+            "$ref": "#/components/schemas/PublicationFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ScoredResearchTask": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "researchTask": {
+            "$ref": "#/components/schemas/ResearchTaskFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ScoredSpubTask": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "spubTask": {
+            "$ref": "#/components/schemas/SpubTaskFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ShipEquipmentOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "name": {
             "type": "string"
           }
         }
       },
-      "ShortResearchEquipmentDto": {
+      "ShortTermResearchEquipmentFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -5173,7 +5176,7 @@
           }
         }
       },
-      "SpubTaskDto": {
+      "SpubTaskFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -5219,10 +5222,10 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormADto"
+            "$ref": "#/components/schemas/FormAFields"
           },
           "initValues": {
-            "$ref": "#/components/schemas/FormAInitValuesDto"
+            "$ref": "#/components/schemas/FormAOptions"
           }
         }
       },
@@ -5251,31 +5254,11 @@
           }
         }
       },
-      "UgTeamDto": {
+      "UgTeamFields": {
         "type": "object",
         "properties": {
           "ugUnitId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "noOfEmployees": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          },
-          "noOfStudents": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          }
-        }
-      },
-      "UgTeamWithNameDto": {
-        "type": "object",
-        "properties": {
-          "ugUnitName": {
-            "maxLength": 1024,
-            "minLength": 0,
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
             "type": "string"
           },
           "noOfEmployees": {
@@ -5290,12 +5273,12 @@
           }
         }
       },
-      "UgUnitDto": {
+      "UgUnitOption": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -5321,18 +5304,18 @@
             "type": "string"
           },
           "mainManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "deputyManagerId": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "cruiseApplicationIds": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
             }
           },
           "title": {
@@ -5369,6 +5352,24 @@
           }
         }
       },
+      "UserOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
       "UserResponse": {
         "required": [
           "id",
@@ -5382,8 +5383,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
           },
           "email": {
             "type": "string"

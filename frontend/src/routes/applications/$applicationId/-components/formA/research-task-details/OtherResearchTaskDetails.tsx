@@ -3,12 +3,12 @@ import { Row } from '@tanstack/react-table';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { OtherResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormADto>;
-  row: Row<OtherResearchTaskDto>;
+  form: AnyReactFormApi<FormAValues>;
+  row: Row<OtherResearchTaskValues>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;
 };

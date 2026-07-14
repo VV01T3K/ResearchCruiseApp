@@ -5,13 +5,13 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal static partial class ApplicationMappings
 {
-    public static Permission ToPermission(PermissionDto dto) =>
+    public static Permission ToPermission(PermissionFields dto) =>
         new() { Description = dto.Description, Executive = dto.Executive };
 
-    public static PermissionDto ToPermissionDto(Permission permission) =>
+    public static PermissionFields ToPermissionFields(Permission permission) =>
         new() { Description = permission.Description, Executive = permission.Executive };
 
-    public static Contract ToContract(ContractDto dto) =>
+    public static Contract ToContract(ContractFields dto) =>
         new()
         {
             Category = dto.Category,
@@ -21,7 +21,7 @@ internal static partial class ApplicationMappings
             Description = dto.Description,
         };
 
-    public static ContractDto ToContractDto(Contract contract) =>
+    public static ContractFields ToContractFields(Contract contract) =>
         new()
         {
             Category = contract.Category,
@@ -31,9 +31,7 @@ internal static partial class ApplicationMappings
             Description = contract.Description,
         };
 
-    public static ResearchAreaDescription ToResearchAreaDescription(
-        ResearchAreaDescriptionDto dto
-    ) =>
+    public static ResearchAreaDescription ToResearchAreaDescription(ResearchAreaSelection dto) =>
         new()
         {
             AreaId = dto.AreaId,
@@ -41,7 +39,7 @@ internal static partial class ApplicationMappings
             Info = dto.Info,
         };
 
-    public static ResearchAreaDescriptionDto ToResearchAreaDescriptionDto(
+    public static ResearchAreaSelection ToResearchAreaSelection(
         ResearchAreaDescription description
     ) =>
         new()
@@ -51,7 +49,7 @@ internal static partial class ApplicationMappings
             Info = description.Info ?? "",
         };
 
-    public static ResearchTask ToResearchTask(IResearchTaskDto dto) =>
+    public static ResearchTask ToResearchTask(IResearchTaskFields dto) =>
         new()
         {
             Type = dto.Type.ToEnum<ResearchTaskType>(),
@@ -69,7 +67,7 @@ internal static partial class ApplicationMappings
             MinisterialPoints = dto.MinisterialPoints,
         };
 
-    public static ResearchTaskDto ToResearchTaskDto(ResearchTask task) =>
+    public static ResearchTaskFields ToResearchTaskFields(ResearchTask task) =>
         new()
         {
             Type = ((int)task.Type).ToString(),
@@ -87,10 +85,10 @@ internal static partial class ApplicationMappings
             MinisterialPoints = task.MinisterialPoints,
         };
 
-    public static ResearchTaskDto ToResearchTaskDto(FormAResearchTask task) =>
-        ToResearchTaskDto(task.ResearchTask);
+    public static ResearchTaskFields ToResearchTaskFields(FormAResearchTask task) =>
+        ToResearchTaskFields(task.ResearchTask);
 
-    public static ResearchTaskEffectDto ToResearchTaskEffectDto(ResearchTaskEffect effect) =>
+    public static ResearchTaskEffectFields ToResearchTaskEffectFields(ResearchTaskEffect effect) =>
         new()
         {
             Type = ((int)effect.ResearchTask.Type).ToString(),
@@ -112,7 +110,7 @@ internal static partial class ApplicationMappings
             DeputyConditionMet = effect.DeputyConditionMet,
         };
 
-    public static Publication ToPublication(PublicationDto dto) =>
+    public static Publication ToPublication(PublicationFields dto) =>
         new()
         {
             Category = dto.Category,
@@ -124,7 +122,7 @@ internal static partial class ApplicationMappings
             MinisterialPoints = dto.MinisterialPoints,
         };
 
-    public static PublicationDto ToPublicationDto(Publication publication) =>
+    public static PublicationFields ToPublicationFields(Publication publication) =>
         new()
         {
             Id = publication.Id,
@@ -137,10 +135,10 @@ internal static partial class ApplicationMappings
             MinisterialPoints = publication.MinisterialPoints,
         };
 
-    public static PublicationDto ToPublicationDto(FormAPublication publication) =>
-        ToPublicationDto(publication.Publication);
+    public static PublicationFields ToPublicationFields(FormAPublication publication) =>
+        ToPublicationFields(publication.Publication);
 
-    public static SpubTask ToSpubTask(SpubTaskDto dto) =>
+    public static SpubTask ToSpubTask(SpubTaskFields dto) =>
         new()
         {
             Name = dto.Name,
@@ -148,7 +146,7 @@ internal static partial class ApplicationMappings
             YearTo = dto.YearTo,
         };
 
-    public static SpubTaskDto ToSpubTaskDto(SpubTask task) =>
+    public static SpubTaskFields ToSpubTaskFields(SpubTask task) =>
         new()
         {
             Name = task.Name,
@@ -156,20 +154,21 @@ internal static partial class ApplicationMappings
             YearTo = task.YearTo,
         };
 
-    public static SpubTaskDto ToSpubTaskDto(FormASpubTask task) => ToSpubTaskDto(task.SpubTask);
+    public static SpubTaskFields ToSpubTaskFields(FormASpubTask task) =>
+        ToSpubTaskFields(task.SpubTask);
 
-    public static GuestUnit ToGuestUnit(GuestTeamDto dto) => new() { Name = dto.Name };
+    public static GuestUnit ToGuestUnit(GuestTeamFields dto) => new() { Name = dto.Name };
 
-    public static GuestTeamDto ToGuestTeamDto(FormAGuestUnit unit) =>
+    public static GuestTeamFields ToGuestTeamFields(FormAGuestUnit unit) =>
         new() { Name = unit.GuestUnit.Name, NoOfPersons = unit.NoOfPersons };
 
-    public static GuestTeamDto ToGuestTeamDto(FormBGuestUnit unit) =>
+    public static GuestTeamFields ToGuestTeamFields(FormBGuestUnit unit) =>
         new() { Name = unit.GuestUnit.Name, NoOfPersons = unit.NoOfPersons };
 
-    public static GuestTeamDto ToGuestTeamDto(FormCGuestUnit unit) =>
+    public static GuestTeamFields ToGuestTeamFields(FormCGuestUnit unit) =>
         new() { Name = unit.GuestUnit.Name, NoOfPersons = unit.NoOfPersons };
 
-    public static CrewMember ToCrewMember(CrewMemberDto dto) =>
+    public static CrewMember ToCrewMember(CrewMemberFields dto) =>
         new()
         {
             Title = dto.Title,
@@ -182,7 +181,7 @@ internal static partial class ApplicationMappings
             Institution = dto.Institution,
         };
 
-    public static CrewMemberDto ToCrewMemberDto(CrewMember member) =>
+    public static CrewMemberFields ToCrewMemberFields(CrewMember member) =>
         new()
         {
             Title = member.Title,
@@ -195,7 +194,7 @@ internal static partial class ApplicationMappings
             Institution = member.Institution,
         };
 
-    public static CruiseDayDetails ToCruiseDayDetails(CruiseDayDetailsDto dto) =>
+    public static CruiseDayDetails ToCruiseDayDetails(CruiseDayFields dto) =>
         new()
         {
             Number = dto.Number,
@@ -206,7 +205,7 @@ internal static partial class ApplicationMappings
             Comment = dto.Comment,
         };
 
-    public static CruiseDayDetailsDto ToCruiseDayDetailsDto(CruiseDayDetails details) =>
+    public static CruiseDayFields ToCruiseDayFields(CruiseDayDetails details) =>
         new()
         {
             Number = details.Number,
@@ -217,7 +216,7 @@ internal static partial class ApplicationMappings
             Comment = details.Comment,
         };
 
-    public static CollectedSample ToCollectedSample(CollectedSampleDto dto) =>
+    public static CollectedSample ToCollectedSample(CollectedSampleFields dto) =>
         new()
         {
             Type = dto.Type,
@@ -226,7 +225,7 @@ internal static partial class ApplicationMappings
             Publishing = dto.Publishing,
         };
 
-    public static CollectedSampleDto ToCollectedSampleDto(CollectedSample sample) =>
+    public static CollectedSampleFields ToCollectedSampleFields(CollectedSample sample) =>
         new()
         {
             Type = sample.Type,
@@ -235,7 +234,7 @@ internal static partial class ApplicationMappings
             Publishing = sample.Publishing,
         };
 
-    public static UgTeamDto ToUgTeamDto(FormAUgUnit unit) =>
+    public static UgTeamFields ToUgTeamFields(FormAUgUnit unit) =>
         new()
         {
             UgUnitId = unit.UgUnit.Id,
@@ -243,7 +242,7 @@ internal static partial class ApplicationMappings
             NoOfStudents = unit.NoOfStudents,
         };
 
-    public static UgTeamDto ToUgTeamDto(FormBUgUnit unit) =>
+    public static UgTeamFields ToUgTeamFields(FormBUgUnit unit) =>
         new()
         {
             UgUnitId = unit.UgUnit.Id,
@@ -251,7 +250,7 @@ internal static partial class ApplicationMappings
             NoOfStudents = unit.NoOfStudents,
         };
 
-    public static UgTeamDto ToUgTeamDto(FormCUgUnit unit) =>
+    public static UgTeamFields ToUgTeamFields(FormCUgUnit unit) =>
         new()
         {
             UgUnitId = unit.UgUnit.Id,
@@ -259,7 +258,7 @@ internal static partial class ApplicationMappings
             NoOfStudents = unit.NoOfStudents,
         };
 
-    public static UgTeamWithNameDto ToUgTeamWithNameDto(FormAUgUnit unit) =>
+    public static NamedUgTeam ToNamedUgTeam(FormAUgUnit unit) =>
         new()
         {
             UgUnitName = unit.UgUnit.Name,
@@ -267,11 +266,13 @@ internal static partial class ApplicationMappings
             NoOfStudents = unit.NoOfStudents,
         };
 
-    public static ResearchAreaDto ToResearchAreaDto(ResearchArea area) => new(area.Id, area.Name);
+    public static ResearchAreaOption ToResearchAreaOption(ResearchArea area) =>
+        new(area.Id, area.Name);
 
-    public static UgUnitDto ToUgUnitDto(UgUnit unit) => new() { Id = unit.Id, Name = unit.Name };
+    public static UgUnitOption ToUgUnitOption(UgUnit unit) =>
+        new() { Id = unit.Id, Name = unit.Name };
 
-    public static ShipEquipmentDto ToShipEquipmentDto(ShipEquipment equipment) =>
+    public static ShipEquipmentOption ToShipEquipmentOption(ShipEquipment equipment) =>
         new() { Id = equipment.Id, Name = equipment.Name };
 
     public static UserEffectDto ToUserEffectDto(UserEffect effect) =>
@@ -279,7 +280,7 @@ internal static partial class ApplicationMappings
         {
             Id = effect.Id,
             UserId = effect.UserId,
-            Effect = ToResearchTaskEffectDto(effect.Effect),
+            Effect = ToResearchTaskEffectFields(effect.Effect),
             Points = effect.Points.ToString(),
             CruiseApplicationId = effect.Effect.FormC.CruiseApplication.Id.ToString(),
         };

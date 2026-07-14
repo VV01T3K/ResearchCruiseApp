@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { CreateRequest } from '@/api/generated/schemas';
+
 const CruiseDatesValidationSchema = z
   .object({
     startDate: z.iso.datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),
@@ -56,8 +58,22 @@ const CustomCruiseValidationSchema = z
     }
   });
 
-export function getCruiseFormValidationSchema() {
+export function getCruiseFormSchema() {
   return CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema)
     .and(CruiseApplicationsValidationSchema)
-    .and(CustomCruiseValidationSchema);
+    .and(CustomCruiseValidationSchema)
+    .transform(
+      (cruise): z.input<typeof CreateRequest> => ({
+        startDate: cruise.startDate,
+        endDate: cruise.endDate,
+        mainManagerId: cruise.managersTeam.mainCruiseManagerId,
+        deputyManagerId: cruise.managersTeam.mainDeputyManagerId,
+        cruiseApplicationIds: cruise.cruiseApplicationsIds,
+        title: cruise.title || null,
+        shipUnavailable: cruise.shipUnavailable,
+      })
+    )
+    .pipe(CreateRequest);
 }
+
+export type CruiseFormValues = z.input<ReturnType<typeof getCruiseFormSchema>>;

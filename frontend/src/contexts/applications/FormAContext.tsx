@@ -1,16 +1,16 @@
 import { createContext, use } from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
 export type FormAContextType = {
-  initValues: FormAInitValuesDto;
-  form: AnyReactFormApi<FormADto>;
+  initValues: FormAOptions;
+  form: AnyReactFormApi<FormAValues>;
   hasFormBeenSubmitted: boolean;
   isReadonly: boolean;
-  blockades?: BlockadePeriodDto[];
+  blockades?: BlockadePeriod[];
 };
 
 const FormAContext = createContext<FormAContextType | undefined>(undefined);

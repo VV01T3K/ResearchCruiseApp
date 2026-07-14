@@ -1,6 +1,6 @@
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { ApplicationsSection } from './ApplicationsSection';
 import { BasicInformationSection } from './BasicInformationSection';
 import { DateSelectionSection } from './DateSelectionSection';

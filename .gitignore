@@ -292,4 +292,3 @@ gen
 
 # Cursor-local config (skills symlink, MCP, hooks — not shared in git)
 .cursor/
-

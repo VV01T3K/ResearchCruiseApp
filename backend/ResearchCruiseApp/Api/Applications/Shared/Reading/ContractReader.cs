@@ -4,9 +4,9 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal class ContractReader(FileReader files)
 {
-    public async Task<ContractDto> Create(Contract contract)
+    public async Task<ContractFields> Create(Contract contract)
     {
-        var dto = ApplicationMappings.ToContractDto(contract);
+        var dto = ApplicationMappings.ToContractFields(contract);
 
         foreach (var file in contract.Files)
         {
@@ -19,7 +19,7 @@ internal class ContractReader(FileReader files)
         return dto;
     }
 
-    public async Task<FormAContractDto> Create(FormAContract contract) =>
+    public async Task<ScoredContract> Create(FormAContract contract) =>
         new()
         {
             Id = contract.Id,

@@ -1,7 +1,7 @@
-import { ThesisResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  task: ThesisResearchTaskDto;
+  task: ThesisResearchTaskValues;
 };
 export function ThesisResearchTaskThumbnail({ task }: Props) {
   return (

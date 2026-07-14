@@ -90,7 +90,7 @@ public static class FormAEndpoints
         return TypedResults.Created();
     }
 
-    private static async Task<Results<Ok<FormADto>, NotFound>> Get(
+    private static async Task<Results<Ok<FormAFields>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
         FormReader forms,
@@ -189,7 +189,7 @@ public static class FormAEndpoints
     }
 
     private static async Task<Result> ValidatePrecisePeriodAgainstBlockades(
-        FormADto request,
+        FormAFields request,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
