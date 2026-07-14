@@ -36,7 +36,10 @@ jobs:
         run: vp check
 
       - name: Check generated API
-        run: vp run gen && git diff --exit-code -- src/api/generated
+        run: |
+          vp run gen
+          git diff --exit-code -- src/api/generated
+          test -z "$(git ls-files --others --exclude-standard -- src/api/generated)"
 
   backend-checks:
     name: Backend checks
