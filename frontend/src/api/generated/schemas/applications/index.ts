@@ -10,6 +10,7 @@ export * from './contractDto.gen.ts';
 export * from './crewMemberDto.gen.ts';
 export * from './cruiseApplicationDto.gen.ts';
 export * from './cruiseApplicationEvaluationDetailsDto.gen.ts';
+export * from './cruiseApplicationStatus.gen.ts';
 export * from './cruiseDayDetailsDto.gen.ts';
 export * from './fileDto.gen.ts';
 export * from './formAContractDto.gen.ts';

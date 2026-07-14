@@ -24,7 +24,7 @@ internal class ApplicationReader(
             HasFormA = application.FormA is not null,
             HasFormB = application.FormB is not null,
             HasFormC = application.FormC is not null,
-            Status = application.Status.ToCode(),
+            Status = application.Status,
             Note = application.Note,
             CruiseHours = application.FormA?.CruiseHours,
             AcceptablePeriodBeg = application.FormA?.AcceptablePeriodBeg,

@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
@@ -137,6 +139,7 @@ public class CruiseApplicationDto
 
     public DateOnly Date { get; init; }
 
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
     public int Year { get; init; }
 
     public Guid CruiseManagerId { get; init; }
@@ -161,9 +164,10 @@ public class CruiseApplicationDto
 
     public bool HasFormC { get; init; }
 
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
     public int Points { get; set; }
 
-    public string Status { get; init; } = null!;
+    public CruiseApplicationStatus Status { get; init; }
 
     public string EffectsDoneRate { get; set; } = "0";
 

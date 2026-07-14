@@ -2924,7 +2924,7 @@
             }
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseStatus"
           },
           "title": {
             "type": [
@@ -3012,11 +3012,7 @@
             "format": "date"
           },
           "year": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "mainManager": {
@@ -3035,15 +3031,11 @@
             "type": "boolean"
           },
           "points": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseApplicationStatus"
           },
           "effectsDoneRate": {
             "type": "string"
@@ -3382,11 +3374,7 @@
             "format": "date"
           },
           "year": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "cruiseManagerId": {
@@ -3425,15 +3413,11 @@
             "type": "boolean"
           },
           "points": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseApplicationStatus"
           },
           "effectsDoneRate": {
             "type": "string"
@@ -3559,6 +3543,20 @@
             "type": "string"
           }
         }
+      },
+      "CruiseApplicationStatus": {
+        "enum": [
+          "draft",
+          "waitingForSupervisor",
+          "acceptedBySupervisor",
+          "deniedBySupervisor",
+          "accepted",
+          "denied",
+          "formBRequired",
+          "formBFilled",
+          "undertaken",
+          "reported"
+        ]
       },
       "CruiseDayDetailsDto": {
         "type": "object",
@@ -3689,7 +3687,7 @@
             }
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/CruiseStatus"
           },
           "title": {
             "type": [
@@ -3701,6 +3699,13 @@
             "type": "boolean"
           }
         }
+      },
+      "CruiseStatus": {
+        "enum": [
+          "new",
+          "confirmed",
+          "ended"
+        ]
       },
       "CurrentUserResponse": {
         "required": [

@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -13,14 +15,14 @@ public sealed record ApplicationResponse(
     Guid Id,
     string Number,
     DateOnly Date,
-    int Year,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int Year,
     ApplicationPersonResponse MainManager,
     ApplicationPersonResponse DeputyManager,
     bool HasFormA,
     bool HasFormB,
     bool HasFormC,
-    int Points,
-    string Status,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int Points,
+    CruiseApplicationStatus Status,
     string EffectsDoneRate,
     string? Note,
     string? CruiseHours,

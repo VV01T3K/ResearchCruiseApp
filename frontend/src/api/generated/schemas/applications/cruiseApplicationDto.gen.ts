@@ -1,10 +1,9 @@
 import { z as zod } from 'zod';
+import { CruiseApplicationStatus } from './cruiseApplicationStatus.gen.ts';
 
 export const cruiseApplicationDtoIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
-export const cruiseApplicationDtoYearRegExpTwo = new RegExp('^-?(?:0|[1-9]\\d*)$');
 export const cruiseApplicationDtoCruiseManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 export const cruiseApplicationDtoDeputyManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
-export const cruiseApplicationDtoPointsRegExpTwo = new RegExp('^-?(?:0|[1-9]\\d*)$');
 export const cruiseApplicationDtoCruiseDaysRegExpTwo = new RegExp('^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$');
 
 
@@ -12,7 +11,7 @@ export const CruiseApplicationDto = zod.object({
   "id": zod.string().regex(cruiseApplicationDtoIdRegExp).optional(),
   "number": zod.string().optional(),
   "date": zod.iso.date().optional(),
-  "year": zod.union([zod.number(),zod.stringFormat('int32', cruiseApplicationDtoYearRegExpTwo)]).optional(),
+  "year": zod.number().optional(),
   "cruiseManagerId": zod.string().regex(cruiseApplicationDtoCruiseManagerIdRegExp).optional(),
   "cruiseManagerEmail": zod.string().optional(),
   "cruiseManagerFirstName": zod.string().optional(),
@@ -24,8 +23,8 @@ export const CruiseApplicationDto = zod.object({
   "hasFormA": zod.boolean().optional(),
   "hasFormB": zod.boolean().optional(),
   "hasFormC": zod.boolean().optional(),
-  "points": zod.union([zod.number(),zod.stringFormat('int32', cruiseApplicationDtoPointsRegExpTwo)]).optional(),
-  "status": zod.string().optional(),
+  "points": zod.number().optional(),
+  "status": CruiseApplicationStatus.optional(),
   "effectsDoneRate": zod.string().optional(),
   "note": zod.string().nullish(),
   "cruiseHours": zod.string().nullish(),

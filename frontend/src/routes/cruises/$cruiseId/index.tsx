@@ -29,10 +29,7 @@ import {
   useUpdateCruise,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
-import {
-  CruiseApplicationDto,
-  CruiseApplicationStatus,
-} from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
+import type { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -377,7 +374,7 @@ function CruiseDetailsPage() {
 function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationDto {
   return {
     ...application,
-    status: application.status as unknown as CruiseApplicationStatus,
+    status: application.status,
     cruiseManagerId: application.mainManager.id,
     cruiseManagerEmail: application.mainManager.email,
     cruiseManagerFirstName: application.mainManager.firstName,

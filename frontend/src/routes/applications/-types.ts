@@ -1,5 +1,6 @@
 import type {
   ApplicationResponse as GeneratedApplicationResponse,
+  CruiseApplicationStatus as GeneratedCruiseApplicationStatus,
   CruiseApplicationEvaluationDetailsDto,
 } from '@/api/generated/schemas';
 import type { DeepPresent } from '@/types/utils';
@@ -9,18 +10,20 @@ import type { PublicationDto } from '@/routes/applications/$applicationId/-schem
 import type { ResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 import type { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
 
-export enum ApplicationStatus {
-  Draft = 'draft',
-  Accepted = 'accepted',
-  WaitingForSupervisor = 'waitingForSupervisor',
-  AcceptedBySupervisor = 'acceptedBySupervisor',
-  Denied = 'denied',
-  DeniedBySupervisor = 'deniedBySupervisor',
-  FormBRequired = 'formBRequired',
-  FormBFilled = 'formBFilled',
-  Undertaken = 'undertaken',
-  Reported = 'reported',
-}
+export const ApplicationStatus = {
+  Draft: 'draft',
+  Accepted: 'accepted',
+  WaitingForSupervisor: 'waitingForSupervisor',
+  AcceptedBySupervisor: 'acceptedBySupervisor',
+  Denied: 'denied',
+  DeniedBySupervisor: 'deniedBySupervisor',
+  FormBRequired: 'formBRequired',
+  FormBFilled: 'formBFilled',
+  Undertaken: 'undertaken',
+  Reported: 'reported',
+} as const satisfies Record<string, GeneratedCruiseApplicationStatus>;
+
+export type ApplicationStatus = GeneratedCruiseApplicationStatus;
 
 export function getApplicationStatusLabel(status: ApplicationStatus): string {
   switch (status) {
@@ -47,10 +50,7 @@ export function getApplicationStatusLabel(status: ApplicationStatus): string {
   }
 }
 
-export type ApplicationResponse = Omit<GeneratedApplicationResponse, 'status' | 'year' | 'points' | 'cruiseDays'> & {
-  status: ApplicationStatus;
-  year: number;
-  points: number;
+export type ApplicationResponse = Omit<GeneratedApplicationResponse, 'cruiseDays'> & {
   cruiseDays: number | null;
 };
 type GeneratedEvaluation = DeepPresent<CruiseApplicationEvaluationDetailsDto>;

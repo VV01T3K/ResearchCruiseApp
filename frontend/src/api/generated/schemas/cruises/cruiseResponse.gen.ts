@@ -1,5 +1,6 @@
 import { z as zod } from 'zod';
 import { ApplicationSummaryResponse } from './applicationSummaryResponse.gen.ts';
+import { CruiseStatus } from '../cruiseStatus.gen.ts';
 import { PersonResponse } from './personResponse.gen.ts';
 
 export const cruiseResponseIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
@@ -13,7 +14,7 @@ export const CruiseResponse = zod.object({
   "mainManager": PersonResponse,
   "deputyManager": PersonResponse,
   "applications": zod.array(ApplicationSummaryResponse),
-  "status": zod.string(),
+  "status": CruiseStatus,
   "title": zod.string().nullable(),
   "shipUnavailable": zod.boolean()
 });
