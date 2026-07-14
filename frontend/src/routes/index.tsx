@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { AppAlert } from '@/components/shared/AppAlert';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import {
   AccountSettingsCard,
   ApplicationsCard,

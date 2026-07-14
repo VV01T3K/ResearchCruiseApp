@@ -1,4 +1,4 @@
-import type { FormBInitValuesDto as GeneratedFormBInitValuesDto } from '@/api/gen/model';
+import type { FormBInitValuesDto as GeneratedFormBInitValuesDto } from '@/api/generated/schemas';
 
 import type { DeepPresent } from './DeepPresent';
 

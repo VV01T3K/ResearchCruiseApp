@@ -10,8 +10,8 @@ import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMapp
 import { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
 import { FormUserDto } from '@/routes/applications/$applicationId/-schemas/types/FormUserDto';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
-import { useGetAvailableCruiseManagersSuspense } from '@/api/gen/endpoints/users.gen';
-import { CruiseManagerOption } from '@/models/shared/CruiseManagerOption';
+import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
+import type { CruiseManagerResponse } from '@/api/generated/schemas';
 
 export function ManagerSelectionSection() {
   const { isReadonly } = useCruiseForm();
@@ -102,7 +102,7 @@ function ManagerSelectionLayout({
   showWarnings,
 }: {
   users: AppDropdownInputOption[];
-  cruiseManagersNotAssignedToApplication: CruiseManagerOption[];
+  cruiseManagersNotAssignedToApplication: CruiseManagerResponse[];
   isReadonly: boolean;
   showWarnings: boolean;
 }) {
@@ -182,11 +182,11 @@ function checkIfCruiseManagerIsAssignedToAnyApplication(
 }
 
 function getCruiseManagersNotAssignedToApplication(
-  users: CruiseManagerOption[],
+  users: CruiseManagerResponse[],
   selectedUsersIds: string[],
   cruiseApplications: CruiseApplicationDto[],
   selectedCruiseApplicationsIds: string[]
-): CruiseManagerOption[] {
+): CruiseManagerResponse[] {
   return selectedUsersIds
     .map((userId) => users.find((user) => user.id === userId))
     .filter((user) => {
@@ -196,11 +196,11 @@ function getCruiseManagersNotAssignedToApplication(
         cruiseApplications,
         selectedCruiseApplicationsIds
       );
-    }) as CruiseManagerOption[];
+    }) as CruiseManagerResponse[];
 }
 
 function getAllUsersForDropdown(
-  users: CruiseManagerOption[],
+  users: CruiseManagerResponse[],
   cruiseApplications: CruiseApplicationDto[],
   selectedCruiseApplicationsIds: string[]
 ): AppDropdownInputOption[] {

@@ -7,7 +7,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useChangeCurrentUserPassword } from '@/api/gen/endpoints/users.gen';
+import { useChangeCurrentUserPassword } from '@/api/generated/endpoints/users.gen';
 
 const validationSchema = z
   .object({

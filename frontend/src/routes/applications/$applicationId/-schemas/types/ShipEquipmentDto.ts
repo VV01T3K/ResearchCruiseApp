@@ -1,4 +1,4 @@
-import type { ShipEquipmentDto as GeneratedShipEquipmentDto } from '@/api/gen/model';
+import type { ShipEquipmentDto as GeneratedShipEquipmentDto } from '@/api/generated/schemas';
 
 import type { DeepPresent } from './DeepPresent';
 

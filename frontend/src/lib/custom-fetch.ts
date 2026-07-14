@@ -1,5 +1,5 @@
 import config from '@/config';
-import type { ProblemDetails } from '@/api/gen/model';
+import type { ProblemDetails } from '@/api/generated/schemas';
 import { getValidAccessToken, refreshSession } from '@/lib/auth-session';
 
 export class ApiError extends Error {

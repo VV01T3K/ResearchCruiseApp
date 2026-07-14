@@ -4,9 +4,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { getGetCruiseQueryKey, getGetCruisesQueryKey, useUpdateCruise } from '@/api/gen/endpoints/cruises.gen';
-import type { CruiseResponse } from '@/api/gen/model';
-import { CruiseFormValues, toCruiseRequest } from '@/routes/cruises/-types';
+import { getGetCruiseQueryKey, getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/generated/schemas';
+import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 
 type Props = {
   cruises: CruiseResponse[];
@@ -51,7 +51,6 @@ export function Calendar({ cruises, buttons }: Props) {
         mainDeputyManagerId: cruise.deputyManager.id,
       },
       cruiseApplicationsIds: cruise.applications.map((x) => x.id),
-      status: cruise.status,
       title: cruise.title || '',
       shipUnavailable: cruise.shipUnavailable,
     };
@@ -70,7 +69,7 @@ export function Calendar({ cruises, buttons }: Props) {
     await updateCruiseByIdMutation.mutateAsync(
       {
         cruiseId: cruise.id,
-        data: toCruiseRequest(mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
+        data: getCruiseFormSchema().parse(mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
       },
       {
         onSuccess: () => {

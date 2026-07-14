@@ -1,7 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { AppLayout } from '@/components/shared/AppLayout';
-import { useGetApplicationEvaluationSuspense, useGetApplicationSuspense } from '@/api/gen/endpoints/applications.gen';
+import {
+  useGetApplicationEvaluationSuspense,
+  useGetApplicationSuspense,
+} from '@/api/generated/endpoints/applications.gen';
 import type { ApplicationResponse, EvaluationResponse } from '@/routes/applications/-types';
 import { DetailsView } from './-components/details/DetailsView';
 

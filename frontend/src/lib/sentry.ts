@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react';
 
 import config from '@/config';
 import { createFormBreadcrumb, parseSampleRate } from '@/lib/sentryUtils';
-import { User } from '@/models/shared/User';
+import { User } from '@/types/user';
 
 type FieldMeta = { errors: Array<unknown> };
 

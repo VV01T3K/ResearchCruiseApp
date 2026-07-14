@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { FormBWriteRequest } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
 import { CrewMemberDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberDto';
 import { CruiseDayDetailsDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
@@ -48,4 +49,10 @@ export function getFormBValidationSchema() {
     researchEquipments: ResearchEquipmentDtoValidationSchema.array(),
     shipEquipmentsIds: z.array(z.string()),
   });
+}
+
+export function getFormBWriteSchema(draft: boolean) {
+  return getFormBValidationSchema()
+    .transform((form): z.input<typeof FormBWriteRequest> => ({ form, draft }))
+    .pipe(FormBWriteRequest);
 }

@@ -3,7 +3,7 @@ import { createContext, use } from 'react';
 import { AnyReactFormApi } from '@/lib/form';
 import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
 import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
-import type { BlockadeResponse as BlockadePeriodDto } from '@/api/gen/model';
+import type { BlockadeResponse as BlockadePeriodDto } from '@/api/generated/schemas';
 
 export type FormAContextType = {
   initValues: FormAInitValuesDto;

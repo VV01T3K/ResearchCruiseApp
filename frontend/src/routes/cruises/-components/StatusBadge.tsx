@@ -1,5 +1,5 @@
 import { AppBadge } from '@/components/shared/AppBadge';
-import type { CruiseResponse } from '@/api/gen/model';
+import type { CruiseResponse } from '@/api/generated/schemas';
 
 type Props = {
   status: CruiseResponse['status'];

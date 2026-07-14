@@ -1,17 +1,16 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import React from 'react';
 
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
-import { useLogin } from '@/api/gen/endpoints/auth.gen';
-import { getGetCurrentUserQueryKey } from '@/api/gen/endpoints/users.gen';
+import { useLogin } from '@/api/generated/endpoints/auth.gen';
+import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 import { ApiError } from '@/lib/custom-fetch';
 import { refreshSession, setSession, subscribeAuthDetails, toAuthDetails } from '@/lib/auth-session';
 import { setSentryUser } from '@/lib/sentry';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { UserContext, UserContextType } from '@/providers/UserContext';
-import { useProfileQuery } from '@/api/users/CurrentUserApiHooks';
-import { AuthDetails } from '@/models/user/AuthDetails';
-import { SignInResult } from '@/models/user/Results';
+import { AuthDetails } from '@/types/user';
+import { SignInResult } from '@/types/user';
 import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
 type Props = {
@@ -39,7 +38,21 @@ export function UserContextProvider({ children }: Props) {
 
   React.useEffect(() => subscribeAuthDetails(setAuthDetails), []);
 
-  const profileQuery = useProfileQuery();
+  const profileQuery = useSuspenseQuery({
+    queryKey: getGetCurrentUserQueryKey(),
+    queryFn: async () => {
+      if (!getStoredAuthDetails()?.accessToken) return null;
+
+      try {
+        const user = await getCurrentUser();
+        return { ...user, roles: user.roles as Role[] };
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) return null;
+        throw error;
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
 
   const { mutateAsync: loginMutateAsync } = useLogin({
     mutation: {

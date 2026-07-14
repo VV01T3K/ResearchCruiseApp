@@ -19,8 +19,8 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { getRoleLabel, Role } from '@/models/shared/Role';
-import { User } from '@/models/shared/User';
+import { getRoleLabel, Role } from '@/types/user';
+import { User } from '@/types/user';
 import {
   useAcceptUser,
   useAddUserRole,
@@ -29,8 +29,8 @@ import {
   useDeleteUser,
   useRemoveUserRole,
   useUpdateUser,
-} from '@/api/gen/endpoints/users.gen';
-import { useRequestPasswordReset } from '@/api/gen/endpoints/auth.gen';
+} from '@/api/generated/endpoints/users.gen';
+import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
 import { getProblemDetail } from '@/lib/custom-fetch';
 
 type Props = {

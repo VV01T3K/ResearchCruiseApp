@@ -11,7 +11,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
-import { useGetApplicationsSuspense } from '@/api/gen/endpoints/applications.gen';
+import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/routes/applications/-types';
 
 export const Route = createFileRoute('/applications/')({

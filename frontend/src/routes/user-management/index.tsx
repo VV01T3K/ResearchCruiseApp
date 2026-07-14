@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role, getRoleLabel } from '@/models/shared/Role';
+import { Role, getRoleLabel } from '@/types/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import React from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
@@ -11,12 +11,12 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
-import { User } from '@/models/shared/User';
+import { User } from '@/types/user';
 import { useUserContext } from '@/providers/useUserContext';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';
 import { EditForm } from './-components/EditForm';
-import { useGetUsersSuspense } from '@/api/gen/endpoints/users.gen';
+import { useGetUsersSuspense } from '@/api/generated/endpoints/users.gen';
 
 export const Route = createFileRoute('/user-management/')({
   component: UserManagementPage,

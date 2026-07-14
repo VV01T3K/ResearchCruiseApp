@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
@@ -17,8 +17,8 @@ import {
   useDeleteCurrentUserPublication,
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
-} from '@/api/gen/endpoints/users.gen';
-import type { PublicationResponse } from '@/api/gen/model';
+} from '@/api/generated/endpoints/users.gen';
+import type { PublicationResponse } from '@/api/generated/schemas';
 import { useQueryClient } from '@tanstack/react-query';
 
 type Publication = Omit<PublicationResponse, 'doi' | 'authors' | 'title' | 'magazine' | 'year'> & {

@@ -1,6 +1,6 @@
 import config from '@/config';
-import type { TokenResponse } from '@/api/gen/model';
-import type { AuthDetails } from '@/models/user/AuthDetails';
+import type { TokenResponse } from '@/api/generated/schemas';
+import type { AuthDetails } from '@/types/user';
 import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
 const subscribers = new Set<(details: AuthDetails | undefined) => void>();

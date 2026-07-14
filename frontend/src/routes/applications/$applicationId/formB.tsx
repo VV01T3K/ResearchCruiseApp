@@ -11,16 +11,17 @@ import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
   getFormBValidationSchema,
+  getFormBWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { useGetApplicationCruiseSuspense } from '@/api/gen/endpoints/applications.gen';
-import { useFormAQuery, useFormBQuery } from '@/api/applications/ApplicationFormsApiHooks';
+import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
   useGetApplicationFormBContextSuspense,
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
-} from '@/api/gen/endpoints/applications.gen';
-import type { UpdateApplicationFormBBody } from '@/api/gen/model';
+} from '@/api/generated/endpoints/applications.gen';
+import { FormBWriteRequest } from '@/api/generated/schemas';
 import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
 import type { FormBInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormBInitValuesDto';
 import { ApiError } from '@/lib/custom-fetch';
@@ -104,7 +105,7 @@ function FormBPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: { form: form.state.values, draft: false } as unknown as UpdateApplicationFormBBody,
+        data: getFormBWriteSchema(false).parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -151,7 +152,7 @@ function FormBPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: { form: form.state.values, draft: true } as unknown as UpdateApplicationFormBBody,
+        data: FormBWriteRequest.parse({ form: form.state.values, draft: true }),
       },
       {
         onSuccess: () => {

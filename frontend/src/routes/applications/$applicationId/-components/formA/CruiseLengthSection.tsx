@@ -13,7 +13,7 @@ import { getErrors } from '@/lib/utils';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
-import type { BlockadeResponse as BlockadePeriodDto } from '@/api/gen/model';
+import type { BlockadeResponse as BlockadePeriodDto } from '@/api/generated/schemas';
 
 import { CruiseApplicationPeriodInput } from './CruiseApplicationPeriodInput';
 import { BlockadeWarning } from './BlockadeWarning';

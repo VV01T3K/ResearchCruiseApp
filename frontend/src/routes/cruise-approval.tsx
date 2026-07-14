@@ -4,8 +4,8 @@ import { useForm } from '@tanstack/react-form';
 import {
   useGetApplicationSupervisorReviewSuspense,
   useUpdateApplicationSupervisorReviewDecision,
-} from '@/api/gen/endpoints/applications.gen';
-import type { SupervisorReviewResponse as GeneratedSupervisorReviewResponse } from '@/api/gen/model';
+} from '@/api/generated/endpoints/applications.gen';
+import type { SupervisorReviewResponse as GeneratedSupervisorReviewResponse } from '@/api/generated/schemas';
 import { ApiError, getProblemDetail } from '@/lib/custom-fetch';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';

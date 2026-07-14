@@ -8,9 +8,9 @@ import React from 'react';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
-import { Role } from '@/models/shared/Role';
-import { User } from '@/models/shared/User';
-import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/gen/endpoints/users.gen';
+import { Role } from '@/types/user';
+import { User } from '@/types/user';
+import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
 import { getProblemDetail } from '@/lib/custom-fetch';
 
 type Props = {

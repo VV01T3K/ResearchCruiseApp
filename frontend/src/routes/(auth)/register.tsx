@@ -9,9 +9,9 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useRegisterAccount } from '@/api/gen/endpoints/auth.gen';
+import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
 import { getProblemDetail } from '@/lib/custom-fetch';
-import { Result } from '@/models/user/Results';
+import { Result } from '@/types/user';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,

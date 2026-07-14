@@ -11,15 +11,20 @@ import { FormView } from './-components/formC/FormView';
 import {
   FORM_C_FIELD_TO_SECTION,
   getFormCValidationSchema,
+  getFormCWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { useGetApplicationCruiseSuspense } from '@/api/gen/endpoints/applications.gen';
-import { useFormAQuery, useFormBQuery, useFormCQuery } from '@/api/applications/ApplicationFormsApiHooks';
+import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import {
+  useFormAQuery,
+  useFormBQuery,
+  useFormCQuery,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
   useGetApplicationFormBContextSuspense,
   useUpdateApplicationFormC,
-} from '@/api/gen/endpoints/applications.gen';
-import type { UpdateApplicationFormCBody } from '@/api/gen/model';
+} from '@/api/generated/endpoints/applications.gen';
+import { FormCWriteRequest } from '@/api/generated/schemas';
 import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
 import type { FormBInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormBInitValuesDto';
 import { ApiError } from '@/lib/custom-fetch';
@@ -121,7 +126,7 @@ function FormCPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: { form: form.state.values, draft: false } as unknown as UpdateApplicationFormCBody,
+        data: getFormCWriteSchema(formAInitValues.data, false).parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -153,7 +158,7 @@ function FormCPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: { form: form.state.values, draft: true } as unknown as UpdateApplicationFormCBody,
+        data: FormCWriteRequest.parse({ form: form.state.values, draft: true }),
       },
       {
         onSuccess: () => {

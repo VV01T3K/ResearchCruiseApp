@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
 import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
@@ -12,7 +13,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
-import { useBackendVersionQuery } from '@/api/other/BackendVersionApiHook';
+import config from '@/config';
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,
@@ -39,7 +40,15 @@ function HelpPage() {
       );
     },
   });
-  const backendVersion = useBackendVersionQuery();
+  const backendVersion = useSuspenseQuery({
+    queryKey: ['backendVersion'],
+    queryFn: async () => {
+      const response = await fetch(`${config.apiUrl}/version`);
+      if (!response.ok) throw new Error(`Backend version request failed with status ${response.status}`);
+      return response.json() as Promise<string>;
+    },
+    retry: false,
+  });
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();

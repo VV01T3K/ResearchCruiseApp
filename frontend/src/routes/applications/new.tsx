@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { useForm, useStore } from '@tanstack/react-form';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useEffect, useState } from 'react';
@@ -10,17 +10,21 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors, getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
+import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
+  getFormAWriteSchema,
+  parseFormADraft,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { useCreateApplication, useGetApplicationFormAContextSuspense } from '@/api/gen/endpoints/applications.gen';
-import type { CreateApplicationBody } from '@/api/gen/model';
+import {
+  useCreateApplication,
+  useGetApplicationFormAContextSuspense,
+} from '@/api/generated/endpoints/applications.gen';
 import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
 import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
-import { useGetCruiseBlockades } from '@/api/gen/endpoints/cruises.gen';
+import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/new')({
@@ -123,16 +127,10 @@ function NewCruiseApplicationPage() {
 
     trackFormSubmit('new-application', 'valid', form.state);
 
-    const dto = removeEmptyValues(form.state.values, [
-      'year',
-      'periodNotes',
-      'differentUsage',
-      'supervisorEmail',
-      'cruiseGoalDescription',
-      'researchAreaInfo',
-    ]);
-
-    if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
+    if (
+      form.state.values.cruiseManagerId !== userContext.currentUser!.id &&
+      form.state.values.deputyManagerId !== userContext.currentUser!.id
+    ) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
@@ -142,7 +140,9 @@ function NewCruiseApplicationPage() {
     const loading = toast.loading('Zapisywanie formularza...');
 
     saveMutation.mutate(
-      { data: { form: dto, draft: false } as unknown as CreateApplicationBody },
+      {
+        data: getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data).parse(form.state.values),
+      },
       {
         onSuccess: () => {
           toast.success('Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.');
@@ -162,16 +162,10 @@ function NewCruiseApplicationPage() {
   }
 
   function handleSavingDraft() {
-    const dto = removeEmptyValues(form.state.values, [
-      'year',
-      'periodNotes',
-      'differentUsage',
-      'supervisorEmail',
-      'cruiseGoalDescription',
-      'researchAreaInfo',
-    ]);
-
-    if (dto.cruiseManagerId !== userContext.currentUser!.id && dto.deputyManagerId !== userContext.currentUser!.id) {
+    if (
+      form.state.values.cruiseManagerId !== userContext.currentUser!.id &&
+      form.state.values.deputyManagerId !== userContext.currentUser!.id
+    ) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
@@ -180,7 +174,7 @@ function NewCruiseApplicationPage() {
 
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     saveMutation.mutate(
-      { data: { form: dto, draft: true } as unknown as CreateApplicationBody },
+      { data: parseFormADraft(form.state.values) },
       {
         onSuccess: () => {
           toast.success('Formularz został zapisany jako wersja robocza');

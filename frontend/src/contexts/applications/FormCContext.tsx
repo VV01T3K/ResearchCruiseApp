@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import type { CruiseResponse } from '@/api/gen/model';
+import type { CruiseResponse } from '@/api/generated/schemas';
 import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
 import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
 import { FormBDto } from '@/routes/applications/$applicationId/-schemas/types/FormBDto';

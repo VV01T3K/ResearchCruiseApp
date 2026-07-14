@@ -2,7 +2,7 @@ import Papa from 'papaparse';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
-import type { ImportPublicationRequest } from '@/api/gen/model';
+import type { ImportPublicationRequest } from '@/api/generated/schemas';
 
 function parseRow(row: Record<string, string>) {
   return {

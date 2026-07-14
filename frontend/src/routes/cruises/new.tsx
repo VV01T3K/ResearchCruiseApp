@@ -10,13 +10,12 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/FormView';
-import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
-import { getGetCruisesQueryKey, useCreateCruise } from '@/api/gen/endpoints/cruises.gen';
-import { useGetApplicationsForCruisePlanningSuspense } from '@/api/gen/endpoints/applications.gen';
+import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
+import { getGetCruisesQueryKey, useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
+import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import type { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
-import { CruiseFormValues, toCruiseRequest } from '@/routes/cruises/-types';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -66,7 +65,7 @@ function NewCruisePage() {
       shipUnavailable: search.blockade ?? false,
     } as CruiseFormValues,
     validators: {
-      onChange: getCruiseFormValidationSchema(),
+      onChange: getCruiseFormSchema(),
     },
   });
 
@@ -82,12 +81,8 @@ function NewCruisePage() {
 
     trackFormSubmit('new-cruise', 'valid', form.state);
 
-    const dto = removeEmptyValues(form.state.values, [
-      'managersTeam.mainCruiseManagerId',
-      'managersTeam.mainDeputyManagerId',
-    ]);
     await createCruiseMutation.mutateAsync(
-      { data: toCruiseRequest(dto) },
+      { data: getCruiseFormSchema().parse(form.state.values) },
       {
         onSuccess: () => {
           navigate({ to: '/cruises' });

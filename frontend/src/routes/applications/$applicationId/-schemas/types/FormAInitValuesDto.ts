@@ -1,4 +1,4 @@
-import type { FormAInitValuesDto as GeneratedFormAInitValuesDto } from '@/api/gen/model';
+import type { FormAInitValuesDto as GeneratedFormAInitValuesDto } from '@/api/generated/schemas';
 
 import type { ContractDto } from './ContractDto';
 import type { DeepPresent } from './DeepPresent';

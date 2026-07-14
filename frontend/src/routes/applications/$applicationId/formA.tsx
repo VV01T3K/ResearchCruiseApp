@@ -10,24 +10,22 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import {
-  getErrors,
-  getFormErrorMessage,
-  mapNullsToEmptyStrings,
-  navigateToFirstError,
-  removeEmptyValues,
-} from '@/lib/utils';
+import { getErrors, getFormErrorMessage, mapNullsToEmptyStrings, navigateToFirstError } from '@/lib/utils';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
+  getFormAWriteSchema,
+  parseFormADraft,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { useFormAQuery } from '@/api/applications/ApplicationFormsApiHooks';
-import { useGetApplicationFormAContextSuspense, useUpdateApplicationFormA } from '@/api/gen/endpoints/applications.gen';
-import type { UpdateApplicationFormABody } from '@/api/gen/model';
+import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+import {
+  useGetApplicationFormAContextSuspense,
+  useUpdateApplicationFormA,
+} from '@/api/generated/endpoints/applications.gen';
 import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
 import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
-import { useGetCruiseBlockades } from '@/api/gen/endpoints/cruises.gen';
+import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
@@ -147,16 +145,7 @@ function FormAPage() {
   }
 
   function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
-    const dto = removeEmptyValues(form.state.values, [
-      'year',
-      'periodNotes',
-      'differentUsage',
-      'supervisorEmail',
-      'cruiseGoalDescription',
-      'researchAreaInfo',
-    ]);
-
-    if (!isCurrentUserManagerOrDeputy(dto)) {
+    if (!isCurrentUserManagerOrDeputy(form.state.values)) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       return;
@@ -166,10 +155,11 @@ function FormAPage() {
     saveMutation.mutate(
       {
         applicationId,
-        data: {
-          form: { ...dto, id: applicationId },
-          draft,
-        } as unknown as UpdateApplicationFormABody,
+        data: draft
+          ? parseFormADraft(form.state.values, applicationId)
+          : getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data, applicationId).parse(
+              form.state.values
+            ),
       },
       {
         onSuccess: () => {

@@ -11,8 +11,8 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useResetPassword } from '@/api/gen/endpoints/auth.gen';
-import { Result } from '@/models/user/Results';
+import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
+import { Result } from '@/types/user';
 
 export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,

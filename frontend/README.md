@@ -10,7 +10,7 @@
 
 The backend build writes the checked-in OpenAPI document to
 `backend/ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json`. Orval generates the fetch client,
-TanStack Query hooks, and Zod schemas under `src/api/gen`; commit both outputs.
+TanStack Query hooks, and Zod schemas under `src/api/generated`; commit both outputs.
 
 ## Tests (Playwright)
 

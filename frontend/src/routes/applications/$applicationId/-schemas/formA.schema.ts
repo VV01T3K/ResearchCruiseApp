@@ -1,9 +1,13 @@
 import { literal, z } from 'zod';
 
-import { groupBy } from '@/lib/utils';
+import { groupBy, removeEmptyValues } from '@/lib/utils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import { ContractDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
-import { CruiseGoal, CruisePeriodValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import {
+  CruiseGoal,
+  CruisePeriodValidationSchema,
+  type FormADto,
+} from '@/routes/applications/$applicationId/-schemas/types/FormADto';
 import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
 import { GuestTeamDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
 import { PermissionDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
@@ -11,7 +15,7 @@ import { PublicationDtoValidationSchema } from '@/routes/applications/$applicati
 import { ResearchTaskDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 import { SpubTaskDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
 import { UGTeamDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/UGTeamDto';
-import type { BlockadeResponse as BlockadePeriodDto } from '@/api/gen/model';
+import { FormAWriteRequest, type BlockadeResponse as BlockadePeriodDto } from '@/api/generated/schemas';
 import { getResearchAreaDescriptionDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDescriptionDto';
 
 export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
@@ -503,4 +507,38 @@ export function getFormAValidationSchema(initValues: FormAInitValuesDto, blockad
     .and(CruiseGoalValidationSchema)
     .and(BlockadeCollisionValidationSchema(blockades))
     .and(OtherValidationSchema(initValues));
+}
+
+export function getFormAWriteSchema(
+  initValues: FormAInitValuesDto,
+  draft: boolean,
+  blockades?: BlockadePeriodDto[],
+  applicationId?: string
+) {
+  return getFormAValidationSchema(initValues, blockades)
+    .transform((form): z.input<typeof FormAWriteRequest> => mapFormAWriteRequest(form, draft, applicationId))
+    .pipe(FormAWriteRequest);
+}
+
+export function parseFormADraft(form: FormADto, applicationId?: string) {
+  return FormAWriteRequest.parse(mapFormAWriteRequest(form, true, applicationId));
+}
+
+function mapFormAWriteRequest(form: FormADto, draft: boolean, applicationId?: string) {
+  return {
+    form: {
+      ...removeEmptyValues(form, [
+        'year',
+        'periodNotes',
+        'differentUsage',
+        'supervisorEmail',
+        'cruiseGoalDescription',
+        'researchAreaInfo',
+      ]),
+      acceptablePeriod: form.acceptablePeriod || undefined,
+      optimalPeriod: form.optimalPeriod || undefined,
+      ...(applicationId ? { id: applicationId } : {}),
+    },
+    draft,
+  } satisfies z.input<typeof FormAWriteRequest>;
 }

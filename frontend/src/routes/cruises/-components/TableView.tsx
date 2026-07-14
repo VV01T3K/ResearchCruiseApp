@@ -8,10 +8,13 @@ import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
-import type { ApplicationSummaryResponse as CruiseApplicationSummaryResponse, CruiseResponse } from '@/api/gen/model';
+import type {
+  ApplicationSummaryResponse as CruiseApplicationSummaryResponse,
+  CruiseResponse,
+} from '@/api/generated/schemas';
 
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 const dateFormat = 'DD.MM.YYYY, HH:mm';

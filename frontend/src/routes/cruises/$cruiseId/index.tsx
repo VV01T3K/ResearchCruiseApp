@@ -13,11 +13,11 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
-import { useGetApplicationsSuspense } from '@/api/gen/endpoints/applications.gen';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
+import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
 import { FormView } from '../-components/FormView';
-import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
+import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -27,9 +27,8 @@ import {
   useGetCruiseSuspense,
   useRemoveCruiseConfirmation,
   useUpdateCruise,
-} from '@/api/gen/endpoints/cruises.gen';
-import type { CruiseResponse } from '@/api/gen/model';
-import { CruiseFormValues, toCruiseRequest } from '@/routes/cruises/-types';
+} from '@/api/generated/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/generated/schemas';
 import {
   CruiseApplicationDto,
   CruiseApplicationStatus,
@@ -80,7 +79,7 @@ function CruiseDetailsPage() {
   const form = useForm({
     defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormValues,
     validators: {
-      onChange: getCruiseFormValidationSchema(),
+      onChange: getCruiseFormSchema(),
     },
   });
 
@@ -92,13 +91,8 @@ function CruiseDetailsPage() {
       return;
     }
 
-    const dto = removeEmptyValues(form.state.values, [
-      'managersTeam.mainCruiseManagerId',
-      'managersTeam.mainDeputyManagerId',
-    ]);
-
     updateCruiseMutation.mutate(
-      { cruiseId, data: toCruiseRequest(dto) },
+      { cruiseId, data: getCruiseFormSchema().parse(form.state.values) },
       {
         onSuccess: () => {
           setEditMode(false);
@@ -398,7 +392,6 @@ function mapCruiseToForm(cruise: CruiseResponse): CruiseFormValues {
       mainDeputyManagerId: cruise.deputyManager.id,
     },
     cruiseApplicationsIds: cruise.applications.map((x) => x.id),
-    status: cruise.status,
     title: cruise.title || '',
     shipUnavailable: cruise.shipUnavailable,
   };

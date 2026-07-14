@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { FormCWriteRequest } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
 import { CollectedSampleDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleDto';
 import { ContractDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
@@ -98,4 +99,10 @@ const OtherValidationSchema = (formAInitValues: FormAInitValuesDto) =>
 
 export function getFormCValidationSchema(formAInitValues: FormAInitValuesDto) {
   return ShipUsageValidationSchema.and(OtherValidationSchema(formAInitValues));
+}
+
+export function getFormCWriteSchema(formAInitValues: FormAInitValuesDto, draft: boolean) {
+  return getFormCValidationSchema(formAInitValues)
+    .transform((form): z.input<typeof FormCWriteRequest> => ({ form, draft }))
+    .pipe(FormCWriteRequest);
 }

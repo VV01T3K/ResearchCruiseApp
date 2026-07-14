@@ -6,7 +6,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/gen/endpoints/users.gen';
+import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 import { UserEffectDto } from '@/routes/applications/$applicationId/-schemas/types/UserEffectDto';
 

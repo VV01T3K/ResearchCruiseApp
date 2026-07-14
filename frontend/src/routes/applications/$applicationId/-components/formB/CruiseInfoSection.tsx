@@ -5,7 +5,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import type { CruiseResponse } from '@/api/gen/model';
+import type { CruiseResponse } from '@/api/generated/schemas';
 
 export function CruiseInfoSection() {
   const { cruise } = useFormB();

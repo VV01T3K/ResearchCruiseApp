@@ -1,4 +1,4 @@
-import type { CruiseEffectResponse } from '@/api/gen/model';
+import type { CruiseEffectResponse } from '@/api/generated/schemas';
 
 import type { ResearchTaskEffectDto } from './ResearchTaskEffectDto';
 

@@ -3,8 +3,8 @@ import { useMutation } from '@tanstack/react-query';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { exportCruises } from '@/api/gen/endpoints/cruises.gen';
-import type { CruiseResponse, ExportResponse } from '@/api/gen/model';
+import { exportCruises } from '@/api/generated/endpoints/cruises.gen';
+import type { CruiseResponse, ExportResponse } from '@/api/generated/schemas';
 
 type Props = {
   cruises: CruiseResponse[];

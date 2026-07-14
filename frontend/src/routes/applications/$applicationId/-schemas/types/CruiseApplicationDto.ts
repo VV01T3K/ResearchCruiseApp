@@ -1,4 +1,4 @@
-import type { CruiseApplicationDto as GeneratedCruiseApplicationDto } from '@/api/gen/model';
+import type { CruiseApplicationDto as GeneratedCruiseApplicationDto } from '@/api/generated/schemas';
 
 import type { DeepRequired } from './DeepPresent';
 

@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { toast } from '@/components/shared/layout/toast';
 import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationDetailsContext';
-import { getGetApplicationQueryKey, useUpdateApplicationDecision } from '@/api/gen/endpoints/applications.gen';
+import { getGetApplicationQueryKey, useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, EvaluationResponse } from '@/routes/applications/-types';
 
 import { ActionsSection } from './ActionsSection';

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
