@@ -222,7 +222,7 @@ public class PermissionFields
     [StringLength(1024)]
     public string? Executive { get; init; }
 
-    public EncodedFile? Scan { get; set; }
+    public FileContent? Scan { get; set; }
 }
 
 public class ContractFields
@@ -237,7 +237,7 @@ public class ContractFields
 
     public string? Description { get; init; }
 
-    public List<EncodedFile> Scans { get; set; } = [];
+    public List<FileContent> Scans { get; set; } = [];
 }
 
 public interface IResearchTaskFields
@@ -567,7 +567,7 @@ public class PortCallFields
     public string EndTime { get; init; } = null!;
 }
 
-public class EncodedFile
+public class FileContent
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;

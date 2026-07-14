@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import { EncodedFile } from './encodedFile.gen.ts';
+import { FileContent } from './fileContent.gen.ts';
 
 export const ContractFields = zod.object({
   "category": zod.string().optional(),
@@ -7,7 +7,7 @@ export const ContractFields = zod.object({
   "institutionUnit": zod.string().nullish(),
   "institutionLocalization": zod.string().nullish(),
   "description": zod.string().nullish(),
-  "scans": zod.array(EncodedFile).optional()
+  "scans": zod.array(FileContent).optional()
 });
 
 export type ContractFields = zod.input<typeof ContractFields>;

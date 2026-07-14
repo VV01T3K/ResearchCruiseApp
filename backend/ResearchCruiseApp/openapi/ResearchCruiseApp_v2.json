@@ -3237,7 +3237,7 @@
           "scans": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EncodedFile"
+              "$ref": "#/components/schemas/FileContent"
             }
           }
         }
@@ -3856,19 +3856,6 @@
           }
         }
       },
-      "EncodedFile": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          }
-        }
-      },
       "ExportResponse": {
         "required": [
           "name",
@@ -3877,6 +3864,19 @@
         "type": "object",
         "properties": {
           "name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "FileContent": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           },
           "content": {
@@ -4359,7 +4359,7 @@
           "photos": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EncodedFile"
+              "$ref": "#/components/schemas/FileContent"
             }
           }
         }
@@ -4570,7 +4570,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/EncodedFile"
+                "$ref": "#/components/schemas/FileContent"
               }
             ]
           }

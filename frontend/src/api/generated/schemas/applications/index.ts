@@ -12,7 +12,7 @@ export * from './cruiseApplicationEvaluation.gen.ts';
 export * from './cruiseApplicationStatus.gen.ts';
 export * from './cruiseApplicationSummary.gen.ts';
 export * from './cruiseDayFields.gen.ts';
-export * from './encodedFile.gen.ts';
+export * from './fileContent.gen.ts';
 export * from './formAFields.gen.ts';
 export * from './formAOptions.gen.ts';
 export * from './formAWriteRequest.gen.ts';

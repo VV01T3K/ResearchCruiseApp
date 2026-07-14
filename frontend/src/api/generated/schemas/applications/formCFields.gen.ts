@@ -2,7 +2,7 @@ import { z as zod } from 'zod';
 import { CollectedSampleFields } from './collectedSampleFields.gen.ts';
 import { ContractFields } from './contractFields.gen.ts';
 import { CruiseDayFields } from './cruiseDayFields.gen.ts';
-import { EncodedFile } from './encodedFile.gen.ts';
+import { FileContent } from './fileContent.gen.ts';
 import { GuestTeamFields } from './guestTeamFields.gen.ts';
 import { LongTermResearchEquipmentFields } from './longTermResearchEquipmentFields.gen.ts';
 import { PermissionFields } from './permissionFields.gen.ts';
@@ -48,7 +48,7 @@ export const FormCFields = zod.object({
   "collectedSamples": zod.array(CollectedSampleFields).optional(),
   "spubReportData": zod.string().min(formCFieldsSpubReportDataMin).max(formCFieldsSpubReportDataMax).nullish(),
   "additionalDescription": zod.string().min(formCFieldsAdditionalDescriptionMin).max(formCFieldsAdditionalDescriptionMax).nullish(),
-  "photos": zod.array(EncodedFile).optional()
+  "photos": zod.array(FileContent).optional()
 });
 
 export type FormCFields = zod.input<typeof FormCFields>;

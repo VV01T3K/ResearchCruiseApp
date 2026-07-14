@@ -18,17 +18,17 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
                     );
 
                 RuleForEach(request => request.Form.Permissions)
-                    .Must(contractFields =>
-                        contractFields.Scan is not null
-                        && fileInspector.IsFilePdf(contractFields.Scan.Content)
+                    .Must(permissionFields =>
+                        permissionFields.Scan is not null
+                        && fileInspector.IsFilePdf(permissionFields.Scan.Content)
                     )
                     .WithMessage("Skan pozwolenia musi być plikiem PDF.");
 
                 RuleForEach(request => request.Form.Permissions)
-                    .Must(contractFields =>
-                        contractFields.Scan is not null
+                    .Must(permissionFields =>
+                        permissionFields.Scan is not null
                         && fileInspector.IsFileSizeValid(
-                            contractFields.Scan.Content,
+                            permissionFields.Scan.Content,
                             PermissionScanLimits.MaxFileSize
                         )
                     )

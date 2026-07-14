@@ -44,5 +44,5 @@ public class FormCFields
     [StringLength(10240)]
     public string? AdditionalDescription { get; init; } = null!;
 
-    public List<EncodedFile> Photos { get; init; } = []!;
+    public List<FileContent> Photos { get; init; } = []!;
 }
