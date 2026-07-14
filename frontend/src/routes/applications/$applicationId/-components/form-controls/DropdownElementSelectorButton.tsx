@@ -36,6 +36,12 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
       option.value && option.value.trim().length > 0 && option.value.toLowerCase().includes(searchValue.toLowerCase())
   );
 
+  function toggleDropdown() {
+    const rect = rootRef.current?.getBoundingClientRect();
+    if (rect) setPosition({ left: rect.left + rect.width / 2, top: rect.top - 4 });
+    setExpanded((value) => !value);
+  }
+
   return (
     <div ref={rootRef} className="relative inline-block">
       <button
@@ -48,12 +54,15 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
         disabled={disabled}
         data-testid={testId}
         aria-expanded={expanded}
-        aria-haspopup="menu"
+        aria-haspopup="dialog"
         onPointerDown={(event) => {
           event.preventDefault();
-          const rect = rootRef.current?.getBoundingClientRect();
-          if (rect) setPosition({ left: rect.left + rect.width / 2, top: rect.top - 4 });
-          setExpanded((value) => !value);
+          toggleDropdown();
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          toggleDropdown();
         }}
       >
         <span>{children}</span>
@@ -66,7 +75,8 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
         createPortal(
           <div
             ref={menuRef}
-            role="menu"
+            role="dialog"
+            aria-label="Wybierz element"
             style={{ left: position.left, top: position.top }}
             className={cn(
               'fixed z-[9999] w-max max-w-sm min-w-64 -translate-x-1/2 -translate-y-full rounded-lg bg-white shadow-xl ring-1 ring-black/10',

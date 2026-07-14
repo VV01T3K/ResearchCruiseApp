@@ -103,6 +103,13 @@ export function getServerFormErrors(error: unknown): Record<string, string[]> | 
 export function installServerFormErrors(form: AnyFormApi, error: unknown): boolean {
   const fields = getServerFormErrors(error);
   if (!fields || Object.keys(fields).length === 0) return false;
-  form.setErrorMap({ onServer: { fields } });
-  return true;
+  const fieldMeta = (form.state as { fieldMeta: Record<string, unknown> }).fieldMeta;
+  const mappedFields = Object.fromEntries(
+    Object.entries(fields).filter(
+      ([path]) => path in fieldMeta || (typeof document !== 'undefined' && document.getElementsByName(path).length > 0)
+    )
+  );
+  if (Object.keys(mappedFields).length === 0) return false;
+  form.setErrorMap({ onServer: { fields: mappedFields } });
+  return Object.keys(mappedFields).length === Object.keys(fields).length;
 }

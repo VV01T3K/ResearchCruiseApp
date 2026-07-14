@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/types/user';
-import { revalidateLogic } from '@tanstack/react-form';
+import { revalidateLogic, useSelector } from '@tanstack/react-form';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -93,12 +93,13 @@ function NewCruiseApplicationPage() {
       navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
     },
   });
+  const submissionAttempts = useSelector(form.store, (state) => state.submissionAttempts);
 
   const context = {
     form,
     initValues: initialStateQuery.data,
     isReadonly: false,
-    hasFormBeenSubmitted: form.state.submissionAttempts > 0,
+    hasFormBeenSubmitted: submissionAttempts > 0,
     blockades: blockadesQuery.data,
     onSubmit: () => form.handleSubmit(),
     onSaveDraft: () => setIsSaveDraftModalOpen(true),

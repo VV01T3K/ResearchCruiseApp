@@ -128,8 +128,8 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
     }
 
     const row: CruiseDayValues = {
-      number: Number(values[columnIndices.number] || 0),
-      hours: Number(values[columnIndices.hours] || 0),
+      number: Number(values[columnIndices.number]) || 0,
+      hours: Number(values[columnIndices.hours]) || 0,
       taskName: String(values[columnIndices.taskName] || '').trim(),
       region: String(values[columnIndices.region] || '').trim(),
       position: positionString,
@@ -331,8 +331,8 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
           }
 
           const cruiseDay: CruiseDayValues = {
-            number: Number(row[columnIndices.number] || 0),
-            hours: Number(row[columnIndices.hours] || 0),
+            number: Number(row[columnIndices.number]) || 0,
+            hours: Number(row[columnIndices.hours]) || 0,
             taskName: String(row[columnIndices.taskName] || '').trim(),
             region: String(row[columnIndices.region] || '').trim(),
             position: positionString,

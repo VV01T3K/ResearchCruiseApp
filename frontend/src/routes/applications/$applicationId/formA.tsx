@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic } from '@tanstack/react-form';
+import { revalidateLogic, useSelector } from '@tanstack/react-form';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -102,12 +102,13 @@ function FormAPage() {
       navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
     },
   });
+  const submissionAttempts = useSelector(form.store, (state) => state.submissionAttempts);
 
   const context = {
     form,
     initValues: initialStateQuery.data,
     isReadonly: !editMode,
-    hasFormBeenSubmitted: form.state.submissionAttempts > 0,
+    hasFormBeenSubmitted: submissionAttempts > 0,
     onSubmit: () => form.handleSubmit(),
     blockades: blockadesQuery.data,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
