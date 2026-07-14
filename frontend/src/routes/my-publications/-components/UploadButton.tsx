@@ -2,7 +2,7 @@ import Papa from 'papaparse';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
-import { CurrentPublicationImportRequest } from '@/api/users/contracts';
+import type { ImportPublicationRequest } from '@/api/gen/model';
 
 function parseRow(row: Record<string, string>) {
   return {
@@ -17,7 +17,7 @@ function parseRow(row: Record<string, string>) {
 }
 
 type Props = {
-  onUpload: (publications: CurrentPublicationImportRequest[]) => void;
+  onUpload: (publications: ImportPublicationRequest[]) => void;
 };
 export function UploadButton({ onUpload }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -39,7 +39,7 @@ export function UploadButton({ onUpload }: Props) {
         skipEmptyLines: true,
         complete: (results: { data: Record<string, string>[] }) => {
           const publications = results.data.map(parseRow);
-          onUpload(publications as CurrentPublicationImportRequest[]);
+          onUpload(publications as ImportPublicationRequest[]);
         },
       });
     };

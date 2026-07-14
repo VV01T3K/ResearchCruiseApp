@@ -12,12 +12,22 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { UploadButton } from './-components/UploadButton';
 import {
-  useCurrentPublicationsQuery,
-  useDeleteAllCurrentPublicationsMutation,
-  useDeleteCurrentPublicationMutation,
-  useImportCurrentPublicationsMutation,
-} from '@/api/users/CurrentUserApiHooks';
-import { Publication } from '@/api/publications/dto/Publication';
+  getGetCurrentUserPublicationsQueryKey,
+  useDeleteAllCurrentUserPublications,
+  useDeleteCurrentUserPublication,
+  useGetCurrentUserPublicationsSuspense,
+  useImportCurrentUserPublications,
+} from '@/api/gen/endpoints/users.gen';
+import type { PublicationResponse } from '@/api/gen/model';
+import { useQueryClient } from '@tanstack/react-query';
+
+type Publication = Omit<PublicationResponse, 'doi' | 'authors' | 'title' | 'magazine' | 'year'> & {
+  doi: string;
+  authors: string;
+  title: string;
+  magazine: string;
+  year: string;
+};
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -27,14 +37,37 @@ export const Route = createFileRoute('/my-publications/')({
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
+  const queryClient = useQueryClient();
 
-  const ownPublicationsQuery = useCurrentPublicationsQuery();
-  const deleteOwnPublicationMutation = useDeleteCurrentPublicationMutation();
-  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentPublicationsMutation();
-  const uploadPublicationsMutation = useImportCurrentPublicationsMutation();
+  const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
+    query: {
+      select: (publications) =>
+        publications.map(
+          (publication): Publication => ({
+            ...publication,
+            doi: publication.doi ?? '',
+            authors: publication.authors ?? '',
+            title: publication.title ?? '',
+            magazine: publication.magazine ?? '',
+            year: publication.year ?? '',
+          })
+        ),
+    },
+  });
+  const invalidatePublications = () =>
+    queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
+  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication({
+    mutation: { onSuccess: invalidatePublications },
+  });
+  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications({
+    mutation: { onSuccess: invalidatePublications },
+  });
+  const uploadPublicationsMutation = useImportCurrentUserPublications({
+    mutation: { onSuccess: invalidatePublications },
+  });
 
   function deleteSelectedPublications() {
-    Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync(id));
+    Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync({ publicationId: id }));
     setSelectedPublications({});
   }
 
@@ -101,7 +134,9 @@ function MyPublicationsPage() {
         <AppButton
           variant="dangerOutline"
           size="xs"
-          onClick={() => deleteOwnPublicationMutation.mutateAsync(cell.row.original.id).catch(() => {})}
+          onClick={() =>
+            deleteOwnPublicationMutation.mutateAsync({ publicationId: cell.row.original.id }).catch(() => {})
+          }
         >
           <TrashIcon className="mr-2 h-3 w-3" />
           Usuń
@@ -122,7 +157,10 @@ function MyPublicationsPage() {
           getRowId={(row) => row.id}
           emptyTableMessage="Nie dodano żadnej publikacji"
           buttons={(defaultButtons) => [
-            <UploadButton key="upload" onUpload={uploadPublicationsMutation.mutate} />,
+            <UploadButton
+              key="upload"
+              onUpload={(publications) => uploadPublicationsMutation.mutate({ data: publications })}
+            />,
             <AppButton
               key="goToRepository"
               type="link"

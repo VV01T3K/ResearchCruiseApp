@@ -10,11 +10,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/models/shared/Role';
 import { User } from '@/models/shared/User';
-import {
-  useAcceptUserMutation,
-  useDeleteUserMutation,
-  useUnAcceptUserMutation,
-} from '@/api/users/UserManagementApiHooks';
+import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/gen/endpoints/users.gen';
+import { getProblemDetail } from '@/lib/custom-fetch';
 
 type Props = {
   selectedUsers: User[];
@@ -28,10 +25,22 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
 
-  const mutationContext = { editMode: true, setSubmitError };
-  const deleteUserMutation = useDeleteUserMutation(mutationContext);
-  const acceptUserMutation = useAcceptUserMutation(mutationContext);
-  const unAcceptUserMutation = useUnAcceptUserMutation(mutationContext);
+  const deleteUserMutation = useDeleteUser({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas usuwania użytkownika')),
+    },
+  });
+  const acceptUserMutation = useAcceptUser({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas akceptacji użytkownika')),
+    },
+  });
+  const unAcceptUserMutation = useDeactivateUser({
+    mutation: {
+      onError: (error) =>
+        setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas cofania akceptacji użytkownika')),
+    },
+  });
 
   async function handleDeleteSelectedUsers() {
     if (!deletionConfirmed) {
@@ -51,7 +60,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
       }
     }
 
-    const promises = selectedUsers.map((user) => deleteUserMutation.mutateAsync(user.id));
+    const promises = selectedUsers.map((user) => deleteUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
 
@@ -72,7 +81,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
       return;
     }
 
-    const promises = usersToAccept.map((user) => acceptUserMutation.mutateAsync(user.id));
+    const promises = usersToAccept.map((user) => acceptUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
 
@@ -91,7 +100,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
       return;
     }
 
-    const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync(user.id));
+    const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
 

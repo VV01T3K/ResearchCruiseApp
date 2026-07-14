@@ -6,9 +6,9 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useCurrentCruiseEffectsQuery } from '@/api/users/CurrentUserApiHooks';
-import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
-import { UserEffectDto } from '@/api/applications/dto/UserEffectDto';
+import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/gen/endpoints/users.gen';
+import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import { UserEffectDto } from '@/routes/applications/$applicationId/-schemas/types/UserEffectDto';
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,
@@ -16,7 +16,9 @@ export const Route = createFileRoute('/cruise-effects')({
 });
 
 function CruiseEffectsPage() {
-  const effectsQuery = useCurrentCruiseEffectsQuery();
+  const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({
+    query: { select: (effects) => effects as UserEffectDto[] },
+  });
 
   const columns: ColumnDef<UserEffectDto>[] = [
     {
