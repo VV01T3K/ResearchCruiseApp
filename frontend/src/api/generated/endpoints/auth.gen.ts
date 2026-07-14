@@ -22,6 +22,7 @@ import type {
 } from '../schemas';
 
 import { customFetch } from '../../../lib/custom-fetch.ts';
+import type { ErrorType } from '../../../lib/custom-fetch.ts';
 
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -59,7 +60,7 @@ export const login = async (loginRequest: LoginRequest, options?: RequestInit): 
 
 
 
-export const getLoginMutationOptions = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const getLoginMutationOptions = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext> => {
 
@@ -88,12 +89,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>
     export type LoginMutationBody = LoginRequest
-    export type LoginMutationError = HttpValidationProblemDetails | ProblemDetails
+    export type LoginMutationError = ErrorType<HttpValidationProblemDetails | ProblemDetails>
 
     /**
  * @summary Sign in with an account.
  */
-export const useLogin = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const useLogin = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof login>>,
@@ -153,7 +154,7 @@ export const registerAccount = async (registerAccountRequest: RegisterAccountReq
 
 
 
-export const getRegisterAccountMutationOptions = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const getRegisterAccountMutationOptions = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof registerAccount>>, TError,{data: RegisterAccountRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof registerAccount>>, TError,{data: RegisterAccountRequest}, TContext> => {
 
@@ -182,12 +183,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RegisterAccountMutationResult = NonNullable<Awaited<ReturnType<typeof registerAccount>>>
     export type RegisterAccountMutationBody = RegisterAccountRequest
-    export type RegisterAccountMutationError = HttpValidationProblemDetails | ProblemDetails
+    export type RegisterAccountMutationError = ErrorType<HttpValidationProblemDetails | ProblemDetails>
 
     /**
  * @summary Register a new account.
  */
-export const useRegisterAccount = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const useRegisterAccount = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof registerAccount>>, TError,{data: RegisterAccountRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof registerAccount>>,
@@ -254,7 +255,7 @@ export const resendConfirmationEmail = async (resendConfirmationEmailRequest: Re
 
 
 
-export const getResendConfirmationEmailMutationOptions = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const getResendConfirmationEmailMutationOptions = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resendConfirmationEmail>>, TError,{data: ResendConfirmationEmailRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof resendConfirmationEmail>>, TError,{data: ResendConfirmationEmailRequest}, TContext> => {
 
@@ -283,12 +284,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ResendConfirmationEmailMutationResult = NonNullable<Awaited<ReturnType<typeof resendConfirmationEmail>>>
     export type ResendConfirmationEmailMutationBody = ResendConfirmationEmailRequest
-    export type ResendConfirmationEmailMutationError = HttpValidationProblemDetails | ProblemDetails
+    export type ResendConfirmationEmailMutationError = ErrorType<HttpValidationProblemDetails | ProblemDetails>
 
     /**
  * @summary Resend an account confirmation email.
  */
-export const useResendConfirmationEmail = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const useResendConfirmationEmail = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resendConfirmationEmail>>, TError,{data: ResendConfirmationEmailRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resendConfirmationEmail>>,
@@ -324,7 +325,7 @@ export const requestPasswordReset = async (requestPasswordResetRequest: RequestP
 
 
 
-export const getRequestPasswordResetMutationOptions = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const getRequestPasswordResetMutationOptions = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestPasswordReset>>, TError,{data: RequestPasswordResetRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof requestPasswordReset>>, TError,{data: RequestPasswordResetRequest}, TContext> => {
 
@@ -353,12 +354,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RequestPasswordResetMutationResult = NonNullable<Awaited<ReturnType<typeof requestPasswordReset>>>
     export type RequestPasswordResetMutationBody = RequestPasswordResetRequest
-    export type RequestPasswordResetMutationError = HttpValidationProblemDetails | ProblemDetails
+    export type RequestPasswordResetMutationError = ErrorType<HttpValidationProblemDetails | ProblemDetails>
 
     /**
  * @summary Request a password reset email.
  */
-export const useRequestPasswordReset = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const useRequestPasswordReset = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestPasswordReset>>, TError,{data: RequestPasswordResetRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof requestPasswordReset>>,
@@ -394,7 +395,7 @@ export const resetPassword = async (resetPasswordRequest: ResetPasswordRequest, 
 
 
 
-export const getResetPasswordMutationOptions = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const getResetPasswordMutationOptions = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError,{data: ResetPasswordRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError,{data: ResetPasswordRequest}, TContext> => {
 
@@ -423,12 +424,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ResetPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof resetPassword>>>
     export type ResetPasswordMutationBody = ResetPasswordRequest
-    export type ResetPasswordMutationError = HttpValidationProblemDetails | ProblemDetails
+    export type ResetPasswordMutationError = ErrorType<HttpValidationProblemDetails | ProblemDetails>
 
     /**
  * @summary Reset an account password.
  */
-export const useResetPassword = <TError = HttpValidationProblemDetails | ProblemDetails,
+export const useResetPassword = <TError = ErrorType<HttpValidationProblemDetails | ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError,{data: ResetPasswordRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resetPassword>>,

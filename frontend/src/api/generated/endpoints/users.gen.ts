@@ -28,6 +28,7 @@ import type {
 } from '../schemas';
 
 import { customFetch } from '../../../lib/custom-fetch.ts';
+import type { ErrorType } from '../../../lib/custom-fetch.ts';
 
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -87,7 +88,7 @@ export const getGetCurrentUserQueryKey = () => {
     }
 
 
-export const getGetCurrentUserSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ProblemDetails | void>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCurrentUserSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ErrorType<ProblemDetails | void>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -106,18 +107,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetCurrentUserSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>
-export type GetCurrentUserSuspenseQueryError = ProblemDetails | void
+export type GetCurrentUserSuspenseQueryError = ErrorType<ProblemDetails | void>
 
 
-export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ProblemDetails | void>(
+export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ErrorType<ProblemDetails | void>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ProblemDetails | void>(
+export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ErrorType<ProblemDetails | void>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ProblemDetails | void>(
+export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ErrorType<ProblemDetails | void>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -125,7 +126,7 @@ export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getC
  * @summary Get the current account.
  */
 
-export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ProblemDetails | void>(
+export function useGetCurrentUserSuspense<TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = ErrorType<ProblemDetails | void>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -168,7 +169,7 @@ export const changeCurrentUserPassword = async (changePasswordRequest: ChangePas
 
 
 
-export const getChangeCurrentUserPasswordMutationOptions = <TError = ProblemDetails,
+export const getChangeCurrentUserPasswordMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,{data: ChangePasswordRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,{data: ChangePasswordRequest}, TContext> => {
 
@@ -197,12 +198,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ChangeCurrentUserPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof changeCurrentUserPassword>>>
     export type ChangeCurrentUserPasswordMutationBody = ChangePasswordRequest
-    export type ChangeCurrentUserPasswordMutationError = ProblemDetails
+    export type ChangeCurrentUserPasswordMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Change the current account password.
  */
-export const useChangeCurrentUserPassword = <TError = ProblemDetails,
+export const useChangeCurrentUserPassword = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,{data: ChangePasswordRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof changeCurrentUserPassword>>,
@@ -245,7 +246,7 @@ export const getGetCurrentUserCruiseEffectsQueryKey = () => {
     }
 
 
-export const getGetCurrentUserCruiseEffectsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCurrentUserCruiseEffectsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -264,18 +265,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetCurrentUserCruiseEffectsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>>
-export type GetCurrentUserCruiseEffectsSuspenseQueryError = ProblemDetails
+export type GetCurrentUserCruiseEffectsSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ProblemDetails>(
+export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ProblemDetails>(
+export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ProblemDetails>(
+export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -283,7 +284,7 @@ export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnTyp
  * @summary Get cruise effects for the current user.
  */
 
-export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ProblemDetails>(
+export function useGetCurrentUserCruiseEffectsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -333,7 +334,7 @@ export const getGetCurrentUserPublicationsQueryKey = () => {
     }
 
 
-export const getGetCurrentUserPublicationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCurrentUserPublicationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -352,18 +353,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetCurrentUserPublicationsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUserPublications>>>
-export type GetCurrentUserPublicationsSuspenseQueryError = ProblemDetails
+export type GetCurrentUserPublicationsSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ProblemDetails>(
+export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ProblemDetails>(
+export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ProblemDetails>(
+export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -371,7 +372,7 @@ export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType
  * @summary Get the current user's publications.
  */
 
-export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ProblemDetails>(
+export function useGetCurrentUserPublicationsSuspense<TData = Awaited<ReturnType<typeof getCurrentUserPublications>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -414,7 +415,7 @@ export const deleteAllCurrentUserPublications = async ( options?: RequestInit): 
 
 
 
-export const getDeleteAllCurrentUserPublicationsMutationOptions = <TError = ProblemDetails,
+export const getDeleteAllCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext> => {
 
@@ -443,12 +444,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteAllCurrentUserPublicationsMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>>
 
-    export type DeleteAllCurrentUserPublicationsMutationError = ProblemDetails
+    export type DeleteAllCurrentUserPublicationsMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Delete all publications from the current user.
  */
-export const useDeleteAllCurrentUserPublications = <TError = ProblemDetails,
+export const useDeleteAllCurrentUserPublications = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>,
@@ -484,7 +485,7 @@ export const importCurrentUserPublications = async (importPublicationRequest: Im
 
 
 
-export const getImportCurrentUserPublicationsMutationOptions = <TError = ProblemDetails,
+export const getImportCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext> => {
 
@@ -513,12 +514,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ImportCurrentUserPublicationsMutationResult = NonNullable<Awaited<ReturnType<typeof importCurrentUserPublications>>>
     export type ImportCurrentUserPublicationsMutationBody = ImportPublicationRequest[]
-    export type ImportCurrentUserPublicationsMutationError = ProblemDetails
+    export type ImportCurrentUserPublicationsMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Import publications for the current user.
  */
-export const useImportCurrentUserPublications = <TError = ProblemDetails,
+export const useImportCurrentUserPublications = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof importCurrentUserPublications>>,
@@ -554,7 +555,7 @@ export const deleteCurrentUserPublication = async (publicationId: string, option
 
 
 
-export const getDeleteCurrentUserPublicationMutationOptions = <TError = ProblemDetails,
+export const getDeleteCurrentUserPublicationMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext> => {
 
@@ -583,12 +584,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteCurrentUserPublicationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCurrentUserPublication>>>
 
-    export type DeleteCurrentUserPublicationMutationError = ProblemDetails
+    export type DeleteCurrentUserPublicationMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Delete one publication from the current user.
  */
-export const useDeleteCurrentUserPublication = <TError = ProblemDetails,
+export const useDeleteCurrentUserPublication = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCurrentUserPublication>>,
@@ -631,7 +632,7 @@ export const getGetUsersQueryKey = () => {
     }
 
 
-export const getGetUsersSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetUsersSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -650,18 +651,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetUsersSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>
-export type GetUsersSuspenseQueryError = ProblemDetails
+export type GetUsersSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ProblemDetails>(
+export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ProblemDetails>(
+export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ProblemDetails>(
+export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -669,7 +670,7 @@ export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>
  * @summary Get manageable users.
  */
 
-export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ProblemDetails>(
+export function useGetUsersSuspense<TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -712,7 +713,7 @@ export const createUser = async (createUserRequest: CreateUserRequest, options?:
 
 
 
-export const getCreateUserMutationOptions = <TError = ProblemDetails,
+export const getCreateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext> => {
 
@@ -741,12 +742,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
     export type CreateUserMutationBody = CreateUserRequest
-    export type CreateUserMutationError = ProblemDetails
+    export type CreateUserMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Create a user account.
  */
-export const useCreateUser = <TError = ProblemDetails,
+export const useCreateUser = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createUser>>,
@@ -789,7 +790,7 @@ export const getGetAvailableCruiseManagersQueryKey = () => {
     }
 
 
-export const getGetAvailableCruiseManagersSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetAvailableCruiseManagersSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -808,18 +809,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetAvailableCruiseManagersSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getAvailableCruiseManagers>>>
-export type GetAvailableCruiseManagersSuspenseQueryError = ProblemDetails
+export type GetAvailableCruiseManagersSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ProblemDetails>(
+export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ProblemDetails>(
+export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ProblemDetails>(
+export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -827,7 +828,7 @@ export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType
  * @summary Get users available as cruise managers.
  */
 
-export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ProblemDetails>(
+export function useGetAvailableCruiseManagersSuspense<TData = Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -871,7 +872,7 @@ export const updateUser = async (userId: string,
 
 
 
-export const getUpdateUserMutationOptions = <TError = ProblemDetails,
+export const getUpdateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{userId: string;data: UpdateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{userId: string;data: UpdateUserRequest}, TContext> => {
 
@@ -900,12 +901,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateUserMutationResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>
     export type UpdateUserMutationBody = UpdateUserRequest
-    export type UpdateUserMutationError = ProblemDetails
+    export type UpdateUserMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Update a managed user.
  */
-export const useUpdateUser = <TError = ProblemDetails,
+export const useUpdateUser = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{userId: string;data: UpdateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateUser>>,
@@ -941,7 +942,7 @@ export const deleteUser = async (userId: string, options?: RequestInit): Promise
 
 
 
-export const getDeleteUserMutationOptions = <TError = ProblemDetails,
+export const getDeleteUserMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{userId: string}, TContext> => {
 
@@ -970,12 +971,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>
 
-    export type DeleteUserMutationError = ProblemDetails
+    export type DeleteUserMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Delete a managed user.
  */
-export const useDeleteUser = <TError = ProblemDetails,
+export const useDeleteUser = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteUser>>,
@@ -1011,7 +1012,7 @@ export const acceptUser = async (userId: string, options?: RequestInit): Promise
 
 
 
-export const getAcceptUserMutationOptions = <TError = ProblemDetails,
+export const getAcceptUserMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,{userId: string}, TContext> => {
 
@@ -1040,12 +1041,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AcceptUserMutationResult = NonNullable<Awaited<ReturnType<typeof acceptUser>>>
 
-    export type AcceptUserMutationError = ProblemDetails
+    export type AcceptUserMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Accept a managed user.
  */
-export const useAcceptUser = <TError = ProblemDetails,
+export const useAcceptUser = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof acceptUser>>,
@@ -1081,7 +1082,7 @@ export const deactivateUser = async (userId: string, options?: RequestInit): Pro
 
 
 
-export const getDeactivateUserMutationOptions = <TError = ProblemDetails,
+export const getDeactivateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,{userId: string}, TContext> => {
 
@@ -1110,12 +1111,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeactivateUserMutationResult = NonNullable<Awaited<ReturnType<typeof deactivateUser>>>
 
-    export type DeactivateUserMutationError = ProblemDetails
+    export type DeactivateUserMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Deactivate a managed user.
  */
-export const useDeactivateUser = <TError = ProblemDetails,
+export const useDeactivateUser = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deactivateUser>>,
@@ -1153,7 +1154,7 @@ export const addUserRole = async (userId: string,
 
 
 
-export const getAddUserRoleMutationOptions = <TError = ProblemDetails,
+export const getAddUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,{userId: string;roleName: string}, TContext> => {
 
@@ -1182,12 +1183,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AddUserRoleMutationResult = NonNullable<Awaited<ReturnType<typeof addUserRole>>>
 
-    export type AddUserRoleMutationError = ProblemDetails
+    export type AddUserRoleMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Add a role to a managed user.
  */
-export const useAddUserRole = <TError = ProblemDetails,
+export const useAddUserRole = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addUserRole>>,
@@ -1225,7 +1226,7 @@ export const removeUserRole = async (userId: string,
 
 
 
-export const getRemoveUserRoleMutationOptions = <TError = ProblemDetails,
+export const getRemoveUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,{userId: string;roleName: string}, TContext> => {
 
@@ -1254,12 +1255,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemoveUserRoleMutationResult = NonNullable<Awaited<ReturnType<typeof removeUserRole>>>
 
-    export type RemoveUserRoleMutationError = ProblemDetails
+    export type RemoveUserRoleMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Remove a role from a managed user.
  */
-export const useRemoveUserRole = <TError = ProblemDetails,
+export const useRemoveUserRole = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeUserRole>>,

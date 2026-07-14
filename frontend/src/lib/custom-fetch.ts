@@ -13,6 +13,8 @@ export class ApiError extends Error {
   }
 }
 
+export type ErrorType<_Error> = ApiError;
+
 export function getProblemDetail(error: unknown, fallback: string) {
   return error instanceof ApiError ? (error.problem?.detail ?? fallback) : fallback;
 }

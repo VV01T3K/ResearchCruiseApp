@@ -32,6 +32,7 @@ import type {
 } from '../schemas';
 
 import { customFetch } from '../../../lib/custom-fetch.ts';
+import type { ErrorType } from '../../../lib/custom-fetch.ts';
 
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -91,7 +92,7 @@ export const getGetCruisesQueryKey = () => {
     }
 
 
-export const getGetCruisesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCruises>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruises>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCruisesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCruises>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruises>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -110,18 +111,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetCruisesSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCruises>>>
-export type GetCruisesSuspenseQueryError = ProblemDetails
+export type GetCruisesSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ProblemDetails>(
+export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruises>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ProblemDetails>(
+export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruises>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ProblemDetails>(
+export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruises>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -129,7 +130,7 @@ export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruis
  * @summary Get visible cruises.
  */
 
-export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ProblemDetails>(
+export function useGetCruisesSuspense<TData = Awaited<ReturnType<typeof getCruises>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruises>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -172,7 +173,7 @@ export const createCruise = async (createRequest: CreateRequest, options?: Reque
 
 
 
-export const getCreateCruiseMutationOptions = <TError = ProblemDetails,
+export const getCreateCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,{data: CreateRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,{data: CreateRequest}, TContext> => {
 
@@ -201,12 +202,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof createCruise>>>
     export type CreateCruiseMutationBody = CreateRequest
-    export type CreateCruiseMutationError = ProblemDetails
+    export type CreateCruiseMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Create a cruise.
  */
-export const useCreateCruise = <TError = ProblemDetails,
+export const useCreateCruise = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,{data: CreateRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCruise>>,
@@ -249,7 +250,7 @@ export const getGetCruiseQueryKey = (cruiseId: string,) => {
     }
 
 
-export const getGetCruiseSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCruise>>, TError = ProblemDetails>(cruiseId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCruiseSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getCruise>>, TError = ErrorType<ProblemDetails>>(cruiseId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -268,18 +269,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetCruiseSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCruise>>>
-export type GetCruiseSuspenseQueryError = ProblemDetails
+export type GetCruiseSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ProblemDetails>(
+export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ErrorType<ProblemDetails>>(
  cruiseId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ProblemDetails>(
+export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ErrorType<ProblemDetails>>(
  cruiseId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ProblemDetails>(
+export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ErrorType<ProblemDetails>>(
  cruiseId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -287,7 +288,7 @@ export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise
  * @summary Get one visible cruise.
  */
 
-export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ProblemDetails>(
+export function useGetCruiseSuspense<TData = Awaited<ReturnType<typeof getCruise>>, TError = ErrorType<ProblemDetails>>(
  cruiseId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -331,7 +332,7 @@ export const updateCruise = async (cruiseId: string,
 
 
 
-export const getUpdateCruiseMutationOptions = <TError = ProblemDetails,
+export const getUpdateCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,{cruiseId: string;data: UpdateRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,{cruiseId: string;data: UpdateRequest}, TContext> => {
 
@@ -360,12 +361,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof updateCruise>>>
     export type UpdateCruiseMutationBody = UpdateRequest
-    export type UpdateCruiseMutationError = ProblemDetails
+    export type UpdateCruiseMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Update a cruise.
  */
-export const useUpdateCruise = <TError = ProblemDetails,
+export const useUpdateCruise = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,{cruiseId: string;data: UpdateRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateCruise>>,
@@ -401,7 +402,7 @@ export const deleteCruise = async (cruiseId: string, options?: RequestInit): Pro
 
 
 
-export const getDeleteCruiseMutationOptions = <TError = ProblemDetails,
+export const getDeleteCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,{cruiseId: string}, TContext> => {
 
@@ -430,12 +431,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCruise>>>
 
-    export type DeleteCruiseMutationError = ProblemDetails
+    export type DeleteCruiseMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Delete a cruise.
  */
-export const useDeleteCruise = <TError = ProblemDetails,
+export const useDeleteCruise = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCruise>>,
@@ -471,7 +472,7 @@ export const confirmCruise = async (cruiseId: string, options?: RequestInit): Pr
 
 
 
-export const getConfirmCruiseMutationOptions = <TError = ProblemDetails,
+export const getConfirmCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,{cruiseId: string}, TContext> => {
 
@@ -500,12 +501,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ConfirmCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof confirmCruise>>>
 
-    export type ConfirmCruiseMutationError = ProblemDetails
+    export type ConfirmCruiseMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Confirm a cruise.
  */
-export const useConfirmCruise = <TError = ProblemDetails,
+export const useConfirmCruise = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof confirmCruise>>,
@@ -541,7 +542,7 @@ export const removeCruiseConfirmation = async (cruiseId: string, options?: Reque
 
 
 
-export const getRemoveCruiseConfirmationMutationOptions = <TError = ProblemDetails,
+export const getRemoveCruiseConfirmationMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,{cruiseId: string}, TContext> => {
 
@@ -570,12 +571,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RemoveCruiseConfirmationMutationResult = NonNullable<Awaited<ReturnType<typeof removeCruiseConfirmation>>>
 
-    export type RemoveCruiseConfirmationMutationError = ProblemDetails
+    export type RemoveCruiseConfirmationMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Revert the latest cruise lifecycle state.
  */
-export const useRemoveCruiseConfirmation = <TError = ProblemDetails,
+export const useRemoveCruiseConfirmation = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeCruiseConfirmation>>,
@@ -611,7 +612,7 @@ export const completeCruise = async (cruiseId: string, options?: RequestInit): P
 
 
 
-export const getCompleteCruiseMutationOptions = <TError = ProblemDetails,
+export const getCompleteCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,{cruiseId: string}, TContext> => {
 
@@ -640,12 +641,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CompleteCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof completeCruise>>>
 
-    export type CompleteCruiseMutationError = ProblemDetails
+    export type CompleteCruiseMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Mark a cruise as completed.
  */
-export const useCompleteCruise = <TError = ProblemDetails,
+export const useCompleteCruise = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,{cruiseId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof completeCruise>>,
@@ -681,7 +682,7 @@ export const autoPlanCruises = async ( options?: RequestInit): Promise<void> => 
 
 
 
-export const getAutoPlanCruisesMutationOptions = <TError = ProblemDetails,
+export const getAutoPlanCruisesMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext> => {
 
@@ -710,12 +711,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AutoPlanCruisesMutationResult = NonNullable<Awaited<ReturnType<typeof autoPlanCruises>>>
 
-    export type AutoPlanCruisesMutationError = ProblemDetails
+    export type AutoPlanCruisesMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Automatically plan eligible cruises.
  */
-export const useAutoPlanCruises = <TError = ProblemDetails,
+export const useAutoPlanCruises = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof autoPlanCruises>>,
@@ -765,7 +766,7 @@ export const getGetCruiseBlockadesQueryKey = (params?: GetCruiseBlockadesParams,
     }
 
 
-export const getGetCruiseBlockadesQueryOptions = <TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ProblemDetails>(params: GetCruiseBlockadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCruiseBlockades>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCruiseBlockadesQueryOptions = <TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ErrorType<ProblemDetails>>(params: GetCruiseBlockadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCruiseBlockades>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -784,10 +785,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetCruiseBlockadesQueryResult = NonNullable<Awaited<ReturnType<typeof getCruiseBlockades>>>
-export type GetCruiseBlockadesQueryError = ProblemDetails
+export type GetCruiseBlockadesQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ProblemDetails>(
+export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ErrorType<ProblemDetails>>(
  params: GetCruiseBlockadesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCruiseBlockades>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getCruiseBlockades>>,
@@ -797,7 +798,7 @@ export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruis
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ProblemDetails>(
+export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ErrorType<ProblemDetails>>(
  params: GetCruiseBlockadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCruiseBlockades>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getCruiseBlockades>>,
@@ -807,7 +808,7 @@ export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruis
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ProblemDetails>(
+export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ErrorType<ProblemDetails>>(
  params: GetCruiseBlockadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCruiseBlockades>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -815,7 +816,7 @@ export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruis
  * @summary Get blockade periods for a year.
  */
 
-export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ProblemDetails>(
+export function useGetCruiseBlockades<TData = Awaited<ReturnType<typeof getCruiseBlockades>>, TError = ErrorType<ProblemDetails>>(
  params: GetCruiseBlockadesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCruiseBlockades>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

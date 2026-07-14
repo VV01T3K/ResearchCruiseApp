@@ -35,6 +35,7 @@ import type {
 } from '../schemas';
 
 import { customFetch } from '../../../lib/custom-fetch.ts';
+import type { ErrorType } from '../../../lib/custom-fetch.ts';
 
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -94,7 +95,7 @@ export const getGetApplicationsQueryKey = () => {
     }
 
 
-export const getGetApplicationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplications>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -113,18 +114,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplications>>>
-export type GetApplicationsSuspenseQueryError = ProblemDetails
+export type GetApplicationsSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ProblemDetails>(
+export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ProblemDetails>(
+export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ProblemDetails>(
+export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -132,7 +133,7 @@ export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof get
  * @summary Get visible applications.
  */
 
-export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ProblemDetails>(
+export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -175,7 +176,7 @@ export const createApplication = async (formAWriteRequest: FormAWriteRequest, op
 
 
 
-export const getCreateApplicationMutationOptions = <TError = ProblemDetails,
+export const getCreateApplicationMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createApplication>>, TError,{data: FormAWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createApplication>>, TError,{data: FormAWriteRequest}, TContext> => {
 
@@ -204,12 +205,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateApplicationMutationResult = NonNullable<Awaited<ReturnType<typeof createApplication>>>
     export type CreateApplicationMutationBody = FormAWriteRequest
-    export type CreateApplicationMutationError = ProblemDetails
+    export type CreateApplicationMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Create an application from Form A.
  */
-export const useCreateApplication = <TError = ProblemDetails,
+export const useCreateApplication = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createApplication>>, TError,{data: FormAWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createApplication>>,
@@ -252,7 +253,7 @@ export const getGetApplicationQueryKey = (applicationId: string,) => {
     }
 
 
-export const getGetApplicationSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplication>>, TError = ProblemDetails>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplication>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplication>>, TError = ErrorType<ProblemDetails>>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplication>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -271,18 +272,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplication>>>
-export type GetApplicationSuspenseQueryError = ProblemDetails
+export type GetApplicationSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ProblemDetails>(
+export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplication>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ProblemDetails>(
+export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplication>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ProblemDetails>(
+export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplication>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -290,7 +291,7 @@ export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getA
  * @summary Get one visible application.
  */
 
-export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ProblemDetails>(
+export function useGetApplicationSuspense<TData = Awaited<ReturnType<typeof getApplication>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplication>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -340,7 +341,7 @@ export const getGetApplicationCruiseQueryKey = (applicationId: string,) => {
     }
 
 
-export const getGetApplicationCruiseSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ProblemDetails>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationCruiseSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ErrorType<ProblemDetails>>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -359,18 +360,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationCruiseSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationCruise>>>
-export type GetApplicationCruiseSuspenseQueryError = ProblemDetails
+export type GetApplicationCruiseSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ProblemDetails>(
+export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ProblemDetails>(
+export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ProblemDetails>(
+export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -378,7 +379,7 @@ export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeo
  * @summary Get the visible cruise linked to an application.
  */
 
-export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ProblemDetails>(
+export function useGetApplicationCruiseSuspense<TData = Awaited<ReturnType<typeof getApplicationCruise>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationCruise>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -428,7 +429,7 @@ export const getGetApplicationEvaluationQueryKey = (applicationId: string,) => {
     }
 
 
-export const getGetApplicationEvaluationSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ProblemDetails>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationEvaluation>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationEvaluationSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ErrorType<ProblemDetails>>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationEvaluation>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -447,18 +448,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationEvaluationSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationEvaluation>>>
-export type GetApplicationEvaluationSuspenseQueryError = ProblemDetails
+export type GetApplicationEvaluationSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ProblemDetails>(
+export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationEvaluation>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ProblemDetails>(
+export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationEvaluation>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ProblemDetails>(
+export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationEvaluation>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -466,7 +467,7 @@ export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<t
  * @summary Get application evaluation details.
  */
 
-export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ProblemDetails>(
+export function useGetApplicationEvaluationSuspense<TData = Awaited<ReturnType<typeof getApplicationEvaluation>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationEvaluation>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -510,7 +511,7 @@ export const updateApplicationDecision = async (applicationId: string,
 
 
 
-export const getUpdateApplicationDecisionMutationOptions = <TError = ProblemDetails,
+export const getUpdateApplicationDecisionMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext> => {
 
@@ -539,12 +540,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateApplicationDecisionMutationResult = NonNullable<Awaited<ReturnType<typeof updateApplicationDecision>>>
     export type UpdateApplicationDecisionMutationBody = ApplicationDecisionRequest
-    export type UpdateApplicationDecisionMutationError = ProblemDetails
+    export type UpdateApplicationDecisionMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Accept or reject an application.
  */
-export const useUpdateApplicationDecision = <TError = ProblemDetails,
+export const useUpdateApplicationDecision = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationDecision>>, TError,{applicationId: string;data: ApplicationDecisionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateApplicationDecision>>,
@@ -587,7 +588,7 @@ export const getGetApplicationsForCruisePlanningQueryKey = () => {
     }
 
 
-export const getGetApplicationsForCruisePlanningSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationsForCruisePlanningSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -606,18 +607,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationsForCruisePlanningSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>>
-export type GetApplicationsForCruisePlanningSuspenseQueryError = ProblemDetails
+export type GetApplicationsForCruisePlanningSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ProblemDetails>(
+export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ProblemDetails>(
+export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ProblemDetails>(
+export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -625,7 +626,7 @@ export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<Retu
  * @summary Get applications eligible for cruise planning.
  */
 
-export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ProblemDetails>(
+export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -675,7 +676,7 @@ export const getGetApplicationFormAContextQueryKey = () => {
     }
 
 
-export const getGetApplicationFormAContextSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationFormAContextSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -694,18 +695,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationFormAContextSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationFormAContext>>>
-export type GetApplicationFormAContextSuspenseQueryError = ProblemDetails
+export type GetApplicationFormAContextSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -713,7 +714,7 @@ export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType
  * @summary Get authenticated Form A context.
  */
 
-export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -763,7 +764,7 @@ export const getGetApplicationFormBContextQueryKey = () => {
     }
 
 
-export const getGetApplicationFormBContextSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ProblemDetails>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormBContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationFormBContextSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormBContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -782,18 +783,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationFormBContextSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationFormBContext>>>
-export type GetApplicationFormBContextSuspenseQueryError = ProblemDetails
+export type GetApplicationFormBContextSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ErrorType<ProblemDetails>>(
   options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormBContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormBContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormBContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -801,7 +802,7 @@ export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType
  * @summary Get authenticated Form B context.
  */
 
-export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ProblemDetails>(
+export function useGetApplicationFormBContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormBContext>>, TError = ErrorType<ProblemDetails>>(
   options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormBContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -851,7 +852,7 @@ export const getGetApplicationFormAQueryKey = (applicationId: string,) => {
     }
 
 
-export const getGetApplicationFormASuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ProblemDetails>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormA>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationFormASuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ErrorType<ProblemDetails>>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormA>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -870,18 +871,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationFormASuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationFormA>>>
-export type GetApplicationFormASuspenseQueryError = ProblemDetails
+export type GetApplicationFormASuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ProblemDetails>(
+export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormA>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ProblemDetails>(
+export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormA>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ProblemDetails>(
+export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormA>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -889,7 +890,7 @@ export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof
  * @summary Get Form A.
  */
 
-export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ProblemDetails>(
+export function useGetApplicationFormASuspense<TData = Awaited<ReturnType<typeof getApplicationFormA>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormA>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -933,7 +934,7 @@ export const updateApplicationFormA = async (applicationId: string,
 
 
 
-export const getUpdateApplicationFormAMutationOptions = <TError = ProblemDetails,
+export const getUpdateApplicationFormAMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormA>>, TError,{applicationId: string;data: FormAWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormA>>, TError,{applicationId: string;data: FormAWriteRequest}, TContext> => {
 
@@ -962,12 +963,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateApplicationFormAMutationResult = NonNullable<Awaited<ReturnType<typeof updateApplicationFormA>>>
     export type UpdateApplicationFormAMutationBody = FormAWriteRequest
-    export type UpdateApplicationFormAMutationError = ProblemDetails
+    export type UpdateApplicationFormAMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Update Form A.
  */
-export const useUpdateApplicationFormA = <TError = ProblemDetails,
+export const useUpdateApplicationFormA = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormA>>, TError,{applicationId: string;data: FormAWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateApplicationFormA>>,
@@ -1010,7 +1011,7 @@ export const getGetApplicationFormBQueryKey = (applicationId: string,) => {
     }
 
 
-export const getGetApplicationFormBSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ProblemDetails>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormB>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationFormBSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ErrorType<ProblemDetails>>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormB>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1029,18 +1030,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationFormBSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationFormB>>>
-export type GetApplicationFormBSuspenseQueryError = ProblemDetails
+export type GetApplicationFormBSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ProblemDetails>(
+export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormB>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ProblemDetails>(
+export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormB>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ProblemDetails>(
+export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormB>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1048,7 +1049,7 @@ export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof
  * @summary Get Form B.
  */
 
-export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ProblemDetails>(
+export function useGetApplicationFormBSuspense<TData = Awaited<ReturnType<typeof getApplicationFormB>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormB>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1092,7 +1093,7 @@ export const updateApplicationFormB = async (applicationId: string,
 
 
 
-export const getUpdateApplicationFormBMutationOptions = <TError = ProblemDetails,
+export const getUpdateApplicationFormBMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormB>>, TError,{applicationId: string;data: FormBWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormB>>, TError,{applicationId: string;data: FormBWriteRequest}, TContext> => {
 
@@ -1121,12 +1122,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateApplicationFormBMutationResult = NonNullable<Awaited<ReturnType<typeof updateApplicationFormB>>>
     export type UpdateApplicationFormBMutationBody = FormBWriteRequest
-    export type UpdateApplicationFormBMutationError = ProblemDetails
+    export type UpdateApplicationFormBMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Create or replace Form B.
  */
-export const useUpdateApplicationFormB = <TError = ProblemDetails,
+export const useUpdateApplicationFormB = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormB>>, TError,{applicationId: string;data: FormBWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateApplicationFormB>>,
@@ -1162,7 +1163,7 @@ export const refillApplicationFormB = async (applicationId: string, options?: Re
 
 
 
-export const getRefillApplicationFormBMutationOptions = <TError = ProblemDetails,
+export const getRefillApplicationFormBMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refillApplicationFormB>>, TError,{applicationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof refillApplicationFormB>>, TError,{applicationId: string}, TContext> => {
 
@@ -1191,12 +1192,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type RefillApplicationFormBMutationResult = NonNullable<Awaited<ReturnType<typeof refillApplicationFormB>>>
 
-    export type RefillApplicationFormBMutationError = ProblemDetails
+    export type RefillApplicationFormBMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Return Form B to editable state.
  */
-export const useRefillApplicationFormB = <TError = ProblemDetails,
+export const useRefillApplicationFormB = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refillApplicationFormB>>, TError,{applicationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof refillApplicationFormB>>,
@@ -1239,7 +1240,7 @@ export const getGetApplicationFormCQueryKey = (applicationId: string,) => {
     }
 
 
-export const getGetApplicationFormCSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ProblemDetails>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormC>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationFormCSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ErrorType<ProblemDetails>>(applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormC>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1258,18 +1259,18 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationFormCSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationFormC>>>
-export type GetApplicationFormCSuspenseQueryError = ProblemDetails
+export type GetApplicationFormCSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ProblemDetails>(
+export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormC>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ProblemDetails>(
+export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormC>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ProblemDetails>(
+export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormC>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -1277,7 +1278,7 @@ export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof
  * @summary Get Form C.
  */
 
-export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ProblemDetails>(
+export function useGetApplicationFormCSuspense<TData = Awaited<ReturnType<typeof getApplicationFormC>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormC>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1321,7 +1322,7 @@ export const updateApplicationFormC = async (applicationId: string,
 
 
 
-export const getUpdateApplicationFormCMutationOptions = <TError = ProblemDetails,
+export const getUpdateApplicationFormCMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormC>>, TError,{applicationId: string;data: FormCWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormC>>, TError,{applicationId: string;data: FormCWriteRequest}, TContext> => {
 
@@ -1350,12 +1351,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateApplicationFormCMutationResult = NonNullable<Awaited<ReturnType<typeof updateApplicationFormC>>>
     export type UpdateApplicationFormCMutationBody = FormCWriteRequest
-    export type UpdateApplicationFormCMutationError = ProblemDetails
+    export type UpdateApplicationFormCMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Create or replace Form C.
  */
-export const useUpdateApplicationFormC = <TError = ProblemDetails,
+export const useUpdateApplicationFormC = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationFormC>>, TError,{applicationId: string;data: FormCWriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateApplicationFormC>>,
@@ -1432,7 +1433,7 @@ export const getGetApplicationSupervisorReviewQueryKey = (applicationId: string,
     }
 
 
-export const getGetApplicationSupervisorReviewSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ProblemDetails>(applicationId: string,
+export const getGetApplicationSupervisorReviewSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ErrorType<ProblemDetails>>(applicationId: string,
     params: GetApplicationSupervisorReviewParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
@@ -1452,20 +1453,20 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApplicationSupervisorReviewSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationSupervisorReview>>>
-export type GetApplicationSupervisorReviewSuspenseQueryError = ProblemDetails
+export type GetApplicationSupervisorReviewSuspenseQueryError = ErrorType<ProblemDetails>
 
 
-export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ProblemDetails>(
+export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string,
     params: GetApplicationSupervisorReviewParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ProblemDetails>(
+export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string,
     params: GetApplicationSupervisorReviewParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ProblemDetails>(
+export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string,
     params: GetApplicationSupervisorReviewParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
@@ -1474,7 +1475,7 @@ export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<Return
  * @summary Get the anonymous supervisor review view.
  */
 
-export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ProblemDetails>(
+export function useGetApplicationSupervisorReviewSuspense<TData = Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError = ErrorType<ProblemDetails>>(
  applicationId: string,
     params: GetApplicationSupervisorReviewParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationSupervisorReview>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
@@ -1519,7 +1520,7 @@ export const updateApplicationSupervisorReviewDecision = async (applicationId: s
 
 
 
-export const getUpdateApplicationSupervisorReviewDecisionMutationOptions = <TError = ProblemDetails,
+export const getUpdateApplicationSupervisorReviewDecisionMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationSupervisorReviewDecision>>, TError,{applicationId: string;data: SupervisorDecisionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateApplicationSupervisorReviewDecision>>, TError,{applicationId: string;data: SupervisorDecisionRequest}, TContext> => {
 
@@ -1548,12 +1549,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateApplicationSupervisorReviewDecisionMutationResult = NonNullable<Awaited<ReturnType<typeof updateApplicationSupervisorReviewDecision>>>
     export type UpdateApplicationSupervisorReviewDecisionMutationBody = SupervisorDecisionRequest
-    export type UpdateApplicationSupervisorReviewDecisionMutationError = ProblemDetails
+    export type UpdateApplicationSupervisorReviewDecisionMutationError = ErrorType<ProblemDetails>
 
     /**
  * @summary Accept or reject an application as the anonymous supervisor.
  */
-export const useUpdateApplicationSupervisorReviewDecision = <TError = ProblemDetails,
+export const useUpdateApplicationSupervisorReviewDecision = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateApplicationSupervisorReviewDecision>>, TError,{applicationId: string;data: SupervisorDecisionRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateApplicationSupervisorReviewDecision>>,
