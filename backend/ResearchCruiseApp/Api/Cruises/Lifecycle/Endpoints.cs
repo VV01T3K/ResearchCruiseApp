@@ -19,7 +19,7 @@ public static class LifecycleEndpoints
     {
         group
             .MapPut("/{cruiseId:guid}/confirmation", Confirm)
-            .WithName("ConfirmCruiseV2")
+            .WithName("ConfirmCruise")
             .WithSummary("Confirm a cruise.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -31,7 +31,7 @@ public static class LifecycleEndpoints
     {
         group
             .MapDelete("/{cruiseId:guid}/confirmation", RemoveConfirmation)
-            .WithName("RemoveCruiseConfirmationV2")
+            .WithName("RemoveCruiseConfirmation")
             .WithSummary("Revert the latest cruise lifecycle state.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -44,7 +44,7 @@ public static class LifecycleEndpoints
     {
         group
             .MapPut("/{cruiseId:guid}/completion", Complete)
-            .WithName("CompleteCruiseV2")
+            .WithName("CompleteCruise")
             .WithSummary("Mark a cruise as completed.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)

@@ -9,7 +9,7 @@ public static class MeEndpoints
     {
         group
             .MapGet("", Handle)
-            .WithName("GetCurrentUserV2")
+            .WithName("GetCurrentUser")
             .WithSummary("Get the current account.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);

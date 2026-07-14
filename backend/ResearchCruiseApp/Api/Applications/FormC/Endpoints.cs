@@ -14,7 +14,7 @@ public static class FormCEndpoints
     {
         group
             .MapGet("/{applicationId:guid}/form-c", Get)
-            .WithName("GetApplicationFormCV2")
+            .WithName("GetApplicationFormC")
             .WithSummary("Get Form C.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -22,7 +22,7 @@ public static class FormCEndpoints
 
         group
             .MapPut("/{applicationId:guid}/form-c", Update)
-            .WithName("UpdateApplicationFormCV2")
+            .WithName("UpdateApplicationFormC")
             .WithSummary("Create or replace Form C.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -33,7 +33,7 @@ public static class FormCEndpoints
 
         group
             .MapPut("/{applicationId:guid}/form-c/refill", Refill)
-            .WithName("RefillApplicationFormCV2")
+            .WithName("RefillApplicationFormC")
             .WithSummary("Return Form C to editable state.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)

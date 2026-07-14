@@ -21,7 +21,7 @@ public static class PublicationsEndpoints
     {
         group
             .MapGet("/publications", Get)
-            .WithName("GetCurrentUserPublicationsV2")
+            .WithName("GetCurrentUserPublications")
             .WithSummary("Get the current user's publications.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -32,7 +32,7 @@ public static class PublicationsEndpoints
     {
         group
             .MapPost("/publications/import", Import)
-            .WithName("ImportCurrentUserPublicationsV2")
+            .WithName("ImportCurrentUserPublications")
             .WithSummary("Import publications for the current user.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -45,7 +45,7 @@ public static class PublicationsEndpoints
     {
         group
             .MapDelete("/publications/{publicationId:guid}", Delete)
-            .WithName("DeleteCurrentUserPublicationV2")
+            .WithName("DeleteCurrentUserPublication")
             .WithSummary("Delete one publication from the current user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -56,7 +56,7 @@ public static class PublicationsEndpoints
     {
         group
             .MapDelete("/publications", DeleteAll)
-            .WithName("DeleteAllCurrentUserPublicationsV2")
+            .WithName("DeleteAllCurrentUserPublications")
             .WithSummary("Delete all publications from the current user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
