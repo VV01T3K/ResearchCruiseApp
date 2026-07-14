@@ -12,9 +12,9 @@ export const shortTermResearchEquipmentFieldsEndDateMax = 1024;
 
 
 export const ShortTermResearchEquipmentFields = zod.object({
-  "name": zod.string().min(shortTermResearchEquipmentFieldsNameMin).max(shortTermResearchEquipmentFieldsNameMax).optional(),
-  "startDate": zod.string().min(shortTermResearchEquipmentFieldsStartDateMin).max(shortTermResearchEquipmentFieldsStartDateMax).optional(),
-  "endDate": zod.string().min(shortTermResearchEquipmentFieldsEndDateMin).max(shortTermResearchEquipmentFieldsEndDateMax).optional()
+  "name": zod.string().min(shortTermResearchEquipmentFieldsNameMin).max(shortTermResearchEquipmentFieldsNameMax),
+  "startDate": zod.string().min(shortTermResearchEquipmentFieldsStartDateMin).max(shortTermResearchEquipmentFieldsStartDateMax),
+  "endDate": zod.string().min(shortTermResearchEquipmentFieldsEndDateMin).max(shortTermResearchEquipmentFieldsEndDateMax)
 });
 
 export type ShortTermResearchEquipmentFields = zod.input<typeof ShortTermResearchEquipmentFields>;

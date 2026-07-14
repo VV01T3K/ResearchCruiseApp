@@ -103,6 +103,34 @@ export function getFormCValidationSchema(formAInitValues: FormAOptions) {
 
 export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolean) {
   return getFormCValidationSchema(formAInitValues)
-    .transform((form): z.input<typeof FormCWriteRequest> => ({ form, draft }))
+    .transform(
+      (form): z.input<typeof FormCWriteRequest> => ({
+        form: {
+          ...form,
+          researchTasksEffects: form.researchTasksEffects.map((task) => ({
+            type: task.type,
+            title: 'title' in task ? task.title : null,
+            magazine: 'magazine' in task ? task.magazine : null,
+            author: 'author' in task ? task.author : null,
+            institution: null,
+            date: 'date' in task ? task.date : null,
+            startDate: 'startDate' in task ? task.startDate : null,
+            endDate: 'endDate' in task ? task.endDate : null,
+            financingAmount: 'financingAmount' in task ? task.financingAmount : null,
+            financingApproved: 'financingApproved' in task ? task.financingApproved : null,
+            description: 'description' in task ? task.description : null,
+            securedAmount: 'securedAmount' in task ? task.securedAmount : null,
+            ministerialPoints: 'ministerialPoints' in task ? task.ministerialPoints : null,
+            publicationMinisterialPoints: null,
+            done: task.done,
+            managerConditionMet: task.managerConditionMet,
+            deputyConditionMet: task.deputyConditionMet,
+          })),
+          spubReportData: form.spubReportData || null,
+          additionalDescription: form.additionalDescription || null,
+        },
+        draft,
+      })
+    )
     .pipe(FormCWriteRequest);
 }

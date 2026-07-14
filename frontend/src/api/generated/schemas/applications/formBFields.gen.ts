@@ -16,17 +16,17 @@ export const formBFieldsShipEquipmentsIdsItemRegExp = new RegExp('^[0-9a-fA-F]{8
 
 
 export const FormBFields = zod.object({
-  "isCruiseManagerPresent": zod.string().min(formBFieldsIsCruiseManagerPresentMin).max(formBFieldsIsCruiseManagerPresentMax).optional(),
-  "permissions": zod.array(PermissionFields).optional(),
-  "ugTeams": zod.array(UgTeamFields).optional(),
-  "guestTeams": zod.array(GuestTeamFields).optional(),
-  "crewMembers": zod.array(CrewMemberFields).optional(),
-  "shortResearchEquipments": zod.array(ShortTermResearchEquipmentFields).optional(),
-  "longResearchEquipments": zod.array(LongTermResearchEquipmentFields).optional(),
-  "ports": zod.array(PortCallFields).optional(),
-  "cruiseDaysDetails": zod.array(CruiseDayFields).optional(),
-  "researchEquipments": zod.array(ResearchEquipmentFields).optional(),
-  "shipEquipmentsIds": zod.array(zod.string().regex(formBFieldsShipEquipmentsIdsItemRegExp)).optional()
+  "isCruiseManagerPresent": zod.string().min(formBFieldsIsCruiseManagerPresentMin).max(formBFieldsIsCruiseManagerPresentMax),
+  "permissions": zod.array(PermissionFields),
+  "ugTeams": zod.array(UgTeamFields),
+  "guestTeams": zod.array(GuestTeamFields),
+  "crewMembers": zod.array(CrewMemberFields),
+  "shortResearchEquipments": zod.array(ShortTermResearchEquipmentFields),
+  "longResearchEquipments": zod.array(LongTermResearchEquipmentFields),
+  "ports": zod.array(PortCallFields),
+  "cruiseDaysDetails": zod.array(CruiseDayFields),
+  "researchEquipments": zod.array(ResearchEquipmentFields),
+  "shipEquipmentsIds": zod.array(zod.string().regex(formBFieldsShipEquipmentsIdsItemRegExp))
 });
 
 export type FormBFields = zod.input<typeof FormBFields>;

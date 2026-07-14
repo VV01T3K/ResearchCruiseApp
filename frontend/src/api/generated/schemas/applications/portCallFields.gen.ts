@@ -12,9 +12,9 @@ export const portCallFieldsEndTimeMax = 1024;
 
 
 export const PortCallFields = zod.object({
-  "name": zod.string().min(portCallFieldsNameMin).max(portCallFieldsNameMax).optional(),
-  "startTime": zod.string().min(portCallFieldsStartTimeMin).max(portCallFieldsStartTimeMax).optional(),
-  "endTime": zod.string().min(portCallFieldsEndTimeMin).max(portCallFieldsEndTimeMax).optional()
+  "name": zod.string().min(portCallFieldsNameMin).max(portCallFieldsNameMax),
+  "startTime": zod.string().min(portCallFieldsStartTimeMin).max(portCallFieldsStartTimeMax),
+  "endTime": zod.string().min(portCallFieldsEndTimeMin).max(portCallFieldsEndTimeMax)
 });
 
 export type PortCallFields = zod.input<typeof PortCallFields>;

@@ -1,4 +1,4 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { useState } from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -10,7 +10,7 @@ import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
 export function DateSelectionSection() {
   const { form, isReadonly, hasFormBeenSubmitted } = useCruiseForm();
 
-  const cruiseStart = useStore(form.store, (state) => state.values.startDate);
+  const cruiseStart = useSelector(form.store, (state) => state.values.startDate);
   const cruiseStartDate = cruiseStart !== '' ? new Date(cruiseStart) : undefined;
 
   const [allowPastDates, setAllowPastDates] = useState(false);

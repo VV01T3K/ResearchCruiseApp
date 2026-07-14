@@ -10,9 +10,9 @@ export const ugTeamFieldsNoOfStudentsMax = 1024;
 
 
 export const UgTeamFields = zod.object({
-  "ugUnitId": zod.string().regex(ugTeamFieldsUgUnitIdRegExp).optional(),
-  "noOfEmployees": zod.string().min(ugTeamFieldsNoOfEmployeesMin).max(ugTeamFieldsNoOfEmployeesMax).optional(),
-  "noOfStudents": zod.string().min(ugTeamFieldsNoOfStudentsMin).max(ugTeamFieldsNoOfStudentsMax).optional()
+  "ugUnitId": zod.string().regex(ugTeamFieldsUgUnitIdRegExp),
+  "noOfEmployees": zod.string().min(ugTeamFieldsNoOfEmployeesMin).max(ugTeamFieldsNoOfEmployeesMax),
+  "noOfStudents": zod.string().min(ugTeamFieldsNoOfStudentsMin).max(ugTeamFieldsNoOfStudentsMax)
 });
 
 export type UgTeamFields = zod.input<typeof UgTeamFields>;

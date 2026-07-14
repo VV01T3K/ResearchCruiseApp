@@ -1,4 +1,4 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
@@ -9,7 +9,7 @@ import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
 
 export function BasicInformationSection() {
   const { cruise, form, hasFormBeenSubmitted, isReadonly } = useCruiseForm();
-  const shipUnavailable = useStore(form.store, (state) => state.values.shipUnavailable);
+  const shipUnavailable = useSelector(form.store, (state) => state.values.shipUnavailable);
 
   return (
     <AppAccordion title={`1. Podstawowe informacje o ${shipUnavailable ? 'blokadzie' : 'rejsie'}`} expandedByDefault>

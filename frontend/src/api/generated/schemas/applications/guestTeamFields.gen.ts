@@ -1,8 +1,8 @@
 import { z as zod } from 'zod';
 
 export const GuestTeamFields = zod.object({
-  "name": zod.string().nullish(),
-  "noOfPersons": zod.string().optional()
+  "name": zod.string().nullable(),
+  "noOfPersons": zod.string()
 });
 
 export type GuestTeamFields = zod.input<typeof GuestTeamFields>;

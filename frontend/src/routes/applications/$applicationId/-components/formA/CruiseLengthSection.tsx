@@ -1,4 +1,4 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -90,12 +90,12 @@ function getOverlappingBlockadesForPeriod(
 export function CruiseLengthSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
 
-  const year = useStore(form.store, (state) => state.values.year);
-  const periodSelectionType = useStore(form.store, (state) => state.values.periodSelectionType ?? 'period');
-  const acceptablePeriod = useStore(form.store, (state) => state.values.acceptablePeriod);
-  const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
-  const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
-  const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
+  const year = useSelector(form.store, (state) => state.values.year);
+  const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
+  const acceptablePeriod = useSelector(form.store, (state) => state.values.acceptablePeriod);
+  const optimalPeriod = useSelector(form.store, (state) => state.values.optimalPeriod);
+  const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
+  const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
 
   // Initialize checkbox state based on whether saved start date is in the past
   const [allowPastDates, setAllowPastDates] = useState(() => {

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/types/user';
-import { useForm, useStore } from '@tanstack/react-form';
+import { useForm, useSelector } from '@tanstack/react-form';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useEffect, useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -76,7 +76,7 @@ function NewCruiseApplicationPage() {
     },
   });
 
-  const year = useStore(form.store, (state) => state.values.year);
+  const year = useSelector(form.store, (state) => state.values.year);
   const blockadesQuery = useGetCruiseBlockades({ year: +year });
 
   // Update form validators when blockades change

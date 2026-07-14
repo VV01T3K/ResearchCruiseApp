@@ -1,4 +1,4 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -26,8 +26,8 @@ export function ManagerSelectionSection() {
 function ManagerSelectionReadonly() {
   const { form, cruise } = useCruiseForm();
 
-  const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useStore(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
+  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
+  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
 
   const selectedManagersAsOptions = React.useMemo(() => {
     const options: AppDropdownInputOption[] = [];
@@ -68,9 +68,9 @@ function ManagerSelectionEditable() {
   const { form, cruiseApplications } = useCruiseForm();
   const usersQuery = useGetAvailableCruiseManagersSuspense();
 
-  const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
-  const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useStore(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
+  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
+  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
+  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
 
   const users = React.useMemo(() => {
     return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, form.state.values.cruiseApplicationsIds);
@@ -107,7 +107,7 @@ function ManagerSelectionLayout({
   showWarnings: boolean;
 }) {
   const { form, hasFormBeenSubmitted } = useCruiseForm();
-  const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
+  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
 
   return (
     <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>

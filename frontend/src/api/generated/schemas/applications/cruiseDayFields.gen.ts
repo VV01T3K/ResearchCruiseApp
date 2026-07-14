@@ -21,12 +21,12 @@ export const cruiseDayFieldsCommentMax = 1024;
 
 
 export const CruiseDayFields = zod.object({
-  "number": zod.string().min(cruiseDayFieldsNumberMin).max(cruiseDayFieldsNumberMax).optional(),
-  "hours": zod.string().min(cruiseDayFieldsHoursMin).max(cruiseDayFieldsHoursMax).optional(),
-  "taskName": zod.string().min(cruiseDayFieldsTaskNameMin).max(cruiseDayFieldsTaskNameMax).optional(),
-  "region": zod.string().min(cruiseDayFieldsRegionMin).max(cruiseDayFieldsRegionMax).optional(),
-  "position": zod.string().min(cruiseDayFieldsPositionMin).max(cruiseDayFieldsPositionMax).optional(),
-  "comment": zod.string().min(cruiseDayFieldsCommentMin).max(cruiseDayFieldsCommentMax).optional()
+  "number": zod.string().min(cruiseDayFieldsNumberMin).max(cruiseDayFieldsNumberMax),
+  "hours": zod.string().min(cruiseDayFieldsHoursMin).max(cruiseDayFieldsHoursMax),
+  "taskName": zod.string().min(cruiseDayFieldsTaskNameMin).max(cruiseDayFieldsTaskNameMax),
+  "region": zod.string().min(cruiseDayFieldsRegionMin).max(cruiseDayFieldsRegionMax),
+  "position": zod.string().min(cruiseDayFieldsPositionMin).max(cruiseDayFieldsPositionMax),
+  "comment": zod.string().min(cruiseDayFieldsCommentMin).max(cruiseDayFieldsCommentMax)
 });
 
 export type CruiseDayFields = zod.input<typeof CruiseDayFields>;

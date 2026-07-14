@@ -1,6 +1,6 @@
 import { literal, z } from 'zod';
 
-import { groupBy, removeEmptyValues } from '@/lib/utils';
+import { groupBy } from '@/lib/utils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import { ContractValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import {
@@ -15,8 +15,16 @@ import { PublicationValuesSchema } from '@/routes/applications/$applicationId/-s
 import { ResearchTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import { SpubTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
 import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
-import { FormAWriteRequest, type BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
+import {
+  FormAWriteRequest,
+  type BlockadeResponse as BlockadePeriod,
+  type FormAFields,
+  type FormAOptions as GeneratedFormAOptions,
+  type ResearchTaskFields,
+} from '@/api/generated/schemas';
 import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   cruiseManagerId: 1,
@@ -527,26 +535,230 @@ export function parseFormADraft(form: FormAValues, applicationId?: string) {
 function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?: string) {
   return {
     form: {
-      ...removeEmptyValues(form, [
-        'year',
-        'periodNotes',
-        'differentUsage',
-        'supervisorEmail',
-        'cruiseGoalDescription',
-        'researchAreaInfo',
-      ]),
-      acceptablePeriod: form.acceptablePeriod || undefined,
-      optimalPeriod: form.optimalPeriod || undefined,
+      id: applicationId ?? form.id ?? null,
+      cruiseManagerId: form.cruiseManagerId,
+      deputyManagerId: form.deputyManagerId || null,
+      year: form.year,
+      acceptablePeriod: form.acceptablePeriod || null,
+      optimalPeriod: form.optimalPeriod || null,
+      periodSelectionType: form.periodSelectionType ?? null,
       precisePeriodStart: toApiDateTime(form.precisePeriodStart),
       precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
-      ...(applicationId ? { id: applicationId } : {}),
+      cruiseHours: form.cruiseHours,
+      periodNotes: form.periodNotes,
+      shipUsage: form.shipUsage || null,
+      differentUsage: form.differentUsage,
+      permissions: form.permissions.map((permission) => ({
+        description: permission.description || null,
+        executive: permission.executive || null,
+        scan: permission.scan ?? null,
+      })),
+      researchAreaDescriptions: form.researchAreaDescriptions,
+      cruiseGoal: form.cruiseGoal || null,
+      cruiseGoalDescription: form.cruiseGoalDescription,
+      researchTasks: form.researchTasks.map((task) => ({
+        type: task.type,
+        title: 'title' in task ? task.title : null,
+        magazine: 'magazine' in task ? task.magazine : null,
+        author: 'author' in task ? task.author : null,
+        institution: null,
+        date: 'date' in task ? task.date : null,
+        startDate: 'startDate' in task ? task.startDate : null,
+        endDate: 'endDate' in task ? task.endDate : null,
+        financingAmount: 'financingAmount' in task ? task.financingAmount : null,
+        financingApproved: 'financingApproved' in task ? task.financingApproved : null,
+        description: 'description' in task ? task.description : null,
+        securedAmount: 'securedAmount' in task ? task.securedAmount : null,
+        ministerialPoints: 'ministerialPoints' in task ? task.ministerialPoints : null,
+      })),
+      contracts: form.contracts,
+      ugTeams: form.ugTeams,
+      guestTeams: form.guestTeams.map((team) => ({ ...team, name: team.name || null })),
+      publications: form.publications.map((publication) => ({
+        ...publication,
+        id: publication.id || '00000000-0000-0000-0000-000000000000',
+        doi: publication.doi || null,
+        authors: publication.authors || null,
+        title: publication.title || null,
+        magazine: publication.magazine || null,
+        year: publication.year || null,
+      })),
+      spubTasks: form.spubTasks.map((task) => ({
+        name: task.name || null,
+        yearFrom: task.yearFrom || null,
+        yearTo: task.yearTo || null,
+      })),
+      supervisorEmail: form.supervisorEmail,
+      note: form.note || null,
     },
     draft,
   } satisfies z.input<typeof FormAWriteRequest>;
 }
 
-function toApiDateTime(value: string): string | undefined {
-  if (!value) return undefined;
+function toApiDateTime(value: string): string | null {
+  if (!value) return null;
   if (/(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return value;
   return value.includes('T') ? `${value}Z` : `${value}T00:00:00Z`;
+}
+
+export function mapFormAToValues(form: FormAFields): FormAValues {
+  const acceptablePeriod = CruisePeriodValidationSchema.safeParse(form.acceptablePeriod ?? '').data ?? '';
+  const optimalPeriod = CruisePeriodValidationSchema.safeParse(form.optimalPeriod ?? '').data ?? '';
+
+  return {
+    id: form.id ?? undefined,
+    cruiseManagerId: form.cruiseManagerId,
+    deputyManagerId: form.deputyManagerId ?? '',
+    year: form.year,
+    acceptablePeriod,
+    optimalPeriod,
+    periodSelectionType:
+      form.periodSelectionType === 'precise' || form.periodSelectionType === 'period'
+        ? form.periodSelectionType
+        : form.precisePeriodStart || form.precisePeriodEnd
+          ? 'precise'
+          : 'period',
+    precisePeriodStart: form.precisePeriodStart ?? '',
+    precisePeriodEnd: form.precisePeriodEnd ?? '',
+    cruiseHours: form.cruiseHours,
+    periodNotes: form.periodNotes,
+    shipUsage: form.shipUsage ?? '',
+    differentUsage: form.differentUsage,
+    permissions: form.permissions.map((permission) => ({
+      description: permission.description ?? '',
+      executive: permission.executive ?? '',
+      scan: permission.scan ?? undefined,
+    })),
+    researchAreaDescriptions: form.researchAreaDescriptions,
+    cruiseGoal:
+      form.cruiseGoal === CruiseGoal.Research ||
+      form.cruiseGoal === CruiseGoal.Commercial ||
+      form.cruiseGoal === CruiseGoal.Educational
+        ? form.cruiseGoal
+        : '',
+    cruiseGoalDescription: form.cruiseGoalDescription,
+    researchTasks: form.researchTasks.map(mapResearchTaskToValues),
+    contracts: form.contracts.map((contract) => ({
+      category: contract.category === 'international' ? 'international' : 'domestic',
+      institutionName: contract.institutionName ?? '',
+      institutionUnit: contract.institutionUnit ?? '',
+      institutionLocalization: contract.institutionLocalization ?? '',
+      description: contract.description ?? '',
+      scans: contract.scans,
+    })),
+    ugTeams: form.ugTeams,
+    guestTeams: form.guestTeams.map((team) => ({ ...team, name: team.name ?? '' })),
+    publications: form.publications.map((publication) => ({
+      id: publication.id,
+      category:
+        publication.category === PublicationCategory.Postscript
+          ? PublicationCategory.Postscript
+          : PublicationCategory.Subject,
+      doi: publication.doi ?? '',
+      authors: publication.authors ?? '',
+      title: publication.title ?? '',
+      magazine: publication.magazine ?? '',
+      year: publication.year ?? '',
+      ministerialPoints: publication.ministerialPoints,
+    })),
+    spubTasks: form.spubTasks.map((task) => ({
+      name: task.name ?? '',
+      yearFrom: task.yearFrom ?? '',
+      yearTo: task.yearTo ?? '',
+    })),
+    supervisorEmail: form.supervisorEmail,
+    note: form.note ?? '',
+  };
+}
+
+function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
+  switch (task.type) {
+    case ResearchTaskType.BachelorThesis:
+    case ResearchTaskType.MasterThesis:
+    case ResearchTaskType.DoctoralThesis:
+      return { type: task.type, author: task.author ?? '', title: task.title ?? '' };
+    case ResearchTaskType.ProjectPreparation:
+      return {
+        type: task.type,
+        title: task.title ?? '',
+        date: task.date ?? '',
+        financingApproved: task.financingApproved === 'true' ? 'true' : 'false',
+      };
+    case ResearchTaskType.DomesticProject:
+    case ResearchTaskType.ForeignProject:
+    case ResearchTaskType.InternalUgProject:
+    case ResearchTaskType.OtherProject:
+    case ResearchTaskType.CommercialProject:
+      return {
+        type: task.type,
+        title: task.title ?? '',
+        financingAmount: task.financingAmount ?? '',
+        startDate: task.startDate ?? '',
+        endDate: task.endDate ?? '',
+        securedAmount: task.securedAmount ?? '',
+      };
+    case ResearchTaskType.Didactics:
+      return { type: task.type, description: task.description ?? '' };
+    case ResearchTaskType.OwnResearchTask:
+      return {
+        type: task.type,
+        title: task.title ?? '',
+        date: task.date ?? '',
+        magazine: task.magazine ?? '',
+        ministerialPoints: task.ministerialPoints ?? '',
+      };
+    default:
+      return { type: ResearchTaskType.OtherResearchTask, description: task.description ?? '' };
+  }
+}
+
+export function mapFormAOptions(options: GeneratedFormAOptions): FormAOptions {
+  return {
+    cruiseManagers: (options.cruiseManagers ?? []).map((user) => ({
+      id: user.id ?? '',
+      email: user.email ?? '',
+      firstName: user.firstName ?? '',
+      lastName: user.lastName ?? '',
+    })),
+    deputyManagers: (options.deputyManagers ?? []).map((user) => ({
+      id: user.id ?? '',
+      email: user.email ?? '',
+      firstName: user.firstName ?? '',
+      lastName: user.lastName ?? '',
+    })),
+    years: options.years ?? [],
+    shipUsages: options.shipUsages ?? [],
+    standardSpubTasks: options.standardSpubTasks ?? [],
+    researchAreas: (options.researchAreas ?? []).map((area) => ({ id: area.id ?? '', name: area.name ?? '' })),
+    cruiseGoals: options.cruiseGoals ?? [],
+    historicalResearchTasks: (options.historicalResearchTasks ?? []).map(mapResearchTaskToValues),
+    historicalContracts: (options.historicalContracts ?? []).map((contract) => ({
+      category: contract.category === 'international' ? 'international' : 'domestic',
+      institutionName: contract.institutionName ?? '',
+      institutionUnit: contract.institutionUnit ?? '',
+      institutionLocalization: contract.institutionLocalization ?? '',
+      description: contract.description ?? '',
+      scans: contract.scans,
+    })),
+    ugUnits: (options.ugUnits ?? []).map((unit) => ({ id: unit.id ?? '', name: unit.name ?? '' })),
+    historicalGuestInstitutions: options.historicalGuestInstitutions ?? [],
+    historicalSpubTasks: (options.historicalSpubTasks ?? []).map((task) => ({
+      name: task.name ?? '',
+      yearFrom: task.yearFrom ?? '',
+      yearTo: task.yearTo ?? '',
+    })),
+    historicalPublications: (options.historicalPublications ?? []).map((publication) => ({
+      id: publication.id,
+      category:
+        publication.category === PublicationCategory.Postscript
+          ? PublicationCategory.Postscript
+          : PublicationCategory.Subject,
+      doi: publication.doi ?? '',
+      authors: publication.authors ?? '',
+      title: publication.title ?? '',
+      magazine: publication.magazine ?? '',
+      year: publication.year ?? '',
+      ministerialPoints: publication.ministerialPoints,
+    })),
+  };
 }
