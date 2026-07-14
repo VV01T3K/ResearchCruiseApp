@@ -2,12 +2,12 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
 
-export function ResearchAreaSection() {
-  const { formA, formAInitValues, isReadonly } = useFormB();
+export function ResearchAreaSection({ context }: { context: FormBViewModel }) {
+  const { formA, formAInitValues, isReadonly } = context;
 
   const columns: ColumnDef<ResearchAreaValues>[] = [
     {

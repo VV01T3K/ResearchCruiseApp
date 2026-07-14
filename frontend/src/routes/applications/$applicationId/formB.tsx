@@ -190,7 +190,7 @@ function FormBPage() {
   return (
     <>
       <AppLayout title="Formularz B">
-        <FormView context={context} />
+        <FormView form={form} context={context} />
       </AppLayout>
     </>
   );

@@ -18,58 +18,63 @@ import { ResearchTasksSection } from './ResearchTasksSection';
 import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import { FormBContextType, FormBProvider } from '@/contexts/applications/FormBContext';
+import { withForm } from '@/lib/form';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
 type Props = {
-  context: FormBContextType & {
+  context: FormBViewModel & {
     onSubmit: () => void;
     onSaveDraft: () => void;
     onRevertToEdit?: () => void;
     actionsDisabled?: boolean;
   };
 };
-export function FormView({ context }: Props) {
-  const componentRef = useRef(null);
+export const FormView = withForm({
+  defaultValues: formBDefaultValues,
+  props: {} as Props,
+  render: function FormView({ form, context }) {
+    const componentRef = useRef(null);
 
-  const reactToPrintContent = () => {
-    return componentRef.current;
-  };
+    const reactToPrintContent = () => {
+      return componentRef.current;
+    };
 
-  const handlePrint = useReactToPrint({});
+    const handlePrint = useReactToPrint({});
 
-  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    context.onSubmit();
-  }
+    function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
+      evt.preventDefault();
+      context.onSubmit();
+    }
 
-  return (
-    <>
-      <FormBProvider value={context}>
+    return (
+      <form.AppForm>
         <form className="space-y-8" onSubmit={onSubmit}>
-          <CruiseInfoSection />
-          <CruiseManagerInfoSection />
-          <ShipUsageSection />
-          <AdditionalPermissionsSection />
-          <ResearchAreaSection />
-          <CruiseGoalSection />
-          <ResearchTasksSection />
-          <ContractsSection />
-          <MembersSection />
-          <PublicationsSection />
-          <SPUBTasksSection />
-          <CruiseDetailsSection />
-          <CruiseDayDetailsSection />
-          <ResearchEquipmentsSection />
-          <ShipEquipmentsSection />
+          <CruiseInfoSection context={context} />
+          <CruiseManagerInfoSection form={form} context={context} />
+          <ShipUsageSection context={context} />
+          <AdditionalPermissionsSection form={form} context={context} />
+          <ResearchAreaSection context={context} />
+          <CruiseGoalSection context={context} />
+          <ResearchTasksSection context={context} />
+          <ContractsSection context={context} />
+          <MembersSection form={form} context={context} />
+          <PublicationsSection context={context} />
+          <SPUBTasksSection context={context} />
+          <CruiseDetailsSection form={form} context={context} />
+          <CruiseDayDetailsSection form={form} context={context} />
+          <ResearchEquipmentsSection form={form} context={context} />
+          <ShipEquipmentsSection form={form} context={context} />
           <ActionsSection
             onSaveDraft={context.onSaveDraft}
             onRevertToEdit={context.onRevertToEdit}
             onPrint={() => handlePrint(reactToPrintContent)}
             disabled={context.actionsDisabled}
+            context={context}
           />
         </form>
-        <PrintTemplate ref={componentRef} />
-      </FormBProvider>
-    </>
-  );
-}
+        <PrintTemplate form={form} ref={componentRef} context={context} />
+      </form.AppForm>
+    );
+  },
+});

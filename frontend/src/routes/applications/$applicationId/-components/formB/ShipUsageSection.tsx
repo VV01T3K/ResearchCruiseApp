@@ -1,10 +1,10 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
-export function ShipUsageSection() {
-  const { formA, formAInitValues } = useFormB();
+export function ShipUsageSection({ context }: { context: FormBViewModel }) {
+  const { formA, formAInitValues } = context;
 
   return (
     <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-b-ship-usage-section">

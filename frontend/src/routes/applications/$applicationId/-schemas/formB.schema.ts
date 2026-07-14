@@ -27,6 +27,20 @@ export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
   shipEquipmentsIds: 15,
 };
 
+export const formBDefaultValues: FormBValues = {
+  isCruiseManagerPresent: 'true',
+  permissions: [],
+  ugTeams: [],
+  guestTeams: [],
+  crewMembers: [],
+  shortResearchEquipments: [],
+  longResearchEquipments: [],
+  ports: [],
+  cruiseDaysDetails: [],
+  researchEquipments: [],
+  shipEquipmentsIds: [],
+} satisfies FormBValues;
+
 export function getFormBValidationSchema() {
   return z.object({
     isCruiseManagerPresent: z.enum(['true', 'false']),
