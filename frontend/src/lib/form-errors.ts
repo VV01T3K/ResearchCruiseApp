@@ -15,16 +15,10 @@ export function extractErrorMessage(error: unknown): string {
   return stringified === '[object Object]' ? 'Błąd walidacji' : stringified;
 }
 
-export function getFieldErrors(meta: AnyFieldMeta, submissionAttempts: number): string[] | undefined {
-  if ((!meta.isTouched && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
+export function getErrors(meta: AnyFieldMeta, submissionAttempts: number | boolean = 0): string[] | undefined {
+  const attempts = typeof submissionAttempts === 'boolean' ? Number(submissionAttempts) : submissionAttempts;
+  if ((!meta.isTouched && attempts === 0) || meta.errors.length === 0) return undefined;
   return meta.errors.map(extractErrorMessage);
-}
-
-export function getErrors(meta: AnyFieldMeta, submissionAttempts: number | boolean = 1): string[] | undefined {
-  return getFieldErrors(
-    meta,
-    typeof submissionAttempts === 'boolean' ? Number(submissionAttempts) : submissionAttempts
-  );
 }
 
 function getSectionNumber(fieldName: string, sections: Record<string, number>): number | undefined {
