@@ -126,11 +126,17 @@ export function getFormCValidationSchema(formAInitValues: FormAOptions) {
 }
 
 export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolean) {
-  return getFormCValidationSchema(formAInitValues)
+  const inputSchema = draft ? z.custom<FormCValues>() : getFormCValidationSchema(formAInitValues);
+  return inputSchema
     .transform(
       (form): z.input<typeof FormCWriteRequest> => ({
         form: {
           ...form,
+          permissions: form.permissions.map((permission) => ({
+            description: permission.description || null,
+            executive: permission.executive || null,
+            scan: permission.scan ?? null,
+          })),
           ugTeams: form.ugTeams.map((team) => ({
             ...team,
             noOfEmployees: String(team.noOfEmployees),

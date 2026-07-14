@@ -1,4 +1,4 @@
-import { createFormHook, createFormHookContexts, type ReactFormExtendedApi, useSelector } from '@tanstack/react-form';
+import { createFormHook, createFormHookContexts, useSelector } from '@tanstack/react-form';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
@@ -163,21 +163,3 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   },
   formComponents: {},
 });
-
-/* Temporary compatibility type; deleted with the legacy form contexts. */
-/* oxlint-disable @typescript-eslint/no-explicit-any */
-export type AnyReactFormApi<TFormData> = ReactFormExtendedApi<
-  TFormData,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any
->;
-/* oxlint-enable @typescript-eslint/no-explicit-any */

@@ -3,13 +3,12 @@ import { Row } from '@tanstack/react-table';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { AnyReactFormApi } from '@/lib/form';
+import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { getErrors } from '@/lib/utils';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
+  form: FormAFormApi;
   row: Row<OwnResearchTaskValues>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;

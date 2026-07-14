@@ -67,11 +67,17 @@ export function getFormBValidationSchema() {
 }
 
 export function getFormBWriteSchema(draft: boolean) {
-  return getFormBValidationSchema()
+  const inputSchema = draft ? z.custom<FormBValues>() : getFormBValidationSchema();
+  return inputSchema
     .transform(
       (form): z.input<typeof FormBWriteRequest> => ({
         form: {
           ...form,
+          permissions: form.permissions.map((permission) => ({
+            description: permission.description || null,
+            executive: permission.executive || null,
+            scan: permission.scan ?? null,
+          })),
           ugTeams: form.ugTeams.map((team) => ({
             ...team,
             noOfEmployees: String(team.noOfEmployees),

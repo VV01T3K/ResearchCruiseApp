@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 
-import { getFormAWriteSchema } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { getFormAWriteSchema, mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
@@ -10,7 +10,7 @@ import { touchInput } from './utils/form-filling-utils';
 test('normalizes backend precise-period datetimes at the API boundary', () => {
   const initValues = getInitValuesAPayload();
   const form = {
-    ...getFormAPayload(),
+    ...mapFormAToValues(getFormAPayload()),
     cruiseManagerId: initValues.cruiseManagers[0].id,
     deputyManagerId: initValues.deputyManagers[1].id,
     year: initValues.years[0],

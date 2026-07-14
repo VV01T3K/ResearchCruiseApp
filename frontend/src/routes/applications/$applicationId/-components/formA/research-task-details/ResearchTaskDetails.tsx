@@ -1,13 +1,12 @@
 import { Row } from '@tanstack/react-table';
 
-import { AnyReactFormApi } from '@/lib/form';
+import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/DidacticsResearchTaskDetails';
 import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OtherResearchTaskDetails';
 import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OwnResearchTaskDetails';
 import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
 import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectResearchTaskDetails';
 import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ThesisResearchTaskDetails';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import {
   DidacticsResearchTaskValues,
   OtherResearchTaskValues,
@@ -20,7 +19,7 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
+  form: FormAFormApi;
   row: Row<ResearchTaskValues>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;

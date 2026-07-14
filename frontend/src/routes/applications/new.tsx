@@ -27,6 +27,7 @@ import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/f
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 import { useAppForm } from '@/lib/form';
+import { installServerFormErrors } from '@/lib/form-errors';
 
 export const Route = createFileRoute('/applications/new')({
   component: NewCruiseApplicationPage,
@@ -99,7 +100,7 @@ function NewCruiseApplicationPage() {
     isReadonly: false,
     hasFormBeenSubmitted: form.state.submissionAttempts > 0,
     blockades: blockadesQuery.data,
-    onSubmit: form.handleSubmit,
+    onSubmit: () => form.handleSubmit(),
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
   };
@@ -130,6 +131,11 @@ function NewCruiseApplicationPage() {
         },
         onError: (err) => {
           console.error(err);
+          if (installServerFormErrors(form, err)) {
+            toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+            navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+            return;
+          }
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
           navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },

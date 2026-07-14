@@ -1,7 +1,5 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
 
-import { ApiError } from '@/lib/custom-fetch';
-
 export interface FormError {
   fieldName: string;
   errorMessage: string;
@@ -88,10 +86,23 @@ export function normalizeBackendFormPath(path: string): string {
 }
 
 export function getServerFormErrors(error: unknown): Record<string, string[]> | null {
-  if (!(error instanceof ApiError)) return null;
-  const errors = (error.problem as (typeof error.problem & { errors?: Record<string, string[]> }) | undefined)?.errors;
-  if (!errors) return null;
+  if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
+  const problem = error.problem;
+  if (typeof problem !== 'object' || problem === null || !('errors' in problem)) return null;
+  const errors = problem.errors;
+  if (typeof errors !== 'object' || errors === null) return null;
   return Object.fromEntries(
-    Object.entries(errors).map(([path, messages]) => [normalizeBackendFormPath(path), messages])
+    Object.entries(errors).flatMap(([path, messages]) =>
+      Array.isArray(messages) && messages.every((message) => typeof message === 'string')
+        ? [[normalizeBackendFormPath(path), messages]]
+        : []
+    )
   );
+}
+
+export function installServerFormErrors(form: AnyFormApi, error: unknown): boolean {
+  const fields = getServerFormErrors(error);
+  if (!fields || Object.keys(fields).length === 0) return false;
+  form.setErrorMap({ onServer: { fields } });
+  return true;
 }

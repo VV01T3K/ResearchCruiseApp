@@ -26,6 +26,7 @@ import { ApiError } from '@/lib/custom-fetch';
 import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 import { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
 import { useAppForm } from '@/lib/form';
+import { installServerFormErrors } from '@/lib/form-errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
@@ -87,7 +88,7 @@ function FormBPage() {
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
     hasFormBeenSubmitted: form.state.submissionAttempts > 0,
-    onSubmit: form.handleSubmit,
+    onSubmit: () => form.handleSubmit(),
     onSaveDraft: handleDraftSave,
     onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,
     actionsDisabled: updateMutation.isPending || revertToEditMutation.isPending,
@@ -117,6 +118,11 @@ function FormBPage() {
           }
 
           console.error(err);
+          if (installServerFormErrors(form, err)) {
+            toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+            navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+            return;
+          }
           toast.error(
             'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
           );

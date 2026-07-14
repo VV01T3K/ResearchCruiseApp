@@ -18,10 +18,25 @@ import {
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
 import type { PublicationResponse } from '@/api/generated/schemas';
-import { mapNullsToEmptyStrings } from '@/lib/utils';
-import type { DeepPresent } from '@/types/utils';
 
-type Publication = DeepPresent<PublicationResponse>;
+type Publication = Omit<PublicationResponse, 'doi' | 'authors' | 'title' | 'magazine' | 'year'> & {
+  doi: string;
+  authors: string;
+  title: string;
+  magazine: string;
+  year: string;
+};
+
+function mapPublication(publication: PublicationResponse): Publication {
+  return {
+    ...publication,
+    doi: publication.doi ?? '',
+    authors: publication.authors ?? '',
+    title: publication.title ?? '',
+    magazine: publication.magazine ?? '',
+    year: publication.year ?? '',
+  };
+}
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -33,7 +48,7 @@ function MyPublicationsPage() {
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
     query: {
-      select: (publications) => publications.map(mapNullsToEmptyStrings) as Publication[],
+      select: (publications) => publications.map(mapPublication),
     },
   });
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();

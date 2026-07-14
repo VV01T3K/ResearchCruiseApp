@@ -1,13 +1,12 @@
 import { Row } from '@tanstack/react-table';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AnyReactFormApi } from '@/lib/form';
+import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { getErrors } from '@/lib/utils';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { DidacticsResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
+  form: FormAFormApi;
   row: Row<DidacticsResearchTaskValues>;
   disabled?: boolean;
   hasFormBeenSubmitted?: boolean;
