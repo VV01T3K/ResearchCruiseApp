@@ -36,7 +36,14 @@ export function UserContextProvider({ children }: Props) {
     };
   }, []);
 
-  React.useEffect(() => subscribeAuthDetails(setAuthDetails), []);
+  React.useEffect(
+    () =>
+      subscribeAuthDetails((details) => {
+        setAuthDetails(details);
+        if (!details) queryClient.removeQueries({ queryKey: getGetCurrentUserQueryKey() });
+      }),
+    [queryClient]
+  );
 
   const profileQuery = useSuspenseQuery({
     queryKey: getGetCurrentUserQueryKey(),
@@ -76,10 +83,7 @@ export function UserContextProvider({ children }: Props) {
     [loginMutateAsync]
   );
 
-  const signOut = React.useCallback(async () => {
-    setSession(undefined);
-    queryClient.removeQueries({ queryKey: getGetCurrentUserQueryKey() });
-  }, [queryClient]);
+  const signOut = React.useCallback(async () => setSession(undefined), []);
 
   const refreshUser = React.useCallback(async () => {
     await refreshSession();
