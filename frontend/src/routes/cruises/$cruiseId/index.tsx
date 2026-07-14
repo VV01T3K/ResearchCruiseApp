@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
@@ -13,11 +13,16 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
+import { useAppForm } from '@/lib/form';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
 import { FormView } from '../-components/FormView';
-import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
+import {
+  CruiseFormInputSchema,
+  UpdateCruiseFormSchema,
+  mapCruiseToValues,
+} from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -73,36 +78,31 @@ function CruiseDetailsPage() {
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
 
-  const form = useForm({
-    defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormValues,
-    validators: {
-      onChange: getCruiseFormSchema(),
+  const form = useAppForm({
+    defaultValues: mapCruiseToValues(cruiseQuery.data),
+    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
+    validators: { onDynamic: CruiseFormInputSchema },
+    onSubmitInvalid: ({ formApi }) => {
+      toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
+      navigateToFirstError(formApi, CRUISE_FIELD_TO_SECTION);
+    },
+    onSubmit: ({ value }) => {
+      updateCruiseMutation.mutate(
+        { cruiseId, data: UpdateCruiseFormSchema.parse(value) },
+        {
+          onSuccess: () => {
+            setEditMode(false);
+            toast.success('Rejs został zaktualizowany pomyślnie.');
+          },
+          onError: (error) => {
+            console.error(error);
+            toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+            navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+          },
+        }
+      );
     },
   });
-
-  function handleCruiseUpdate() {
-    form.validateAllFields('change');
-    if (!form.state.isValid) {
-      toast.error(getFormErrorMessage(form, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-      return;
-    }
-
-    updateCruiseMutation.mutate(
-      { cruiseId, data: getCruiseFormSchema().parse(form.state.values) },
-      {
-        onSuccess: () => {
-          setEditMode(false);
-          toast.success('Rejs został zaktualizowany pomyślnie.');
-        },
-        onError: (error) => {
-          console.error(error);
-          toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-        },
-      }
-    );
-  }
 
   function getButtons() {
     if (editMode) {
@@ -127,7 +127,7 @@ function CruiseDetailsPage() {
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
           </AppButton>
-          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={handleCruiseUpdate}>
+          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => form.handleSubmit()}>
             <FloppyFillIcon className="h-4 w-4" />
             Zapisz rejs
           </AppButton>
@@ -228,12 +228,10 @@ function CruiseDetailsPage() {
     <>
       <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
         <FormView
-          context={{
-            form,
-            cruise: cruiseQuery.data,
-            cruiseApplications: filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data),
-            isReadonly: !editMode,
-          }}
+          form={form}
+          cruise={cruiseQuery.data}
+          cruiseApplications={filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data)}
+          isReadonly={!editMode}
           buttons={getButtons()}
         />
       </AppLayout>
@@ -377,19 +375,5 @@ function mapApplicationToLegacyCruiseApplication(application: ApplicationRespons
     deputyManagerFirstName: application.deputyManager.firstName,
     deputyManagerLastName: application.deputyManager.lastName,
     cruiseHours: application.cruiseHours ?? '',
-  };
-}
-
-function mapCruiseToForm(cruise: CruiseResponse): CruiseFormValues {
-  return {
-    startDate: cruise.startDate,
-    endDate: cruise.endDate,
-    managersTeam: {
-      mainCruiseManagerId: cruise.mainManager.id,
-      mainDeputyManagerId: cruise.deputyManager.id,
-    },
-    cruiseApplicationsIds: cruise.applications.map((x) => x.id),
-    title: cruise.title || '',
-    shipUnavailable: cruise.shipUnavailable,
   };
 }

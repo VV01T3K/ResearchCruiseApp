@@ -6,7 +6,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
 import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
-import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
+import { UpdateCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 
 type Props = {
   cruises: CruiseResponse[];
@@ -66,7 +66,7 @@ export function Calendar({ cruises, buttons }: Props) {
     await updateCruiseByIdMutation.mutateAsync(
       {
         cruiseId: cruise.id,
-        data: getCruiseFormSchema().parse(mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
+        data: UpdateCruiseFormSchema.parse(mapCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
       },
       {
         onSuccess: () => {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { CreateRequest } from '@/api/generated/schemas';
+import { CreateRequest, UpdateRequest, type CruiseResponse } from '@/api/generated/schemas';
 
 const CruiseDatesValidationSchema = z
   .object({
@@ -58,22 +58,50 @@ const CustomCruiseValidationSchema = z
     }
   });
 
-export function getCruiseFormSchema() {
-  return CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema)
-    .and(CruiseApplicationsValidationSchema)
-    .and(CustomCruiseValidationSchema)
-    .transform(
-      (cruise): z.input<typeof CreateRequest> => ({
-        startDate: cruise.startDate,
-        endDate: cruise.endDate,
-        mainManagerId: cruise.managersTeam.mainCruiseManagerId,
-        deputyManagerId: cruise.managersTeam.mainDeputyManagerId,
-        cruiseApplicationIds: cruise.cruiseApplicationsIds,
-        title: cruise.title || null,
-        shipUnavailable: cruise.shipUnavailable,
-      })
-    )
-    .pipe(CreateRequest);
-}
+export const CruiseFormInputSchema = CruiseDatesValidationSchema.and(ManagerAndDeputyValidationSchema)
+  .and(CruiseApplicationsValidationSchema)
+  .and(CustomCruiseValidationSchema);
 
-export type CruiseFormValues = z.input<ReturnType<typeof getCruiseFormSchema>>;
+const mapCruiseRequest = (cruise: CruiseFormValues) => ({
+  startDate: cruise.startDate,
+  endDate: cruise.endDate,
+  mainManagerId: cruise.managersTeam.mainCruiseManagerId,
+  deputyManagerId: cruise.managersTeam.mainDeputyManagerId,
+  cruiseApplicationIds: cruise.cruiseApplicationsIds,
+  title: cruise.title || null,
+  shipUnavailable: cruise.shipUnavailable,
+});
+
+export const CreateCruiseFormSchema = CruiseFormInputSchema.transform(
+  (cruise): z.input<typeof CreateRequest> => mapCruiseRequest(cruise)
+).pipe(CreateRequest);
+export const UpdateCruiseFormSchema = CruiseFormInputSchema.transform(
+  (cruise): z.input<typeof UpdateRequest> => mapCruiseRequest(cruise)
+).pipe(UpdateRequest);
+
+export type CruiseFormValues = z.input<typeof CruiseFormInputSchema>;
+export type CreateCruiseRequest = z.output<typeof CreateCruiseFormSchema>;
+export type UpdateCruiseRequest = z.output<typeof UpdateCruiseFormSchema>;
+
+export const cruiseFormDefaultValues: CruiseFormValues = {
+  startDate: '',
+  endDate: '',
+  managersTeam: { mainCruiseManagerId: '', mainDeputyManagerId: '' },
+  cruiseApplicationsIds: [],
+  title: '',
+  shipUnavailable: false,
+} satisfies CruiseFormValues;
+
+export function mapCruiseToValues(cruise: CruiseResponse): CruiseFormValues {
+  return {
+    startDate: cruise.startDate,
+    endDate: cruise.endDate,
+    managersTeam: {
+      mainCruiseManagerId: cruise.mainManager.id,
+      mainDeputyManagerId: cruise.deputyManager.id,
+    },
+    cruiseApplicationsIds: cruise.applications.map((application) => application.id),
+    title: cruise.title ?? '',
+    shipUnavailable: cruise.shipUnavailable,
+  };
+}

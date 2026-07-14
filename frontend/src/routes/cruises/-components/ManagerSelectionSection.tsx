@@ -4,170 +4,132 @@ import React from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
-import { AppDropdownInput, AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/utils';
+import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
+import { withForm } from '@/lib/form';
 import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 import { UserOption } from '@/routes/applications/$applicationId/-schemas/types/UserOption';
-import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
+import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
-import type { CruiseManagerResponse } from '@/api/generated/schemas';
+import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
 
-export function ManagerSelectionSection() {
-  const { isReadonly } = useCruiseForm();
+export const ManagerSelectionSection = withForm({
+  defaultValues: cruiseFormDefaultValues,
+  props: {} as {
+    cruise?: CruiseResponse;
+    cruiseApplications: CruiseApplicationCandidate[];
+    isReadonly: boolean;
+  },
+  render: function Render({ form, cruise, cruiseApplications, isReadonly }) {
+    const usersQuery = useGetAvailableCruiseManagersSuspense();
+    const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
+    const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
+    const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
 
-  if (isReadonly) {
-    return <ManagerSelectionReadonly />;
-  }
-
-  return <ManagerSelectionEditable />;
-}
-
-function ManagerSelectionReadonly() {
-  const { form, cruise } = useCruiseForm();
-
-  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
-
-  const selectedManagersAsOptions = React.useMemo(() => {
-    const options: AppDropdownInputOption[] = [];
-    if (cruise && selectedCruiseManagerId) {
-      options.push(
-        mapPersonToLabel({
-          id: selectedCruiseManagerId,
-          firstName: cruise.mainManager.firstName,
-          lastName: cruise.mainManager.lastName,
-          email: '',
-        })
-      );
-    }
-    if (cruise && selectedDeputyManagerId && selectedDeputyManagerId !== selectedCruiseManagerId) {
-      options.push(
-        mapPersonToLabel({
-          id: selectedDeputyManagerId,
-          firstName: cruise.deputyManager.firstName,
-          lastName: cruise.deputyManager.lastName,
-          email: '',
-        })
-      );
-    }
-    return options;
-  }, [cruise, selectedCruiseManagerId, selectedDeputyManagerId]);
-
-  return (
-    <ManagerSelectionLayout
-      users={selectedManagersAsOptions}
-      cruiseManagersNotAssignedToApplication={[]}
-      isReadonly={true}
-      showWarnings={false}
-    />
-  );
-}
-
-function ManagerSelectionEditable() {
-  const { form, cruiseApplications } = useCruiseForm();
-  const usersQuery = useGetAvailableCruiseManagersSuspense();
-
-  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
-  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
-
-  const users = React.useMemo(() => {
-    return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, form.state.values.cruiseApplicationsIds);
-  }, [usersQuery.data, cruiseApplications, form.state.values.cruiseApplicationsIds]);
-
-  const cruiseManagersNotAssignedToApplication = React.useMemo(() => {
-    return getCruiseManagersNotAssignedToApplication(
-      usersQuery.data ?? [],
-      [selectedCruiseManagerId, selectedDeputyManagerId],
+    const users = React.useMemo(() => {
+      if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationsIds);
+      const options: AppDropdownInputOption[] = [];
+      if (cruise && selectedCruiseManagerId) {
+        options.push(
+          mapPersonToLabel({
+            id: selectedCruiseManagerId,
+            firstName: cruise.mainManager.firstName,
+            lastName: cruise.mainManager.lastName,
+            email: '',
+          })
+        );
+      }
+      if (cruise && selectedDeputyManagerId && selectedDeputyManagerId !== selectedCruiseManagerId) {
+        options.push(
+          mapPersonToLabel({
+            id: selectedDeputyManagerId,
+            firstName: cruise.deputyManager.firstName,
+            lastName: cruise.deputyManager.lastName,
+            email: '',
+          })
+        );
+      }
+      return options;
+    }, [
+      cruise,
       cruiseApplications,
-      cruiseApplicationsIds
+      cruiseApplicationsIds,
+      isReadonly,
+      selectedCruiseManagerId,
+      selectedDeputyManagerId,
+      usersQuery.data,
+    ]);
+
+    const cruiseManagersNotAssignedToApplication = React.useMemo(
+      () =>
+        isReadonly
+          ? []
+          : getCruiseManagersNotAssignedToApplication(
+              usersQuery.data ?? [],
+              [selectedCruiseManagerId, selectedDeputyManagerId],
+              cruiseApplications,
+              cruiseApplicationsIds
+            ),
+      [
+        cruiseApplications,
+        cruiseApplicationsIds,
+        isReadonly,
+        selectedCruiseManagerId,
+        selectedDeputyManagerId,
+        usersQuery.data,
+      ]
     );
-  }, [cruiseApplications, cruiseApplicationsIds, selectedCruiseManagerId, selectedDeputyManagerId, usersQuery.data]);
 
-  return (
-    <ManagerSelectionLayout
-      users={users}
-      cruiseManagersNotAssignedToApplication={cruiseManagersNotAssignedToApplication}
-      isReadonly={false}
-      showWarnings={true}
-    />
-  );
-}
+    return (
+      <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
+        {!isReadonly && (
+          <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
+            {cruiseManagersNotAssignedToApplication.length > 0 && (
+              <motion.div
+                className="mt-2"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ ease: 'easeOut' }}
+              >
+                <AppAlert variant="warning">
+                  Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego
+                  zgłoszenia dołączonego do rejsu.
+                </AppAlert>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
 
-function ManagerSelectionLayout({
-  users,
-  cruiseManagersNotAssignedToApplication,
-  isReadonly,
-  showWarnings,
-}: {
-  users: AppDropdownInputOption[];
-  cruiseManagersNotAssignedToApplication: CruiseManagerResponse[];
-  isReadonly: boolean;
-  showWarnings: boolean;
-}) {
-  const { form, hasFormBeenSubmitted } = useCruiseForm();
-  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
+        <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <form.AppField
+            name="managersTeam.mainCruiseManagerId"
+            children={(field) => (
+              <field.SelectField
+                allOptions={users}
+                label="Kierownik główny"
+                placeholder="Wybierz kierownika głównego"
+                disabled={isReadonly}
+              />
+            )}
+          />
 
-  return (
-    <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
-      {showWarnings && (
-        <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
-          {cruiseManagersNotAssignedToApplication.length > 0 && (
-            <motion.div
-              className="mt-2"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ ease: 'easeOut' }}
-            >
-              <AppAlert variant="warning">
-                Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego
-                zgłoszenia dołączonego do rejsu.
-              </AppAlert>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-
-      <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <form.Field
-          name="managersTeam.mainCruiseManagerId"
-          children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              allOptions={users}
-              label="Kierownik główny"
-              placeholder="Wybierz kierownika głównego"
-              disabled={isReadonly}
-            />
-          )}
-        />
-
-        <form.Field
-          name="managersTeam.mainDeputyManagerId"
-          children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-              allOptions={users}
-              label="Zastępca kierownika głównego"
-              placeholder="Wybierz zastępcę kierownika głównego"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </div>
-    </AppAccordion>
-  );
-}
+          <form.AppField
+            name="managersTeam.mainDeputyManagerId"
+            children={(field) => (
+              <field.SelectField
+                allOptions={users}
+                label="Zastępca kierownika głównego"
+                placeholder="Wybierz zastępcę kierownika głównego"
+                disabled={isReadonly}
+              />
+            )}
+          />
+        </div>
+      </AppAccordion>
+    );
+  },
+});
 
 function checkIfCruiseManagerIsAssignedToAnyApplication(
   managerId: string,
@@ -196,7 +158,8 @@ function getCruiseManagersNotAssignedToApplication(
         cruiseApplications,
         selectedCruiseApplicationsIds
       );
-    }) as CruiseManagerResponse[];
+    })
+    .filter((user): user is CruiseManagerResponse => user !== undefined);
 }
 
 function getAllUsersForDropdown(
