@@ -537,8 +537,16 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
       ]),
       acceptablePeriod: form.acceptablePeriod || undefined,
       optimalPeriod: form.optimalPeriod || undefined,
+      precisePeriodStart: toApiDateTime(form.precisePeriodStart),
+      precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
       ...(applicationId ? { id: applicationId } : {}),
     },
     draft,
   } satisfies z.input<typeof FormAWriteRequest>;
+}
+
+function toApiDateTime(value: string): string | undefined {
+  if (!value) return undefined;
+  if (/(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return value;
+  return value.includes('T') ? `${value}Z` : `${value}T00:00:00Z`;
 }

@@ -1,8 +1,32 @@
 import { expect } from '@playwright/test';
 
+import { getFormAWriteSchema } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
+import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
+
+test('normalizes backend precise-period datetimes at the API boundary', () => {
+  const initValues = getInitValuesAPayload();
+  const form = {
+    ...getFormAPayload(),
+    cruiseManagerId: initValues.cruiseManagers[0].id,
+    deputyManagerId: initValues.deputyManagers[1].id,
+    year: initValues.years[0],
+    periodSelectionType: 'precise' as const,
+    acceptablePeriod: '',
+    optimalPeriod: '',
+    precisePeriodStart: '2026-07-20',
+    precisePeriodEnd: '2026-07-23T00:00:00',
+    note: '',
+  };
+
+  const request = getFormAWriteSchema(initValues, false).parse(form);
+
+  expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
+  expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
+});
 
 test('valid form A', async ({ formAPage }) => {
   await formAPage.fillForm(); // Fill the form with default values
