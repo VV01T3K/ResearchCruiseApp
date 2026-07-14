@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-export type CollectedSampleDto = {
-  type: string; // Max length 10240
-  amount: string; // Max length 10240
-  analysis: string; // Max length 10240
-  publishing: string; // Max length 10240
-};
-
 export const CollectedSampleDtoValidationSchema = z.object({
   type: z
     .string()
@@ -28,3 +21,5 @@ export const CollectedSampleDtoValidationSchema = z.object({
     .nonempty('Publikacja próbki nie może być pusta')
     .max(10240, 'Publikacja próbki nie może być dłuższa niż 10240 znaków'),
 });
+
+export type CollectedSampleDto = z.infer<typeof CollectedSampleDtoValidationSchema>;

@@ -15,24 +15,12 @@ export enum ResearchTaskType {
   OtherResearchTask = '11',
 }
 
-export type ThesisResearchTaskDto = {
-  type: ResearchTaskType.BachelorThesis | ResearchTaskType.MasterThesis | ResearchTaskType.DoctoralThesis;
-  author: string;
-  title: string;
-};
-
 export const ThesisResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.BachelorThesis, ResearchTaskType.MasterThesis, ResearchTaskType.DoctoralThesis]),
   author: z.string().nonempty('Autor nie może być pusty'),
   title: z.string().nonempty('Tytuł nie może być pusty'),
 });
-
-export type ProjectPreparationResearchTaskDto = {
-  type: ResearchTaskType.ProjectPreparation;
-  title: string;
-  date: string;
-  financingApproved: 'true' | 'false';
-};
+export type ThesisResearchTaskDto = z.infer<typeof ThesisResearchTaskDtoValidationSchema>;
 
 export const ProjectPreparationResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.ProjectPreparation]),
@@ -42,20 +30,7 @@ export const ProjectPreparationResearchTaskDtoValidationSchema = z.object({
     error: 'Wymagane jest wskazanie czy finansowanie zostało zatwierdzone',
   }),
 });
-
-export type ProjectResearchTaskDto = {
-  type:
-    | ResearchTaskType.DomesticProject
-    | ResearchTaskType.ForeignProject
-    | ResearchTaskType.InternalUgProject
-    | ResearchTaskType.OtherProject
-    | ResearchTaskType.CommercialProject;
-  title: string;
-  financingAmount: string;
-  startDate: string;
-  endDate: string;
-  securedAmount: string;
-};
+export type ProjectPreparationResearchTaskDto = z.infer<typeof ProjectPreparationResearchTaskDtoValidationSchema>;
 
 export const ProjectResearchTaskDtoValidationSchema = z.object({
   type: z.enum([
@@ -77,24 +52,13 @@ export const ProjectResearchTaskDtoValidationSchema = z.object({
     return !isNaN(parsed) && parsed >= 0;
   }, 'Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
 });
-
-export type DidacticsResearchTaskDto = {
-  type: ResearchTaskType.Didactics;
-  description: string;
-};
+export type ProjectResearchTaskDto = z.infer<typeof ProjectResearchTaskDtoValidationSchema>;
 
 export const DidacticsResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.Didactics]),
   description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
-
-export type OwnResearchTaskDto = {
-  type: ResearchTaskType.OwnResearchTask;
-  title: string;
-  date: string;
-  magazine: string;
-  ministerialPoints: string;
-};
+export type DidacticsResearchTaskDto = z.infer<typeof DidacticsResearchTaskDtoValidationSchema>;
 
 export const OwnResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.OwnResearchTask]),
@@ -111,24 +75,13 @@ export const OwnResearchTaskDtoValidationSchema = z.object({
     }
   ),
 });
-
-export type OtherResearchTaskDto = {
-  type: ResearchTaskType.OtherResearchTask;
-  description: string;
-};
+export type OwnResearchTaskDto = z.infer<typeof OwnResearchTaskDtoValidationSchema>;
 
 export const OtherResearchTaskDtoValidationSchema = z.object({
   type: z.enum([ResearchTaskType.OtherResearchTask]),
   description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
-
-export type ResearchTaskDto =
-  | ThesisResearchTaskDto
-  | ProjectPreparationResearchTaskDto
-  | ProjectResearchTaskDto
-  | DidacticsResearchTaskDto
-  | OwnResearchTaskDto
-  | OtherResearchTaskDto;
+export type OtherResearchTaskDto = z.infer<typeof OtherResearchTaskDtoValidationSchema>;
 
 export const taskTypes = [
   ResearchTaskType.BachelorThesis,
@@ -157,6 +110,7 @@ export const ResearchTaskDtoValidationSchema = z.union([
   OwnResearchTaskDtoValidationSchema,
   OtherResearchTaskDtoValidationSchema,
 ]);
+export type ResearchTaskDto = z.infer<typeof ResearchTaskDtoValidationSchema>;
 
 export function getTaskName(taskType: ResearchTaskType): string {
   switch (taskType) {

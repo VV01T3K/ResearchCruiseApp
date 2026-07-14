@@ -14,17 +14,6 @@ export function getPublicationCategoryLabel(category: PublicationCategory) {
   }
 }
 
-export type PublicationDto = {
-  id: string;
-  category: PublicationCategory;
-  doi: string;
-  authors: string;
-  title: string;
-  magazine: string;
-  year: string;
-  ministerialPoints: string;
-};
-
 export const PublicationDtoValidationSchema = z.object({
   id: z.guid().or(z.literal('')),
   category: z.enum(PublicationCategory),
@@ -38,3 +27,5 @@ export const PublicationDtoValidationSchema = z.object({
     return !isNaN(parsed) && parsed >= 0;
   }, 'Punkty muszą być liczbą nieujemną'),
 });
+
+export type PublicationDto = z.infer<typeof PublicationDtoValidationSchema>;

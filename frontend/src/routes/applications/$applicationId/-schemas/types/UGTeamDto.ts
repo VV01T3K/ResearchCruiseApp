@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-export type UGTeamDto = {
-  ugUnitId: string;
-  noOfEmployees: string;
-  noOfStudents: string;
-};
-
 export const UGTeamDtoValidationSchema = z.object({
   ugUnitId: z.guid(),
   noOfEmployees: z.string().refine((val) => {
@@ -17,3 +11,5 @@ export const UGTeamDtoValidationSchema = z.object({
     return !isNaN(parsed) && parsed >= 0;
   }, 'Liczba studentów musi być liczbą nieujemną'),
 });
+
+export type UGTeamDto = z.infer<typeof UGTeamDtoValidationSchema>;

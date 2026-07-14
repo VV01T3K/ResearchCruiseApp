@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-export type ResearchEquipmentDto = {
-  name: string;
-  insuranceStartDate: string | null;
-  insuranceEndDate: string | null;
-  permission: 'true' | 'false';
-};
-
 export const ResearchEquipmentDtoValidationSchema = z.object({
   name: z.string().nonempty('Nazwa jest wymagana'),
   insuranceStartDate: z.string().nullable(),
@@ -15,3 +8,5 @@ export const ResearchEquipmentDtoValidationSchema = z.object({
     error: 'Pozwolenie jest wymagane',
   }),
 });
+
+export type ResearchEquipmentDto = z.infer<typeof ResearchEquipmentDtoValidationSchema>;

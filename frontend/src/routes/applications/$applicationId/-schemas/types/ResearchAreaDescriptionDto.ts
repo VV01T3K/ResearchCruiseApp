@@ -2,12 +2,6 @@ import { z } from 'zod';
 
 import { FormAInitValuesDto } from './FormAInitValuesDto';
 
-export type ResearchAreaDescriptionDto = {
-  areaId: string | null;
-  differentName: string | null;
-  info: string;
-};
-
 export function getResearchAreaDescriptionDtoValidationSchema(formAInitValues: FormAInitValuesDto) {
   return z
     .object({
@@ -31,3 +25,5 @@ export function getResearchAreaDescriptionDtoValidationSchema(formAInitValues: F
       }
     });
 }
+
+export type ResearchAreaDescriptionDto = z.infer<ReturnType<typeof getResearchAreaDescriptionDtoValidationSchema>>;

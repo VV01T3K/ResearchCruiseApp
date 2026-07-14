@@ -1,12 +1,6 @@
 import { z } from 'zod';
 
-import { FileDto, FileDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/FileDto';
-
-export type PermissionDto = {
-  description: string;
-  executive: string;
-  scan?: FileDto | undefined;
-};
+import { FileDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/FileDto';
 
 export const PermissionDtoValidationSchema = z.object({
   description: z.string().nonempty('Treść pozwolenia jest wymagana').max(10240, 'Maksymalna długość to 10240 znaków'),
@@ -19,3 +13,5 @@ export const PermissionDtoWithFileValidationSchema = PermissionDtoValidationSche
     name: z.string().endsWith('.pdf', 'Plik musi być w formacie PDF'),
   }),
 });
+
+export type PermissionDto = z.infer<typeof PermissionDtoValidationSchema>;

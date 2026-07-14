@@ -1,15 +1,6 @@
 import { z } from 'zod';
 
-import { FileDto, FileDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/FileDto';
-
-export type ContractDto = {
-  category: 'domestic' | 'international';
-  institutionName: string;
-  institutionUnit: string;
-  institutionLocalization: string;
-  description: string;
-  scans: FileDto[];
-};
+import { FileDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/FileDto';
 
 export function getContractCategoryName(category: ContractDto['category']): string {
   return category === 'domestic' ? 'Krajowa' : 'Międzynarodowa';
@@ -23,3 +14,5 @@ export const ContractDtoValidationSchema = z.object({
   description: z.string().nonempty('Opis jest wymagany').max(10240, 'Maksymalna długość to 10240 znaków'),
   scans: FileDtoValidationSchema.array(),
 });
+
+export type ContractDto = z.infer<typeof ContractDtoValidationSchema>;

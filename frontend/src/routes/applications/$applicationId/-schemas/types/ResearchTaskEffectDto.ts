@@ -1,16 +1,6 @@
 import { z } from 'zod';
 
-import {
-  ResearchTaskDto,
-  ResearchTaskDtoValidationSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
-
-type TaskEffect = {
-  done: string;
-  managerConditionMet: string;
-  deputyConditionMet: string;
-};
-export type ResearchTaskEffectDto = ResearchTaskDto & TaskEffect;
+import { ResearchTaskDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 export const ResearchTaskEffectDtoValidationSchema = z.intersection(
   ResearchTaskDtoValidationSchema,
@@ -20,3 +10,5 @@ export const ResearchTaskEffectDtoValidationSchema = z.intersection(
     deputyConditionMet: z.enum(['true', 'false']),
   })
 );
+
+export type ResearchTaskEffectDto = z.infer<typeof ResearchTaskEffectDtoValidationSchema>;
