@@ -1,8 +1,8 @@
 import { z as zod } from 'zod';
-import { FormCDto } from './formCDto.gen.ts';
+import { FormCFields } from './formCFields.gen.ts';
 
 export const FormCWriteRequest = zod.object({
-  "form": FormCDto,
+  "form": FormCFields,
   "draft": zod.boolean()
 });
 

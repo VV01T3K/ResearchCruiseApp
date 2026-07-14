@@ -1,8 +1,8 @@
 import { z as zod } from 'zod';
-import { FormADto } from './formADto.gen.ts';
+import { FormAFields } from './formAFields.gen.ts';
 
 export const FormAWriteRequest = zod.object({
-  "form": FormADto,
+  "form": FormAFields,
   "draft": zod.boolean()
 });
 

@@ -1,7 +1,7 @@
 import type {
   ApplicationResponse as GeneratedApplicationResponse,
   CruiseApplicationStatus as GeneratedCruiseApplicationStatus,
-  CruiseApplicationEvaluationDetailsDto,
+  CruiseApplicationEvaluation,
 } from '@/api/generated/schemas';
 import type { DeepPresent } from '@/types/utils';
 import type { ContractValues } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
@@ -51,7 +51,7 @@ export function getApplicationStatusLabel(status: ApplicationStatus): string {
 }
 
 export type ApplicationResponse = GeneratedApplicationResponse;
-type GeneratedEvaluation = DeepPresent<CruiseApplicationEvaluationDetailsDto>;
+type GeneratedEvaluation = DeepPresent<CruiseApplicationEvaluation>;
 type GeneratedResearchTask = GeneratedEvaluation['formAResearchTasks'][number];
 type GeneratedContract = GeneratedEvaluation['formAContracts'][number];
 type GeneratedPublication = GeneratedEvaluation['formAPublications'][number];

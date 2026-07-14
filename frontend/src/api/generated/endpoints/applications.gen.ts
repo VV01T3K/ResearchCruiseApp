@@ -18,15 +18,15 @@ import type {
   ApplicationCruiseResponse,
   ApplicationDecisionRequest,
   ApplicationResponse,
-  CruiseApplicationDto,
-  CruiseApplicationEvaluationDetailsDto,
-  FormADto,
-  FormAInitValuesDto,
+  CruiseApplicationEvaluation,
+  CruiseApplicationSummary,
+  FormAFields,
+  FormAOptions,
   FormAWriteRequest,
-  FormBDto,
-  FormBInitValuesDto,
+  FormBFields,
+  FormBOptions,
   FormBWriteRequest,
-  FormCDto,
+  FormCFields,
   FormCWriteRequest,
   GetApplicationSupervisorReviewParams,
   ProblemDetails,
@@ -406,9 +406,9 @@ export const getGetApplicationEvaluationUrl = (applicationId: string,) => {
 /**
  * @summary Get application evaluation details.
  */
-export const getApplicationEvaluation = async (applicationId: string, options?: RequestInit): Promise<CruiseApplicationEvaluationDetailsDto> => {
+export const getApplicationEvaluation = async (applicationId: string, options?: RequestInit): Promise<CruiseApplicationEvaluation> => {
 
-  return customFetch<CruiseApplicationEvaluationDetailsDto>(getGetApplicationEvaluationUrl(applicationId),
+  return customFetch<CruiseApplicationEvaluation>(getGetApplicationEvaluationUrl(applicationId),
   {
     ...options,
     method: 'GET'
@@ -565,9 +565,9 @@ export const useUpdateApplicationDecision = <TError = ProblemDetails,
 /**
  * @summary Get applications eligible for cruise planning.
  */
-export const getApplicationsForCruisePlanning = async ( options?: RequestInit): Promise<CruiseApplicationDto[]> => {
+export const getApplicationsForCruisePlanning = async ( options?: RequestInit): Promise<CruiseApplicationSummary[]> => {
 
-  return customFetch<CruiseApplicationDto[]>(getGetApplicationsForCruisePlanningUrl(),
+  return customFetch<CruiseApplicationSummary[]>(getGetApplicationsForCruisePlanningUrl(),
   {
     ...options,
     method: 'GET'
@@ -653,9 +653,9 @@ export const getGetApplicationFormAContextUrl = () => {
 /**
  * @summary Get authenticated Form A context.
  */
-export const getApplicationFormAContext = async ( options?: RequestInit): Promise<FormAInitValuesDto> => {
+export const getApplicationFormAContext = async ( options?: RequestInit): Promise<FormAOptions> => {
 
-  return customFetch<FormAInitValuesDto>(getGetApplicationFormAContextUrl(),
+  return customFetch<FormAOptions>(getGetApplicationFormAContextUrl(),
   {
     ...options,
     method: 'GET'
@@ -741,9 +741,9 @@ export const getGetApplicationFormBContextUrl = () => {
 /**
  * @summary Get authenticated Form B context.
  */
-export const getApplicationFormBContext = async ( options?: RequestInit): Promise<FormBInitValuesDto> => {
+export const getApplicationFormBContext = async ( options?: RequestInit): Promise<FormBOptions> => {
 
-  return customFetch<FormBInitValuesDto>(getGetApplicationFormBContextUrl(),
+  return customFetch<FormBOptions>(getGetApplicationFormBContextUrl(),
   {
     ...options,
     method: 'GET'
@@ -829,9 +829,9 @@ export const getGetApplicationFormAUrl = (applicationId: string,) => {
 /**
  * @summary Get Form A.
  */
-export const getApplicationFormA = async (applicationId: string, options?: RequestInit): Promise<FormADto> => {
+export const getApplicationFormA = async (applicationId: string, options?: RequestInit): Promise<FormAFields> => {
 
-  return customFetch<FormADto>(getGetApplicationFormAUrl(applicationId),
+  return customFetch<FormAFields>(getGetApplicationFormAUrl(applicationId),
   {
     ...options,
     method: 'GET'
@@ -988,9 +988,9 @@ export const useUpdateApplicationFormA = <TError = ProblemDetails,
 /**
  * @summary Get Form B.
  */
-export const getApplicationFormB = async (applicationId: string, options?: RequestInit): Promise<FormBDto> => {
+export const getApplicationFormB = async (applicationId: string, options?: RequestInit): Promise<FormBFields> => {
 
-  return customFetch<FormBDto>(getGetApplicationFormBUrl(applicationId),
+  return customFetch<FormBFields>(getGetApplicationFormBUrl(applicationId),
   {
     ...options,
     method: 'GET'
@@ -1217,9 +1217,9 @@ export const useRefillApplicationFormB = <TError = ProblemDetails,
 /**
  * @summary Get Form C.
  */
-export const getApplicationFormC = async (applicationId: string, options?: RequestInit): Promise<FormCDto> => {
+export const getApplicationFormC = async (applicationId: string, options?: RequestInit): Promise<FormCFields> => {
 
-  return customFetch<FormCDto>(getGetApplicationFormCUrl(applicationId),
+  return customFetch<FormCFields>(getGetApplicationFormCUrl(applicationId),
   {
     ...options,
     method: 'GET'

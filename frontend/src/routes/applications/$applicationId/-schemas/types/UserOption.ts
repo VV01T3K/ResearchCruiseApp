@@ -1,4 +1,4 @@
-import type { FormUserDto as GeneratedFormUser } from '@/api/generated/schemas';
+import type { UserOption as GeneratedFormUser } from '@/api/generated/schemas';
 
 import type { DeepPresent } from '@/types/utils';
 

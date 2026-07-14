@@ -19,7 +19,7 @@ public static class CruisePlanningEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Ok<List<CruiseApplicationDto>>> Get(
+    private static async Task<Ok<List<CruiseApplicationSummary>>> Get(
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -30,7 +30,7 @@ public static class CruisePlanningEndpoints
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
             .ToListAsync(cancellationToken);
-        var visibleApplications = new List<CruiseApplicationDto>();
+        var visibleApplications = new List<CruiseApplicationSummary>();
 
         foreach (var application in applications)
         {

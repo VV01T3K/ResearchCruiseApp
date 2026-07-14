@@ -1,4 +1,4 @@
-import type { UgUnitDto as GeneratedUgUnit } from '@/api/generated/schemas';
+import type { UgUnitOption as GeneratedUgUnit } from '@/api/generated/schemas';
 
 import type { DeepPresent } from '@/types/utils';
 

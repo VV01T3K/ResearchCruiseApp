@@ -1,4 +1,4 @@
-import type { FormBInitValuesDto as GeneratedFormBOptions } from '@/api/generated/schemas';
+import type { FormBOptions as GeneratedFormBOptions } from '@/api/generated/schemas';
 
 import type { DeepPresent } from '@/types/utils';
 

@@ -23,7 +23,7 @@ public static class FormContextEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Ok<FormAInitValuesDto>> GetFormAContext(
+    private static async Task<Ok<FormAOptions>> GetFormAContext(
         FormInitValuesReader forms,
         CancellationToken cancellationToken
     )
@@ -31,7 +31,7 @@ public static class FormContextEndpoints
         return TypedResults.Ok(await forms.CreateFormA(cancellationToken));
     }
 
-    private static async Task<Ok<FormBInitValuesDto>> GetFormBContext(
+    private static async Task<Ok<FormBOptions>> GetFormBContext(
         FormInitValuesReader forms,
         CancellationToken cancellationToken
     )

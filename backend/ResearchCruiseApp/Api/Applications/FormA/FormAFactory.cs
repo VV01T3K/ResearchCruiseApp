@@ -13,69 +13,75 @@ internal class FormAFactory(
     ApplicationDbContext dbContext
 )
 {
-    public async Task<Result<FormA>> Create(FormADto formADto, CancellationToken cancellationToken)
+    public async Task<Result<FormA>> Create(
+        FormAFields formAFields,
+        CancellationToken cancellationToken
+    )
     {
-        var formA = ApplicationMappings.ToFormA(formADto);
+        var formA = ApplicationMappings.ToFormA(formAFields);
 
-        var result = await AddManagersTeam(formA, formADto);
+        var result = await AddManagersTeam(formA, formAFields);
         if (!result.IsSuccess)
             return result.Error!;
 
-        result = await AddFormAUgUnits(formA, formADto, cancellationToken);
+        result = await AddFormAUgUnits(formA, formAFields, cancellationToken);
         if (!result.IsSuccess)
             return result.Error!;
 
-        await AddPermissions(formA, formADto, cancellationToken);
-        await AddResearchAreaDescriptions(formA, formADto, cancellationToken);
-        await AddFormAResearchTasks(formA, formADto, cancellationToken);
-        await AddFormAContracts(formA, formADto, cancellationToken);
-        await AddFormAGuestUnits(formA, formADto, cancellationToken);
-        await AddFormAPublications(formA, formADto, cancellationToken);
-        await AddFormASpubTasks(formA, formADto, cancellationToken);
+        await AddPermissions(formA, formAFields, cancellationToken);
+        await AddResearchAreaDescriptions(formA, formAFields, cancellationToken);
+        await AddFormAResearchTasks(formA, formAFields, cancellationToken);
+        await AddFormAContracts(formA, formAFields, cancellationToken);
+        await AddFormAGuestUnits(formA, formAFields, cancellationToken);
+        await AddFormAPublications(formA, formAFields, cancellationToken);
+        await AddFormASpubTasks(formA, formAFields, cancellationToken);
 
         return formA;
     }
 
-    private async Task<Result> AddManagersTeam(FormA formA, FormADto formADto)
+    private async Task<Result> AddManagersTeam(FormA formA, FormAFields formAFields)
     {
         var currentUserId = currentUserService.GetId();
         if (currentUserId is null)
             return Error.UnknownIdentity();
 
-        if (formADto.CruiseManagerId != currentUserId && formADto.DeputyManagerId != currentUserId)
+        if (
+            formAFields.CruiseManagerId != currentUserId
+            && formAFields.DeputyManagerId != currentUserId
+        )
             return Error.InvalidArgument(
                 "Użytkownik wysyłający zgłoszenie musi być kierownikiem lub jego zastępcą."
             );
 
-        if (!await identityService.UserWithIdExists(formADto.CruiseManagerId))
+        if (!await identityService.UserWithIdExists(formAFields.CruiseManagerId))
             return Error.InvalidArgument("Podany kierownik nie istnieje.");
 
         if (
-            formADto.DeputyManagerId is not null
-            && !await identityService.UserWithIdExists((Guid)formADto.DeputyManagerId)
+            formAFields.DeputyManagerId is not null
+            && !await identityService.UserWithIdExists((Guid)formAFields.DeputyManagerId)
         )
         {
             return Error.InvalidArgument("Podany zastępca kierownika nie istnieje.");
         }
 
-        formA.CruiseManagerId = formADto.CruiseManagerId;
-        formA.DeputyManagerId = formADto.DeputyManagerId ?? Guid.Empty;
+        formA.CruiseManagerId = formAFields.CruiseManagerId;
+        formA.DeputyManagerId = formAFields.DeputyManagerId ?? Guid.Empty;
 
         return Result.Empty;
     }
 
     private async Task AddPermissions(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedPermissions = new HashSet<Permission>();
 
-        foreach (var permissionDto in formADto.Permissions)
+        foreach (var permissionFields in formAFields.Permissions)
         {
             var permission = await formsFieldsService.GetUniquePermission(
-                permissionDto,
+                permissionFields,
                 alreadyAddedPermissions,
                 cancellationToken
             );
@@ -87,16 +93,16 @@ internal class FormAFactory(
 
     private async Task AddResearchAreaDescriptions(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedResearchAreaDescriptions = new HashSet<ResearchAreaDescription>();
 
-        foreach (var researchAreaDescriptionDto in formADto.ResearchAreaDescriptions)
+        foreach (var researchAreaSelection in formAFields.ResearchAreaDescriptions)
         {
             var researchAreaDescription = await formsFieldsService.GetUniqueResearchAreaDescription(
-                researchAreaDescriptionDto,
+                researchAreaSelection,
                 alreadyAddedResearchAreaDescriptions,
                 cancellationToken
             );
@@ -108,16 +114,16 @@ internal class FormAFactory(
 
     private async Task AddFormAResearchTasks(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedResearchTasks = new HashSet<ResearchTask>();
 
-        foreach (var researchTaskDto in formADto.ResearchTasks)
+        foreach (var researchTaskFields in formAFields.ResearchTasks)
         {
             var researchTask = await formsFieldsService.GetUniqueResearchTask(
-                researchTaskDto,
+                researchTaskFields,
                 alreadyAddedResearchTasks,
                 cancellationToken
             );
@@ -130,16 +136,16 @@ internal class FormAFactory(
 
     private async Task AddFormAContracts(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedContracts = new HashSet<Contract>();
 
-        foreach (var contractDto in formADto.Contracts)
+        foreach (var contractFields in formAFields.Contracts)
         {
             var contract = await formsFieldsService.GetUniqueContract(
-                contractDto,
+                contractFields,
                 alreadyAddedContracts,
                 cancellationToken
             );
@@ -152,21 +158,24 @@ internal class FormAFactory(
 
     private async Task<Result> AddFormAUgUnits(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
-        foreach (var ugTeamDto in formADto.UgTeams)
+        foreach (var ugTeamFields in formAFields.UgTeams)
         {
-            var ugUnit = await dbContext.UgUnits.FindAsync([ugTeamDto.UgUnitId], cancellationToken);
+            var ugUnit = await dbContext.UgUnits.FindAsync(
+                [ugTeamFields.UgUnitId],
+                cancellationToken
+            );
             if (ugUnit is null)
                 return Error.InvalidArgument("Podana jednostka organizacyjna UG nie istnieje.");
 
             var formAUgUnit = new FormAUgUnit
             {
                 UgUnit = ugUnit,
-                NoOfEmployees = ugTeamDto.NoOfEmployees,
-                NoOfStudents = ugTeamDto.NoOfStudents,
+                NoOfEmployees = ugTeamFields.NoOfEmployees,
+                NoOfStudents = ugTeamFields.NoOfStudents,
             };
             formA.FormAUgUnits.Add(formAUgUnit);
         }
@@ -176,16 +185,16 @@ internal class FormAFactory(
 
     private async Task AddFormAGuestUnits(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedGuestUnits = new HashSet<GuestUnit>();
 
-        foreach (var guestTeamDto in formADto.GuestTeams)
+        foreach (var guestTeamFields in formAFields.GuestTeams)
         {
             var guestUnit = await formsFieldsService.GetUniqueGuestUnit(
-                guestTeamDto,
+                guestTeamFields,
                 alreadyAddedGuestUnits,
                 cancellationToken
             );
@@ -194,7 +203,7 @@ internal class FormAFactory(
             var formAGuestUnit = new FormAGuestUnit
             {
                 GuestUnit = guestUnit,
-                NoOfPersons = guestTeamDto.NoOfPersons,
+                NoOfPersons = guestTeamFields.NoOfPersons,
             };
             formA.FormAGuestUnits.Add(formAGuestUnit);
         }
@@ -202,16 +211,16 @@ internal class FormAFactory(
 
     private async Task AddFormAPublications(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedPublications = new HashSet<Publication>();
 
-        foreach (var publicationDto in formADto.Publications)
+        foreach (var publicationFields in formAFields.Publications)
         {
             var publication = await formsFieldsService.GetUniquePublication(
-                publicationDto,
+                publicationFields,
                 alreadyAddedPublications,
                 cancellationToken
             );
@@ -236,16 +245,16 @@ internal class FormAFactory(
 
     private async Task AddFormASpubTasks(
         FormA formA,
-        FormADto formADto,
+        FormAFields formAFields,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedSpubTasks = new HashSet<SpubTask>();
 
-        foreach (var spubTaskDto in formADto.SpubTasks)
+        foreach (var spubTaskFields in formAFields.SpubTasks)
         {
             var spubTask = await formsFieldsService.GetUniqueSpubTask(
-                spubTaskDto,
+                spubTaskFields,
                 alreadyAddedSpubTasks,
                 cancellationToken
             );

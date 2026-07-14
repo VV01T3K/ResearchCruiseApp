@@ -2031,7 +2031,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CruiseApplicationEvaluationDetailsDto"
+                  "$ref": "#/components/schemas/CruiseApplicationEvaluation"
                 }
               }
             }
@@ -2149,7 +2149,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CruiseApplicationDto"
+                    "$ref": "#/components/schemas/CruiseApplicationSummary"
                   }
                 }
               }
@@ -2181,7 +2181,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormAInitValuesDto"
+                  "$ref": "#/components/schemas/FormAOptions"
                 }
               }
             }
@@ -2212,7 +2212,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormBInitValuesDto"
+                  "$ref": "#/components/schemas/FormBOptions"
                 }
               }
             }
@@ -2254,7 +2254,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormADto"
+                  "$ref": "#/components/schemas/FormAFields"
                 }
               }
             }
@@ -2379,7 +2379,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormBDto"
+                  "$ref": "#/components/schemas/FormBFields"
                 }
               }
             }
@@ -2559,7 +2559,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormCDto"
+                  "$ref": "#/components/schemas/FormCFields"
                 }
               }
             }
@@ -3179,7 +3179,7 @@
           }
         }
       },
-      "CollectedSampleDto": {
+      "CollectedSampleFields": {
         "type": "object",
         "properties": {
           "type": {
@@ -3204,7 +3204,7 @@
           }
         }
       },
-      "ContractDto": {
+      "ContractFields": {
         "type": "object",
         "properties": {
           "category": {
@@ -3237,7 +3237,7 @@
           "scans": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FileDto"
+              "$ref": "#/components/schemas/EncodedFile"
             }
           }
         }
@@ -3312,7 +3312,7 @@
           }
         }
       },
-      "CrewMemberDto": {
+      "CrewMemberFields": {
         "type": "object",
         "properties": {
           "title": {
@@ -3357,7 +3357,68 @@
           }
         }
       },
-      "CruiseApplicationDto": {
+      "CruiseApplicationEvaluation": {
+        "type": "object",
+        "properties": {
+          "formAResearchTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredResearchTask"
+            }
+          },
+          "formAContracts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredContract"
+            }
+          },
+          "ugTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedUgTeam"
+            }
+          },
+          "guestTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuestTeamFields"
+            }
+          },
+          "ugUnitsPoints": {
+            "type": "string"
+          },
+          "formAPublications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredPublication"
+            }
+          },
+          "formASpubTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoredSpubTask"
+            }
+          },
+          "effectsPoints": {
+            "type": "string"
+          }
+        }
+      },
+      "CruiseApplicationStatus": {
+        "enum": [
+          "draft",
+          "waitingForSupervisor",
+          "acceptedBySupervisor",
+          "deniedBySupervisor",
+          "accepted",
+          "denied",
+          "formBRequired",
+          "formBFilled",
+          "undertaken",
+          "reported"
+        ]
+      },
+      "CruiseApplicationSummary": {
         "type": "object",
         "properties": {
           "id": {
@@ -3493,68 +3554,7 @@
           }
         }
       },
-      "CruiseApplicationEvaluationDetailsDto": {
-        "type": "object",
-        "properties": {
-          "formAResearchTasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormAResearchTaskDto"
-            }
-          },
-          "formAContracts": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormAContractDto"
-            }
-          },
-          "ugTeams": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UgTeamWithNameDto"
-            }
-          },
-          "guestTeams": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
-            }
-          },
-          "ugUnitsPoints": {
-            "type": "string"
-          },
-          "formAPublications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormAPublicationDto"
-            }
-          },
-          "formASpubTasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormASpubTaskDto"
-            }
-          },
-          "effectsPoints": {
-            "type": "string"
-          }
-        }
-      },
-      "CruiseApplicationStatus": {
-        "enum": [
-          "draft",
-          "waitingForSupervisor",
-          "acceptedBySupervisor",
-          "deniedBySupervisor",
-          "accepted",
-          "denied",
-          "formBRequired",
-          "formBFilled",
-          "undertaken",
-          "reported"
-        ]
-      },
-      "CruiseDayDetailsDto": {
+      "CruiseDayFields": {
         "type": "object",
         "properties": {
           "number": {
@@ -3856,6 +3856,19 @@
           }
         }
       },
+      "EncodedFile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
       "ExportResponse": {
         "required": [
           "name",
@@ -3871,35 +3884,7 @@
           }
         }
       },
-      "FileDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          }
-        }
-      },
-      "FormAContractDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "contract": {
-            "$ref": "#/components/schemas/ContractDto"
-          },
-          "points": {
-            "type": "string"
-          }
-        }
-      },
-      "FormADto": {
+      "FormAFields": {
         "type": "object",
         "properties": {
           "id": {
@@ -3991,13 +3976,13 @@
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionDto"
+              "$ref": "#/components/schemas/PermissionFields"
             }
           },
           "researchAreaDescriptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchAreaDescriptionDto"
+              "$ref": "#/components/schemas/ResearchAreaSelection"
             }
           },
           "cruiseGoal": {
@@ -4014,37 +3999,37 @@
           "researchTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchTaskDto"
+              "$ref": "#/components/schemas/ResearchTaskFields"
             }
           },
           "contracts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ContractDto"
+              "$ref": "#/components/schemas/ContractFields"
             }
           },
           "ugTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgTeamDto"
+              "$ref": "#/components/schemas/UgTeamFields"
             }
           },
           "guestTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
+              "$ref": "#/components/schemas/GuestTeamFields"
             }
           },
           "publications": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PublicationDto"
+              "$ref": "#/components/schemas/PublicationFields"
             }
           },
           "spubTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SpubTaskDto"
+              "$ref": "#/components/schemas/SpubTaskFields"
             }
           },
           "supervisorEmail": {
@@ -4062,19 +4047,19 @@
           }
         }
       },
-      "FormAInitValuesDto": {
+      "FormAOptions": {
         "type": "object",
         "properties": {
           "cruiseManagers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormUserDto"
+              "$ref": "#/components/schemas/UserOption"
             }
           },
           "deputyManagers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormUserDto"
+              "$ref": "#/components/schemas/UserOption"
             }
           },
           "years": {
@@ -4098,7 +4083,7 @@
           "researchAreas": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchAreaDto"
+              "$ref": "#/components/schemas/ResearchAreaOption"
             }
           },
           "cruiseGoals": {
@@ -4110,19 +4095,19 @@
           "historicalResearchTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchTaskDto"
+              "$ref": "#/components/schemas/ResearchTaskFields"
             }
           },
           "historicalContracts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ContractDto"
+              "$ref": "#/components/schemas/ContractFields"
             }
           },
           "ugUnits": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgUnitDto"
+              "$ref": "#/components/schemas/UgUnitOption"
             }
           },
           "historicalGuestInstitutions": {
@@ -4134,59 +4119,14 @@
           "historicalSpubTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SpubTaskDto"
+              "$ref": "#/components/schemas/SpubTaskFields"
             }
           },
           "historicalPublications": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PublicationDto"
+              "$ref": "#/components/schemas/PublicationFields"
             }
-          }
-        }
-      },
-      "FormAPublicationDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "publication": {
-            "$ref": "#/components/schemas/PublicationDto"
-          },
-          "points": {
-            "type": "string"
-          }
-        }
-      },
-      "FormAResearchTaskDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "researchTask": {
-            "$ref": "#/components/schemas/ResearchTaskDto"
-          },
-          "points": {
-            "type": "string"
-          }
-        }
-      },
-      "FormASpubTaskDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "spubTask": {
-            "$ref": "#/components/schemas/SpubTaskDto"
-          },
-          "points": {
-            "type": "string"
           }
         }
       },
@@ -4198,14 +4138,14 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormADto"
+            "$ref": "#/components/schemas/FormAFields"
           },
           "draft": {
             "type": "boolean"
           }
         }
       },
-      "FormBDto": {
+      "FormBFields": {
         "type": "object",
         "properties": {
           "isCruiseManagerPresent": {
@@ -4216,55 +4156,55 @@
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionDto"
+              "$ref": "#/components/schemas/PermissionFields"
             }
           },
           "ugTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgTeamDto"
+              "$ref": "#/components/schemas/UgTeamFields"
             }
           },
           "guestTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
+              "$ref": "#/components/schemas/GuestTeamFields"
             }
           },
           "crewMembers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CrewMemberDto"
+              "$ref": "#/components/schemas/CrewMemberFields"
             }
           },
           "shortResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShortResearchEquipmentDto"
+              "$ref": "#/components/schemas/ShortTermResearchEquipmentFields"
             }
           },
           "longResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/LongResearchEquipmentDto"
+              "$ref": "#/components/schemas/LongTermResearchEquipmentFields"
             }
           },
           "ports": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PortDto"
+              "$ref": "#/components/schemas/PortCallFields"
             }
           },
           "cruiseDaysDetails": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CruiseDayDetailsDto"
+              "$ref": "#/components/schemas/CruiseDayFields"
             }
           },
           "researchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchEquipmentDto"
+              "$ref": "#/components/schemas/ResearchEquipmentFields"
             }
           },
           "shipEquipmentsIds": {
@@ -4276,13 +4216,13 @@
           }
         }
       },
-      "FormBInitValuesDto": {
+      "FormBOptions": {
         "type": "object",
         "properties": {
           "shipEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShipEquipmentDto"
+              "$ref": "#/components/schemas/ShipEquipmentOption"
             }
           }
         }
@@ -4295,14 +4235,14 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormBDto"
+            "$ref": "#/components/schemas/FormBFields"
           },
           "draft": {
             "type": "boolean"
           }
         }
       },
-      "FormCDto": {
+      "FormCFields": {
         "type": "object",
         "properties": {
           "shipUsage": {
@@ -4318,73 +4258,73 @@
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionDto"
+              "$ref": "#/components/schemas/PermissionFields"
             }
           },
           "researchAreaDescriptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchAreaDescriptionDto"
+              "$ref": "#/components/schemas/ResearchAreaSelection"
             }
           },
           "ugTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UgTeamDto"
+              "$ref": "#/components/schemas/UgTeamFields"
             }
           },
           "guestTeams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GuestTeamDto"
+              "$ref": "#/components/schemas/GuestTeamFields"
             }
           },
           "researchTasksEffects": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchTaskEffectDto"
+              "$ref": "#/components/schemas/ResearchTaskEffectFields"
             }
           },
           "contracts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ContractDto"
+              "$ref": "#/components/schemas/ContractFields"
             }
           },
           "spubTasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SpubTaskDto"
+              "$ref": "#/components/schemas/SpubTaskFields"
             }
           },
           "shortResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShortResearchEquipmentDto"
+              "$ref": "#/components/schemas/ShortTermResearchEquipmentFields"
             }
           },
           "longResearchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/LongResearchEquipmentDto"
+              "$ref": "#/components/schemas/LongTermResearchEquipmentFields"
             }
           },
           "ports": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PortDto"
+              "$ref": "#/components/schemas/PortCallFields"
             }
           },
           "cruiseDaysDetails": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CruiseDayDetailsDto"
+              "$ref": "#/components/schemas/CruiseDayFields"
             }
           },
           "researchEquipments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ResearchEquipmentDto"
+              "$ref": "#/components/schemas/ResearchEquipmentFields"
             }
           },
           "shipEquipmentsIds": {
@@ -4397,7 +4337,7 @@
           "collectedSamples": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CollectedSampleDto"
+              "$ref": "#/components/schemas/CollectedSampleFields"
             }
           },
           "spubReportData": {
@@ -4419,7 +4359,7 @@
           "photos": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FileDto"
+              "$ref": "#/components/schemas/EncodedFile"
             }
           }
         }
@@ -4432,32 +4372,14 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormCDto"
+            "$ref": "#/components/schemas/FormCFields"
           },
           "draft": {
             "type": "boolean"
           }
         }
       },
-      "FormUserDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          }
-        }
-      },
-      "GuestTeamDto": {
+      "GuestTeamFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4583,7 +4505,7 @@
           }
         }
       },
-      "LongResearchEquipmentDto": {
+      "LongTermResearchEquipmentFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4603,7 +4525,27 @@
           }
         }
       },
-      "PermissionDto": {
+      "NamedUgTeam": {
+        "type": "object",
+        "properties": {
+          "ugUnitName": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "noOfEmployees": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          },
+          "noOfStudents": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "PermissionFields": {
         "type": "object",
         "properties": {
           "description": {
@@ -4628,7 +4570,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/FileDto"
+                "$ref": "#/components/schemas/EncodedFile"
               }
             ]
           }
@@ -4654,7 +4596,7 @@
           }
         }
       },
-      "PortDto": {
+      "PortCallFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4712,7 +4654,7 @@
           }
         }
       },
-      "PublicationDto": {
+      "PublicationFields": {
         "type": "object",
         "properties": {
           "id": {
@@ -4861,7 +4803,23 @@
           }
         }
       },
-      "ResearchAreaDescriptionDto": {
+      "ResearchAreaOption": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ResearchAreaSelection": {
         "type": "object",
         "properties": {
           "areaId": {
@@ -4886,23 +4844,7 @@
           }
         }
       },
-      "ResearchAreaDto": {
-        "required": [
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "ResearchEquipmentDto": {
+      "ResearchEquipmentFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -4933,87 +4875,7 @@
           }
         }
       },
-      "ResearchTaskDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "magazine": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "author": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "institution": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "date": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "startDate": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "endDate": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "financingAmount": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "financingApproved": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "description": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "securedAmount": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "ministerialPoints": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      },
-      "ResearchTaskEffectDto": {
+      "ResearchTaskEffectFields": {
         "type": "object",
         "properties": {
           "type": {
@@ -5108,6 +4970,86 @@
           }
         }
       },
+      "ResearchTaskFields": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "magazine": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "author": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "institution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "date": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financingApproved": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "securedAmount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ministerialPoints": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ResendConfirmationEmailRequest": {
         "required": [
           "email"
@@ -5142,7 +5084,67 @@
           }
         }
       },
-      "ShipEquipmentDto": {
+      "ScoredContract": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "contract": {
+            "$ref": "#/components/schemas/ContractFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ScoredPublication": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "publication": {
+            "$ref": "#/components/schemas/PublicationFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ScoredResearchTask": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "researchTask": {
+            "$ref": "#/components/schemas/ResearchTaskFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ScoredSpubTask": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "spubTask": {
+            "$ref": "#/components/schemas/SpubTaskFields"
+          },
+          "points": {
+            "type": "string"
+          }
+        }
+      },
+      "ShipEquipmentOption": {
         "type": "object",
         "properties": {
           "id": {
@@ -5154,7 +5156,7 @@
           }
         }
       },
-      "ShortResearchEquipmentDto": {
+      "ShortTermResearchEquipmentFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -5174,7 +5176,7 @@
           }
         }
       },
-      "SpubTaskDto": {
+      "SpubTaskFields": {
         "type": "object",
         "properties": {
           "name": {
@@ -5220,10 +5222,10 @@
         "type": "object",
         "properties": {
           "form": {
-            "$ref": "#/components/schemas/FormADto"
+            "$ref": "#/components/schemas/FormAFields"
           },
           "initValues": {
-            "$ref": "#/components/schemas/FormAInitValuesDto"
+            "$ref": "#/components/schemas/FormAOptions"
           }
         }
       },
@@ -5252,7 +5254,7 @@
           }
         }
       },
-      "UgTeamDto": {
+      "UgTeamFields": {
         "type": "object",
         "properties": {
           "ugUnitId": {
@@ -5271,27 +5273,7 @@
           }
         }
       },
-      "UgTeamWithNameDto": {
-        "type": "object",
-        "properties": {
-          "ugUnitName": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          },
-          "noOfEmployees": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          },
-          "noOfStudents": {
-            "maxLength": 1024,
-            "minLength": 0,
-            "type": "string"
-          }
-        }
-      },
-      "UgUnitDto": {
+      "UgUnitOption": {
         "type": "object",
         "properties": {
           "id": {
@@ -5367,6 +5349,24 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "UserOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
           }
         }
       },

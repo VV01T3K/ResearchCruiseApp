@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
-public class FormCDto
+public class FormCFields
 {
     [StringLength(1)]
     public string ShipUsage { get; init; } = null!;
@@ -10,33 +10,33 @@ public class FormCDto
     [StringLength(1024)]
     public string DifferentUsage { get; init; } = null!;
 
-    public List<PermissionDto> Permissions { get; init; } = [];
+    public List<PermissionFields> Permissions { get; init; } = [];
 
-    public List<ResearchAreaDescriptionDto> ResearchAreaDescriptions { get; init; } = [];
+    public List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; } = [];
 
-    public List<UgTeamDto> UgTeams { get; init; } = [];
+    public List<UgTeamFields> UgTeams { get; init; } = [];
 
-    public List<GuestTeamDto> GuestTeams { get; init; } = [];
+    public List<GuestTeamFields> GuestTeams { get; init; } = [];
 
-    public List<ResearchTaskEffectDto> ResearchTasksEffects { get; init; } = [];
+    public List<ResearchTaskEffectFields> ResearchTasksEffects { get; init; } = [];
 
-    public List<ContractDto> Contracts { get; init; } = [];
+    public List<ContractFields> Contracts { get; init; } = [];
 
-    public List<SpubTaskDto> SpubTasks { get; init; } = [];
+    public List<SpubTaskFields> SpubTasks { get; init; } = [];
 
-    public List<ShortResearchEquipmentDto> ShortResearchEquipments { get; init; } = [];
+    public List<ShortTermResearchEquipmentFields> ShortResearchEquipments { get; init; } = [];
 
-    public List<LongResearchEquipmentDto> LongResearchEquipments { get; init; } = [];
+    public List<LongTermResearchEquipmentFields> LongResearchEquipments { get; init; } = [];
 
-    public List<PortDto> Ports { get; init; } = [];
+    public List<PortCallFields> Ports { get; init; } = [];
 
-    public List<CruiseDayDetailsDto> CruiseDaysDetails { get; init; } = [];
+    public List<CruiseDayFields> CruiseDaysDetails { get; init; } = [];
 
-    public List<ResearchEquipmentDto> ResearchEquipments { get; init; } = [];
+    public List<ResearchEquipmentFields> ResearchEquipments { get; init; } = [];
 
     public List<Guid> ShipEquipmentsIds { get; init; } = [];
 
-    public List<CollectedSampleDto> CollectedSamples { get; init; } = [];
+    public List<CollectedSampleFields> CollectedSamples { get; init; } = [];
 
     [StringLength(10240)]
     public string? SpubReportData { get; init; } = null!;
@@ -44,5 +44,5 @@ public class FormCDto
     [StringLength(10240)]
     public string? AdditionalDescription { get; init; } = null!;
 
-    public List<FileDto> Photos { get; init; } = []!;
+    public List<EncodedFile> Photos { get; init; } = []!;
 }

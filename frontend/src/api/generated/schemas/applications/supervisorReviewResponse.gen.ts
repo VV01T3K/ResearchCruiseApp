@@ -1,10 +1,10 @@
 import { z as zod } from 'zod';
-import { FormADto } from './formADto.gen.ts';
-import { FormAInitValuesDto } from './formAInitValuesDto.gen.ts';
+import { FormAFields } from './formAFields.gen.ts';
+import { FormAOptions } from './formAOptions.gen.ts';
 
 export const SupervisorReviewResponse = zod.object({
-  "form": FormADto,
-  "initValues": FormAInitValuesDto
+  "form": FormAFields,
+  "initValues": FormAOptions
 });
 
 export type SupervisorReviewResponse = zod.input<typeof SupervisorReviewResponse>;

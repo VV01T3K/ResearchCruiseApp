@@ -1,5 +1,5 @@
-import type { ResearchAreaDto as ResearchAreaOption } from '@/api/generated/schemas';
-export type { ResearchAreaDto as ResearchAreaOption } from '@/api/generated/schemas';
+import type { ResearchAreaOption } from '@/api/generated/schemas';
+export type { ResearchAreaOption } from '@/api/generated/schemas';
 
 export function getResearchAreaName(initialAreas: ResearchAreaOption[], id: string) {
   for (const area of initialAreas) {

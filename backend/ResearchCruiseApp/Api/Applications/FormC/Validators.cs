@@ -12,23 +12,23 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
             () =>
             {
                 RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionDto => permissionDto.Scan is not null)
+                    .Must(permissionFields => permissionFields.Scan is not null)
                     .WithMessage(
                         "Na etapie Formularza C wymagane jest przesłanie skanów pozwoleń."
                     );
 
                 RuleForEach(request => request.Form.Permissions)
-                    .Must(contractDto =>
-                        contractDto.Scan is not null
-                        && fileInspector.IsFilePdf(contractDto.Scan.Content)
+                    .Must(contractFields =>
+                        contractFields.Scan is not null
+                        && fileInspector.IsFilePdf(contractFields.Scan.Content)
                     )
                     .WithMessage("Skan pozwolenia musi być plikiem PDF.");
 
                 RuleForEach(request => request.Form.Permissions)
-                    .Must(contractDto =>
-                        contractDto.Scan is not null
+                    .Must(contractFields =>
+                        contractFields.Scan is not null
                         && fileInspector.IsFileSizeValid(
-                            contractDto.Scan.Content,
+                            contractFields.Scan.Content,
                             PermissionScanLimits.MaxFileSize
                         )
                     )

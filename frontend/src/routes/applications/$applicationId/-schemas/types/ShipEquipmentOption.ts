@@ -1,4 +1,4 @@
-import type { ShipEquipmentDto as GeneratedShipEquipment } from '@/api/generated/schemas';
+import type { ShipEquipmentOption as GeneratedShipEquipment } from '@/api/generated/schemas';
 
 import type { DeepPresent } from '@/types/utils';
 

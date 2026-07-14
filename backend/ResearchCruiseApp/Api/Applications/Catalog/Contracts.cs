@@ -37,7 +37,7 @@ public sealed record ApplicationResponse(
     DateTime? EndDate
 )
 {
-    public static ApplicationResponse From(CruiseApplicationDto application)
+    public static ApplicationResponse From(CruiseApplicationSummary application)
     {
         return new ApplicationResponse(
             application.Id,

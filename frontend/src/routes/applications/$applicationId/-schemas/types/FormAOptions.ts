@@ -1,4 +1,4 @@
-import type { FormAInitValuesDto as GeneratedFormAOptions } from '@/api/generated/schemas';
+import type { FormAOptions as GeneratedFormAOptions } from '@/api/generated/schemas';
 
 import type { ContractValues } from './ContractValues';
 import type { DeepPresent } from '@/types/utils';

@@ -15,7 +15,7 @@ internal class CsvExporter(
     private const string ExportedCruisesFileName = "Rejsy.csv";
     private const string CsvBase64Prefix = "data:text/csv;base64,";
 
-    public async Task<FileDto> ExportCruisesToGoogleCalendar(List<Cruise> cruises)
+    public async Task<EncodedFile> ExportCruisesToGoogleCalendar(List<Cruise> cruises)
     {
         var csvContentBuilder = GetGoogleCalendarCruisesBuilder();
 
@@ -27,7 +27,7 @@ internal class CsvExporter(
         var csvContent = csvContentBuilder.ToString();
         var csvContentEncoded = UrlBase64.Encode(Encoding.UTF8.GetBytes(csvContent));
 
-        var file = new FileDto
+        var file = new EncodedFile
         {
             Name = ExportedCruisesFileName,
             Content = $"{CsvBase64Prefix}{csvContentEncoded}",

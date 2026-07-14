@@ -41,7 +41,7 @@ public static class FormCEndpoints
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
-    private static async Task<Results<Ok<FormCDto>, NotFound>> Get(
+    private static async Task<Results<Ok<FormCFields>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
