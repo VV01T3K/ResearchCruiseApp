@@ -4,29 +4,29 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal static partial class ApplicationMappings
 {
-    public static FormB ToFormB(FormBDto dto)
+    public static FormB ToFormB(FormBFields dto)
     {
         return new FormB { IsCruiseManagerPresent = dto.IsCruiseManagerPresent };
     }
 
-    public static FormBDto ToFormBDto(FormB form)
+    public static FormBFields ToFormBFields(FormB form)
     {
-        return new FormBDto
+        return new FormBFields
         {
             IsCruiseManagerPresent = form.IsCruiseManagerPresent,
-            UgTeams = form.FormBUgUnits.Select(ToUgTeamDto).ToList(),
-            GuestTeams = form.FormBGuestUnits.Select(ToGuestTeamDto).ToList(),
-            CrewMembers = form.CrewMembers.Select(ToCrewMemberDto).ToList(),
+            UgTeams = form.FormBUgUnits.Select(ToUgTeamFields).ToList(),
+            GuestTeams = form.FormBGuestUnits.Select(ToGuestTeamFields).ToList(),
+            CrewMembers = form.CrewMembers.Select(ToCrewMemberFields).ToList(),
             ShortResearchEquipments = form
-                .FormBShortResearchEquipments.Select(ToShortResearchEquipmentDto)
+                .FormBShortResearchEquipments.Select(ToShortTermResearchEquipmentFields)
                 .ToList(),
             LongResearchEquipments = form
-                .FormBLongResearchEquipments.Select(ToLongResearchEquipmentDto)
+                .FormBLongResearchEquipments.Select(ToLongTermResearchEquipmentFields)
                 .ToList(),
-            Ports = form.FormBPorts.Select(ToPortDto).ToList(),
-            CruiseDaysDetails = form.CruiseDaysDetails.Select(ToCruiseDayDetailsDto).ToList(),
+            Ports = form.FormBPorts.Select(ToPortCallFields).ToList(),
+            CruiseDaysDetails = form.CruiseDaysDetails.Select(ToCruiseDayFields).ToList(),
             ResearchEquipments = form
-                .FormBResearchEquipments.Select(ToResearchEquipmentDto)
+                .FormBResearchEquipments.Select(ToResearchEquipmentFields)
                 .ToList(),
             ShipEquipmentsIds = form.ShipEquipments.Select(equipment => equipment.Id).ToList(),
         };

@@ -5,8 +5,8 @@ import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { getContractCategoryName } from '@/api/applications/dto/ContractDto';
-import { EvaluationFormAContract } from '@/api/applications/contracts';
+import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import { EvaluationFormAContract } from '@/routes/applications/-types';
 
 export function ContractsSection() {
   const { evaluation } = useApplicationDetails();

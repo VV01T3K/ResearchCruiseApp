@@ -1,4 +1,4 @@
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { useUserContext } from '@/providers/useUserContext';
 
 type Props = {

@@ -227,4 +227,16 @@ test.describe('session expiration and refresh', () => {
     );
     await expect(page).toHaveURL('/user-management');
   });
+
+  test('failed manual refresh clears the cached current user', async ({ page }) => {
+    await setupAuthMocks(page, { refreshResponse: { status: 401 } });
+
+    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
+    await expect(page.getByText('Zarządzanie użytkownikami')).toBeVisible();
+
+    await page.getByTestId('session-refresh-btn').click();
+
+    await expect(page.getByText('Zarządzanie użytkownikami')).toBeHidden();
+    await expect.poll(() => page.evaluate(() => window.localStorage.getItem('authDetails'))).toBeNull();
+  });
 });

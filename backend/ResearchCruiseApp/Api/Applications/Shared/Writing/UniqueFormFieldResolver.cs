@@ -7,16 +7,16 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compressor compressor)
 {
     public async Task<Permission> GetUniquePermission(
-        PermissionDto permissionDto,
+        PermissionFields permissionFields,
         IEnumerable<Permission> permissionsInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newPermission = ApplicationMappings.ToPermission(permissionDto);
-        if (permissionDto.Scan is not null)
+        var newPermission = ApplicationMappings.ToPermission(permissionFields);
+        if (permissionFields.Scan is not null)
         {
-            newPermission.ScanName = permissionDto.Scan.Name;
-            newPermission.ScanContent = await compressor.Compress(permissionDto.Scan.Content);
+            newPermission.ScanName = permissionFields.Scan.Name;
+            newPermission.ScanContent = await compressor.Compress(permissionFields.Scan.Content);
         }
         var oldPermission =
             Find(newPermission, permissionsInMemory)
@@ -29,25 +29,25 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<ResearchAreaDescription> GetUniqueResearchAreaDescription(
-        ResearchAreaDescriptionDto researchAreaDescriptionDto,
+        ResearchAreaSelection researchAreaSelection,
         IEnumerable<ResearchAreaDescription> researchAreaDescriptionsInMemory,
         CancellationToken cancellationToken
     )
     {
         // If the research area description has a different name, we check if this name already exists in the researchAreasRepository
         if (
-            researchAreaDescriptionDto.AreaId is null
-            && !string.IsNullOrEmpty(researchAreaDescriptionDto.DifferentName)
+            researchAreaSelection.AreaId is null
+            && !string.IsNullOrEmpty(researchAreaSelection.DifferentName)
         )
         {
             var researchArea = await dbContext.ResearchAreas.FirstOrDefaultAsync(
-                researchArea => researchArea.Name == researchAreaDescriptionDto.DifferentName,
+                researchArea => researchArea.Name == researchAreaSelection.DifferentName,
                 cancellationToken
             );
 
             if (researchArea is not null)
             {
-                researchAreaDescriptionDto = researchAreaDescriptionDto with
+                researchAreaSelection = researchAreaSelection with
                 {
                     AreaId = researchArea.Id,
                     DifferentName = null, // Clear the different name since we found a matching research area
@@ -56,7 +56,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
         }
 
         var newResearchAreaDescription = ApplicationMappings.ToResearchAreaDescription(
-            researchAreaDescriptionDto
+            researchAreaSelection
         );
         var oldResearchAreaDescription =
             Find(newResearchAreaDescription, researchAreaDescriptionsInMemory)
@@ -69,12 +69,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<ResearchTask> GetUniqueResearchTask(
-        IResearchTaskDto researchTaskDto,
+        IResearchTaskFields researchTaskFields,
         IEnumerable<ResearchTask> researchTasksInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newResearchTask = ApplicationMappings.ToResearchTask(researchTaskDto);
+        var newResearchTask = ApplicationMappings.ToResearchTask(researchTaskFields);
         var oldResearchTask =
             Find(newResearchTask, researchTasksInMemory)
             ?? await dbContext.ResearchTasks.FirstOrDefaultAsync(
@@ -86,13 +86,13 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<Contract> GetUniqueContract(
-        ContractDto contractDto,
+        ContractFields contractFields,
         IEnumerable<Contract> contractsInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newContract = ApplicationMappings.ToContract(contractDto);
-        foreach (var scan in contractDto.Scans)
+        var newContract = ApplicationMappings.ToContract(contractFields);
+        foreach (var scan in contractFields.Scans)
         {
             if (!string.IsNullOrEmpty(scan.Name) && !string.IsNullOrEmpty(scan.Content))
             {
@@ -146,12 +146,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<Publication> GetUniquePublication(
-        PublicationDto publicationDto,
+        PublicationFields publicationFields,
         IEnumerable<Publication> publicationInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newPublication = ApplicationMappings.ToPublication(publicationDto);
+        var newPublication = ApplicationMappings.ToPublication(publicationFields);
         var oldPublication =
             Find(newPublication, publicationInMemory)
             ?? await dbContext.Publications.FirstOrDefaultAsync(
@@ -163,12 +163,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<SpubTask> GetUniqueSpubTask(
-        SpubTaskDto spubTaskDto,
+        SpubTaskFields spubTaskFields,
         IEnumerable<SpubTask> spubTasksInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newSpubTask = ApplicationMappings.ToSpubTask(spubTaskDto);
+        var newSpubTask = ApplicationMappings.ToSpubTask(spubTaskFields);
         var oldSpubTask =
             Find(newSpubTask, spubTasksInMemory)
             ?? await dbContext.SpubTasks.FirstOrDefaultAsync(
@@ -180,12 +180,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<GuestUnit> GetUniqueGuestUnit(
-        GuestTeamDto guestTeamDto,
+        GuestTeamFields guestTeamFields,
         IEnumerable<GuestUnit> guestUnitsInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newGuestUnit = ApplicationMappings.ToGuestUnit(guestTeamDto);
+        var newGuestUnit = ApplicationMappings.ToGuestUnit(guestTeamFields);
         var oldGuestUnit =
             Find(newGuestUnit, guestUnitsInMemory)
             ?? await dbContext.GuestUnits.FirstOrDefaultAsync(
@@ -197,12 +197,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<CrewMember> GetUniqueCrewMember(
-        CrewMemberDto crewMemberDto,
+        CrewMemberFields crewMemberFields,
         IEnumerable<CrewMember> crewMembersInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newCrewMember = ApplicationMappings.ToCrewMember(crewMemberDto);
+        var newCrewMember = ApplicationMappings.ToCrewMember(crewMemberFields);
         var oldCrewMember =
             Find(newCrewMember, crewMembersInMemory)
             ?? await dbContext.CrewMembers.FirstOrDefaultAsync(
@@ -214,12 +214,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<ResearchEquipment> GetUniqueResearchEquipment(
-        IResearchEquipmentDto researchEquipmentDto,
+        IResearchEquipmentFields researchEquipmentFields,
         IEnumerable<ResearchEquipment> researchEquipmentsInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newResearchEquipment = ApplicationMappings.ToResearchEquipment(researchEquipmentDto);
+        var newResearchEquipment = ApplicationMappings.ToResearchEquipment(researchEquipmentFields);
         var oldResearchEquipment =
             Find(newResearchEquipment, researchEquipmentsInMemory)
             ?? await dbContext.ResearchEquipments.FirstOrDefaultAsync(
@@ -231,12 +231,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<Port> GetUniquePort(
-        PortDto portDto,
+        PortCallFields portCallFields,
         IEnumerable<Port> portsInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newPort = ApplicationMappings.ToPort(portDto);
+        var newPort = ApplicationMappings.ToPort(portCallFields);
         var oldPort =
             Find(newPort, portsInMemory)
             ?? await dbContext.Ports.FirstOrDefaultAsync(
@@ -248,12 +248,12 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     }
 
     public async Task<CruiseDayDetails> GetUniqueCruiseDayDetails(
-        CruiseDayDetailsDto cruiseDayDetailsDto,
+        CruiseDayFields cruiseDayFields,
         IEnumerable<CruiseDayDetails> cruiseDaysDetailsInMemory,
         CancellationToken cancellationToken
     )
     {
-        var newCruiseDayDetails = ApplicationMappings.ToCruiseDayDetails(cruiseDayDetailsDto);
+        var newCruiseDayDetails = ApplicationMappings.ToCruiseDayDetails(cruiseDayFields);
         var oldCruiseDayDetails =
             Find(newCruiseDayDetails, cruiseDaysDetailsInMemory)
             ?? await dbContext.CruiseDaysDetails.FirstOrDefaultAsync(

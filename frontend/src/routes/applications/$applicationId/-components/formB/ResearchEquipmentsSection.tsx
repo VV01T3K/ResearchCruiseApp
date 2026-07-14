@@ -9,7 +9,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { ResearchEquipmentDto } from '@/api/applications/dto/ResearchEquipmentDto';
+import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
 
 const researchEquipmentsColumns = (
   form: FormBContextType['form'],
@@ -17,7 +17,7 @@ const researchEquipmentsColumns = (
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<ResearchEquipmentDto>[] => [
+): ColumnDef<ResearchEquipmentValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -123,7 +123,7 @@ const researchEquipmentsColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev: ResearchEquipmentDto[]) => prev);
+            field.handleChange((prev: ResearchEquipmentValues[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -161,7 +161,7 @@ export function ResearchEquipmentsSection() {
                     insuranceEndDate: null,
                     permission: 'false',
                   });
-                  field.handleChange((prev: ResearchEquipmentDto[]) => prev);
+                  field.handleChange((prev: ResearchEquipmentValues[]) => prev);
                   field.handleBlur();
                 }}
               >

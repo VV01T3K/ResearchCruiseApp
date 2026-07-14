@@ -4,7 +4,7 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal static partial class ApplicationMappings
 {
-    public static FormA ToFormA(FormADto dto)
+    public static FormA ToFormA(FormAFields dto)
     {
         return new FormA
         {
@@ -30,9 +30,9 @@ internal static partial class ApplicationMappings
         };
     }
 
-    public static FormADto ToFormADto(FormA form)
+    public static FormAFields ToFormAFields(FormA form)
     {
-        return new FormADto
+        return new FormAFields
         {
             Id = form.Id,
             CruiseManagerId = form.CruiseManagerId,
@@ -54,40 +54,40 @@ internal static partial class ApplicationMappings
             ShipUsage = form.ShipUsage,
             DifferentUsage = form.DifferentUsage,
             ResearchAreaDescriptions = form
-                .ResearchAreaDescriptions.Select(ToResearchAreaDescriptionDto)
+                .ResearchAreaDescriptions.Select(ToResearchAreaSelection)
                 .ToList(),
-            ResearchTasks = form.FormAResearchTasks.Select(ToResearchTaskDto).ToList(),
-            UgTeams = form.FormAUgUnits.Select(ToUgTeamDto).ToList(),
-            GuestTeams = form.FormAGuestUnits.Select(ToGuestTeamDto).ToList(),
-            Publications = form.FormAPublications.Select(ToPublicationDto).ToList(),
-            SpubTasks = form.FormASpubTasks.Select(ToSpubTaskDto).ToList(),
+            ResearchTasks = form.FormAResearchTasks.Select(ToResearchTaskFields).ToList(),
+            UgTeams = form.FormAUgUnits.Select(ToUgTeamFields).ToList(),
+            GuestTeams = form.FormAGuestUnits.Select(ToGuestTeamFields).ToList(),
+            Publications = form.FormAPublications.Select(ToPublicationFields).ToList(),
+            SpubTasks = form.FormASpubTasks.Select(ToSpubTaskFields).ToList(),
             CruiseGoal = form.CruiseGoal,
             CruiseGoalDescription = form.CruiseGoalDescription,
             SupervisorEmail = form.SupervisorEmail,
         };
     }
 
-    public static FormAResearchTaskDto ToFormAResearchTaskDto(FormAResearchTask task) =>
+    public static ScoredResearchTask ToScoredResearchTask(FormAResearchTask task) =>
         new()
         {
             Id = task.Id,
-            ResearchTask = ToResearchTaskDto(task.ResearchTask),
+            ResearchTask = ToResearchTaskFields(task.ResearchTask),
             Points = task.Points.ToString(),
         };
 
-    public static FormAPublicationDto ToFormAPublicationDto(FormAPublication publication) =>
+    public static ScoredPublication ToScoredPublication(FormAPublication publication) =>
         new()
         {
             Id = publication.Id,
-            Publication = ToPublicationDto(publication.Publication),
+            Publication = ToPublicationFields(publication.Publication),
             Points = publication.Points.ToString(),
         };
 
-    public static FormASpubTaskDto ToFormASpubTaskDto(FormASpubTask task) =>
+    public static ScoredSpubTask ToScoredSpubTask(FormASpubTask task) =>
         new()
         {
             Id = task.Id,
-            SpubTask = ToSpubTaskDto(task.SpubTask),
+            SpubTask = ToSpubTaskFields(task.SpubTask),
             Points = task.Points.ToString(),
         };
 }

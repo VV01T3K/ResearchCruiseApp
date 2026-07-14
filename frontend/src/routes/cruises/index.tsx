@@ -9,12 +9,12 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppTabs } from '@/components/shared/AppTabs';
 import { toast } from '@/components/shared/layout/toast';
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/types/user';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
-import { useAutoPlanCruisesMutation, useCruisesQuery, useDeleteCruiseMutation } from '@/api/cruises/CruisesApiHooks';
-import { CruiseResponse } from '@/api/cruises/contracts';
+import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/')({
   component: CruisesPage,
@@ -22,9 +22,9 @@ export const Route = createFileRoute('/cruises/')({
 });
 
 function CruisesPage() {
-  const cruisesQuery = useCruisesQuery();
-  const deleteCruiseMutation = useDeleteCruiseMutation();
-  const autoAddCruisesMutation = useAutoPlanCruisesMutation();
+  const cruisesQuery = useGetCruisesSuspense();
+  const deleteCruiseMutation = useDeleteCruise();
+  const autoAddCruisesMutation = useAutoPlanCruises();
 
   const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseResponse | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -86,7 +86,7 @@ function CruisesPage() {
             variant="danger"
             className="basis-2/3"
             onClick={async () => {
-              await deleteCruiseMutation.mutateAsync(cruiseSelectedForDeletion!.id!);
+              await deleteCruiseMutation.mutateAsync({ cruiseId: cruiseSelectedForDeletion!.id });
               setCruiseSelectedForDeletion(undefined);
             }}
             disabled={deleteCruiseMutation.isPending}

@@ -1,8 +1,8 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { DidacticsResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { DidacticsResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: DidacticsResearchTaskDto;
+  data: DidacticsResearchTaskValues;
 };
 export function DidacticsResearchTaskDetails({ data }: Props) {
   return (

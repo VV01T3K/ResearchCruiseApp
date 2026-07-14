@@ -12,14 +12,14 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { CrewMemberDto } from '@/api/applications/dto/CrewMemberDto';
-import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
-import { UGTeamDto } from '@/api/applications/dto/UGTeamDto';
+import { CrewMemberValues } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
+import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import { UgTeamValues } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 
 export function MembersSection() {
   const { form, formB, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UGTeamDto>[] {
+  function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UgTeamValues>[] {
     const tableField = field;
     return [
       {
@@ -51,7 +51,7 @@ export function MembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev: UGTeamDto[]) => prev);
+                  tableField.handleChange((prev: UgTeamValues[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -78,7 +78,7 @@ export function MembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev: UGTeamDto[]) => prev);
+                  tableField.handleChange((prev: UgTeamValues[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -97,9 +97,9 @@ export function MembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: UGTeamDto[]) => prev);
+                field.handleChange((prev: UgTeamValues[]) => prev);
                 field.handleBlur();
-                tableField.handleChange((prev: UGTeamDto[]) => prev);
+                tableField.handleChange((prev: UgTeamValues[]) => prev);
               }}
               disabled={isReadonly}
             />
@@ -110,7 +110,7 @@ export function MembersSection() {
     ];
   }
 
-  function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamDto>[] {
+  function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamValues>[] {
     const tableField = field;
     return [
       {
@@ -158,7 +158,7 @@ export function MembersSection() {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x.toString());
-                  tableField.handleChange((prev: GuestTeamDto[]) => prev);
+                  tableField.handleChange((prev: GuestTeamValues[]) => prev);
                 }}
                 onBlur={field.handleBlur}
                 errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
@@ -177,9 +177,9 @@ export function MembersSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: GuestTeamDto[]) => prev);
+                field.handleChange((prev: GuestTeamValues[]) => prev);
                 field.handleBlur();
-                tableField.handleChange((prev: GuestTeamDto[]) => prev);
+                tableField.handleChange((prev: GuestTeamValues[]) => prev);
               }}
               disabled={isReadonly}
             />
@@ -190,7 +190,7 @@ export function MembersSection() {
     ];
   }
 
-  const crewMembersColumns: ColumnDef<CrewMemberDto>[] = [
+  const crewMembersColumns: ColumnDef<CrewMemberValues>[] = [
     {
       header: 'Lp.',
       enableColumnFilter: false,
@@ -281,7 +281,11 @@ export function MembersSection() {
                       value: unit.name,
                       content: unit.name,
                       onClick: () => {
-                        field.pushValue({ ugUnitId: unit.id, noOfEmployees: '0', noOfStudents: '0' });
+                        field.pushValue({
+                          ugUnitId: unit.id,
+                          noOfEmployees: '0',
+                          noOfStudents: '0',
+                        });
                         field.handleChange((prev) => prev);
                         field.handleBlur();
                       },

@@ -13,7 +13,7 @@ public sealed record ApplicationCruiseResponse(
     ApplicationCruisePersonResponse MainManager,
     ApplicationCruisePersonResponse DeputyManager,
     List<ApplicationCruiseApplicationSummaryResponse> Applications,
-    string Status,
+    CruiseStatus Status,
     string? Title,
     bool ShipUnavailable
 )
@@ -53,7 +53,7 @@ public sealed record ApplicationCruiseResponse(
                     )
                 )
                 .ToList(),
-            cruise.Status.ToCode(),
+            cruise.Status,
             cruise.Title,
             cruise.ShipUnavailable
         );

@@ -10,7 +10,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
-import { CruiseApplicationDto } from '@/api/applications/dto/CruiseApplicationDto';
+import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
 
 export function ApplicationsSection() {
@@ -30,7 +30,7 @@ export function ApplicationsSection() {
     field.handleBlur();
   }
 
-  function getColumns(field: AnyFieldApi, attached: boolean): ColumnDef<CruiseApplicationDto>[] {
+  function getColumns(field: AnyFieldApi, attached: boolean): ColumnDef<CruiseApplicationCandidate>[] {
     return [
       {
         header: 'Numer',
@@ -108,7 +108,7 @@ export function ApplicationsSection() {
               ),
               size: 5,
             },
-          ] as ColumnDef<CruiseApplicationDto>[])
+          ] as ColumnDef<CruiseApplicationCandidate>[])
         : []),
     ];
   }

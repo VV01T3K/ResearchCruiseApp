@@ -79,16 +79,16 @@ internal class CruiseEffectService(
 
     public async Task AddResearchTasksEffects(
         FormC formC,
-        List<ResearchTaskEffectDto> researchTaskEffectDtos,
+        List<ResearchTaskEffectFields> researchTaskEffects,
         CancellationToken cancellationToken
     )
     {
         var alreadyAddedResearchTasks = new HashSet<ResearchTask>();
 
-        foreach (var researchTaskEffectDto in researchTaskEffectDtos)
+        foreach (var effectFields in researchTaskEffects)
         {
             var researchTask = await formsFieldsService.GetUniqueResearchTask(
-                researchTaskEffectDto,
+                effectFields,
                 alreadyAddedResearchTasks,
                 cancellationToken
             );
@@ -97,10 +97,10 @@ internal class CruiseEffectService(
             var researchTaskEffect = new ResearchTaskEffect
             {
                 ResearchTask = researchTask,
-                Done = researchTaskEffectDto.Done,
-                PublicationMinisterialPoints = researchTaskEffectDto.PublicationMinisterialPoints,
-                ManagerConditionMet = researchTaskEffectDto.ManagerConditionMet,
-                DeputyConditionMet = researchTaskEffectDto.DeputyConditionMet,
+                Done = effectFields.Done,
+                PublicationMinisterialPoints = effectFields.PublicationMinisterialPoints,
+                ManagerConditionMet = effectFields.ManagerConditionMet,
+                DeputyConditionMet = effectFields.DeputyConditionMet,
             };
             formC.ResearchTaskEffects.Add(researchTaskEffect);
         }
