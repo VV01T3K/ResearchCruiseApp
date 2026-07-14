@@ -12,7 +12,7 @@ public sealed record CruiseResponse(
     PersonResponse MainManager,
     PersonResponse DeputyManager,
     List<ApplicationSummaryResponse> Applications,
-    string Status,
+    CruiseStatus Status,
     string? Title,
     bool ShipUnavailable
 )
@@ -50,7 +50,7 @@ public sealed record CruiseResponse(
                     evaluator.GetPointsSum(application).ToString()
                 ))
                 .ToList(),
-            cruise.Status.ToCode(),
+            cruise.Status,
             cruise.Title,
             cruise.ShipUnavailable
         );

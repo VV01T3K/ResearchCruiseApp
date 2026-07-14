@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role, getRoleLabel } from '@/models/shared/Role';
+import { Role, getRoleLabel } from '@/types/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import React from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
@@ -11,12 +11,12 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
-import { User } from '@/models/shared/User';
+import { User } from '@/types/user';
 import { useUserContext } from '@/providers/useUserContext';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';
 import { EditForm } from './-components/EditForm';
-import { useUsersQuery } from '@/api/users/UserManagementApiHooks';
+import { useGetUsersSuspense } from '@/api/generated/endpoints/users.gen';
 
 export const Route = createFileRoute('/user-management/')({
   component: UserManagementPage,
@@ -41,7 +41,9 @@ function UserManagementPage() {
   const userContext = useUserContext();
   const [selectedUsers, setSelectedUsers] = React.useState<RowSelectionState>({});
   const [modalState, setModalState] = React.useState<ModalStates>({ state: 'none' });
-  const usersQuery = useUsersQuery();
+  const usersQuery = useGetUsersSuspense({
+    query: { select: (users) => users.map((user) => ({ ...user, roles: user.roles as Role[] })) },
+  });
   const currentUserRole = userContext.currentUser?.roles[0] as Role;
 
   async function handleModalClose() {

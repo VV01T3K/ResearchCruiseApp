@@ -9,12 +9,12 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getFormErrorMessage, navigateToFirstError, removeEmptyValues } from '@/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/FormView';
-import { getCruiseFormValidationSchema } from '@/routes/cruises/-schemas/form.schema';
-import { useCreateCruiseMutation } from '@/api/cruises/CruisesApiHooks';
-import { useCruisePlanningCandidatesQuery } from '@/api/applications/CruisePlanningApiHooks';
-import { CruiseFormValues } from '@/api/cruises/contracts';
+import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
+import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
+import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
+import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -36,8 +36,10 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 function NewCruisePage() {
-  const cruiseApplicationsQuery = useCruisePlanningCandidatesQuery();
-  const createCruiseMutation = useCreateCruiseMutation();
+  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense({
+    query: { select: (applications) => applications as CruiseApplicationCandidate[] },
+  });
+  const createCruiseMutation = useCreateCruise();
   const search = Route.useSearch();
 
   const navigate = useNavigate();
@@ -57,7 +59,7 @@ function NewCruisePage() {
       shipUnavailable: search.blockade ?? false,
     } as CruiseFormValues,
     validators: {
-      onChange: getCruiseFormValidationSchema(),
+      onChange: getCruiseFormSchema(),
     },
   });
 
@@ -73,21 +75,20 @@ function NewCruisePage() {
 
     trackFormSubmit('new-cruise', 'valid', form.state);
 
-    const dto = removeEmptyValues(form.state.values, [
-      'managersTeam.mainCruiseManagerId',
-      'managersTeam.mainDeputyManagerId',
-    ]);
-    await createCruiseMutation.mutateAsync(dto, {
-      onSuccess: () => {
-        navigate({ to: '/cruises' });
-        toast.success('Rejs został utworzony pomyślnie.');
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-        navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-      },
-    });
+    await createCruiseMutation.mutateAsync(
+      { data: getCruiseFormSchema().parse(form.state.values) },
+      {
+        onSuccess: () => {
+          navigate({ to: '/cruises' });
+          toast.success('Rejs został utworzony pomyślnie.');
+        },
+        onError: (error) => {
+          console.error(error);
+          toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+          navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+        },
+      }
+    );
   }
 
   const buttons = (

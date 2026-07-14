@@ -3,10 +3,10 @@ import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppAlert } from '@/components/shared/AppAlert';
-import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
+import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
 interface Props {
-  blockades?: BlockadePeriodDto[];
+  blockades?: BlockadePeriod[];
   year: number;
 }
 
@@ -39,7 +39,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
                 data-testid="form-a-blockade-warning-content"
               >
                 <ul className="mt-2 space-y-1" data-testid="form-a-blockade-warning-list">
-                  {blockades.map((blockade: BlockadePeriodDto) => (
+                  {blockades.map((blockade: BlockadePeriod) => (
                     <li key={`${blockade.startDate}-${blockade.endDate}`} className="text-sm">
                       <span className="font-bold">{blockade.title}</span>:{' '}
                       {new Date(blockade.startDate).toLocaleDateString('pl-PL')} -{' '}

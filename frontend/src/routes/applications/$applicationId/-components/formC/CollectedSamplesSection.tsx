@@ -10,15 +10,15 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { CollectedSampleDto } from '@/api/applications/dto/CollectedSampleDto';
-import { FormCDto } from '@/api/applications/dto/FormCDto';
+import { CollectedSampleValues } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
+import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 
 const collectedSamplesColumns = (
-  form: AnyReactFormApi<FormCDto>,
+  form: AnyReactFormApi<FormCValues>,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<CollectedSampleDto>[] => [
+): ColumnDef<CollectedSampleValues>[] => [
   {
     header: 'Rodzaj materiału badawczego/próbek/danych',
     cell: ({ row }) => (
@@ -135,8 +135,8 @@ export function CollectedSamplesSection() {
                     amount: '0',
                     analysis: '',
                     publishing: '',
-                  } as CollectedSampleDto);
-                  field.handleChange((prev: CollectedSampleDto[]) => prev);
+                  } as CollectedSampleValues);
+                  field.handleChange((prev: CollectedSampleValues[]) => prev);
                   field.handleBlur();
                 }}
               >

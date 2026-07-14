@@ -42,7 +42,7 @@ public static class FormBEndpoints
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
-    private static async Task<Results<Ok<FormBDto>, NotFound>> Get(
+    private static async Task<Results<Ok<FormBFields>, NotFound>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
         FormReader forms,

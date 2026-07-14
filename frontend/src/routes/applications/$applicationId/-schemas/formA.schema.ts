@@ -1,18 +1,22 @@
 import { literal, z } from 'zod';
 
-import { groupBy } from '@/lib/utils';
+import { groupBy, removeEmptyValues } from '@/lib/utils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
-import { ContractDtoValidationSchema } from '@/api/applications/dto/ContractDto';
-import { CruiseGoal, CruisePeriodValidationSchema } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { GuestTeamDtoValidationSchema } from '@/api/applications/dto/GuestTeamDto';
-import { PermissionDtoValidationSchema } from '@/api/applications/dto/PermissionDto';
-import { PublicationDtoValidationSchema } from '@/api/applications/dto/PublicationDto';
-import { ResearchTaskDtoValidationSchema } from '@/api/applications/dto/ResearchTaskDto';
-import { SpubTaskDtoValidationSchema } from '@/api/applications/dto/SpubTaskDto';
-import { UGTeamDtoValidationSchema } from '@/api/applications/dto/UGTeamDto';
-import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
-import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/applications/dto/ResearchAreaDescriptionDto';
+import { ContractValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import {
+  CruiseGoal,
+  CruisePeriodValidationSchema,
+  type FormAValues,
+} from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { GuestTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import { PermissionValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import { PublicationValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import { ResearchTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { SpubTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import { FormAWriteRequest, type BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
+import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 
 export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   cruiseManagerId: 1,
@@ -64,7 +68,7 @@ function hasEnoughDaysInPeriod(period: [string, string], year: number, cruiseDur
   return periodDays >= cruiseDurationDays;
 }
 
-const ManagerAndDeputyManagerValidationSchema = (initValues: FormAInitValuesDto) =>
+const ManagerAndDeputyManagerValidationSchema = (initValues: FormAOptions) =>
   z
     .object({
       cruiseManagerId: z
@@ -130,7 +134,7 @@ const CruiseGoalValidationSchema = z
     }
   });
 
-const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
+const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   type OverlappingBlockade = {
     title: string;
     start: Date;
@@ -350,7 +354,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriodDto[]) => {
     );
 };
 
-const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
+const OtherValidationSchema = (initValues: FormAOptions) =>
   z
     .object({
       id: z.guid().optional(),
@@ -370,16 +374,16 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
         return !isNaN(parsed) && parsed > 0 && parsed <= 1440;
       }, 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)'),
       periodNotes: z.string(),
-      permissions: PermissionDtoValidationSchema.array().refine(
+      permissions: PermissionValuesSchema.array().refine(
         (val) => val.every((x) => !x.scan),
         'Skan nie może być dostarczony na tym etapie'
       ),
-      researchAreaDescriptions: getResearchAreaDescriptionDtoValidationSchema(initValues)
+      researchAreaDescriptions: getResearchAreaValuesSchema(initValues)
         .array()
         .min(1, 'Co najmniej jeden rejon badań jest wymagany'),
-      researchTasks: ResearchTaskDtoValidationSchema.array().min(1, 'Co najmniej jedno zadanie badawcze jest wymagane'),
-      contracts: ContractDtoValidationSchema.array(),
-      ugTeams: UGTeamDtoValidationSchema.array()
+      researchTasks: ResearchTaskValuesSchema.array().min(1, 'Co najmniej jedno zadanie badawcze jest wymagane'),
+      contracts: ContractValuesSchema.array(),
+      ugTeams: UgTeamValuesSchema.array()
         .min(1, 'Co najmniej jeden zespół UG jest wymagany')
         .refine(
           (val) => val.every((x) => parseInt(x.noOfEmployees, 10) + parseInt(x.noOfStudents, 10) > 0),
@@ -389,9 +393,9 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
           (val) => groupBy(val, (x) => x.ugUnitId).filter((x) => x[1].length > 1).length === 0,
           'Nie można dodać dwóch zespołów UG z tego samego wydziału'
         ),
-      guestTeams: GuestTeamDtoValidationSchema.array(),
-      publications: PublicationDtoValidationSchema.array(),
-      spubTasks: SpubTaskDtoValidationSchema.array(),
+      guestTeams: GuestTeamValuesSchema.array(),
+      publications: PublicationValuesSchema.array(),
+      spubTasks: SpubTaskValuesSchema.array(),
       supervisorEmail: z.email('Niepoprawny adres email'),
       note: z.string().optional(),
     })
@@ -497,10 +501,52 @@ const OtherValidationSchema = (initValues: FormAInitValuesDto) =>
       }
     });
 
-export function getFormAValidationSchema(initValues: FormAInitValuesDto, blockades?: BlockadePeriodDto[]) {
+export function getFormAValidationSchema(initValues: FormAOptions, blockades?: BlockadePeriod[]) {
   return ManagerAndDeputyManagerValidationSchema(initValues)
     .and(ShipUsageValidationSchema)
     .and(CruiseGoalValidationSchema)
     .and(BlockadeCollisionValidationSchema(blockades))
     .and(OtherValidationSchema(initValues));
+}
+
+export function getFormAWriteSchema(
+  initValues: FormAOptions,
+  draft: boolean,
+  blockades?: BlockadePeriod[],
+  applicationId?: string
+) {
+  return getFormAValidationSchema(initValues, blockades)
+    .transform((form): z.input<typeof FormAWriteRequest> => mapFormAWriteRequest(form, draft, applicationId))
+    .pipe(FormAWriteRequest);
+}
+
+export function parseFormADraft(form: FormAValues, applicationId?: string) {
+  return FormAWriteRequest.parse(mapFormAWriteRequest(form, true, applicationId));
+}
+
+function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?: string) {
+  return {
+    form: {
+      ...removeEmptyValues(form, [
+        'year',
+        'periodNotes',
+        'differentUsage',
+        'supervisorEmail',
+        'cruiseGoalDescription',
+        'researchAreaInfo',
+      ]),
+      acceptablePeriod: form.acceptablePeriod || undefined,
+      optimalPeriod: form.optimalPeriod || undefined,
+      precisePeriodStart: toApiDateTime(form.precisePeriodStart),
+      precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
+      ...(applicationId ? { id: applicationId } : {}),
+    },
+    draft,
+  } satisfies z.input<typeof FormAWriteRequest>;
+}
+
+function toApiDateTime(value: string): string | undefined {
+  if (!value) return undefined;
+  if (/(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return value;
+  return value.includes('T') ? `${value}Z` : `${value}T00:00:00Z`;
 }

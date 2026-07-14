@@ -139,14 +139,22 @@ test('cruise create flow uses v2 planning candidates and create route', async ({
   await expect
     .poll(() => createBody)
     .toMatchObject({
-      endDate: '2026-05-18T00:00:00.000Z',
       mainManagerId: manager.id,
       deputyManagerId: deputy.id,
       cruiseApplicationIds: [],
       shipUnavailable: false,
     });
-  expect((createBody as { startDate: string }).startDate).toMatch(/^2026-05-17T/);
+  const submittedDates = createBody as { startDate: string; endDate: string };
+  expect(toLocalDate(submittedDates.startDate)).toBe('2026-05-17');
+  expect(toLocalDate(submittedDates.endDate)).toBe('2026-05-18');
 });
+
+function toLocalDate(value: string) {
+  const date = new Date(value);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
 
 test('cruise detail update and lifecycle actions use v2 routes', async ({ page }) => {
   await seedAuthenticatedAdmin(page);

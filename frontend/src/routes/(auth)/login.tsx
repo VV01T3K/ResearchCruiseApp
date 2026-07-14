@@ -10,7 +10,7 @@ import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLab
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
 import { useUserContext } from '@/providers/useUserContext';
-import { SignInResult } from '@/models/user/Results';
+import { SignInResult } from '@/types/user';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,

@@ -1,10 +1,10 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
-import { ProjectResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: ProjectResearchTaskDto;
+  data: ProjectResearchTaskValues;
 };
 export function ProjectResearchTaskDetails({ data }: Props) {
   return (

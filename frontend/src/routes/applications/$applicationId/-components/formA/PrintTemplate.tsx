@@ -11,10 +11,10 @@ import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
-import { getContractCategoryName } from '@/api/applications/dto/ContractDto';
-import { getPublicationCategoryLabel } from '@/api/applications/dto/PublicationDto';
-import { getResearchAreaName } from '@/api/applications/dto/ResearchAreaDto';
-import { getTaskName } from '@/api/applications/dto/ResearchTaskDto';
+import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
   ref: RefObject<HTMLDivElement | null>;

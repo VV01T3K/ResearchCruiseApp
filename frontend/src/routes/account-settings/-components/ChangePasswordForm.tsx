@@ -7,7 +7,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useChangePasswordMutation } from '@/api/users/CurrentUserApiHooks';
+import { useChangeCurrentUserPassword } from '@/api/generated/endpoints/users.gen';
 
 const validationSchema = z
   .object({
@@ -34,7 +34,12 @@ const validationSchema = z
 
 export function ChangePasswordForm() {
   const [result, setResult] = React.useState<'success' | 'error'>();
-  const { mutateAsync } = useChangePasswordMutation({ setResult });
+  const { mutateAsync } = useChangeCurrentUserPassword({
+    mutation: {
+      onSuccess: () => setResult('success'),
+      onError: () => setResult('error'),
+    },
+  });
   const form = useForm({
     defaultValues: {
       password: '',
@@ -52,8 +57,7 @@ export function ChangePasswordForm() {
       }
 
       await mutateAsync({
-        password: value.password,
-        newPassword: value.newPassword,
+        data: { password: value.password, newPassword: value.newPassword },
       }).catch(() => {});
 
       formApi.reset();

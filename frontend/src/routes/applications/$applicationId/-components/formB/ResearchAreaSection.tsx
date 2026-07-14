@@ -3,13 +3,13 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { ResearchAreaDescriptionDto } from '@/api/applications/dto/ResearchAreaDescriptionDto';
-import { getResearchAreaName } from '@/api/applications/dto/ResearchAreaDto';
+import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
 
 export function ResearchAreaSection() {
   const { formA, formAInitValues, isReadonly } = useFormB();
 
-  const columns: ColumnDef<ResearchAreaDescriptionDto>[] = [
+  const columns: ColumnDef<ResearchAreaValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
-public class FormADto
+public class FormAFields
 {
     public Guid? Id { get; init; }
 
@@ -36,26 +38,26 @@ public class FormADto
     [StringLength(1024)]
     public string DifferentUsage { get; init; } = null!;
 
-    public List<PermissionDto> Permissions { get; init; } = [];
+    public List<PermissionFields> Permissions { get; init; } = [];
 
-    public List<ResearchAreaDescriptionDto> ResearchAreaDescriptions { get; init; } = [];
+    public List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; } = [];
 
     public string? CruiseGoal { get; init; }
 
     [StringLength(10240)]
     public string CruiseGoalDescription { get; init; } = null!;
 
-    public List<ResearchTaskDto> ResearchTasks { get; init; } = [];
+    public List<ResearchTaskFields> ResearchTasks { get; init; } = [];
 
-    public List<ContractDto> Contracts { get; init; } = [];
+    public List<ContractFields> Contracts { get; init; } = [];
 
-    public List<UgTeamDto> UgTeams { get; init; } = [];
+    public List<UgTeamFields> UgTeams { get; init; } = [];
 
-    public List<GuestTeamDto> GuestTeams { get; init; } = [];
+    public List<GuestTeamFields> GuestTeams { get; init; } = [];
 
-    public List<PublicationDto> Publications { get; init; } = [];
+    public List<PublicationFields> Publications { get; init; } = [];
 
-    public List<SpubTaskDto> SpubTasks { get; init; } = [];
+    public List<SpubTaskFields> SpubTasks { get; init; } = [];
 
     [StringLength(1024)]
     public string SupervisorEmail { get; init; } = null!;
@@ -64,48 +66,48 @@ public class FormADto
     public string? Note { get; set; }
 }
 
-public class FormAContractDto
+public class ScoredContract
 {
     public Guid Id { get; init; }
 
-    public ContractDto Contract { get; set; } = null!;
+    public ContractFields Contract { get; set; } = null!;
 
     public string Points { get; init; } = "0";
 }
 
-public class FormAPublicationDto
+public class ScoredPublication
 {
     public Guid Id { get; init; }
 
-    public PublicationDto Publication { get; init; } = null!;
+    public PublicationFields Publication { get; init; } = null!;
 
     public string Points { get; init; } = "0";
 }
 
-public class FormAResearchTaskDto
+public class ScoredResearchTask
 {
     public Guid Id { get; init; }
 
-    public ResearchTaskDto ResearchTask { get; init; } = null!;
+    public ResearchTaskFields ResearchTask { get; init; } = null!;
 
     public string Points { get; init; } = "0";
 }
 
-public class FormASpubTaskDto
+public class ScoredSpubTask
 {
     public Guid Id { get; init; }
 
-    public SpubTaskDto SpubTask { get; init; } = null!;
+    public SpubTaskFields SpubTask { get; init; } = null!;
 
     public string Points { get; init; } = "0";
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-public class FormAInitValuesDto
+public class FormAOptions
 {
-    public List<FormUserDto> CruiseManagers { get; set; } = [];
+    public List<UserOption> CruiseManagers { get; set; } = [];
 
-    public List<FormUserDto> DeputyManagers { get; set; } = [];
+    public List<UserOption> DeputyManagers { get; set; } = [];
 
     public List<string> Years { get; set; } = [];
 
@@ -113,23 +115,23 @@ public class FormAInitValuesDto
 
     public List<string> StandardSpubTasks { get; set; } = [];
 
-    public List<ResearchAreaDto> ResearchAreas { get; set; } = [];
+    public List<ResearchAreaOption> ResearchAreas { get; set; } = [];
 
     public List<string> CruiseGoals { get; set; } = [];
 
-    public List<ResearchTaskDto> HistoricalResearchTasks { get; set; } = [];
+    public List<ResearchTaskFields> HistoricalResearchTasks { get; set; } = [];
 
-    public List<ContractDto> HistoricalContracts { get; set; } = [];
+    public List<ContractFields> HistoricalContracts { get; set; } = [];
 
-    public List<UgUnitDto> UgUnits { get; set; } = [];
+    public List<UgUnitOption> UgUnits { get; set; } = [];
 
     public List<string> HistoricalGuestInstitutions { get; set; } = [];
 
-    public List<SpubTaskDto> HistoricalSpubTasks { get; set; } = [];
-    public List<PublicationDto> HistoricalPublications { get; set; } = [];
+    public List<SpubTaskFields> HistoricalSpubTasks { get; set; } = [];
+    public List<PublicationFields> HistoricalPublications { get; set; } = [];
 }
 
-public class CruiseApplicationDto
+public class CruiseApplicationSummary
 {
     public Guid Id { get; init; }
 
@@ -137,6 +139,7 @@ public class CruiseApplicationDto
 
     public DateOnly Date { get; init; }
 
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
     public int Year { get; init; }
 
     public Guid CruiseManagerId { get; init; }
@@ -161,9 +164,10 @@ public class CruiseApplicationDto
 
     public bool HasFormC { get; init; }
 
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
     public int Points { get; set; }
 
-    public string Status { get; init; } = null!;
+    public CruiseApplicationStatus Status { get; init; }
 
     public string EffectsDoneRate { get; set; } = "0";
 
@@ -171,6 +175,7 @@ public class CruiseApplicationDto
 
     public string? CruiseHours { get; init; }
 
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
     public float? CruiseDays { get; set; }
 
     public string? AcceptablePeriodBeg { get; init; }
@@ -190,26 +195,26 @@ public class CruiseApplicationDto
     public DateTime? EndDate { get; init; }
 }
 
-public class CruiseApplicationEvaluationDetailsDto
+public class CruiseApplicationEvaluation
 {
-    public List<FormAResearchTaskDto> FormAResearchTasks { get; init; } = [];
+    public List<ScoredResearchTask> FormAResearchTasks { get; init; } = [];
 
-    public List<FormAContractDto> FormAContracts { get; init; } = [];
+    public List<ScoredContract> FormAContracts { get; init; } = [];
 
-    public List<UgTeamWithNameDto> UgTeams { get; init; } = [];
+    public List<NamedUgTeam> UgTeams { get; init; } = [];
 
-    public List<GuestTeamDto> GuestTeams { get; init; } = [];
+    public List<GuestTeamFields> GuestTeams { get; init; } = [];
 
     public string UgUnitsPoints { get; init; } = null!;
 
-    public List<FormAPublicationDto> FormAPublications { get; init; } = [];
+    public List<ScoredPublication> FormAPublications { get; init; } = [];
 
-    public List<FormASpubTaskDto> FormASpubTasks { get; init; } = [];
+    public List<ScoredSpubTask> FormASpubTasks { get; init; } = [];
 
     public string EffectsPoints { get; init; } = null!;
 }
 
-public class PermissionDto
+public class PermissionFields
 {
     [StringLength(1024)]
     public string? Description { get; init; }
@@ -217,10 +222,10 @@ public class PermissionDto
     [StringLength(1024)]
     public string? Executive { get; init; }
 
-    public FileDto? Scan { get; set; }
+    public FileContent? Scan { get; set; }
 }
 
-public class ContractDto
+public class ContractFields
 {
     public string Category { get; init; } = null!;
 
@@ -232,10 +237,10 @@ public class ContractDto
 
     public string? Description { get; init; }
 
-    public List<FileDto> Scans { get; set; } = [];
+    public List<FileContent> Scans { get; set; } = [];
 }
 
-public interface IResearchTaskDto
+public interface IResearchTaskFields
 {
     string Type { get; init; }
 
@@ -264,7 +269,7 @@ public interface IResearchTaskDto
     string? MinisterialPoints { get; init; }
 }
 
-public class ResearchTaskDto : IResearchTaskDto
+public class ResearchTaskFields : IResearchTaskFields
 {
     public string Type { get; init; } = null!;
 
@@ -293,7 +298,7 @@ public class ResearchTaskDto : IResearchTaskDto
     public string? MinisterialPoints { get; init; }
 }
 
-public class ResearchTaskEffectDto : IResearchTaskDto
+public class ResearchTaskEffectFields : IResearchTaskFields
 {
     public string Type { get; init; } = null!;
 
@@ -330,7 +335,7 @@ public class ResearchTaskEffectDto : IResearchTaskDto
     public string DeputyConditionMet { get; init; } = null!;
 }
 
-public class PublicationDto
+public class PublicationFields
 {
     public Guid Id { get; set; }
 
@@ -355,10 +360,10 @@ public class UserPublicationDto
 
     public Guid UserId { get; init; }
 
-    public PublicationDto Publication { get; init; } = null!;
+    public PublicationFields Publication { get; init; } = null!;
 }
 
-public class SpubTaskDto
+public class SpubTaskFields
 {
     public string? Name { get; init; }
 
@@ -368,14 +373,14 @@ public class SpubTaskDto
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-public class ResearchAreaDto(Guid id, string name)
+public class ResearchAreaOption(Guid id, string name)
 {
     public Guid Id { get; set; } = id;
 
     public string Name { get; set; } = name;
 }
 
-public record ResearchAreaDescriptionDto
+public record ResearchAreaSelection
 {
     public Guid? AreaId { get; init; }
 
@@ -386,7 +391,7 @@ public record ResearchAreaDescriptionDto
     public string Info { get; init; } = "";
 }
 
-public class UgTeamDto
+public class UgTeamFields
 {
     public Guid UgUnitId { get; init; }
 
@@ -397,7 +402,7 @@ public class UgTeamDto
     public string NoOfStudents { get; init; } = null!;
 }
 
-public class UgTeamWithNameDto
+public class NamedUgTeam
 {
     [StringLength(1024)]
     public string UgUnitName { get; init; } = null!;
@@ -409,21 +414,21 @@ public class UgTeamWithNameDto
     public string NoOfStudents { get; init; } = null!;
 }
 
-public class UgUnitDto
+public class UgUnitOption
 {
     public Guid Id { get; init; }
 
     public string Name { get; init; } = null!;
 }
 
-public class GuestTeamDto
+public class GuestTeamFields
 {
     public string? Name { get; init; }
 
     public string NoOfPersons { get; init; } = null!;
 }
 
-public class CrewMemberDto
+public class CrewMemberFields
 {
     [StringLength(1024)]
     public string Title { get; init; } = null!;
@@ -450,14 +455,14 @@ public class CrewMemberDto
     public string Institution { get; init; } = null!;
 }
 
-public class ShipEquipmentDto
+public class ShipEquipmentOption
 {
     public Guid Id { get; init; }
 
     public string Name { get; init; } = null!;
 }
 
-public class CollectedSampleDto
+public class CollectedSampleFields
 {
     [StringLength(10240)]
     public string Type { get; init; } = null!;
@@ -472,7 +477,7 @@ public class CollectedSampleDto
     public string Publishing { get; init; } = null!;
 }
 
-public class CruiseDayDetailsDto
+public class CruiseDayFields
 {
     [StringLength(1024)]
     public string Number { get; init; } = null!;
@@ -499,19 +504,19 @@ public class UserEffectDto
 
     public Guid UserId { get; init; }
 
-    public ResearchTaskEffectDto Effect { get; init; } = null!;
+    public ResearchTaskEffectFields Effect { get; init; } = null!;
 
     public string Points { get; init; } = "0";
 
     public string CruiseApplicationId { get; init; } = null!;
 }
 
-public interface IResearchEquipmentDto
+public interface IResearchEquipmentFields
 {
     string Name { get; init; }
 }
 
-public class ResearchEquipmentDto : IResearchEquipmentDto
+public class ResearchEquipmentFields : IResearchEquipmentFields
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;
@@ -526,7 +531,7 @@ public class ResearchEquipmentDto : IResearchEquipmentDto
     public string Permission { get; init; } = null!;
 }
 
-public class ShortResearchEquipmentDto : IResearchEquipmentDto
+public class ShortTermResearchEquipmentFields : IResearchEquipmentFields
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;
@@ -538,7 +543,7 @@ public class ShortResearchEquipmentDto : IResearchEquipmentDto
     public string EndDate { get; init; } = null!;
 }
 
-public class LongResearchEquipmentDto : IResearchEquipmentDto
+public class LongTermResearchEquipmentFields : IResearchEquipmentFields
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;
@@ -550,7 +555,7 @@ public class LongResearchEquipmentDto : IResearchEquipmentDto
     public string Duration { get; init; } = null!;
 }
 
-public class PortDto
+public class PortCallFields
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;
@@ -562,7 +567,7 @@ public class PortDto
     public string EndTime { get; init; } = null!;
 }
 
-public class FileDto
+public class FileContent
 {
     [StringLength(1024)]
     public string Name { get; init; } = null!;
@@ -571,7 +576,7 @@ public class FileDto
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-public class FormUserDto
+public class UserOption
 {
     public Guid Id { get; set; }
 
