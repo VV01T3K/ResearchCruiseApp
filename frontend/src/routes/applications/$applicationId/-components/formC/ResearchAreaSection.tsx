@@ -8,8 +8,8 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { ResearchAreaDescriptionDto } from '@/api/applications/dto/ResearchAreaDescriptionDto';
-import { getResearchAreaName } from '@/api/applications/dto/ResearchAreaDto';
+import { ResearchAreaDescriptionDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDescriptionDto';
+import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDto';
 
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 

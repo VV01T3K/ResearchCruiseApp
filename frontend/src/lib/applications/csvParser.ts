@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 
 import { toast } from '@/components/shared/layout/toast';
-import { CruiseDayDetailsDto } from '@/api/applications/dto/CruiseDayDetailsDto';
+import { CruiseDayDetailsDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
 
 /**
  * Parses a CSV string and converts it to an array of CruiseDayDetailsDto objects

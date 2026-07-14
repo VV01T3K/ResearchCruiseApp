@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { SpubTaskDto } from '@/api/applications/dto/SpubTaskDto';
+import { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
 
 export function SPUBTasksSection() {
   const { formA, isReadonly } = useFormB();

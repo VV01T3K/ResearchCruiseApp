@@ -3,8 +3,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { ResearchAreaDescriptionDto } from '@/api/applications/dto/ResearchAreaDescriptionDto';
-import { getResearchAreaName } from '@/api/applications/dto/ResearchAreaDto';
+import { ResearchAreaDescriptionDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDescriptionDto';
+import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDto';
 
 export function ResearchAreaSection() {
   const { formA, formAInitValues, isReadonly } = useFormB();

@@ -22,13 +22,12 @@ import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import {
-  useFormAInitValuesQuery,
-  useFormAQuery,
-  useUpdateFormAMutation,
-} from '@/api/applications/ApplicationFormsApiHooks';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { useBlockadesQuery } from '@/api/cruises/CruisesApiHooks';
+import { useFormAQuery } from '@/api/applications/ApplicationFormsApiHooks';
+import { useGetApplicationFormAContextSuspense, useUpdateApplicationFormA } from '@/api/gen/endpoints/applications.gen';
+import type { UpdateApplicationFormABody } from '@/api/gen/model';
+import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { useGetCruiseBlockades } from '@/api/gen/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
@@ -45,8 +44,10 @@ function FormAPage() {
 
   const navigate = useNavigate();
   const userContext = useUserContext();
-  const initialStateQuery = useFormAInitValuesQuery();
-  const saveMutation = useUpdateFormAMutation();
+  const initialStateQuery = useGetApplicationFormAContextSuspense({
+    query: { select: (context) => context as FormAInitValuesDto },
+  });
+  const saveMutation = useUpdateApplicationFormA();
   const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';
@@ -113,7 +114,7 @@ function FormAPage() {
   });
 
   const year = useStore(form.store, (state) => state.values.year);
-  const blockadesQuery = useBlockadesQuery(+year);
+  const blockadesQuery = useGetCruiseBlockades({ year: +year });
 
   useEffect(() => {
     const newValidators = {
@@ -163,7 +164,13 @@ function FormAPage() {
 
     const loading = toast.loading(loadingMessage);
     saveMutation.mutate(
-      { id: applicationId, form: dto, draft },
+      {
+        applicationId,
+        data: {
+          form: { ...dto, id: applicationId },
+          draft,
+        } as unknown as UpdateApplicationFormABody,
+      },
       {
         onSuccess: () => {
           navigate({ to: '/' });

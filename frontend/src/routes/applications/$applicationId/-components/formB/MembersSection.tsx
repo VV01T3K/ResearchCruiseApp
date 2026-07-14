@@ -12,9 +12,9 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { CrewMemberDto } from '@/api/applications/dto/CrewMemberDto';
-import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
-import { UGTeamDto } from '@/api/applications/dto/UGTeamDto';
+import { CrewMemberDto } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberDto';
+import { GuestTeamDto } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
+import { UGTeamDto } from '@/routes/applications/$applicationId/-schemas/types/UGTeamDto';
 
 export function MembersSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormB();
@@ -417,7 +417,11 @@ export function MembersSection() {
                       value: unit.name,
                       content: unit.name,
                       onClick: () => {
-                        field.pushValue({ ugUnitId: unit.id, noOfEmployees: '0', noOfStudents: '0' });
+                        field.pushValue({
+                          ugUnitId: unit.id,
+                          noOfEmployees: '0',
+                          noOfStudents: '0',
+                        });
                         field.handleChange((prev: UGTeamDto[]) => prev);
                         field.handleBlur();
                       },

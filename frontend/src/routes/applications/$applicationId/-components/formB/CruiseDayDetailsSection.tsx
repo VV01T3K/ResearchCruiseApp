@@ -10,7 +10,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { CruiseDayDetailsDto } from '@/api/applications/dto/CruiseDayDetailsDto';
+import { CruiseDayDetailsDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
 import {
   exportCruiseDayDetailsToXlsx,
   parseCruiseDayDetailsFromCsv,

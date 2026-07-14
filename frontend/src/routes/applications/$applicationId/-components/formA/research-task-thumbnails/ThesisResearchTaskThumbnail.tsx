@@ -1,4 +1,4 @@
-import { ThesisResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { ThesisResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type Props = {
   task: ThesisResearchTaskDto;

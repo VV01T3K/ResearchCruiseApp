@@ -1,7 +1,5 @@
-export type ResearchAreaDto = {
-  id: string;
-  name: string;
-};
+import type { ResearchAreaDto } from '@/api/gen/model';
+export type { ResearchAreaDto } from '@/api/gen/model';
 
 export function getResearchAreaName(initialAreas: ResearchAreaDto[], id: string) {
   for (const area of initialAreas) {

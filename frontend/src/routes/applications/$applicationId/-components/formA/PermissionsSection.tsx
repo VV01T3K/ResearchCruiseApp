@@ -9,7 +9,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { PermissionDto } from '@/api/applications/dto/PermissionDto';
+import { PermissionDto } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
 
 export function PermissionsSection() {
   const { form, isReadonly, hasFormBeenSubmitted } = useFormA();
@@ -105,7 +105,11 @@ export function PermissionsSection() {
                   <AppButton
                     key="permissions.add-btn"
                     onClick={() => {
-                      field.pushValue({ description: '', executive: '', scan: undefined } as PermissionDto);
+                      field.pushValue({
+                        description: '',
+                        executive: '',
+                        scan: undefined,
+                      } as PermissionDto);
                       field.handleChange((prev: PermissionDto[]) => prev);
                       field.handleBlur();
                     }}

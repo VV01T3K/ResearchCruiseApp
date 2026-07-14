@@ -4,7 +4,7 @@ import { OwnResearchTaskThumbnail } from '@/routes/applications/$applicationId/-
 import { ProjectPreparationResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
 import { ProjectResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
 import { ThesisResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
-import { ResearchTaskDto, ResearchTaskType } from '@/api/applications/dto/ResearchTaskDto';
+import { ResearchTaskDto, ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type Props = {
   task: ResearchTaskDto;

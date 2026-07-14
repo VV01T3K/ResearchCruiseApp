@@ -1,5 +1,5 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { DidacticsResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { DidacticsResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type Props = {
   data: DidacticsResearchTaskDto;

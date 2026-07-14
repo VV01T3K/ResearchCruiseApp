@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { CruiseResponse } from '@/api/cruises/contracts';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { FormBDto } from '@/api/applications/dto/FormBDto';
-import { FormBInitValuesDto } from '@/api/applications/dto/FormBInitValuesDto';
+import type { CruiseResponse } from '@/api/gen/model';
+import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { FormBDto } from '@/routes/applications/$applicationId/-schemas/types/FormBDto';
+import { FormBInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormBInitValuesDto';
 
 export type FormBContextType = {
   formAInitValues: FormAInitValuesDto;

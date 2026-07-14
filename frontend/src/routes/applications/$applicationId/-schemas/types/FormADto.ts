@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { ContractDto } from '@/api/applications/dto/ContractDto';
-import { GuestTeamDto } from '@/api/applications/dto/GuestTeamDto';
-import { PermissionDto } from '@/api/applications/dto/PermissionDto';
-import { PublicationDto } from '@/api/applications/dto/PublicationDto';
-import { ResearchAreaDescriptionDto } from '@/api/applications/dto/ResearchAreaDescriptionDto';
-import { ResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
-import { SpubTaskDto } from '@/api/applications/dto/SpubTaskDto';
-import { UGTeamDto } from '@/api/applications/dto/UGTeamDto';
+import { ContractDto } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
+import { GuestTeamDto } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
+import { PermissionDto } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
+import { PublicationDto } from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
+import { ResearchAreaDescriptionDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDescriptionDto';
+import { ResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
+import { UGTeamDto } from '@/routes/applications/$applicationId/-schemas/types/UGTeamDto';
 
 export type FormADto = {
   id?: string | undefined;

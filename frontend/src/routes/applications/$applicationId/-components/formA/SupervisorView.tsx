@@ -13,8 +13,8 @@ import { ResearchTasksSection } from '@/routes/applications/$applicationId/-comp
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
 import { FormAProvider } from '@/contexts/applications/FormAContext';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
+import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
 
 export function SupervisorView({
   form,
@@ -30,7 +30,14 @@ export function SupervisorView({
   return (
     <AppLayout title="Formularz A">
       <div className="space-y-8">
-        <FormAProvider value={{ form, initValues: formInitValues, isReadonly: true, hasFormBeenSubmitted: false }}>
+        <FormAProvider
+          value={{
+            form,
+            initValues: formInitValues,
+            isReadonly: true,
+            hasFormBeenSubmitted: false,
+          }}
+        >
           <CruiseManagerInfoSection />
           <CruiseLengthSection />
           <PermissionsSection />

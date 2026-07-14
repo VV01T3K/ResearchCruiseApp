@@ -10,8 +10,8 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { CollectedSampleDto } from '@/api/applications/dto/CollectedSampleDto';
-import { FormCDto } from '@/api/applications/dto/FormCDto';
+import { CollectedSampleDto } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleDto';
+import { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
 
 const collectedSamplesColumns = (
   form: AnyReactFormApi<FormCDto>,

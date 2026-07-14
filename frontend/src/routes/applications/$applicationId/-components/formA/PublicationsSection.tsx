@@ -16,7 +16,7 @@ import {
   getPublicationCategoryLabel,
   PublicationCategory,
   PublicationDto,
-} from '@/api/applications/dto/PublicationDto';
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
 
 export function PublicationsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

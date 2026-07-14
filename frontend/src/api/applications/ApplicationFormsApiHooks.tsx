@@ -1,105 +1,57 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { FormBDto } from '@/api/applications/dto/FormBDto';
-import { FormBInitValuesDto } from '@/api/applications/dto/FormBInitValuesDto';
-import { FormCDto } from '@/api/applications/dto/FormCDto';
-import { client } from '@/lib/api';
-
-export function useFormAInitValuesQuery() {
-  return useSuspenseQuery({
-    queryKey: ['formAInitValues'],
-    queryFn: async () => client.get('/v2/applications/form-a/context'),
-    select: (res) => res.data as FormAInitValuesDto,
-  });
-}
-
-export function useFormBInitValuesQuery() {
-  return useSuspenseQuery({
-    queryKey: ['formBInitValues'],
-    queryFn: async () => client.get('/v2/applications/form-b/context'),
-    select: (res) => res.data as FormBInitValuesDto,
-  });
-}
+import {
+  getApplicationFormA,
+  getApplicationFormB,
+  getApplicationFormC,
+  getGetApplicationFormAQueryKey,
+  getGetApplicationFormBQueryKey,
+  getGetApplicationFormCQueryKey,
+} from '@/api/gen/endpoints/applications.gen';
+import type { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import type { FormBDto } from '@/routes/applications/$applicationId/-schemas/types/FormBDto';
+import type { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
+import { ApiError } from '@/lib/custom-fetch';
 
 export function useFormAQuery(applicationId: string) {
   return useSuspenseQuery({
-    queryKey: ['formA', applicationId],
-    queryFn: async () => client.get(`/v2/applications/${applicationId}/form-a`),
-    select: (res) => {
-      const dto = res.data as FormADto;
-      dto.note ??= '';
-      dto.precisePeriodStart ??= '';
-      dto.precisePeriodEnd ??= '';
-      return dto;
+    queryKey: getGetApplicationFormAQueryKey(applicationId),
+    queryFn: async () => {
+      const form = (await getApplicationFormA(applicationId)) as FormADto;
+      form.note ??= '';
+      form.precisePeriodStart ??= '';
+      form.precisePeriodEnd ??= '';
+      return form;
     },
   });
 }
 
 export function useFormBQuery(applicationId: string) {
   return useSuspenseQuery({
-    queryKey: ['formB', applicationId],
-    queryFn: async () => {
+    queryKey: getGetApplicationFormBQueryKey(applicationId),
+    queryFn: async (): Promise<FormBDto | null> => {
       try {
-        return await client.get<FormBDto>(`/v2/applications/${applicationId}/form-b`);
+        return (await getApplicationFormB(applicationId)) as FormBDto;
       } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 404) return { data: null };
+        if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
-    select: (res): FormBDto | null => res.data,
     retry: false,
   });
 }
 
 export function useFormCQuery(applicationId: string) {
   return useSuspenseQuery({
-    queryKey: ['formC', applicationId],
-    queryFn: async () => {
+    queryKey: getGetApplicationFormCQueryKey(applicationId),
+    queryFn: async (): Promise<FormCDto | null> => {
       try {
-        return await client.get<FormCDto>(`/v2/applications/${applicationId}/form-c`);
+        return (await getApplicationFormC(applicationId)) as FormCDto;
       } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 404) return { data: null };
+        if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
-    select: (res): FormCDto | null => res.data,
     retry: false,
-  });
-}
-
-export function useSaveFormAMutation() {
-  return useMutation({
-    mutationFn: async ({ form, draft }: { form: FormADto; draft: boolean }) =>
-      client.post('/v2/applications', { form, draft }),
-  });
-}
-
-export function useUpdateFormAMutation() {
-  return useMutation({
-    mutationFn: async ({ id, form, draft }: { id: string; form: FormADto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-a`, { form: { ...form, id }, draft }),
-  });
-}
-
-export function useUpdateFormBMutation() {
-  return useMutation({
-    mutationFn: async ({ id, form, draft }: { id: string; form: FormBDto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-b`, { form, draft }),
-  });
-}
-
-export function useUpdateFormCMutation() {
-  return useMutation({
-    mutationFn: async ({ id, form, draft }: { id: string; form: FormCDto; draft: boolean }) =>
-      client.put(`/v2/applications/${id}/form-c`, { form, draft }),
-  });
-}
-
-export function useRevertFormBToEditMutation() {
-  return useMutation({
-    mutationFn: async ({ id }: { id: string }) => client.put(`/v2/applications/${id}/form-b/refill`),
   });
 }

@@ -16,9 +16,11 @@ import {
   FORM_A_FIELD_TO_SECTION,
   getFormAValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { useFormAInitValuesQuery, useSaveFormAMutation } from '@/api/applications/ApplicationFormsApiHooks';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { useBlockadesQuery } from '@/api/cruises/CruisesApiHooks';
+import { useCreateApplication, useGetApplicationFormAContextSuspense } from '@/api/gen/endpoints/applications.gen';
+import type { CreateApplicationBody } from '@/api/gen/model';
+import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { useGetCruiseBlockades } from '@/api/gen/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
 export const Route = createFileRoute('/applications/new')({
@@ -29,8 +31,10 @@ export const Route = createFileRoute('/applications/new')({
 function NewCruiseApplicationPage() {
   const navigate = useNavigate();
   const userContext = useUserContext();
-  const initialStateQuery = useFormAInitValuesQuery();
-  const saveMutation = useSaveFormAMutation();
+  const initialStateQuery = useGetApplicationFormAContextSuspense({
+    query: { select: (context) => context as FormAInitValuesDto },
+  });
+  const saveMutation = useCreateApplication();
 
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
@@ -69,7 +73,7 @@ function NewCruiseApplicationPage() {
   });
 
   const year = useStore(form.store, (state) => state.values.year);
-  const blockadesQuery = useBlockadesQuery(+year);
+  const blockadesQuery = useGetCruiseBlockades({ year: +year });
 
   // Update form validators when blockades change
   useEffect(() => {
@@ -138,7 +142,7 @@ function NewCruiseApplicationPage() {
     const loading = toast.loading('Zapisywanie formularza...');
 
     saveMutation.mutate(
-      { form: dto, draft: false },
+      { data: { form: dto, draft: false } as unknown as CreateApplicationBody },
       {
         onSuccess: () => {
           toast.success('Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.');
@@ -176,7 +180,7 @@ function NewCruiseApplicationPage() {
 
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     saveMutation.mutate(
-      { form: dto, draft: true },
+      { data: { form: dto, draft: true } as unknown as CreateApplicationBody },
       {
         onSuccess: () => {
           toast.success('Formularz został zapisany jako wersja robocza');

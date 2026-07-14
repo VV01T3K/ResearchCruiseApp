@@ -3,8 +3,8 @@ import { Row } from '@tanstack/react-table';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { OtherResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import { OtherResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type Props = {
   form: AnyReactFormApi<FormADto>;

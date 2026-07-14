@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { getTaskName, ResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { getTaskName, ResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 export function ResearchTasksSection() {
   const { formA, isReadonly } = useFormB();

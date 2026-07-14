@@ -5,8 +5,8 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { FormADto } from '@/api/applications/dto/FormADto';
-import { ProjectPreparationResearchTaskDto } from '@/api/applications/dto/ResearchTaskDto';
+import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import { ProjectPreparationResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type Props = {
   form: AnyReactFormApi<FormADto>;

@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
-import { CrewMemberDtoValidationSchema } from '@/api/applications/dto/CrewMemberDto';
-import { CruiseDayDetailsDtoValidationSchema } from '@/api/applications/dto/CruiseDayDetailsDto';
-import { GuestTeamDtoValidationSchema } from '@/api/applications/dto/GuestTeamDto';
-import { LongResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/LongResearchEquipmentDto';
-import { PermissionDtoWithFileValidationSchema } from '@/api/applications/dto/PermissionDto';
-import { PortDtoValidationSchema } from '@/api/applications/dto/PortDto';
-import { ResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/ResearchEquipmentDto';
-import { ShortResearchEquipmentDtoValidationSchema } from '@/api/applications/dto/ShortResearchEquipmentDto';
-import { UGTeamDtoValidationSchema } from '@/api/applications/dto/UGTeamDto';
+import { CrewMemberDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberDto';
+import { CruiseDayDetailsDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
+import { GuestTeamDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
+import { LongResearchEquipmentDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentDto';
+import { PermissionDtoWithFileValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
+import { PortDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/PortDto';
+import { ResearchEquipmentDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentDto';
+import { ShortResearchEquipmentDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentDto';
+import { UGTeamDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/UGTeamDto';
 
 export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
   isCruiseManagerPresent: 2,

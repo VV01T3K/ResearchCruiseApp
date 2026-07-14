@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
-import { CruisePeriodType } from '@/api/applications/dto/FormADto';
+import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
 
 export const MAX_PERIOD_EDGE_VALUE = 24;
 

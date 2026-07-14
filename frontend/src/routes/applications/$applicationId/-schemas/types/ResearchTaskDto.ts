@@ -190,11 +190,23 @@ export function getTaskName(taskType: ResearchTaskType): string {
 export function getEmptyTask(taskType: ResearchTaskType) {
   switch (taskType) {
     case ResearchTaskType.BachelorThesis:
-      return { type: ResearchTaskType.BachelorThesis, author: '', title: '' } as ThesisResearchTaskDto;
+      return {
+        type: ResearchTaskType.BachelorThesis,
+        author: '',
+        title: '',
+      } as ThesisResearchTaskDto;
     case ResearchTaskType.MasterThesis:
-      return { type: ResearchTaskType.MasterThesis, author: '', title: '' } as ThesisResearchTaskDto;
+      return {
+        type: ResearchTaskType.MasterThesis,
+        author: '',
+        title: '',
+      } as ThesisResearchTaskDto;
     case ResearchTaskType.DoctoralThesis:
-      return { type: ResearchTaskType.DoctoralThesis, author: '', title: '' } as ThesisResearchTaskDto;
+      return {
+        type: ResearchTaskType.DoctoralThesis,
+        author: '',
+        title: '',
+      } as ThesisResearchTaskDto;
     case ResearchTaskType.ProjectPreparation:
       return {
         type: ResearchTaskType.ProjectPreparation,

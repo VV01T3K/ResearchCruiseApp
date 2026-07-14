@@ -9,7 +9,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { PermissionDto } from '@/api/applications/dto/PermissionDto';
+import { PermissionDto } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
 
 export function AdditionalPermissionsSection() {
   const { form, hasFormBeenSubmitted, isReadonly } = useFormB();

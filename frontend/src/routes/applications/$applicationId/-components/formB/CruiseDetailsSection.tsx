@@ -12,9 +12,9 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { LongResearchEquipmentDto } from '@/api/applications/dto/LongResearchEquipmentDto';
-import { PortDto } from '@/api/applications/dto/PortDto';
-import { ShortResearchEquipmentDto } from '@/api/applications/dto/ShortResearchEquipmentDto';
+import { LongResearchEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentDto';
+import { PortDto } from '@/routes/applications/$applicationId/-schemas/types/PortDto';
+import { ShortResearchEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentDto';
 
 const shortResearchEquipmentColumns = (
   form: FormBContextType['form'],

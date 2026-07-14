@@ -3,7 +3,10 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { getPublicationCategoryLabel, PublicationDto } from '@/api/applications/dto/PublicationDto';
+import {
+  getPublicationCategoryLabel,
+  PublicationDto,
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
 
 export function PublicationsSection() {
   const { formA } = useFormC();

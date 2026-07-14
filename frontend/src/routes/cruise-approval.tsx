@@ -1,15 +1,21 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useForm } from '@tanstack/react-form';
-import axios, { AxiosError } from 'axios';
-import { ProblemDetails } from '@/lib/api';
 import {
-  useSupervisorReviewDecisionMutation,
-  useSupervisorReviewQuery,
-} from '@/api/applications/SupervisorReviewApiHooks';
+  useGetApplicationSupervisorReviewSuspense,
+  useUpdateApplicationSupervisorReviewDecision,
+} from '@/api/gen/endpoints/applications.gen';
+import type { SupervisorReviewResponse as GeneratedSupervisorReviewResponse } from '@/api/gen/model';
+import { ApiError, getProblemDetail } from '@/lib/custom-fetch';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
-import { CruisePeriodType, FormADto } from '@/api/applications/dto/FormADto';
+import { CruisePeriodType, FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+
+type SupervisorReviewResponse = Omit<GeneratedSupervisorReviewResponse, 'form' | 'initValues'> & {
+  form: FormADto;
+  initValues: FormAInitValuesDto;
+};
 
 export const Route = createFileRoute('/cruise-approval')({
   component: SupervisorViewPage,
@@ -27,8 +33,22 @@ export const Route = createFileRoute('/cruise-approval')({
 function SupervisorViewPage() {
   const { cruiseApplicationId, supervisorCode } = Route.useSearch();
   const navigate = useNavigate();
-  const supervisorReview = useSupervisorReviewQuery({ applicationId: cruiseApplicationId, code: supervisorCode });
-  const answerMutation = useSupervisorReviewDecisionMutation();
+  const supervisorReview = useGetApplicationSupervisorReviewSuspense(
+    cruiseApplicationId,
+    { code: supervisorCode },
+    {
+      query: {
+        select: (value) => {
+          const review = value as SupervisorReviewResponse;
+          review.form.note ??= '';
+          review.form.periodSelectionType =
+            review.form.precisePeriodEnd || review.form.precisePeriodStart ? 'precise' : 'period';
+          return review;
+        },
+      },
+    }
+  );
+  const answerMutation = useUpdateApplicationSupervisorReviewDecision();
   const formA = supervisorReview.data.form;
 
   const form = useForm({
@@ -78,16 +98,16 @@ function SupervisorViewPage() {
   function handleAcceptForm() {
     const loading = toast.loading('Przetwarzanie zgłoszenia...');
     answerMutation.mutate(
-      { applicationId: cruiseApplicationId!, accept: true, code: supervisorCode! },
+      { applicationId: cruiseApplicationId, data: { accept: true, code: supervisorCode } },
       {
         onSuccess: () => {
           navigate({ to: '/' });
           toast.success('Zgłoszenie zostało zaakceptowane');
         },
-        onError: (err: Error | AxiosError) => {
+        onError: (err) => {
           console.error(err);
-          if (axios.isAxiosError<ProblemDetails>(err) && err.response?.status === 403) {
-            toast.error('Niedozwolona operacja: ' + (err.response.data.detail ?? ''));
+          if (err instanceof ApiError && err.status === 403) {
+            toast.error('Niedozwolona operacja: ' + getProblemDetail(err, ''));
           } else {
             toast.error('Wystąpił błąd: Nie udało się zaakceptować zgłoszenia');
           }
@@ -102,16 +122,16 @@ function SupervisorViewPage() {
   function handleDenyForm() {
     const loading = toast.loading('Przetwarzanie zgłoszenia...');
     answerMutation.mutate(
-      { applicationId: cruiseApplicationId!, accept: false, code: supervisorCode! },
+      { applicationId: cruiseApplicationId, data: { accept: false, code: supervisorCode } },
       {
         onSuccess: () => {
           navigate({ to: '/' });
           toast.success('Zgłoszenie zostało odrzucone');
         },
-        onError: (err: Error | AxiosError) => {
+        onError: (err) => {
           console.error(err);
-          if (axios.isAxiosError<ProblemDetails>(err) && err.response?.status === 403) {
-            toast.error('Niedozwolona operacja: ' + (err.response.data.detail ?? ''));
+          if (err instanceof ApiError && err.status === 403) {
+            toast.error('Niedozwolona operacja: ' + getProblemDetail(err, ''));
           } else {
             toast.error('Wystąpił błąd: Nie udało się odrzucić zgłoszenia');
           }

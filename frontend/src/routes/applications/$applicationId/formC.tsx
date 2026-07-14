@@ -2,7 +2,6 @@ import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
-import { isAxiosError } from 'axios';
 import { useState } from 'react';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
@@ -13,17 +12,19 @@ import {
   FORM_C_FIELD_TO_SECTION,
   getFormCValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { useApplicationCruiseQuery } from '@/api/applications/ApplicationCatalogApiHooks';
+import { useGetApplicationCruiseSuspense } from '@/api/gen/endpoints/applications.gen';
+import { useFormAQuery, useFormBQuery, useFormCQuery } from '@/api/applications/ApplicationFormsApiHooks';
 import {
-  useFormAInitValuesQuery,
-  useFormAQuery,
-  useFormBInitValuesQuery,
-  useFormBQuery,
-  useFormCQuery,
-  useUpdateFormCMutation,
-} from '@/api/applications/ApplicationFormsApiHooks';
-import { FormCDto } from '@/api/applications/dto/FormCDto';
-import { ResearchTaskEffectDto } from '@/api/applications/dto/ResearchTaskEffectDto';
+  useGetApplicationFormAContextSuspense,
+  useGetApplicationFormBContextSuspense,
+  useUpdateApplicationFormC,
+} from '@/api/gen/endpoints/applications.gen';
+import type { UpdateApplicationFormCBody } from '@/api/gen/model';
+import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import type { FormBInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormBInitValuesDto';
+import { ApiError } from '@/lib/custom-fetch';
+import { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
+import { ResearchTaskEffectDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectDto';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
@@ -42,10 +43,14 @@ function FormCPage() {
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
   const formC = useFormCQuery(applicationId);
-  const formAInitValues = useFormAInitValuesQuery();
-  const formBInitValues = useFormBInitValuesQuery();
-  const cruise = useApplicationCruiseQuery(applicationId);
-  const updateMutation = useUpdateFormCMutation();
+  const formAInitValues = useGetApplicationFormAContextSuspense({
+    query: { select: (context) => context as FormAInitValuesDto },
+  });
+  const formBInitValues = useGetApplicationFormBContextSuspense({
+    query: { select: (context) => context as FormBInitValuesDto },
+  });
+  const cruise = useGetApplicationCruiseSuspense(applicationId);
+  const updateMutation = useUpdateApplicationFormC();
 
   if (!formB.data) throw notFound();
 
@@ -115,9 +120,8 @@ function FormCPage() {
     const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(
       {
-        id: applicationId,
-        form: form.state.values,
-        draft: false,
+        applicationId,
+        data: { form: form.state.values, draft: false } as unknown as UpdateApplicationFormCBody,
       },
       {
         onSuccess: () => {
@@ -125,7 +129,7 @@ function FormCPage() {
           toast.success('Formularz został wysłany pomyślnie.');
         },
         onError: (err) => {
-          if (isAxiosError(err) && err.response?.status === 403) {
+          if (err instanceof ApiError && err.status === 403) {
             toast.error(
               'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
             );
@@ -148,9 +152,8 @@ function FormCPage() {
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     await updateMutation.mutateAsync(
       {
-        id: applicationId,
-        form: form.state.values,
-        draft: true,
+        applicationId,
+        data: { form: form.state.values, draft: true } as unknown as UpdateApplicationFormCBody,
       },
       {
         onSuccess: () => {
@@ -158,7 +161,7 @@ function FormCPage() {
           toast.success('Wersja robocza formularza została zapisana pomyślnie.');
         },
         onError: (err) => {
-          if (isAxiosError(err) && err.response?.status === 403) {
+          if (err instanceof ApiError && err.status === 403) {
             toast.error(
               'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
             );

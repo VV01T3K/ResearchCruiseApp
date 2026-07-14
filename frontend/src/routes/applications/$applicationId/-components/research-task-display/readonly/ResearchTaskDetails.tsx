@@ -13,7 +13,7 @@ import {
   ResearchTaskDto,
   ResearchTaskType,
   ThesisResearchTaskDto,
-} from '@/api/applications/dto/ResearchTaskDto';
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type Props = {
   data: ResearchTaskDto;

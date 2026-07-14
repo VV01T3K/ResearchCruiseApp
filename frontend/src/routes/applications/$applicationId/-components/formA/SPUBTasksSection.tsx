@@ -11,7 +11,7 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { SpubTaskDto } from '@/api/applications/dto/SpubTaskDto';
+import { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
 
 export function SPUBTasksSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();

@@ -1,6 +1,6 @@
 import { createContext, use } from 'react';
 
-import { ApplicationResponse, EvaluationResponse } from '@/api/applications/contracts';
+import { ApplicationResponse, EvaluationResponse } from '@/routes/applications/-types';
 
 export type ApplicationDetailsContextType = {
   application: ApplicationResponse;

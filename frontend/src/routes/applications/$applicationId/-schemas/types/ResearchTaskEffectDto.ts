@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { ResearchTaskDto, ResearchTaskDtoValidationSchema } from '@/api/applications/dto/ResearchTaskDto';
+import {
+  ResearchTaskDto,
+  ResearchTaskDtoValidationSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
 
 type TaskEffect = {
   done: string;

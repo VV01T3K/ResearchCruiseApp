@@ -2,17 +2,17 @@ import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
-import { ContractDtoValidationSchema } from '@/api/applications/dto/ContractDto';
-import { CruiseGoal, CruisePeriodValidationSchema } from '@/api/applications/dto/FormADto';
-import { FormAInitValuesDto } from '@/api/applications/dto/FormAInitValuesDto';
-import { GuestTeamDtoValidationSchema } from '@/api/applications/dto/GuestTeamDto';
-import { PermissionDtoValidationSchema } from '@/api/applications/dto/PermissionDto';
-import { PublicationDtoValidationSchema } from '@/api/applications/dto/PublicationDto';
-import { ResearchTaskDtoValidationSchema } from '@/api/applications/dto/ResearchTaskDto';
-import { SpubTaskDtoValidationSchema } from '@/api/applications/dto/SpubTaskDto';
-import { UGTeamDtoValidationSchema } from '@/api/applications/dto/UGTeamDto';
-import { BlockadePeriodDto } from '@/api/cruises/dto/CruiseDto';
-import { getResearchAreaDescriptionDtoValidationSchema } from '@/api/applications/dto/ResearchAreaDescriptionDto';
+import { ContractDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
+import { CruiseGoal, CruisePeriodValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
+import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { GuestTeamDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
+import { PermissionDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
+import { PublicationDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
+import { ResearchTaskDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import { SpubTaskDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
+import { UGTeamDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/UGTeamDto';
+import type { BlockadeResponse as BlockadePeriodDto } from '@/api/gen/model';
+import { getResearchAreaDescriptionDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDescriptionDto';
 
 export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   cruiseManagerId: 1,
