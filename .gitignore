@@ -280,8 +280,6 @@ __pycache__/
 *.iml
 out
 gen
-!frontend/src/api/gen/
-!frontend/src/api/gen/**
 
 
 # VS Code settings

@@ -36,7 +36,7 @@ jobs:
         run: vp check
 
       - name: Check generated API
-        run: vp run gen && git diff --exit-code -- src/api/gen
+        run: vp run gen && git diff --exit-code -- src/api/generated
 
   backend-checks:
     name: Backend checks
