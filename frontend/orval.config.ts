@@ -94,16 +94,12 @@ export default defineConfig({
           runtimeValidation: false,
           mutationInvalidates: [
             {
-              onMutations: ['createCruise'],
-              invalidates: ['getCruises'],
-            },
-            {
-              onMutations: ['autoPlanCruises', 'deleteCruise'],
+              onMutations: ['createCruise', 'autoPlanCruises', 'deleteCruise'],
               invalidates: ['getCruises'],
             },
             {
               onMutations: ['removeCruiseConfirmation'],
-              invalidates: ['getCruises'],
+              invalidates: ['getCruises', { query: 'getCruise', params: ['cruiseId'] }],
             },
             {
               onMutations: ['updateCruise', 'confirmCruise', 'completeCruise'],

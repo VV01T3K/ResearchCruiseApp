@@ -591,6 +591,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   const onSuccess = (data: Awaited<ReturnType<typeof removeCruiseConfirmation>>, variables: {cruiseId: string}, onMutateResult: TContext, context: MutationFunctionContext) => {
         if (!options?.skipInvalidation) {
         queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(variables.cruiseId) });
         }
         mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
       };
