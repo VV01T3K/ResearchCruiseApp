@@ -16,7 +16,7 @@ public static class AcceptanceEndpoints
     {
         group
             .MapPut("/{userId:guid}/acceptance", Accept)
-            .WithName("AcceptUserV2")
+            .WithName("AcceptUser")
             .WithSummary("Accept a managed user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -28,7 +28,7 @@ public static class AcceptanceEndpoints
     {
         group
             .MapDelete("/{userId:guid}/acceptance", Deactivate)
-            .WithName("DeactivateUserV2")
+            .WithName("DeactivateUser")
             .WithSummary("Deactivate a managed user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)

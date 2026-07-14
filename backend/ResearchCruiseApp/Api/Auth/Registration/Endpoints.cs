@@ -10,7 +10,7 @@ public static class RegistrationEndpoints
     {
         group
             .MapPost("/register", Handle)
-            .WithName("RegisterAccountV2")
+            .WithName("RegisterAccount")
             .WithSummary("Register a new account.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)

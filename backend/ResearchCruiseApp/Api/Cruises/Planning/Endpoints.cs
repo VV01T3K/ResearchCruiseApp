@@ -21,7 +21,7 @@ public static class PlanningEndpoints
     {
         group
             .MapPost("/auto-plan", AutoPlan)
-            .WithName("AutoPlanCruisesV2")
+            .WithName("AutoPlanCruises")
             .WithSummary("Automatically plan eligible cruises.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -32,7 +32,7 @@ public static class PlanningEndpoints
     {
         group
             .MapGet("/blockades", GetBlockades)
-            .WithName("GetCruiseBlockadesV2")
+            .WithName("GetCruiseBlockades")
             .WithSummary("Get blockade periods for a year.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);

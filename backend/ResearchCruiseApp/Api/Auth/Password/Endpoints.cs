@@ -16,7 +16,7 @@ public static class PasswordEndpoints
     {
         group
             .MapPost("/password-reset-request", RequestReset)
-            .WithName("RequestPasswordResetV2")
+            .WithName("RequestPasswordReset")
             .WithSummary("Request a password reset email.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
@@ -29,7 +29,7 @@ public static class PasswordEndpoints
     {
         group
             .MapPost("/password-reset", Reset)
-            .WithName("ResetPasswordV2")
+            .WithName("ResetPassword")
             .WithSummary("Reset an account password.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)

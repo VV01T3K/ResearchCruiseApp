@@ -15,7 +15,7 @@ public static class EmailConfirmationEndpoints
     {
         group
             .MapGet("/confirm-email", Confirm)
-            .WithName("ConfirmEmailV2")
+            .WithName("ConfirmEmail")
             .WithSummary("Confirm an account email.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -28,7 +28,7 @@ public static class EmailConfirmationEndpoints
     {
         group
             .MapPost("/resend-confirmation-email", Resend)
-            .WithName("ResendConfirmationEmailV2")
+            .WithName("ResendConfirmationEmail")
             .WithSummary("Resend an account confirmation email.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
