@@ -1,6 +1,6 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 
-import { client } from '@/lib/api';
+import { getCurrentUser } from '@/api/gen/endpoints/users.gen';
 import { Role } from '@/models/shared/Role';
 import { User } from '@/models/shared/User';
 import { UserContextType } from '@/providers/UserContext';
@@ -49,13 +49,7 @@ async function resolveCurrentUser(userContext?: UserContextType): Promise<User |
   }
 
   try {
-    const response = await client.get('/v2/users/me', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data as User;
+    return (await getCurrentUser()) as User;
   } catch {
     return undefined;
   }

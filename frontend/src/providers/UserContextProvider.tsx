@@ -2,15 +2,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
-import { client, setAuthToken } from '@/lib/api';
+import { useLogin } from '@/api/gen/endpoints/auth.gen';
+import { getGetCurrentUserQueryKey } from '@/api/gen/endpoints/users.gen';
+import { ApiError } from '@/lib/custom-fetch';
+import { refreshSession, setSession, subscribeAuthDetails, toAuthDetails } from '@/lib/auth-session';
 import { setSentryUser } from '@/lib/sentry';
 import { Role } from '@/models/shared/Role';
 import { UserContext, UserContextType } from '@/providers/UserContext';
-import { useLoginMutation, useRefreshTokenMutation } from '@/api/auth/AuthApiHooks';
 import { useProfileQuery } from '@/api/users/CurrentUserApiHooks';
 import { AuthDetails } from '@/models/user/AuthDetails';
 import { SignInResult } from '@/models/user/Results';
-import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
+import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
 
 type Props = {
   children: React.ReactNode;
@@ -35,86 +37,40 @@ export function UserContextProvider({ children }: Props) {
     };
   }, []);
 
-  React.useLayoutEffect(() => {
-    if (!authDetails) {
-      setAuthToken(undefined);
-      return;
-    }
-
-    const remainingMs = authDetails.accessTokenExpirationDate.getTime() - Date.now();
-    if (remainingMs <= 0) {
-      setAuthToken(undefined);
-      return;
-    }
-
-    setAuthToken(authDetails);
-
-    const timeoutId = window.setTimeout(() => {
-      setAuthToken(undefined);
-    }, remainingMs);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [authDetails]);
+  React.useEffect(() => subscribeAuthDetails(setAuthDetails), []);
 
   const profileQuery = useProfileQuery();
 
-  const updateAuthDetails = React.useCallback(
-    async (newAuthDetails: AuthDetails | undefined) => {
-      if (newAuthDetails) {
-        setAuthDetails(newAuthDetails);
-        setStoredAuthDetails(newAuthDetails);
-        setAuthToken(newAuthDetails);
-        await queryClient.fetchQuery({ queryKey: ['userProfile'] });
-      } else {
-        setAuthDetails(undefined);
-        setStoredAuthDetails(undefined);
-        setAuthToken(undefined);
-        queryClient.removeQueries({ queryKey: ['userProfile'] });
-      }
+  const { mutateAsync: loginMutateAsync } = useLogin({
+    mutation: {
+      onSuccess: async (response) => {
+        setSession(toAuthDetails(response));
+        await queryClient.invalidateQueries({ queryKey: getGetCurrentUserQueryKey() });
+      },
+      onError: () => setSession(undefined),
     },
-    [queryClient]
-  );
-
-  const { mutateAsync: loginMutateAsync } = useLoginMutation({ updateAuthDetails });
-  const { mutateAsync: refreshTokenMutateAsync } = useRefreshTokenMutation({ updateAuthDetails });
+  });
 
   const signIn = React.useCallback(
     async (email: string, password: string): Promise<SignInResult> => {
-      const res = await loginMutateAsync({ email, password }).catch((error) => {
-        return error.response;
-      });
-
-      if (!res) {
-        return 'error';
-      }
-
-      if (res.status === 200) {
+      try {
+        await loginMutateAsync({ data: { email, password } });
         return 'success';
+      } catch (error) {
+        return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
       }
-
-      if (res.status === 401) {
-        return 'invalid_credentials';
-      }
-
-      return 'error';
     },
     [loginMutateAsync]
   );
 
   const signOut = React.useCallback(async () => {
-    await updateAuthDetails(undefined);
-  }, [updateAuthDetails]);
+    setSession(undefined);
+    queryClient.removeQueries({ queryKey: getGetCurrentUserQueryKey() });
+  }, [queryClient]);
 
   const refreshUser = React.useCallback(async () => {
-    const currentAuthDetails = getStoredAuthDetails();
-
-    if (currentAuthDetails) {
-      await refreshTokenMutateAsync(currentAuthDetails);
-      return;
-    }
-
-    await signOut();
-  }, [refreshTokenMutateAsync, signOut]);
+    await refreshSession();
+  }, []);
 
   const isInRole = React.useCallback(
     (allowedRoles: Role | Role[]) => {
@@ -133,7 +89,7 @@ export function UserContextProvider({ children }: Props) {
 
   const context = React.useMemo<UserContextType>(
     () => ({
-      currentUser: profileQuery.data,
+      currentUser: profileQuery.data ?? undefined,
       accessTokenExpirationDate: authDetails?.accessTokenExpirationDate,
       refreshTokenExpirationDate: authDetails?.refreshTokenExpirationDate,
       isReady,
@@ -154,59 +110,6 @@ export function UserContextProvider({ children }: Props) {
     ]
   );
 
-  // Refs keep the interceptor stable while accessing latest functions
-  const refreshUserRef = React.useRef(refreshUser);
-  React.useEffect(() => {
-    refreshUserRef.current = refreshUser;
-  }, [refreshUser]);
-  const refreshPromiseRef = React.useRef<Promise<void> | null>(null);
-
-  React.useEffect(() => {
-    const interceptorId = client.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        // Rule 1: Never intercept refresh requests
-        if (error.config?.url?.includes('/v2/auth/refresh')) {
-          return Promise.reject(error);
-        }
-
-        // Rule 2: Only retry once per failed request
-        if (error.response?.status === 401 && !error.config?._retry) {
-          error.config._retry = true;
-
-          try {
-            if (!refreshPromiseRef.current) {
-              refreshPromiseRef.current = refreshUserRef
-                .current()
-                .then(() => {
-                  refreshPromiseRef.current = null;
-                })
-                .catch((err) => {
-                  refreshPromiseRef.current = null;
-                  throw err;
-                });
-            }
-            await refreshPromiseRef.current;
-
-            const updatedToken = getStoredAuthDetails()?.accessToken;
-            if (updatedToken) {
-              error.config.headers['Authorization'] = `Bearer ${updatedToken}`;
-              return client(error.config);
-            }
-          } catch (refreshError) {
-            return Promise.reject(refreshError);
-          }
-        }
-
-        return Promise.reject(error);
-      }
-    );
-
-    return () => {
-      client.interceptors.response.eject(interceptorId);
-    };
-  }, []);
-
   const initRefreshRef = React.useRef(false);
   React.useEffect(() => {
     if (initRefreshRef.current) return;
@@ -214,27 +117,16 @@ export function UserContextProvider({ children }: Props) {
 
     const stored = getStoredAuthDetails();
     if (stored && stored.accessTokenExpirationDate <= new Date()) {
-      if (!refreshPromiseRef.current) {
-        refreshPromiseRef.current = refreshUserRef
-          .current()
-          .then(() => {
-            refreshPromiseRef.current = null;
-          })
-          .catch((err) => {
-            refreshPromiseRef.current = null;
-            throw err;
-          });
-      }
-      refreshPromiseRef.current
+      refreshSession()
         .then(
-          () => queryClient.invalidateQueries({ queryKey: ['userProfile'] }),
-          () => {} // refresh failure is handled inside refreshUser (signs out)
+          () => queryClient.invalidateQueries({ queryKey: getGetCurrentUserQueryKey() }),
+          () => {}
         )
         .finally(() => {
           setInitialRefreshPending(false);
         });
     } else {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: getGetCurrentUserQueryKey() });
     }
   }, [queryClient]);
 
@@ -262,7 +154,7 @@ export function UserContextProvider({ children }: Props) {
   }, [context, authDetails]);
 
   React.useEffect(() => {
-    setSentryUser(profileQuery.data);
+    setSentryUser(profileQuery.data ?? undefined);
   }, [profileQuery.data]);
 
   React.useEffect(() => {

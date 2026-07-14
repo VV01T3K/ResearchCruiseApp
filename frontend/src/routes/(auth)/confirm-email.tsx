@@ -8,7 +8,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppLoader } from '@/components/shared/layout/AppLoader';
-import { useConfirmEmailMutation } from '@/api/auth/AuthApiHooks';
+import { useMutation } from '@tanstack/react-query';
+import { confirmEmail } from '@/api/gen/endpoints/auth.gen';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
@@ -23,7 +24,11 @@ export const Route = createFileRoute('/(auth)/confirm-email')({
 function ConfirmEmailPage() {
   const { userId, code } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const { mutate } = useConfirmEmailMutation({ setResult });
+  const { mutate } = useMutation({
+    mutationFn: ({ userId, code }: { userId: string; code: string }) => confirmEmail({ userId, code }),
+    onSuccess: () => setResult('success'),
+    onError: () => setResult('error'),
+  });
 
   React.useEffect(() => {
     if (userId && code) {

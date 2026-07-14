@@ -11,7 +11,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useResetPasswordMutation } from '@/api/auth/AuthApiHooks';
+import { useResetPassword } from '@/api/gen/endpoints/auth.gen';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/(auth)/reset-password')({
@@ -48,7 +48,12 @@ function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
   const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
-  const { mutateAsync } = useResetPasswordMutation({ setResult });
+  const { mutateAsync } = useResetPassword({
+    mutation: {
+      onSuccess: () => setResult('success'),
+      onError: () => setResult('error'),
+    },
+  });
   const form = useForm({
     defaultValues: {
       password: '',
@@ -72,10 +77,12 @@ function ResetPasswordPage() {
       }
 
       await mutateAsync({
-        emailBase64,
-        resetCode,
-        password: value.password,
-        passwordConfirm: value.passwordConfirm,
+        data: {
+          emailBase64,
+          resetCode,
+          password: value.password,
+          passwordConfirm: value.passwordConfirm,
+        },
       });
     },
     onSubmitInvalid: ({ formApi }) => {

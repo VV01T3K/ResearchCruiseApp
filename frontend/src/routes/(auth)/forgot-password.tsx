@@ -9,7 +9,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/lib/sentry';
 import { getErrors } from '@/lib/utils';
-import { useForgotPasswordMutation } from '@/api/auth/AuthApiHooks';
+import { useRequestPasswordReset } from '@/api/gen/endpoints/auth.gen';
 import { Result } from '@/models/user/Results';
 
 export const Route = createFileRoute('/(auth)/forgot-password')({
@@ -24,7 +24,12 @@ const validationSchema = z.object({
 function ForgotPasswordPage() {
   const [result, setResult] = React.useState<Result | undefined>(undefined);
   const [email, setEmail] = React.useState<string | undefined>(undefined);
-  const { mutateAsync } = useForgotPasswordMutation({ setResult });
+  const { mutateAsync } = useRequestPasswordReset({
+    mutation: {
+      onSuccess: () => setResult('success'),
+      onError: () => setResult('error'),
+    },
+  });
   const form = useForm({
     defaultValues: {
       email: '',
@@ -41,7 +46,7 @@ function ForgotPasswordPage() {
 
       setResult(undefined);
       await mutateAsync(
-        { email: value.email },
+        { data: { email: value.email } },
         {
           onSuccess: async () => {
             setEmail(value.email);
