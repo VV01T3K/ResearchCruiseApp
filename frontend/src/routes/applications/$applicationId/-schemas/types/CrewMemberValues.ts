@@ -11,4 +11,4 @@ export const CrewMemberValuesSchema = z.object({
   institution: z.string().nonempty('Instytucja jest wymagana'),
 });
 
-export type CrewMemberValues = z.infer<typeof CrewMemberValuesSchema>;
+export type CrewMemberValues = z.input<typeof CrewMemberValuesSchema>;

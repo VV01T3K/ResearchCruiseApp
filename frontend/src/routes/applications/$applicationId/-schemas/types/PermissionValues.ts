@@ -14,4 +14,4 @@ export const PermissionWithFileValuesSchema = PermissionValuesSchema.extend({
   }),
 });
 
-export type PermissionValues = z.infer<typeof PermissionValuesSchema>;
+export type PermissionValues = z.input<typeof PermissionValuesSchema>;

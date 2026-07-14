@@ -26,4 +26,4 @@ export function getResearchAreaValuesSchema(formAInitValues: FormAOptions) {
     });
 }
 
-export type ResearchAreaValues = z.infer<ReturnType<typeof getResearchAreaValuesSchema>>;
+export type ResearchAreaValues = z.input<ReturnType<typeof getResearchAreaValuesSchema>>;

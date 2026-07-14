@@ -1,10 +1,10 @@
 import type { CruiseResponse } from '@/api/generated/schemas';
 import type { ReactFormExtendedApi } from '@tanstack/react-form';
-import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
-import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
+import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
-import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 /* Internal bridge for table column factories; section components themselves are inferred by withForm. */
 // oxlint-disable-next-line @typescript-eslint/no-explicit-any

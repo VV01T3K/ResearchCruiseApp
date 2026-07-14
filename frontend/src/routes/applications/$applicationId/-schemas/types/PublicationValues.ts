@@ -14,7 +14,18 @@ export function getPublicationCategoryLabel(category: PublicationCategory) {
   }
 }
 
-export const PublicationValuesSchema = z.object({
+export const PublicationValuesInputSchema = z.object({
+  id: z.string(),
+  category: z.enum(PublicationCategory),
+  doi: z.string(),
+  authors: z.string(),
+  title: z.string(),
+  magazine: z.string(),
+  year: z.number(),
+  ministerialPoints: z.number(),
+});
+
+export const PublicationValuesSchema = PublicationValuesInputSchema.extend({
   id: z.guid().or(z.literal('')),
   category: z.enum(PublicationCategory),
   doi: z.string().nonempty('DOI jest wymagane'),
@@ -25,4 +36,4 @@ export const PublicationValuesSchema = z.object({
   ministerialPoints: z.number().nonnegative('Punkty muszą być liczbą nieujemną'),
 });
 
-export type PublicationValues = z.infer<typeof PublicationValuesSchema>;
+export type PublicationValues = z.input<typeof PublicationValuesInputSchema>;

@@ -14,15 +14,14 @@ import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/util
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
+  type FormAValues,
   getFormAValidationSchema,
   getFormAWriteSchema,
-  parseFormADraft,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
   useCreateApplication,
   useGetApplicationFormAContextSuspense,
 } from '@/api/generated/endpoints/applications.gen';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
@@ -161,7 +160,7 @@ function NewCruiseApplicationPage() {
 
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     saveMutation.mutate(
-      { data: parseFormADraft(form.state.values) },
+      { data: getFormAWriteSchema(initialStateQuery.data, true, blockadesQuery.data).parse(form.state.values) },
       {
         onSuccess: () => {
           toast.success('Formularz został zapisany jako wersja robocza');

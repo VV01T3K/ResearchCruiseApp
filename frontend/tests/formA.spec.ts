@@ -1,11 +1,30 @@
 import { expect } from '@playwright/test';
 
-import { getFormAWriteSchema, mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import {
+  formADefaultValues,
+  getFormAWriteSchema,
+  mapFormAToValues,
+} from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
 import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
+
+test('draft form A requires the complete input shape while allowing empty values', () => {
+  const initValues = getInitValuesAPayload();
+  const draft = {
+    ...formADefaultValues,
+    cruiseManagerId: initValues.cruiseManagers[0].id,
+    year: initValues.years[0],
+    permissions: [{ description: '', executive: '', scan: undefined }],
+  };
+  const schema = getFormAWriteSchema(initValues, true);
+  expect(schema.safeParse(draft).success).toBe(true);
+
+  const { note: _omitted, ...missingKey } = draft;
+  expect(schema.safeParse(missingKey).success).toBe(false);
+});
 
 test('normalizes backend precise-period datetimes at the API boundary', () => {
   const initValues = getInitValuesAPayload();

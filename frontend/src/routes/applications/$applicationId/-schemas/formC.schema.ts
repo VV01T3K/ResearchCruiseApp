@@ -2,22 +2,57 @@ import { z } from 'zod';
 
 import { FormCFields, FormCWriteRequest } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
-import { CollectedSampleValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
-import { ContractValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import { FormFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
-import { GuestTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
-import { LongResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
-import { PermissionWithFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
-import { PortCallValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
-import { ResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
-import { ResearchTaskEffectValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
-import { ShortResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
-import { SpubTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
-import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import {
+  CollectedSampleValuesInputSchema,
+  CollectedSampleValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
+import {
+  ContractValuesInputSchema,
+  ContractValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import {
+  CruiseDayValuesInputSchema,
+  CruiseDayValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import {
+  FormFileValuesInputSchema,
+  FormFileValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
+import {
+  GuestTeamValuesInputSchema,
+  GuestTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import {
+  LongResearchEquipmentValuesInputSchema,
+  LongResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+import { PermissionValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import {
+  PortCallValuesInputSchema,
+  PortCallValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+import {
+  ResearchEquipmentValuesInputSchema,
+  ResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+import {
+  ResearchTaskEffectValuesInputSchema,
+  ResearchTaskEffectValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import {
+  ShortResearchEquipmentValuesInputSchema,
+  ShortResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
+import {
+  SpubTaskValuesInputSchema,
+  SpubTaskValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import {
+  UgTeamValuesInputSchema,
+  UgTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
-import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
@@ -41,6 +76,34 @@ export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
   photos: 18,
   additionalDescription: 18,
 };
+
+const FormCInputSchema = z.object({
+  shipUsage: z.string(),
+  differentUsage: z.string(),
+  permissions: z
+    .object({ description: z.string(), executive: z.string(), scan: FormFileValuesInputSchema.optional() })
+    .array(),
+  researchAreaDescriptions: z
+    .object({ areaId: z.string().nullable(), differentName: z.string().nullable(), info: z.string() })
+    .array(),
+  ugTeams: UgTeamValuesInputSchema.array(),
+  guestTeams: GuestTeamValuesInputSchema.array(),
+  researchTasksEffects: ResearchTaskEffectValuesInputSchema.array(),
+  contracts: ContractValuesInputSchema.array(),
+  spubTasks: SpubTaskValuesInputSchema.array(),
+  shortResearchEquipments: ShortResearchEquipmentValuesInputSchema.array(),
+  longResearchEquipments: LongResearchEquipmentValuesInputSchema.array(),
+  ports: PortCallValuesInputSchema.array(),
+  cruiseDaysDetails: CruiseDayValuesInputSchema.array(),
+  researchEquipments: ResearchEquipmentValuesInputSchema.array(),
+  shipEquipmentsIds: z.array(z.string()),
+  collectedSamples: CollectedSampleValuesInputSchema.array(),
+  spubReportData: z.string(),
+  additionalDescription: z.string(),
+  photos: FormFileValuesInputSchema.array(),
+});
+
+export type FormCValues = z.input<typeof FormCInputSchema>;
 
 export const formCDefaultValues: FormCValues = {
   shipUsage: '',
@@ -83,7 +146,13 @@ const ShipUsageValidationSchema = z
 
 const OtherValidationSchema = (formAInitValues: FormAOptions) =>
   z.object({
-    permissions: PermissionWithFileValuesSchema.array(),
+    permissions: PermissionValuesSchema.array().superRefine((permissions, ctx) => {
+      permissions.forEach((permission, index) => {
+        if (!permission.scan || !permission.scan.name.endsWith('.pdf')) {
+          ctx.addIssue({ code: 'custom', path: [index, 'scan'], message: 'Plik musi być w formacie PDF' });
+        }
+      });
+    }),
     researchAreaDescriptions: getResearchAreaValuesSchema(formAInitValues)
       .array()
       .min(1, 'Co najmniej jeden rejon badań jest wymagany'),
@@ -122,11 +191,11 @@ const OtherValidationSchema = (formAInitValues: FormAOptions) =>
   });
 
 export function getFormCValidationSchema(formAInitValues: FormAOptions) {
-  return ShipUsageValidationSchema.and(OtherValidationSchema(formAInitValues));
+  return FormCInputSchema.and(ShipUsageValidationSchema).and(OtherValidationSchema(formAInitValues));
 }
 
 export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolean) {
-  const inputSchema = draft ? z.custom<FormCValues>() : getFormCValidationSchema(formAInitValues);
+  const inputSchema = draft ? FormCInputSchema : getFormCValidationSchema(formAInitValues);
   return inputSchema
     .transform(
       (form): z.input<typeof FormCWriteRequest> => ({

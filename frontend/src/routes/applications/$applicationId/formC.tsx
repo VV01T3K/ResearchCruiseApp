@@ -9,6 +9,7 @@ import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/formC/FormView';
 import {
   FORM_C_FIELD_TO_SECTION,
+  type FormCValues,
   getFormCValidationSchema,
   getFormCWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -26,7 +27,6 @@ import {
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/lib/form';
 import { installServerFormErrors } from '@/lib/form-errors';

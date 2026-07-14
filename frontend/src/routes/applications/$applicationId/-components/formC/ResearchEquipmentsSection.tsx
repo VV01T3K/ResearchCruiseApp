@@ -12,7 +12,7 @@ import { withForm } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
 
 const researchEquipmentsColumns = (

@@ -9,6 +9,7 @@ import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
+  type FormBValues,
   getFormBValidationSchema,
   getFormBWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -24,7 +25,6 @@ import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/f
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
 import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
 import { useAppForm } from '@/lib/form';
 import { installServerFormErrors } from '@/lib/form-errors';
 

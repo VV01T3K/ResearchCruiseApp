@@ -2,19 +2,37 @@ import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
-import { ContractValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import {
+  ContractValuesInputSchema,
+  ContractValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import {
   CruiseGoal,
   CruisePeriodValidationSchema,
-  type FormAValues,
 } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
-import { GuestTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import {
+  GuestTeamValuesInputSchema,
+  GuestTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import { FormFileValuesInputSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
 import { PermissionValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
-import { PublicationValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import { ResearchTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import { SpubTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
-import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import {
+  PublicationValuesInputSchema,
+  PublicationValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import {
+  ResearchTaskValuesInputSchema,
+  ResearchTaskValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import {
+  SpubTaskValuesInputSchema,
+  SpubTaskValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import {
+  UgTeamValuesInputSchema,
+  UgTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 import {
   FormAWriteRequest,
   type BlockadeResponse as BlockadePeriod,
@@ -52,6 +70,41 @@ export const FORM_A_FIELD_TO_SECTION: Record<string, number> = {
   supervisorEmail: 11,
   note: 11,
 };
+
+const FormAInputSchema = z.object({
+  id: z.string().optional(),
+  cruiseManagerId: z.string(),
+  deputyManagerId: z.string(),
+  year: z.string(),
+  periodSelectionType: z.enum(['precise', 'period']),
+  acceptablePeriod: CruisePeriodValidationSchema,
+  optimalPeriod: CruisePeriodValidationSchema,
+  precisePeriodStart: z.string(),
+  precisePeriodEnd: z.string(),
+  cruiseDays: z.number(),
+  cruiseHours: z.number(),
+  periodNotes: z.string(),
+  shipUsage: z.string(),
+  differentUsage: z.string(),
+  permissions: z
+    .object({ description: z.string(), executive: z.string(), scan: FormFileValuesInputSchema.optional() })
+    .array(),
+  researchAreaDescriptions: z
+    .object({ areaId: z.string().nullable(), differentName: z.string().nullable(), info: z.string() })
+    .array(),
+  cruiseGoal: z.union([z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational]), z.literal('')]),
+  cruiseGoalDescription: z.string(),
+  researchTasks: ResearchTaskValuesInputSchema.array(),
+  contracts: ContractValuesInputSchema.array(),
+  ugTeams: UgTeamValuesInputSchema.array(),
+  guestTeams: GuestTeamValuesInputSchema.array(),
+  publications: PublicationValuesInputSchema.array(),
+  spubTasks: SpubTaskValuesInputSchema.array(),
+  supervisorEmail: z.string(),
+  note: z.string(),
+});
+
+export type FormAValues = z.input<typeof FormAInputSchema>;
 
 export const formADefaultValues: FormAValues = {
   id: undefined,
@@ -541,7 +594,7 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
     });
 
 export function getFormAValidationSchema(initValues: FormAOptions, blockades?: BlockadePeriod[]) {
-  return ManagerAndDeputyManagerValidationSchema(initValues)
+  return FormAInputSchema.and(ManagerAndDeputyManagerValidationSchema(initValues))
     .and(ShipUsageValidationSchema)
     .and(CruiseGoalValidationSchema)
     .and(BlockadeCollisionValidationSchema(blockades))
@@ -554,13 +607,10 @@ export function getFormAWriteSchema(
   blockades?: BlockadePeriod[],
   applicationId?: string
 ) {
-  return getFormAValidationSchema(initValues, blockades)
+  const inputSchema = draft ? FormAInputSchema : getFormAValidationSchema(initValues, blockades);
+  return inputSchema
     .transform((form): z.input<typeof FormAWriteRequest> => mapFormAWriteRequest(form, draft, applicationId))
     .pipe(FormAWriteRequest);
-}
-
-export function parseFormADraft(form: FormAValues, applicationId?: string) {
-  return FormAWriteRequest.parse(mapFormAWriteRequest(form, true, applicationId));
 }
 
 function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?: string) {

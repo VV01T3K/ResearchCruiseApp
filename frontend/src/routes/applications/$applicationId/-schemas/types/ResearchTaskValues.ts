@@ -15,24 +15,33 @@ export enum ResearchTaskType {
   OtherResearchTask = '11',
 }
 
-export const ThesisResearchTaskValuesSchema = z.object({
+const ThesisResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.BachelorThesis, ResearchTaskType.MasterThesis, ResearchTaskType.DoctoralThesis]),
+  author: z.string(),
+  title: z.string(),
+});
+export const ThesisResearchTaskValuesSchema = ThesisResearchTaskInputSchema.extend({
   author: z.string().nonempty('Autor nie może być pusty'),
   title: z.string().nonempty('Tytuł nie może być pusty'),
 });
-export type ThesisResearchTaskValues = z.infer<typeof ThesisResearchTaskValuesSchema>;
+export type ThesisResearchTaskValues = z.input<typeof ThesisResearchTaskInputSchema>;
 
-export const ProjectPreparationResearchTaskValuesSchema = z.object({
+const ProjectPreparationResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.ProjectPreparation]),
+  title: z.string(),
+  date: z.string(),
+  financingApproved: z.enum(['true', 'false']),
+});
+export const ProjectPreparationResearchTaskValuesSchema = ProjectPreparationResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
   financingApproved: z.enum(['true', 'false'], {
     error: 'Wymagane jest wskazanie czy finansowanie zostało zatwierdzone',
   }),
 });
-export type ProjectPreparationResearchTaskValues = z.infer<typeof ProjectPreparationResearchTaskValuesSchema>;
+export type ProjectPreparationResearchTaskValues = z.input<typeof ProjectPreparationResearchTaskInputSchema>;
 
-export const ProjectResearchTaskValuesSchema = z.object({
+const ProjectResearchTaskInputSchema = z.object({
   type: z.enum([
     ResearchTaskType.DomesticProject,
     ResearchTaskType.ForeignProject,
@@ -40,22 +49,38 @@ export const ProjectResearchTaskValuesSchema = z.object({
     ResearchTaskType.OtherProject,
     ResearchTaskType.CommercialProject,
   ]),
+  title: z.string(),
+  financingAmount: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  securedAmount: z.number(),
+});
+export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   financingAmount: z.number().nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00'),
   startDate: z.string().nonempty('Data rozpoczęcia nie może być pusta'),
   endDate: z.string().nonempty('Data zakończenia nie może być pusta'),
   securedAmount: z.number().nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
 });
-export type ProjectResearchTaskValues = z.infer<typeof ProjectResearchTaskValuesSchema>;
+export type ProjectResearchTaskValues = z.input<typeof ProjectResearchTaskInputSchema>;
 
-export const DidacticsResearchTaskValuesSchema = z.object({
+const DidacticsResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.Didactics]),
+  description: z.string(),
+});
+export const DidacticsResearchTaskValuesSchema = DidacticsResearchTaskInputSchema.extend({
   description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
-export type DidacticsResearchTaskValues = z.infer<typeof DidacticsResearchTaskValuesSchema>;
+export type DidacticsResearchTaskValues = z.input<typeof DidacticsResearchTaskInputSchema>;
 
-export const OwnResearchTaskValuesSchema = z.object({
+const OwnResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.OwnResearchTask]),
+  title: z.string(),
+  date: z.string(),
+  magazine: z.string(),
+  ministerialPoints: z.number(),
+});
+export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
   magazine: z.string().nonempty('Czasopismo nie może być puste'),
@@ -64,13 +89,16 @@ export const OwnResearchTaskValuesSchema = z.object({
     .int('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
     .nonnegative('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0'),
 });
-export type OwnResearchTaskValues = z.infer<typeof OwnResearchTaskValuesSchema>;
+export type OwnResearchTaskValues = z.input<typeof OwnResearchTaskInputSchema>;
 
-export const OtherResearchTaskValuesSchema = z.object({
+const OtherResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.OtherResearchTask]),
+  description: z.string(),
+});
+export const OtherResearchTaskValuesSchema = OtherResearchTaskInputSchema.extend({
   description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
-export type OtherResearchTaskValues = z.infer<typeof OtherResearchTaskValuesSchema>;
+export type OtherResearchTaskValues = z.input<typeof OtherResearchTaskInputSchema>;
 
 export const taskTypes = [
   ResearchTaskType.BachelorThesis,
@@ -99,7 +127,15 @@ export const ResearchTaskValuesSchema = z.union([
   OwnResearchTaskValuesSchema,
   OtherResearchTaskValuesSchema,
 ]);
-export type ResearchTaskValues = z.infer<typeof ResearchTaskValuesSchema>;
+export const ResearchTaskValuesInputSchema = z.union([
+  ThesisResearchTaskInputSchema,
+  ProjectPreparationResearchTaskInputSchema,
+  ProjectResearchTaskInputSchema,
+  DidacticsResearchTaskInputSchema,
+  OwnResearchTaskInputSchema,
+  OtherResearchTaskInputSchema,
+]);
+export type ResearchTaskValues = z.input<typeof ResearchTaskValuesInputSchema>;
 
 export function getTaskName(taskType: ResearchTaskType): string {
   switch (taskType) {
@@ -130,33 +166,33 @@ export function getTaskName(taskType: ResearchTaskType): string {
   }
 }
 
-export function getEmptyTask(taskType: ResearchTaskType) {
+export function getEmptyTask(taskType: ResearchTaskType): ResearchTaskValues {
   switch (taskType) {
     case ResearchTaskType.BachelorThesis:
       return {
         type: ResearchTaskType.BachelorThesis,
         author: '',
         title: '',
-      } as ThesisResearchTaskValues;
+      };
     case ResearchTaskType.MasterThesis:
       return {
         type: ResearchTaskType.MasterThesis,
         author: '',
         title: '',
-      } as ThesisResearchTaskValues;
+      };
     case ResearchTaskType.DoctoralThesis:
       return {
         type: ResearchTaskType.DoctoralThesis,
         author: '',
         title: '',
-      } as ThesisResearchTaskValues;
+      };
     case ResearchTaskType.ProjectPreparation:
       return {
         type: ResearchTaskType.ProjectPreparation,
         title: '',
         date: '',
         financingApproved: 'false',
-      } as ProjectPreparationResearchTaskValues;
+      };
     case ResearchTaskType.DomesticProject:
     case ResearchTaskType.ForeignProject:
     case ResearchTaskType.InternalUgProject:
@@ -169,9 +205,9 @@ export function getEmptyTask(taskType: ResearchTaskType) {
         startDate: '',
         endDate: '',
         securedAmount: 0,
-      } as ProjectResearchTaskValues;
+      };
     case ResearchTaskType.Didactics:
-      return { type: ResearchTaskType.Didactics, description: '' } as DidacticsResearchTaskValues;
+      return { type: ResearchTaskType.Didactics, description: '' };
     case ResearchTaskType.OwnResearchTask:
       return {
         type: ResearchTaskType.OwnResearchTask,
@@ -179,9 +215,9 @@ export function getEmptyTask(taskType: ResearchTaskType) {
         date: '',
         magazine: '',
         ministerialPoints: 0,
-      } as OwnResearchTaskValues;
+      };
     case ResearchTaskType.OtherResearchTask:
-      return { type: ResearchTaskType.OtherResearchTask, description: '' } as OtherResearchTaskValues;
+      return { type: ResearchTaskType.OtherResearchTask, description: '' };
     default:
       throw new Error(`Unknown task type: ${taskType}`);
   }

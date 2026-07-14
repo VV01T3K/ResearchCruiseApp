@@ -14,16 +14,15 @@ import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/util
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
+  type FormAValues,
   getFormAValidationSchema,
   getFormAWriteSchema,
-  parseFormADraft,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
@@ -132,7 +131,9 @@ function FormAPage() {
       {
         applicationId,
         data: draft
-          ? parseFormADraft(form.state.values, applicationId)
+          ? getFormAWriteSchema(initialStateQuery.data, true, blockadesQuery.data, applicationId).parse(
+              form.state.values
+            )
           : getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data, applicationId).parse(
               form.state.values
             ),

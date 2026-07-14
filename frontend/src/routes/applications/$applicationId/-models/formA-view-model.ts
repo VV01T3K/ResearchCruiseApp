@@ -1,6 +1,6 @@
 import type { BlockadeResponse } from '@/api/generated/schemas';
 import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
-import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { ReactFormExtendedApi } from '@tanstack/react-form';
 
 /* Internal bridge for the research-task discriminated-union renderer. */

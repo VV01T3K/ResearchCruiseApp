@@ -1,13 +1,10 @@
 import { z } from 'zod';
 
-export const FormFileValuesSchema = z.object(
-  {
-    name: z.string().nonempty('Nazwa pliku nie może być pusta'),
-    content: z.string().nonempty('Zawartość pliku nie może być pusta'),
-  },
-  {
-    error: 'Plik jest wymagany',
-  }
-);
+export const FormFileValuesInputSchema = z.object({ name: z.string(), content: z.string() });
 
-export type FormFileValues = z.infer<typeof FormFileValuesSchema>;
+export const FormFileValuesSchema = FormFileValuesInputSchema.extend({
+  name: z.string().nonempty('Nazwa pliku nie może być pusta'),
+  content: z.string().nonempty('Zawartość pliku nie może być pusta'),
+});
+
+export type FormFileValues = z.input<typeof FormFileValuesInputSchema>;

@@ -1,8 +1,22 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
+import { formCDefaultValues, getFormCWriteSchema } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 import { API_URL, MOCK_IMAGE_FILEPATH, MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
+
+test('draft form C requires the complete input shape while allowing empty values', () => {
+  const draft = {
+    ...formCDefaultValues,
+    permissions: [{ description: '', executive: '', scan: undefined }],
+  };
+  const schema = getFormCWriteSchema(getInitValuesAPayload(), true);
+  expect(schema.safeParse(draft).success).toBe(true);
+
+  const { photos: _omitted, ...missingKey } = draft;
+  expect(schema.safeParse(missingKey).success).toBe(false);
+});
 
 test('valid form C', async ({ formCPage }) => {
   await formCPage.fillForm(); // Fill the form with default values
