@@ -11,12 +11,12 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
+import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
 
 export function SPUBTasksSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskValues>[] {
     return [
       {
         header: 'Lp.',
@@ -108,7 +108,7 @@ export function SPUBTasksSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: SpubTaskDto[]) => prev);
+                field.handleChange((prev: SpubTaskValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}

@@ -9,12 +9,12 @@ import type { SupervisorReviewResponse as GeneratedSupervisorReviewResponse } fr
 import { ApiError, getProblemDetail } from '@/lib/custom-fetch';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
-import { CruisePeriodType, FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
-import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { CruisePeriodType, FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 
 type SupervisorReviewResponse = Omit<GeneratedSupervisorReviewResponse, 'form' | 'initValues'> & {
-  form: FormADto;
-  initValues: FormAInitValuesDto;
+  form: FormAValues;
+  initValues: FormAOptions;
 };
 
 export const Route = createFileRoute('/cruise-approval')({
@@ -92,7 +92,7 @@ function SupervisorViewPage() {
           spubTasks: [],
           supervisorEmail: '',
           note: '',
-        }) as FormADto,
+        }) as FormAValues,
   });
 
   function handleAcceptForm() {

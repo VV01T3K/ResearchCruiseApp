@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const LongResearchEquipmentDtoValidationSchema = z.object({
+export const LongResearchEquipmentValuesSchema = z.object({
   name: z.string().nonempty('Nazwa jest wymagana'),
   action: z.enum(['Put', 'Collect'], {
     error: 'Akcja jest wymagana',
@@ -8,4 +8,4 @@ export const LongResearchEquipmentDtoValidationSchema = z.object({
   duration: z.string().nonempty('Czas trwania jest wymagany'),
 });
 
-export type LongResearchEquipmentDto = z.infer<typeof LongResearchEquipmentDtoValidationSchema>;
+export type LongResearchEquipmentValues = z.infer<typeof LongResearchEquipmentValuesSchema>;

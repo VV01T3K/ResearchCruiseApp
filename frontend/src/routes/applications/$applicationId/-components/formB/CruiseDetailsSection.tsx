@@ -12,9 +12,9 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { LongResearchEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentDto';
-import { PortDto } from '@/routes/applications/$applicationId/-schemas/types/PortDto';
-import { ShortResearchEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentDto';
+import { LongResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+import { PortCallValues } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+import { ShortResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
 
 const shortResearchEquipmentColumns = (
   form: FormBContextType['form'],
@@ -23,7 +23,7 @@ const shortResearchEquipmentColumns = (
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean,
   allowPastDates: boolean
-): ColumnDef<ShortResearchEquipmentDto>[] => [
+): ColumnDef<ShortResearchEquipmentValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -124,7 +124,7 @@ const shortResearchEquipmentColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev: ShortResearchEquipmentDto[]) => prev);
+            field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -141,7 +141,7 @@ const longResearchEquipmentColumns = (
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<LongResearchEquipmentDto>[] => [
+): ColumnDef<LongResearchEquipmentValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -159,7 +159,7 @@ const longResearchEquipmentColumns = (
           <AppDropdownInput
             name={field.name}
             value={field.state.value}
-            onChange={(e) => field.handleChange(e as LongResearchEquipmentDto['action'])}
+            onChange={(e) => field.handleChange(e as LongResearchEquipmentValues['action'])}
             onBlur={field.handleBlur}
             errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
@@ -229,7 +229,7 @@ const longResearchEquipmentColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev: LongResearchEquipmentDto[]) => prev);
+            field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -247,7 +247,7 @@ const portColumns = (
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean,
   allowPastDates: boolean
-): ColumnDef<PortDto>[] => [
+): ColumnDef<PortCallValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -350,7 +350,7 @@ const portColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev: PortDto[]) => prev);
+            field.handleChange((prev: PortCallValues[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -397,7 +397,7 @@ export function CruiseDetailsSection() {
                       endDate: '',
                       name: '',
                     });
-                    field.handleChange((prev: ShortResearchEquipmentDto[]) => prev);
+                    field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
                     field.handleBlur();
                   }}
                 >
@@ -446,11 +446,11 @@ export function CruiseDetailsSection() {
                     value: option.label,
                     onClick: () => {
                       field.pushValue({
-                        action: option.value as LongResearchEquipmentDto['action'],
+                        action: option.value as LongResearchEquipmentValues['action'],
                         duration: '',
                         name: '',
                       });
-                      field.handleChange((prev: LongResearchEquipmentDto[]) => prev);
+                      field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
                       field.handleBlur();
                     },
                   }))}
@@ -487,7 +487,7 @@ export function CruiseDetailsSection() {
                       endTime: '',
                       name: '',
                     });
-                    field.handleChange((prev: PortDto[]) => prev);
+                    field.handleChange((prev: PortCallValues[]) => prev);
                     field.handleBlur();
                   }}
                 >

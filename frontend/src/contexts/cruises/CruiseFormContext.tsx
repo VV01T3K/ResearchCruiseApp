@@ -1,14 +1,14 @@
 import { createContext, use } from 'react';
 
 import { AnyReactFormApi } from '@/lib/form';
-import { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
+import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 import type { CruiseResponse } from '@/api/generated/schemas';
 import type { CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 
 export type CruiseFormContextType = {
   form: AnyReactFormApi<CruiseFormValues>;
   cruise?: CruiseResponse;
-  cruiseApplications: CruiseApplicationDto[];
+  cruiseApplications: CruiseApplicationCandidate[];
   isReadonly: boolean;
   hasFormBeenSubmitted?: boolean;
 };

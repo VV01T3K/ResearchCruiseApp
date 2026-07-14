@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
-import { ContractDto } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
-import { GuestTeamDto } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
-import { PermissionDto } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
-import { PublicationDto } from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
-import { ResearchAreaDescriptionDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaDescriptionDto';
-import { ResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
-import { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
-import { UGTeamDto } from '@/routes/applications/$applicationId/-schemas/types/UGTeamDto';
+import { ContractValues } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import { PublicationValues } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import { ResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import { UgTeamValues } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 
-export type FormADto = {
+export type FormAValues = {
   id?: string | undefined;
   cruiseManagerId: string;
   deputyManagerId: string;
@@ -23,16 +23,16 @@ export type FormADto = {
   periodNotes: string;
   shipUsage?: string;
   differentUsage: string;
-  permissions: PermissionDto[];
-  researchAreaDescriptions: ResearchAreaDescriptionDto[];
+  permissions: PermissionValues[];
+  researchAreaDescriptions: ResearchAreaValues[];
   cruiseGoal: CruiseGoal | '';
   cruiseGoalDescription: string;
-  researchTasks: ResearchTaskDto[];
-  contracts: ContractDto[];
-  ugTeams: UGTeamDto[];
-  guestTeams: GuestTeamDto[];
-  publications: PublicationDto[];
-  spubTasks: SpubTaskDto[];
+  researchTasks: ResearchTaskValues[];
+  contracts: ContractValues[];
+  ugTeams: UgTeamValues[];
+  guestTeams: GuestTeamValues[];
+  publications: PublicationValues[];
+  spubTasks: SpubTaskValues[];
   supervisorEmail: string;
   note?: string;
 };

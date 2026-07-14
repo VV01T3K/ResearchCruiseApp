@@ -15,14 +15,14 @@ export enum ResearchTaskType {
   OtherResearchTask = '11',
 }
 
-export const ThesisResearchTaskDtoValidationSchema = z.object({
+export const ThesisResearchTaskValuesSchema = z.object({
   type: z.enum([ResearchTaskType.BachelorThesis, ResearchTaskType.MasterThesis, ResearchTaskType.DoctoralThesis]),
   author: z.string().nonempty('Autor nie może być pusty'),
   title: z.string().nonempty('Tytuł nie może być pusty'),
 });
-export type ThesisResearchTaskDto = z.infer<typeof ThesisResearchTaskDtoValidationSchema>;
+export type ThesisResearchTaskValues = z.infer<typeof ThesisResearchTaskValuesSchema>;
 
-export const ProjectPreparationResearchTaskDtoValidationSchema = z.object({
+export const ProjectPreparationResearchTaskValuesSchema = z.object({
   type: z.enum([ResearchTaskType.ProjectPreparation]),
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
@@ -30,9 +30,9 @@ export const ProjectPreparationResearchTaskDtoValidationSchema = z.object({
     error: 'Wymagane jest wskazanie czy finansowanie zostało zatwierdzone',
   }),
 });
-export type ProjectPreparationResearchTaskDto = z.infer<typeof ProjectPreparationResearchTaskDtoValidationSchema>;
+export type ProjectPreparationResearchTaskValues = z.infer<typeof ProjectPreparationResearchTaskValuesSchema>;
 
-export const ProjectResearchTaskDtoValidationSchema = z.object({
+export const ProjectResearchTaskValuesSchema = z.object({
   type: z.enum([
     ResearchTaskType.DomesticProject,
     ResearchTaskType.ForeignProject,
@@ -52,15 +52,15 @@ export const ProjectResearchTaskDtoValidationSchema = z.object({
     return !isNaN(parsed) && parsed >= 0;
   }, 'Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
 });
-export type ProjectResearchTaskDto = z.infer<typeof ProjectResearchTaskDtoValidationSchema>;
+export type ProjectResearchTaskValues = z.infer<typeof ProjectResearchTaskValuesSchema>;
 
-export const DidacticsResearchTaskDtoValidationSchema = z.object({
+export const DidacticsResearchTaskValuesSchema = z.object({
   type: z.enum([ResearchTaskType.Didactics]),
   description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
-export type DidacticsResearchTaskDto = z.infer<typeof DidacticsResearchTaskDtoValidationSchema>;
+export type DidacticsResearchTaskValues = z.infer<typeof DidacticsResearchTaskValuesSchema>;
 
-export const OwnResearchTaskDtoValidationSchema = z.object({
+export const OwnResearchTaskValuesSchema = z.object({
   type: z.enum([ResearchTaskType.OwnResearchTask]),
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
@@ -75,13 +75,13 @@ export const OwnResearchTaskDtoValidationSchema = z.object({
     }
   ),
 });
-export type OwnResearchTaskDto = z.infer<typeof OwnResearchTaskDtoValidationSchema>;
+export type OwnResearchTaskValues = z.infer<typeof OwnResearchTaskValuesSchema>;
 
-export const OtherResearchTaskDtoValidationSchema = z.object({
+export const OtherResearchTaskValuesSchema = z.object({
   type: z.enum([ResearchTaskType.OtherResearchTask]),
   description: z.string().nonempty('Opis nie może być pusty').max(10240, 'Opis nie może być dłuższy niż 10240 znaków'),
 });
-export type OtherResearchTaskDto = z.infer<typeof OtherResearchTaskDtoValidationSchema>;
+export type OtherResearchTaskValues = z.infer<typeof OtherResearchTaskValuesSchema>;
 
 export const taskTypes = [
   ResearchTaskType.BachelorThesis,
@@ -98,19 +98,19 @@ export const taskTypes = [
   ResearchTaskType.OtherResearchTask,
 ];
 
-export const ResearchTaskDtoDraftValidationSchema = z.object({
+export const ResearchTaskValuesDraftValidationSchema = z.object({
   type: z.enum([taskTypes[0], ...taskTypes.slice(1)]),
 });
 
-export const ResearchTaskDtoValidationSchema = z.union([
-  ThesisResearchTaskDtoValidationSchema,
-  ProjectPreparationResearchTaskDtoValidationSchema,
-  ProjectResearchTaskDtoValidationSchema,
-  DidacticsResearchTaskDtoValidationSchema,
-  OwnResearchTaskDtoValidationSchema,
-  OtherResearchTaskDtoValidationSchema,
+export const ResearchTaskValuesSchema = z.union([
+  ThesisResearchTaskValuesSchema,
+  ProjectPreparationResearchTaskValuesSchema,
+  ProjectResearchTaskValuesSchema,
+  DidacticsResearchTaskValuesSchema,
+  OwnResearchTaskValuesSchema,
+  OtherResearchTaskValuesSchema,
 ]);
-export type ResearchTaskDto = z.infer<typeof ResearchTaskDtoValidationSchema>;
+export type ResearchTaskValues = z.infer<typeof ResearchTaskValuesSchema>;
 
 export function getTaskName(taskType: ResearchTaskType): string {
   switch (taskType) {
@@ -148,26 +148,26 @@ export function getEmptyTask(taskType: ResearchTaskType) {
         type: ResearchTaskType.BachelorThesis,
         author: '',
         title: '',
-      } as ThesisResearchTaskDto;
+      } as ThesisResearchTaskValues;
     case ResearchTaskType.MasterThesis:
       return {
         type: ResearchTaskType.MasterThesis,
         author: '',
         title: '',
-      } as ThesisResearchTaskDto;
+      } as ThesisResearchTaskValues;
     case ResearchTaskType.DoctoralThesis:
       return {
         type: ResearchTaskType.DoctoralThesis,
         author: '',
         title: '',
-      } as ThesisResearchTaskDto;
+      } as ThesisResearchTaskValues;
     case ResearchTaskType.ProjectPreparation:
       return {
         type: ResearchTaskType.ProjectPreparation,
         title: '',
         date: '',
         financingApproved: 'false',
-      } as ProjectPreparationResearchTaskDto;
+      } as ProjectPreparationResearchTaskValues;
     case ResearchTaskType.DomesticProject:
     case ResearchTaskType.ForeignProject:
     case ResearchTaskType.InternalUgProject:
@@ -180,9 +180,9 @@ export function getEmptyTask(taskType: ResearchTaskType) {
         startDate: '',
         endDate: '',
         securedAmount: '0.00',
-      } as ProjectResearchTaskDto;
+      } as ProjectResearchTaskValues;
     case ResearchTaskType.Didactics:
-      return { type: ResearchTaskType.Didactics, description: '' } as DidacticsResearchTaskDto;
+      return { type: ResearchTaskType.Didactics, description: '' } as DidacticsResearchTaskValues;
     case ResearchTaskType.OwnResearchTask:
       return {
         type: ResearchTaskType.OwnResearchTask,
@@ -190,9 +190,9 @@ export function getEmptyTask(taskType: ResearchTaskType) {
         date: '',
         magazine: '',
         ministerialPoints: '0',
-      } as OwnResearchTaskDto;
+      } as OwnResearchTaskValues;
     case ResearchTaskType.OtherResearchTask:
-      return { type: ResearchTaskType.OtherResearchTask, description: '' } as OtherResearchTaskDto;
+      return { type: ResearchTaskType.OtherResearchTask, description: '' } as OtherResearchTaskValues;
     default:
       throw new Error(`Unknown task type: ${taskType}`);
   }

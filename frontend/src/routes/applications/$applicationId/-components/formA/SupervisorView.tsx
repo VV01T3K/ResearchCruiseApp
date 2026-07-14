@@ -13,8 +13,8 @@ import { ResearchTasksSection } from '@/routes/applications/$applicationId/-comp
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
 import { FormAProvider } from '@/contexts/applications/FormAContext';
-import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
-import { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 
 export function SupervisorView({
   form,
@@ -22,8 +22,8 @@ export function SupervisorView({
   handleAcceptForm,
   handleDenyForm,
 }: {
-  form: AnyReactFormApi<FormADto>;
-  formInitValues: FormAInitValuesDto;
+  form: AnyReactFormApi<FormAValues>;
+  formInitValues: FormAOptions;
   handleAcceptForm: () => void;
   handleDenyForm: () => void;
 }) {

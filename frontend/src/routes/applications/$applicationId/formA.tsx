@@ -23,8 +23,8 @@ import {
   useGetApplicationFormAContextSuspense,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
-import { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
-import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
+import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 
@@ -43,7 +43,7 @@ function FormAPage() {
   const navigate = useNavigate();
   const userContext = useUserContext();
   const initialStateQuery = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAInitValuesDto },
+    query: { select: (context) => context as FormAOptions },
   });
   const saveMutation = useUpdateApplicationFormA();
   const formA = useFormAQuery(applicationId);
@@ -105,7 +105,7 @@ function FormAPage() {
           spubTasks: [],
           supervisorEmail: '',
           note: '',
-        }) as FormADto,
+        }) as FormAValues,
     validators: {
       onChange: getFormAValidationSchema(initialStateQuery.data),
     },
@@ -139,7 +139,7 @@ function FormAPage() {
     actionsDisabled: saveMutation.isPending,
   };
 
-  function isCurrentUserManagerOrDeputy(dto: FormADto) {
+  function isCurrentUserManagerOrDeputy(dto: FormAValues) {
     const userId = userContext.currentUser!.id;
     return dto.cruiseManagerId === userId || dto.deputyManagerId === userId;
   }

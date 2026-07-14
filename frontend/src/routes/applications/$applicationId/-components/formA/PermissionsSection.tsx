@@ -9,12 +9,12 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { PermissionDto } from '@/routes/applications/$applicationId/-schemas/types/PermissionDto';
+import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 
 export function PermissionsSection() {
   const { form, isReadonly, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<PermissionDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<PermissionValues>[] {
     return [
       {
         header: 'Lp.',
@@ -74,7 +74,7 @@ export function PermissionsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: PermissionDto[]) => prev);
+                field.handleChange((prev: PermissionValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -109,8 +109,8 @@ export function PermissionsSection() {
                         description: '',
                         executive: '',
                         scan: undefined,
-                      } as PermissionDto);
-                      field.handleChange((prev: PermissionDto[]) => prev);
+                      } as PermissionValues);
+                      field.handleChange((prev: PermissionValues[]) => prev);
                       field.handleBlur();
                     }}
                     disabled={isReadonly}

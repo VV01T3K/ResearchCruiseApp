@@ -7,8 +7,8 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInput, AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { getErrors } from '@/lib/utils';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
-import { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
-import { FormUserDto } from '@/routes/applications/$applicationId/-schemas/types/FormUserDto';
+import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
+import { UserOption } from '@/routes/applications/$applicationId/-schemas/types/UserOption';
 import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse } from '@/api/generated/schemas';
@@ -171,7 +171,7 @@ function ManagerSelectionLayout({
 
 function checkIfCruiseManagerIsAssignedToAnyApplication(
   managerId: string,
-  cruiseApplications: CruiseApplicationDto[],
+  cruiseApplications: CruiseApplicationCandidate[],
   selectedCruiseApplicationsIds: string[]
 ) {
   return cruiseApplications.some(
@@ -184,7 +184,7 @@ function checkIfCruiseManagerIsAssignedToAnyApplication(
 function getCruiseManagersNotAssignedToApplication(
   users: CruiseManagerResponse[],
   selectedUsersIds: string[],
-  cruiseApplications: CruiseApplicationDto[],
+  cruiseApplications: CruiseApplicationCandidate[],
   selectedCruiseApplicationsIds: string[]
 ): CruiseManagerResponse[] {
   return selectedUsersIds
@@ -201,10 +201,10 @@ function getCruiseManagersNotAssignedToApplication(
 
 function getAllUsersForDropdown(
   users: CruiseManagerResponse[],
-  cruiseApplications: CruiseApplicationDto[],
+  cruiseApplications: CruiseApplicationCandidate[],
   selectedCruiseApplicationsIds: string[]
 ): AppDropdownInputOption[] {
-  const formUsers: FormUserDto[] = users.map((user) => ({
+  const formUsers: UserOption[] = users.map((user) => ({
     id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,

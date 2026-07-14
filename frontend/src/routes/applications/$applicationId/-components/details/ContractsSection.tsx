@@ -5,7 +5,7 @@ import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
+import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { EvaluationFormAContract } from '@/routes/applications/-types';
 
 export function ContractsSection() {

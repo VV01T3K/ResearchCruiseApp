@@ -15,13 +15,13 @@ import { useFormA } from '@/contexts/applications/FormAContext';
 import {
   getPublicationCategoryLabel,
   PublicationCategory,
-  PublicationDto,
-} from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
+  PublicationValues,
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<PublicationDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<PublicationValues>[] {
     return [
       {
         header: 'Lp.',
@@ -189,7 +189,7 @@ export function PublicationsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: PublicationDto[]) => prev);
+                field.handleChange((prev: PublicationValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -257,7 +257,7 @@ export function PublicationsSection() {
                           year: '',
                           ministerialPoints: '0',
                         });
-                        field.handleChange((prev: PublicationDto[]) => prev);
+                        field.handleChange((prev: PublicationValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -314,7 +314,7 @@ export function PublicationsSection() {
                         ),
                         onClick: () => {
                           field.pushValue(publication);
-                          field.handleChange((prev: PublicationDto[]) => prev);
+                          field.handleChange((prev: PublicationValues[]) => prev);
                           field.handleBlur();
                         },
                       })),

@@ -1,7 +1,7 @@
-import { OtherResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  task: OtherResearchTaskDto;
+  task: OtherResearchTaskValues;
 };
 export function OtherResearchTaskThumbnail({ task }: Props) {
   return (

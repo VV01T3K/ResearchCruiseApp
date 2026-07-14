@@ -7,7 +7,7 @@ import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPick
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
 import { EvaluationFormAPublication } from '@/routes/applications/-types';
-import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
+import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const { evaluation } = useApplicationDetails();

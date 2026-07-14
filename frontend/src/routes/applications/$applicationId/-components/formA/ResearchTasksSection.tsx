@@ -13,15 +13,15 @@ import { useFormA } from '@/contexts/applications/FormAContext';
 import {
   getEmptyTask,
   getTaskName,
-  ResearchTaskDto,
+  ResearchTaskValues,
   ResearchTaskType,
   taskTypes,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskValues>[] {
     return [
       {
         header: 'Lp.',
@@ -58,7 +58,7 @@ export function ResearchTasksSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: ResearchTaskDto[]) => prev);
+                field.handleChange((prev: ResearchTaskValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -93,7 +93,7 @@ export function ResearchTasksSection() {
                       value: getTaskName(type),
                       onClick: () => {
                         field.pushValue(getEmptyTask(type));
-                        field.handleChange((prev: ResearchTaskDto[]) => prev);
+                        field.handleChange((prev: ResearchTaskValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -121,7 +121,7 @@ export function ResearchTasksSection() {
                         content: <ResearchTaskThumbnail task={task} />,
                         onClick: () => {
                           field.pushValue(task);
-                          field.handleChange((prev: ResearchTaskDto[]) => prev);
+                          field.handleChange((prev: ResearchTaskValues[]) => prev);
                           field.handleBlur();
                         },
                       })),

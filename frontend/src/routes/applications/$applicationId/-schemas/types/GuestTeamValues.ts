@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const GuestTeamDtoValidationSchema = z.object({
+export const GuestTeamValuesSchema = z.object({
   name: z.string().nonempty('Instytucja jest wymagana'),
   noOfPersons: z.string().refine((val) => {
     const parsed = parseInt(val, 10);
@@ -8,4 +8,4 @@ export const GuestTeamDtoValidationSchema = z.object({
   }, 'Liczba osób musi być liczbą większą od 0'),
 });
 
-export type GuestTeamDto = z.infer<typeof GuestTeamDtoValidationSchema>;
+export type GuestTeamValues = z.infer<typeof GuestTeamValuesSchema>;

@@ -29,7 +29,7 @@ import {
   useUpdateCruise,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
-import type { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
+import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -369,7 +369,7 @@ function CruiseDetailsPage() {
   );
 }
 
-function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationDto {
+function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationCandidate {
   return {
     ...application,
     status: application.status,

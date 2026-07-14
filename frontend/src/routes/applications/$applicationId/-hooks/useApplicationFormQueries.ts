@@ -8,16 +8,16 @@ import {
   getGetApplicationFormBQueryKey,
   getGetApplicationFormCQueryKey,
 } from '@/api/generated/endpoints/applications.gen';
-import type { FormADto } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
-import type { FormBDto } from '@/routes/applications/$applicationId/-schemas/types/FormBDto';
-import type { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
+import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 import { ApiError } from '@/lib/custom-fetch';
 
 export function useFormAQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormAQueryKey(applicationId),
     queryFn: async () => {
-      const form = (await getApplicationFormA(applicationId)) as FormADto;
+      const form = (await getApplicationFormA(applicationId)) as FormAValues;
       form.note ??= '';
       form.precisePeriodStart ??= '';
       form.precisePeriodEnd ??= '';
@@ -29,9 +29,9 @@ export function useFormAQuery(applicationId: string) {
 export function useFormBQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormBQueryKey(applicationId),
-    queryFn: async (): Promise<FormBDto | null> => {
+    queryFn: async (): Promise<FormBValues | null> => {
       try {
-        return (await getApplicationFormB(applicationId)) as FormBDto;
+        return (await getApplicationFormB(applicationId)) as FormBValues;
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
@@ -44,9 +44,9 @@ export function useFormBQuery(applicationId: string) {
 export function useFormCQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormCQueryKey(applicationId),
-    queryFn: async (): Promise<FormCDto | null> => {
+    queryFn: async (): Promise<FormCValues | null> => {
       try {
-        return (await getApplicationFormC(applicationId)) as FormCDto;
+        return (await getApplicationFormC(applicationId)) as FormCValues;
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;

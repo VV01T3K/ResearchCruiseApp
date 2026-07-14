@@ -4,11 +4,11 @@ import type {
   CruiseApplicationEvaluationDetailsDto,
 } from '@/api/generated/schemas';
 import type { DeepPresent } from '@/types/utils';
-import type { ContractDto } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
-import type { GuestTeamDto } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
-import type { PublicationDto } from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
-import type { ResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
-import type { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
+import type { ContractValues } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import type { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import type { PublicationValues } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import type { ResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
 
 export const ApplicationStatus = {
   Draft: 'draft',
@@ -58,17 +58,17 @@ type GeneratedPublication = GeneratedEvaluation['formAPublications'][number];
 type GeneratedSpubTask = GeneratedEvaluation['formASpubTasks'][number];
 
 export type EvaluationFormAResearchTask = Omit<GeneratedResearchTask, 'researchTask'> & {
-  researchTask: ResearchTaskDto;
+  researchTask: ResearchTaskValues;
 };
 export type EvaluationFormAContract = Omit<GeneratedContract, 'contract'> & {
-  contract: ContractDto;
+  contract: ContractValues;
 };
 export type EvaluationUgTeamResponse = GeneratedEvaluation['ugTeams'][number];
 export type EvaluationFormAPublication = Omit<GeneratedPublication, 'publication'> & {
-  publication: PublicationDto;
+  publication: PublicationValues;
 };
 export type EvaluationFormASpubTask = Omit<GeneratedSpubTask, 'spubTask'> & {
-  spubTask: SpubTaskDto;
+  spubTask: SpubTaskValues;
 };
 export type EvaluationResponse = Omit<
   GeneratedEvaluation,
@@ -76,7 +76,7 @@ export type EvaluationResponse = Omit<
 > & {
   formAResearchTasks: EvaluationFormAResearchTask[];
   formAContracts: EvaluationFormAContract[];
-  guestTeams: GuestTeamDto[];
+  guestTeams: GuestTeamValues[];
   formAPublications: EvaluationFormAPublication[];
   formASpubTasks: EvaluationFormASpubTask[];
 };

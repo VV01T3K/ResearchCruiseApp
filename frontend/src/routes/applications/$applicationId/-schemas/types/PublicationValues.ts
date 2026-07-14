@@ -14,7 +14,7 @@ export function getPublicationCategoryLabel(category: PublicationCategory) {
   }
 }
 
-export const PublicationDtoValidationSchema = z.object({
+export const PublicationValuesSchema = z.object({
   id: z.guid().or(z.literal('')),
   category: z.enum(PublicationCategory),
   doi: z.string().nonempty('DOI jest wymagane'),
@@ -28,4 +28,4 @@ export const PublicationDtoValidationSchema = z.object({
   }, 'Punkty muszą być liczbą nieujemną'),
 });
 
-export type PublicationDto = z.infer<typeof PublicationDtoValidationSchema>;
+export type PublicationValues = z.infer<typeof PublicationValuesSchema>;

@@ -4,12 +4,15 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { getTaskName, ResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import {
+  getTaskName,
+  ResearchTaskValues,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection() {
   const { formA, isReadonly } = useFormB();
 
-  const columns: ColumnDef<ResearchTaskDto>[] = [
+  const columns: ColumnDef<ResearchTaskValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

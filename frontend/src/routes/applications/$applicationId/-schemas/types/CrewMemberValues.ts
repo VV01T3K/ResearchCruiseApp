@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CrewMemberDtoValidationSchema = z.object({
+export const CrewMemberValuesSchema = z.object({
   title: z.string().nonempty('Tytuł jest wymagany'),
   firstName: z.string().nonempty('Imię jest wymagane'),
   lastName: z.string().nonempty('Nazwisko jest wymagane'),
@@ -11,4 +11,4 @@ export const CrewMemberDtoValidationSchema = z.object({
   institution: z.string().nonempty('Instytucja jest wymagana'),
 });
 
-export type CrewMemberDto = z.infer<typeof CrewMemberDtoValidationSchema>;
+export type CrewMemberValues = z.infer<typeof CrewMemberValuesSchema>;

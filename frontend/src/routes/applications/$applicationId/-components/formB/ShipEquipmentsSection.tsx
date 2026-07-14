@@ -5,13 +5,13 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { ShipEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentDto';
+import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
 
 const shipEquipmentColumns = (
   form: FormBContextType['form'],
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<ShipEquipmentDto>[] => [
+): ColumnDef<ShipEquipmentOption>[] => [
   {
     header: 'Element',
     cell: ({ row }) => row.original.name,

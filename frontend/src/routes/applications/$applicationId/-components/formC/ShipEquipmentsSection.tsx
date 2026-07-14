@@ -7,14 +7,14 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
-import { ShipEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentDto';
+import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
 
 const shipEquipmentColumns = (
-  form: AnyReactFormApi<FormCDto>,
+  form: AnyReactFormApi<FormCValues>,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<ShipEquipmentDto>[] => [
+): ColumnDef<ShipEquipmentOption>[] => [
   {
     header: 'Element',
     cell: ({ row }) => row.original.name,

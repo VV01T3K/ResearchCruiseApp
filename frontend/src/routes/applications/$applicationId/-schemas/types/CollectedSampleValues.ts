@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CollectedSampleDtoValidationSchema = z.object({
+export const CollectedSampleValuesSchema = z.object({
   type: z
     .string()
     .nonempty('Typ próbki nie może być pusty')
@@ -22,4 +22,4 @@ export const CollectedSampleDtoValidationSchema = z.object({
     .max(10240, 'Publikacja próbki nie może być dłuższa niż 10240 znaków'),
 });
 
-export type CollectedSampleDto = z.infer<typeof CollectedSampleDtoValidationSchema>;
+export type CollectedSampleValues = z.infer<typeof CollectedSampleValuesSchema>;

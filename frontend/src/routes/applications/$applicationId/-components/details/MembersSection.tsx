@@ -5,7 +5,7 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
 import { EvaluationUgTeamResponse } from '@/routes/applications/-types';
-import { GuestTeamDto } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
+import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
 
 export function MembersSection() {
   const { evaluation } = useApplicationDetails();
@@ -64,7 +64,7 @@ export function MembersSection() {
     },
   ];
 
-  const guestTeamsColumns: ColumnDef<GuestTeamDto>[] = [
+  const guestTeamsColumns: ColumnDef<GuestTeamValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

@@ -1,8 +1,8 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { OtherResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: OtherResearchTaskDto;
+  data: OtherResearchTaskValues;
 };
 export function OtherResearchTaskDetails({ data }: Props) {
   return (

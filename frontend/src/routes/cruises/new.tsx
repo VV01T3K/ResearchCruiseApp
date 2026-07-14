@@ -15,7 +15,7 @@ import { FormView } from './-components/FormView';
 import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
 import { getGetCruisesQueryKey, useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import type { CruiseApplicationDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationDto';
+import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -38,7 +38,7 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 
 function NewCruisePage() {
   const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense({
-    query: { select: (applications) => applications as CruiseApplicationDto[] },
+    query: { select: (applications) => applications as CruiseApplicationCandidate[] },
   });
   const queryClient = useQueryClient();
   const createCruiseMutation = useCreateCruise({

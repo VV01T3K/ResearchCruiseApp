@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const ResearchEquipmentDtoValidationSchema = z.object({
+export const ResearchEquipmentValuesSchema = z.object({
   name: z.string().nonempty('Nazwa jest wymagana'),
   insuranceStartDate: z.string().nullable(),
   insuranceEndDate: z.string().nullable(),
@@ -9,4 +9,4 @@ export const ResearchEquipmentDtoValidationSchema = z.object({
   }),
 });
 
-export type ResearchEquipmentDto = z.infer<typeof ResearchEquipmentDtoValidationSchema>;
+export type ResearchEquipmentValues = z.infer<typeof ResearchEquipmentValuesSchema>;

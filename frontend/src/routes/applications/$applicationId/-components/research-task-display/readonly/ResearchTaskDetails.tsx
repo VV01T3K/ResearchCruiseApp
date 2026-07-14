@@ -5,39 +5,39 @@ import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$ap
 import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ProjectResearchTaskDetails';
 import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ThesisResearchTaskDetails';
 import {
-  DidacticsResearchTaskDto,
-  OtherResearchTaskDto,
-  OwnResearchTaskDto,
-  ProjectPreparationResearchTaskDto,
-  ProjectResearchTaskDto,
-  ResearchTaskDto,
+  DidacticsResearchTaskValues,
+  OtherResearchTaskValues,
+  OwnResearchTaskValues,
+  ProjectPreparationResearchTaskValues,
+  ProjectResearchTaskValues,
+  ResearchTaskValues,
   ResearchTaskType,
-  ThesisResearchTaskDto,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+  ThesisResearchTaskValues,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: ResearchTaskDto;
+  data: ResearchTaskValues;
 };
 export function ResearchTaskDetails({ data }: Props) {
   switch (data.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:
     case ResearchTaskType.DoctoralThesis:
-      return <ThesisResearchTaskDetails data={data as ThesisResearchTaskDto} />;
+      return <ThesisResearchTaskDetails data={data as ThesisResearchTaskValues} />;
     case ResearchTaskType.ProjectPreparation:
-      return <ProjectPreparationResearchTaskDetails data={data as ProjectPreparationResearchTaskDto} />;
+      return <ProjectPreparationResearchTaskDetails data={data as ProjectPreparationResearchTaskValues} />;
     case ResearchTaskType.DomesticProject:
     case ResearchTaskType.ForeignProject:
     case ResearchTaskType.InternalUgProject:
     case ResearchTaskType.OtherProject:
     case ResearchTaskType.CommercialProject:
-      return <ProjectResearchTaskDetails data={data as ProjectResearchTaskDto} />;
+      return <ProjectResearchTaskDetails data={data as ProjectResearchTaskValues} />;
     case ResearchTaskType.Didactics:
-      return <DidacticsResearchTaskDetails data={data as DidacticsResearchTaskDto} />;
+      return <DidacticsResearchTaskDetails data={data as DidacticsResearchTaskValues} />;
     case ResearchTaskType.OwnResearchTask:
-      return <OwnResearchTaskDetails data={data as OwnResearchTaskDto} />;
+      return <OwnResearchTaskDetails data={data as OwnResearchTaskValues} />;
     case ResearchTaskType.OtherResearchTask:
-      return <OtherResearchTaskDetails data={data as OtherResearchTaskDto} />;
+      return <OtherResearchTaskDetails data={data as OtherResearchTaskValues} />;
     default:
       throw new Error(`Unknown research task type`);
   }

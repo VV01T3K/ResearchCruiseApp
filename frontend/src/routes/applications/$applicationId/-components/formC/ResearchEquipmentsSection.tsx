@@ -11,15 +11,15 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
-import { ResearchEquipmentDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentDto';
+import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
 
 const researchEquipmentsColumns = (
-  form: AnyReactFormApi<FormCDto>,
+  form: AnyReactFormApi<FormCValues>,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<ResearchEquipmentDto>[] => [
+): ColumnDef<ResearchEquipmentValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -67,7 +67,9 @@ const researchEquipmentsColumns = (
           name={`researchEquipments[${row.index}].insuranceEndDate`}
           children={(field: AnyFieldApi) => (
             <form.Subscribe
-              selector={(state: { values: FormCDto }) => state.values.researchEquipments[row.index].insuranceStartDate}
+              selector={(state: { values: FormCValues }) =>
+                state.values.researchEquipments[row.index].insuranceStartDate
+              }
               children={(insuranceStartDate) => {
                 const startDate = insuranceStartDate ?? undefined;
                 if (startDate && field.state.value && startDate > field.state.value) {
@@ -122,7 +124,7 @@ const researchEquipmentsColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev: ResearchEquipmentDto[]) => prev);
+            field.handleChange((prev: ResearchEquipmentValues[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}

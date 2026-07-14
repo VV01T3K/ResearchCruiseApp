@@ -22,11 +22,11 @@ import {
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
 import { FormBWriteRequest } from '@/api/generated/schemas';
-import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
-import type { FormBInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormBInitValuesDto';
+import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
-import { CruiseDayDetailsDtoValidationSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
-import { FormBDto } from '@/routes/applications/$applicationId/-schemas/types/FormBDto';
+import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
@@ -45,10 +45,10 @@ function FormBPage() {
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
   const formAInitValues = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAInitValuesDto },
+    query: { select: (context) => context as FormAOptions },
   });
   const formBInitValues = useGetApplicationFormBContextSuspense({
-    query: { select: (context) => context as FormBInitValuesDto },
+    query: { select: (context) => context as FormBOptions },
   });
   const cruise = useGetApplicationCruiseSuspense(applicationId);
   const updateMutation = useUpdateApplicationFormB();
@@ -67,7 +67,7 @@ function FormBPage() {
       cruiseDaysDetails: [],
       researchEquipments: [],
       shipEquipmentsIds: [],
-    }) as FormBDto,
+    }) as FormBValues,
     validators: {
       onChange: getFormBValidationSchema(),
     },
@@ -137,7 +137,7 @@ function FormBPage() {
   async function handleDraftSave() {
     const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
     const commentError = cruiseDaysDetails
-      ?.map((day) => CruiseDayDetailsDtoValidationSchema.shape.comment.safeParse(day.comment))
+      ?.map((day) => CruiseDayValuesSchema.shape.comment.safeParse(day.comment))
       .find((result) => !result.success);
 
     if (commentError && !commentError.success) {

@@ -1,8 +1,8 @@
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
-import { FormUserDto } from '@/routes/applications/$applicationId/-schemas/types/FormUserDto';
+import { UserOption } from '@/routes/applications/$applicationId/-schemas/types/UserOption';
 
-export function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption {
+export function mapPersonToLabel(person: UserOption): AppDropdownInputOption {
   return {
     value: person.id,
     inlineLabel: `${person.firstName} ${person.lastName} (${person.email})`,
@@ -20,7 +20,7 @@ export function mapPersonToLabel(person: FormUserDto): AppDropdownInputOption {
   };
 }
 
-export function mapPersonToText(person: FormUserDto | undefined): string {
+export function mapPersonToText(person: UserOption | undefined): string {
   if (!person) {
     return '';
   }

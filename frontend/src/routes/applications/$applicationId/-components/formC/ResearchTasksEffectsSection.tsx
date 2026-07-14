@@ -6,13 +6,13 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { getErrors } from '@/lib/utils';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
-import { ResearchTaskEffectDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectDto';
+import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 
 export function ResearchTasksEffectsSection() {
   const { form, isReadonly, hasFormBeenSubmitted } = useFormC();
 
-  const columns: ColumnDef<ResearchTaskEffectDto>[] = [
+  const columns: ColumnDef<ResearchTaskEffectValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

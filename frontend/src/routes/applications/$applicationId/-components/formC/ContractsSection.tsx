@@ -10,12 +10,15 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { ContractDto, getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
+import {
+  ContractValues,
+  getContractCategoryName,
+} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 
 export function ContractsSection() {
   const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ContractDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<ContractValues>[] {
     return [
       {
         header: 'Lp.',
@@ -142,7 +145,7 @@ export function ContractsSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: ContractDto[]) => prev);
+                field.handleChange((prev: ContractValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -179,14 +182,14 @@ export function ContractsSection() {
                       value: name,
                       onClick: () => {
                         field.pushValue({
-                          category: category as ContractDto['category'],
+                          category: category as ContractValues['category'],
                           institutionName: '',
                           institutionUnit: '',
                           institutionLocalization: '',
                           description: '',
                           scans: [],
                         });
-                        field.handleChange((prev: ContractDto[]) => prev);
+                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -201,7 +204,7 @@ export function ContractsSection() {
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
-                        field.handleChange((prev: ContractDto[]) => prev);
+                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}

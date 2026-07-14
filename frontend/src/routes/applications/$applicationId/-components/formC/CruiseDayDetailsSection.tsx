@@ -10,15 +10,15 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { AnyReactFormApi } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { useFormC } from '@/contexts/applications/FormCContext';
-import { CruiseDayDetailsDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
-import { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
+import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 
 const cruiseDayDetailsColumns = (
-  form: AnyReactFormApi<FormCDto>,
+  form: AnyReactFormApi<FormCValues>,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<CruiseDayDetailsDto>[] => [
+): ColumnDef<CruiseDayValues>[] => [
   {
     header: 'Dzień',
     enableColumnFilter: false,
@@ -166,7 +166,7 @@ const cruiseDayDetailsColumns = (
         <AppTableDeleteRowButton
           onClick={() => {
             field.removeValue(row.index);
-            field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
+            field.handleChange((prev: CruiseDayValues[]) => prev);
             field.handleBlur();
           }}
           disabled={isReadonly}
@@ -205,7 +205,7 @@ export function CruiseDayDetailsSection() {
                     position: '',
                     comment: '',
                   });
-                  field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
+                  field.handleChange((prev: CruiseDayValues[]) => prev);
                   field.handleBlur();
                 }}
                 variant="primary"

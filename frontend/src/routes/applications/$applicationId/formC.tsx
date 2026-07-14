@@ -25,11 +25,11 @@ import {
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
 import { FormCWriteRequest } from '@/api/generated/schemas';
-import type { FormAInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormAInitValuesDto';
-import type { FormBInitValuesDto } from '@/routes/applications/$applicationId/-schemas/types/FormBInitValuesDto';
+import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
-import { FormCDto } from '@/routes/applications/$applicationId/-schemas/types/FormCDto';
-import { ResearchTaskEffectDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectDto';
+import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
@@ -49,10 +49,10 @@ function FormCPage() {
   const formB = useFormBQuery(applicationId);
   const formC = useFormCQuery(applicationId);
   const formAInitValues = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAInitValuesDto },
+    query: { select: (context) => context as FormAOptions },
   });
   const formBInitValues = useGetApplicationFormBContextSuspense({
-    query: { select: (context) => context as FormBInitValuesDto },
+    query: { select: (context) => context as FormBOptions },
   });
   const cruise = useGetApplicationCruiseSuspense(applicationId);
   const updateMutation = useUpdateApplicationFormC();
@@ -74,7 +74,7 @@ function FormCPage() {
             done: 'false',
             managerConditionMet: 'false',
             deputyConditionMet: 'false',
-          }) as ResearchTaskEffectDto
+          }) as ResearchTaskEffectValues
       ),
       contracts: formA.data.contracts,
       spubTasks: formA.data.spubTasks,
@@ -88,7 +88,7 @@ function FormCPage() {
       spubReportData: '',
       additionalDescription: '',
       photos: [],
-    }) as FormCDto,
+    }) as FormCValues,
     validators: {
       onChange: getFormCValidationSchema(formAInitValues.data),
     },

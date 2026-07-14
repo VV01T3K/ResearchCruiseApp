@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const FileDtoValidationSchema = z.object(
+export const FormFileValuesSchema = z.object(
   {
     name: z.string().nonempty('Nazwa pliku nie może być pusta'),
     content: z.string().nonempty('Zawartość pliku nie może być pusta'),
@@ -10,4 +10,4 @@ export const FileDtoValidationSchema = z.object(
   }
 );
 
-export type FileDto = z.infer<typeof FileDtoValidationSchema>;
+export type FormFileValues = z.infer<typeof FormFileValuesSchema>;

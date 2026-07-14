@@ -11,12 +11,12 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useFormA } from '@/contexts/applications/FormAContext';
-import { SpubTaskDto } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskDto';
+import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
 
 export function SPUBTasksSection() {
   const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
 
-  function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskDto>[] {
+  function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskValues>[] {
     return [
       {
         header: 'Lp.',
@@ -109,7 +109,7 @@ export function SPUBTasksSection() {
             <AppTableDeleteRowButton
               onClick={() => {
                 field.removeValue(row.index);
-                field.handleChange((prev: SpubTaskDto[]) => prev);
+                field.handleChange((prev: SpubTaskValues[]) => prev);
                 field.handleBlur();
               }}
               disabled={isReadonly}
@@ -141,7 +141,7 @@ export function SPUBTasksSection() {
                     key="new"
                     onClick={() => {
                       field.pushValue({ name: '', yearFrom: '', yearTo: '' });
-                      field.handleChange((prev: SpubTaskDto[]) => prev);
+                      field.handleChange((prev: SpubTaskValues[]) => prev);
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
@@ -158,7 +158,7 @@ export function SPUBTasksSection() {
                         content: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,
                         onClick: () => {
                           field.pushValue(task);
-                          field.handleChange((prev: SpubTaskDto[]) => prev);
+                          field.handleChange((prev: SpubTaskValues[]) => prev);
                           field.handleBlur();
                         },
                       }))}

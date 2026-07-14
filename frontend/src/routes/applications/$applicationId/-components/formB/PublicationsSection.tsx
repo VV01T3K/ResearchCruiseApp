@@ -5,13 +5,13 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
 import {
   getPublicationCategoryLabel,
-  PublicationDto,
-} from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
+  PublicationValues,
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const { formA } = useFormB();
 
-  const columns: ColumnDef<PublicationDto>[] = [
+  const columns: ColumnDef<PublicationValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

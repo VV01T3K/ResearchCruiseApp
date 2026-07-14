@@ -5,12 +5,15 @@ import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useFormB } from '@/contexts/applications/FormBContext';
-import { ContractDto, getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
+import {
+  ContractValues,
+  getContractCategoryName,
+} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 
 export function ContractsSection() {
   const { formA, isReadonly } = useFormB();
 
-  const columns: ColumnDef<ContractDto>[] = [
+  const columns: ColumnDef<ContractValues>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

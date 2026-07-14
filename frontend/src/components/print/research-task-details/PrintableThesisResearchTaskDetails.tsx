@@ -1,7 +1,7 @@
-import { ThesisResearchTaskDto } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
+import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: ThesisResearchTaskDto;
+  data: ThesisResearchTaskValues;
 };
 export function PrintableThesisResearchTaskDetails({ data }: Props) {
   return (

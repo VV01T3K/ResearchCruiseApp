@@ -6,7 +6,7 @@ import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
-import { FileDto } from '@/lib/types';
+import { FormFileValues } from '@/types/form-file-values';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -31,14 +31,14 @@ type Props = {
 } & (
   | {
       allowMultiple: true;
-      value: FileDto[];
+      value: FormFileValues[];
 
-      onChange?: (value: FileDto[]) => void;
+      onChange?: (value: FormFileValues[]) => void;
     }
   | {
       allowMultiple?: false;
-      value?: FileDto;
-      onChange?: (value: FileDto) => void;
+      value?: FormFileValues;
+      onChange?: (value: FormFileValues) => void;
     }
 );
 
@@ -63,11 +63,11 @@ export function AppFileInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const [files, setFiles] = React.useState<FileDto[]>(allowMultiple ? value : value ? [value] : []);
+  const [files, setFiles] = React.useState<FormFileValues[]>(allowMultiple ? value : value ? [value] : []);
   const [notifications, setNotifications] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  function updateFiles(newFiles: FileDto[]) {
+  function updateFiles(newFiles: FormFileValues[]) {
     setFiles(newFiles);
     if (allowMultiple) {
       onChange?.(newFiles);
@@ -106,7 +106,7 @@ export function AppFileInput({
     }
   }
 
-  async function loadFileList(files: FileList): Promise<FileDto[]> {
+  async function loadFileList(files: FileList): Promise<FormFileValues[]> {
     const newNotifications: string[] = [];
     const promises = Array.from(files)
       .filter((file) => {
@@ -130,7 +130,7 @@ export function AppFileInput({
     return await Promise.all(promises);
   }
 
-  function removeFile(file: FileDto) {
+  function removeFile(file: FormFileValues) {
     updateFiles(files.filter((f) => f !== file));
   }
 
@@ -201,7 +201,7 @@ export function AppFileInput({
   );
 }
 
-async function loadFile(file: File): Promise<FileDto> {
+async function loadFile(file: File): Promise<FormFileValues> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {

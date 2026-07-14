@@ -7,8 +7,8 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskDto';
-import { UserEffectDto } from '@/routes/applications/$applicationId/-schemas/types/UserEffectDto';
+import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { CruiseEffectView } from '@/routes/applications/$applicationId/-schemas/types/CruiseEffectView';
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,
@@ -17,10 +17,10 @@ export const Route = createFileRoute('/cruise-effects')({
 
 function CruiseEffectsPage() {
   const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({
-    query: { select: (effects) => effects as UserEffectDto[] },
+    query: { select: (effects) => effects as CruiseEffectView[] },
   });
 
-  const columns: ColumnDef<UserEffectDto>[] = [
+  const columns: ColumnDef<CruiseEffectView>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}`,

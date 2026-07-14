@@ -12,8 +12,8 @@ import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePick
 import { getErrors } from '@/lib/utils';
 import { useFormA } from '@/contexts/applications/FormAContext';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
-import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormADto';
-import type { BlockadeResponse as BlockadePeriodDto } from '@/api/generated/schemas';
+import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
 import { CruiseApplicationPeriodInput } from './CruiseApplicationPeriodInput';
 import { BlockadeWarning } from './BlockadeWarning';
@@ -29,7 +29,7 @@ type OverlappingBlockade = {
 };
 
 function getOverlappingBlockadesForRange(
-  blockades: BlockadePeriodDto[] | undefined,
+  blockades: BlockadePeriod[] | undefined,
   rangeStart: string,
   rangeEnd: string
 ): OverlappingBlockade[] {
@@ -71,7 +71,7 @@ function getCurrentFortnight(year: string): number {
 }
 
 function getOverlappingBlockadesForPeriod(
-  blockades: BlockadePeriodDto[] | undefined,
+  blockades: BlockadePeriod[] | undefined,
   year: string,
   period: CruisePeriodType | ''
 ): OverlappingBlockade[] {

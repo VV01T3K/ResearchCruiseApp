@@ -10,7 +10,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { getErrors } from '@/lib/utils';
 import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { CruiseDayDetailsDto } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayDetailsDto';
+import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 import {
   exportCruiseDayDetailsToXlsx,
   parseCruiseDayDetailsFromCsv,
@@ -24,7 +24,7 @@ const cruiseDayDetailsColumns = (
   field: any,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
-): ColumnDef<CruiseDayDetailsDto>[] => [
+): ColumnDef<CruiseDayValues>[] => [
   {
     header: 'Dzień',
     enableColumnFilter: false,
@@ -186,7 +186,7 @@ const cruiseDayDetailsColumns = (
               <AppTableDeleteRowButton
                 onClick={() => {
                   field.removeValue(row.index);
-                  field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
+                  field.handleChange((prev: CruiseDayValues[]) => prev);
                   field.handleBlur();
                 }}
                 disabled={isReadonly}
@@ -194,7 +194,7 @@ const cruiseDayDetailsColumns = (
             </div>
           ),
           size: 10,
-        } as ColumnDef<CruiseDayDetailsDto>,
+        } as ColumnDef<CruiseDayValues>,
       ]
     : []),
 ];
@@ -211,7 +211,7 @@ export function CruiseDayDetailsSection() {
     const toastId = toast.loading(isXlsx ? 'Wczytywanie pliku XLSX...' : 'Wczytywanie pliku CSV...');
 
     try {
-      let rows: CruiseDayDetailsDto[];
+      let rows: CruiseDayValues[];
 
       if (isXlsx) {
         rows = await parseCruiseDayDetailsFromFile(file);
@@ -277,7 +277,7 @@ export function CruiseDayDetailsSection() {
                           position: '',
                           comment: '',
                         });
-                        field.handleChange((prev: CruiseDayDetailsDto[]) => prev);
+                        field.handleChange((prev: CruiseDayValues[]) => prev);
                         field.handleBlur();
                       }}
                       variant="primary"
