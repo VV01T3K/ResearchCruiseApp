@@ -7,6 +7,7 @@
     "build": "vp run --cache -r build",
     "check": "vp run --cache -r check",
     "fix": "vp run --cache -r fix",
+    "gen": "vp run -F frontend gen",
     "seed": "vp run -F backend seed",
     "ef:update": "vp run -F backend ef:update",
     "ef:drop": "vp run -F backend ef:drop",

@@ -45,7 +45,7 @@ export const lintConfig = {
     '@tanstack/query/no-void-query-fn': 'error',
     '@tanstack/query/mutation-property-order': 'error',
   },
-  ignorePatterns: ['dist', 'src/routeTree.gen.ts', '.storybook'],
+  ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/gen', '.storybook'],
   overrides: [
     {
       files: ['**/*.{ts,tsx}'],
@@ -66,7 +66,7 @@ export const fmtConfig = {
     stylesheet: './src/styles/index.css',
   },
   sortPackageJson: true,
-  ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'pnpm-lock.yaml'],
+  ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/gen', 'pnpm-lock.yaml'],
 } satisfies NonNullable<UserConfig['fmt']>;
 
 export default defineConfig({

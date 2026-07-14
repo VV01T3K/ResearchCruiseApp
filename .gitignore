@@ -280,6 +280,8 @@ __pycache__/
 *.iml
 out
 gen
+!frontend/src/api/gen/
+!frontend/src/api/gen/**
 
 
 # VS Code settings
@@ -292,4 +294,3 @@ gen
 
 # Cursor-local config (skills symlink, MCP, hooks — not shared in git)
 .cursor/
-
