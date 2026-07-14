@@ -1,6 +1,6 @@
 import type { CruiseApplicationDto as GeneratedCruiseApplicationDto } from '@/api/generated/schemas';
 
-import type { DeepRequired } from './DeepPresent';
+import type { DeepRequired } from '@/types/utils';
 
 export enum CruiseApplicationStatus {
   Draft = 'draft',

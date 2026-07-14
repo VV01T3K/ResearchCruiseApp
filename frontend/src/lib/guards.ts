@@ -29,25 +29,6 @@ async function resolveCurrentUser(userContext?: UserContextType): Promise<User |
     return undefined;
   }
 
-  if (storedAuthDetails.refreshTokenExpirationDate <= new Date()) {
-    return undefined;
-  }
-
-  let accessToken = storedAuthDetails.accessToken;
-
-  if (storedAuthDetails.accessTokenExpirationDate <= new Date() && userContext) {
-    try {
-      await userContext.refreshUser();
-      accessToken = getStoredAuthDetails()?.accessToken ?? '';
-    } catch {
-      return undefined;
-    }
-  }
-
-  if (!accessToken) {
-    return undefined;
-  }
-
   try {
     return (await getCurrentUser()) as User;
   } catch {

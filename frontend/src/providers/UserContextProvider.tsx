@@ -142,8 +142,6 @@ export function UserContextProvider({ children }: Props) {
         .finally(() => {
           setInitialRefreshPending(false);
         });
-    } else {
-      queryClient.invalidateQueries({ queryKey: getGetCurrentUserQueryKey() });
     }
   }, [queryClient]);
 

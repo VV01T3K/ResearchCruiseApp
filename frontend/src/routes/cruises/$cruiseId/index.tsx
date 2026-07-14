@@ -52,20 +52,27 @@ function CruiseDetailsPage() {
   const { cruiseId } = Route.useParams();
 
   const queryClient = useQueryClient();
-  const invalidateCruise = () => {
-    queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
-    return queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
-  };
+  const invalidateCruiseDetail = () => queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsSuspense({
     query: { select: (applications) => applications as ApplicationResponse[] },
   });
-  const updateCruiseMutation = useUpdateCruise({ mutation: { onSuccess: invalidateCruise } });
-  const confirmCruiseMutation = useConfirmCruise({ mutation: { onSuccess: invalidateCruise } });
-  const deleteCruiseMutation = useDeleteCruise({ mutation: { onSuccess: invalidateCruise } });
-  const endCruiseMutation = useCompleteCruise({ mutation: { onSuccess: invalidateCruise } });
+  const updateCruiseMutation = useUpdateCruise({ mutation: { onSuccess: invalidateCruiseDetail } });
+  const confirmCruiseMutation = useConfirmCruise({ mutation: { onSuccess: invalidateCruiseDetail } });
+  const deleteCruiseMutation = useDeleteCruise({
+    mutation: {
+      onSuccess: () => {
+        queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
+        return queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+      },
+    },
+  });
+  const endCruiseMutation = useCompleteCruise({ mutation: { onSuccess: invalidateCruiseDetail } });
   const revertCruiseStatusMutation = useRemoveCruiseConfirmation({
-    mutation: { onSuccess: invalidateCruise },
+    mutation: {
+      onSuccess: () =>
+        Promise.all([queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }), invalidateCruiseDetail()]),
+    },
   });
 
   const navigate = useNavigate();

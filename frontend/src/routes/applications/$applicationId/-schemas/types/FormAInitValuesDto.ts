@@ -1,7 +1,7 @@
 import type { FormAInitValuesDto as GeneratedFormAInitValuesDto } from '@/api/generated/schemas';
 
 import type { ContractDto } from './ContractDto';
-import type { DeepPresent } from './DeepPresent';
+import type { DeepPresent } from '@/types/utils';
 import type { FormUserDto } from './FormUserDto';
 import type { PublicationDto } from './PublicationDto';
 import type { ResearchAreaDto } from './ResearchAreaDto';

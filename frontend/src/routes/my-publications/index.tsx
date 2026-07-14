@@ -20,14 +20,10 @@ import {
 } from '@/api/generated/endpoints/users.gen';
 import type { PublicationResponse } from '@/api/generated/schemas';
 import { useQueryClient } from '@tanstack/react-query';
+import { mapNullsToEmptyStrings } from '@/lib/utils';
+import type { DeepPresent } from '@/types/utils';
 
-type Publication = Omit<PublicationResponse, 'doi' | 'authors' | 'title' | 'magazine' | 'year'> & {
-  doi: string;
-  authors: string;
-  title: string;
-  magazine: string;
-  year: string;
-};
+type Publication = DeepPresent<PublicationResponse>;
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -41,17 +37,7 @@ function MyPublicationsPage() {
 
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
     query: {
-      select: (publications) =>
-        publications.map(
-          (publication): Publication => ({
-            ...publication,
-            doi: publication.doi ?? '',
-            authors: publication.authors ?? '',
-            title: publication.title ?? '',
-            magazine: publication.magazine ?? '',
-            year: publication.year ?? '',
-          })
-        ),
+      select: (publications) => publications.map(mapNullsToEmptyStrings) as Publication[],
     },
   });
   const invalidatePublications = () =>

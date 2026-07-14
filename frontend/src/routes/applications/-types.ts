@@ -2,7 +2,7 @@ import type {
   ApplicationResponse as GeneratedApplicationResponse,
   CruiseApplicationEvaluationDetailsDto,
 } from '@/api/generated/schemas';
-import type { DeepPresent } from '@/routes/applications/$applicationId/-schemas/types/DeepPresent';
+import type { DeepPresent } from '@/types/utils';
 import type { ContractDto } from '@/routes/applications/$applicationId/-schemas/types/ContractDto';
 import type { GuestTeamDto } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamDto';
 import type { PublicationDto } from '@/routes/applications/$applicationId/-schemas/types/PublicationDto';
