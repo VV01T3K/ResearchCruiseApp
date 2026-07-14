@@ -22,6 +22,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddProblemDetails();
+const string dotNetGuidPattern =
+    "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 builder.Services.AddOpenApi(
     "v2",
     options =>
@@ -36,6 +38,21 @@ builder.Services.AddOpenApi(
                     StringComparison.OrdinalIgnoreCase
                 ) == true
             );
+        options.AddSchemaTransformer(
+            (schema, context, _) =>
+            {
+                var type =
+                    Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
+                    ?? context.JsonTypeInfo.Type;
+                if (type == typeof(Guid))
+                {
+                    schema.Format = null;
+                    schema.Pattern = dotNetGuidPattern;
+                }
+
+                return Task.CompletedTask;
+            }
+        );
     }
 );
 builder

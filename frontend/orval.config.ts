@@ -1,22 +1,10 @@
 import { defineConfig } from 'orval';
 
-const dotNetGuidPattern = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$';
-
 export default defineConfig({
   backend: {
     input: {
       target: '../backend/ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json',
       unsafeDisableValidation: false,
-      override: {
-        transformer: (spec) =>
-          JSON.parse(
-            JSON.stringify(spec, (_key, value) =>
-              value && typeof value === 'object' && value.format === 'uuid'
-                ? { ...value, format: undefined, pattern: dotNetGuidPattern }
-                : value
-            )
-          ) as typeof spec,
-      },
     },
     output: {
       target: 'src/api/generated/endpoints',
