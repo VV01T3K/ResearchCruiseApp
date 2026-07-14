@@ -16,7 +16,7 @@ public static class SessionsEndpoints
     {
         group
             .MapPost("/login", Login)
-            .WithName("LoginV2")
+            .WithName("Login")
             .WithSummary("Sign in with an account.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -30,7 +30,7 @@ public static class SessionsEndpoints
     {
         group
             .MapPost("/refresh", Refresh)
-            .WithName("RefreshTokensV2")
+            .WithName("RefreshTokens")
             .WithSummary("Refresh account tokens.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)

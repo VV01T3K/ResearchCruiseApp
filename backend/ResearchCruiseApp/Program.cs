@@ -38,13 +38,15 @@ builder.Services.AddOpenApi(
             );
     }
 );
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(2, 0);
-    options.AssumeDefaultVersionWhenUnspecified = false;
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = new UrlSegmentApiVersionReader();
-});
+builder
+    .Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(2, 0);
+        options.AssumeDefaultVersionWhenUnspecified = false;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    })
+    .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
 builder.Services.AddRateLimiter(options =>
 {
@@ -134,7 +136,12 @@ app.MapGet(
     .ExcludeFromDescription();
 
 app.MapHealthChecks("/health");
-await app.InitializeDatabase();
+
+var isOpenApiGen = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
+if (!isOpenApiGen)
+{
+    await app.InitializeDatabase();
+}
 
 app.Run();
 

@@ -15,7 +15,7 @@ public static class ListsEndpoints
     {
         group
             .MapGet("", GetAll)
-            .WithName("GetUsersV2")
+            .WithName("GetUsers")
             .WithSummary("Get manageable users.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
@@ -26,7 +26,7 @@ public static class ListsEndpoints
     {
         group
             .MapGet("/available-cruise-managers", GetAvailableCruiseManagers)
-            .WithName("GetAvailableCruiseManagersV2")
+            .WithName("GetAvailableCruiseManagers")
             .WithSummary("Get users available as cruise managers.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)

@@ -13,7 +13,7 @@ public static class CruisePlanningEndpoints
     {
         group
             .MapGet("/for-cruise-planning", Get)
-            .WithName("GetApplicationsForCruisePlanningV2")
+            .WithName("GetApplicationsForCruisePlanning")
             .WithSummary("Get applications eligible for cruise planning.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);

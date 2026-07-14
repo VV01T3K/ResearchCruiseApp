@@ -12,14 +12,14 @@ public static class SupervisorReviewEndpoints
     {
         group
             .MapGet("/{applicationId:guid}/supervisor-review", Get)
-            .WithName("GetApplicationSupervisorReviewV2")
+            .WithName("GetApplicationSupervisorReview")
             .WithSummary("Get the anonymous supervisor review view.")
             .ProducesProblem(StatusCodes.Status404NotFound)
             .AllowAnonymous();
 
         group
             .MapPut("/{applicationId:guid}/supervisor-review/decision", UpdateDecision)
-            .WithName("UpdateApplicationSupervisorReviewDecisionV2")
+            .WithName("UpdateApplicationSupervisorReviewDecision")
             .WithSummary("Accept or reject an application as the anonymous supervisor.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status403Forbidden)

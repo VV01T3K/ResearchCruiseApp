@@ -12,7 +12,7 @@ public static class EvaluationEndpoints
     {
         group
             .MapGet("/{applicationId:guid}/evaluation", Get)
-            .WithName("GetApplicationEvaluationV2")
+            .WithName("GetApplicationEvaluation")
             .WithSummary("Get application evaluation details.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)

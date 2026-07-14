@@ -13,7 +13,7 @@ public static class ApplicationDecisionEndpoints
     {
         group
             .MapPut("/{applicationId:guid}/decision", Update)
-            .WithName("UpdateApplicationDecisionV2")
+            .WithName("UpdateApplicationDecision")
             .WithSummary("Accept or reject an application.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)

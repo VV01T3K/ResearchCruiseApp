@@ -16,7 +16,7 @@ public static class RolesEndpoints
     {
         group
             .MapPut("/{userId:guid}/roles/{roleName}", Add)
-            .WithName("AddUserRoleV2")
+            .WithName("AddUserRole")
             .WithSummary("Add a role to a managed user.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -29,7 +29,7 @@ public static class RolesEndpoints
     {
         group
             .MapDelete("/{userId:guid}/roles/{roleName}", Remove)
-            .WithName("RemoveUserRoleV2")
+            .WithName("RemoveUserRole")
             .WithSummary("Remove a role from a managed user.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)

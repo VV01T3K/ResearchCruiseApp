@@ -11,7 +11,7 @@ public static class CruiseEffectsEndpoints
     {
         group
             .MapGet("/cruise-effects", Handle)
-            .WithName("GetCurrentUserCruiseEffectsV2")
+            .WithName("GetCurrentUserCruiseEffects")
             .WithSummary("Get cruise effects for the current user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
