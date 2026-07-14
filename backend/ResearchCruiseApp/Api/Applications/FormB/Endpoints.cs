@@ -15,7 +15,7 @@ public static class FormBEndpoints
     {
         group
             .MapGet("/{applicationId:guid}/form-b", Get)
-            .WithName("GetApplicationFormBV2")
+            .WithName("GetApplicationFormB")
             .WithSummary("Get Form B.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -23,7 +23,7 @@ public static class FormBEndpoints
 
         group
             .MapPut("/{applicationId:guid}/form-b", Update)
-            .WithName("UpdateApplicationFormBV2")
+            .WithName("UpdateApplicationFormB")
             .WithSummary("Create or replace Form B.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -34,7 +34,7 @@ public static class FormBEndpoints
 
         group
             .MapPut("/{applicationId:guid}/form-b/refill", Refill)
-            .WithName("RefillApplicationFormBV2")
+            .WithName("RefillApplicationFormB")
             .WithSummary("Return Form B to editable state.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)

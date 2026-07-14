@@ -14,7 +14,7 @@ public static class ExportEndpoints
     {
         group
             .MapGet("/export", Handle)
-            .WithName("ExportCruisesV2")
+            .WithName("ExportCruises")
             .WithSummary("Export visible cruises for a year.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)

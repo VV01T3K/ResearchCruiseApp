@@ -19,7 +19,7 @@ public static class ListsEndpoints
     {
         group
             .MapGet("", GetAll)
-            .WithName("GetCruisesV2")
+            .WithName("GetCruises")
             .WithSummary("Get visible cruises.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
@@ -29,7 +29,7 @@ public static class ListsEndpoints
     {
         group
             .MapGet("/{cruiseId:guid}", GetById)
-            .WithName("GetCruiseV2")
+            .WithName("GetCruise")
             .WithSummary("Get one visible cruise.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)

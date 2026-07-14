@@ -17,7 +17,7 @@ public static class AccountsEndpoints
     {
         group
             .MapPost("", Create)
-            .WithName("CreateUserV2")
+            .WithName("CreateUser")
             .WithSummary("Create a user account.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
@@ -32,7 +32,7 @@ public static class AccountsEndpoints
     {
         group
             .MapPatch("/{userId:guid}", Update)
-            .WithName("UpdateUserV2")
+            .WithName("UpdateUser")
             .WithSummary("Update a managed user.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
@@ -47,7 +47,7 @@ public static class AccountsEndpoints
     {
         group
             .MapDelete("/{userId:guid}", Delete)
-            .WithName("DeleteUserV2")
+            .WithName("DeleteUser")
             .WithSummary("Delete a managed user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)

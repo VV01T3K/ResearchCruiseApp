@@ -20,7 +20,7 @@ public static class CruiseEndpoints
     {
         group
             .MapPost("", Create)
-            .WithName("CreateCruiseV2")
+            .WithName("CreateCruise")
             .WithSummary("Create a cruise.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
@@ -34,7 +34,7 @@ public static class CruiseEndpoints
     {
         group
             .MapPatch("/{cruiseId:guid}", Update)
-            .WithName("UpdateCruiseV2")
+            .WithName("UpdateCruise")
             .WithSummary("Update a cruise.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
@@ -49,7 +49,7 @@ public static class CruiseEndpoints
     {
         group
             .MapDelete("/{cruiseId:guid}", Delete)
-            .WithName("DeleteCruiseV2")
+            .WithName("DeleteCruise")
             .WithSummary("Delete a cruise.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)

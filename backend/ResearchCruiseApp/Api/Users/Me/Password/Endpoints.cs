@@ -10,7 +10,7 @@ public static class PasswordEndpoints
     {
         group
             .MapPatch("/password", Handle)
-            .WithName("ChangeCurrentUserPasswordV2")
+            .WithName("ChangeCurrentUserPassword")
             .WithSummary("Change the current account password.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)

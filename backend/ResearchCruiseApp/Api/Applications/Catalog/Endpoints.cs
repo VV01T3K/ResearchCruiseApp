@@ -12,14 +12,14 @@ public static class CatalogEndpoints
     {
         group
             .MapGet("", GetAll)
-            .WithName("GetApplicationsV2")
+            .WithName("GetApplications")
             .WithSummary("Get visible applications.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
 
         group
             .MapGet("/{applicationId:guid}", Get)
-            .WithName("GetApplicationV2")
+            .WithName("GetApplication")
             .WithSummary("Get one visible application.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)

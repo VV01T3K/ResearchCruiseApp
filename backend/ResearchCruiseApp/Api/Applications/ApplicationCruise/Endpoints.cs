@@ -12,7 +12,7 @@ public static class ApplicationCruiseEndpoints
     {
         group
             .MapGet("/{applicationId:guid}/cruise", Get)
-            .WithName("GetApplicationCruiseV2")
+            .WithName("GetApplicationCruise")
             .WithSummary("Get the visible cruise linked to an application.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)

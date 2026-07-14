@@ -10,14 +10,14 @@ public static class FormContextEndpoints
     {
         group
             .MapGet("/form-a/context", GetFormAContext)
-            .WithName("GetApplicationFormAContextV2")
+            .WithName("GetApplicationFormAContext")
             .WithSummary("Get authenticated Form A context.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
 
         group
             .MapGet("/form-b/context", GetFormBContext)
-            .WithName("GetApplicationFormBContextV2")
+            .WithName("GetApplicationFormBContext")
             .WithSummary("Get authenticated Form B context.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
