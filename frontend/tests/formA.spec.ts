@@ -45,6 +45,8 @@ test('normalizes backend precise-period datetimes at the API boundary', () => {
 
   expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
   expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
+  expect(request.form.cruiseHours).toBe(String(form.cruiseHours));
+  expect(request.form).not.toHaveProperty('cruiseDays');
 });
 
 test('valid form A', async ({ formAPage }) => {
