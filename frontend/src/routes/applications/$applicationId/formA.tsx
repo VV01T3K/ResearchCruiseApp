@@ -1,16 +1,16 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { useForm, useSelector } from '@tanstack/react-form';
+import { revalidateLogic } from '@tanstack/react-form';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors, getFormErrorMessage, mapNullsToEmptyStrings, navigateToFirstError } from '@/lib/utils';
+import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
@@ -27,6 +27,7 @@ import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
+import { useAppForm } from '@/lib/form';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -49,92 +50,64 @@ function FormAPage() {
   const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
-  const form = useForm({
-    defaultValues: (formA.data
-      ? {
-          ...formA.data,
-          deputyManagerId: formA.data.deputyManagerId ?? '',
-          permissions: formA.data.permissions.map((p) => ({
-            ...p,
-            description: p.description ?? '',
-            executive: p.executive ?? '',
-            scan: undefined,
-          })),
-          acceptablePeriod: formA.data.acceptablePeriod?.length === 0 ? '' : (formA.data.acceptablePeriod ?? ''),
-          optimalPeriod: formA.data.optimalPeriod?.length === 0 ? '' : (formA.data.optimalPeriod ?? ''),
-          precisePeriodStart: formA.data.precisePeriodStart ?? '',
-          precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
-          periodSelectionType:
-            formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period'
-              ? formA.data.periodSelectionType
-              : formA.data.precisePeriodStart || formA.data.precisePeriodEnd
-                ? 'precise'
-                : 'period',
-          contracts: mapNullsToEmptyStrings(formA.data.contracts),
-          researchTasks: mapNullsToEmptyStrings(formA.data.researchTasks),
-          guestTeams: mapNullsToEmptyStrings(formA.data.guestTeams),
-          publications: mapNullsToEmptyStrings(formA.data.publications),
-          spubTasks: mapNullsToEmptyStrings(formA.data.spubTasks),
-        }
-      : {
-          id: undefined,
-          cruiseManagerId: userContext.currentUser!.id,
-          deputyManagerId: '',
-          year: initialStateQuery.data.years[0],
-          acceptablePeriod: ['0', '24'],
-          optimalPeriod: ['0', '24'],
-          precisePeriodStart: '',
-          precisePeriodEnd: '',
-          periodSelectionType: 'period',
-          cruiseDays: 0,
-          cruiseHours: 0,
-          periodNotes: '',
-          shipUsage: '',
-          differentUsage: '',
-          permissions: [],
-          researchAreaDescriptions: [],
-          cruiseGoal: '',
-          cruiseGoalDescription: '',
-          researchTasks: [],
-          contracts: [],
-          ugTeams: [],
-          guestTeams: [],
-          publications: [],
-          spubTasks: [],
-          supervisorEmail: '',
-          note: '',
-        }) as FormAValues,
+  const defaultValues = (formA.data ?? {
+    id: undefined,
+    cruiseManagerId: userContext.currentUser!.id,
+    deputyManagerId: '',
+    year: initialStateQuery.data.years[0],
+    acceptablePeriod: ['0', '24'],
+    optimalPeriod: ['0', '24'],
+    precisePeriodStart: '',
+    precisePeriodEnd: '',
+    periodSelectionType: 'period',
+    cruiseDays: 0,
+    cruiseHours: 0,
+    periodNotes: '',
+    shipUsage: '',
+    differentUsage: '',
+    permissions: [],
+    researchAreaDescriptions: [],
+    cruiseGoal: '',
+    cruiseGoalDescription: '',
+    researchTasks: [],
+    contracts: [],
+    ugTeams: [],
+    guestTeams: [],
+    publications: [],
+    spubTasks: [],
+    supervisorEmail: '',
+    note: '',
+  }) satisfies FormAValues;
+  const [selectedYear, setSelectedYear] = useState(defaultValues.year);
+  const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
+  const form = useAppForm({
+    defaultValues,
+    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: getFormAValidationSchema(initialStateQuery.data),
+      onDynamic: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+    },
+    listeners: {
+      onChange: ({ fieldApi }) => {
+        if (fieldApi.name === 'year') setSelectedYear(String(fieldApi.state.value));
+      },
+    },
+    onSubmit: () => handleValidSubmit(),
+    onSubmitInvalid: () => {
+      trackFormSubmit('form-a', 'invalid', form.state);
+      setIsSaveDraftModalOpen(false);
+      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
     },
   });
-
-  const year = useSelector(form.store, (state) => state.values.year);
-  const blockadesQuery = useGetCruiseBlockades({ year: +year });
-
-  useEffect(() => {
-    const newValidators = {
-      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-    };
-    form.update({
-      validators: newValidators,
-    });
-
-    // Re-validate the fields that depend on blockades if form has been submitted
-    if (hasFormBeenSubmitted) {
-      form.validate('change');
-    }
-  }, [blockadesQuery.data, blockadesQuery.status, initialStateQuery.data, hasFormBeenSubmitted, form]);
 
   const context = {
     form,
     initValues: initialStateQuery.data,
     isReadonly: !editMode,
-    hasFormBeenSubmitted,
-    onSubmit: handleSubmit,
+    hasFormBeenSubmitted: form.state.submissionAttempts > 0,
+    onSubmit: form.handleSubmit,
     blockades: blockadesQuery.data,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
@@ -180,25 +153,7 @@ function FormAPage() {
     );
   }
 
-  async function handleSubmit() {
-    const currentValidators = {
-      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-    };
-    form.update({
-      validators: currentValidators,
-    });
-
-    setHasFormBeenSubmitted(true);
-    await form.validate('change');
-
-    if (!form.state.isValid) {
-      trackFormSubmit('form-a', 'invalid', form.state);
-      setIsSaveDraftModalOpen(false);
-      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
-      return;
-    }
-
+  async function handleValidSubmit() {
     trackFormSubmit('form-a', 'valid', form.state);
 
     saveForm(

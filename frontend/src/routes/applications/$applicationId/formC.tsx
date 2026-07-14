@@ -1,8 +1,7 @@
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
-import { useState } from 'react';
+import { revalidateLogic } from '@tanstack/react-form';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
@@ -24,12 +23,12 @@ import {
   useGetApplicationFormBContextSuspense,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
-import { FormCWriteRequest } from '@/api/generated/schemas';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
 import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import { useAppForm } from '@/lib/form';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
@@ -59,41 +58,48 @@ function FormCPage() {
 
   if (!formB.data) throw notFound();
 
-  const form = useForm({
-    defaultValues: (formC.data ?? {
-      shipUsage: formA.data.shipUsage, // Max length 1
-      differentUsage: formA.data.differentUsage,
-      permissions: formB.data.permissions,
-      researchAreaDescriptions: formA.data.researchAreaDescriptions,
-      ugTeams: formB.data.ugTeams,
-      guestTeams: formB.data.guestTeams,
-      researchTasksEffects: formA.data.researchTasks.map(
-        (task) =>
-          ({
-            ...task,
-            done: 'false',
-            managerConditionMet: 'false',
-            deputyConditionMet: 'false',
-          }) as ResearchTaskEffectValues
-      ),
-      contracts: formA.data.contracts,
-      spubTasks: formA.data.spubTasks,
-      shortResearchEquipments: formB.data.shortResearchEquipments,
-      longResearchEquipments: formB.data.longResearchEquipments,
-      ports: formB.data.ports,
-      cruiseDaysDetails: formB.data.cruiseDaysDetails,
-      researchEquipments: formB.data.researchEquipments,
-      shipEquipmentsIds: formB.data.shipEquipmentsIds,
-      collectedSamples: [],
-      spubReportData: '',
-      additionalDescription: '',
-      photos: [],
-    }) as FormCValues,
+  const defaultValues = (formC.data ?? {
+    shipUsage: formA.data.shipUsage ?? '', // Max length 1
+    differentUsage: formA.data.differentUsage,
+    permissions: formB.data.permissions,
+    researchAreaDescriptions: formA.data.researchAreaDescriptions,
+    ugTeams: formB.data.ugTeams,
+    guestTeams: formB.data.guestTeams,
+    researchTasksEffects: formA.data.researchTasks.map(
+      (task) =>
+        ({
+          ...task,
+          done: 'false',
+          managerConditionMet: 'false',
+          deputyConditionMet: 'false',
+        }) satisfies ResearchTaskEffectValues
+    ),
+    contracts: formA.data.contracts,
+    spubTasks: formA.data.spubTasks,
+    shortResearchEquipments: formB.data.shortResearchEquipments,
+    longResearchEquipments: formB.data.longResearchEquipments,
+    ports: formB.data.ports,
+    cruiseDaysDetails: formB.data.cruiseDaysDetails,
+    researchEquipments: formB.data.researchEquipments,
+    shipEquipmentsIds: formB.data.shipEquipmentsIds,
+    collectedSamples: [],
+    spubReportData: '',
+    additionalDescription: '',
+    photos: [],
+  }) satisfies FormCValues;
+  const form = useAppForm({
+    defaultValues,
+    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: getFormCValidationSchema(formAInitValues.data),
+      onDynamic: getFormCValidationSchema(formAInitValues.data),
+    },
+    onSubmit: async ({ value }) => handleValidSubmit(value),
+    onSubmitInvalid: () => {
+      trackFormSubmit('form-c', 'invalid', form.state);
+      toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
     },
   });
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const context = {
     form,
     formA: formA.data,
@@ -102,31 +108,20 @@ function FormCPage() {
     formBInitValues: formBInitValues.data,
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
-    hasFormBeenSubmitted,
-    onSubmit: handleSubmit,
+    hasFormBeenSubmitted: form.state.submissionAttempts > 0,
+    onSubmit: form.handleSubmit,
     onSaveDraft: handleDraftSave,
     actionsDisabled: updateMutation.isPending,
   };
 
-  async function handleSubmit() {
-    setHasFormBeenSubmitted(true);
-
-    await form.validate('change');
-
-    if (!form.state.canSubmit) {
-      trackFormSubmit('form-c', 'invalid', form.state);
-      toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
-      return;
-    }
-
+  async function handleValidSubmit(values: FormCValues) {
     trackFormSubmit('form-c', 'valid', form.state);
 
     const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormCWriteSchema(formAInitValues.data, false).parse(form.state.values),
+        data: getFormCWriteSchema(formAInitValues.data, false).parse(values),
       },
       {
         onSuccess: () => {
@@ -158,7 +153,7 @@ function FormCPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: FormCWriteRequest.parse({ form: form.state.values, draft: true }),
+        data: getFormCWriteSchema(formAInitValues.data, true).parse(form.state.values),
       },
       {
         onSuccess: () => {

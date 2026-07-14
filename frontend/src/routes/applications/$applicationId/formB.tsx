@@ -1,8 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
-import { useState } from 'react';
+import { revalidateLogic } from '@tanstack/react-form';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
@@ -21,12 +20,12 @@ import {
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
-import { FormBWriteRequest } from '@/api/generated/schemas';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
 import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 import { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
+import { useAppForm } from '@/lib/form';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
@@ -54,25 +53,32 @@ function FormBPage() {
   const updateMutation = useUpdateApplicationFormB();
   const revertToEditMutation = useRefillApplicationFormB();
 
-  const form = useForm({
-    defaultValues: (formB.data ?? {
-      isCruiseManagerPresent: 'true',
-      permissions: formA.data.permissions,
-      ugTeams: formA.data.ugTeams,
-      guestTeams: formA.data.guestTeams,
-      crewMembers: [],
-      shortResearchEquipments: [],
-      longResearchEquipments: [],
-      ports: [],
-      cruiseDaysDetails: [],
-      researchEquipments: [],
-      shipEquipmentsIds: [],
-    }) as FormBValues,
+  const defaultValues = (formB.data ?? {
+    isCruiseManagerPresent: 'true',
+    permissions: formA.data.permissions,
+    ugTeams: formA.data.ugTeams,
+    guestTeams: formA.data.guestTeams,
+    crewMembers: [],
+    shortResearchEquipments: [],
+    longResearchEquipments: [],
+    ports: [],
+    cruiseDaysDetails: [],
+    researchEquipments: [],
+    shipEquipmentsIds: [],
+  }) satisfies FormBValues;
+  const form = useAppForm({
+    defaultValues,
+    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: getFormBValidationSchema(),
+      onDynamic: getFormBValidationSchema(),
+    },
+    onSubmit: async ({ value }) => handleValidSubmit(value),
+    onSubmitInvalid: () => {
+      trackFormSubmit('form-b', 'invalid', form.state);
+      toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
     },
   });
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const context = {
     form,
     formA: formA.data,
@@ -80,32 +86,21 @@ function FormBPage() {
     formBInitValues: formBInitValues.data,
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
-    hasFormBeenSubmitted,
-    onSubmit: handleSubmit,
+    hasFormBeenSubmitted: form.state.submissionAttempts > 0,
+    onSubmit: form.handleSubmit,
     onSaveDraft: handleDraftSave,
     onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,
     actionsDisabled: updateMutation.isPending || revertToEditMutation.isPending,
   };
 
-  async function handleSubmit() {
-    setHasFormBeenSubmitted(true);
-
-    await form.validate('change');
-
-    if (!form.state.isValid) {
-      trackFormSubmit('form-b', 'invalid', form.state);
-      toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
-      return;
-    }
-
+  async function handleValidSubmit(values: FormBValues) {
     trackFormSubmit('form-b', 'valid', form.state);
 
     const loading = toast.loading('Zapisywanie formularza...');
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormBWriteSchema(false).parse(form.state.values),
+        data: getFormBWriteSchema(false).parse(values),
       },
       {
         onSuccess: () => {
@@ -141,8 +136,6 @@ function FormBPage() {
       .find((result) => !result.success);
 
     if (commentError && !commentError.success) {
-      setHasFormBeenSubmitted(true);
-      await form.validate('change');
       toast.error(`Formularz błędny w sekcji nr 13:\n${commentError.error.issues[0].message}`);
       navigateToFirstError(form, { cruiseDaysDetails: 13 });
       return;
@@ -152,7 +145,7 @@ function FormBPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: FormBWriteRequest.parse({ form: form.state.values, draft: true }),
+        data: getFormBWriteSchema(true).parse(form.state.values),
       },
       {
         onSuccess: () => {
