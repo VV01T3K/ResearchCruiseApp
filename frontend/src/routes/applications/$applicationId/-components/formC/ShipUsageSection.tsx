@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -12,7 +12,7 @@ export const ShipUsageSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ShipUsageSection({ form, context }) {
-    const { isReadonly, formAInitValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, formAInitValues, submissionAttempts } = context;
 
     return (
       <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-c-ship-usage-section">
@@ -25,7 +25,7 @@ export const ShipUsageSection = withForm({
                 value={field.state.value as string}
                 onChange={(e) => field.handleChange(e as string)}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 label="Statek na potrzeby badań był wykorzystywany"
                 allOptions={formAInitValues?.shipUsages.map((shipUsage, i) => ({
                   value: i.toString(),
@@ -57,7 +57,7 @@ export const ShipUsageSection = withForm({
                           value={field.state.value}
                           onChange={field.handleChange}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          errors={getErrors(field.state.meta, submissionAttempts)}
                           label="Inny sposób użycia"
                           placeholder="np. statek badawczy"
                           disabled={isReadonly}

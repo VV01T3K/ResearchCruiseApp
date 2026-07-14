@@ -10,7 +10,7 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
+import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
@@ -98,7 +98,7 @@ function NewCruiseApplicationPage() {
     form,
     initValues: initialStateQuery.data,
     isReadonly: false,
-    hasFormBeenSubmitted: submissionAttempts > 0,
+    submissionAttempts,
     blockades: blockadesQuery.data,
     onSubmit: () => form.handleSubmit(),
     onSaveDraft: () => setIsSaveDraftModalOpen(true),

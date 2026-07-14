@@ -3,17 +3,18 @@ import { Row } from '@tanstack/react-table';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { getErrors } from '@/lib/utils';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { getErrors } from '@/lib/form-errors';
 import { ProjectPreparationResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: FormAFormApi;
   row: Row<ProjectPreparationResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
+  submissionAttempts?: number;
 };
-export function ProjectPreparationResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function ProjectPreparationResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <form.Field
@@ -24,7 +25,7 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
@@ -43,7 +44,7 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             onChange={(value) => field.handleChange(value ?? '')}
             label="Przewidywany termin składania"
             disabled={disabled}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
           />
         )}
       />
@@ -62,7 +63,7 @@ export function ProjectPreparationResearchTaskDetails({ form, row, disabled, has
             ]}
             label="Otrzymano decyzję o finansowaniu?"
             disabled={disabled}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
           />
         )}
       />

@@ -148,7 +148,7 @@ function FieldErrors() {
   return <AppInputErrorsList errors={useErrors()} />;
 }
 
-export const { useAppForm, withForm, withFieldGroup } = createFormHook({
+export const { useAppForm, useTypedAppFormContext, withForm, withFieldGroup } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: {

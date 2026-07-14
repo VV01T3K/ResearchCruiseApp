@@ -1,11 +1,11 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors, groupBy } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
+import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { ResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ResearchTaskDetails';
@@ -24,9 +24,9 @@ export const ResearchTasksSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function ResearchTasksSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
-    function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskValues>[] {
+    function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchTaskValues>[] {
       return [
         {
           header: 'Lp.',
@@ -48,12 +48,7 @@ export const ResearchTasksSection = withForm({
         {
           header: 'Szczegóły',
           cell: ({ row }) => (
-            <ResearchTaskDetails
-              form={form}
-              row={row}
-              disabled={isReadonly}
-              hasFormBeenSubmitted={hasFormBeenSubmitted}
-            />
+            <ResearchTaskDetails row={row} disabled={isReadonly} submissionAttempts={submissionAttempts} />
           ),
         },
         {
@@ -62,9 +57,7 @@ export const ResearchTasksSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: ResearchTaskValues[]) => prev);
-                  field.handleBlur();
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -88,7 +81,11 @@ export const ResearchTasksSection = withForm({
             children={(field) => (
               <>
                 <AppTable
-                  columns={getColumns(field)}
+                  columns={getColumns((index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  })}
                   data={field.state.value}
                   showRequiredAsterisk
                   buttons={() => [
@@ -141,11 +138,11 @@ export const ResearchTasksSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zadania."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-research-tasks-table"
                 />
                 <AppInputErrorsList
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-research-tasks-errors"
                 />
               </>

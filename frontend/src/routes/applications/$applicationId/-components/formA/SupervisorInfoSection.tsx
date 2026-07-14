@@ -1,7 +1,7 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -10,7 +10,7 @@ export const SupervisorInfoSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function SupervisorInfoSection({ form, context }) {
-    const { isReadonly, hasFormBeenSubmitted } = context;
+    const { isReadonly, submissionAttempts } = context;
 
     return (
       <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault data-testid="form-a-supervisor-section">
@@ -29,7 +29,7 @@ export const SupervisorInfoSection = withForm({
                 value={field.state.value}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 label="Adres e-mail przełożonego"
                 showRequiredAsterisk
                 placeholder="Wprowadź adres e-mail przełożonego"

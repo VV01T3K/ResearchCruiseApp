@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -11,7 +11,7 @@ import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schem
 
 const shipEquipmentColumns = (
   form: FormBFormApi,
-  hasFormBeenSubmitted: boolean,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<ShipEquipmentOption>[] => [
   {
@@ -35,7 +35,7 @@ const shipEquipmentColumns = (
               )
             }
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -49,7 +49,7 @@ export const ShipEquipmentsSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function ShipEquipmentsSection({ form, context }) {
-    const { formBInitValues, hasFormBeenSubmitted, isReadonly } = context;
+    const { formBInitValues, submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -62,7 +62,7 @@ export const ShipEquipmentsSection = withForm({
           children={() => (
             <AppTable
               data={formBInitValues.shipEquipments}
-              columns={shipEquipmentColumns(form, hasFormBeenSubmitted, isReadonly)}
+              columns={shipEquipmentColumns(form, submissionAttempts, isReadonly)}
               buttons={() => []}
               variant="form"
               disabled={isReadonly}

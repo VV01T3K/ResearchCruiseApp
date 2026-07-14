@@ -9,7 +9,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
@@ -20,9 +20,8 @@ import { ShortResearchEquipmentValues } from '@/routes/applications/$application
 
 const shortResearchEquipmentColumns = (
   form: FormBFormApi,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean,
   allowPastDates: boolean
 ): ColumnDef<ShortResearchEquipmentValues>[] => [
@@ -55,7 +54,7 @@ const shortResearchEquipmentColumns = (
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             minimalDate={allowPastDates ? undefined : new Date()}
           />
@@ -83,7 +82,7 @@ const shortResearchEquipmentColumns = (
                 value={field.state.value}
                 onChange={(newValue) => field.handleChange(newValue ?? '')}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 disabled={isReadonly}
                 selectionStartDate={startDate ? new Date(startDate) : undefined}
                 minimalDate={startDate ? new Date(startDate) : undefined}
@@ -111,7 +110,7 @@ const shortResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -123,14 +122,7 @@ const shortResearchEquipmentColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
-          onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
-            field.handleBlur();
-          }}
-          disabled={isReadonly}
-        />
+        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 10,
@@ -139,9 +131,8 @@ const shortResearchEquipmentColumns = (
 
 const longResearchEquipmentColumns = (
   form: FormBFormApi,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentValues>[] => [
   {
@@ -163,7 +154,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={(e) => field.handleChange(e as LongResearchEquipmentValues['action'])}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             allOptions={[
               { value: 'Put', inlineLabel: 'Pozostawienie' },
@@ -191,7 +182,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Czas"
             disabled={isReadonly}
           />
@@ -216,7 +207,7 @@ const longResearchEquipmentColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -228,14 +219,7 @@ const longResearchEquipmentColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
-          onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
-            field.handleBlur();
-          }}
-          disabled={isReadonly}
-        />
+        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 10,
@@ -244,9 +228,8 @@ const longResearchEquipmentColumns = (
 
 const portColumns = (
   form: FormBFormApi,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean,
   allowPastDates: boolean
 ): ColumnDef<PortCallValues>[] => [
@@ -279,7 +262,7 @@ const portColumns = (
             value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             type="datetime"
             minimalDate={allowPastDates ? undefined : new Date()}
@@ -308,7 +291,7 @@ const portColumns = (
                 value={field.state.value}
                 onChange={(newValue) => field.handleChange(newValue ?? '')}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 disabled={isReadonly}
                 type="datetime"
                 selectionStartDate={startTime ? new Date(startTime) : undefined}
@@ -337,7 +320,7 @@ const portColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Nazwa portu"
             disabled={isReadonly}
           />
@@ -349,14 +332,7 @@ const portColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
-          onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: PortCallValues[]) => prev);
-            field.handleBlur();
-          }}
-          disabled={isReadonly}
-        />
+        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 10,
@@ -367,7 +343,7 @@ export const CruiseDetailsSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function CruiseDetailsSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     const [includeShortResearchEquipments, setIncludeShortResearchEquipments] = useState(false);
     const [includePorts, setIncludePorts] = useState(false);
@@ -386,8 +362,12 @@ export const CruiseDetailsSection = withForm({
               <AppTable
                 columns={shortResearchEquipmentColumns(
                   form,
-                  field,
-                  hasFormBeenSubmitted,
+                  (index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  },
+                  submissionAttempts,
                   isReadonly,
                   includeShortResearchEquipments
                 )}
@@ -438,7 +418,16 @@ export const CruiseDetailsSection = withForm({
             mode="array"
             children={(field) => (
               <AppTable
-                columns={longResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+                columns={longResearchEquipmentColumns(
+                  form,
+                  (index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  },
+                  submissionAttempts,
+                  isReadonly
+                )}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -480,7 +469,17 @@ export const CruiseDetailsSection = withForm({
             mode="array"
             children={(field) => (
               <AppTable
-                columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly, includePorts)}
+                columns={portColumns(
+                  form,
+                  (index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  },
+                  submissionAttempts,
+                  isReadonly,
+                  includePorts
+                )}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton

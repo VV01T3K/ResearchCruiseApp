@@ -8,7 +8,7 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { toast } from '@/components/shared/layout/toast';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -22,9 +22,8 @@ import {
 
 const cruiseDayDetailsColumns = (
   form: FormBFormApi,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<CruiseDayValues>[] => [
   {
@@ -43,7 +42,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -69,7 +68,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -95,7 +94,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -120,7 +119,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -145,7 +144,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -170,7 +169,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -185,14 +184,7 @@ const cruiseDayDetailsColumns = (
           id: 'actions',
           cell: ({ row }) => (
             <div className="flex justify-end">
-              <AppTableDeleteRowButton
-                onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: CruiseDayValues[]) => prev);
-                  field.handleBlur();
-                }}
-                disabled={isReadonly}
-              />
+              <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
             </div>
           ),
           size: 10,
@@ -205,7 +197,7 @@ export const CruiseDayDetailsSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function CruiseDayDetailsSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,7 +257,16 @@ export const CruiseDayDetailsSection = withForm({
               />
               <AppTable
                 data={field.state.value}
-                columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+                columns={cruiseDayDetailsColumns(
+                  form,
+                  (index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  },
+                  submissionAttempts,
+                  isReadonly
+                )}
                 buttons={() => {
                   const buttons = [];
                   if (!isReadonly) {

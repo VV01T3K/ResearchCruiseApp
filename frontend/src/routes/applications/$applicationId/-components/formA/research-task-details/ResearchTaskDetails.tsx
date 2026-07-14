@@ -1,6 +1,5 @@
 import { Row } from '@tanstack/react-table';
 
-import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/DidacticsResearchTaskDetails';
 import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OtherResearchTaskDetails';
 import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OwnResearchTaskDetails';
@@ -19,31 +18,28 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: FormAFormApi;
   row: Row<ResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
+  submissionAttempts?: number;
 };
-export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function ResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
   switch (row.original.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:
     case ResearchTaskType.DoctoralThesis:
       return (
         <ThesisResearchTaskDetails
-          form={form}
           row={row as Row<ThesisResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
+          submissionAttempts={submissionAttempts}
         />
       );
     case ResearchTaskType.ProjectPreparation:
       return (
         <ProjectPreparationResearchTaskDetails
-          form={form}
           row={row as Row<ProjectPreparationResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
+          submissionAttempts={submissionAttempts}
         />
       );
     case ResearchTaskType.DomesticProject:
@@ -53,37 +49,33 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
     case ResearchTaskType.CommercialProject:
       return (
         <ProjectResearchTaskDetails
-          form={form}
           row={row as Row<ProjectResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
+          submissionAttempts={submissionAttempts}
         />
       );
     case ResearchTaskType.Didactics:
       return (
         <DidacticsResearchTaskDetails
-          form={form}
           row={row as Row<DidacticsResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
+          submissionAttempts={submissionAttempts}
         />
       );
     case ResearchTaskType.OwnResearchTask:
       return (
         <OwnResearchTaskDetails
-          form={form}
           row={row as Row<OwnResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
+          submissionAttempts={submissionAttempts}
         />
       );
     case ResearchTaskType.OtherResearchTask:
       return (
         <OtherResearchTaskDetails
-          form={form}
           row={row as Row<OtherResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
+          submissionAttempts={submissionAttempts}
         />
       );
     default:

@@ -7,7 +7,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -15,9 +15,8 @@ import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-s
 
 const researchEquipmentsColumns = (
   form: FormBFormApi,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<ResearchEquipmentValues>[] => [
   {
@@ -38,7 +37,7 @@ const researchEquipmentsColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Wpisz nazwę sprzętu / aparatury"
             disabled={isReadonly}
           />
@@ -60,7 +59,7 @@ const researchEquipmentsColumns = (
               value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e ?? '')}
               onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, submissionAttempts)}
               label="Data rozpoczęcia ubezpieczenia"
               disabled={isReadonly}
             />
@@ -82,7 +81,7 @@ const researchEquipmentsColumns = (
                     value={field.state.value ?? ''}
                     onChange={(e) => field.handleChange(e ?? '')}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
                     selectionStartDate={state ? new Date(state) : undefined}
@@ -109,7 +108,7 @@ const researchEquipmentsColumns = (
             checked={field.state.value === 'true'}
             onChange={(value) => field.handleChange(value ? 'true' : 'false')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -122,14 +121,7 @@ const researchEquipmentsColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
-          onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: ResearchEquipmentValues[]) => prev);
-            field.handleBlur();
-          }}
-          disabled={isReadonly}
-        />
+        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 5,
@@ -140,7 +132,7 @@ export const ResearchEquipmentsSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function ResearchEquipmentsSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -154,7 +146,16 @@ export const ResearchEquipmentsSection = withForm({
           children={(field) => (
             <AppTable
               data={field.state.value}
-              columns={researchEquipmentsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={researchEquipmentsColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleChange((prev) => prev);
+                  field.handleBlur();
+                },
+                submissionAttempts,
+                isReadonly
+              )}
               buttons={() => [
                 <AppButton
                   key="new"

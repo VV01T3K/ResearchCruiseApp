@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -8,15 +7,15 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { withForm } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 
 const cruiseDayDetailsColumns = (
   form: FormCFormApi,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<CruiseDayValues>[] => [
   {
@@ -33,7 +32,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -57,7 +56,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -81,7 +80,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -104,7 +103,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -127,7 +126,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -150,7 +149,7 @@ const cruiseDayDetailsColumns = (
             value={field.state.value}
             onChange={field.setValue}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -165,9 +164,7 @@ const cruiseDayDetailsColumns = (
       <div className="flex justify-end">
         <AppTableDeleteRowButton
           onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: CruiseDayValues[]) => prev);
-            field.handleBlur();
+            removeRow(row.index);
           }}
           disabled={isReadonly}
         />
@@ -181,7 +178,7 @@ export const CruiseDayDetailsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function CruiseDayDetailsSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -195,7 +192,16 @@ export const CruiseDayDetailsSection = withForm({
           children={(field) => (
             <AppTable
               data={field.state.value}
-              columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={cruiseDayDetailsColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleChange((prev) => prev);
+                  field.handleBlur();
+                },
+                submissionAttempts,
+                isReadonly
+              )}
               buttons={() => [
                 <AppButton
                   key="new"

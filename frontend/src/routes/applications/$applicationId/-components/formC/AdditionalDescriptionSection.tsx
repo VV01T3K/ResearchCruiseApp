@@ -1,7 +1,7 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -10,7 +10,7 @@ export const AdditionalDescriptionSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function AdditionalDescriptionSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -32,7 +32,7 @@ export const AdditionalDescriptionSection = withForm({
               onBlur={field.handleBlur}
               type="textarea"
               className="h-48"
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, submissionAttempts)}
               label="Dodatkowy opis"
               placeholder="Dodatkowy opis"
               disabled={isReadonly}
@@ -50,7 +50,7 @@ export const AdditionalDescriptionSection = withForm({
               label="Załączniki"
               onChange={field.handleChange}
               onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, submissionAttempts)}
               disabled={isReadonly}
               allowMultiple
               maxSizeInMb={10}

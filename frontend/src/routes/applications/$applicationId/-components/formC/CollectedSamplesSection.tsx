@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -8,15 +7,15 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { withForm } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CollectedSampleValues } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
 
 const collectedSamplesColumns = (
   form: FormCFormApi,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<CollectedSampleValues>[] => [
   {
@@ -30,7 +29,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Wpisz rodzaj materiału badawczego/próbek/danych"
             disabled={isReadonly}
           />
@@ -50,7 +49,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             disabled={isReadonly}
           />
         )}
@@ -69,7 +68,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Wpisz zakres analiz"
             disabled={isReadonly}
           />
@@ -89,7 +88,7 @@ const collectedSamplesColumns = (
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Wpisz informacje o upublicznieniu danych"
             disabled={isReadonly}
           />
@@ -102,7 +101,7 @@ const collectedSamplesColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => field.removeValue(row.index)} disabled={isReadonly} />
+        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 5,
@@ -113,7 +112,7 @@ export const CollectedSamplesSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function CollectedSamplesSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -127,7 +126,12 @@ export const CollectedSamplesSection = withForm({
           children={(field) => (
             <AppTable
               data={field.state.value}
-              columns={collectedSamplesColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={collectedSamplesColumns(
+                form,
+                (index) => field.removeValue(index),
+                submissionAttempts,
+                isReadonly
+              )}
               buttons={() => [
                 <AppButton
                   key="new"

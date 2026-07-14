@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -9,7 +8,7 @@ import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePick
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
 import { withForm } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -17,8 +16,8 @@ import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-s
 
 const researchEquipmentsColumns = (
   form: FormCFormApi,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  removeRow: (index: number) => void,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<ResearchEquipmentValues>[] => [
   {
@@ -31,13 +30,13 @@ const researchEquipmentsColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`researchEquipments[${row.index}].name`}
-        children={(field: AnyFieldApi) => (
+        children={(field) => (
           <AppInput
             name={field.name}
             value={field.state.value}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             placeholder="Wpisz nazwę sprzętu / aparatury"
             disabled={isReadonly}
           />
@@ -52,13 +51,13 @@ const researchEquipmentsColumns = (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.Field
           name={`researchEquipments[${row.index}].insuranceStartDate`}
-          children={(field: AnyFieldApi) => (
+          children={(field) => (
             <AppDatePickerInput
               name={field.name}
               value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e ?? '')}
               onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, submissionAttempts)}
               label="Data rozpoczęcia ubezpieczenia"
               disabled={isReadonly}
             />
@@ -66,7 +65,7 @@ const researchEquipmentsColumns = (
         />
         <form.Field
           name={`researchEquipments[${row.index}].insuranceEndDate`}
-          children={(field: AnyFieldApi) => (
+          children={(field) => (
             <form.Subscribe
               selector={(state: { values: FormCValues }) =>
                 state.values.researchEquipments[row.index].insuranceStartDate
@@ -82,7 +81,7 @@ const researchEquipmentsColumns = (
                     value={field.state.value ?? ''}
                     onChange={(e) => field.handleChange(e ?? '')}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
                     selectionStartDate={startDate ? new Date(startDate) : undefined}
@@ -102,14 +101,14 @@ const researchEquipmentsColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`researchEquipments[${row.index}].permission`}
-        children={(field: AnyFieldApi) => (
+        children={(field) => (
           <AppCheckbox
             size="md"
             name={field.name}
             checked={field.state.value === 'true'}
             onChange={(value) => field.handleChange(value ? 'true' : 'false')}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -124,9 +123,7 @@ const researchEquipmentsColumns = (
       <div className="flex justify-end">
         <AppTableDeleteRowButton
           onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: ResearchEquipmentValues[]) => prev);
-            field.handleBlur();
+            removeRow(row.index);
           }}
           disabled={isReadonly}
         />
@@ -140,7 +137,7 @@ export const ResearchEquipmentsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ResearchEquipmentsSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -154,7 +151,16 @@ export const ResearchEquipmentsSection = withForm({
           children={(field) => (
             <AppTable
               data={field.state.value}
-              columns={researchEquipmentsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={researchEquipmentsColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleChange((prev) => prev);
+                  field.handleBlur();
+                },
+                submissionAttempts,
+                isReadonly
+              )}
               buttons={() => [
                 <AppButton
                   key="new"

@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -9,7 +8,7 @@ import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePick
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { withForm } from '@/lib/form';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
@@ -22,10 +21,12 @@ export const MembersSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function MembersSection({ form, context }) {
-    const { formB, isReadonly, formAInitValues, hasFormBeenSubmitted } = context;
+    const { formB, isReadonly, formAInitValues, submissionAttempts } = context;
 
-    function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UgTeamValues>[] {
-      const tableField = field;
+    function getUgTeamsColumns(
+      notifyRowsChanged: () => void,
+      removeRow: (index: number) => void
+    ): ColumnDef<UgTeamValues>[] {
       return [
         {
           header: 'Lp.',
@@ -56,10 +57,10 @@ export const MembersSection = withForm({
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
-                    tableField.handleChange((prev: UgTeamValues[]) => prev);
+                    notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -83,10 +84,10 @@ export const MembersSection = withForm({
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
-                    tableField.handleChange((prev: UgTeamValues[]) => prev);
+                    notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -101,10 +102,7 @@ export const MembersSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: UgTeamValues[]) => prev);
-                  field.handleBlur();
-                  tableField.handleChange((prev: UgTeamValues[]) => prev);
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -115,8 +113,10 @@ export const MembersSection = withForm({
       ];
     }
 
-    function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamValues>[] {
-      const tableField = field;
+    function getGuestTeams(
+      notifyRowsChanged: () => void,
+      removeRow: (index: number) => void
+    ): ColumnDef<GuestTeamValues>[] {
       return [
         {
           header: 'Lp.',
@@ -139,7 +139,7 @@ export const MembersSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -163,10 +163,10 @@ export const MembersSection = withForm({
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
-                    tableField.handleChange((prev: GuestTeamValues[]) => prev);
+                    notifyRowsChanged();
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -181,10 +181,7 @@ export const MembersSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: GuestTeamValues[]) => prev);
-                  field.handleBlur();
-                  tableField.handleChange((prev: GuestTeamValues[]) => prev);
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -277,7 +274,14 @@ export const MembersSection = withForm({
             children={(field) => (
               <div>
                 <AppTable
-                  columns={getUgTeamsColumns(field)}
+                  columns={getUgTeamsColumns(
+                    () => field.handleChange((prev) => prev),
+                    (index) => {
+                      field.removeValue(index);
+                      field.handleChange((prev) => prev);
+                      field.handleBlur();
+                    }
+                  )}
                   data={field.state.value}
                   buttons={() => [
                     <DropdownElementSelectorButton
@@ -304,9 +308,9 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                 />
-                <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+                <AppInputErrorsList errors={getErrors(field.state.meta, submissionAttempts)} />
               </div>
             )}
           />
@@ -316,7 +320,14 @@ export const MembersSection = withForm({
             children={(field) => (
               <div>
                 <AppTable
-                  columns={getGuestTeams(field)}
+                  columns={getGuestTeams(
+                    () => field.handleChange((prev) => prev),
+                    (index) => {
+                      field.removeValue(index);
+                      field.handleChange((prev) => prev);
+                      field.handleBlur();
+                    }
+                  )}
                   data={field.state.value}
                   buttons={() => [
                     <AppButton
@@ -351,9 +362,9 @@ export const MembersSection = withForm({
                   emptyTableMessage="Nie dodano żadnego zespołu."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                 />
-                <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+                <AppInputErrorsList errors={getErrors(field.state.meta, submissionAttempts)} />
               </div>
             )}
           />

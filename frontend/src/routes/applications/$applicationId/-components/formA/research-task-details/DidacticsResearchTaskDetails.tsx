@@ -1,17 +1,18 @@
 import { Row } from '@tanstack/react-table';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { getErrors } from '@/lib/utils';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { getErrors } from '@/lib/form-errors';
 import { DidacticsResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: FormAFormApi;
   row: Row<DidacticsResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
+  submissionAttempts?: number;
 };
-export function DidacticsResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function DidacticsResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
       <form.Field
@@ -22,7 +23,7 @@ export function DidacticsResearchTaskDetails({ form, row, disabled, hasFormBeenS
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Opis zajęcia dydaktycznego"
             placeholder="Wprowadź opis zajęcia dydaktycznego"
             disabled={disabled}

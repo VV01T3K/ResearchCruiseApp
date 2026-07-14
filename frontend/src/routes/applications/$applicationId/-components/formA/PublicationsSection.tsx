@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -9,7 +8,8 @@ import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPick
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors, groupBy } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
+import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
@@ -24,9 +24,9 @@ export const PublicationsSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function PublicationsSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
-    function getColumns(field: AnyFieldApi): ColumnDef<PublicationValues>[] {
+    function getColumns(removeRow: (index: number) => void): ColumnDef<PublicationValues>[] {
       return [
         {
           header: 'Lp.',
@@ -47,7 +47,7 @@ export const PublicationsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange as (value: string) => void}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   allOptions={Object.values(PublicationCategory).map((role) => ({
                     value: role,
                     inlineLabel: getPublicationCategoryLabel(role),
@@ -74,7 +74,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="DOI"
                     placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
                     disabled={isReadonly}
@@ -91,7 +91,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Autorzy"
                     placeholder='np. "Kowalski J., Nowak A."'
                     disabled={isReadonly}
@@ -108,7 +108,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Tytuł"
                     placeholder='np. "The impact of sea level rise on the coastal zone"'
                     disabled={isReadonly}
@@ -125,7 +125,7 @@ export const PublicationsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Czasopismo"
                     placeholder='np. "Journal of Marine Systems"'
                     disabled={isReadonly}
@@ -151,7 +151,7 @@ export const PublicationsSection = withForm({
                   value={field.state.value}
                   onChange={(value) => field.handleChange(value ?? 0)}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Rok"
                   disabled={isReadonly}
                   data-testid-button="form-a-publication-year-button"
@@ -177,7 +177,7 @@ export const PublicationsSection = withForm({
                   step={10}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Punkty"
                   disabled={isReadonly}
                   data-testid-input="form-a-publication-points-input"
@@ -193,9 +193,7 @@ export const PublicationsSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: PublicationValues[]) => prev);
-                  field.handleBlur();
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -244,7 +242,11 @@ export const PublicationsSection = withForm({
             children={(field) => (
               <>
                 <AppTable
-                  columns={getColumns(field)}
+                  columns={getColumns((index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  })}
                   data={field.state.value}
                   buttons={() => [
                     <DropdownElementSelectorButton
@@ -333,7 +335,7 @@ export const PublicationsSection = withForm({
                   ]}
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-publications-table"
                 />
                 <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />

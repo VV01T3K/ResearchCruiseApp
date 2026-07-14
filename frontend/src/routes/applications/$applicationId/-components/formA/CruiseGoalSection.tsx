@@ -1,7 +1,7 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -11,7 +11,7 @@ export const CruiseGoalSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function CruiseGoalSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
     return (
       <AppAccordion title="5. Cel rejsu" expandedByDefault data-testid="form-a-cruise-goal-section">
@@ -24,7 +24,7 @@ export const CruiseGoalSection = withForm({
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e as CruiseGoal)}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 label="Cel rejsu"
                 allOptions={initValues.cruiseGoals.map((cruiseGoal, index) => ({
                   value: index.toString(),
@@ -49,7 +49,7 @@ export const CruiseGoalSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Opis"
                     placeholder="np. szczegóły dotyczące celu rejsu"
                     disabled={!cruiseGoal || isReadonly}

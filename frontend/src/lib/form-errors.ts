@@ -20,8 +20,11 @@ export function getFieldErrors(meta: AnyFieldMeta, submissionAttempts: number): 
   return meta.errors.map(extractErrorMessage);
 }
 
-export function getErrors(meta: AnyFieldMeta, hasFormBeenSubmitted = true): string[] | undefined {
-  return getFieldErrors(meta, hasFormBeenSubmitted ? 1 : 0);
+export function getErrors(meta: AnyFieldMeta, submissionAttempts: number | boolean = 1): string[] | undefined {
+  return getFieldErrors(
+    meta,
+    typeof submissionAttempts === 'boolean' ? Number(submissionAttempts) : submissionAttempts
+  );
 }
 
 function getSectionNumber(fieldName: string, sections: Record<string, number>): number | undefined {

@@ -1,18 +1,17 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { withForm } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
 
 const shipEquipmentColumns = (
   form: FormCFormApi,
-  hasFormBeenSubmitted: boolean,
+  submissionAttempts: number,
   isReadonly: boolean
 ): ColumnDef<ShipEquipmentOption>[] => [
   {
@@ -25,7 +24,7 @@ const shipEquipmentColumns = (
     cell: ({ row }) => (
       <form.Field
         name={`shipEquipmentsIds`}
-        children={(field: AnyFieldApi) => (
+        children={(field) => (
           <AppCheckbox
             size="md"
             name={field.name}
@@ -36,7 +35,7 @@ const shipEquipmentColumns = (
               )
             }
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -50,7 +49,7 @@ export const ShipEquipmentsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ShipEquipmentsSection({ form, context }) {
-    const { formBInitValues, hasFormBeenSubmitted, isReadonly } = context;
+    const { formBInitValues, submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -63,7 +62,7 @@ export const ShipEquipmentsSection = withForm({
           children={() => (
             <AppTable
               data={formBInitValues.shipEquipments}
-              columns={shipEquipmentColumns(form, hasFormBeenSubmitted, isReadonly)}
+              columns={shipEquipmentColumns(form, submissionAttempts, isReadonly)}
               buttons={() => []}
               variant="form"
               disabled={isReadonly}

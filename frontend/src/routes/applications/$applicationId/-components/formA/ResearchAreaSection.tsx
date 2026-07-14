@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -6,7 +5,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -19,9 +18,9 @@ export const ResearchAreaSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function ResearchAreaSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
-    function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaValues>[] {
+    function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchAreaValues>[] {
       return [
         {
           header: 'Lp.',
@@ -53,7 +52,7 @@ export const ResearchAreaSection = withForm({
                     }
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     placeholder="Nazwa rejonu"
                     disabled={isReadonly}
                     showRequiredAsterisk
@@ -75,7 +74,7 @@ export const ResearchAreaSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                   disabled={isReadonly}
                 />
@@ -89,9 +88,7 @@ export const ResearchAreaSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: ResearchAreaValues[]) => prev);
-                  field.handleBlur();
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -110,7 +107,11 @@ export const ResearchAreaSection = withForm({
           children={(field) => (
             <>
               <AppTable
-                columns={getColumns(field)}
+                columns={getColumns((index) => {
+                  field.removeValue(index);
+                  field.handleChange((prev) => prev);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
@@ -138,11 +139,11 @@ export const ResearchAreaSection = withForm({
                 emptyTableMessage="Nie dodano żadnego rejonu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 data-testid="form-a-research-areas-table"
               />
               <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 data-testid="form-a-research-areas-errors"
               />
             </>

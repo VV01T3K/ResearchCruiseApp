@@ -9,7 +9,7 @@ import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -93,7 +93,7 @@ export const CruiseLengthSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function CruiseLengthSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted, blockades } = context;
+    const { isReadonly, initValues, submissionAttempts, blockades } = context;
 
     const year = useSelector(form.store, (state) => state.values.year);
     const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
@@ -220,7 +220,7 @@ export const CruiseLengthSection = withForm({
                       value={field.state.value}
                       onChange={(newValue) => field.handleChange(newValue ?? '')}
                       onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      errors={getErrors(field.state.meta, submissionAttempts)}
                       label="Dokładny termin rozpoczęcia rejsu"
                       type="date"
                       showRequiredAsterisk
@@ -244,7 +244,7 @@ export const CruiseLengthSection = withForm({
                             form.validateField('precisePeriodStart', 'change');
                           }}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          errors={getErrors(field.state.meta, submissionAttempts)}
                           label="Dokładny termin zakończenia rejsu"
                           type="date"
                           showRequiredAsterisk
@@ -275,7 +275,7 @@ export const CruiseLengthSection = withForm({
                       value={field.state.value}
                       onChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      errors={getErrors(field.state.meta, submissionAttempts)}
                       label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                       showRequiredAsterisk
                       disabled={isReadonly}
@@ -295,7 +295,7 @@ export const CruiseLengthSection = withForm({
                           value={field.state.value}
                           onChange={field.handleChange}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          errors={getErrors(field.state.meta, submissionAttempts)}
                           maxValues={acceptablePeriod}
                           label="Optymalny okres, w którym miałby się odbywać rejs"
                           showRequiredAsterisk
@@ -356,7 +356,7 @@ export const CruiseLengthSection = withForm({
                     form.setFieldValue('cruiseHours', value * 24);
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Liczba planowanych dób rejsowych"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -379,7 +379,7 @@ export const CruiseLengthSection = withForm({
                     form.setFieldValue('cruiseDays', value / 24);
                   }}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Liczba planowanych godzin rejsowych"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -399,7 +399,7 @@ export const CruiseLengthSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Uwagi dotyczące terminu"
                     placeholder='np. "Rejs w okresie wakacyjnym"'
                     disabled={isReadonly}
@@ -418,7 +418,7 @@ export const CruiseLengthSection = withForm({
                     value={field.state.value as string}
                     onChange={(e) => field.handleChange(e as string)}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Statek na potrzeby badań będzie wykorzystywany"
                     showRequiredAsterisk
                     allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
@@ -452,7 +452,7 @@ export const CruiseLengthSection = withForm({
                               value={field.state.value}
                               onChange={field.handleChange}
                               onBlur={field.handleBlur}
-                              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                              errors={getErrors(field.state.meta, submissionAttempts)}
                               label="Inny sposób użycia"
                               placeholder="np. statek badawczy"
                               showRequiredAsterisk

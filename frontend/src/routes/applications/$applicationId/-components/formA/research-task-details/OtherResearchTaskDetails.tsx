@@ -1,17 +1,18 @@
 import { Row } from '@tanstack/react-table';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { getErrors } from '@/lib/utils';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { getErrors } from '@/lib/form-errors';
 import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: FormAFormApi;
   row: Row<OtherResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
+  submissionAttempts?: number;
 };
-export function OtherResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function OtherResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
       <form.Field
@@ -22,7 +23,7 @@ export function OtherResearchTaskDetails({ form, row, disabled, hasFormBeenSubmi
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Opis zadania"
             placeholder="Wprowadź opis zadania"
             disabled={disabled}

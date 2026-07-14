@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { withForm } from '@/lib/form';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
@@ -15,7 +15,7 @@ export const ResearchTasksEffectsSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function ResearchTasksEffectsSection({ form, context }) {
-    const { isReadonly, hasFormBeenSubmitted } = context;
+    const { isReadonly, submissionAttempts } = context;
 
     const columns: ColumnDef<ResearchTaskEffectValues>[] = [
       {
@@ -52,7 +52,7 @@ export const ResearchTasksEffectsSection = withForm({
                           field.handleChange(value ? 'true' : 'false');
                         }}
                         onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                        errors={getErrors(field.state.meta, submissionAttempts)}
                         label="Zrealizowane"
                         labelPosition="top"
                         disabled={isReadonly}
@@ -72,7 +72,7 @@ export const ResearchTasksEffectsSection = withForm({
                           checked={field.state.value === 'true'}
                           onChange={(value) => field.handleChange(value ? 'true' : 'false')}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          errors={getErrors(field.state.meta, submissionAttempts)}
                           label="Czy naliczyć punkty kierownikowi?"
                           labelPosition="top"
                           disabled={isReadonly || taskDone === 'false'}
@@ -93,7 +93,7 @@ export const ResearchTasksEffectsSection = withForm({
                           checked={field.state.value === 'true'}
                           onChange={(value) => field.handleChange(value ? 'true' : 'false')}
                           onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          errors={getErrors(field.state.meta, submissionAttempts)}
                           label="Czy naliczyć punkty zastępcy?"
                           labelPosition="top"
                           disabled={isReadonly || taskDone === 'false'}

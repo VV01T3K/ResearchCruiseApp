@@ -1,6 +1,6 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -10,7 +10,7 @@ export const CruiseManagerInfoSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function CruiseManagerInfoSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
     return (
       <AppAccordion
@@ -27,7 +27,7 @@ export const CruiseManagerInfoSection = withForm({
                 value={field.state.value}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 label="Kierownik rejsu"
                 showRequiredAsterisk
                 placeholder="Wybierz kierownika rejsu"
@@ -46,7 +46,7 @@ export const CruiseManagerInfoSection = withForm({
                 value={field.state.value}
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 label="Zastępca kierownika rejsu"
                 showRequiredAsterisk
                 placeholder="Wybierz zastępcę kierownika rejsu"
@@ -64,12 +64,9 @@ export const CruiseManagerInfoSection = withForm({
               <AppDropdownInput
                 name={field.name}
                 value={field.state.value}
-                onChange={(newValue) => {
-                  field.handleChange(newValue);
-                  form.validateAllFields('change');
-                }}
+                onChange={field.handleChange}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, submissionAttempts)}
                 label="Rok"
                 showRequiredAsterisk
                 placeholder="Wybierz rok"

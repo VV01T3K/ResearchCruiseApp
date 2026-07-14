@@ -1,7 +1,7 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -10,7 +10,7 @@ export const CruiseManagerInfoSection = withForm({
   defaultValues: formBDefaultValues,
   props: {} as { context: FormBViewModel },
   render: function CruiseManagerInfoSection({ form, context }) {
-    const { formA, formAInitValues, hasFormBeenSubmitted, isReadonly } = context;
+    const { formA, formAInitValues, submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -53,7 +53,7 @@ export const CruiseManagerInfoSection = withForm({
                   checked={field.state.value === 'true'}
                   onChange={(value) => field.handleChange(value ? 'true' : 'false')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Czy kierownik jest obecny na rejsie?"
                   disabled={isReadonly}
                 />

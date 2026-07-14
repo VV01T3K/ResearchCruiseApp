@@ -1,6 +1,6 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -9,7 +9,7 @@ export const SPUBReportDataSection = withForm({
   defaultValues: formCDefaultValues,
   props: {} as { context: FormCViewModel },
   render: function SPUBReportDataSection({ form, context }) {
-    const { hasFormBeenSubmitted, isReadonly } = context;
+    const { submissionAttempts, isReadonly } = context;
 
     return (
       <AppAccordion
@@ -34,7 +34,7 @@ export const SPUBReportDataSection = withForm({
               label="Dodatkowe dane do raportu SPUB"
               type="textarea"
               className="h-48"
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, submissionAttempts)}
               placeholder="Wpisz dodatkowe dane do raportu SPUB"
               disabled={isReadonly}
             />

@@ -3,17 +3,18 @@ import { Row } from '@tanstack/react-table';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { getErrors } from '@/lib/utils';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { getErrors } from '@/lib/form-errors';
 import { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: FormAFormApi;
   row: Row<OwnResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
+  submissionAttempts?: number;
 };
-export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function OwnResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <form.Field
@@ -24,7 +25,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
             disabled={disabled}
@@ -40,7 +41,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             value={field.state.value as string}
             onBlur={field.handleBlur}
             onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Przewidywany termin składania"
             disabled={disabled}
           />
@@ -55,7 +56,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Czasopismo"
             placeholder="Wprowadź czasopismo"
             disabled={disabled}
@@ -73,7 +74,7 @@ export function OwnResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitt
             step={10}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Przewidywane punkty ministerialne"
             disabled={disabled}
           />

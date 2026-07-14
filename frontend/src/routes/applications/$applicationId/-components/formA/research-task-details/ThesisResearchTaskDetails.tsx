@@ -1,17 +1,18 @@
 import { Row } from '@tanstack/react-table';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import type { FormAFormApi } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { getErrors } from '@/lib/utils';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { getErrors } from '@/lib/form-errors';
 import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: FormAFormApi;
   row: Row<ThesisResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
+  submissionAttempts?: number;
 };
-export function ThesisResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function ThesisResearchTaskDetails({ row, disabled, submissionAttempts }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <form.Field
@@ -22,7 +23,7 @@ export function ThesisResearchTaskDetails({ form, row, disabled, hasFormBeenSubm
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Autor"
             placeholder="Wprowadź autora"
             disabled={disabled}
@@ -38,7 +39,7 @@ export function ThesisResearchTaskDetails({ form, row, disabled, hasFormBeenSubm
             value={field.state.value as string}
             onChange={field.handleChange}
             onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            errors={getErrors(field.state.meta, submissionAttempts)}
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             disabled={disabled}

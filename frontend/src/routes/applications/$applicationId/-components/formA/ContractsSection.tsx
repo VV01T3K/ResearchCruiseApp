@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -7,7 +6,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
@@ -21,9 +20,9 @@ export const ContractsSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function ContractsSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
-    function getColumns(field: AnyFieldApi): ColumnDef<ContractValues>[] {
+    function getColumns(removeRow: (index: number) => void): ColumnDef<ContractValues>[] {
       return [
         {
           header: 'Lp.',
@@ -54,7 +53,7 @@ export const ContractsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Nazwa instytucji"
                     placeholder='np. "Uniwersytet Gdański"'
                     disabled={isReadonly}
@@ -69,7 +68,7 @@ export const ContractsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Jednostka"
                     placeholder='np. "Wydział Biologii"'
                     disabled={isReadonly}
@@ -84,7 +83,7 @@ export const ContractsSection = withForm({
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, submissionAttempts)}
                     label="Lokalizacja instytucji"
                     placeholder='np. "Gdańsk"'
                     disabled={isReadonly}
@@ -107,7 +106,7 @@ export const ContractsSection = withForm({
                   value={field.state.value}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Opis"
                   placeholder='np. "Umowa o współpracy"'
                   disabled={isReadonly}
@@ -132,7 +131,7 @@ export const ContractsSection = withForm({
                   allowMultiple={true}
                   onChange={field.handleChange}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   label="Skany"
                   uploadMessage="Kliknij lub przeciągnij pliki"
                   maxSizeInMb={2}
@@ -149,9 +148,7 @@ export const ContractsSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: ContractValues[]) => prev);
-                  field.handleBlur();
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -175,7 +172,11 @@ export const ContractsSection = withForm({
             children={(field) => (
               <>
                 <AppTable
-                  columns={getColumns(field)}
+                  columns={getColumns((index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  })}
                   data={field.state.value}
                   buttons={() => [
                     <DropdownElementSelectorButton
@@ -224,11 +225,11 @@ export const ContractsSection = withForm({
                   emptyTableMessage="Nie dodano żadnej umowy."
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-contracts-table"
                 />
                 <AppInputErrorsList
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-contracts-errors"
                 />
               </>

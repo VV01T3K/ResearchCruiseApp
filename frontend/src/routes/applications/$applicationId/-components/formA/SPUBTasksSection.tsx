@@ -1,4 +1,3 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -8,7 +7,7 @@ import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPick
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
@@ -19,9 +18,9 @@ export const SPUBTasksSection = withForm({
   defaultValues: formADefaultValues,
   props: {} as { context: FormAViewModel },
   render: function SPUBTasksSection({ form, context }) {
-    const { isReadonly, initValues, hasFormBeenSubmitted } = context;
+    const { isReadonly, initValues, submissionAttempts } = context;
 
-    function getColumns(field: AnyFieldApi): ColumnDef<SpubTaskValues>[] {
+    function getColumns(removeRow: (index: number) => void): ColumnDef<SpubTaskValues>[] {
       return [
         {
           header: 'Lp.',
@@ -50,7 +49,7 @@ export const SPUBTasksSection = withForm({
                   value={field.state.value ? parseInt(field.state.value) : undefined}
                   onChange={(e) => field.handleChange(e?.toString() ?? '')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   disabled={isReadonly}
                 />
               )}
@@ -72,7 +71,7 @@ export const SPUBTasksSection = withForm({
                   value={field.state.value ? parseInt(field.state.value) : undefined}
                   onChange={(e) => field.handleChange(e?.toString() ?? '')}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   disabled={isReadonly}
                 />
               )}
@@ -94,7 +93,7 @@ export const SPUBTasksSection = withForm({
                   value={field.state.value as string}
                   onChange={(e) => field.handleChange(e as string)}
                   onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   allOptions={initValues?.standardSpubTasks.map((taskName) => ({
                     value: taskName,
                     inlineLabel: taskName,
@@ -113,9 +112,7 @@ export const SPUBTasksSection = withForm({
             <div className="flex justify-end">
               <AppTableDeleteRowButton
                 onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: SpubTaskValues[]) => prev);
-                  field.handleBlur();
+                  removeRow(row.index);
                 }}
                 disabled={isReadonly}
               />
@@ -139,7 +136,11 @@ export const SPUBTasksSection = withForm({
             children={(field) => (
               <>
                 <AppTable
-                  columns={getColumns(field)}
+                  columns={getColumns((index) => {
+                    field.removeValue(index);
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  })}
                   data={field.state.value}
                   buttons={() => [
                     <AppButton
@@ -177,11 +178,11 @@ export const SPUBTasksSection = withForm({
                   emptyTableMessage="Brak zadań SPUB"
                   variant="form"
                   disabled={isReadonly}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-spub-tasks-table"
                 />
                 <AppInputErrorsList
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                  errors={getErrors(field.state.meta, submissionAttempts)}
                   data-testid="form-a-spub-tasks-errors"
                 />
               </>

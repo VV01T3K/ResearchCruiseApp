@@ -5,7 +5,7 @@ import { revalidateLogic, useSelector } from '@tanstack/react-form';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
 import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
@@ -88,7 +88,7 @@ function FormBPage() {
     formBInitValues: formBInitValues.data,
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
-    hasFormBeenSubmitted: submissionAttempts > 0,
+    submissionAttempts,
     onSubmit: () => form.handleSubmit(),
     onSaveDraft: handleDraftSave,
     onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,
