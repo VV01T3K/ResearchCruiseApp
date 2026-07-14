@@ -35,6 +35,9 @@ jobs:
       - name: Run checks
         run: vp check
 
+      - name: Check generated API
+        run: vp run gen && git diff --exit-code -- src/api/gen
+
   backend-checks:
     name: Backend checks
     runs-on: ubuntu-latest
@@ -67,6 +70,9 @@ jobs:
 
       - name: Run checks
         run: vp run check
+
+      - name: Check OpenAPI spec
+        run: git diff --exit-code -- '*openapi*'
 
       - name: Run tests
         run: vp run test

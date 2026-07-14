@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { client } from '@/lib/api';
+import config from '@/config';
 
 type Props = {
   setNetworkConnectionStatus: (status: boolean) => void;
@@ -8,7 +8,10 @@ type Props = {
 
 export function useNetworkStatusMutation({ setNetworkConnectionStatus }: Props) {
   return useMutation({
-    mutationFn: async () => client.get('/health', { headers: { Authorization: '' } }),
+    mutationFn: async () => {
+      const response = await fetch(`${config.apiUrl}/health`);
+      if (!response.ok) throw new Error(`Network status request failed with status ${response.status}`);
+    },
     onSuccess: () => {
       setNetworkConnectionStatus(true);
     },
